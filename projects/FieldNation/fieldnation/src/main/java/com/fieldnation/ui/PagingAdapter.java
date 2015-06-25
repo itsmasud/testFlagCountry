@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.fieldnation.GlobalState;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -17,7 +19,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "PagingAdapter";
 
     private RateMeView _rateMeView = null;
-    private int _rateMePosition = 2;
+    private int _rateMePosition = 5;
     private boolean _showRateMe = false;
     private boolean _noMorePages = false;
     private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
@@ -26,10 +28,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private Listener _listener;
 
     public PagingAdapter() {
-    }
-
-    public void setShowRateMe(boolean show) {
-        _showRateMe = show;
+        _showRateMe = GlobalState.getContext().showRateMe();
     }
 
     public void setPage(int page, List<T> items) {
@@ -148,6 +147,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView = new RateMeView(parent.getContext());
                 _rateMeView.setListener(_rateMe_listener);
             }
+            GlobalState.getContext().setRateMeShown();
             return _rateMeView;
         } else if (position > _rateMePosition && _showRateMe) {
             position--;

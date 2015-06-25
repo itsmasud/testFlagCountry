@@ -152,7 +152,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
                 _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
-                _adapter.setShowRateMe(_displayView == WorkorderDataSelector.ASSIGNED || _displayView == WorkorderDataSelector.AVAILABLE);
             }
 
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
@@ -213,7 +212,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
         Log.v(TAG, "setDisplayType");
         _displayView = displayView;
-        _adapter.setShowRateMe(_displayView == WorkorderDataSelector.ASSIGNED || _displayView == WorkorderDataSelector.AVAILABLE);
         return this;
     }
 
@@ -275,7 +273,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (getArguments() != null) {
             Bundle bundle = getArguments();
             _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
-            _adapter.setShowRateMe(_displayView == WorkorderDataSelector.ASSIGNED || _displayView == WorkorderDataSelector.AVAILABLE);
         }
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
@@ -781,7 +778,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-//            Log.v(TAG, "_adapter.getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -800,7 +796,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-//            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page);
         }
     };

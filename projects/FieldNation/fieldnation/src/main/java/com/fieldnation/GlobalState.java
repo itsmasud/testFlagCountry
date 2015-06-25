@@ -25,6 +25,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
+import java.util.Calendar;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -34,12 +35,17 @@ import java.io.File;
 public class GlobalState extends Application {
     private final String TAG = UniqueTag.makeTag("GlobalState");
 
+    public static final long DAY = 86400000;
+
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
     public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
+    public static final String PREF_INSTALL_TIME = "PREF_INSTALL_TIME";
+    public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
+    public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
 
     private static GlobalState _context;
 
@@ -102,6 +108,7 @@ public class GlobalState extends Application {
         SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
+        setInstallTime();
     }
 
     public int getMemoryClass() {
@@ -323,18 +330,13 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+    public boolean shouldShowReviewDialog() {
+        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
+    }
+
     public boolean hasShownReviewDialog() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         return settings.contains(PREF_SHOWN_REVIEW_DIALOG);
-    }
-
-    public boolean hasCompletedWorkorder() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.contains(PREF_COMPLETED_WORKORDER);
-    }
-
-    public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
     }
 
     public void setShownReviewDialog() {
@@ -344,11 +346,109 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+    public boolean hasCompletedWorkorder() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.contains(PREF_COMPLETED_WORKORDER);
+    }
+
     public void setCompletedWorkorder() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
         edit.apply();
+    }
+
+    public void setInstallTime() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (settings.contains(PREF_INSTALL_TIME))
+            return;
+
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getInstallTime() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_INSTALL_TIME)) {
+            SharedPreferences.Editor edit = settings.edit();
+            edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+            edit.apply();
+            return System.currentTimeMillis();
+        }
+
+        return settings.getLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+    }
+
+    public void setRateMeInteracted() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getRateMeInteracted() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_RATE_INTERACTION)) {
+            return -1;
+        }
+
+        return settings.getLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+    }
+
+    public void setRateMeShown() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_RATE_SHOWN, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getRateMeShown() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_RATE_SHOWN))
+            return -1;
+
+        return settings.getLong(PREF_RATE_SHOWN, 0);
+    }
+
+    public boolean showRateMe() {
+        // if under 10 days, then no
+        if (System.currentTimeMillis() - getInstallTime() < DAY * 10) {
+            Log.v(TAG, "showRateMe: 10 day check failed");
+            return false;
+        }
+
+        // if hasn't completed a work order, then no
+        if (!hasCompletedWorkorder()) {
+            Log.v(TAG, "showRateMe: completed check failed");
+            return false;
+        }
+
+        // if have interacted before, then no
+        if (System.currentTimeMillis() - getRateMeInteracted() < DAY) {
+            Log.v(TAG, "showRateMe:  failed");
+            return false;
+        }
+
+        // if not in the time restraints, then no
+        Calendar cal = Calendar.getInstance();
+        if (cal.get(Calendar.HOUR_OF_DAY) <= 11) {
+            Log.v(TAG, "showRateMe:  time check failed");
+            return false;
+        }
+
+        // if shown before, check time.
+        if (System.currentTimeMillis() - getRateMeShown() < DAY * 10) {
+            Log.v(TAG, "showRateMe:  shown before check failed");
+            return false;
+        }
+
+        Log.v(TAG, "showRateMe:  ok!");
+        return true;
     }
 
     public String getStoragePath() {

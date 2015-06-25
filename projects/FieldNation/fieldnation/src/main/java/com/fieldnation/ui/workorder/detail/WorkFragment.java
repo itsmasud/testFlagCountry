@@ -919,6 +919,7 @@ public class WorkFragment extends WorkorderFragment {
             }
 
             WorkorderClient.actionComplete(getActivity(), _workorder.getWorkorderId());
+            GlobalState.getContext().setCompletedWorkorder();
 
             setLoading(true);
         }
