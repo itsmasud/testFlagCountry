@@ -47,7 +47,6 @@ public class WebCrawlerService extends Service {
     private final List<Workorder> _workorderDetails = new LinkedList<>();
 
     private boolean _haveProfile = false;
-    //    private long _pendingRequestCounter = 0;
     private long _lastRequestTime;
     private long _requestCounter = 0;
     private boolean _skipProfileImages = true;

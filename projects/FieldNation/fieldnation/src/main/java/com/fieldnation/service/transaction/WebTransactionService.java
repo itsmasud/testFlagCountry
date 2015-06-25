@@ -2,11 +2,7 @@ package com.fieldnation.service.transaction;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -47,17 +43,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
 
-
-    @Override
-    public int getMaxWorkerCount() {
-        return 1;
-    }
-
-    @Override
-    public MSService.WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
-        return new IntentThread(this, manager, intents);
-    }
-
     @Override
     public void onCreate() {
         super.onCreate();
@@ -87,7 +72,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         return null;
     }
 
-
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
@@ -95,19 +79,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         _manager.shutdown();
         super.onDestroy();
     }
-
-    @Override
-    public void onLowMemory() {
-        Log.v(TAG, "onLowMemory");
-        super.onLowMemory();
-    }
-
-    @Override
-    public void onTrimMemory(int level) {
-        Log.v(TAG, "onTrimMemory" + level);
-        super.onTrimMemory(level);
-    }
-
 
     private void setAuth(OAuth auth) {
         Log.v(TAG, "setAuth");
@@ -123,6 +94,16 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
     }
 
+    @Override
+    public int getMaxWorkerCount() {
+        return 1;
+    }
+
+    @Override
+    public MSService.WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
+        return new IntentThread(this, manager, intents);
+    }
+
     private synchronized boolean allowSync() {
         // TODO calculate by collecting config information and compare to phone state
         if (_syncCheckCoolDown < System.currentTimeMillis()) {
@@ -134,32 +115,22 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-
-            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-            boolean haveWifi = wifi.isConnected();
+            boolean haveWifi = GlobalState.getContext().haveWifi();
 
             Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
-
-                Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-                int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-                boolean pluggedIn = plugged == BatteryManager.BATTERY_PLUGGED_AC || plugged == BatteryManager.BATTERY_PLUGGED_USB;
-
+                boolean pluggedIn = GlobalState.getContext().isCharging();
                 Log.v(TAG, "HavePower " + pluggedIn);
-
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;
                 }
             }
-
             _syncCheckCoolDown = System.currentTimeMillis() + 1000;
             Log.v(TAG, "allowSync time: " + watch.finish());
         }
-
         return _allowSync;
     }
 
