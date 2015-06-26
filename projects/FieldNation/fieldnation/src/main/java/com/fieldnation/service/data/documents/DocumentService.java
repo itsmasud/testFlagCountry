@@ -31,6 +31,12 @@ public class DocumentService extends MSService implements DocumentConstants {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
     private static void download(Context context, Intent intent) {
         Log.v(TAG, "download");
 

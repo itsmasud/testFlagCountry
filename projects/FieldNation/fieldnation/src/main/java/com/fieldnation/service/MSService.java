@@ -97,6 +97,7 @@ public abstract class MSService extends Service {
 
     @Override
     public void onDestroy() {
+        Log.v(TAG, "onDestroy");
         _manager.shutdown();
         super.onDestroy();
     }
