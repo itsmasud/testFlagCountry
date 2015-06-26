@@ -220,7 +220,6 @@ public class WebCrawlerService extends Service {
         Log.v(TAG, "register sync alarm " + ISO8601.fromUTC(nextTime));
     }
 
-
     public void runCrawler() {
         Log.v(TAG, "runCrawler");
 
