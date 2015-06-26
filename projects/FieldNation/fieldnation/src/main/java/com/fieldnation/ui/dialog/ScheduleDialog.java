@@ -167,10 +167,14 @@ public class ScheduleDialog extends DialogFragmentBase {
             e.printStackTrace();
         }
 
-        if (_sched.isExact()) {
-            setMode(MODE_EXACT);
-        } else {
-            setMode(MODE_RANGE);
+        try {
+            if (_sched.isExact()) {
+                setMode(MODE_EXACT);
+            } else {
+                setMode(MODE_RANGE);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
