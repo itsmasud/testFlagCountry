@@ -806,6 +806,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //            Log.v(TAG, "_adapterListener.onLoadingComplete");
             setLoading(false);
         }
+
+        @Override
+        public void showFeedbackDialog() {
+            // TODO show feedback dialog
+        }
     };
 
 

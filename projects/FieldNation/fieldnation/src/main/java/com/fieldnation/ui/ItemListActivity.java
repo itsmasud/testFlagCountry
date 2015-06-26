@@ -100,6 +100,11 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
         public void onLoadingComplete() {
             _refreshView.refreshComplete();
         }
+
+        @Override
+        public void showFeedbackDialog() {
+            // TODO, show feedback?
+        }
     };
 }
 
