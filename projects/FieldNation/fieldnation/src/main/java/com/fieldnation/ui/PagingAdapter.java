@@ -52,7 +52,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _listener.onLoadingComplete();
         }
 
-
         notifyDataSetChanged();
     }
 
@@ -65,10 +64,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         for (int i = 0; i <= _pages.size(); i++) {
             preRequestPage(i, false);
         }
-    }
-
-    public Hashtable<Integer, List<T>> getPages() {
-        return _pages;
     }
 
     private void countItems() {
@@ -145,6 +140,10 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         int page_num = 0;
         for (page_num = 0; page_num < _pages.size(); page_num++) {
             page = _pages.get(page_num);
+
+            if (page == null)
+                continue;
+
             count = count + page.size();
             if (count > position)
                 break;
