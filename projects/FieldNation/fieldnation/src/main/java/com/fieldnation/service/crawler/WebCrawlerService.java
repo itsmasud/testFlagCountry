@@ -46,8 +46,9 @@ public class WebCrawlerService extends Service {
     private final ThreadManager _workorderThreadManager = new ThreadManager();
     private final List<Workorder> _workorderDetails = new LinkedList<>();
 
+    private Handler _activityHandler;
+
     private boolean _haveProfile = false;
-    //    private long _pendingRequestCounter = 0;
     private long _lastRequestTime;
     private long _requestCounter = 0;
     private boolean _skipProfileImages = true;
@@ -177,19 +178,24 @@ public class WebCrawlerService extends Service {
     }
 
     private void startActivityMonitor() {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                // check timer
-                if (System.currentTimeMillis() - _lastRequestTime > 60000) {
-                    // shutdown
-                    stopSelf();
-                } else {
-                    startActivityMonitor();
-                }
-            }
-        }, 60000);
+        if (_activityHandler == null)
+            _activityHandler = new Handler();
+        _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
     }
+
+    private final Runnable _activityMonitor_runnable = new Runnable() {
+        @Override
+        public void run() {
+            // check timer
+            if (System.currentTimeMillis() - _lastRequestTime > 60000
+                    && !_runningPurge) {
+                // shutdown
+                stopSelf();
+            } else {
+                startActivityMonitor();
+            }
+        }
+    };
 
     @Override
     public void onDestroy() {
