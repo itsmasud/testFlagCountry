@@ -79,7 +79,6 @@ public class DrawerView extends RelativeLayout {
     // Data
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
-    //    private int _nextPage = 0;
 
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
