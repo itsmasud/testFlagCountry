@@ -99,11 +99,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         return 1;
     }
 
-    @Override
-    public MSService.WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
-        return new IntentThread(this, manager, intents);
-    }
-
     private synchronized boolean allowSync() {
         // TODO calculate by collecting config information and compare to phone state
         if (_syncCheckCoolDown < System.currentTimeMillis()) {
@@ -165,52 +160,41 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
     }
 
-    class IntentThread extends WorkerThread {
-        private String TAG = UniqueTag.makeTag("IntentThread");
-        private Context context;
+    @Override
+    public void processIntent(Intent intent) {
+        if (intent != null && intent.getExtras() != null) {
+            try {
+                Bundle extras = intent.getExtras();
 
-        public IntentThread(Context context, ThreadManager manager, List<Intent> list) {
-            super(manager, list);
-            setName(TAG);
-            this.context = context;
-        }
-
-        @Override
-        public void processIntent(Intent intent) {
-            if (intent != null && intent.getExtras() != null) {
-                try {
-                    Bundle extras = intent.getExtras();
-
-                    if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(context,
-                            extras.getString(PARAM_KEY))) {
-                        return;
-                    }
-
-                    WebTransaction transaction = WebTransaction.put(context,
-                            (Priority) extras.getSerializable(PARAM_PRIORITY),
-                            extras.getString(PARAM_KEY),
-                            extras.getBoolean(PARAM_USE_AUTH),
-                            extras.getBoolean(PARAM_IS_SYNC),
-                            extras.getByteArray(PARAM_REQUEST),
-                            extras.getString(PARAM_HANDLER_NAME),
-                            extras.getByteArray(PARAM_HANDLER_PARAMS));
-
-                    if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
-                        Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-                        for (int i = 0; i < transforms.length; i++) {
-                            Bundle transform = (Bundle) transforms[i];
-                            Transform.put(context, transaction.getId(), transform);
-                        }
-                    }
-
-                    transaction.setState(WebTransaction.State.IDLE);
-                    transaction.save(context);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this,
+                        extras.getString(PARAM_KEY))) {
+                    return;
                 }
+
+                WebTransaction transaction = WebTransaction.put(this,
+                        (Priority) extras.getSerializable(PARAM_PRIORITY),
+                        extras.getString(PARAM_KEY),
+                        extras.getBoolean(PARAM_USE_AUTH),
+                        extras.getBoolean(PARAM_IS_SYNC),
+                        extras.getByteArray(PARAM_REQUEST),
+                        extras.getString(PARAM_HANDLER_NAME),
+                        extras.getByteArray(PARAM_HANDLER_PARAMS));
+
+                if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
+                    Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
+                    for (int i = 0; i < transforms.length; i++) {
+                        Bundle transform = (Bundle) transforms[i];
+                        Transform.put(this, transaction.getId(), transform);
+                    }
+                }
+
+                transaction.setState(WebTransaction.State.IDLE);
+                transaction.save(this);
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
-            _manager.wakeUp();
         }
+        _manager.wakeUp();
     }
 
     class TransactionThread extends ThreadManager.ManagedThread {

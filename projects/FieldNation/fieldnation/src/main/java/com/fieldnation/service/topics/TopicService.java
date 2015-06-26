@@ -26,6 +26,7 @@ public class TopicService extends Service implements TopicConstants {
     private Hashtable<String, StickyContainer> _stickies;
     private int _bindCount = 0;
     private int _lastStartId = -1;
+
     private Handler _handler;
 
     private long _pruneTimer = 0;
@@ -41,6 +42,7 @@ public class TopicService extends Service implements TopicConstants {
             _stickies = new Hashtable<>();
         }
         _handler = new Handler();
+        startActivityMonitor();
     }
 
     @Override
@@ -49,10 +51,6 @@ public class TopicService extends Service implements TopicConstants {
 
         if (intent != null && intent.getExtras() != null) {
             dispatchEvent(intent.getExtras());
-        }
-
-        if (_bindCount == 0) {
-            stopSelf(startId);
         }
 
         if (_pruneTimer < System.currentTimeMillis()) {
@@ -71,14 +69,24 @@ public class TopicService extends Service implements TopicConstants {
         return _me.getBinder();
     }
 
+    private void startActivityMonitor() {
+        _handler.postDelayed(_activityMonitor_runnable, 60000);
+    }
+
+    private final Runnable _activityMonitor_runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (_bindCount == 0) {
+                stopSelf();
+            } else {
+                startActivityMonitor();
+            }
+        }
+    };
+
     @Override
     public boolean onUnbind(Intent intent) {
         _bindCount--;
-//        Log.v(TAG, "onUnbind:" + _bindCount);
-        if (_bindCount == 0 && _lastStartId != -1) {
-            stopSelf(_lastStartId);
-            _lastStartId = -1;
-        }
         return super.onUnbind(intent);
     }
 
@@ -109,7 +117,7 @@ public class TopicService extends Service implements TopicConstants {
 
     @Override
     public void onDestroy() {
-//        Log.v(TAG, "onDestroy");
+        Log.v(TAG, "onDestroy");
         TopicUser.reset();
         synchronized (TAG) {
             _stickies.clear();
