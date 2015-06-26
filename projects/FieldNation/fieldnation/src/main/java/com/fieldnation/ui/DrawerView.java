@@ -26,6 +26,7 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.dialog.FeedbackDialog;
+import com.fieldnation.ui.dialog.FragmentDialogDemo;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -135,10 +136,9 @@ public class DrawerView extends RelativeLayout {
 
 
         // Dialog
-        _feedbackDialog = FeedbackDialog.getInstance(getFragmentManager(), TAG);
-        _feedbackDialog.setListener(_feedbackDialog_onOk);
+//        _feedbackDialog = FeedbackDialog.getInstance(getFragmentManager(), TAG);
+//        _feedbackDialog.setListener(_feedbackDialog_onOk);
 
-        ((GlobalState) getContext().getApplicationContext())
 
         // items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -398,7 +398,16 @@ public class DrawerView extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
 */
-            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+            // I disabled it
+//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+            // shoaib: started editing as the following
+            Intent intent = new Intent(getContext(), FragmentDialogDemo.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+
         }
     };
 
