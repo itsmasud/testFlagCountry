@@ -168,13 +168,6 @@
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
 
-        <!--Testing for ANDR-537-->
-        <activity
-            android:name=".ui.dialog.FragmentDialogDemo"
-            android:exported="false"
-            android:label="Hell"
-             />
-
         <service
             android:name=".service.auth.AuthService"
             android:exported="true"
