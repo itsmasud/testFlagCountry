@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,11 +24,9 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.dialog.FeedbackDialog;
-import com.fieldnation.ui.dialog.FragmentDialogDemo;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -134,9 +134,8 @@ public class DrawerView extends RelativeLayout {
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
-
         // Dialog
-//        _feedbackDialog = FeedbackDialog.getInstance(getFragmentManager(), TAG);
+        _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 //        _feedbackDialog.setListener(_feedbackDialog_onOk);
 
 
@@ -399,14 +398,12 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 
-            // I disabled it
+            // shoaib: I disabled it & i dont know the implementation yet
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
-            // shoaib: started editing as the following
-            Intent intent = new Intent(getContext(), FragmentDialogDemo.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
+// Feedback Dialog
+            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            _feedbackDialog.show(fm, "what the hell happened before!");
 
         }
     };
