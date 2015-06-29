@@ -314,7 +314,6 @@ public class DrawerView extends RelativeLayout {
     };
 
     private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
-
         @Override
         protected Payment[] doInBackground(Bundle... params) {
             Bundle resultData = params[0];
@@ -355,8 +354,10 @@ public class DrawerView extends RelativeLayout {
                 if (ja.size() == 0) {
                     return new Payment[]{selPaid, selEst};
                 } else {
-                    getContext().startService(_dataService.getAll(1, _nextPage, true));
-                    _nextPage++;
+                    if (_dataService != null) {
+                        getContext().startService(_dataService.getAll(1, _nextPage, true));
+                        _nextPage++;
+                    }
                     return new Payment[]{selPaid, selEst};
                 }
             } catch (Exception ex) {

@@ -31,7 +31,7 @@ public class Pay implements Parcelable {
     @Json(name = "hidePay")
     private Boolean _hidePay;
     @Json(name = "maxDevice")
-    private Integer _maxDevice;
+    private Double _maxDevice;
     @Json(name = "maxHour")
     private Double _maxHour;
     @Json(name = "maximumAmount")
@@ -88,7 +88,7 @@ public class Pay implements Parcelable {
     }
 
     public Integer getMaxDevice() {
-        return _maxDevice;
+        return (int) (double) _maxDevice;
     }
 
     public Double getMaxHour() {
@@ -154,7 +154,7 @@ public class Pay implements Parcelable {
     public Pay(double deviceRate, int maxDevices) {
         _payRateBasis = "Per Device";
         _perDevice = deviceRate;
-        _maxDevice = maxDevices;
+        _maxDevice = (double) maxDevices;
     }
 
     public Pay(double hourlyRate, double maxHours, double extraRate, double extraMax) {
