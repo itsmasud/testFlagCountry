@@ -24,9 +24,6 @@ import com.fieldnation.utils.misc;
 public class RateDialog extends DialogFragmentBase {
     private static final String TAG = "RateDialog";
 
-    // State
-    private static final String STATE_NOTES = "RateDialog:message";
-
     // Ui
     private StarView _rateStarView;
     private CheckBox _isClearExceptionCheckBox;
@@ -34,7 +31,6 @@ public class RateDialog extends DialogFragmentBase {
     private Button _continueButton;
 
     // Data
-    private String _message;
     private Listener _listener;
 
     /*-*****************************-*/
@@ -48,10 +44,6 @@ public class RateDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_NOTES))
-                _message = savedInstanceState.getString(STATE_NOTES);
-        }
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
@@ -59,20 +51,12 @@ public class RateDialog extends DialogFragmentBase {
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
         Log.v(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_NOTES))
-                _message = savedInstanceState.getString(STATE_NOTES);
-        }
         super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
-//        if (_messageEditText != null && !misc.isEmptyOrNull(_messageEditText.getText().toString())) {
-//            _message = _messageEditText.getText().toString();
-//            outState.putString(STATE_NOTES, _message);
-//        }
         super.onSaveInstanceState(outState);
     }
 
@@ -82,12 +66,12 @@ public class RateDialog extends DialogFragmentBase {
         View v = inflater.inflate(R.layout.dialog_rate_me, container, false);
 
         _rateStarView = (StarView) v.findViewById(R.id.stars);
-//        _rateStarView.setOnEditorActionListener(_onClick_listener);
+//        _rateStarView.setOnClickListener(_onClick_listener);
         _isClearExceptionCheckBox = (CheckBox) v.findViewById(R.id.chk_is_clear_exception);
-        _rateStarView.setOnClickListener(_isClearException_onClick);
+        _isClearExceptionCheckBox.setOnClickListener(_isClearException_onClick);
         _isProfessionalCheckBox = (CheckBox) v.findViewById(R.id.chk_is_professional);
-        _rateStarView.setOnClickListener(_isProfessional_listener);
-        _continueButton = (Button) v.findViewById(R.id.ok_button);
+        _isProfessionalCheckBox.setOnClickListener(_isProfessional_listener);
+        _continueButton = (Button) v.findViewById(R.id.continue_button);
         _continueButton.setOnClickListener(_continue_onClick);
 
 
@@ -101,11 +85,6 @@ public class RateDialog extends DialogFragmentBase {
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-
-//        if (!misc.isEmptyOrNull(_message))
-//            _messageEditText.setText(_message);
-//        else
-//            _messageEditText.setText("");
     }
 
     public void setListener(Listener listener) {
@@ -159,7 +138,7 @@ public class RateDialog extends DialogFragmentBase {
 
 
     public interface Listener {
-        void onOk(String message);
+        void onOk(int rating, boolean clearExpectations, boolean professional);
 
         void onCancel();
     }

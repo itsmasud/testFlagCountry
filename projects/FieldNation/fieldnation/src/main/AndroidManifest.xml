@@ -168,6 +168,7 @@
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
 
+
         <service
             android:name=".service.auth.AuthService"
             android:exported="true"

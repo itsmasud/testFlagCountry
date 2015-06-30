@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
@@ -44,7 +45,10 @@ public class StarView extends FrameLayout {
 
         _star = getContext().getResources().getString(R.string.icfont_star);
         _leftStars = (TextView) findViewById(R.id.left_stars);
+        _leftStars.setOnClickListener(_leftStar_onClick);
         _rightStars = (TextView) findViewById(R.id.right_stars);
+        _rightStars.setOnClickListener(_rightStar_onClick);
+
 
         setStars(_goldStars, _totalStars);
     }
@@ -66,4 +70,21 @@ public class StarView extends FrameLayout {
 
         _rightStars.setText(misc.repeat(_star, totalStars - goldStars));
     }
+
+
+
+    private final TextView.OnClickListener _leftStar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setStars(_goldStars-1);
+        }
+    };
+
+    private final TextView.OnClickListener _rightStar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            setStars(_goldStars+1);
+        }
+    };
+
 }
