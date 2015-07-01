@@ -76,9 +76,6 @@
         <attr name="dialogCancelButtonStyle" format="reference" />
         <attr name="dialogOkButtonStyle" format="reference" />
         <attr name="dialogOkButtonGreenStyle" format="reference" />
-        <attr name="dialogCallButtonStyle" format="reference" />
-        <attr name="dialogEmailButtonStyle" format="reference" />
-        <attr name="dialogFaqButtonStyle" format="reference" />
         <attr name="dialogSpinnerButtonStyle" format="reference" />
         <attr name="dialogBodyStyle" format="reference" />
         <attr name="dialogDividerStyle" format="reference" />

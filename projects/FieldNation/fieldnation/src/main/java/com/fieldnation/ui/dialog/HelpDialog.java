@@ -5,20 +5,14 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.TextView;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.ui.StarView;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 6/12/2015.
@@ -26,16 +20,10 @@ import com.fieldnation.utils.misc;
 public class HelpDialog extends DialogFragmentBase {
     private static final String TAG = "HelpDialog";
 
-    // State
-    private static final String STATE_NOTES = "HelpDialog:message";
-
     // Ui
     private Button _callButton;
     private Button _emailButton;
     private Button _faqButton;
-
-    // Data
-//    private Listener _listener;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -50,18 +38,6 @@ public class HelpDialog extends DialogFragmentBase {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.v(TAG, "onViewStateRestored");
-        super.onViewStateRestored(savedInstanceState);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -80,17 +56,6 @@ public class HelpDialog extends DialogFragmentBase {
 
         return v;
     }
-
-    @Override
-    public void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
-    }
-
-//    public void setListener(Listener listener) {
-//        _listener = listener;
-//    }
-
 
     private final View.OnClickListener _call_onClick = new View.OnClickListener() {
         @Override
@@ -119,15 +84,4 @@ public class HelpDialog extends DialogFragmentBase {
 
         }
     };
-
-
-
-//
-//    public interface Listener {
-//        void onOk(String message);
-//
-//        void onCancel();
-//    }
-
-
 }

@@ -93,7 +93,7 @@
 
     <string name="dialog_feedback_body">We\'re actively trying to improve the Field Nation App to better cater to your needs.\r\n\r\nPlease let us know how we can make this happen.</string>
 
-    <string name="dialog_help_body">We are more than happy to lend a helping hand! Feel free to contact us or check out our FAQs.</string>
+    <string name="dialog_help_body">We are more than happy to lend a helping hand! Feel free to contact us.</string>
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>

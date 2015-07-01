@@ -38,20 +38,15 @@
 
             <Button
                 android:id="@+id/call_button"
-                style="?attr/dialogCallButtonStyle"
+                style="?attr/dialogOkButtonStyle"
                 android:layout_weight="1"
-                android:text="@string/btn_call"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
+                android:text="@string/btn_call" />
 
             <Button
                 android:id="@+id/email_button"
-                style="?attr/dialogEmailButtonStyle"
+                style="?attr/dialogOkButtonStyle"
                 android:layout_weight="1"
-                android:text="@string/btn_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
-
+                android:text="@string/btn_email" />
 
 
         </LinearLayout>
@@ -62,15 +57,12 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
 
-
             <Button
                 android:id="@+id/faq_button"
-                style="?attr/dialogFaqButtonStyle"
+                style="?attr/dialogOkButtonStyle"
                 android:layout_weight="1"
                 android:text="@string/btn_faq"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone"/>
+                android:visibility="gone" />
 
         </LinearLayout>
 
