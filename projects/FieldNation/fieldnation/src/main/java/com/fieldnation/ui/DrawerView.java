@@ -58,9 +58,6 @@ public class DrawerView extends RelativeLayout {
     private NavProfileDetailListView _profileListView;
     private LinearLayout _linkContainerView;
 
-    // Dialogs: Testing RaterDialog
-    private RateDialog _feedbackDialog;
-
     // items
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
@@ -134,10 +131,6 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
-
-        // Dialog: Testing RateDialog
-        _feedbackDialog = RateDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
-//        _feedbackDialog.setListener(_feedbackDialog_onOk);
 
         // items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -398,11 +391,6 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
-
-            // Feedback Dialog
-            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
-            _feedbackDialog.show(fm, "what the hell happened before!");
-
 
         }
     };

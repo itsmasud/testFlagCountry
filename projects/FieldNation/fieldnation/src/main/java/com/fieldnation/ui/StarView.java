@@ -61,6 +61,12 @@ public class StarView extends FrameLayout {
         _goldStars = goldStars;
         _totalStars = totalStars;
 
+        if (_goldStars < 0) {
+            _goldStars = 0;
+        } else if (_goldStars > totalStars) {
+            _goldStars = totalStars;
+        }
+
         if (goldStars > 0) {
             _leftStars.setText(misc.repeat(_star, goldStars));
             _leftStars.setVisibility(VISIBLE);
@@ -72,18 +78,17 @@ public class StarView extends FrameLayout {
     }
 
 
-
     private final TextView.OnClickListener _leftStar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setStars(_goldStars-1);
+            setStars(_goldStars - 1);
         }
     };
 
     private final TextView.OnClickListener _rightStar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            setStars(_goldStars+1);
+            setStars(_goldStars + 1);
         }
     };
 

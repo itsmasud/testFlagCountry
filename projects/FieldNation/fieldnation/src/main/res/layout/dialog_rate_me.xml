@@ -59,7 +59,7 @@
             <Button
                 android:id="@+id/continue_button"
                 style="?attr/dialogOkButtonStyle"
-                android:text="CONTINUE" />
+                android:text="@string/btn_continue" />
         </LinearLayout>
 
     </LinearLayout>
