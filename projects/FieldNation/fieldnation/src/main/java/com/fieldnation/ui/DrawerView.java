@@ -6,6 +6,8 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,6 +27,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -65,6 +68,9 @@ public class DrawerView extends RelativeLayout {
     private TextView _estimatedDateTextView;
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
+
+    // Dialog
+    private HelpDialog _helpDialog;
 
     // sub items
     private LinearLayout _settingsView;
@@ -128,6 +134,9 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+
+        // Dialog
+        _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 
         // items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -394,7 +403,8 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            _helpDialog.show(fm, "what the hell happened before!");
         }
     };
 
