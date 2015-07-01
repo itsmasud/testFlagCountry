@@ -778,7 +778,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-//            Log.v(TAG, "_adapter.getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -797,7 +796,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-//            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
             requestList(page);
         }
     };
@@ -807,6 +805,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onLoadingComplete() {
 //            Log.v(TAG, "_adapterListener.onLoadingComplete");
             setLoading(false);
+        }
+
+        @Override
+        public void showFeedbackDialog() {
+            // TODO show feedback dialog
         }
     };
 

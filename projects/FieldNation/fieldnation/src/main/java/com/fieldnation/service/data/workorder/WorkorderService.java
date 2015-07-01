@@ -1,18 +1,14 @@
 package com.fieldnation.service.data.workorder;
 
-import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.Log;
-import com.fieldnation.ThreadManager;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
 
-import java.util.List;
 
 /**
  * Created by Michael Carver on 3/24/2015.
@@ -25,249 +21,232 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         return 2;
     }
 
+
     @Override
-    public WorkerThread getNewWorker(ThreadManager manager, List<Intent> intents) {
-        return new MyWorkerThread(manager, this, intents);
-    }
-
-    private class MyWorkerThread extends WorkerThread {
-        private String TAG = UniqueTag.makeTag("WorkorderServiceThread");
-        private Context _context;
-
-        public MyWorkerThread(ThreadManager manager, Context context, List<Intent> intents) {
-            super(manager, intents);
-            setName(TAG);
-            _context = context.getApplicationContext();
-        }
-
-        @Override
-        public void processIntent(Intent intent) {
-            Log.v(TAG, "MyWorkerThread, processIntent");
-            if (_context != null) {
-                String action = intent.getStringExtra(PARAM_ACTION);
-                switch (action) {
-                    case PARAM_ACTION_GET:
-                        get(_context, intent);
-                        break;
-                    case PARAM_ACTION_LIST:
-                        list(_context, intent);
-                        break;
-                    case PARAM_ACTION_GET_SIGNATURE:
-                        getSignature(_context, intent);
-                        break;
-                    case PARAM_ACTION_GET_BUNDLE:
-                        getBundle(_context, intent);
-                        break;
-                    case PARAM_ACTION_UPLOAD_DELIVERABLE:
-                        uploadDeliverable(_context, intent);
-                        break;
-                    case PARAM_ACTION_GET_DELIVERABLE:
-                        getDeliverable(_context, intent);
-                        break;
+    public void processIntent(Intent intent) {
+        Log.v(TAG, "MyWorkerThread, processIntent");
+        String action = intent.getStringExtra(PARAM_ACTION);
+        switch (action) {
+            case PARAM_ACTION_GET:
+                get(intent);
+                break;
+            case PARAM_ACTION_LIST:
+                list(intent);
+                break;
+            case PARAM_ACTION_GET_SIGNATURE:
+                getSignature(intent);
+                break;
+            case PARAM_ACTION_GET_BUNDLE:
+                getBundle(intent);
+                break;
+            case PARAM_ACTION_UPLOAD_DELIVERABLE:
+                uploadDeliverable(intent);
+                break;
+            case PARAM_ACTION_GET_DELIVERABLE:
+                getDeliverable(intent);
+                break;
 //                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
-//                        downloadDeliverable(_context, intent);
+//                        downloadDeliverable( intent);
 //                        break;
-                    case PARAM_ACTION_LIST_MESSAGES:
-                        listMessages(_context, intent);
-                        break;
-                    case PARAM_ACTION_LIST_NOTIFICATIONS:
-                        listAlerts(_context, intent);
-                        break;
-                    case PARAM_ACTION_LIST_TASKS:
-                        listTasks(_context, intent);
-                }
-            }
+            case PARAM_ACTION_LIST_MESSAGES:
+                listMessages(intent);
+                break;
+            case PARAM_ACTION_LIST_NOTIFICATIONS:
+                listAlerts(intent);
+                break;
+            case PARAM_ACTION_LIST_TASKS:
+                listTasks(intent);
         }
     }
 
-    private static void get(Context context, Intent intent) {
+    private void get(Intent intent) {
         Log.v(TAG, "get");
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
         if (allowCache && !isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_WORKORDER, workorderId);
+            StoredObject obj = StoredObject.get(this, PSO_WORKORDER, workorderId);
             if (obj != null) {
                 try {
                     JsonObject workorder = new JsonObject(obj.getData());
 
-                    Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
+                    Transform.applyTransform(this, workorder, PSO_WORKORDER, workorderId);
 
-                    WorkorderDispatch.get(context, workorder, workorderId, false, isSync);
+                    WorkorderDispatch.get(this, workorder, workorderId, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.get(context, workorderId, isSync);
+        WorkorderTransactionBuilder.get(this, workorderId, isSync);
     }
 
-    private static void list(Context context, Intent intent) {
+    private void list(Intent intent) {
         Log.v(TAG, "list");
         String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_WORKORDER_LIST + selector, page);
+            StoredObject obj = StoredObject.get(this, PSO_WORKORDER_LIST + selector, page);
             if (obj != null) {
                 try {
                     JsonArray ja = new JsonArray(obj.getData());
                     for (int i = 0; i < ja.size(); i++) {
                         JsonObject json = ja.getJsonObject(i);
-                        Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
+                        Transform.applyTransform(this, json, PSO_WORKORDER, json.getLong("workorderId"));
                     }
 
-                    WorkorderDispatch.list(context, ja, page, selector, false, isSync);
+                    WorkorderDispatch.list(this, ja, page, selector, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.list(context, selector, page, isSync);
+        WorkorderTransactionBuilder.list(this, selector, page, isSync);
     }
 
-    private static void getSignature(Context context, Intent intent) {
+    private void getSignature(Intent intent) {
         Log.v(TAG, "getSignature");
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long signatureId = intent.getLongExtra(PARAM_SIGNATURE_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_SIGNATURE, signatureId);
+        StoredObject obj = StoredObject.get(this, PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
-                WorkorderDispatch.signature(context, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
+                WorkorderDispatch.signature(this, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
 
         if (obj == null) {
-            WorkorderTransactionBuilder.getSignature(context, workorderId, signatureId, isSync);
+            WorkorderTransactionBuilder.getSignature(this, workorderId, signatureId, isSync);
         }
     }
 
-    private static void listMessages(Context context, Intent intent) {
+    private void listMessages(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_MESSAGE_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, PSO_MESSAGE_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listMessages(context, workorderId, new JsonArray(obj.getData()), false, isSync);
+                    WorkorderDispatch.listMessages(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.listMessages(context, workorderId, false, isSync);
+        WorkorderTransactionBuilder.listMessages(this, workorderId, false, isSync);
     }
 
-    private static void listAlerts(Context context, Intent intent) {
+    private void listAlerts(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_ALERT_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, PSO_ALERT_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(obj.getData()), false, isSync);
+                    WorkorderDispatch.listAlerts(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.listAlerts(context, workorderId, false, isSync);
+        WorkorderTransactionBuilder.listAlerts(this, workorderId, false, isSync);
     }
 
-    private static void listTasks(Context context, Intent intent) {
+    private void listTasks(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_TASK_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, PSO_TASK_LIST, workorderId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.listTasks(context, workorderId, new JsonArray(obj.getData()), false, isSync);
+                    WorkorderDispatch.listTasks(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.listTasks(context, workorderId, isSync);
+        WorkorderTransactionBuilder.listTasks(this, workorderId, isSync);
     }
 
-    private static void getBundle(Context context, Intent intent) {
+    private void getBundle(Intent intent) {
         Log.v(TAG, "getBundle");
         long bundleId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(context, PSO_BUNDLE, bundleId);
+            StoredObject obj = StoredObject.get(this, PSO_BUNDLE, bundleId);
             if (obj != null) {
                 try {
-                    WorkorderDispatch.bundle(context, new JsonObject(obj.getData()), bundleId, false, isSync);
+                    WorkorderDispatch.bundle(this, new JsonObject(obj.getData()), bundleId, false, isSync);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
             }
         }
 
-        WorkorderTransactionBuilder.getBundle(context, bundleId, isSync);
+        WorkorderTransactionBuilder.getBundle(this, bundleId, isSync);
     }
 
-    private static void uploadDeliverable(Context context, Intent intent) {
+    private void uploadDeliverable(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        WorkorderTransactionBuilder.uploadDeliverable(context, filePath, filename, workorderId, uploadSlotId);
+        WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, workorderId, uploadSlotId);
     }
 
-    private static void getDeliverable(Context context, Intent intent) {
+    private void getDeliverable(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE, deliverableId);
+        StoredObject obj = StoredObject.get(this, PSO_DELIVERABLE, deliverableId);
 
         if (obj != null) {
             try {
-                WorkorderDispatch.getDeliverable(context, new JsonObject(obj.getData()), workorderId, deliverableId, false, isSync);
+                WorkorderDispatch.getDeliverable(this, new JsonObject(obj.getData()), workorderId, deliverableId, false, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
         }
         if (obj == null || isSync) {
-            WorkorderTransactionBuilder.getDeliverable(context, workorderId, deliverableId, isSync);
+            WorkorderTransactionBuilder.getDeliverable(this, workorderId, deliverableId, isSync);
         }
     }
 
-//    private static void downloadDeliverable(Context context, Intent intent) {
+//    private void downloadDeliverable(Intent intent) {
 //        long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
 //        long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
 //        String url = intent.getStringExtra(PARAM_URL);
 //        boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 //
-//        StoredObject obj = StoredObject.get(context, PSO_DELIVERABLE_FILE, deliverableId);
+//        StoredObject obj = StoredObject.get(this, PSO_DELIVERABLE_FILE, deliverableId);
 //        if (obj != null) {
 //            try {
-//                WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), isSync);
+//                WorkorderDispatch.downloadDeliverable(this, workorderId, deliverableId, obj.getFile(), isSync);
 //            } catch (Exception ex) {
 //                ex.printStackTrace();
 //            }
 //        }
 //
 //        if (obj == null || isSync) {
-//            WorkorderTransactionBuilder.downloadDeliverable(context, workorderId, deliverableId, url, isSync);
+//            WorkorderTransactionBuilder.downloadDeliverable(this, workorderId, deliverableId, url, isSync);
 //        }
 //    }
 }

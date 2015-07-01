@@ -17,6 +17,23 @@
             android:title="@string/pref_string_purge_rate" />
     </PreferenceCategory>
 
+    <PreferenceCategory android:title="Profile Images">
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_key_profile_photo_wifi_only"
+            android:summary="Limit profile image downloads"
+            android:title="Require wifi for download" />
+        <ListPreference
+            android:defaultValue="@string/pref_default_purge_rate"
+            android:dependency="@string/pref_key_allow_data_purge"
+            android:entries="@array/pref_purge_titles"
+            android:entryValues="@array/pref_purge_values"
+            android:key="@string/pref_key_profile_photo_ttl"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="Delete profile pictures after" />
+    </PreferenceCategory>
+
     <PreferenceCategory android:title="Sync Settings">
         <SwitchPreference
             android:defaultValue="true"
@@ -42,10 +59,9 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_require_power"
+            android:key="@string/pref_key_sync_require_power"
             android:summary="If checked then sync will only run while the device is plugged in"
             android:title="Only run while charging" />
-
         <CheckBoxPreference
             android:defaultValue="true"
             android:dependency="@string/pref_key_sync_enabled"

@@ -5,6 +5,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.fieldnation.GlobalState;
+
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -17,7 +19,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "PagingAdapter";
 
     private RateMeView _rateMeView = null;
-    private int _rateMePosition = 2;
+    private int _rateMePosition = 5;
     private boolean _showRateMe = false;
     private boolean _noMorePages = false;
     private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
@@ -26,11 +28,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private Listener _listener;
 
     public PagingAdapter() {
-
-    }
-
-    public PagingAdapter(boolean showRateMe) {
-        _showRateMe = showRateMe;
+        _showRateMe = GlobalState.getContext().showRateMe();
     }
 
     public void setPage(int page, List<T> items) {
@@ -149,6 +147,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView = new RateMeView(parent.getContext());
                 _rateMeView.setListener(_rateMe_listener);
             }
+            GlobalState.getContext().setRateMeShown();
             return _rateMeView;
         } else if (position > _rateMePosition && _showRateMe) {
             position--;
@@ -197,6 +196,12 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _showRateMe = false;
             notifyDataSetInvalidated();
         }
+
+        @Override
+        public void showFeedbackDialog() {
+            if (_listener != null)
+                _listener.showFeedbackDialog();
+        }
     };
 
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);
@@ -205,6 +210,8 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     public interface Listener {
         void onLoadingComplete();
+
+        void showFeedbackDialog();
     }
 
 }
