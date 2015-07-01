@@ -22,7 +22,7 @@
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_centerVertical="true"
-            android:text="@string/icfont_missing"
+            android:text="@string/icfont_back_arrow"
             android:textColor="@color/fn_light_text"
             android:textSize="24sp" />
 

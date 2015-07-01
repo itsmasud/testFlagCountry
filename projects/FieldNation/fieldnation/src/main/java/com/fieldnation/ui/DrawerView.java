@@ -24,11 +24,9 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.ui.dialog.HelpDialog;
-import com.fieldnation.ui.market.MarketActivity;
+import com.fieldnation.ui.dialog.FeedbackDialog;import com.fieldnation.ui.dialog.HelpDialog;import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 import com.fieldnation.utils.ISO8601;
@@ -58,6 +56,7 @@ public class DrawerView extends RelativeLayout {
     private NavProfileDetailListView _profileListView;
     private LinearLayout _linkContainerView;
 
+
     // items
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
@@ -71,6 +70,7 @@ public class DrawerView extends RelativeLayout {
 
     // Dialog
     private HelpDialog _helpDialog;
+	private FeedbackDialog _feedbackDialog;
 
     // sub items
     private LinearLayout _settingsView;
@@ -85,7 +85,6 @@ public class DrawerView extends RelativeLayout {
     // Data
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
-    //    private int _nextPage = 0;
 
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
@@ -136,8 +135,9 @@ public class DrawerView extends RelativeLayout {
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
         // Dialog
-        _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
-
+        _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
+//        _feedbackDialog.setListener(_feedbackDialog_onOk);
+		_helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
         // items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
@@ -396,7 +396,14 @@ public class DrawerView extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
 */
-            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+            // shoaib: I disabled it & i dont know the implementation yet
+//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+// Feedback Dialog
+            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
+            _feedbackDialog.show(fm, "what the hell happened before!");
+
         }
     };
 

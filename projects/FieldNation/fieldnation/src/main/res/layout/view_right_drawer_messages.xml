@@ -29,7 +29,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:text="@string/icfont_missing"
+                android:text="@string/icfont_back_arrow"
                 android:textColor="@color/fn_light_text"
                 android:textSize="24sp" />
 
@@ -42,17 +42,6 @@
                 android:layout_toLeftOf="@+id/writeMessage_button"
                 android:layout_toRightOf="@+id/close_button"
                 android:text="Messages" />
-
-            <com.fieldnation.ui.IconFontButton
-                android:id="@+id/writeMessage_button"
-                style="?attr/buttonFlatStyle"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:text="@string/icfont_missing"
-                android:textColor="@color/fn_light_text"
-                android:textSize="24sp" />
         </RelativeLayout>
 
         <RelativeLayout

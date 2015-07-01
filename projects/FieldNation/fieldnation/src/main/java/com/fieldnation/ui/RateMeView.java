@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.R;
 
@@ -119,10 +118,10 @@ public class RateMeView extends RelativeLayout {
                         _listener.onHide();
                     break;
                 case 2:
-                    // TODO show feedback form
-                    Toast.makeText(getContext(), "Show Feedback form here", Toast.LENGTH_SHORT).show();
-                    if (_listener != null)
+                    if (_listener != null) {
+                        _listener.showFeedbackDialog();
                         _listener.onHide();
+                    }
                     break;
             }
         }
@@ -150,5 +149,7 @@ public class RateMeView extends RelativeLayout {
 
     public interface Listener {
         void onHide();
+
+        void showFeedbackDialog();
     }
 }
