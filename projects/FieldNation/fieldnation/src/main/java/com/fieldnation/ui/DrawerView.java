@@ -7,7 +7,6 @@ import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
-import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,12 +20,14 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.dialog.FeedbackDialog;
+import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -44,11 +45,11 @@ import java.util.List;
  * @author michael.carver
  */
 public class DrawerView extends RelativeLayout {
-    private static final String TAG = "DrawerView";
+    private static final String STAG = "DrawerView";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     // UI
     private LinearLayout _profileContainerLayout;
-    //    private ImageView _profileImageView;
     private ProfilePicView _picView;
     private TextView _profileNameTextView;
     private TextView _profileCompanyTextView;
@@ -56,9 +57,6 @@ public class DrawerView extends RelativeLayout {
     private TextView _providerIdTextView;
     private NavProfileDetailListView _profileListView;
     private LinearLayout _linkContainerView;
-
-    // Dialogs
-    private FeedbackDialog _feedbackDialog;
 
     // items
     private RelativeLayout _myworkView;
@@ -70,6 +68,10 @@ public class DrawerView extends RelativeLayout {
     private TextView _estimatedDateTextView;
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
+
+    // Dialog
+    private HelpDialog _helpDialog;
+    private FeedbackDialog _feedbackDialog;
 
     // sub items
     private LinearLayout _settingsView;
@@ -133,12 +135,12 @@ public class DrawerView extends RelativeLayout {
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
-        // Dialog
+        // Dialogs
         _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 //        _feedbackDialog.setListener(_feedbackDialog_onOk);
+        _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 
-
-        // items
+        // Items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
@@ -157,7 +159,7 @@ public class DrawerView extends RelativeLayout {
         _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
 
-        // sub items
+        // Sub items
         _settingsView = (LinearLayout) findViewById(R.id.settings_view);
         _settingsView.setOnClickListener(_settingsView_onClick);
 
@@ -401,8 +403,7 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
 // Feedback Dialog
-            FragmentManager fm = ((FragmentActivity) getContext()).getSupportFragmentManager();
-            _feedbackDialog.show(fm, "what the hell happened before!");
+            _feedbackDialog.show();
 
         }
     };
@@ -410,7 +411,7 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            _helpDialog.show();
         }
     };
 

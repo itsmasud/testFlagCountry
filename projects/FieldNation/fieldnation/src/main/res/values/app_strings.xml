@@ -42,6 +42,7 @@
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
     <string name="btn_add">ADD</string>
+    <string name="btn_call">CALL US</string>
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_check_in">CHECK IN</string>
@@ -50,6 +51,8 @@
     <string name="btn_confirm">CONFIRM</string>
     <string name="btn_continue">CONTINUE</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_email">EMAIL US</string>
+    <string name="btn_faq">FREQUENTLY ASKED QUESTIONS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
@@ -89,6 +92,8 @@
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
 
     <string name="dialog_feedback_body">We\'re actively trying to improve the Field Nation App to better cater to your needs.\r\n\r\nPlease let us know how we can make this happen.</string>
+
+    <string name="dialog_help_body">We are more than happy to lend a helping hand! Feel free to contact us.</string>
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
