@@ -26,7 +26,6 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.ui.dialog.RateDialog;
 import com.fieldnation.ui.dialog.FeedbackDialog;
 import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.market.MarketActivity;
