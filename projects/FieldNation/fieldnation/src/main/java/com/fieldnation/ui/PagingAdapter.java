@@ -7,11 +7,10 @@ import android.widget.BaseAdapter;
 
 import com.fieldnation.Log;
 
-import java.util.Enumeration;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeMap;
 
 /**
  * Created by michael.carver on 11/21/2014.
@@ -20,8 +19,8 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "ui.PagingAdapter";
 
     private boolean _noMorePages = false;
-    private Hashtable<Integer, List<T>> _pages = new Hashtable<Integer, List<T>>();
-    private Set<Integer> _loadingPages = new HashSet<Integer>();
+    private TreeMap<Integer, List<T>> _pages = new TreeMap<>();
+    private Set<Integer> _loadingPages = new HashSet<>();
     private int _size;
     private Listener _listener;
 
@@ -52,7 +51,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _listener.onLoadingComplete();
         }
 
-
         notifyDataSetChanged();
     }
 
@@ -67,20 +65,13 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         }
     }
 
-    public Hashtable<Integer, List<T>> getPages() {
-        return _pages;
-    }
-
     private void countItems() {
         int count = 0;
-        Enumeration<Integer> e = _pages.keys();
-        while (e.hasMoreElements()) {
-            Integer i = e.nextElement();
-
-            count += _pages.get(i).size();
+        Set<Integer> e = _pages.keySet();
+        for (Integer key : e) {
+            count += _pages.get(key).size();
+            _size = count;
         }
-
-        _size = count;
     }
 
     public void setNoMorePages() {
@@ -111,8 +102,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         // find the page that has this item
         int count = 0;
         List<T> page = null;
-        for (int i = 0; i < _pages.size(); i++) {
-            page = _pages.get(i);
+        Set<Integer> set = _pages.keySet();
+        for (Integer s : set) {
+            page = _pages.get(s);
             count = count + page.size();
             if (count > position)
                 break;
@@ -143,7 +135,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         int count = 0;
         List<T> page = null;
         int page_num = 0;
-        for (page_num = 0; page_num < _pages.size(); page_num++) {
+        Set<Integer> set = _pages.keySet();
+        for (Integer s : set) {
+            page_num = s;
             page = _pages.get(page_num);
             count = count + page.size();
             if (count > position)
@@ -154,7 +148,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         if (_pages.get(_pages.size() - 1) == page && !_noMorePages) {
             preRequestPage(_pages.size(), true);
         }
-
 
         // find the begining of the page
         count = count - page.size();
