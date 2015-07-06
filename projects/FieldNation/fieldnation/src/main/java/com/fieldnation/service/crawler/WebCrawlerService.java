@@ -339,9 +339,9 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
-            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true);
-            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true);
-            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true, false);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true, false);
+            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true, false);
         }
 
         @Override
@@ -359,7 +359,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true);
+            WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true, false);
 
             Log.v(TAG, "onWorkorderList, Request details");
             for (int i = 0; i < list.size(); i++) {

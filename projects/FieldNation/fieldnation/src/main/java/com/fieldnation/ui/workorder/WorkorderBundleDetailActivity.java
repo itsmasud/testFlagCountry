@@ -5,10 +5,8 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
@@ -141,23 +139,12 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void viewCounter(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: viewCounter()
             Log.v(TAG, "Method Stub: viewCounter()");
-
         }
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: onViewPayments()
             Log.v(TAG, "Method Stub: onViewPayments()");
-
-        }
-
-        @Override
-        public void onLongClick(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: onLongClick()
-            Log.v(TAG, "Method Stub: onLongClick()");
-            GoogleAnalyticsTopicClient.dispatchEvent(WorkorderBundleDetailActivity.this,
-                    "BundleActivity", GoogleAnalyticsTopicClient.EventAction.LONG_CLICK,
-                    "WorkorderCard", 1);
         }
 
         @Override

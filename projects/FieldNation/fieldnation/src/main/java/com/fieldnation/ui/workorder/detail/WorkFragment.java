@@ -1448,7 +1448,6 @@ public class WorkFragment extends WorkorderFragment {
             return;
 
         _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
-        _workorderClient.subActions(_workorder.getWorkorderId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -1460,13 +1459,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
             setTasks(tasks);
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            // TODO _workorderClient_listener.onAction
-            Log.v(TAG, "_workorderClient_listener.onAction");
-            //_workorder.dispatchOnChange();
         }
     };
 
