@@ -387,7 +387,6 @@ public class DrawerView extends RelativeLayout {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
 */
-
 /*
             File tempfile = misc.dumpLogcat(getContext());
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -403,7 +402,8 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
 // Feedback Dialog
-            _feedbackDialog.show();
+//            _feedbackDialog.show();
+            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
 
         }
     };

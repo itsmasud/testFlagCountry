@@ -17,6 +17,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.dialog.FeedbackDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -42,6 +43,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
+    private FeedbackDialog _feedbackDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -88,6 +90,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         onFinishCreate(savedInstanceState);
+
+        _feedbackDialog = _feedbackDialog.getInstance(getSupportFragmentManager(), TAG);
+        _feedbackDialog.setCancelable(false);
+
+
     }
 
     public abstract int getLayoutResource();
@@ -273,6 +280,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _globalClient.registerGotProfile();
             _globalClient.registerUpdateApp();
             _globalClient.registerAppShutdown();
+            _globalClient.registerShowFeedbackDialog();
         }
 
         @Override
@@ -290,6 +298,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         public void onShutdown() {
             finish();
         }
+
+        @Override
+        public void onShowFeedbackDialog() {
+            _feedbackDialog.show();
+        }
+
     };
 
 
