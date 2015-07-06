@@ -88,8 +88,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (!isSync) {
+        if (allowCache && !isSync) {
             StoredObject obj = StoredObject.get(this, PSO_WORKORDER_LIST + selector, page);
             if (obj != null) {
                 try {

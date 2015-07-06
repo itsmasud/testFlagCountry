@@ -74,6 +74,8 @@
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
+    <string name="btn_yes">YES</string>
+    <string name="btn_no">NO</string>
 
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -90,6 +92,9 @@
 
     <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+
+    <string name="dialog_withdraw_title">Withdraw Request?</string>
+    <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
 
     <string name="dialog_feedback_body">We\'re actively trying to improve the Field Nation App to better cater to your needs.\r\n\r\nPlease let us know how we can make this happen.</string>
 
