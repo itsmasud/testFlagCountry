@@ -49,11 +49,17 @@ public class Pay implements Parcelable {
     }
 
     public Double getBlendedAdditionalHours() {
-        return _blendedAdditionalHours;
+        if (_blendedAdditionalHours != null)
+            return _blendedAdditionalHours;
+
+        return 0.0;
     }
 
     public Double getBlendedAdditionalRate() {
-        return _blendedAdditionalRate;
+        if (_blendedAdditionalRate != null)
+            return _blendedAdditionalRate;
+
+        return 0.0;
     }
 
     public Double getBlendedFirstHours() {
