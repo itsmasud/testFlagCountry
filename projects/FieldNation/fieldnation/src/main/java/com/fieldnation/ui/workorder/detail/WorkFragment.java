@@ -709,7 +709,8 @@ public class WorkFragment extends WorkorderFragment {
                     if (isAdded())
                         onActivityResult(requestCode, resultCode, data);
                 }
-            }, 1000);        } else {
+            }, 1000);
+        } else {
             Log.v(TAG, "onActivityResult execute...");
 
             if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
@@ -983,9 +984,18 @@ public class WorkFragment extends WorkorderFragment {
 
     }
 
-    private ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+        public void onOk(final String trackingId, final String carrier, final String carrierName, final String description, final boolean shipToSite) {
+            if (_service == null || _workorder == null) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _shipmentAddDialog_listener.onOk(trackingId, carrier, carrierName, description, shipToSite);
+                    }
+                }, 1000);
+                return;
+            }
             GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId));
@@ -993,7 +1003,16 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
+        public void onOk(final String trackingId, final String carrier, final String carrierName, final String description, final boolean shipToSite, final long taskId) {
+            if (_service == null || _workorder == null) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _shipmentAddDialog_listener.onOk(trackingId, carrier, carrierName, description, shipToSite, taskId);
+                    }
+                }, 1000);
+                return;
+            }
             GlobalState.getContext().startService(
                     _service.addShipmentDetails(WEB_CHANGED, _workorder.getWorkorderId(), description, shipToSite,
                             carrier, carrierName, trackingId, taskId));
