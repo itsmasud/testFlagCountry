@@ -5,7 +5,6 @@ import android.content.Context;
 import com.fieldnation.GlobalState;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.data.help.HelpConstants;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.utils.misc;
