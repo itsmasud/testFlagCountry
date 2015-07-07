@@ -150,7 +150,5 @@ public class RateMeView extends RelativeLayout {
 
     public interface Listener {
         void onHide();
-
-        void showFeedbackDialog();
     }
 }
