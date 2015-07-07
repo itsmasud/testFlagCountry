@@ -196,12 +196,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _showRateMe = false;
             notifyDataSetInvalidated();
         }
-
-        @Override
-        public void showFeedbackDialog() {
-            if (_listener != null)
-                _listener.showFeedbackDialog();
-        }
     };
 
     public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);
@@ -210,8 +204,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     public interface Listener {
         void onLoadingComplete();
-
-        void showFeedbackDialog();
     }
 
 }

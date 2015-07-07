@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 
 /**
@@ -119,7 +120,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 2:
                     if (_listener != null) {
-                        _listener.showFeedbackDialog();
+                        GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
                         _listener.onHide();
                     }
                     break;
@@ -149,7 +150,5 @@ public class RateMeView extends RelativeLayout {
 
     public interface Listener {
         void onHide();
-
-        void showFeedbackDialog();
     }
 }
