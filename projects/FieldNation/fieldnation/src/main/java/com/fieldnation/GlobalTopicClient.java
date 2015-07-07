@@ -87,7 +87,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean registerShowFeedbackDialog() {
-        return register(TOPIC_GCM_MESSAGE, TAG);
+        return register(TOPIC_ID_SHOW_FEEDBACK, TAG);
     }
 
     // feedback dialog

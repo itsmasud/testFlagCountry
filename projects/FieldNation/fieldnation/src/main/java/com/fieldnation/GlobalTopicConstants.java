@@ -13,7 +13,7 @@ public interface GlobalTopicConstants {
     String TOPIC_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_GCM_MESSAGE";
     String TOPIC_ID_SHOW_FEEDBACK  = "GlobalTopicConstants:TOPIC_ID_SHOW_FEEDBACK";
 
-    String PARAM_NETWORK_STATE = "TOPIC_ID_SHOW_FEEDBACK";
+    String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     int NETWORK_STATE_CONNECTED = 1;
     int NETWORK_STATE_DISCONNECTED = 2;
     int NETWORK_STATE_CONNECTING = 3;

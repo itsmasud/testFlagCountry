@@ -71,7 +71,7 @@ public class DrawerView extends RelativeLayout {
 
     // Dialog
     private HelpDialog _helpDialog;
-    private FeedbackDialog _feedbackDialog;
+//    private FeedbackDialog _feedbackDialog;
 
     // sub items
     private LinearLayout _settingsView;
@@ -136,7 +136,7 @@ public class DrawerView extends RelativeLayout {
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
         // Dialogs
-        _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
+//        _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 //        _feedbackDialog.setListener(_feedbackDialog_onOk);
         _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 

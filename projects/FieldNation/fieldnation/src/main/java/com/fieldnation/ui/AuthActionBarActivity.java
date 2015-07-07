@@ -92,8 +92,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         onFinishCreate(savedInstanceState);
 
         _feedbackDialog = _feedbackDialog.getInstance(getSupportFragmentManager(), TAG);
-        _feedbackDialog.setCancelable(false);
-
 
     }
 
