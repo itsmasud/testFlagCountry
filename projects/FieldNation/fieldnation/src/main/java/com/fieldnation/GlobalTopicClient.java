@@ -86,6 +86,18 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         return register(TOPIC_APP_UPDATE, TAG);
     }
 
+    public boolean registerShowFeedbackDialog() {
+        return register(TOPIC_ID_SHOW_FEEDBACK, TAG);
+    }
+
+    // feedback dialog
+    public static void dispatchShowFeedbackDialog(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, null, Sticky.NONE);
+    }
+
     // NETWORK STATE
     public static void dispatchNetworkDisconnected(Context context) {
         Log.v(STAG, "dispatchNetworkDisconnected");
@@ -152,6 +164,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_SHUTDOWN:
                     onShutdown();
                     break;
+                case TOPIC_ID_SHOW_FEEDBACK:
+                    onShowFeedbackDialog();
+                    break;
                 case TOPIC_NETWORK_STATE: {
                     switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
                         case NETWORK_STATE_CONNECTED:
@@ -182,6 +197,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         }
 
         public void onShutdown() {
+        }
+
+        public void onShowFeedbackDialog() {
         }
 
         public void onNetworkDisconnected() {
