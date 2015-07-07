@@ -10,48 +10,13 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.utils.misc;
 
 /**
- * Created by Michael Carver on 4/22/2015.
+ * Created by Shoaib on 7/4/2015.
  */
 public class HelpTransactionBuilder {
 
-//    public static void get(Context context, long profileId, boolean isSync) {
-//        try {
-//            HttpJsonBuilder http = new HttpJsonBuilder()
-//            HttpJsonBuilder http = new HttpJsonBuilder()
-//                    .protocol("https")
-//                    .method("GET");
-//
-//            if (profileId > 0) {
-//                http.path("/api/rest/v1/profile/" + profileId);
-//            } else {
-//                http.path("/api/rest/v1/profile");
-//            }
-//
-//            WebTransactionBuilder.builder(context)
-//                    .priority(Priority.HIGH)
-//                    .handler(ProfileTransactionHandler.class)
-//                    .handlerParams(ProfileTransactionHandler.pGet(profileId))
-//                    .key((isSync ? "Sync/" : "") + "ProfileGet")
-//                    .isSyncCall(isSync)
-//                    .useAuth(true)
-//                    .request(http)
-//                    .send();
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//    }
-
-
-
-
-
-    /*
-    Newly edited.
-   Date: July 07, 2015
-     */
 
     public static void actionPostFeedback(Context context,
-                                          String topic,  String message, String uri,  String extra_data ,  String extra_type ) {
+                                          String topic, String message, String uri, String extra_data, String extra_type) {
         try {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
@@ -78,8 +43,6 @@ public class HelpTransactionBuilder {
             ex.printStackTrace();
         }
     }
-
-
 
 
 }
