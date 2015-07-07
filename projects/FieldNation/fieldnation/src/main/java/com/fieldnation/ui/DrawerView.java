@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,12 +20,14 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.dialog.FeedbackDialog;
+import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -42,11 +45,11 @@ import java.util.List;
  * @author michael.carver
  */
 public class DrawerView extends RelativeLayout {
-    private static final String TAG = "DrawerView";
+    private static final String STAG = "DrawerView";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     // UI
     private LinearLayout _profileContainerLayout;
-    //    private ImageView _profileImageView;
     private ProfilePicView _picView;
     private TextView _profileNameTextView;
     private TextView _profileCompanyTextView;
@@ -66,6 +69,9 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
 
+    // Dialog
+    private HelpDialog _helpDialog;
+
     // sub items
     private LinearLayout _settingsView;
     private LinearLayout _feedbackView;
@@ -79,7 +85,6 @@ public class DrawerView extends RelativeLayout {
     // Data
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
-    //    private int _nextPage = 0;
 
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
@@ -129,7 +134,10 @@ public class DrawerView extends RelativeLayout {
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
-        // items
+        // Dialogs
+        _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
+
+        // Items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
@@ -148,7 +156,7 @@ public class DrawerView extends RelativeLayout {
         _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
 
-        // sub items
+        // Sub items
         _settingsView = (LinearLayout) findViewById(R.id.settings_view);
         _settingsView.setOnClickListener(_settingsView_onClick);
 
@@ -376,7 +384,6 @@ public class DrawerView extends RelativeLayout {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
 */
-
 /*
             File tempfile = misc.dumpLogcat(getContext());
             Intent intent = new Intent(Intent.ACTION_SEND);
@@ -387,14 +394,18 @@ public class DrawerView extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
 */
-            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+            // Feedback Dialog
+            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
         }
     };
 
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            _helpDialog.show();
         }
     };
 

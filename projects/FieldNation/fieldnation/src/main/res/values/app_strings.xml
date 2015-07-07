@@ -42,6 +42,7 @@
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
     <string name="btn_add">ADD</string>
+    <string name="btn_call">CALL US</string>
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_check_in">CHECK IN</string>
@@ -50,6 +51,8 @@
     <string name="btn_confirm">CONFIRM</string>
     <string name="btn_continue">CONTINUE</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_email">EMAIL US</string>
+    <string name="btn_faq">FREQUENTLY ASKED QUESTIONS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
@@ -71,6 +74,8 @@
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
+    <string name="btn_yes">YES</string>
+    <string name="btn_no">NO</string>
 
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -88,7 +93,12 @@
     <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
 
+    <string name="dialog_withdraw_title">Withdraw Request?</string>
+    <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
+
     <string name="dialog_feedback_body">We\'re actively trying to improve the Field Nation App to better cater to your needs.\r\n\r\nPlease let us know how we can make this happen.</string>
+
+    <string name="dialog_help_body">We are more than happy to lend a helping hand! Feel free to contact us.</string>
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
@@ -346,8 +356,11 @@
     <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
     <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
     <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
-    <string name="pref_key_require_power">pref_key_require_power</string>
+    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
     <string name="pref_key_sync_skip_profile_images">pref_key_sync_skip_profile_images</string>
+
+    <string name="pref_key_profile_photo_wifi_only">pref_key_profile_photo_wifi_only</string>
+    <string name="pref_key_profile_photo_ttl">pref_key_profile_photo_ttl</string>
 
     <string name="icfont_arrow_r">\uF106</string>
     <string name="icfont_bundle">\uF10D</string>
@@ -394,6 +407,7 @@
     <string name="icfont_circle_dollar">\uF177</string>
     <string name="icfont_circle_truck">\uF178</string>
     <string name="icfont_circle_pen">\uF179</string>
+    <string name="icfont_back_arrow">\uF183</string>
     <!--<string name="icfont_messages_action">\uF17C</string>-->
     <!--<string name="icfont_alert_action">\uF17D</string>-->
 

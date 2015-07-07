@@ -35,6 +35,7 @@ import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.utils.ISO8601;
@@ -70,6 +71,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private AcceptBundleDialog _acceptBundleDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
+    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -140,6 +142,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
     }
@@ -248,7 +251,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
 
-        requestList(0);
+        requestList(0, true);
     }
 
     @Override
@@ -297,6 +300,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void setLoading(boolean loading) {
         Log.v(TAG, "setLoading()");
+        misc.printStackTrace("setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
@@ -311,10 +315,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _adapter.refreshPages();
     }
 
-    private void requestList(int page) {
+    private void requestList(int page, boolean allowCache) {
         Log.v(TAG, "requestList " + page);
         setLoading(true);
-        WorkorderClient.list(GlobalState.getContext(), _displayView, page);
+        WorkorderClient.list(GlobalState.getContext(), _displayView, page, false, allowCache);
     }
 
     private void addPage(int page, List<Workorder> list) {
@@ -516,8 +520,27 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
-            // TODO, withdraw the request
+        public void actionWithdrawRequest(WorkorderCardView view, final Workorder workorder) {
+            _yesNoDialog.setData(getString(R.string.dialog_withdraw_title),
+                    getString(R.string.dialog_withdraw_body), getString(R.string.btn_yes),
+                    getString(R.string.btn_no), new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+                                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST,
+                                    "WorkorderCardView", 1);
+                            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), workorder.getWorkorderId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
         }
 
         @Override
@@ -545,6 +568,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkorderCardView", 1);
             WorkorderClient.actionAcknowledgeHold(getActivity(), workorder.getWorkorderId());
             _adapter.refreshPages();
         }
@@ -555,50 +580,20 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onLongClick(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.LONG_CLICK, "WorkorderCardView", 1);
-//            if (_selected.contains(workorder.getWorkorderId())) {
-//                _selected.remove(workorder.getWorkorderId());
-//                view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
-//                if (_actionMode != null && _selected.size() == 0) {
-//                    _actionMode.finish();
-//                    _actionMode = null;
-//                }
-//            } else {
-//                _selected.add(workorder.getWorkorderId());
-//                view.setDisplayMode(WorkorderCardView.MODE_SELECTED);
-//                if (_actionMode == null) {
-//                    _actionMode = ((ActionBarActivity) getActivity()).startSupportActionMode(_actionMode_Callback);
-//                }
-//            }
-        }
-
-        @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
-//            if (view.isBundle()) {
-//                Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-//                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-//                intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, workorder.getBundleId());
-//                getActivity().startActivity(intent);
-//                view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-//            } else {
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
-/*
-                if (workorder.getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS || workorder.getStatus().getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_TASKS);
-                } else {
-*/
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-//                }
             getActivity().startActivity(intent);
             view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-//            }
         }
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkorderCardView", 1);
+
             if (workorder.getPaymentId() != null) {
                 Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
                 intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, workorder.getPaymentId());
@@ -638,7 +633,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     };
 
     private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-
         @Override
         public void onOk(Workorder workorder, String dateTime) {
             long time = -1;
@@ -778,7 +772,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
         public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
-//            Log.v(TAG, "_adapter.getView()");
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -797,8 +790,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-//            Log.v(TAG, "_adapter.requestPage(), " + _displayView.getCall() + " " + page);
-            requestList(page);
+            requestList(page, allowCache);
         }
     };
 

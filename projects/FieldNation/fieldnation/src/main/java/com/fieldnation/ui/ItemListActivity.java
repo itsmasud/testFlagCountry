@@ -29,7 +29,7 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
-        _adapter.setListener(_adapter_lsitener);
+        _adapter.setListener(_adapter_listener);
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
@@ -95,7 +95,7 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
         }
     };
 
-    private final PagingAdapter.Listener _adapter_lsitener = new PagingAdapter.Listener() {
+    private final PagingAdapter.Listener _adapter_listener = new PagingAdapter.Listener() {
         @Override
         public void onLoadingComplete() {
             _refreshView.refreshComplete();

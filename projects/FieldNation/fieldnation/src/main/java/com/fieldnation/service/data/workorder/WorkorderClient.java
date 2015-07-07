@@ -48,16 +48,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*****************************-*/
     /*-             list            -*/
     /*-*****************************-*/
-    public static void list(Context context, WorkorderDataSelector selector, int page) {
-        list(context, selector, page, false);
-    }
-
-    public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
+    public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 

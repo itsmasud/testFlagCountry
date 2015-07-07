@@ -193,7 +193,6 @@ public class WorkorderCardView extends RelativeLayout {
         // _cashLinearLayout.setVisibility(GONE);
 
         // attach my listeners
-        setOnLongClickListener(_this_onLongClickListener);
         setOnClickListener(_this_onClick);
 
         // hook up animations
@@ -283,21 +282,6 @@ public class WorkorderCardView extends RelativeLayout {
             if (_listener != null) {
                 _listener.onClick(WorkorderCardView.this, _workorder);
             }
-        }
-    };
-
-    private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_listener != null) {
-                _listener.onLongClick(WorkorderCardView.this, _workorder);
-            }
-
-            // _backImageView.setClickable(true);
-            // _notInterestedButtonLayout.setClickable(true);
-            // _contentLayout.startAnimation(_slideAnimation);
-            // _backgroundLayout.startAnimation(_slideAnimation);
-            return true;
         }
     };
 
@@ -725,6 +709,8 @@ public class WorkorderCardView extends RelativeLayout {
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case REQUESTED:
+                _actionButton.setText(R.string.btn_withdraw_request);
+                _actionButton.setVisibility(VISIBLE);
 //                _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
@@ -883,8 +869,6 @@ public class WorkorderCardView extends RelativeLayout {
         void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder);
 
         void viewCounter(WorkorderCardView view, Workorder workorder);
-
-        void onLongClick(WorkorderCardView view, Workorder workorder);
 
         void onClick(WorkorderCardView view, Workorder workorder);
 

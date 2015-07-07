@@ -32,6 +32,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String EVENT_PARAM_VALUE = "TOPIC_GA_EVENT_PARAM_VALUE";
 
     public enum EventAction {
+        ACK_HOLD("AcknowledgeHold"),
         LONG_CLICK("LongClick"),
         REQUEST_WORK("RequestWork"),
         COUNTER("CounterOffer"),
@@ -42,7 +43,9 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         START_MAP("ViewLocation"),
         COMPLETE_FN_EARNED("CompleteWorkFnEarned"),
         COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
-        CLICK("ActionClick");
+        CLICK("ActionClick"),
+        VIEW_PAY("ViewPayments"),
+        WITHDRAW_REQUEST("WithdrawRequest");
 
         private final String _actionName;
 
