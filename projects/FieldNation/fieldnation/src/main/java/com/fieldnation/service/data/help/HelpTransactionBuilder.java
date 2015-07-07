@@ -13,7 +13,7 @@ import com.fieldnation.utils.misc;
 /**
  * Created by Michael Carver on 4/22/2015.
  */
-public class HelpTransactionBuilder implements HelpConstants {
+public class HelpTransactionBuilder {
 
 //    public static void get(Context context, long profileId, boolean isSync) {
 //        try {
