@@ -398,9 +398,7 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-//            _feedbackDialog.show();
             GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
-
         }
     };
 
