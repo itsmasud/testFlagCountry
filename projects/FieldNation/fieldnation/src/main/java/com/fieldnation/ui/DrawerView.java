@@ -71,7 +71,6 @@ public class DrawerView extends RelativeLayout {
 
     // Dialog
     private HelpDialog _helpDialog;
-//    private FeedbackDialog _feedbackDialog;
 
     // sub items
     private LinearLayout _settingsView;
@@ -136,8 +135,6 @@ public class DrawerView extends RelativeLayout {
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
 
         // Dialogs
-//        _feedbackDialog = FeedbackDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
-//        _feedbackDialog.setListener(_feedbackDialog_onOk);
         _helpDialog = HelpDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 
         // Items
@@ -398,10 +395,9 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 
-            // shoaib: I disabled it & i dont know the implementation yet
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
-// Feedback Dialog
+            // Feedback Dialog
 //            _feedbackDialog.show();
             GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
 
