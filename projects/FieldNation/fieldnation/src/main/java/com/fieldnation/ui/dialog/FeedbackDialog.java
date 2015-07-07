@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.utils.misc;
 
 /**
@@ -126,6 +128,7 @@ public class FeedbackDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 _listener.onOk(_messageEditText.getText().toString());
+                HelpClient.sendFeedback(GlobalState.getContext(), "android", _messageEditText.getText().toString(), null, null, null);
             }
         }
     };
