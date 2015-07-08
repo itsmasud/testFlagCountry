@@ -57,7 +57,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private TextView _nameTextView;
     private Button _doneButton;
 
-    private LoadingView _loadingView;
 
     // Data
     private Signature _signature;
@@ -95,8 +94,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         _doneButton = (Button) findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
-
-        _loadingView = (LoadingView) findViewById(R.id.loading_view);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(this);
@@ -183,8 +180,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
         if (_workorderClient == null)
             return;
-
-        _loadingView.setVisibility(View.VISIBLE);
 
         if (_workorderClient.isConnected()) {
             _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
@@ -295,7 +290,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _closingNotesLabelTextView.setVisibility(View.GONE);
         }
 
-        _loadingView.setVisibility(View.GONE);
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {

@@ -103,6 +103,10 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         _noDataTextView.setVisibility(View.GONE);
         _listView.setVisibility(VISIBLE);
 
+        if (_listView.getChildCount() > list.length) {
+            _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
             private Signature[] _list = list;
 
@@ -123,9 +127,9 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
             @Override
             public void finish(int count) throws Exception {
-                if (_listView.getChildCount() > count) {
-                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-                }
+//                if (_listView.getChildCount() > count) {
+//                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
+//                }
             }
         };
         post(r);
