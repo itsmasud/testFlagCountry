@@ -128,8 +128,10 @@ public class FeedbackDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 _listener.onOk(_messageEditText.getText().toString());
-                HelpClient.sendFeedback(GlobalState.getContext(), "android", _messageEditText.getText().toString(), null, null, null);
             }
+
+            HelpClient.sendFeedback(GlobalState.getContext(), _messageEditText.getText().toString(), null, null, null);
+
         }
     };
 

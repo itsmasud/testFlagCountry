@@ -12,8 +12,8 @@ public class HelpClient {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    public static void sendFeedback(Context context, String topic, String message, String uri, String extra_data, String extra_type) {
-        HelpTransactionBuilder.actionPostFeedback(context, topic, message, uri, extra_data, extra_type);
+    public static void sendFeedback(Context context, String message, String uri, String extra_data, String extra_type) {
+        HelpTransactionBuilder.actionPostFeedback(context, message, uri, extra_data, extra_type);
     }
 
 
