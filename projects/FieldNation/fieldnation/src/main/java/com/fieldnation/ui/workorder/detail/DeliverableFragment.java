@@ -240,6 +240,10 @@ public class DeliverableFragment extends WorkorderFragment {
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
+            if (_reviewList.getChildCount() > docs.length) {
+                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
                 private final Document[] _docs = docs;
 
@@ -258,9 +262,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 @Override
                 public void finish(int count) throws Exception {
-                    if (_reviewList.getChildCount() > count) {
-                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
-                    }
+//                    if (_reviewList.getChildCount() > count) {
+//                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
+//                    }
                 }
             };
             _reviewList.post(r);
@@ -276,6 +280,10 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
+            if (_filesLayout.getChildCount() > slots.length) {
+                _filesLayout.removeViews(slots.length - 1, _filesLayout.getChildCount() - slots.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
@@ -296,9 +304,9 @@ public class DeliverableFragment extends WorkorderFragment {
                 @Override
                 public void finish(int count) throws Exception {
                     Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
-                    if (_filesLayout.getChildCount() > count) {
-                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
-                    }
+//                    if (_filesLayout.getChildCount() > count) {
+//                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
+//                    }
                 }
             };
             _filesLayout.post(r);

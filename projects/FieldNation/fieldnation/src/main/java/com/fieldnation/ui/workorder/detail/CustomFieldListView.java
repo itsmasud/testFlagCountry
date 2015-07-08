@@ -62,6 +62,10 @@ public class CustomFieldListView extends RelativeLayout {
 
         setVisibility(View.VISIBLE);
 
+        if (_fieldsList.getChildCount() > _fields.length) {
+            _fieldsList.removeViews(_fields.length - 1, _fieldsList.getChildCount() - _fields.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(_fields.length, new Handler()) {
             @Override
             public void next(int i) throws Exception {
@@ -78,9 +82,9 @@ public class CustomFieldListView extends RelativeLayout {
 
             @Override
             public void finish(int count) throws Exception {
-                if (_fieldsList.getChildCount() > count) {
-                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
-                }
+//                if (_fieldsList.getChildCount() > count) {
+//                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
+//                }
             }
         };
         post(r);

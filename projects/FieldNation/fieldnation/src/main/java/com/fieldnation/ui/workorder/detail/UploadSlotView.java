@@ -97,6 +97,11 @@ public class UploadSlotView extends RelativeLayout {
         final UploadedDocument[] docs = _slot.getUploadedDocuments();
         if (docs != null && docs.length > 0) {
             Log.v(TAG, "docs: " + docs.length + " " + _docsList.getChildCount());
+
+            if (_docsList.getChildCount() > docs.length) {
+                _docsList.removeViews(docs.length - 1, _docsList.getChildCount() - docs.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
                 private UploadedDocument[] _docs = docs;
 
@@ -114,12 +119,12 @@ public class UploadSlotView extends RelativeLayout {
 
                 @Override
                 public void finish(final int count) throws Exception {
-                    Log.v(TAG, "finish " + count + "/"
-                            + _docsList.getChildCount() + ": "
-                            + (count - 1) + "/" + (_docsList.getChildCount() - count));
-                    if (_docsList.getChildCount() > count) {
-                        _docsList.removeViews(count - 1, _docsList.getChildCount() - count);
-                    }
+//                    Log.v(TAG, "finish " + count + "/"
+//                            + _docsList.getChildCount() + ": "
+//                            + (count - 1) + "/" + (_docsList.getChildCount() - count));
+//                    if (_docsList.getChildCount() > count) {
+//                        _docsList.removeViews(count - 1, _docsList.getChildCount() - count);
+//                    }
                 }
             };
             post(r);
@@ -130,6 +135,11 @@ public class UploadSlotView extends RelativeLayout {
         if (_uploadingFiles.size() > 0) {
             Log.v(TAG, "UF: " + _uploadingFiles.size() + " " + _uploadList.getChildCount());
             _uploadList.setVisibility(View.VISIBLE);
+
+            if (_uploadList.getChildCount() > _uploadingFiles.size()) {
+                _uploadList.removeViews(_uploadingFiles.size() - 1, _uploadList.getChildCount() - _uploadingFiles.size());
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
                 @Override
                 public void next(int i) throws Exception {

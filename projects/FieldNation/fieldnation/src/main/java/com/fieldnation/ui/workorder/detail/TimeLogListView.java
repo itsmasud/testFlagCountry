@@ -86,6 +86,10 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         }
         _noTimeTextView.setVisibility(View.GONE);
 
+        if (_logList.getChildCount() > logs.length) {
+            _logList.removeViews(logs.length - 1, _logList.getChildCount() - logs.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
             private LoggedWork[] _logs = logs;
 
@@ -105,9 +109,9 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
             @Override
             public void finish(int count) throws Exception {
-                if (_logList.getChildCount() > count) {
-                    _logList.removeViews(count - 1, _logList.getChildCount() - count);
-                }
+//                if (_logList.getChildCount() > count) {
+//                    _logList.removeViews(count - 1, _logList.getChildCount() - count);
+//                }
             }
         };
         post(r);
