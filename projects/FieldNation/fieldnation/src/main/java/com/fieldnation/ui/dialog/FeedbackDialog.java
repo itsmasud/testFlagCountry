@@ -13,8 +13,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.utils.misc;
 
 /**
@@ -28,7 +30,7 @@ public class FeedbackDialog extends DialogFragmentBase {
 
     // Ui
     private EditText _messageEditText;
-    private Button _okButton;
+    private Button _sendButton;
     private Button _cancelButton;
 
     // Data
@@ -81,8 +83,8 @@ public class FeedbackDialog extends DialogFragmentBase {
 
         _messageEditText = (EditText) v.findViewById(R.id.message_edittext);
         _messageEditText.setOnEditorActionListener(_onEditor_listener);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
+        _sendButton = (Button) v.findViewById(R.id.send_button);
+        _sendButton.setOnClickListener(_send_onClick);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
@@ -113,20 +115,23 @@ public class FeedbackDialog extends DialogFragmentBase {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                _ok_onClick.onClick(null);
+                _send_onClick.onClick(null);
                 handled = true;
             }
             return handled;
         }
     };
 
-    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
             if (_listener != null) {
                 _listener.onOk(_messageEditText.getText().toString());
             }
+
+            HelpClient.sendFeedback(GlobalState.getContext(), _messageEditText.getText().toString(), null, null, null);
+
         }
     };
 
