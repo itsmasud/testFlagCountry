@@ -72,6 +72,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
@@ -149,6 +150,7 @@ public class WorkFragment extends WorkorderFragment {
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
+    private TwoButtonDialog _deleteSignatureDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -340,7 +342,7 @@ public class WorkFragment extends WorkorderFragment {
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-
+        _deleteSignatureDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -1241,6 +1243,29 @@ public class WorkFragment extends WorkorderFragment {
             SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
             setLoading(true);
         }
+
+        @Override
+        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
+            _deleteSignatureDialog.setData("Delete Signature",
+                    "Are you sure you want to delete this signature?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteSignature(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), signature.getSignatureId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _deleteSignatureDialog.show();
+            return true;
+        }
     };
 
     private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
@@ -1475,122 +1500,4 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "_profileClient_listener.onAction");
         }
     };
-
-// todo remove
-/*
-    private AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
-        @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if ((_service == null || isNew) && getActivity() != null) {
-                _username = username;
-                _authToken = authToken;
-// todo remove
-                _service = new WorkorderWebClient(getActivity(), username, authToken, _resultReceiver);
-                _profileService = new ProfileWebService(getActivity(), username, authToken, _resultReceiver);
-
-
-                requestWorkorder(true);
-            }
-        }
-
-        @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-            _profileService = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-            _profileService = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-// todo remove
-            AuthTopicService.requestAuthentication(getActivity());
-        }
-    };
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(
-            new Handler()) {
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_CHANGED || resultCode == WEB_SEND_DELIVERABLE) {
-                requestWorkorder(false);
-            } else if (resultCode == WEB_GET_TASKS) {
-                new TaskParseAsyncTask().executeEx(resultData);
-            } else if (resultCode == WEB_COMPLETE_WORKORDER) {
-                GlobalState gs = (GlobalState) getActivity().getApplication();
-                gs.setCompletedWorkorder();
-
-                if (gs.shouldShowReviewDialog()) {
-                    showReviewDialog();
-                    gs.setShownReviewDialog();
-                }
-                requestWorkorder(false);
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return WorkFragment.this.getActivity();
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _username = null;
-            _authToken = null;
-            _service = null;
-// todo remove
-            _profileService = null;
-            try {
-                Toast.makeText(getActivity(), new String(resultData.getByteArray(KEY_RESPONSE_DATA)), Toast.LENGTH_LONG).show();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                try {
-                    Toast.makeText(getActivity(), R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
-                } catch (Exception ex2) {
-                    ex2.printStackTrace();
-                }
-            }
-        }
-    };
-*/
-
-/*
-    private class TaskParseAsyncTask extends AsyncTaskEx<Bundle, Object, List<Task>> {
-        private boolean cached = false;
-
-        @Override
-        protected List<Task> doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-            cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-            List<Task> tasks = new LinkedList<>();
-            try {
-                JsonArray array = new JsonArray(data);
-
-                for (int i = 0; i < array.size(); i++) {
-                    try {
-                        tasks.add(Task.fromJson(array.getJsonObject(i)));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return tasks;
-        }
-
-        @Override
-        protected void onPostExecute(List<Task> tasks) {
-            super.onPostExecute(tasks);
-            setTasks(tasks, cached);
-        }
-    }
-*/
 }
