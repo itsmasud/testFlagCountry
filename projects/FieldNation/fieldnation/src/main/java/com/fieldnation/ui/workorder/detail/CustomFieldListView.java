@@ -79,13 +79,6 @@ public class CustomFieldListView extends RelativeLayout {
                 CustomField field = _fields[i];
                 v.setData(_workorder, field, _listener);
             }
-
-            @Override
-            public void finish(int count) throws Exception {
-//                if (_fieldsList.getChildCount() > count) {
-//                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
-//                }
-            }
         };
         post(r);
     }

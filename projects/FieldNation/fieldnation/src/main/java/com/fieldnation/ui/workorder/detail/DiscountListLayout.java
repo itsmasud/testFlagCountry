@@ -97,7 +97,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
 
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
-        
+
         if (_listView.getChildCount() > list.length) {
             _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
         }
@@ -118,13 +118,6 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
                 v.setDiscount(discount);
                 v.setOnClickListener(_discount_onClick);
                 v.setOnLongClickListener(_discount_onLongClick);
-            }
-
-            @Override
-            public void finish(int count) throws Exception {
-//                if (_listView.getChildCount() > count) {
-//                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-//                }
             }
         };
         post(r);

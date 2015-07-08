@@ -116,13 +116,6 @@ public class TaskListView extends RelativeLayout {
                         row.setOnTaskClickListener(_task_onClick);
                     }
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-//                    if (_preVisistList.getChildCount() > count) {
-//                        _preVisistList.removeViews(count - 1, count - _preVisistList.getChildCount());
-//                    }
-                }
             };
             post(r);
         } else {

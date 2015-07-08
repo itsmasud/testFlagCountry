@@ -124,13 +124,6 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
                 v.setOnClickListener(_signature_onClick);
                 v.setOnLongClickListener(_signature_onLongClick);
             }
-
-            @Override
-            public void finish(int count) throws Exception {
-//                if (_listView.getChildCount() > count) {
-//                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-//                }
-            }
         };
         post(r);
     }

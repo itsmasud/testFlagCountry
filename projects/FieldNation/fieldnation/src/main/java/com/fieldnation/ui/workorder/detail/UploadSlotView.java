@@ -116,16 +116,6 @@ public class UploadSlotView extends RelativeLayout {
                     v.setData(_workorder, _profileId, doc);
                     v.setListener(_docListener);
                 }
-
-                @Override
-                public void finish(final int count) throws Exception {
-//                    Log.v(TAG, "finish " + count + "/"
-//                            + _docsList.getChildCount() + ": "
-//                            + (count - 1) + "/" + (_docsList.getChildCount() - count));
-//                    if (_docsList.getChildCount() > count) {
-//                        _docsList.removeViews(count - 1, _docsList.getChildCount() - count);
-//                    }
-                }
             };
             post(r);
         } else {
@@ -152,14 +142,6 @@ public class UploadSlotView extends RelativeLayout {
                     }
                     v.setUploading(_uploadingFiles.get(i));
                     v.setListener(null);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    Log.v(TAG, "UF finish " + count + "/" + _uploadList.getChildCount() + ": " + (count - 1) + "/" + (_uploadList.getChildCount() - count));
-                    if (_uploadList.getChildCount() > count) {
-                        _uploadList.removeViews(count - 1, _uploadList.getChildCount() - count);
-                    }
                 }
             };
             post(r);

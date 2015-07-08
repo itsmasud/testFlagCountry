@@ -119,13 +119,6 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
                 v.setOnClickListener(_expense_onClick);
                 v.setOnLongClickListener(_expense_onLongClick);
             }
-
-            @Override
-            public void finish(int count) throws Exception {
-//                if (_listView.getChildCount() > count) {
-//                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-//                }
-            }
         };
         post(r);
 

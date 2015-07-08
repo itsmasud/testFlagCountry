@@ -259,13 +259,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     Document doc = _docs[i];
                     v.setData(_workorder, doc);
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-//                    if (_reviewList.getChildCount() > count) {
-//                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
-//                    }
-                }
             };
             _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
@@ -299,14 +292,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
-//                    if (_filesLayout.getChildCount() > count) {
-//                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
-//                    }
                 }
             };
             _filesLayout.post(r);

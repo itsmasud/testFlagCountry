@@ -106,13 +106,6 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
                 v.setListener(_scheduleDetailView_listener);
                 v.setData(_workorder, log);
             }
-
-            @Override
-            public void finish(int count) throws Exception {
-//                if (_logList.getChildCount() > count) {
-//                    _logList.removeViews(count - 1, _logList.getChildCount() - count);
-//                }
-            }
         };
         post(r);
     }
