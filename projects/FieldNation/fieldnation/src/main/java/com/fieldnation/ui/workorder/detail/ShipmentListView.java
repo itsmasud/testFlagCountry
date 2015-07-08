@@ -82,6 +82,10 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
             _noShipmentsTextView.setVisibility(GONE);
         }
 
+        if (_shipmentsLayout.getChildCount() > shipments.length) {
+            _shipmentsLayout.removeViews(shipments.length - 1, _shipmentsLayout.getChildCount() - shipments.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
             private ShipmentTracking[] _shipments = shipments;
 
@@ -96,13 +100,6 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
                 }
                 v.setData(_workorder, _shipments[i]);
                 v.setListener(_summaryListener);
-            }
-
-            @Override
-            public void finish(int count) throws Exception {
-                if (_shipmentsLayout.getChildCount() > count) {
-                    _shipmentsLayout.removeViews(count - 1, _shipmentsLayout.getChildCount() - count);
-                }
             }
         };
         post(r);

@@ -95,6 +95,10 @@ public class TaskListView extends RelativeLayout {
             _onSiteLayout.setVisibility(View.GONE);
             _postVisitLayout.setVisibility(View.GONE);
 
+            if (_preVisistList.getChildCount() > _tasks.size()) {
+                _preVisistList.removeViews(_tasks.size() - 1, _preVisistList.getChildCount() - _tasks.size());
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 @Override
                 public void next(int i) throws Exception {
@@ -110,13 +114,6 @@ public class TaskListView extends RelativeLayout {
                     row.setData(_workorder, task);
                     if (_workorder.canModifyTasks()) {
                         row.setOnTaskClickListener(_task_onClick);
-                    }
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    if (_preVisistList.getChildCount() > count) {
-                        _preVisistList.removeViews(count - 1, count - _preVisistList.getChildCount());
                     }
                 }
             };

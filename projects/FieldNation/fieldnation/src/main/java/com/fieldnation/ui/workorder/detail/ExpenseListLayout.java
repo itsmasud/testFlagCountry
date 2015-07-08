@@ -98,6 +98,10 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
         _noDataTextView.setVisibility(GONE);
         _listView.setVisibility(VISIBLE);
 
+        if (_listView.getChildCount() > list.length) {
+            _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
             private Expense[] _list = list;
 
@@ -114,13 +118,6 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
                 v.setData(_workorder, expense);
                 v.setOnClickListener(_expense_onClick);
                 v.setOnLongClickListener(_expense_onLongClick);
-            }
-
-            @Override
-            public void finish(int count) throws Exception {
-                if (_listView.getChildCount() > count) {
-                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-                }
             }
         };
         post(r);

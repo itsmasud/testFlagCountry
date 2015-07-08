@@ -240,6 +240,10 @@ public class DeliverableFragment extends WorkorderFragment {
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
+            if (_reviewList.getChildCount() > docs.length) {
+                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
                 private final Document[] _docs = docs;
 
@@ -255,13 +259,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     Document doc = _docs[i];
                     v.setData(_workorder, doc);
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    if (_reviewList.getChildCount() > count) {
-                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
-                    }
-                }
             };
             _reviewList.post(r);
             _noDocsTextView.setVisibility(View.GONE);
@@ -276,6 +273,10 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
+            if (_filesLayout.getChildCount() > slots.length) {
+                _filesLayout.removeViews(slots.length - 1, _filesLayout.getChildCount() - slots.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
@@ -291,14 +292,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
-                    if (_filesLayout.getChildCount() > count) {
-                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
-                    }
                 }
             };
             _filesLayout.post(r);
