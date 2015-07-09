@@ -91,8 +91,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         onFinishCreate(savedInstanceState);
 
-        _feedbackDialog = _feedbackDialog.getInstance(getSupportFragmentManager(), TAG);
-
+        _feedbackDialog = FeedbackDialog.getInstance(getSupportFragmentManager(), TAG);
     }
 
     public abstract int getLayoutResource();

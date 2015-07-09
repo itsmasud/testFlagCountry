@@ -32,9 +32,11 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
+import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
@@ -62,8 +64,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-
+    private IconFontButton _navigateButton;
     private AppPickerDialog _appPickerDialog;
+    private UploadSlotDialog _uploadSlotDialog;
 
     // Data
     private Workorder _workorder;
@@ -73,8 +76,6 @@ public class DeliverableFragment extends WorkorderFragment {
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
     private int _uploadingSlotId = -1;
-    private int _uploadCount = 0;
-    private int _deleteCount = 0;
     private File _tempFile;
     private DocumentClient _docClient;
 
@@ -121,6 +122,12 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appPickerDialog.setListener(_appdialog_listener);
+
+        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
+
+        _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
+        _navigateButton.setOnClickListener(_navigationButton_onClick);
+
 
         checkMedia();
 
@@ -222,7 +229,6 @@ public class DeliverableFragment extends WorkorderFragment {
             if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
                 _activityResult = null;
         }
-
     }
 
     private void populateUi() {
@@ -350,6 +356,13 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
+            _uploadSlotDialog.show();
+        }
+    };
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
@@ -363,12 +376,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-            _deleteCount++;
             WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
                     document.getId());
         }
     };
-
 
     // step 1, user taps on the add button
     private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
@@ -400,8 +411,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     info.activityInfo.applicationInfo.packageName,
                     info.activityInfo.name));
 
-            _uploadCount++;
-
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
@@ -413,7 +422,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
-            // next: see onActivityResult()
         }
     };
 
@@ -454,64 +462,4 @@ public class DeliverableFragment extends WorkorderFragment {
             startActivity(intent);
         }
     };
-
-/*    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
-            new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "Method Stub: onSuccess()");
-            if (resultCode == WEB_GET_PROFILE) {
-                populateUi();
-            } else if (resultCode == WEB_DELETE_DELIVERABLE
-                    || resultCode == WEB_SEND_DELIVERABLE) {
-                Log.v(TAG, "WEB_DELETE_DELIVERABLE || WEB_SEND_DELIVERABLE");
-                if (resultCode == WEB_DELETE_DELIVERABLE)
-                    _deleteCount--;
-
-                if (resultCode == WEB_SEND_DELIVERABLE)
-                    _uploadCount--;
-
-                if (_deleteCount < 0)
-                    _deleteCount = 0;
-                if (_uploadCount < 0)
-                    _uploadCount = 0;
-
-                // TODO, update individual UI elements when complete.
-                if (_deleteCount == 0 && _uploadCount == 0) {
-                    _workorder.dispatchOnChange();
-                    setLoading(true);
-                }
-
-            } else if (resultCode == WEB_CHANGE) {
-                Log.v(TAG, "WEB_CHANGE");
-                setLoading(true);
-                _workorder.dispatchOnChange();
-            } else {
-                Log.v(TAG, "unknown resultcode");
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return DeliverableFragment.this._context;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            AuthTopicService.requestAuthInvalid(_context);
-            if (resultCode == WEB_DELETE_DELIVERABLE)
-                _deleteCount--;
-            if (resultCode == WEB_SEND_DELIVERABLE)
-                _uploadCount--;
-            _service = null;
-            try {
-                Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            setLoading(false);
-        }
-    };*/
-
 }
