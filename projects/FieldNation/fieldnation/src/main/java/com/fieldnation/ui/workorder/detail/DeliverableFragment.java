@@ -242,6 +242,12 @@ public class DeliverableFragment extends WorkorderFragment {
 
         tryActivityResult();
 
+        if (_workorder.canChangeDeliverables()) {
+            _navigateButton.setVisibility(View.VISIBLE);
+        } else {
+            _navigateButton.setVisibility(View.GONE);
+        }
+
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {

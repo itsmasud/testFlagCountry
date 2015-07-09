@@ -94,7 +94,7 @@
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
         <item name="android:background">@drawable/ic_loading_circle</item>
-        <item name="android:textColor">@color/fn_clickable_text</item>
+        <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
 </resources>
