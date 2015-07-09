@@ -128,7 +128,6 @@ public class DeliverableFragment extends WorkorderFragment {
         _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigationButton_onClick);
 
-
         checkMedia();
 
         populateUi();
@@ -359,8 +358,39 @@ public class DeliverableFragment extends WorkorderFragment {
     private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
-            _uploadSlotDialog.show();
+            if (_workorder.getUploadSlots().length > 1) {
+                _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
+                _uploadSlotDialog.setListener(new UploadSlotDialog.Listener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        UploadSlot slot = _workorder.getUploadSlots()[position];
+                        if (checkMedia()) {
+                            // start of the upload process
+                            _uploadingSlotId = slot.getSlotId();
+                            _appPickerDialog.show();
+                        } else if (getActivity() != null) {
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Need External Storage, please insert storage device before continuing",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        _uploadSlotDialog.dismiss();
+                    }
+                });
+                _uploadSlotDialog.show();
+            } else {
+                UploadSlot slot = _workorder.getUploadSlots()[0];
+                if (checkMedia()) {
+                    // start of the upload process
+                    _uploadingSlotId = slot.getSlotId();
+                    _appPickerDialog.show();
+                } else if (getActivity() != null) {
+                    Toast.makeText(
+                            getActivity(),
+                            "Need External Storage, please insert storage device before continuing",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
         }
     };
 

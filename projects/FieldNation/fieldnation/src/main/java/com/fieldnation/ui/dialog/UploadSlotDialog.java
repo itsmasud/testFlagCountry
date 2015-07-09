@@ -19,6 +19,7 @@ public class UploadSlotDialog extends ListDialog {
 
     // Data
     private UploadSlot[] _uploadSlots;
+    private Listener _listener;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -32,6 +33,10 @@ public class UploadSlotDialog extends ListDialog {
         View v = super.onCreateView(inflater, container, savedInstanceState);
         setListAdapter(_uploadSlot_adapter);
         return v;
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     public void setUploadSlots(UploadSlot[] uploadSlots) {
@@ -59,7 +64,7 @@ public class UploadSlotDialog extends ListDialog {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             TileTextView v = null;
 
             if (convertView != null && convertView instanceof TileTextView) {
@@ -68,7 +73,14 @@ public class UploadSlotDialog extends ListDialog {
                 v = new TileTextView(parent.getContext());
             }
             v.setText(_uploadSlots[position].getSlotName());
-
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_listener != null) {
+                        _listener.onItemClick(position);
+                    }
+                }
+            });
             return v;
         }
     };
@@ -77,5 +89,9 @@ public class UploadSlotDialog extends ListDialog {
     public void show() {
         setTitle("Select Upload Slot");
         super.show();
+    }
+
+    public interface Listener {
+        void onItemClick(int position);
     }
 }

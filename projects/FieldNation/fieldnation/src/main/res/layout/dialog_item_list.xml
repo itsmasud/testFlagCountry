@@ -17,9 +17,6 @@
         android:id="@+id/apps_listview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/title_textview"
-        android:layout_marginBottom="@dimen/dialogGutter_Material"
-        android:paddingLeft="@dimen/dialogGutter_Material"
-        android:paddingRight="@dimen/dialogGutter_Material" />
+        android:layout_below="@+id/title_textview" />
 
 </RelativeLayout>

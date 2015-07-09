@@ -8,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,7 +27,6 @@ public class ListDialog extends DialogFragmentBase {
     // Data
     private ListAdapter _adapter;
     private String _title;
-    private Listener _listener;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -49,15 +47,10 @@ public class ListDialog extends DialogFragmentBase {
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _items = (ListView) v.findViewById(R.id.apps_listview);
-        _items.setOnItemClickListener(_itemClickListener);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     public void setListAdapter(ListAdapter listAdapter) {
@@ -88,17 +81,5 @@ public class ListDialog extends DialogFragmentBase {
     public void show() {
         populateUi();
         super.show();
-    }
-
-    private final AdapterView.OnItemClickListener _itemClickListener = new AdapterView.OnItemClickListener() {
-        @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            if (_listener != null)
-                _listener.onItemClick(position, id);
-        }
-    };
-
-    public interface Listener {
-        void onItemClick(int position, long id);
     }
 }
