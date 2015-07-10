@@ -1250,9 +1250,25 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDelete(Workorder workorder, int shipmentId) {
-            WorkorderClient.deleteShipment(GlobalState.getContext(), workorder.getWorkorderId(), shipmentId);
-            setLoading(true);
+        public void onDelete(Workorder workorder, final int shipmentId) {
+            _yesNoDialog.setData("Delete Shipment",
+                    "Are you sure you want to delete this shipment?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteShipment(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), shipmentId);
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
         }
 
         @Override
