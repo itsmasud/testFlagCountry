@@ -1,30 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/fn_dark_text">
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical">
 
-    <EditText
-        android:id="@+id/message_edittext"
-        style="@style/EditText"
-        android:layout_width="match_parent"
+    <RelativeLayout
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/send_button"
-        android:hint="@string/write_your_message"
-        android:minLines="1"
-        android:paddingLeft="16dp"
-        android:textColor="@color/fn_clickable_bg"
-        android:textColorHint="@color/fn_light_text"
-        android:theme="@style/Theme.AppCompat.NoActionBar" />
+        android:layout_weight="1">
 
-    <Button
-        android:id="@+id/send_button"
-        style="?attr/buttonFlatStyle"
+        <TextView
+            android:id="@+id/header_one"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:text="@string/activity_message_list_empty_message_headline"
+            android:textSize="26dp"
+
+
+            />
+
+        <TextView
+            android:id="@+id/header_two"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/header_one"
+            android:layout_centerHorizontal="true"
+            android:text="@string/activity_message_list_empty_message_sub_headline"
+            android:textSize="16dp"
+            />
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
         android:layout_width="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_centerVertical="true"
-        android:text="@string/btn_send" />
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="@color/fn_dark_text">
 
-</RelativeLayout>
+
+        <EditText
+            android:id="@+id/message_edittext"
+            style="@style/EditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+
+            android:layout_toLeftOf="@+id/send_button"
+            android:hint="@string/write_your_message"
+            android:minLines="1"
+            android:paddingLeft="16dp"
+            android:textColor="@color/fn_clickable_bg"
+            android:textColorHint="@color/fn_light_text"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
+
+        <Button
+            android:id="@+id/send_button"
+            style="?attr/buttonFlatStyle"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="@string/btn_send" />
+
+    </RelativeLayout>
+
+
+</LinearLayout>
+
+
+
+
+
+
+
+
+
+
+
