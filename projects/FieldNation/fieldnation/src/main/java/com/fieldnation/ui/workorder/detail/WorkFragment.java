@@ -1179,9 +1179,25 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void expenseLongClick(Expense expense) {
-            WorkorderClient.deleteExpense(GlobalState.getContext(),
-                    _workorder.getWorkorderId(), expense.getExpenseId());
+        public void expenseLongClick(final Expense expense) {
+            _yesNoDialog.setData("Delete Expense",
+                    "Are you sure you want to delete this expense?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteExpense(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), expense.getExpenseId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
         }
     };
 
