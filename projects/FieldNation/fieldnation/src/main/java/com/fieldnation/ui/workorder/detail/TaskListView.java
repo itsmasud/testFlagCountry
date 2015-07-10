@@ -16,6 +16,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
+import java.util.Random;
 
 public class TaskListView extends RelativeLayout {
     private static final String TAG = "TaskListView";
@@ -117,7 +118,7 @@ public class TaskListView extends RelativeLayout {
                     }
                 }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         } else {
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 private int pre = 0;
@@ -182,7 +183,7 @@ public class TaskListView extends RelativeLayout {
                     }
                 }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         }
     }
 

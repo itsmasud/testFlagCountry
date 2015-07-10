@@ -3,7 +3,7 @@
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
     android:background="@color/fn_menu_bg"
-    android:padding="5dp">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/icon_imageview"
@@ -11,7 +11,7 @@
         android:layout_height="48dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="8dp"
         android:src="@null" />
 
     <TextView

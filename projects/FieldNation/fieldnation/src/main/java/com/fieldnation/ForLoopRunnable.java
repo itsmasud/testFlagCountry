@@ -22,7 +22,7 @@ public abstract class ForLoopRunnable implements Runnable {
     }
 
     public ForLoopRunnable(int count, Handler handler) {
-        this(count, handler, 50);
+        this(count, handler, 250);
     }
 
     @Override

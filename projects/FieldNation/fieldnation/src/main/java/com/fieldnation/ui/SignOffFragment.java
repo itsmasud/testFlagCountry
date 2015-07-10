@@ -24,6 +24,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 12/1/2014.
  */
@@ -218,7 +220,7 @@ public class SignOffFragment extends FragmentBase {
                     _waitLogs = false;
                 }
             };
-            _container.post(r);
+            _container.postDelayed(r, new Random().nextInt(1000));
 
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
@@ -272,7 +274,7 @@ public class SignOffFragment extends FragmentBase {
 
                 }
             };
-            _container.post(r);
+            _container.postDelayed(r, new Random().nextInt(1000));
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);

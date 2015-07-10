@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <dimen name="dialogGutter_Material">24dp</dimen>
+    <dimen name="dialogGutter_Material">16dp</dimen>
     <dimen name="dialogActionBarPadding_Material">16dp</dimen>
     <dimen name="dialogActionBarGutter_Material">16dp</dimen>
     <!--<dimen name="dialogContentPadding_Material">16dp</dimen>-->

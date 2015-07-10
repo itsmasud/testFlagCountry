@@ -16,6 +16,8 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 
+import java.util.Random;
+
 /**
  * Created by Michael Carver on 6/5/2015.
  */
@@ -120,7 +122,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
                 v.setOnLongClickListener(_expense_onLongClick);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
 
         if (_workorder.canChangeExpenses()) {
             _addButton.setVisibility(VISIBLE);

@@ -13,6 +13,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 10/30/2014.
  */
@@ -80,7 +82,7 @@ public class CustomFieldListView extends RelativeLayout {
                 v.setData(_workorder, field, _listener);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {

@@ -14,6 +14,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 
+import java.util.Random;
+
 public class ShipmentListView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ShipmentListView";
 
@@ -102,7 +104,7 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
                 v.setListener(_summaryListener);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
     /*-*********************************-*/

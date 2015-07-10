@@ -22,6 +22,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.misc;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 12/9/2014.
  */
@@ -241,7 +243,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     _timeLinearLayout.addView(v);
                 }
             };
-            _timeLinearLayout.post(r);
+            _timeLinearLayout.postDelayed(r, new Random().nextInt(1000));
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
             _timeTextView.setVisibility(View.GONE);

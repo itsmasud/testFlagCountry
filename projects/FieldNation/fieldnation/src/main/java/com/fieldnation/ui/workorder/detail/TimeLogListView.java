@@ -17,6 +17,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
 
+import java.util.Random;
+
 public class TimeLogListView extends RelativeLayout implements WorkorderRenderer {
     private static final String TAG = "TimeLoggedView";
 
@@ -107,7 +109,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
                 v.setData(_workorder, log);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
     /*-*************************-*/
