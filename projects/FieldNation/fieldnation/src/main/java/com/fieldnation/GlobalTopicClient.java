@@ -98,6 +98,18 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, null, Sticky.NONE);
     }
 
+    public boolean registerShowHelpDialog() {
+        return register(TOPIC_ID_SHOW_HELP_DIALOG, TAG);
+    }
+
+    // feedback dialog
+    public static void dispatchShowHelpDialog(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_HELP_DIALOG, null, Sticky.NONE);
+    }
+
     // NETWORK STATE
     public static void dispatchNetworkDisconnected(Context context) {
         Log.v(STAG, "dispatchNetworkDisconnected");
@@ -167,6 +179,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_ID_SHOW_FEEDBACK:
                     onShowFeedbackDialog();
                     break;
+                case TOPIC_ID_SHOW_HELP_DIALOG:
+                    onShowHelpDialog();
+                    break;
                 case TOPIC_NETWORK_STATE: {
                     switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
                         case NETWORK_STATE_CONNECTED:
@@ -200,6 +215,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         }
 
         public void onShowFeedbackDialog() {
+        }
+
+        public void onShowHelpDialog() {
         }
 
         public void onNetworkDisconnected() {

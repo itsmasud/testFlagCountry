@@ -18,6 +18,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.FeedbackDialog;
+import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -44,6 +45,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
+    private HelpDialog _helpDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -92,6 +94,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         onFinishCreate(savedInstanceState);
 
         _feedbackDialog = FeedbackDialog.getInstance(getSupportFragmentManager(), TAG);
+
+        _helpDialog = HelpDialog.getInstance(getSupportFragmentManager(), TAG);
     }
 
     public abstract int getLayoutResource();
@@ -278,6 +282,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _globalClient.registerUpdateApp();
             _globalClient.registerAppShutdown();
             _globalClient.registerShowFeedbackDialog();
+            _globalClient.registerShowHelpDialog();
         }
 
         @Override
@@ -301,6 +306,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _feedbackDialog.show();
         }
 
+        @Override
+        public void onShowHelpDialog() {
+            _helpDialog.show();
+        }
     };
 
 
