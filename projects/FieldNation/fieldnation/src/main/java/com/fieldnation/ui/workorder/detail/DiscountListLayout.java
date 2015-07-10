@@ -16,6 +16,8 @@ import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 
+import java.util.Random;
+
 /**
  * Created by Michael Carver on 6/5/2015.
  */
@@ -120,7 +122,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
                 v.setOnLongClickListener(_discount_onLongClick);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
 
         if (_workorder.canChangeDiscounts()) {
             _addButton.setVisibility(VISIBLE);

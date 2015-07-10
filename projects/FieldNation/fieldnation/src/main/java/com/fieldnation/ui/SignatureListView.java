@@ -16,6 +16,8 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 12/5/2014.
  */
@@ -125,7 +127,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
                 v.setOnLongClickListener(_signature_onLongClick);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
 

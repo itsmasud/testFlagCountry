@@ -19,6 +19,7 @@ import com.fieldnation.data.workorder.Workorder;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 public class UploadSlotView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("UploadSlotView");
@@ -117,7 +118,7 @@ public class UploadSlotView extends RelativeLayout {
                     v.setListener(_docListener);
                 }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         } else {
             _docsList.removeAllViews();
         }
@@ -144,7 +145,7 @@ public class UploadSlotView extends RelativeLayout {
                     v.setListener(null);
                 }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         } else {
             _uploadList.removeAllViews();
             _uploadList.setVisibility(View.GONE);

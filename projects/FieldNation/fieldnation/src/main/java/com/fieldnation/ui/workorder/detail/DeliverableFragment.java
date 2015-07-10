@@ -44,6 +44,7 @@ import com.fieldnation.utils.Stopwatch;
 import java.io.File;
 import java.net.URLConnection;
 import java.security.SecureRandom;
+import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
     private final String TAG = UniqueTag.makeTag("DeliverableFragment");
@@ -271,7 +272,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     v.setData(_workorder, doc);
                 }
             };
-            _reviewList.post(r);
+            _reviewList.postDelayed(r, new Random().nextInt(1000));
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _reviewList.removeAllViews();
@@ -305,7 +306,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     v.setListener(_uploadSlot_listener);
                 }
             };
-            _filesLayout.post(r);
+            _filesLayout.postDelayed(r, new Random().nextInt(1000));
         } else {
             _filesLayout.removeAllViews();
         }
