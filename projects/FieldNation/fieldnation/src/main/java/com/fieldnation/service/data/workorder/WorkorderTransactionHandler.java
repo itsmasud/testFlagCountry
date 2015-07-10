@@ -301,7 +301,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleTaskList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleTaskList");
         long workorderId = params.getLong("workorderId");
-
         byte[] data = resultData.getByteArray();
 
         WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());

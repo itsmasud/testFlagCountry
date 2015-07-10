@@ -150,7 +150,7 @@ public class WorkFragment extends WorkorderFragment {
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
-    private TwoButtonDialog _deleteSignatureDialog;
+    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -342,7 +342,7 @@ public class WorkFragment extends WorkorderFragment {
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
-        _deleteSignatureDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -1197,9 +1197,25 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void discountLongClick(Discount discount) {
-            WorkorderClient.deleteDiscount(GlobalState.getContext(),
-                    _workorder.getWorkorderId(), discount.getDiscountId());
+        public void discountLongClick(final Discount discount) {
+            _yesNoDialog.setData("Delete Discount",
+                    "Are you sure you want to delete this discount?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteDiscount(GlobalState.getContext(),
+                                    _workorder.getWorkorderId(), discount.getDiscountId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
         }
     };
 
@@ -1246,7 +1262,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            _deleteSignatureDialog.setData("Delete Signature",
+            _yesNoDialog.setData("Delete Signature",
                     "Are you sure you want to delete this signature?", "YES", "NO",
                     new TwoButtonDialog.Listener() {
                         @Override
@@ -1263,7 +1279,7 @@ public class WorkFragment extends WorkorderFragment {
                         public void onCancel() {
                         }
                     });
-            _deleteSignatureDialog.show();
+            _yesNoDialog.show();
             return true;
         }
     };
