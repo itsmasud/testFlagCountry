@@ -750,7 +750,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return canViewDeliverables();
+        return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
     public boolean canViewConfidentialInfo() {
