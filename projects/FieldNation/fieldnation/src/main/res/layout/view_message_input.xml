@@ -6,38 +6,54 @@
     android:orientation="vertical">
 
     <RelativeLayout
+        android:id="@+id/container_message"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1">
+        android:layout_centerHorizontal="true"
+        android:layout_weight="1"
+        android:visibility="gone"
+        >
 
-        <TextView
-            android:id="@+id/header_one"
-            android:layout_width="wrap_content"
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:text="@string/activity_message_list_empty_message_headline"
-            android:textSize="26dp"
+            android:layout_marginLeft="7dp"
+            android:layout_marginRight="7dp"
+            android:layout_marginTop="15dp"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:paddingBottom="30dp"
+            android:paddingTop="30dp">
 
 
-            />
-
-        <TextView
-            android:id="@+id/header_two"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/header_one"
-            android:layout_centerHorizontal="true"
-            android:text="@string/activity_message_list_empty_message_sub_headline"
-            android:textSize="16dp"
-            />
+            <TextView
+                android:id="@+id/header_one"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="@string/activity_message_list_empty_message_headline"
+                android:textSize="26dp"
 
 
+                />
+
+            <TextView
+                android:id="@+id/header_two"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header_one"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:text="@string/activity_message_list_empty_message_sub_headline"
+                android:textSize="16dp" />
+
+        </LinearLayout>
     </RelativeLayout>
 
     <RelativeLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+
         android:background="@color/fn_dark_text">
 
 
@@ -48,7 +64,6 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-
             android:layout_toLeftOf="@+id/send_button"
             android:hint="@string/write_your_message"
             android:minLines="1"

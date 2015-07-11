@@ -53,6 +53,7 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
+
     }
 
     @Override
@@ -146,7 +147,20 @@ public class MessageFragment extends WorkorderFragment {
     }
 
     private void rebuildList() {
-        if (getAdapter() != null) {
+
+        // debug testing
+        Log.v(TAG, "rebuildList");
+
+
+        if (getAdapter() == null) {
+            // debug testing
+            Log.v(TAG, "rebuildList: inside getAdapter() == null");
+            _inputView.showEmptyMessageView();
+
+        } else {
+            // debug testing
+            Log.v(TAG, "rebuildList: inside ELSE getAdapter() == null");
+
             getAdapter().setMessages(_messages);
             _listview.setSelection(getAdapter().getCount() - 1);
         }
