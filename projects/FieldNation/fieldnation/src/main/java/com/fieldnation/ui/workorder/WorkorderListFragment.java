@@ -300,7 +300,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void setLoading(boolean loading) {
         Log.v(TAG, "setLoading()");
-//        misc.printStackTrace("setLoading(" + loading + ")");
+        misc.printStackTrace("setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
@@ -317,7 +317,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void requestList(int page, boolean allowCache) {
         Log.v(TAG, "requestList " + page);
-        setLoading(true);
+        if (page == 0)
+            setLoading(true);
         WorkorderClient.list(GlobalState.getContext(), _displayView, page, false, allowCache);
     }
 
@@ -329,9 +330,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _emptyView.setVisibility(View.GONE);
         }
 
-        if (list.size() == 0) {
-            _adapter.setNoMorePages();
-        }
+//        if (list.size() == 0) {
+//            _adapter.setNoMorePages();
+//        }
 
         _adapter.setPage(page, list);
     }
