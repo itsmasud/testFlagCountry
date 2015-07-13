@@ -87,24 +87,24 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         // request button
         if (_workorder.canAcceptWork()) {
-            _requestButton.setText(R.string.accept_work);
+            _requestButton.setText(R.string.btn_accept);
             _requestButton.setVisibility(View.VISIBLE);
         } else if (_workorder.canRequest()) {
-            _requestButton.setText(R.string.request_work);
+            _requestButton.setText(R.string.btn_request);
             _requestButton.setVisibility(View.VISIBLE);
         } else {
             _requestButton.setVisibility(View.GONE);
         }
 
         // counter offer button
-        if (_workorder.canCounterOffer()) {
-            _counterOfferButton.setVisibility(View.VISIBLE);
-            if (_workorder.getCounterOfferInfo() == null) {
-                _counterOfferButton.setText(R.string.counter_offer);
-            } else {
-                _counterOfferButton.setText(R.string.view_counter);
-            }
-        }
+//        if (_workorder.canCounterOffer()) {
+//            _counterOfferButton.setVisibility(View.VISIBLE);
+//            if (_workorder.getCounterOfferInfo() == null) {
+//                _counterOfferButton.setText(R.string.counter_offer);
+//            } else {
+//                _counterOfferButton.setText(R.string.view_counter);
+//            }
+//        }
 
         // complete button
         if (_workorder.canComplete()) {

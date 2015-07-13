@@ -69,6 +69,7 @@
     <string name="btn_save">SAVE</string>
     <string name="btn_send">SEND</string>
     <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_counter">COUNTER</string>
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>

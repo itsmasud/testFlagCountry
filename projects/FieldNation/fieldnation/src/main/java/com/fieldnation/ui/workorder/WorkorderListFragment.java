@@ -300,7 +300,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void setLoading(boolean loading) {
         Log.v(TAG, "setLoading()");
-        misc.printStackTrace("setLoading(" + loading + ")");
+//        misc.printStackTrace("setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
@@ -583,7 +583,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
+//            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
             getActivity().startActivity(intent);
             view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
