@@ -150,31 +150,28 @@ public class Schedule implements Parcelable {
             if (!misc.isEmptyOrNull(getStartTime())) {
                 String when = "";
                 Calendar cal = null;
+                Calendar ecal = null;
                 cal = ISO8601.toCalendar(getStartTime());
                 when = misc.formatDate(cal);
 
                 if (!misc.isEmptyOrNull(getEndTime())) {
-                    cal = ISO8601.toCalendar(getEndTime());
-                    if (cal.get(Calendar.YEAR) > 2000) {
+                    ecal = ISO8601.toCalendar(getEndTime());
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
                         when += " - ";
-                        when += misc.formatDate(cal);
+                        when += misc.formatDate(ecal);
                     }
                 }
                 when += " @ ";
 
-                if (cal.get(Calendar.HOUR) == 0) {
-                    when += "12:";
-                } else {
-                    when += cal.get(Calendar.HOUR) + ":";
-                }
-                int min = cal.get(Calendar.MINUTE);
-                if (min < 10) {
-                    when += "0" + min;
-                } else {
-                    when += min + "";
-                }
+                when += misc.formatTime(cal, false);
 
-                when += (cal.get(Calendar.AM_PM) == Calendar.PM ? "pm" : "am");
+                if (ecal != null
+                        && ((ecal.get(Calendar.HOUR_OF_DAY) != cal.get(Calendar.HOUR_OF_DAY))
+                        || (ecal.get(Calendar.MINUTE) != cal.get(Calendar.MINUTE)))) {
+                    when += " - ";
+                    when += misc.formatTime(ecal, false);
+                }
 
                 return when;
             } else {

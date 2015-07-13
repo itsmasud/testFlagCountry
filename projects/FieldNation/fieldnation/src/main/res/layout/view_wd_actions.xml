@@ -3,16 +3,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <View
-        android:id="@+id/separator"
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
-
     <LinearLayout
-        android:layout_below="@+id/separator"
         android:id="@+id/button_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/separator"
         android:orientation="vertical"
         android:paddingLeft="16dp"
         android:paddingRight="16dp">
@@ -53,7 +48,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:text="@string/counter_offer"
+                android:text="@string/btn_counter"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <Button
@@ -64,7 +59,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="5dp"
                 android:layout_weight="1"
-                android:text="@string/request_work"
+                android:text="@string/btn_request"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 
