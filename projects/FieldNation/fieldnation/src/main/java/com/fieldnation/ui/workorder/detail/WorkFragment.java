@@ -113,7 +113,6 @@ public class WorkFragment extends WorkorderFragment {
     private ScheduleSummaryView _scheduleView;
     private LocationView _locView;
     private ContactListView _contactListView;
-
     private ExpectedPaymentView _exView;
     private TextView _bundleWarningTextView;
     private TimeLogListView _timeLogged;

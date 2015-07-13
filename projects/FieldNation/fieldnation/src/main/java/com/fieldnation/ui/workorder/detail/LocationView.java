@@ -85,6 +85,17 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     @Override
     public void setWorkorder(Workorder workorder) {
+        try {
+            if (_workorder == null || workorder == null)
+                _isDrawn = false;
+            else if (!_workorder.toJson().toString().equals(workorder.toJson().toString())) {
+                _isDrawn = false;
+            }
+        } catch (Exception ex) {
+            _isDrawn = false;
+            ex.printStackTrace();
+        }
+
         _workorder = workorder;
         populateUi();
     }
@@ -123,7 +134,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
             // get address location
             Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-            List<Address> addrs = geocoder.getFromLocationName(location.getFullAddress(), 1);
+            List<Address> addrs = geocoder.getFromLocationName(location.getFullAddressOneLine(), 1);
             LatLng ll = new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
 
             Log.v(TAG, "Getting user location");
@@ -177,7 +188,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                                 .dispatchEvent(getContext(), "WorkorderActivity",
                                         GoogleAnalyticsTopicClient.EventAction.START_MAP,
                                         "WorkFragment", 1);
-                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "google.navigation:q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);
                         showMap(_uri);
@@ -199,7 +210,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                                 .dispatchEvent(getContext(), "WorkorderActivity",
                                         GoogleAnalyticsTopicClient.EventAction.START_MAP,
                                         "WorkFragment", 1);
-                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);
                         showMap(_uri);
