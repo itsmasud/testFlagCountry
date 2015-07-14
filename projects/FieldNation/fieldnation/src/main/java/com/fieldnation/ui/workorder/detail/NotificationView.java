@@ -27,6 +27,7 @@ public class NotificationView extends RelativeLayout {
     private ImageView _alertThumbImageView;
     private TextView _messageTextView;
     private TextView _dateTextView;
+    private View _clickOverlay;
 
     // Data
     private Notification _notification;
@@ -60,9 +61,9 @@ public class NotificationView extends RelativeLayout {
         _alertThumbImageView = (ImageView) findViewById(R.id.alertthumb_imageview);
         _messageTextView = (TextView) findViewById(R.id.message_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _clickOverlay = findViewById(R.id.click_overlay);
 
-        setOnClickListener(_this_onClick);
-        setClickable(true);
+        _clickOverlay.setOnClickListener(_this_onClick);
     }
 
     /*-*************************************-*/
@@ -77,7 +78,7 @@ public class NotificationView extends RelativeLayout {
         _messageTextView.setVisibility(View.VISIBLE);
         try {
             Spannable msg = misc.linkifyHtml(_notification.getMessage(), Linkify.ALL);
-            _messageTextView.setText(_notification.getMessage());
+            _messageTextView.setText(msg);
             _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
             if (_notification.getWorkorder() == null) {
                 URLSpan[] spans = msg.getSpans(0, msg.length(), URLSpan.class);
