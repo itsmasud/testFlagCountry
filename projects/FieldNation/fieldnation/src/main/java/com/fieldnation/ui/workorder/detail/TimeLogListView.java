@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Handler;
+import android.support.v4.app.FragmentActivity;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,9 +14,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 
 import java.util.Random;
 
@@ -26,6 +30,9 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
     private LinearLayout _logList;
     private TextView _noTimeTextView;
     private Button _logTimeButton;
+
+    // Dialog
+    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private Listener _listener;
@@ -56,6 +63,9 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
         _logTimeButton = (Button) findViewById(R.id.logTime_button);
         _logTimeButton.setOnClickListener(_addLog_onClick);
+
+        _yesNoDialog = TwoButtonDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
+
 
         setVisibility(GONE);
     }
@@ -126,18 +136,29 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
         @Override
         public void deleteWorklog(final TimeLogRowView view, final Workorder workorder, final LoggedWork loggedWork) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Are you sure you want to delete this work log?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    _logList.removeView(view);
-                    if (_listener != null)
-                        _listener.deleteWorklog(workorder, loggedWork);
-                }
-            });
-            builder.setNegativeButton("No", null);
-            builder.show();
+
+            _yesNoDialog.setData("Delete Expense",
+                    "Are you sure you want to delete this work log?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            _logList.removeView(view);
+                            if (_listener != null)
+                                _listener.deleteWorklog(workorder, loggedWork);
+
+
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+
         }
     };
 
