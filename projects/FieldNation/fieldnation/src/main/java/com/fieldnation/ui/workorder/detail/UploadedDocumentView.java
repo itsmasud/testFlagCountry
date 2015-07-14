@@ -1,6 +1,8 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -176,9 +178,20 @@ public class UploadedDocumentView extends RelativeLayout {
         @Override
         public boolean onLongClick(View v) {
             if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
-                if (_listener != null)
-                    _listener.onDelete(UploadedDocumentView.this, _doc);
-                ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+                builder.setMessage("Are you sure you want to delete this Document?");
+                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (_listener != null)
+                            _listener.onDelete(UploadedDocumentView.this, _doc);
+                        ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
+                    }
+                });
+                builder.setNegativeButton("No", null);
+                builder.show();
+
 
                 return true;
             } else {
