@@ -21,11 +21,11 @@
     <color name="btn_status_orange_bottom">#05000000</color>
     <color name="btn_status_orange_pressed">@color/fn_brandcolor_medium</color>
 
-    <color name="btn_status_white_fill">@color/fn_primary_bg</color>
-    <color name="btn_status_white_top">@color/fn_primary_bg_80</color>
-    <color name="btn_status_white_center">@color/fn_primary_bg_0</color>
+    <color name="btn_status_white_fill">#FFF0F0F0</color>
+    <color name="btn_status_white_top">#CCF0F0F0</color>
+    <color name="btn_status_white_center">#00F0F0F0</color>
     <color name="btn_status_white_bottom">#05000000</color>
-    <color name="btn_status_white_pressed">@color/fn_primary_bg_medium</color>
+    <color name="btn_status_white_pressed">#FFC0C0C0</color>
 
     <color name="btn_status_green_fill">@color/fn_accent_color</color>
     <color name="btn_status_green_top">@color/fn_accent_color_80</color>

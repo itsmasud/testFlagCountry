@@ -1,16 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.fieldnation.ui.TileView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:clickable="false">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:clickable="false"
         android:orientation="vertical">
 
         <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:clickable="false">
 
             <ImageView
                 android:id="@+id/alertthumb_imageview"
@@ -19,6 +22,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginRight="8dp"
+                android:clickable="false"
                 android:src="@drawable/ic_alert_thumb" />
 
             <TextView
@@ -29,6 +33,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="8dp"
+                android:clickable="false"
                 android:text="1 day" />
         </RelativeLayout>
 
@@ -38,6 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:clickable="false"
             android:text="Message Content" />
     </LinearLayout>
 </com.fieldnation.ui.TileView>

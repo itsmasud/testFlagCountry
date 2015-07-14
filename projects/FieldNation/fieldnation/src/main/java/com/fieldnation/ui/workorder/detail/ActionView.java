@@ -97,14 +97,14 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         }
 
         // counter offer button
-//        if (_workorder.canCounterOffer()) {
-//            _counterOfferButton.setVisibility(View.VISIBLE);
-//            if (_workorder.getCounterOfferInfo() == null) {
-//                _counterOfferButton.setText(R.string.counter_offer);
-//            } else {
-//                _counterOfferButton.setText(R.string.view_counter);
-//            }
-//        }
+        if (_workorder.canCounterOffer()) {
+            _counterOfferButton.setVisibility(View.VISIBLE);
+            if (_workorder.getCounterOfferInfo() == null) {
+                _counterOfferButton.setText(R.string.counter_offer);
+            } else {
+                _counterOfferButton.setText(R.string.view_counter);
+            }
+        }
 
         // complete button
         if (_workorder.canComplete()) {

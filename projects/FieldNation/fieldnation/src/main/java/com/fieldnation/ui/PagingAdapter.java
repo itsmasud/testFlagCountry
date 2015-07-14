@@ -49,8 +49,10 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             _loadingPages.remove(page);
         }
 
-        if (_loadingPages.size() == 0 && _listener != null) {
-            _listener.onLoadingComplete();
+        if (_loadingPages.size() == 0) {
+            setNoMorePages();
+            if (_listener != null)
+                _listener.onLoadingComplete();
         }
 
         notifyDataSetChanged();

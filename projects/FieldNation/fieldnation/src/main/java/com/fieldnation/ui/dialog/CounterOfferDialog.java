@@ -459,7 +459,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
-        public void onComplete(Pay pay) {
+        public void onComplete(Pay pay, String explanation) {
             _counterPay = pay;
             populateUi();
         }

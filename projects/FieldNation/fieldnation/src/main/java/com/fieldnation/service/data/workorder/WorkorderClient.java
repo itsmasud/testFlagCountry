@@ -365,6 +365,35 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
+
+        String payload = "";
+        if (pay != null) {
+            if (pay.isPerDeviceRate()) {
+                payload += "payBasis=per_device";
+                payload += "&payPerDevice=" + pay.getPerDevice();
+                payload += "&maxDevices=" + pay.getMaxDevice();
+            } else if (pay.isBlendedRate()) {
+                payload += "payBasis=blended";
+                payload += "&hourlyRate=" + pay.getBlendedStartRate();
+                payload += "&maxHours=" + pay.getBlendedFirstHours();
+                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
+                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
+            } else if (pay.isFixedRate()) {
+                payload += "payBasis=fixed";
+                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
+            } else if (pay.isHourlyRate()) {
+                payload += "payBasis=per_hour";
+                payload += "&hourlyRate=" + pay.getPerHour();
+                payload += "&maxHours=" + pay.getMaxHour();
+            }
+        }
+
+        payload += "&explanation=" + misc.escapeForURL(explanation);
+
+        WorkorderTransactionBuilder.action(context, workorderId, "pay-change", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, payload);
+    }
 
     public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
         WorkorderTransactionBuilder.action(context,

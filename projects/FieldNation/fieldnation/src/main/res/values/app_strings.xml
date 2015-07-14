@@ -204,6 +204,7 @@
     <string name="fixed_rate">Fixed Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
+    <string name="explanation">Explanation</string>
     <string name="max_devices">Max Devices</string>
     <string name="pay_of">Pay of</string>
     <string name="per_hour_for_the_first">per hour for the first</string>
