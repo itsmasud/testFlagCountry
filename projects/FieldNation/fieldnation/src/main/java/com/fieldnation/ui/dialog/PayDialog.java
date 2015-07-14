@@ -2,6 +2,7 @@ package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -51,12 +52,16 @@ public class PayDialog extends DialogFragmentBase {
     private EditText _extraHourlyEditText;
     private EditText _extraMaxHoursEditText;
 
+    private TextInputLayout _explanationLayout;
+    private EditText _explanationEditText;
+
     private Button _okButton;
     private Button _cancelButton;
 
     // Data
     private Pay _pay;
     private Listener _listener;
+    private boolean _showExplanation;
     private int _mode = MODE_FIXED;
 
     /*-*************************************-*/
@@ -127,6 +132,9 @@ public class PayDialog extends DialogFragmentBase {
         _extraHourlyEditText = (EditText) v.findViewById(R.id.extrahours_edittext);
         _extraMaxHoursEditText = (EditText) v.findViewById(R.id.extramaxhours_edittext);
 
+        _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
+        _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
@@ -153,7 +161,14 @@ public class PayDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
+    public void show(Pay pay, boolean showExplanation) {
+        _pay = pay;
+        _showExplanation = showExplanation;
+        super.show();
+    }
+
     public void show(Pay pay) {
+        _showExplanation = false;
         _pay = pay;
         super.show();
     }
@@ -227,6 +242,12 @@ public class PayDialog extends DialogFragmentBase {
             _deviceRateEditText.setText(_pay.getPerDevice() + "");
             _maxDevicesEditText.setText(_pay.getMaxDevice() + "");
         }
+
+        if (_showExplanation) {
+            _explanationLayout.setVisibility(View.VISIBLE);
+        } else {
+            _explanationLayout.setVisibility(View.GONE);
+        }
     }
 
 	/*-*********************************-*/
@@ -260,12 +281,12 @@ public class PayDialog extends DialogFragmentBase {
             if (_listener == null)
                 return;
 
-            _listener.onComplete(makePay());
+            _listener.onComplete(makePay(), _explanationEditText.getText().toString());
         }
     };
 
     public interface Listener {
-        void onComplete(Pay pay);
+        void onComplete(Pay pay, String explanation);
 
         void onNothing();
     }

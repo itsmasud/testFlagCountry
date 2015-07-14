@@ -330,7 +330,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _emptyView.setVisibility(View.GONE);
         }
 
-//        if (list.size() == 0) {
+//        if (list.size() == 0 ) {
 //            _adapter.setNoMorePages();
 //        }
 

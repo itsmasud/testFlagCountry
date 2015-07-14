@@ -131,7 +131,6 @@ public class WorkFragment extends WorkorderFragment {
     private PayDialog _payDialog;
 
 
-
     // Dialogs
     private AcceptBundleDialog _acceptBundleWOConfirmDialog;
     private AcceptBundleDialog _acceptBundleWOExpiresDialog;
@@ -1166,7 +1165,7 @@ public class WorkFragment extends WorkorderFragment {
             // TODO show request new pay dialog
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
 
-            _payDialog.show(_workorder.getPay());
+            _payDialog.show(_workorder.getPay(), true);
         }
 
         @Override
@@ -1328,8 +1327,10 @@ public class WorkFragment extends WorkorderFragment {
 
     private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
-        public void onComplete(Pay pay) {
-//            _counterPay = pay;
+        public void onComplete(Pay pay, String explanation) {
+            WorkorderClient.actionChangePay(GlobalState.getContext(), _workorder.getWorkorderId(),
+                    pay, explanation);
+
             populateUi();
         }
 
