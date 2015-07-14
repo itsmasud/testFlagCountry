@@ -69,6 +69,7 @@ import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -127,6 +128,8 @@ public class WorkFragment extends WorkorderFragment {
     private DiscountListLayout _discountListView;
     private ActionView _actionView;
     private RefreshView _refreshView;
+    private PayDialog _payDialog;
+
 
 
     // Dialogs
@@ -234,6 +237,10 @@ public class WorkFragment extends WorkorderFragment {
 
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signaturelist_listener);
+
+        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+        _payDialog.setListener(_payDialog_listener);
+
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
@@ -1157,6 +1164,9 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onRequestNewPay(Workorder workorder) {
             // TODO show request new pay dialog
+            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+
+            _payDialog.show(_workorder.getPay());
         }
 
         @Override
@@ -1312,6 +1322,19 @@ public class WorkFragment extends WorkorderFragment {
                     });
             _yesNoDialog.show();
             return true;
+        }
+    };
+
+
+    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+        @Override
+        public void onComplete(Pay pay) {
+//            _counterPay = pay;
+            populateUi();
+        }
+
+        @Override
+        public void onNothing() {
         }
     };
 
