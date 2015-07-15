@@ -31,8 +31,6 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
     private TextView _noTimeTextView;
     private Button _logTimeButton;
 
-    // Dialog
-    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private Listener _listener;
@@ -63,8 +61,6 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         _noTimeTextView = (TextView) findViewById(R.id.notime_textview);
         _logTimeButton = (Button) findViewById(R.id.logTime_button);
         _logTimeButton.setOnClickListener(_addLog_onClick);
-
-        _yesNoDialog = TwoButtonDialog.getInstance(((FragmentActivity) getContext()).getSupportFragmentManager(), TAG);
 
 
         setVisibility(GONE);
@@ -137,27 +133,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         @Override
         public void deleteWorklog(final TimeLogRowView view, final Workorder workorder, final LoggedWork loggedWork) {
 
-            _yesNoDialog.setData("Delete Expense",
-                    "Are you sure you want to delete this work log?", "YES", "NO",
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            _logList.removeView(view);
-                            if (_listener != null)
-                                _listener.deleteWorklog(workorder, loggedWork);
 
-
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
 
         }
     };

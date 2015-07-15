@@ -1488,9 +1488,35 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
-                    loggedWork.getLoggedHoursId());
-            setLoading(true);
+//            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
+//                    loggedWork.getLoggedHoursId());
+//            setLoading(true);
+
+            final long workorderID = workorder.getWorkorderId();
+            final long loggedHoursID = loggedWork.getLoggedHoursId();
+
+            _yesNoDialog.setData("Delete Worklog",
+                    "Are you sure you want to delete this work log?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorderID,
+                                    loggedHoursID);
+                            setLoading(true);
+
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+
+
         }
     };
 
