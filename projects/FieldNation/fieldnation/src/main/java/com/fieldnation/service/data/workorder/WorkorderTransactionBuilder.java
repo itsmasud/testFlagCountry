@@ -273,9 +273,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         if (expenses != null && expenses.length > 0) {
             StringBuilder json = new StringBuilder();
             json.append("[");
-            for (Expense expense : expenses) {
+            for (int i = 0; i < expenses.length; i++) {
+                Expense expense = expenses[i];
                 json.append("{\"description\":\"").append(expense.getDescription()).append("\",");
                 json.append("\"price\":\"").append(expense.getPrice()).append("\"}");
+                if (i < expenses.length - 1) {
+                    json.append(",");
+                }
             }
             json.append("]");
 
