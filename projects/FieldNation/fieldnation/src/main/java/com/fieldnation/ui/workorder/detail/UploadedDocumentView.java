@@ -179,19 +179,9 @@ public class UploadedDocumentView extends RelativeLayout {
         public boolean onLongClick(View v) {
             if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-                builder.setMessage("Are you sure you want to delete this Document?");
-                builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        if (_listener != null)
-                            _listener.onDelete(UploadedDocumentView.this, _doc);
-                        ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
-                    }
-                });
-                builder.setNegativeButton("No", null);
-                builder.show();
-
+                if (_listener != null)
+                    _listener.onDelete(UploadedDocumentView.this, _doc);
+                ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
 
                 return true;
             } else {
