@@ -389,7 +389,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
         }
 
-        payload += "&explanation=" + misc.escapeForURL(explanation);
+        payload += "&providerExplanation=" + misc.escapeForURL(explanation);
 
         WorkorderTransactionBuilder.action(context, workorderId, "pay-change", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, payload);
