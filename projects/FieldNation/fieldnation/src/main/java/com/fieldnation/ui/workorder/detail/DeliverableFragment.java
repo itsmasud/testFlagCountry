@@ -20,7 +20,6 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -421,17 +420,15 @@ public class DeliverableFragment extends WorkorderFragment {
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-//            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-//                    document.getId());
-
             final int documentId = document.getId();
-            _yesNoDialog.setData("Delete Expense",
-                    "Are you sure you want to delete this expense?", "YES", "NO",
+            _yesNoDialog.setData("Delete File",
+                    "Are you sure you want to delete this file?", "YES", "NO",
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
                                     documentId);
+                            setLoading(true);
                         }
 
                         @Override
