@@ -11,8 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_weight="1"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
 
 
         <LinearLayout
@@ -34,8 +33,6 @@
                 android:layout_gravity="center_vertical|center_horizontal"
                 android:text="@string/activity_message_list_empty_message_headline"
                 android:textSize="26dp"
-
-
                 />
 
             <TextView

@@ -66,9 +66,6 @@ public class MessageInputView extends RelativeLayout {
 
 	public void showEmptyMessageView() {
 		_emptyMessageView.setVisibility(View.VISIBLE);
-		invalidate();
-		requestLayout();
-
 	}
 	/*-*********************************-*/
 	/*-				Events				-*/
