@@ -36,6 +36,7 @@ import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -68,6 +69,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private IconFontButton _navigateButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
+
+    // Dialog
+    private TwoButtonDialog _yesNoDialog;
 
     // Data
     private Workorder _workorder;
@@ -128,6 +132,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigationButton_onClick);
+
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
 
         checkMedia();
 
@@ -413,8 +420,27 @@ public class DeliverableFragment extends WorkorderFragment {
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                    document.getId());
+            final int documentId = document.getId();
+            _yesNoDialog.setData("Delete File",
+                    "Are you sure you want to delete this file?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                    documentId);
+                            setLoading(true);
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+
         }
     };
 

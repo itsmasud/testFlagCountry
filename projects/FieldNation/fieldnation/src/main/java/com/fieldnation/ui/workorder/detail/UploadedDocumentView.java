@@ -176,9 +176,9 @@ public class UploadedDocumentView extends RelativeLayout {
         @Override
         public boolean onLongClick(View v) {
             if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
+
                 if (_listener != null)
                     _listener.onDelete(UploadedDocumentView.this, _doc);
-                ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
 
                 return true;
             } else {
