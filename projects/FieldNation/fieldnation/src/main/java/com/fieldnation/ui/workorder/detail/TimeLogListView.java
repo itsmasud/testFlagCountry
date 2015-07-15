@@ -1,8 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -26,6 +24,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
     private LinearLayout _logList;
     private TextView _noTimeTextView;
     private Button _logTimeButton;
+
 
     // Data
     private Listener _listener;
@@ -57,6 +56,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         _logTimeButton = (Button) findViewById(R.id.logTime_button);
         _logTimeButton.setOnClickListener(_addLog_onClick);
 
+
         setVisibility(GONE);
     }
 
@@ -84,32 +84,37 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
         if (logs == null || logs.length == 0) {
             _noTimeTextView.setVisibility(View.VISIBLE);
-            return;
+        } else {
+            _noTimeTextView.setVisibility(View.GONE);
         }
-        _noTimeTextView.setVisibility(View.GONE);
 
-        if (_logList.getChildCount() > logs.length) {
+
+        if (logs == null || logs.length == 0) {
+            _logList.removeAllViews();
+        } else if (_logList.getChildCount() > logs.length) {
             _logList.removeViews(logs.length - 1, _logList.getChildCount() - logs.length);
         }
 
-        ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-            private LoggedWork[] _logs = logs;
+        if (logs != null && logs.length > 0) {
+            ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
+                private LoggedWork[] _logs = logs;
 
-            @Override
-            public void next(int i) throws Exception {
-                TimeLogRowView v = null;
-                if (i < _logList.getChildCount()) {
-                    v = (TimeLogRowView) _logList.getChildAt(i);
-                } else {
-                    v = new TimeLogRowView(getContext());
-                    _logList.addView(v);
+                @Override
+                public void next(int i) throws Exception {
+                    TimeLogRowView v = null;
+                    if (i < _logList.getChildCount()) {
+                        v = (TimeLogRowView) _logList.getChildAt(i);
+                    } else {
+                        v = new TimeLogRowView(getContext());
+                        _logList.addView(v);
+                    }
+                    LoggedWork log = _logs[i];
+                    v.setListener(_scheduleDetailView_listener);
+                    v.setData(_workorder, log);
                 }
-                LoggedWork log = _logs[i];
-                v.setListener(_scheduleDetailView_listener);
-                v.setData(_workorder, log);
-            }
-        };
-        postDelayed(r, new Random().nextInt(1000));
+            };
+            postDelayed(r, new Random().nextInt(1000));
+        }
     }
 
     /*-*************************-*/
@@ -126,18 +131,8 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
         @Override
         public void deleteWorklog(final TimeLogRowView view, final Workorder workorder, final LoggedWork loggedWork) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-            builder.setMessage("Are you sure you want to delete this work log?");
-            builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    _logList.removeView(view);
-                    if (_listener != null)
-                        _listener.deleteWorklog(workorder, loggedWork);
-                }
-            });
-            builder.setNegativeButton("No", null);
-            builder.show();
+            if (_listener != null)
+                _listener.deleteWorklog(workorder, loggedWork);
         }
     };
 
