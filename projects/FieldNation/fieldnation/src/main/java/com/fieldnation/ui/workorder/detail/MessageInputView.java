@@ -14,7 +14,6 @@ public class MessageInputView extends RelativeLayout {
 	// UI
 	private EditText _messageEditText;
 	private Button _sendButton;
-	private RelativeLayout _emptyMessageView;
 
 	// Data
 
@@ -44,7 +43,6 @@ public class MessageInputView extends RelativeLayout {
 
 		_messageEditText = (EditText) findViewById(R.id.message_edittext);
 		_sendButton = (Button) findViewById(R.id.send_button);
-		_emptyMessageView = (RelativeLayout) findViewById(R.id.container_message);
 	}
 
 	public void setOnSendButtonClick(View.OnClickListener listener) {
@@ -64,9 +62,6 @@ public class MessageInputView extends RelativeLayout {
 	}
 
 
-	public void showEmptyMessageView() {
-		_emptyMessageView.setVisibility(View.VISIBLE);
-	}
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/
