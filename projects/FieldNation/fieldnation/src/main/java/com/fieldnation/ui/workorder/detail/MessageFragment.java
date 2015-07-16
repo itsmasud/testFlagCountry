@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
@@ -15,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.CardView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
@@ -28,7 +28,7 @@ public class MessageFragment extends WorkorderFragment {
     private ListView _listview;
     private MessageInputView _inputView;
     private RefreshView _refreshView;
-    private RelativeLayout _emptyMessageLayout;
+    private CardView _emptyMessageLayout;
 
 
     // Data
@@ -56,9 +56,7 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
-        _emptyMessageLayout = (RelativeLayout) view.findViewById(R.id.container_empty_message);
-
-
+        _emptyMessageLayout = (CardView) view.findViewById(R.id.container_empty_message);
     }
 
     @Override
@@ -155,16 +153,13 @@ public class MessageFragment extends WorkorderFragment {
 
         // debug testing
         Log.v(TAG, "rebuildList");
-        if (_messages == null || _messages.size() == 0){
-
+        if (_messages == null || _messages.size() == 0) {
             _emptyMessageLayout.setVisibility(View.VISIBLE);
-
+        } else {
+            _emptyMessageLayout.setVisibility(View.GONE);
         }
 
-        if (getAdapter() == null) {
-            // debug testing
-
-        } else {
+        if (getAdapter() != null) {
             // debug testing
             Log.v(TAG, "rebuildList: inside ELSE getAdapter() == null");
 

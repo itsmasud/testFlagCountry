@@ -16,8 +16,8 @@
     <string name="activity_login_password">Password</string>
 
     <string name="activity_message_list_title">Messages</string>
-    <string name="activity_message_list_empty_message_headline">Message is empty</string>
-    <string name="activity_message_list_empty_message_sub_headline">Start the conversation using the button below</string>
+    <string name="activity_message_list_empty_message_headline">No Messages</string>
+    <string name="activity_message_list_empty_message_sub_headline">Start the conversation</string>
 
     <string name="activity_payments_list_title">Payments</string>
 
