@@ -61,6 +61,7 @@ public class MessageInputView extends RelativeLayout {
 		_messageEditText.setHint(resId);
 	}
 
+
 	/*-*********************************-*/
 	/*-				Events				-*/
 	/*-*********************************-*/

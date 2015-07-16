@@ -13,6 +13,38 @@
         android:divider="@null"
         android:scrollbarStyle="outsideOverlay" />
 
+    <com.fieldnation.ui.CardView
+        android:id="@+id/container_empty_message"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/header_one"
+                style="@style/Text_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/activity_message_list_empty_message_headline" />
+
+            <TextView
+                android:id="@+id/header_two"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/header_one"
+                android:layout_gravity="center_horizontal"
+                android:text="@string/activity_message_list_empty_message_sub_headline" />
+
+        </LinearLayout>
+    </com.fieldnation.ui.CardView>
+
     <com.fieldnation.ui.workorder.detail.MessageInputView
         android:id="@+id/input_view"
         android:layout_width="match_parent"
@@ -25,5 +57,6 @@
         android:layout_height="250dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
+
 
 </RelativeLayout>
