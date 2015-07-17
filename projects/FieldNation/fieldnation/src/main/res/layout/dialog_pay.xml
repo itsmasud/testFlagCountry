@@ -60,8 +60,10 @@
                     style="@style/EditText"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
                     android:hint="@string/fixed_pay_amount"
-                    android:imeOptions="actionDone"
+                    android:imeOptions="actionNext"
                     android:inputType="numberDecimal" />
             </android.support.design.widget.TextInputLayout>
 
@@ -82,6 +84,8 @@
                     <EditText
                         android:id="@+id/hourlyrate_edittext"
                         style="@style/EditText"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:hint="@string/hourly_rate"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
@@ -95,8 +99,9 @@
                     <EditText
                         android:id="@+id/maxhours_edittext"
                         style="@style/EditText"
+                        android:focusableInTouchMode="true"
                         android:hint="@string/max_hours"
-                        android:imeOptions="actionDone"
+                        android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -118,6 +123,8 @@
                     <EditText
                         android:id="@+id/devicerate_edittext"
                         style="@style/EditText"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:hint="@string/per_device_rate"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
@@ -131,8 +138,9 @@
                     <EditText
                         android:id="@+id/maxdevices_edittext"
                         style="@style/EditText"
+                        android:focusableInTouchMode="true"
                         android:hint="@string/max_devices"
-                        android:imeOptions="actionDone"
+                        android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -166,6 +174,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
 
@@ -183,6 +193,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusableInTouchMode="true"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </LinearLayout>
@@ -206,6 +217,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:focusableInTouchMode="true"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
 
@@ -223,7 +235,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:imeOptions="actionDone"
+                        android:focusableInTouchMode="true"
+                        android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </LinearLayout>
             </LinearLayout>
@@ -239,7 +252,7 @@
                     android:id="@+id/explanation_edittext"
                     style="@style/EditText"
                     android:hint="@string/explanation"
-                    android:imeOptions="actionNext" />
+                    android:imeOptions="actionDone" />
             </android.support.design.widget.TextInputLayout>
         </LinearLayout>
 
