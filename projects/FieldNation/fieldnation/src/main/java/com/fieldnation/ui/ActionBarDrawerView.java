@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.Toolbar;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -22,6 +24,7 @@ public class ActionBarDrawerView extends FrameLayout {
     private RightDrawerMessagesView _messageDrawerView;
     private RightDrawerNotificationsView _notificationDrawerView;
     private WarningView _warningView;
+    private DrawerLayout _drawerLayout;
 
     public ActionBarDrawerView(Context context) {
         super(context);
@@ -48,6 +51,7 @@ public class ActionBarDrawerView extends FrameLayout {
         _body = (FrameLayout) findViewById(R.id.body_container);
         _messageDrawerView = (RightDrawerMessagesView) findViewById(R.id.rightDrawerMessages_view);
         _notificationDrawerView = (RightDrawerNotificationsView) findViewById(R.id.rightDrawerNotifications_view);
+        _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_content);
     }
 
     private FrameLayout getBody() {
@@ -67,6 +71,10 @@ public class ActionBarDrawerView extends FrameLayout {
 
     public Toolbar getToolbar() {
         return _toolbar;
+    }
+
+    public void showLeftNav() {
+        _drawerLayout.openDrawer(GravityCompat.START);
     }
 
     @Override

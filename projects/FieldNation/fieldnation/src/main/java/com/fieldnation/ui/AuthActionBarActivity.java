@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -66,9 +67,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         Toolbar toolbar = _actionBarView.getToolbar();
 
-        if (toolbar != null) {
-            setSupportActionBar(toolbar);
-        }
+        setSupportActionBar(toolbar);
+        final ActionBar ab = getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.nav_icon);
+        ab.setDisplayHomeAsUpEnabled(true);
+
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
@@ -318,7 +321,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                onBackPressed();
+                _actionBarView.showLeftNav();
                 return true;
         }
         return super.onOptionsItemSelected(item);
