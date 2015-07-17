@@ -194,10 +194,10 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private void clearUi() {
-        _fixedLayout.setVisibility(View.GONE);
-        _hourlyLayout.setVisibility(View.GONE);
-        _devicesLayout.setVisibility(View.GONE);
-        _blendedLayout.setVisibility(View.GONE);
+//        _fixedLayout.setVisibility(View.GONE);
+//        _hourlyLayout.setVisibility(View.GONE);
+//        _devicesLayout.setVisibility(View.GONE);
+//        _blendedLayout.setVisibility(View.GONE);
     }
 
     private void setMode(int mode) {
@@ -207,15 +207,27 @@ public class PayDialog extends DialogFragmentBase {
         switch (mode) {
             case MODE_FIXED:
                 _fixedLayout.setVisibility(View.VISIBLE);
+                _hourlyLayout.setVisibility(View.GONE);
+                _devicesLayout.setVisibility(View.GONE);
+                _blendedLayout.setVisibility(View.GONE);
                 break;
             case MODE_HOURLY:
                 _hourlyLayout.setVisibility(View.VISIBLE);
+                _fixedLayout.setVisibility(View.GONE);
+                _devicesLayout.setVisibility(View.GONE);
+                _blendedLayout.setVisibility(View.GONE);
                 break;
             case MODE_PER_DEVICE:
                 _devicesLayout.setVisibility(View.VISIBLE);
+                _fixedLayout.setVisibility(View.GONE);
+                _hourlyLayout.setVisibility(View.GONE);
+                _blendedLayout.setVisibility(View.GONE);
                 break;
             case MODE_BLENDED:
                 _blendedLayout.setVisibility(View.VISIBLE);
+                _fixedLayout.setVisibility(View.GONE);
+                _hourlyLayout.setVisibility(View.GONE);
+                _devicesLayout.setVisibility(View.GONE);
                 break;
         }
     }
@@ -224,33 +236,44 @@ public class PayDialog extends DialogFragmentBase {
         if (_pay == null)
             return;
 
+        if (_showExplanation) {
+            _explanationLayout.setVisibility(View.VISIBLE);
+        } else {
+            _explanationLayout.setVisibility(View.GONE);
+        }
+
         if (_pay.isBlendedRate()) {
             setMode(MODE_BLENDED);
             _blendedHourlyEditText.setText(_pay.getBlendedStartRate() + "");
             _blendedMaxHoursEditText.setText(_pay.getBlendedFirstHours() + "");
             _extraHourlyEditText.setText(_pay.getBlendedAdditionalRate() + "");
             _extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
+            _blendedHourlyEditText.requestFocus();
         } else if (_pay.isFixedRate()) {
             setMode(MODE_FIXED);
-            _fixedEditText.setText(_pay.getFixedAmount() + "");
+            _fixedEditText.setText((_pay.getFixedAmount() + "").trim());
+            _fixedEditText.requestFocus();
         } else if (_pay.isHourlyRate()) {
             setMode(MODE_HOURLY);
-            _hourlyRateEditText.setText(_pay.getPerHour() + "");
-            _maxHoursEditText.setText(_pay.getMaxHour() + "");
+            _hourlyRateEditText.setText((_pay.getPerHour() + "").trim());
+            _maxHoursEditText.setText((_pay.getMaxHour() + "").trim());
+            _hourlyRateEditText.requestFocus();
         } else if (_pay.isPerDeviceRate()) {
             setMode(MODE_PER_DEVICE);
-            _deviceRateEditText.setText(_pay.getPerDevice() + "");
-            _maxDevicesEditText.setText(_pay.getMaxDevice() + "");
-        }
-
-        if (_showExplanation) {
-            _explanationLayout.setVisibility(View.VISIBLE);
-        } else {
-            _explanationLayout.setVisibility(View.GONE);
+            _deviceRateEditText.setText((_pay.getPerDevice() + "").trim());
+            _maxDevicesEditText.setText((_pay.getMaxDevice() + "").trim());
+            _deviceRateEditText.requestFocus();
         }
     }
 
-	/*-*********************************-*/
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        populateUi();
+    }
+
+    /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
 
