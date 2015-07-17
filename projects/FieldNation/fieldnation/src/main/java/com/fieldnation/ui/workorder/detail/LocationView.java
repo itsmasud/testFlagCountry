@@ -108,6 +108,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         Location location = _workorder.getLocation();
+        _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
+        _addressTextView.setText(location.getFullAddressOneLine());
+        _distanceTextView.setText("Could not calculate distance.");
 
         setVisibility(VISIBLE);
 
@@ -158,11 +161,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
             _mapView.setZoom(_mapView.getZoomLevel() - 1);
 
-            _addressTextView.setText(location.getFullAddressOneLine());
             _distanceTextView.setText(misc.to2Decimal(ll.distanceTo(user) * 0.000621371) + " miles");
+            _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
 
         } catch (Exception ex) {
             ex.printStackTrace();
+
+            _navigateButton.setVisibility(GONE);
+            _mapLayout.setVisibility(GONE);
         }
     }
 

@@ -35,17 +35,25 @@ public class PhotoService extends MSService implements PhotoConstants {
     }
 
     @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public int getMaxWorkerCount() {
         return 2;
     }
 
     @Override
     public void processIntent(Intent intent) {
-        String action = intent.getStringExtra(PARAM_ACTION);
-        switch (action) {
-            case PARAM_ACTION_GET:
-                get(intent);
-                break;
+        if (intent.hasExtra(PARAM_ACTION)) {
+            String action = intent.getStringExtra(PARAM_ACTION);
+            switch (action) {
+                case PARAM_ACTION_GET:
+                    get(intent);
+                    break;
+            }
         }
     }
 

@@ -20,23 +20,25 @@ public class RestService extends MSService implements RestConstants {
 
     @Override
     public void processIntent(Intent intent) {
-        String topic = intent.getStringExtra(PARAM_TOPIC);
-        switch (topic) {
-            case TOPIC_LIST:
-                list(intent);
-                break;
-            case TOPIC_ACTION:
-                action(intent);
-                break;
-            case TOPIC_CREATE:
-                create(intent);
-                break;
-            case TOPIC_DELETE:
-                delete(intent);
-                break;
-            case TOPIC_GET:
-                get(intent);
-                break;
+        if (intent.hasExtra(PARAM_TOPIC)) {
+            String topic = intent.getStringExtra(PARAM_TOPIC);
+            switch (topic) {
+                case TOPIC_LIST:
+                    list(intent);
+                    break;
+                case TOPIC_ACTION:
+                    action(intent);
+                    break;
+                case TOPIC_CREATE:
+                    create(intent);
+                    break;
+                case TOPIC_DELETE:
+                    delete(intent);
+                    break;
+                case TOPIC_GET:
+                    get(intent);
+                    break;
+            }
         }
     }
 

@@ -2,6 +2,7 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Intent;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
@@ -14,17 +15,25 @@ public class PaymentService extends MSService implements PaymentConstants {
     private static final String TAG = "PaymentDataService";
 
     @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public int getMaxWorkerCount() {
         return 2;
     }
 
     @Override
     public void processIntent(Intent intent) {
-        String action = intent.getStringExtra(PARAM_ACTION);
-        if (action.equals(PARAM_ACTION_LIST)) {
-            list(intent);
-        } else if (action.equals(PARAM_ACTION_GET)) {
-            get(intent);
+        if (intent.hasExtra(PARAM_ACTION)) {
+            String action = intent.getStringExtra(PARAM_ACTION);
+            if (action.equals(PARAM_ACTION_LIST)) {
+                list(intent);
+            } else if (action.equals(PARAM_ACTION_GET)) {
+                get(intent);
+            }
         }
     }
 
