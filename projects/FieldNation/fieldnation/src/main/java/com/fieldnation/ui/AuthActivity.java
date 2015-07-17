@@ -27,6 +27,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.data.profile.ProfileService;
+import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 /**
@@ -191,6 +193,9 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            startService(new Intent(AuthActivity.this, ProfileService.class));
+            startService(new Intent(AuthActivity.this, WebTransactionService.class));
+
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
 

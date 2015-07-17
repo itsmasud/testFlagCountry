@@ -20,6 +20,8 @@ import java.util.List;
  */
 public abstract class MSService extends Service {
     private static final String TAG = "MSService";
+    private static final long IDLE_TIMEOUT = 10000;
+
     private final Object LOCK = new Object();
 
     private ThreadManager _manager = new ThreadManager();
@@ -77,14 +79,14 @@ public abstract class MSService extends Service {
         if (_shutdownChecker == null) {
             _shutdownChecker = new Handler();
         }
-        _shutdownChecker.postDelayed(_activityCheck_runnable, 60000);
+        _shutdownChecker.postDelayed(_activityCheck_runnable, IDLE_TIMEOUT);
     }
 
     private final Runnable _activityCheck_runnable = new Runnable() {
         @Override
         public void run() {
             // check timer
-            if (System.currentTimeMillis() - _lastRequestTime > 60000
+            if (System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT
                     && _workersWorking == 0
                     && _intents.size() == 0) {
                 // shutdown

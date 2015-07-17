@@ -17,6 +17,12 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     private static final String TAG = "WorkorderDataService";
 
     @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
+    @Override
     public int getMaxWorkerCount() {
         return 2;
     }
@@ -24,38 +30,40 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
     @Override
     public void processIntent(Intent intent) {
-        Log.v(TAG, "MyWorkerThread, processIntent");
-        String action = intent.getStringExtra(PARAM_ACTION);
-        switch (action) {
-            case PARAM_ACTION_GET:
-                get(intent);
-                break;
-            case PARAM_ACTION_LIST:
-                list(intent);
-                break;
-            case PARAM_ACTION_GET_SIGNATURE:
-                getSignature(intent);
-                break;
-            case PARAM_ACTION_GET_BUNDLE:
-                getBundle(intent);
-                break;
-            case PARAM_ACTION_UPLOAD_DELIVERABLE:
-                uploadDeliverable(intent);
-                break;
-            case PARAM_ACTION_GET_DELIVERABLE:
-                getDeliverable(intent);
-                break;
+        if (intent.hasExtra(PARAM_ACTION)) {
+            Log.v(TAG, "MyWorkerThread, processIntent");
+            String action = intent.getStringExtra(PARAM_ACTION);
+            switch (action) {
+                case PARAM_ACTION_GET:
+                    get(intent);
+                    break;
+                case PARAM_ACTION_LIST:
+                    list(intent);
+                    break;
+                case PARAM_ACTION_GET_SIGNATURE:
+                    getSignature(intent);
+                    break;
+                case PARAM_ACTION_GET_BUNDLE:
+                    getBundle(intent);
+                    break;
+                case PARAM_ACTION_UPLOAD_DELIVERABLE:
+                    uploadDeliverable(intent);
+                    break;
+                case PARAM_ACTION_GET_DELIVERABLE:
+                    getDeliverable(intent);
+                    break;
 //                    case PARAM_ACTION_DOWNLOAD_DELIVERABLE:
 //                        downloadDeliverable( intent);
 //                        break;
-            case PARAM_ACTION_LIST_MESSAGES:
-                listMessages(intent);
-                break;
-            case PARAM_ACTION_LIST_NOTIFICATIONS:
-                listAlerts(intent);
-                break;
-            case PARAM_ACTION_LIST_TASKS:
-                listTasks(intent);
+                case PARAM_ACTION_LIST_MESSAGES:
+                    listMessages(intent);
+                    break;
+                case PARAM_ACTION_LIST_NOTIFICATIONS:
+                    listAlerts(intent);
+                    break;
+                case PARAM_ACTION_LIST_TASKS:
+                    listTasks(intent);
+            }
         }
     }
 

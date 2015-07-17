@@ -21,7 +21,7 @@ public class DocumentService extends MSService implements DocumentConstants {
     @Override
     public void processIntent(Intent intent) {
         Log.v(TAG, "processIntent");
-        if (this != null) {
+        if (this != null && intent.hasExtra(PARAM_ACTION)) {
             String action = intent.getStringExtra(PARAM_ACTION);
             switch (action) {
                 case PARAM_ACTION_DOWNLOAD_DOCUMENT:
