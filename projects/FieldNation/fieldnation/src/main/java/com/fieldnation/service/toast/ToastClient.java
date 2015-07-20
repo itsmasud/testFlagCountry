@@ -26,7 +26,6 @@ public class ToastClient extends TopicClient {
     private static final String PARAM_TITLE = "PARAM_TITLE";
     private static final String PARAM_BUTTON_TEXT = "PARAM_BUTTON_TEXT";
 
-    private static final String PARAM_DISMISS_INTENT = "PARAM_DISMISS_INTENT";
     private static final String PARAM_BUTTON_INTENT = "PARAM_BUTTON_INTENT";
     private static final String PARAM_DURATION = "PARAM_DURATION";
 
@@ -38,20 +37,17 @@ public class ToastClient extends TopicClient {
         super.disconnect(context, STAG);
     }
 
-    public static void snackbar(Context context, String title, PendingIntent dismissIntent) {
-        snackbar(context, title, null, dismissIntent, null);
+    public static void snackbar(Context context, String title, int duration) {
+        snackbar(context, title, null, null, duration);
     }
 
-    public static void snackbar(Context context, String title, String buttonText, PendingIntent dismissIntent, PendingIntent buttonIntent) {
+    public static void snackbar(Context context, String title, String buttonText, PendingIntent buttonIntent, int duration) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
         bundle.putString(PARAM_TITLE, title);
-        if (buttonText != null)
-            bundle.putString(PARAM_BUTTON_TEXT, buttonText);
-        if (dismissIntent != null)
-            bundle.putParcelable(PARAM_DISMISS_INTENT, dismissIntent);
-        if (buttonIntent != null)
-            bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
+        bundle.putInt(PARAM_DURATION, duration);
+        bundle.putString(PARAM_BUTTON_TEXT, buttonText);
+        bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
 
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
     }
@@ -89,11 +85,11 @@ public class ToastClient extends TopicClient {
         private void preShowSnackBar(Bundle bundle) {
             showSnackBar(bundle.getString(PARAM_TITLE),
                     bundle.getString(PARAM_BUTTON_TEXT),
-                    (PendingIntent) bundle.getParcelable(PARAM_DISMISS_INTENT),
-                    (PendingIntent) bundle.getParcelable(PARAM_BUTTON_INTENT));
+                    (PendingIntent) bundle.getParcelable(PARAM_BUTTON_INTENT),
+                    bundle.getInt(PARAM_DURATION));
         }
 
-        public void showSnackBar(String title, String buttonText, PendingIntent dismissIntent, PendingIntent buttonIntent) {
+        public void showSnackBar(String title, String buttonText, PendingIntent buttonIntent, int duration) {
         }
 
         private void preShowToast(Bundle bundle) {

@@ -1,7 +1,10 @@
 package com.fieldnation.ui;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +12,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
@@ -18,6 +23,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.FeedbackDialog;
 import com.fieldnation.ui.dialog.HelpDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
@@ -50,6 +56,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
+    private ToastClient _toastClient;
 
     // Data
     private Profile _profile;
@@ -137,6 +144,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
+        _toastClient = new ToastClient(_toastListener);
+        _toastClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
@@ -146,6 +155,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         _globalClient.disconnect(this);
+        _toastClient.disconnect(this);
         super.onPause();
     }
 
@@ -315,6 +325,43 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
+    private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        @Override
+        public void onConnected() {
+            _toastClient.subSnackbar();
+            _toastClient.subToast();
+        }
+
+        @Override
+        public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+            if (getWindow() == null || getWindow().getDecorView() == null)
+                return;
+
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), title, duration);
+            TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(getResources().getColor(R.color.fn_white_text));
+            snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
+
+            if (buttonText != null && buttonIntent != null) {
+                snackbar.setAction(buttonText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        try {
+                            buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
+                        } catch (PendingIntent.CanceledException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+            snackbar.show();
+        }
+
+        @Override
+        public void showToast(String title, int duration) {
+            Toast.makeText(AuthActionBarActivity.this, title, duration);
+        }
+    };
 
     // Menu
     @Override
