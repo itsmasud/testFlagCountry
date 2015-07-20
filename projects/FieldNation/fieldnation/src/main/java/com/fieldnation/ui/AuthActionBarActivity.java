@@ -140,12 +140,17 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        _toastClient = new ToastClient(_toastListener);
+        _toastClient.connect(this);
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
-        _toastClient = new ToastClient(_toastListener);
-        _toastClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
@@ -155,8 +160,13 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         _globalClient.disconnect(this);
-        _toastClient.disconnect(this);
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        _toastClient.disconnect(this);
+        super.onStop();
     }
 
     @Override
@@ -334,8 +344,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
-            if (getWindow() == null || getWindow().getDecorView() == null)
+            if (findViewById(android.R.id.content) == null) {
+                Log.v(TAG, "showSnackBar.findViewById() == null");
                 return;
+            }
 
             Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), title, duration);
             TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
