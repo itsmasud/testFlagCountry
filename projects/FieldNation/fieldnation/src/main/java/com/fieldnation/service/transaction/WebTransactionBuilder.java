@@ -84,8 +84,11 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
-
     public void send() {
+        context.startService(makeIntent());
+    }
+
+    public Intent makeIntent() {
         if (request != null) {
             intent.putExtra(PARAM_REQUEST, request.toByteArray());
         }
@@ -97,8 +100,7 @@ public class WebTransactionBuilder implements WebTransactionConstants {
             }
             intent.putExtra(PARAM_TRANSFORM_LIST, p);
         }
-
-        context.startService(intent);
+        return intent;
     }
 
 }
