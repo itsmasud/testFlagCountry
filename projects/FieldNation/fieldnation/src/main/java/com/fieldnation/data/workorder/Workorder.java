@@ -994,7 +994,7 @@ public class Workorder implements Parcelable {
     }
 
     public interface Listener {
-        public void onChange(Workorder workorder);
+        void onChange(Workorder workorder);
     }
 
     /*-*********************************************-*/

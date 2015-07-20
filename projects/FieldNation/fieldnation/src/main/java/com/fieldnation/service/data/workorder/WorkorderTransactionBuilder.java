@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 
 import com.fieldnation.data.workorder.Expense;
@@ -13,6 +14,7 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -122,7 +124,18 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
+    public static void action(Context context, long workorderId, String action, String params,
+                              String contentType, String body) {
+        context.startService(
+                action(context, workorderId, action, params, contentType, body,
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pAction(workorderId, action)));
+    }
+
+    public static Intent action(Context context, long workorderId, String action, String params,
+                                String contentType, String body,
+                                Class<? extends WebTransactionHandler> clazz,
+                                byte[] handlerParams) {
         try {
             JsonObject _action = new JsonObject();
             _action.put("_action[0].action", action);
@@ -144,10 +157,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 }
             }
 
-            WebTransactionBuilder.builder(context)
+            return WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
+                    .handler(clazz)
+                    .handlerParams(handlerParams)
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)
@@ -156,10 +169,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             workorderId,
                             "merges",
                             _action.toByteArray()))
-                    .send();
+                    .makeIntent();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return null;
     }
 
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
@@ -292,14 +306,36 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        context.startService(
+                actionRequestIntent(context, workorderId, expireInSeconds));
+    }
+
+    public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds) {
         String body = null;
 
         if (expireInSeconds != -1) {
             body = "expiration=" + expireInSeconds;
         }
 
-        action(context, workorderId, "request", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body);
+        return action(context, workorderId, "request", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                body,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds));
+    }
+
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+
+        context.startService(intent);
+    }
+
+    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        return action(context, workorderId, "assignment", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601));
     }
 
     public static void actionDecline(Context context, long workorderId) {
@@ -309,14 +345,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void actionReady(Context context, long workorderId) {
         action(context, workorderId, "ready", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "");
-    }
-
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        action(context, workorderId, "assignment", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601);
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
