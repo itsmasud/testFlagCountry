@@ -342,14 +342,16 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             tv.setTextColor(getResources().getColor(R.color.fn_white_text));
             snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
 
-            if (buttonText != null && buttonIntent != null) {
+            if (buttonText != null) {
                 snackbar.setAction(buttonText, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        try {
-                            buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
-                        } catch (PendingIntent.CanceledException e) {
-                            e.printStackTrace();
+                        if (buttonIntent != null) {
+                            try {
+                                buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
+                            } catch (PendingIntent.CanceledException e) {
+                                e.printStackTrace();
+                            }
                         }
                     }
                 });
@@ -359,7 +361,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void showToast(String title, int duration) {
-            Toast.makeText(AuthActionBarActivity.this, title, duration);
+            Toast.makeText(AuthActionBarActivity.this, title, duration).show();
         }
     };
 
