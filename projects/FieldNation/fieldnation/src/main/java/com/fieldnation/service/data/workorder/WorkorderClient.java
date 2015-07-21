@@ -274,9 +274,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.deleteShipment(context, workorderId, shipmentId);
     }
 
-    public static void actionCompleteShipmentTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
-        WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, taskId, printName, signatureJson);
-    }
 
     public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
         WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, shipmentId, taskId);
@@ -285,7 +282,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionSetShipmentDetails(
             Context context, long workorderId, String description, boolean isToSite, String carrier,
             String carrierName, String trackingNumber) {
-        WorkorderTransactionBuilder.actionSetShipmentDetails(context, workorderId, description,
+        WorkorderTransactionBuilder.postShipment(context, workorderId, description,
                 isToSite, carrier, carrierName, trackingNumber);
     }
 
@@ -293,7 +290,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             Context context, long workorderId, String description, boolean isToSite, String carrier,
             String carrierName, String trackingNumber, long taskId) {
 
-        WorkorderTransactionBuilder.actionSetShipmentDetails(context, workorderId, description,
+        WorkorderTransactionBuilder.postShipment(context, workorderId, description,
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
 
@@ -312,6 +309,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
     }
+
+//    public static void actionCompleteSignatureTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
+//        WorkorderTransactionBuilder.actionCompleteShipmentTask(context, workorderId, taskId, printName, signatureJson);
+//    }
 
     public boolean subGetSignature(boolean isSync) {
         return subGetSignature(0, 0, isSync);
