@@ -4,14 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.misc;
 
 public class PaymentFeeView extends RelativeLayout {
@@ -21,7 +20,7 @@ public class PaymentFeeView extends RelativeLayout {
     private View _statusView;
     private TextView _statusTextView;
     // bundle
-    private ImageView _bundleImageView;
+    private IconFontTextView _bundleImageView;
 
     // center panel
     // title
@@ -34,10 +33,8 @@ public class PaymentFeeView extends RelativeLayout {
     // right panel
     private TextView _paymentTextView;
     private TextView _basisTextView;
-    private Button _actionButton;
 
     // Data
-
     public PaymentFeeView(Context context) {
         this(context, null, -1);
     }
@@ -60,8 +57,7 @@ public class PaymentFeeView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle
-        _bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);
-
+        _bundleImageView = (IconFontTextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
@@ -73,8 +69,9 @@ public class PaymentFeeView extends RelativeLayout {
         _whenTextView = (TextView) findViewById(R.id.when_textview);
 
         // todo need to pick a button, and hide the others
-        _actionButton = (Button) findViewById(R.id.action_button_green);
-        _actionButton.setVisibility(GONE);
+        findViewById(R.id.action_button_green).setVisibility(GONE);
+        findViewById(R.id.action_button_gray).setVisibility(GONE);
+        findViewById(R.id.action_button_orange).setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);

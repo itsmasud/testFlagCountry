@@ -23,6 +23,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private static final int WEB_GET_PAY = 1;
 
     // UI
+    private View _paymentHeaderLayout;
     private TextView _idTextView;
     private TextView _paymentTextView;
     private TextView _paymentTypeTextView;
@@ -60,6 +61,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             finish();
         }
 
+        _paymentHeaderLayout = findViewById(R.id.paymentheader_layout);
         _idTextView = (TextView) findViewById(R.id.id_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
@@ -91,8 +93,14 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     }
 
     private void populateUi() {
-        if (_paid == null)
+        if (_listView == null)
             return;
+
+        if (_paid == null || _paid.getPaymentId() != _paymentId) {
+            _listView.setVisibility(View.GONE);
+            _paymentHeaderLayout.setVisibility(View.GONE);
+            return;
+        }
 
         try {
             if (_paid.getDatePaid() != null) {
@@ -131,6 +139,9 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
         _paymentTypeTextView.setText(paymethod);
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
+
+        _listView.setVisibility(View.VISIBLE);
+        _paymentHeaderLayout.setVisibility(View.VISIBLE);
     }
 
     /*-*********************************-*/
