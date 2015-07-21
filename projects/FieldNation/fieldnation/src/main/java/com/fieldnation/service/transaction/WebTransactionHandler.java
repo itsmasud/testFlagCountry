@@ -54,7 +54,7 @@ public abstract class WebTransactionHandler {
             WebTransactionHandler handler = (WebTransactionHandler) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            return handler.handleResult(context, transaction, resultData);
+            return handler.handleFail(context, transaction, resultData);
 
         } catch (Exception ex) {
             ex.printStackTrace();

@@ -1,12 +1,19 @@
 package com.fieldnation.service.data.workorder;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
+import android.support.design.widget.Snackbar;
 
 import com.fieldnation.Log;
+import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -50,6 +57,92 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             JsonObject obj = new JsonObject("action", "pAction");
             obj.put("workorderId", workorderId);
             obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pActionCreateShipment(long workorderId, String description, boolean isToSite,
+                                               String carrier, String carrierName, String trackingNumber, long taskId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pActionCreateShipment");
+            obj.put("workorderId", workorderId);
+            obj.put("description", description);
+            obj.put("isToSite", isToSite);
+            obj.put("carrier", carrier);
+            obj.put("carrierName", carrierName);
+            obj.put("trackingNumber", trackingNumber);
+            obj.put("taskId", taskId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pActionCompleteShipmentTask(long workorderId, long shipmentId, long taskId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pActionCompleteShipmentTask");
+            obj.put("workorderId", workorderId);
+            obj.put("shipmentId", shipmentId);
+            obj.put("taskId", taskId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pActionRequest(long workorderId, long expireInSeconds) {
+        try {
+            JsonObject obj = new JsonObject("action", "pActionRequest");
+            obj.put("workorderId", workorderId);
+            obj.put("expireInSeconds", expireInSeconds);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        try {
+            JsonObject obj = new JsonObject("action", "pAssignment");
+            obj.put("workorderId", workorderId);
+            obj.put("startTimeIso8601", startTimeIso8601);
+            obj.put("endTimeIso8601", endTimeIso8601);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pCounterOffer(long workorderId, boolean expires,
+                                       String reason, int expiresAfterInSecond, Pay pay,
+                                       Schedule schedule, Expense[] expenses) {
+        try {
+            JsonObject obj = new JsonObject("action", "pCounterOffer");
+            obj.put("workorderId", workorderId);
+            obj.put("expires", expires);
+            obj.put("reason", reason);
+            obj.put("expiresAfterInSecond", expiresAfterInSecond);
+
+            if (pay != null)
+                obj.put("pay", pay.toJson());
+
+            if (schedule != null)
+                obj.put("schedule", schedule.toJson());
+
+            if (expenses != null && expenses.length > 0) {
+                JsonArray ja = new JsonArray();
+                for (Expense expense : expenses) {
+                    ja.add(expense.toJson());
+                }
+                obj.put("expenses", ja);
+            }
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -128,9 +221,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     }
 
 
-    // plumbing
-
-
+    /*-*********************************-*/
+    /*-             Start               -*/
+    /*-*********************************-*/
     @Override
     public Result handleStart(Context context, WebTransaction transaction) {
         try {
@@ -157,6 +250,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
+    /*-**********************************-*/
+    /*-             Result               -*/
+    /*-**********************************-*/
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
@@ -171,6 +267,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleGetSignature(context, transaction, params, resultData);
                 case "pAction":
                     return handleAction(context, transaction, params, resultData);
+                case "pActionRequest":
+                    return handleActionRequest(context, transaction, params, resultData);
                 case "pMessageList":
                     return handleMessageList(context, transaction, params, resultData);
                 case "pAlertList":
@@ -181,6 +279,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleGetBundle(context, transaction, params, resultData);
                 case "pUploadDeliverable":
                     return handleFinishUploadDeliverable(context, transaction, params);
+                case "pAssignment":
+                    return handleConfirmAssignment(context, transaction, params, resultData);
+                case "pActionCreateShipment":
+                    return handleCreateShipment(context, transaction, params, resultData);
+                case "pActionCompleteShipmentTask":
+                    return handleCompleteShipmentTask(context, transaction, params, resultData);
+                case "pCounterOffer":
+                    return handleCounterOffer(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -188,43 +294,49 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
-    @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
-        try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
-            String action = params.getString("action");
-            switch (action) {
-                case "pDetails":
-                    WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
-                    break;
-                case "pList":
-                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync());
-                    break;
-                case "pGetSignature":
-                    WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
-                    break;
-                case "pAction":
-                    WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
-                    break;
-                case "pMessageList":
-                    WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());
-                    break;
-                case "pAlertList":
-                    WorkorderDispatch.listAlerts(context, params.getLong("workorderId"), null, true, transaction.isSync());
-                    break;
-                case "pTaskList":
-                    WorkorderDispatch.listTasks(context, params.getLong("workorderId"), null, true, transaction.isSync());
-                    break;
-                case "pGetBundle":
-                    WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
-                    break;
-                case "pUploadDeliverable":
-                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderid"), params.getLong("slotId"), params.getString("filename"), false, true);
-                    break;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    private Result handleCounterOffer(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCounterOffer");
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDispatch.action(context, workorderId, "counter_offer", false);
+
+        ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleCompleteShipmentTask(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCompleteShipmentTask");
+        long workorderId = params.getLong("workorderId");
+        long shipmentId = params.getLong("shipmentId");
+        long taskId = params.getLong("taskId");
+
+        WorkorderDispatch.action(context, workorderId, "complete_shipment_task", false);
+
+        ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleConfirmAssignment(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleConfirmAssignment");
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDispatch.action(context, workorderId, "assignment", false);
+
+        ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleCreateShipment(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCreateShiptment");
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDispatch.action(context, workorderId, "create_shipment", false);
+
+        ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
         return Result.FINISH;
     }
 
@@ -234,6 +346,18 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         String action = params.getString("param");
 
         WorkorderDispatch.action(context, workorderId, action, false);
+
+        return Result.FINISH;
+    }
+
+    private Result handleActionRequest(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleActionRequest");
+
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDispatch.action(context, workorderId, "request", false);
+
+        ToastClient.snackbar(context, "Success! You have requested this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
         return Result.FINISH;
     }
@@ -367,4 +491,173 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
+    /*-********************************-*/
+    /*-             Fail               -*/
+    /*-********************************-*/
+    @Override
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pDetails":
+                    WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
+                    break;
+                case "pList":
+                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync());
+                    break;
+                case "pGetSignature":
+                    WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
+                    break;
+                case "pAction":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
+                    break;
+                case "pMessageList":
+                    WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pAlertList":
+                    WorkorderDispatch.listAlerts(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pTaskList":
+                    WorkorderDispatch.listTasks(context, params.getLong("workorderId"), null, true, transaction.isSync());
+                    break;
+                case "pGetBundle":
+                    WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
+                    break;
+                case "pUploadDeliverable":
+                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderid"), params.getLong("slotId"), params.getString("filename"), false, true);
+                    break;
+                case "pActionRequest":
+                    return handleActionRequestFail(context, transaction, params, resultData);
+                case "pAssignment":
+                    return handleConfirmAssignmentFail(context, transaction, params, resultData);
+                case "pActionCreateShipment":
+                    return handleCreateShipmentFail(context, transaction, params, resultData);
+                case "pActionCompleteShipmentTask":
+                    return handleCompleteShipmentTaskFail(context, transaction, params, resultData);
+                case "pCounterOffer":
+                    return handleCounterOfferFail(context, transaction, params, resultData);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return Result.FINISH;
+    }
+
+    private Result handleCounterOfferFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCounterOfferFail");
+
+        long workorderId = params.getLong("workorderId");
+        boolean expires = params.getBoolean("expires");
+        String reason = params.getString("reason");
+        int expiresAfterInSecond = params.getInt("expiresAfterInSecond");
+
+        Pay pay = null;
+        if (params.has("pay")) {
+            pay = Pay.fromJson(params.getJsonObject("pay"));
+        }
+
+        Schedule schedule = null;
+        if (params.has("schedule")) {
+            schedule = Schedule.fromJson(params.getJsonObject("schedule"));
+        }
+
+        Expense[] expenses = null;
+        if (params.has("expenses")) {
+            JsonArray ja = params.getJsonArray("expenses");
+            if (ja != null && ja.size() > 0) {
+                expenses = new Expense[ja.size()];
+                for (int i = 0; i < ja.size(); i++) {
+                    expenses[i] = Expense.fromJson(ja.getJsonObject(i));
+                }
+            }
+        }
+
+        Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleCompleteShipmentTaskFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCompleteShipmentTask");
+
+        long workorderId = params.getLong("workorderId");
+        long shipmentId = params.getLong("shipmentId");
+        long taskId = params.getLong("taskId");
+
+        WorkorderDispatch.action(context, workorderId, "request", true);
+
+        Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Could not complete your shipment. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleCreateShipmentFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCreateShipmentFail");
+
+        long workorderId = params.getLong("workorderId");
+        String description = params.getString("description");
+        boolean isToSite = params.getBoolean("isToSite");
+        String carrier = params.getString("carrier");
+        String carrierName = params.getString("carrierName");
+        String trackingNumber = params.getString("trackingNumber");
+        long taskId = params.getLong("taskId");
+
+        WorkorderDispatch.action(context, workorderId, "request", true);
+
+        Intent intent = null;
+        if (taskId == -1)
+            intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber);
+        else
+            intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Could not add your shipment. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleActionRequestFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleActionRequestFail");
+
+        long workorderId = params.getLong("workorderId");
+        long expireInSeconds = params.getLong("expireInSeconds");
+
+        WorkorderDispatch.action(context, workorderId, "request", true);
+
+        Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleConfirmAssignmentFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleConfirmAssignmentFail");
+
+        long workorderId = params.getLong("workorderId");
+        String startTimeIso8601 = params.getString("startTimeIso8601");
+        String endTimeIso8601 = params.getString("endTimeIso8601");
+
+        WorkorderDispatch.action(context, workorderId, "assignment", true);
+
+        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
 }

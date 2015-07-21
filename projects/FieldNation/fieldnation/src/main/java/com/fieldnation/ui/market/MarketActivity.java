@@ -16,7 +16,7 @@ import java.util.List;
  * @author michael.carver
  */
 public class MarketActivity extends TabActionBarFragmentActivity {
-    private static final String TAG = "ui.market.MarketActivity";
+    private static final String TAG = "MarketActivity";
 
     // UI
     private WorkorderListFragment[] _fragments;

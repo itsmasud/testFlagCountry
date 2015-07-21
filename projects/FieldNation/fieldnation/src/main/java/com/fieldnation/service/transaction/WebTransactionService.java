@@ -278,6 +278,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
+                    Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -317,6 +318,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Thread.sleep(5000);
                     trans.requeue(context);
                     AuthTopicClient.dispatchRequestCommand(context);
+                    return true;
+                } else if (result.getResponseCode() / 100 != 2) {
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransaction.delete(context, trans.getId());
+                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                 }
 

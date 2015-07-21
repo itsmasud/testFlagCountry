@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
 
 import com.fieldnation.data.workorder.Expense;
@@ -13,6 +14,7 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -122,7 +124,18 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    public static void action(Context context, long workorderId, String action, String params, String contentType, String body) {
+    public static void action(Context context, long workorderId, String action, String params,
+                              String contentType, String body) {
+        context.startService(
+                action(context, workorderId, action, params, contentType, body,
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pAction(workorderId, action)));
+    }
+
+    public static Intent action(Context context, long workorderId, String action, String params,
+                                String contentType, String body,
+                                Class<? extends WebTransactionHandler> clazz,
+                                byte[] handlerParams) {
         try {
             JsonObject _action = new JsonObject();
             _action.put("_action[0].action", action);
@@ -144,10 +157,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 }
             }
 
-            WebTransactionBuilder.builder(context)
+            return WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
+                    .handler(clazz)
+                    .handlerParams(handlerParams)
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)
@@ -156,10 +169,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             workorderId,
                             "merges",
                             _action.toByteArray()))
-                    .send();
+                    .makeIntent();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return null;
     }
 
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
@@ -228,6 +242,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
+        context.startService(
+                actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond,
+                        pay, schedule, expenses)
+        );
+    }
+
+    public static Intent actionCounterOfferIntent(Context context, long workorderId, boolean expires,
+                                                  String reason, int expiresAfterInSecond, Pay pay,
+                                                  Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
         if (expires)
@@ -286,20 +309,45 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             payload += "&expenses=" + json.toString();
         }
 
-        action(context, workorderId, "counter_offer", null,
+        return action(context, workorderId, "counter_offer", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                payload);
+                payload,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pCounterOffer(workorderId, expires, reason,
+                        expiresAfterInSecond, pay, schedule, expenses));
     }
 
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        context.startService(
+                actionRequestIntent(context, workorderId, expireInSeconds));
+    }
+
+    public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds) {
         String body = null;
 
         if (expireInSeconds != -1) {
             body = "expiration=" + expireInSeconds;
         }
 
-        action(context, workorderId, "request", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body);
+        return action(context, workorderId, "request", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                body,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds));
+    }
+
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+
+        context.startService(intent);
+    }
+
+    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+        return action(context, workorderId, "assignment", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601));
     }
 
     public static void actionDecline(Context context, long workorderId) {
@@ -309,14 +357,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void actionReady(Context context, long workorderId) {
         action(context, workorderId, "ready", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "");
-    }
-
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        action(context, workorderId, "assignment", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601);
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
@@ -662,77 +703,77 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-***********************************-*/
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments")
-                            .body("description=" + misc.escapeForURL(description)
-                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
-                                    + "&carrier=" + carrier
-                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
-                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        context.startService(postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber));
+    }
+
+    public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
+                                            String carrier, String carrierName, String trackingNumber) {
+        return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=Other"
+                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber),
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pActionCreateShipment(workorderId,
+                        description, isToSite, carrier, carrierName, trackingNumber, -1));
     }
 
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber, long taskId) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments")
-                            .body("description=" + misc.escapeForURL(description)
-                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
-                                    + "&carrier=" + carrier
-                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
-                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)
-                                    + "&task_id=" + taskId))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+        context.startService(postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId));
     }
 
-    public static void postShipment(Context context, long workorderId, long shipmentId, String description, boolean isToSite,
-                                    String carrier, String carrierName, String trackingNumber) {
-        try {
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
-                    .useAuth(true)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("POST")
-                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
-                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId)
-                            .body("description=" + misc.escapeForURL(description)
-                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
-                                    + "&carrier=" + carrier
-                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
-                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
-                    .send();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
+    public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
+                                            String carrier, String carrierName, String trackingNumber, long taskId) {
+        return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "description=" + misc.escapeForURL(description)
+                        + "&direction=" + (isToSite ? "to_site" : "from_site")
+                        + "&carrier=Other"
+                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&tracking_number=" + misc.escapeForURL(trackingNumber)
+                        + "&task_id=" + taskId,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pActionCreateShipment(workorderId,
+                        description, isToSite, carrier, carrierName, trackingNumber, taskId));
     }
 
+    public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
+        context.startService(actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId));
+    }
+
+    public static Intent actionCompleteShipmentTaskIntent(Context context, long workorderId, long shipmentId, long taskId) {
+        return action(context, workorderId, "tasks/complete/" + taskId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "shipment_id=" + shipmentId,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pActionCompleteShipmentTask(workorderId, shipmentId, taskId));
+    }
+
+
+    //    public static void postShipment(Context context, long workorderId, long shipmentId, String description, boolean isToSite,
+//                                    String carrier, String carrierName, String trackingNumber) {
+//        try {
+//            WebTransactionBuilder.builder(context)
+//                    .priority(Priority.HIGH)
+//                    .handler(WorkorderTransactionHandler.class)
+//                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
+//                    .useAuth(true)
+//                    .request(new HttpJsonBuilder()
+//                            .protocol("https")
+//                            .method("POST")
+//                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+//                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId)
+//                            .body("description=" + misc.escapeForURL(description)
+//                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
+//                                    + "&carrier=" + carrier
+//                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+//                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
+//                    .send();
+//        } catch (Exception ex) {
+//            ex.printStackTrace();
+//        }
+//    }
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -750,40 +791,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void actionCompleteShipmentTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
+    public static void actionCompleteSignatureTask(Context context, long workorderId, long taskId, String printName, String signatureJson) {
         action(context, workorderId, "tasks/complete/" + taskId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "print_name=" + misc.escapeForURL(printName)
                         + "&signature_json=" + signatureJson);
-
     }
-
-    public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
-        action(context, workorderId, "tasks/complete/" + taskId, null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "shipment_id=" + shipmentId);
-    }
-
-    public static void actionSetShipmentDetails(Context context, long workorderId, String description, boolean isToSite,
-                                                String carrier, String carrierName, String trackingNumber) {
-        action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "description=" + misc.escapeForURL(description)
-                        + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier
-                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
-                        + "&tracking_number=" + misc.escapeForURL(trackingNumber));
-    }
-
-    public static void actionSetShipmentDetails(Context context, long workorderId, String description, boolean isToSite,
-                                                String carrier, String carrierName, String trackingNumber, long taskId) {
-        action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "description=" + misc.escapeForURL(description)
-                        + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=" + carrier
-                        + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
-                        + "&tracking_number=" + misc.escapeForURL(trackingNumber)
-                        + "&task_id=" + taskId);
-    }
-
 }
 
