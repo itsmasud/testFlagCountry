@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 
 import com.fieldnation.Log;
+import com.fieldnation.data.workorder.Expense;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -110,6 +113,36 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             obj.put("startTimeIso8601", startTimeIso8601);
             obj.put("endTimeIso8601", endTimeIso8601);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static byte[] pCounterOffer(long workorderId, boolean expires,
+                                       String reason, int expiresAfterInSecond, Pay pay,
+                                       Schedule schedule, Expense[] expenses) {
+        try {
+            JsonObject obj = new JsonObject("action", "pCounterOffer");
+            obj.put("workorderId", workorderId);
+            obj.put("expires", expires);
+            obj.put("reason", reason);
+            obj.put("expiresAfterInSecond", expiresAfterInSecond);
+
+            if (pay != null)
+                obj.put("pay", pay.toJson());
+
+            if (schedule != null)
+                obj.put("schedule", schedule.toJson());
+
+            if (expenses != null && expenses.length > 0) {
+                JsonArray ja = new JsonArray();
+                for (Expense expense : expenses) {
+                    ja.add(expense.toJson());
+                }
+                obj.put("expenses", ja);
+            }
             return obj.toByteArray();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -252,10 +285,23 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleCreateShipment(context, transaction, params, resultData);
                 case "pActionCompleteShipmentTask":
                     return handleCompleteShipmentTask(context, transaction, params, resultData);
+                case "pCounterOffer":
+                    return handleCounterOffer(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return Result.FINISH;
+    }
+
+    private Result handleCounterOffer(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCounterOffer");
+        long workorderId = params.getLong("workorderId");
+
+        WorkorderDispatch.action(context, workorderId, "counter_offer", false);
+
+        ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
         return Result.FINISH;
     }
 
@@ -265,7 +311,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long shipmentId = params.getLong("shipmentId");
         long taskId = params.getLong("taskId");
 
-        WorkorderDispatch.action(context, workorderId, "create_shipment", false);
+        WorkorderDispatch.action(context, workorderId, "complete_shipment_task", false);
 
         ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
@@ -489,10 +535,50 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleCreateShipmentFail(context, transaction, params, resultData);
                 case "pActionCompleteShipmentTask":
                     return handleCompleteShipmentTaskFail(context, transaction, params, resultData);
+                case "pCounterOffer":
+                    return handleCounterOfferFail(context, transaction, params, resultData);
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+        return Result.FINISH;
+    }
+
+    private Result handleCounterOfferFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCounterOfferFail");
+
+        long workorderId = params.getLong("workorderId");
+        boolean expires = params.getBoolean("expires");
+        String reason = params.getString("reason");
+        int expiresAfterInSecond = params.getInt("expiresAfterInSecond");
+
+        Pay pay = null;
+        if (params.has("pay")) {
+            pay = Pay.fromJson(params.getJsonObject("pay"));
+        }
+
+        Schedule schedule = null;
+        if (params.has("schedule")) {
+            schedule = Schedule.fromJson(params.getJsonObject("schedule"));
+        }
+
+        Expense[] expenses = null;
+        if (params.has("expenses")) {
+            JsonArray ja = params.getJsonArray("expenses");
+            if (ja != null && ja.size() > 0) {
+                expenses = new Expense[ja.size()];
+                for (int i = 0; i < ja.size(); i++) {
+                    expenses[i] = Expense.fromJson(ja.getJsonObject(i));
+                }
+            }
+        }
+
+        Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
+        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+        ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
+                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
         return Result.FINISH;
     }
 

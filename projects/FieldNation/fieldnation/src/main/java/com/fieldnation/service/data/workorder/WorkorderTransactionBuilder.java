@@ -242,6 +242,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
+        context.startService(
+                actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond,
+                        pay, schedule, expenses)
+        );
+    }
+
+    public static Intent actionCounterOfferIntent(Context context, long workorderId, boolean expires,
+                                                  String reason, int expiresAfterInSecond, Pay pay,
+                                                  Schedule schedule, Expense[] expenses) {
         String payload = "";
         // reason/expire
         if (expires)
@@ -300,9 +309,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             payload += "&expenses=" + json.toString();
         }
 
-        action(context, workorderId, "counter_offer", null,
+        return action(context, workorderId, "counter_offer", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                payload);
+                payload,
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pCounterOffer(workorderId, expires, reason,
+                        expiresAfterInSecond, pay, schedule, expenses));
     }
 
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
