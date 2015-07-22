@@ -100,9 +100,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         if (_workorder.canCounterOffer()) {
             _counterOfferButton.setVisibility(View.VISIBLE);
             if (_workorder.getCounterOfferInfo() == null) {
-                _counterOfferButton.setText(R.string.counter_offer);
+                _counterOfferButton.setText(R.string.btn_counter);
             } else {
-                _counterOfferButton.setText(R.string.view_counter);
+                _counterOfferButton.setText(R.string.btn_view_counter);
             }
         }
 
