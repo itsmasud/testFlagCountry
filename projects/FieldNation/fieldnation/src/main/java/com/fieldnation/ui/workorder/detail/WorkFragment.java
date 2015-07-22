@@ -268,13 +268,6 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        if (getArguments() != null) {
-            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
-                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
-                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
-                _confirmDialog.show(_workorder, _workorder.getSchedule());
-            }
-        }
         populateUi();
     }
 
@@ -377,6 +370,11 @@ public class WorkFragment extends WorkorderFragment {
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -511,6 +509,16 @@ public class WorkFragment extends WorkorderFragment {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
         }
+
+        if (getArguments() != null) {
+            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
+                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
+                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
+
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+            }
+        }
+
     }
 
     private void requestWorkorder() {
