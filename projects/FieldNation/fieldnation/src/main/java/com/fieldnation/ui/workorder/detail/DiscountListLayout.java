@@ -89,8 +89,13 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
             setVisibility(VISIBLE);
         }
 
-        final Discount[] list = _workorder.getDiscounts();
+        if (_workorder.canChangeDiscounts()) {
+            _addButton.setVisibility(VISIBLE);
+        } else {
+            _addButton.setVisibility(GONE);
+        }
 
+        final Discount[] list = _workorder.getDiscounts();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
@@ -123,18 +128,6 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
             }
         };
         postDelayed(r, new Random().nextInt(1000));
-
-        if (_workorder.canChangeDiscounts()) {
-            _addButton.setVisibility(VISIBLE);
-        } else {
-            _addButton.setVisibility(GONE);
-        }
-
-        if (_workorder.canChangeDiscounts() == false) {
-            _addButton.setVisibility(GONE);
-        } else {
-            _addButton.setVisibility(VISIBLE);
-        }
     }
 
     /*-*********************************-*/
