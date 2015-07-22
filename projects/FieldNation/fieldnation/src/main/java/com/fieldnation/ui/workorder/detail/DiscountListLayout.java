@@ -82,7 +82,8 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         if (_workorder.getPay() == null)
             return;
 
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
+                || _workorder.getPay().hidePay()) {
             setVisibility(GONE);
             return;
         } else {
@@ -94,7 +95,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         } else {
             _addButton.setVisibility(GONE);
         }
-        
+
         final Discount[] list = _workorder.getDiscounts();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);

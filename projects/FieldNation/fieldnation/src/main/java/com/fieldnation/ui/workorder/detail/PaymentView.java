@@ -72,7 +72,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
 
     private void refresh() {
         Pay pay = _workorder.getPay();
-        if (pay != null) {
+        if (pay != null && !pay.hidePay()) {
             _termsTextView.setVisibility(VISIBLE);
             String[] paytext = pay.toDisplayStringLong();
             String data = "";

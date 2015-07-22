@@ -658,14 +658,16 @@ public class Workorder implements Parcelable {
         WorkorderStatus status = getStatus().getWorkorderStatus();
         return (status == WorkorderStatus.ASSIGNED
                 || status == WorkorderStatus.INPROGRESS)
-                && getPay() != null;
+                && getPay() != null
+				&& !getPay().hidePay();
     }
 
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
                 && !isBundle()
-                && getPay() != null;
+                && getPay() != null
+                && !getPay().hidePay();
     }
 
     public boolean canComplete() {
@@ -768,8 +770,10 @@ public class Workorder implements Parcelable {
 
     public boolean canAcceptSignature() {
         WorkorderStatus status = getWorkorderStatus();
-        return (status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
-                || status == WorkorderStatus.INPROGRESS;
+        WorkorderSubstatus substatus = getWorkorderSubstatus();
+        return ((status == WorkorderStatus.ASSIGNED && getWorkorderSubstatus() != WorkorderSubstatus.UNCONFIRMED)
+                || status == WorkorderStatus.INPROGRESS)
+                && (substatus != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED && substatus != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED);
     }
 
     public boolean canChangeClosingNotes() {

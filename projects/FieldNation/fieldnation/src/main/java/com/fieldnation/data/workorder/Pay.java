@@ -26,6 +26,8 @@ public class Pay implements Parcelable {
     private String _expenses;
     @Json(name = "fixedAmount")
     private Double _fixedAmount;
+    @Json(name = "hidePay")
+    private Boolean _hidePay;
     @Json(name = "maxDevice")
     private Integer _maxDevice;
     @Json(name = "maxHour")
@@ -74,6 +76,13 @@ public class Pay implements Parcelable {
 
     public Double getFixedAmount() {
         return _fixedAmount;
+    }
+
+    public Boolean hidePay() {
+        if (_hidePay != null)
+            return _hidePay;
+
+        return false;
     }
 
     public Integer getMaxDevice() {
@@ -178,6 +187,7 @@ public class Pay implements Parcelable {
     public String toDisplayStringShort() {
         String basis = getPayRateBasis();
 
+        try {
         // Todo, localize this
         if ("Fixed".equals(basis)) {
             return misc.toCurrency(getFixedAmount());
@@ -189,6 +199,9 @@ public class Pay implements Parcelable {
             // getBlendedAdditionalHours();
         } else if ("Per Device".equals(basis)) {
             return misc.toCurrency(getPerDevice());
+        }
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
         return null;
     }
