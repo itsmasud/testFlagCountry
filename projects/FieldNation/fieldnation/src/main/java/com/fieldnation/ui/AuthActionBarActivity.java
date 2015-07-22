@@ -226,6 +226,23 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     public void onProfile(Profile profile) {
     }
 
+    // Menu
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                _actionBarView.showLeftNav();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (!_actionBarView.onBackPressed())
+            super.onBackPressed();
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -376,16 +393,5 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
         }
     };
-
-    // Menu
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                _actionBarView.showLeftNav();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }
 

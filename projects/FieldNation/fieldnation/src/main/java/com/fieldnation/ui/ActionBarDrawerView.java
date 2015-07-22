@@ -77,6 +77,30 @@ public class ActionBarDrawerView extends FrameLayout {
         _drawerLayout.openDrawer(GravityCompat.START);
     }
 
+    /**
+     * @return true if action handled, false otherwise
+     */
+    public boolean onBackPressed() {
+        boolean handled = false;
+
+        if (_drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            _drawerLayout.closeDrawer(GravityCompat.START);
+            handled = true;
+        }
+
+        if (_messageDrawerView.isOpen()) {
+            _messageDrawerView.animateHide();
+            handled = true;
+        }
+
+        if (_notificationDrawerView.isOpen()) {
+            _notificationDrawerView.animateHide();
+            handled = true;
+        }
+
+        return handled;
+    }
+
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
         if (child.getId() == R.id.drawer_content) {

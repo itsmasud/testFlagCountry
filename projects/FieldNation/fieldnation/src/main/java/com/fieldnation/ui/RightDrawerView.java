@@ -25,6 +25,7 @@ public class RightDrawerView extends FrameLayout {
     private FrameLayout _bodyContainer;
     private FrameLayout _toolbarContainer;
     private View _fader;
+
     private View _topSheetView;
 
     private GestureDetectorCompat _gestureDetector;
@@ -97,8 +98,7 @@ public class RightDrawerView extends FrameLayout {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        _gestureDetector.onTouchEvent(event);
-        return super.onTouchEvent(event);
+        return _gestureDetector.onTouchEvent(event);
     }
 
     /*-*********************************-*/
