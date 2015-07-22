@@ -206,7 +206,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
             _acceptTermsDialog.show();
-        } else if (!profile.hasValidCoi() && gs.canRemindCoi()) {
+        } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),

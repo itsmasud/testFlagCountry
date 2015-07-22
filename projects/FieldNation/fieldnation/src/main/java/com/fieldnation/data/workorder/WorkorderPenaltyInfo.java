@@ -5,24 +5,6 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class WorkorderPenaltyInfo {
-    @Json(name = "0")
-    private Integer _0;
-    @Json(name = "1")
-    private Integer _1;
-    @Json(name = "2")
-    private String _2;
-    @Json(name = "3")
-    private Integer _3;
-    @Json(name = "4")
-    private Integer _4;
-    @Json(name = "5")
-    private String _5;
-    @Json(name = "6")
-    private Integer _6;
-    @Json(name = "7")
-    private Integer _7;
-    @Json(name = "8")
-    private Integer _8;
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "charge_type")
@@ -45,42 +27,6 @@ public class WorkorderPenaltyInfo {
     private Integer _wocpfId;
 
     public WorkorderPenaltyInfo() {
-    }
-
-    public Integer get0() {
-        return _0;
-    }
-
-    public Integer get1() {
-        return _1;
-    }
-
-    public String get2() {
-        return _2;
-    }
-
-    public Integer get3() {
-        return _3;
-    }
-
-    public Integer get4() {
-        return _4;
-    }
-
-    public String get5() {
-        return _5;
-    }
-
-    public Integer get6() {
-        return _6;
-    }
-
-    public Integer get7() {
-        return _7;
-    }
-
-    public Integer get8() {
-        return _8;
     }
 
     public Double getAmount() {
