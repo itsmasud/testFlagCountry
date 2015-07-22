@@ -64,7 +64,8 @@
                     style="@style/DrawerProfileButton"
                     android:layout_alignBottom="@+id/profile_container"
                     android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/profile_container" />
+                    android:layout_alignTop="@+id/profile_container"
+                    android:visibility="gone"/>
             </RelativeLayout>
 
             <View
