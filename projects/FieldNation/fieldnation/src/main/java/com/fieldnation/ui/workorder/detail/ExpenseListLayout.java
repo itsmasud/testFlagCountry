@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Workorder;
@@ -79,10 +80,11 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
-        if (_workorder.getPay() == null)
+        if (_workorder.getPay() == null || _workorder.getPay().hidePay())
             return;
 
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE) {
+        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
+                || !GlobalState.getContext().getProfile().getCanViewPayments()) {
             setVisibility(GONE);
             return;
         } else {
