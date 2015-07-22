@@ -89,8 +89,13 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
             setVisibility(VISIBLE);
         }
 
-        final Expense[] list = _workorder.getAdditionalExpenses();
+        if (_workorder.canChangeExpenses()) {
+            _addButton.setVisibility(VISIBLE);
+        } else {
+            _addButton.setVisibility(GONE);
+        }
 
+        final Expense[] list = _workorder.getAdditionalExpenses();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
             _listView.setVisibility(GONE);
@@ -123,12 +128,6 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
             }
         };
         postDelayed(r, new Random().nextInt(1000));
-
-        if (_workorder.canChangeExpenses()) {
-            _addButton.setVisibility(VISIBLE);
-        } else {
-            _addButton.setVisibility(GONE);
-        }
     }
 
     /*-*********************************-*/
