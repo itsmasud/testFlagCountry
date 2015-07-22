@@ -129,6 +129,12 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         } else {
             _addButton.setVisibility(GONE);
         }
+
+        if (_workorder.canChangeDiscounts() == false) {
+            _addButton.setVisibility(GONE);
+        } else {
+            _addButton.setVisibility(VISIBLE);
+        }
     }
 
     /*-*********************************-*/
