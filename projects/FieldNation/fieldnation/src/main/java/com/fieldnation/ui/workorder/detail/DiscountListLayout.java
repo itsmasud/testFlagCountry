@@ -94,6 +94,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         } else {
             _addButton.setVisibility(GONE);
         }
+        
         final Discount[] list = _workorder.getDiscounts();
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(VISIBLE);
