@@ -307,7 +307,7 @@ public class GlobalState extends Application {
 
     public void setCoiReminded() {
         Log.v(TAG, "setCoiReminded");
-        misc.printStackTrace("setCoiReminded");
+        // misc.printStackTrace("setCoiReminded");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks

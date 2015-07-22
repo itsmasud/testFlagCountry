@@ -138,32 +138,20 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
             if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
                 onList(bundle.getInt(PARAM_PAGE), null, true);
             } else {
-                new AsyncTaskEx<Bundle, Object, List<Payment>>() {
-                    private int page;
+                int page = bundle.getInt(PARAM_PAGE);
+                List<Payment> list = new LinkedList<>();
+                try {
+                    JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
 
-                    @Override
-                    protected List<Payment> doInBackground(Bundle... params) {
-                        Bundle bundle = params[0];
-                        page = bundle.getInt(PARAM_PAGE);
-                        List<Payment> list = new LinkedList<>();
-                        try {
-                            JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
-
-                            for (int i = 0; i < ja.size(); i++) {
-                                list.add(Payment.fromJson(ja.getJsonObject(i)));
-                            }
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                            return null;
-                        }
-                        return list;
+                    for (int i = 0; i < ja.size(); i++) {
+                        list.add(Payment.fromJson(ja.getJsonObject(i)));
                     }
 
-                    @Override
-                    protected void onPostExecute(List<Payment> payments) {
-                        onList(page, payments, false);
-                    }
-                }.executeEx(bundle);
+                    onList(page, list, false);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    onList(page, null, false);
+                }
             }
         }
 

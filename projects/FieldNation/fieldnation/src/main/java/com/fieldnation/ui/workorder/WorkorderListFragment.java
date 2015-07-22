@@ -300,7 +300,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void setLoading(boolean loading) {
         Log.v(TAG, "setLoading()");
-        misc.printStackTrace("setLoading(" + loading + ")");
+        // misc.printStackTrace("setLoading(" + loading + ")");
         if (_loadingView != null) {
             if (loading) {
                 _loadingView.startRefreshing();
