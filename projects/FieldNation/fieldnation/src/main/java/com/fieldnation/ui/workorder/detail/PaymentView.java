@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.utils.misc;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
@@ -107,6 +108,12 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
             _actionButton.setText("COUNTER DISABLED");
         } else {
             _actionButton.setVisibility(GONE);
+        }
+
+        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.CANCELED || _workorder.getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED) {
+            _actionButton.setVisibility(GONE);
+        } else {
+            _actionButton.setVisibility(VISIBLE);
         }
     }
 
