@@ -7,10 +7,7 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.ui.RightDrawerMessagesView;
-import com.fieldnation.ui.RightDrawerNotificationsView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
-import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -78,7 +75,7 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
-        misc.printStackTrace("startNew");
+        // misc.printStackTrace("startNew");
         Intent intent = new Intent(context, MyWorkActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
