@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -27,6 +28,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
     public static final String INTENT_FIELD_WORKORDER = "WorkorderActivity:workorder";
     public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
+    public static final String INTENT_FIELD_ACTION = "WorkorderActivity:INTENT_FIELD_ACTION";
+    public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
@@ -52,6 +55,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private boolean _created = false;
     private Workorder _workorder = null;
     private boolean _hidingTasks;
+    private boolean _doConfirm = false;
 
     // Services
     private PagerAdapter _pagerAdapter;
@@ -80,6 +84,14 @@ public class WorkorderActivity extends AuthActionBarActivity {
             } else {
                 _currentTab = TAB_DETAILS;
             }
+
+            if (intent.hasExtra(INTENT_FIELD_ACTION)) {
+                if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
+                    Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
+                    _doConfirm = true;
+                }
+            }
+
             // taking a link from e-mail/browser
             if (Intent.ACTION_VIEW.equals(intent.getAction())) {
                 try {
@@ -202,6 +214,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
                 _fragments[i].setLoadingListener(_workorderFrag_loadingListener);
+                if (getIntent() != null && getIntent().getExtras() != null)
+                    _fragments[i].setArguments(getIntent().getExtras());
             }
         }
 
@@ -398,5 +412,17 @@ public class WorkorderActivity extends AuthActionBarActivity {
             populateUi();
         }
     };
+
+    public static Intent makeIntentConfirm(Context context, long workorderId) {
+        Log.v(TAG, "makeIntentConfirm");
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
+        return intent;
+    }
+
 }
 

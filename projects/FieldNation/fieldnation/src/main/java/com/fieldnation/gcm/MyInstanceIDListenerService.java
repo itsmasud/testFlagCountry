@@ -17,12 +17,11 @@
 package com.fieldnation.gcm;
 
 import android.content.Intent;
-import android.util.Log;
 
 import com.google.android.gms.iid.InstanceIDListenerService;
 
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
-    private static final String TAG = "MyInstanceIDLS";
+    private static final String TAG = "MyInstanceIDListenerService";
 
     /**
      * Called if InstanceID token is updated. This may occur if the security of
@@ -36,12 +35,5 @@ public class MyInstanceIDListenerService extends InstanceIDListenerService {
         Intent intent = new Intent(this, RegistrationIntentService.class);
         startService(intent);
     }
-    // [END refresh_token]
-
-
-    @Override
-    public void onDestroy() {
-        Log.v(TAG, "onDestroy");
-        super.onDestroy();
-    }
+// [END refresh_token]
 }

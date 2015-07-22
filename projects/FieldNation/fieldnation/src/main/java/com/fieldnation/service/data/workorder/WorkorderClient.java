@@ -442,6 +442,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionWithdrawRequest(context, workorderId);
     }
 
+    public static void actionReeadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/

@@ -268,6 +268,13 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
+        if (getArguments() != null) {
+            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
+                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
+                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+            }
+        }
         populateUi();
     }
 
