@@ -55,7 +55,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private boolean _created = false;
     private Workorder _workorder = null;
     private boolean _hidingTasks;
-    private boolean _doConfirm = false;
 
     // Services
     private PagerAdapter _pagerAdapter;
@@ -88,7 +87,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
             if (intent.hasExtra(INTENT_FIELD_ACTION)) {
                 if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
                     Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
-                    _doConfirm = true;
                 }
             }
 

@@ -516,6 +516,7 @@ public class WorkFragment extends WorkorderFragment {
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
                 _confirmDialog.show(_workorder, _workorder.getSchedule());
+                getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
 
