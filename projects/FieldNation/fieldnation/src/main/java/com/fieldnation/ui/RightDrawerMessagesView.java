@@ -92,10 +92,18 @@ public class RightDrawerMessagesView extends FrameLayout {
         _rightDrawer.animateShow();
     }
 
+    public void animateHide() {
+        _rightDrawer.animateHide();
+    }
+
+    public boolean isOpen() {
+        return _rightDrawer.getVisibility() == VISIBLE;
+    }
+
     private final View.OnClickListener _close_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _rightDrawer.animateHide();
+            animateHide();
         }
     };
 
