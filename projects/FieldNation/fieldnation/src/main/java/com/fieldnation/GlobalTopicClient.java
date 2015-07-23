@@ -79,11 +79,11 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_APP_UPDATE, null, Sticky.FOREVER);
+        TopicService.dispatchEvent(context, TOPIC_SHUTDOWN, null, Sticky.NONE);
     }
 
     public boolean registerAppShutdown() {
-        return register(TOPIC_APP_UPDATE, TAG);
+        return register(TOPIC_SHUTDOWN, TAG);
     }
 
     public boolean registerShowFeedbackDialog() {
@@ -157,7 +157,6 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     public boolean registerNetworkConnect() {
         return register(TOPIC_NETWORK_COMMAND_CONNECT, TAG);
     }
-
 
     // events
     public static abstract class Listener extends TopicClient.Listener {

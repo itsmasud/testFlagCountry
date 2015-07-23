@@ -43,6 +43,7 @@ public class TopicClient implements TopicConstants {
     }
 
     public void disconnect(Context context, String userTag) {
+        _listener = null;
         delete(userTag);
         context.unbindService(_serviceConnection);
         _subscribed.clear();

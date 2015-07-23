@@ -90,8 +90,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
-
-
     }
 
     @Override
