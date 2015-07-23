@@ -109,8 +109,9 @@ public class WebCrawlerService extends Service {
         }
 
         Log.v(TAG, "Do nothing");
+        stopSelf();
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     private void purgeOldData() {
@@ -200,9 +201,12 @@ public class WebCrawlerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _workorderClient.disconnect(this);
-        _profileClient.disconnect(this);
-        _workorderThreadManager.shutdown();
+        if (_workorderClient != null)
+            _workorderClient.disconnect(this);
+        if (_profileClient != null)
+            _profileClient.disconnect(this);
+        if (_workorderThreadManager != null)
+            _workorderThreadManager.shutdown();
         _isRunning = false;
         super.onDestroy();
     }
