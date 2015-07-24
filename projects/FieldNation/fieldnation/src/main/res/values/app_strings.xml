@@ -326,17 +326,36 @@
     <string name="confirm">Confirm</string>
 
     <!-- Preferences -->
-    <string name="pref_data_settings">Data Settings</string>
+    <!-- sync settings -->
+    <string name="pref_string_sync_category_title">Sync Settings</string>
 
-    <string name="pref_key_allow_data_purge">pref_key_allow_data_purge</string>
-    <string name="pref_string_data_purge_title">Allow Data Purging</string>
-    <string name="pref_string_data_purge_summary">Allows removing old data</string>
-    <string name="pref_default_purge_rate">7</string>
+    <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
+    <string name="pref_string_sync_enable_title">Enable sync</string>
+    <string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>
 
-    <string name="pref_key_purge_rate">pref_key_purge_rate</string>
-    <string name="pref_string_purge_rate">Purge data older than</string>
+    <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
+    <string name="pref_string_sync_start_title">Start sync at</string>
 
-    <string-array name="pref_purge_titles">
+    <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
+    <string name="pref_string_sync_require_wifi_title">Only on wifi</string>
+    <string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>
+
+    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
+    <string name="pref_string_sync_require_power_title">Only while charging</string>
+    <string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>
+
+    <!-- data settings -->
+    <string name="pref_string_data_settings_category_title">Data Settings</string>
+
+    <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
+    <string name="pref_string_data_remove_title">Remove unused data</string>
+    <string name="pref_string_data_remove_summary">Unused data will be removed from your device.</string>
+
+    <string name="pref_key_remove_rate">pref_key_remove_rate</string>
+    <string name="pref_default_remove_rate">7</string>
+    <string name="pref_string_remove_rate">Remove unused data older then</string>
+
+    <string-array name="pref_remove_titles">
         <item>1 day</item>
         <item>3 days</item>
         <item>1 week</item>
@@ -346,7 +365,7 @@
         <item>3 months</item>
         <item>6 months</item>
     </string-array>
-    <string-array name="pref_purge_values">
+    <string-array name="pref_remove_values">
         <item>1</item>
         <item>3</item>
         <item>7</item>
@@ -357,14 +376,9 @@
         <item>180</item>
     </string-array>
 
-    <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
-    <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
-    <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
-    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
-    <string name="pref_key_sync_skip_profile_images">pref_key_sync_skip_profile_images</string>
-
     <string name="pref_key_profile_photo_wifi_only">pref_key_profile_photo_wifi_only</string>
-    <string name="pref_key_profile_photo_ttl">pref_key_profile_photo_ttl</string>
+    <string name="pref_string_profile_photo_wifi_title">Use wifi to download profile images</string>
+    <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
 
     <string name="icfont_arrow_r">\uF106</string>
     <string name="icfont_bundle">\uF10D</string>
