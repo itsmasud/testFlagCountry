@@ -137,7 +137,7 @@ public class Pay implements Parcelable {
 
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
     public Pay(double hourlyRate, double maxHours) {
         _payRateBasis = "Hourly";
         _perHour = hourlyRate;
@@ -171,7 +171,7 @@ public class Pay implements Parcelable {
 
         // Todo, need to localize this
         if ("Fixed".equals(basis)) {
-            line1 = "Fixed " + misc.toCurrency(getFixedAmount());
+            line1 = misc.toCurrency(getFixedAmount()) + " Fixed";
         } else if ("Hourly".equals(basis)) {
             line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
         } else if ("Blended".equals(basis)) {
@@ -188,18 +188,18 @@ public class Pay implements Parcelable {
         String basis = getPayRateBasis();
 
         try {
-        // Todo, localize this
-        if ("Fixed".equals(basis)) {
-            return misc.toCurrency(getFixedAmount());
-        } else if ("Hourly".equals(basis)) {
-            return misc.toCurrency(getPerHour());
-        } else if ("Blended".equals(basis)) {
-            return misc.toCurrency(getBlendedStartRate());
-            // + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
-            // getBlendedAdditionalHours();
-        } else if ("Per Device".equals(basis)) {
-            return misc.toCurrency(getPerDevice());
-        }
+            // Todo, localize this
+            if ("Fixed".equals(basis)) {
+                return misc.toCurrency(getFixedAmount());
+            } else if ("Hourly".equals(basis)) {
+                return misc.toCurrency(getPerHour());
+            } else if ("Blended".equals(basis)) {
+                return misc.toCurrency(getBlendedStartRate());
+                // + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
+                // getBlendedAdditionalHours();
+            } else if ("Per Device".equals(basis)) {
+                return misc.toCurrency(getPerDevice());
+            }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
