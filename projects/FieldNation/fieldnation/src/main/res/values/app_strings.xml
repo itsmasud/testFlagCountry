@@ -328,15 +328,15 @@
     <!-- Preferences -->
     <string name="pref_data_settings">Data Settings</string>
 
-    <string name="pref_key_allow_data_purge">pref_key_allow_data_purge</string>
-    <string name="pref_string_data_purge_title">Allow Data Purging</string>
-    <string name="pref_string_data_purge_summary">Allows removing old data</string>
-    <string name="pref_default_purge_rate">7</string>
+    <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
+    <string name="pref_string_data_remove_title">Remove unused data</string>
+    <string name="pref_string_data_remove_summary">Unused data will be removed from your device.</string>
+    <string name="pref_default_remove_rate">7</string>
 
-    <string name="pref_key_purge_rate">pref_key_purge_rate</string>
-    <string name="pref_string_purge_rate">Purge data older than</string>
+    <string name="pref_key_remove_rate">pref_key_remove_rate</string>
+    <string name="pref_string_remove_rate">Remove unused data older then</string>
 
-    <string-array name="pref_purge_titles">
+    <string-array name="pref_remove_titles">
         <item>1 day</item>
         <item>3 days</item>
         <item>1 week</item>
@@ -346,7 +346,7 @@
         <item>3 months</item>
         <item>6 months</item>
     </string-array>
-    <string-array name="pref_purge_values">
+    <string-array name="pref_remove_values">
         <item>1</item>
         <item>3</item>
         <item>7</item>

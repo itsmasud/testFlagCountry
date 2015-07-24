@@ -3,18 +3,18 @@
     <PreferenceCategory android:title="@string/pref_data_settings">
         <CheckBoxPreference
             android:defaultValue="true"
-            android:key="@string/pref_key_allow_data_purge"
-            android:summary="@string/pref_string_data_purge_summary"
-            android:title="@string/pref_string_data_purge_title" />
+            android:key="@string/pref_key_allow_data_remove"
+            android:summary="@string/pref_string_data_remove_summary"
+            android:title="@string/pref_string_data_remove_title" />
         <ListPreference
-            android:defaultValue="@string/pref_default_purge_rate"
-            android:dependency="@string/pref_key_allow_data_purge"
-            android:entries="@array/pref_purge_titles"
-            android:entryValues="@array/pref_purge_values"
-            android:key="@string/pref_key_purge_rate"
+            android:defaultValue="@string/pref_default_remove_rate"
+            android:dependency="@string/pref_key_allow_data_remove"
+            android:entries="@array/pref_remove_titles"
+            android:entryValues="@array/pref_remove_values"
+            android:key="@string/pref_key_remove_rate"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
-            android:title="@string/pref_string_purge_rate" />
+            android:title="@string/pref_string_remove_rate" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="Profile Images">
@@ -24,10 +24,10 @@
             android:summary="Limit profile image downloads"
             android:title="Require wifi for download" />
         <ListPreference
-            android:defaultValue="@string/pref_default_purge_rate"
-            android:dependency="@string/pref_key_allow_data_purge"
-            android:entries="@array/pref_purge_titles"
-            android:entryValues="@array/pref_purge_values"
+            android:defaultValue="@string/pref_default_remove_rate"
+            android:dependency="@string/pref_key_allow_data_remove"
+            android:entries="@array/pref_remove_titles"
+            android:entryValues="@array/pref_remove_values"
             android:key="@string/pref_key_profile_photo_ttl"
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
@@ -42,31 +42,31 @@
 
         <Preference
             android:dependency="@string/pref_key_sync_enabled"
-            android:summary="Sync will download all of your data every day so that you can access it even while disconnected from the network. This feature can use a lot of space on your phone!" />
+            android:summary="Sync will download all of your data every day allowing you to access it while offline." />
 
         <com.fieldnation.TimePreference
             android:defaultValue="180"
             android:dependency="@string/pref_key_sync_enabled"
             android:key="@string/pref_key_sync_start_time"
-            android:title="Start Sync at" />
+            android:title="Start sync at" />
 
         <CheckBoxPreference
             android:defaultValue="true"
             android:dependency="@string/pref_key_sync_enabled"
             android:key="@string/pref_key_sync_require_wifi"
-            android:summary="If checked then sync will only run when connected to wifi"
-            android:title="Only run on Wifi" />
+            android:summary="Sync will only run when connected to wifi."
+            android:title="Only on wifi" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:dependency="@string/pref_key_sync_enabled"
             android:key="@string/pref_key_sync_require_power"
-            android:summary="If checked then sync will only run while the device is plugged in"
-            android:title="Only run while charging" />
+            android:summary="Sync will only run while device is charging."
+            android:title="Only while charging" />
         <CheckBoxPreference
             android:defaultValue="true"
             android:dependency="@string/pref_key_sync_enabled"
             android:key="@string/pref_key_sync_skip_profile_images"
-            android:summary="If checked then profile images for messages will not be downloaded to save space"
-            android:title="Don't sync profile images" />
+            android:summary="Profile images used for messages will not sync."
+            android:title="Do not sync profile images" />
     </PreferenceCategory>
 </PreferenceScreen>
