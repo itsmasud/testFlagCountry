@@ -28,7 +28,7 @@ public class PhotoService extends MSService implements PhotoConstants {
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_profile_photo_ttl), "-1"));
+        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
         _requireWifi = settings.getBoolean(getString(R.string.pref_key_profile_photo_wifi_only), false);
 
         Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " _requireWifi: " + _requireWifi);

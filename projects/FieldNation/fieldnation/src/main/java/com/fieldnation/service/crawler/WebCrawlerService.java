@@ -51,7 +51,6 @@ public class WebCrawlerService extends Service {
     private boolean _haveProfile = false;
     private long _lastRequestTime;
     private long _requestCounter = 0;
-    private boolean _skipProfileImages = true;
     private boolean _isRunning = false;
     private long _imageDaysToLive = -1;
     private boolean _runningPurge = false;
@@ -79,7 +78,7 @@ public class WebCrawlerService extends Service {
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_profile_photo_ttl), "-1"));
+        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
 
         purgeOldData();
 
@@ -100,8 +99,6 @@ public class WebCrawlerService extends Service {
         // if not running then
         if (intent != null && intent.hasExtra("IS_ALARM")) {
             Log.v(TAG, "alarm triggered");
-
-            _skipProfileImages = settings.getBoolean(getString(R.string.pref_key_sync_skip_profile_images), true);
 
             runCrawler();
 
@@ -276,11 +273,9 @@ public class WebCrawlerService extends Service {
                     return;
 
                 Log.v(TAG, "ProfileClient.onGet");
-                if (!_skipProfileImages) {
-                    incRequestCounter(2);
-                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
-                }
+                incRequestCounter(2);
+                PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
+                PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
                 _haveProfile = true;
             }
         }
@@ -300,13 +295,11 @@ public class WebCrawlerService extends Service {
             incRequestCounter(1);
             ProfileClient.listMessages(WebCrawlerService.this, page + 1, true);
 
-            if (!_skipProfileImages) {
-                for (int i = 0; i < list.size(); i++) {
-                    Message message = list.get(i);
-                    incRequestCounter(2);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
-                }
+            for (int i = 0; i < list.size(); i++) {
+                Message message = list.get(i);
+                incRequestCounter(2);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
             }
         }
 
@@ -401,13 +394,11 @@ public class WebCrawlerService extends Service {
             if (failed)
                 return;
 
-            if (!_skipProfileImages) {
-                for (int i = 0; i < messages.size(); i++) {
-                    incRequestCounter(2);
-                    com.fieldnation.data.workorder.Message message = messages.get(i);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
-                }
+            for (int i = 0; i < messages.size(); i++) {
+                incRequestCounter(2);
+                com.fieldnation.data.workorder.Message message = messages.get(i);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
             }
             _workorderThreadManager.wakeUp();
         }

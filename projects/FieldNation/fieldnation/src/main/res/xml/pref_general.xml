@@ -1,6 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_data_settings">
+    <PreferenceCategory android:title="@string/pref_string_sync_category_title">
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="@string/pref_key_sync_enabled"
+            android:title="@string/pref_string_sync_enable_title" />
+        <Preference
+            android:dependency="@string/pref_key_sync_enabled"
+            android:summary="@string/pref_string_sync_enable_summary" />
+        <com.fieldnation.TimePreference
+            android:defaultValue="180"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_start_time"
+            android:title="@string/pref_string_sync_start_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_require_wifi"
+            android:summary="@string/pref_string_sync_require_wifi_summary"
+            android:title="@string/pref_string_sync_require_wifi_title" />
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:dependency="@string/pref_key_sync_enabled"
+            android:key="@string/pref_key_sync_require_power"
+            android:summary="@string/pref_string_sync_require_power_summary"
+            android:title="@string/pref_string_sync_require_power_title" />
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_string_data_settings_category_title">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/pref_key_allow_data_remove"
@@ -15,58 +41,10 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_string_remove_rate" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Profile Images">
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="@string/pref_key_profile_photo_wifi_only"
-            android:summary="Limit profile image downloads"
-            android:title="Require wifi for download" />
-        <ListPreference
-            android:defaultValue="@string/pref_default_remove_rate"
-            android:dependency="@string/pref_key_allow_data_remove"
-            android:entries="@array/pref_remove_titles"
-            android:entryValues="@array/pref_remove_values"
-            android:key="@string/pref_key_profile_photo_ttl"
-            android:negativeButtonText="@null"
-            android:positiveButtonText="@null"
-            android:title="Delete profile pictures after" />
-    </PreferenceCategory>
-
-    <PreferenceCategory android:title="Sync Settings">
-        <SwitchPreference
-            android:defaultValue="true"
-            android:key="@string/pref_key_sync_enabled"
-            android:title="Enable Sync" />
-
-        <Preference
-            android:dependency="@string/pref_key_sync_enabled"
-            android:summary="Sync will download all of your data every day allowing you to access it while offline." />
-
-        <com.fieldnation.TimePreference
-            android:defaultValue="180"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_start_time"
-            android:title="Start sync at" />
-
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_require_wifi"
-            android:summary="Sync will only run when connected to wifi."
-            android:title="Only on wifi" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_require_power"
-            android:summary="Sync will only run while device is charging."
-            android:title="Only while charging" />
-        <CheckBoxPreference
-            android:defaultValue="true"
-            android:dependency="@string/pref_key_sync_enabled"
-            android:key="@string/pref_key_sync_skip_profile_images"
-            android:summary="Profile images used for messages will not sync."
-            android:title="Do not sync profile images" />
+            android:summary="@string/pref_string_profile_photo_wifi_summary"
+            android:title="@string/pref_string_profile_photo_wifi_title" />
     </PreferenceCategory>
 </PreferenceScreen>
