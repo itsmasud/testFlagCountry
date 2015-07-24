@@ -516,6 +516,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     }
 
                     _listener.onOk(_workorder, _counterReason, _expires, seconds, _counterPay, _counterSchedule, exp);
+                    _tacAccpet = false;
                     dismiss();
                 }
             }
