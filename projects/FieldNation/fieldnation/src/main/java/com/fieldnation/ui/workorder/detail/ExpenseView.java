@@ -83,6 +83,9 @@ public class ExpenseView extends LinearLayout {
         if (_expense == null)
             return;
 
+        if (_categories == null)
+            return;
+
         _descriptionTextView.setText(_expense.getDescription());
         // TODO need to map the ID to a real string
         _categoryTextView.setVisibility(View.GONE);

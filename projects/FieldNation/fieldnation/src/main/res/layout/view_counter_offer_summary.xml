@@ -78,32 +78,9 @@
                 android:id="@+id/expense_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <TextView
-                    style="@style/Text_Body_1"
-                    android:layout_width="32dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:gravity="center"
-                    android:text="$"
-                    android:textColor="@color/fn_light_text"
-                    android:textSize="32sp" />
-
-                <TextView
-                    android:id="@+id/expense_description"
-                    style="@style/Text_Body_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="8dp"
-                    android:text="@string/placeholder_date_long" />
             </LinearLayout>
-
         </LinearLayout>
-
-
     </RelativeLayout>
-
-
 </LinearLayout>
