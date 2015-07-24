@@ -506,6 +506,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
@@ -513,6 +516,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_LOCAL_PATH, filePath);
         intent.putExtra(PARAM_FILE_NAME, filename);
         context.startService(intent);
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
     }
 
     public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {

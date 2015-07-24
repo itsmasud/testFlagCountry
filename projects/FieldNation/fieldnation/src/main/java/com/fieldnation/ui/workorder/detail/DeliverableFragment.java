@@ -20,6 +20,7 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -335,7 +336,8 @@ public class DeliverableFragment extends WorkorderFragment {
         if (getActivity() == null)
             return false;
 
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+        if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                 && resultCode == Activity.RESULT_OK) {
 
             setLoading(true);
@@ -508,7 +510,12 @@ public class DeliverableFragment extends WorkorderFragment {
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
+            _workorderClient.subDeliverableUpload();
+        }
 
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            WorkorderClient.get(GlobalState.getContext(), workorderId, false);
         }
     };
 

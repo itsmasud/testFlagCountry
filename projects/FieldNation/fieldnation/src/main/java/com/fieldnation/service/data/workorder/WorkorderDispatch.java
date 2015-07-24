@@ -207,7 +207,7 @@ public class WorkorderDispatch implements WorkorderConstants {
         String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
         topicId += "/" + workorderId + "/" + slotId;
 
-        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 
     public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean failed, boolean isSync) {
