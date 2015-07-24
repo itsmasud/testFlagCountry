@@ -166,7 +166,7 @@ public class SignatureView extends View {
 
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         sb.append("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
-        sb.append("<!-- Generator: Field Nation Android ").append(BuildConfig.VERSION_NAME).append(" -->");
+        sb.append("<!-- Generator: Field Nation Android ").append((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim()).append(" -->");
         sb.append("<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"" + minX + "px\" y=\"" + minY + "px\" width=\"" + width + "px\" height=\"" + height + "px\" viewBox=\"" + minX + " " + minY + " " + width + " " + height + "\" enable-background=\"new " + minX + " " + minY + " " + width + " " + height + "\" xml:space=\"preserve\">");
         sb.append("<path fill=\"none\" stroke=\"#000000\" stroke-width=\"5\" stroke-miterlimit=\"10\" ");
         sb.append("d=\"");

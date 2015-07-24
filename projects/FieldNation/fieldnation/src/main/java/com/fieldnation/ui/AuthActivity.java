@@ -102,7 +102,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
 
-        _versionTextView.setText("Version " + BuildConfig.VERSION_NAME);
+        _versionTextView.setText("Version " +
+                (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);

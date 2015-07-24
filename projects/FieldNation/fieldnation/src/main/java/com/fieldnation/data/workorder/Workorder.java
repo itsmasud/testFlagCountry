@@ -659,7 +659,7 @@ public class Workorder implements Parcelable {
         return (status == WorkorderStatus.ASSIGNED
                 || status == WorkorderStatus.INPROGRESS)
                 && getPay() != null
-				&& !getPay().hidePay();
+                && !getPay().hidePay();
     }
 
     public boolean canCounterOffer() {

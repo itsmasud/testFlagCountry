@@ -10,6 +10,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 
@@ -64,10 +65,13 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        startService(new Intent(this, AuthTopicService.class));
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
         _globalClient.connect(this);
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
+
+        AuthTopicClient.dispatchRequestCommand(this);
     }
 
     @Override
@@ -88,6 +92,8 @@ public class SplashActivity extends AuthFragmentActivity {
         @Override
         public void onGotProfile(Profile profile) {
             Log.v(TAG, "_globalTopic_listener.onGotProfile");
+            if (profile != null)
+                Log.v(TAG, profile.toJson().display());
             _profile = profile;
             doNextStep();
         }
@@ -129,31 +135,6 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
     }
-
-/*// Todo remove
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            Log.v(TAG, "onTopic");
-
-            if (AuthTopicService.TOPIC_AUTH_STARTUP.equals(topicId)) {
-                if (parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE)
-                        .equals(AuthTopicService.BUNDLE_PARAM_TYPE_NEED_PASSWORD)
-                        && parcel.containsKey(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
-
-                    Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
-
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-                            parcel.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
-
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            }
-        }
-    };*/
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);

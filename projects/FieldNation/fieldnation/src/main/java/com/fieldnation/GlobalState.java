@@ -23,7 +23,6 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -155,6 +154,7 @@ public class GlobalState extends Application {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
 //            GlobalTopicClient.dispatchNetworkDisconnected(getContext());
         }
     };

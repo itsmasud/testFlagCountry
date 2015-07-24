@@ -31,6 +31,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private OAuth _authToken = null;
     private AuthState _state = null;
     private AuthTopicClient _authTopicClient;
+    private GlobalTopicClient _globalTopicClient;
 
     // Services
     private AccountManager _accountManager;
@@ -54,6 +55,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         super.onCreate();
         _authTopicClient = new AuthTopicClient(_authClientListener);
         _authTopicClient.connect(this);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClientListener);
+        _globalTopicClient.connect(this);
 
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
@@ -75,10 +78,16 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         _authTopicClient.disconnect(this);
+        _globalTopicClient.disconnect(this);
+        setState(AuthState.NOT_AUTHENTICATED);
+        if (_accountManager != null) {
+            _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
+        }
         super.onDestroy();
     }
 
     private void setState(AuthState state) {
+        Log.v(TAG, "setState");
         if (_state == null || state != _state || state == AuthState.AUTHENTICATED) {
             _state = state;
             Log.v(TAG, state.name());
@@ -93,6 +102,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
         @Override
         public void onAccountsUpdated(Account[] accounts) {
+            Log.v(TAG, "onAccountsUpdated");
             List<OAuth> auths = OAuth.list(AuthTopicService.this);
             String type = getAccountType();
             if (auths == null || auths.size() == 0)
@@ -119,7 +129,20 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                     requestToken();
                 }
             }
+        }
+    };
 
+    private final GlobalTopicClient.Listener _globalTopicClientListener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "GlobalTopicClient.onConnected");
+            _globalTopicClient.registerAppShutdown();
+        }
+
+        @Override
+        public void onShutdown() {
+            Log.v(TAG, "GlobalTopicClient.onShutdown");
+            stopSelf();
         }
     };
 
@@ -163,6 +186,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-         Commands            -*/
     /*-*****************************-*/
     private String getAccountType() {
+        Log.v(TAG, "getAccountType");
         return getString(R.string.auth_account_type);
     }
 
