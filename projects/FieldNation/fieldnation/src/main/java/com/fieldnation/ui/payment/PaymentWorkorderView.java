@@ -142,7 +142,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _basisTextView.setText(paymethod);
         _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
         _statusTextView.setText(misc.capitalize(payment.getStatus()));
-        _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {

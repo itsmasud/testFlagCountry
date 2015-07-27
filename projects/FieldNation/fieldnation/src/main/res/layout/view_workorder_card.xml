@@ -127,7 +127,7 @@
                                 style="?attr/tileTextStatusStyle"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="Work Order Id: " />
+                                android:text="Work Order ID: " />
 
                             <TextView
                                 android:id="@+id/workorderid_textview"

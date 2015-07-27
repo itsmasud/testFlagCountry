@@ -436,7 +436,7 @@ public class WorkorderCardView extends RelativeLayout {
         }
 
 //        if (Debug.isDebuggerConnected()) {
-        _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId() + "");
+        _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
         _workorderIdTextView.setVisibility(VISIBLE);
 //        } else {
 //            _workorderIdTextView.setVisibility(GONE);
