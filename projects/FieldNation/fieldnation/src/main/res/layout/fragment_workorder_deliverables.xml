@@ -31,7 +31,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:gravity="center"
-                    android:text="@string/no_documents_headline"
+                    android:text="DOCUMENTS TO REVIEW"
                     android:textColor="@color/fn_brandcolor" />
 
                 <LinearLayout
@@ -48,7 +48,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
                     android:gravity="center"
-                    android:text="No documents to view at this time"
+                    android:text="@string/no_documents_headline"
                     android:visibility="gone" />
             </LinearLayout>
 
