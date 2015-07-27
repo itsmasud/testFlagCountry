@@ -266,7 +266,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         _stiltView.setVisibility(View.VISIBLE);
                     }
                     if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
-                        Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
+                        Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
                     }
                 }
             }.executeEx(AuthActivity.this, _username, _password);
