@@ -429,7 +429,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getNeedsReadyToGo() {
-        return _needsReadyToGo;
+        if (_needsReadyToGo != null)
+            return _needsReadyToGo;
+
+        return false;
     }
 
     public Expense[] getOnlyApprovedAdditionalExpenses() {
@@ -590,6 +593,7 @@ public class Workorder implements Parcelable {
     public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
     public static final int BUTTON_ACTION_VIEW_PAYMENT = 7;
     public static final int BUTTON_ACTION_WITHDRAW_REQUEST = 8;
+    public static final int BUTTON_ACTION_READY_TO_GO = 9;
 
     public static final int NOT_INTERESTED_ACTION_NONE = 0;
     public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -944,11 +948,18 @@ public class Workorder implements Parcelable {
     private void buildStatusAssigned(Status status) {
         switch (status.getWorkorderSubstatus()) {
             case UNCONFIRMED: // green
-                _buttonAction = BUTTON_ACTION_ASSIGNMENT;
+                if (getNeedsReadyToGo())
+                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
+                else
+                    _buttonAction = BUTTON_ACTION_ASSIGNMENT;
+
                 _notInterestedAction = NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT;
                 break;
             case CONFIRMED: // white
-                _buttonAction = BUTTON_ACTION_CHECKIN;
+                if (getNeedsReadyToGo())
+                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
+                else
+                    _buttonAction = BUTTON_ACTION_CHECKIN;
                 break;
             case ONHOLD_UNACKNOWLEDGED: // orange
                 _buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;

@@ -79,6 +79,7 @@
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
     <string name="btn_no">NO</string>
+    <string name="btn_ready_to_go">READY TO GO</string>
 
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>

@@ -331,6 +331,11 @@ public class WorkorderCardView extends RelativeLayout {
                         _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
                     }
                     break;
+                case Workorder.BUTTON_ACTION_READY_TO_GO:
+                    if (_listener != null) {
+                        _listener.actionReadyToGo(WorkorderCardView.this, _workorder);
+                    }
+                    break;
             }
         }
     };
@@ -355,6 +360,9 @@ public class WorkorderCardView extends RelativeLayout {
                 _actionButton = _actionButtonOrange;
                 break;
         }
+
+        if (_workorder.getNeedsReadyToGo())
+            _actionButton = _actionButtonOrange;
     }
 
     private void refresh() {
@@ -630,7 +638,11 @@ public class WorkorderCardView extends RelativeLayout {
     private void buildStatusAssigned() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case CONFIRMED:
-                _actionButton.setText(R.string.btn_check_in);
+                if (_workorder.getNeedsReadyToGo()) {
+                    _actionButton.setText("READY-TO-GO");
+                } else {
+                    _actionButton.setText(R.string.btn_check_in);
+                }
 //                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
@@ -646,7 +658,11 @@ public class WorkorderCardView extends RelativeLayout {
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case UNCONFIRMED:
-                _actionButton.setText(R.string.btn_confirm);
+                if (_workorder.getNeedsReadyToGo()) {
+                    _actionButton.setText("READY-TO-GO");
+                } else {
+                    _actionButton.setText(R.string.btn_confirm);
+                }
                 //setNotInterestedEnabled(true);
 //                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
@@ -851,7 +867,6 @@ public class WorkorderCardView extends RelativeLayout {
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
                 break;
         }
-
     }
 
     public interface Listener {
@@ -873,5 +888,7 @@ public class WorkorderCardView extends RelativeLayout {
         void onClick(WorkorderCardView view, Workorder workorder);
 
         void onViewPayments(WorkorderCardView view, Workorder workorder);
+
+        void actionReadyToGo(WorkorderCardView view, Workorder workorder);
     }
 }

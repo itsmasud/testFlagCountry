@@ -1097,6 +1097,14 @@ public class WorkFragment extends WorkorderFragment {
         public void onEnterClosingNotes() {
             showClosingNotesDialog();
         }
+
+        @Override
+        public void onReadyToGo() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkFragment", 1);
+
+            WorkorderClient.actionReadyToGo(GlobalState.getContext(), _workorder.getWorkorderId());
+        }
     };
 
     private final ActionView.Listener _actionView_listener = new ActionView.Listener() {

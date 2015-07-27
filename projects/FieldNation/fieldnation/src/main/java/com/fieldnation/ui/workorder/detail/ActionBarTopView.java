@@ -21,6 +21,7 @@ public class ActionBarTopView extends RelativeLayout {
     private Button _completeButton;
     private Button _confirmButton;
     private Button _closingNotesButton;
+    private Button _readyToGoButton;
 
     // Data
     private Listener _listener;
@@ -49,16 +50,24 @@ public class ActionBarTopView extends RelativeLayout {
 
         _checkinButton = (Button) findViewById(R.id.checkin_button);
         _checkinButton.setOnClickListener(_checkin_onClick);
+
         _checkoutButton = (Button) findViewById(R.id.checkout_button);
         _checkoutButton.setOnClickListener(_checkout_onClick);
+
         _acknowledgeButton = (Button) findViewById(R.id.acknowledge_button);
         _acknowledgeButton.setOnClickListener(_acknowledge_onClick);
+
         _completeButton = (Button) findViewById(R.id.complete_button);
         _completeButton.setOnClickListener(_complete_onClick);
+
         _confirmButton = (Button) findViewById(R.id.confirm_button);
         _confirmButton.setOnClickListener(_confirm_onClick);
+
         _closingNotesButton = (Button) findViewById(R.id.closingnotes_button);
         _closingNotesButton.setOnClickListener(_closing_onClick);
+
+        _readyToGoButton = (Button) findViewById(R.id.readyToGo_button);
+        _readyToGoButton.setOnClickListener(_readyToGo_onClick);
 
         setVisibility(View.GONE);
     }
@@ -86,7 +95,11 @@ public class ActionBarTopView extends RelativeLayout {
             _acknowledgeButton.setVisibility(View.VISIBLE);
             setVisibility(VISIBLE);
         }
-        if (_workorder.canConfirm()) {
+
+        if (_workorder.getNeedsReadyToGo()) {
+            _readyToGoButton.setVisibility(VISIBLE);
+            setVisibility(VISIBLE);
+        } else if (_workorder.canConfirm()) {
             _confirmButton.setVisibility(View.VISIBLE);
             setVisibility(VISIBLE);
         }
@@ -107,6 +120,14 @@ public class ActionBarTopView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onReadyToGo();
+            }
+        }
+    };
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -166,5 +187,7 @@ public class ActionBarTopView extends RelativeLayout {
         void onConfirm();
 
         void onEnterClosingNotes();
+
+        void onReadyToGo();
     }
 }

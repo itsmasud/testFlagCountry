@@ -604,6 +604,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 startActivity(intent);
             }
         }
+
+        @Override
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
+
+            WorkorderClient.actionReadyToGo(GlobalState.getContext(), workorder.getWorkorderId());
+        }
     };
 
     /*-*****************************************-*/

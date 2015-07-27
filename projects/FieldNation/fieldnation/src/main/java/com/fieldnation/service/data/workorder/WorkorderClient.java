@@ -366,6 +366,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionReadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
 
         String payload = "";

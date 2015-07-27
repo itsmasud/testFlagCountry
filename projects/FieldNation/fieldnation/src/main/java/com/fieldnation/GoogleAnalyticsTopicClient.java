@@ -45,7 +45,8 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
         CLICK("ActionClick"),
         VIEW_PAY("ViewPayments"),
-        WITHDRAW_REQUEST("WithdrawRequest");
+        WITHDRAW_REQUEST("WithdrawRequest"),
+        READY_TO_GO("ReadyToGo");
 
         private final String _actionName;
 
