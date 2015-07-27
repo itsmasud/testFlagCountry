@@ -249,9 +249,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             _tabview.setMessagesCount(0);
         }
 
-        for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workorder);
-        }
+//        for (int i = 0; i < _fragments.length; i++) {
+//            _fragments[i].setWorkorder(_workorder);
+//        }
+
+        _fragments[_currentFragment].setWorkorder(_workorder);
+
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
 //            //_tabview.hideTab(TAB_TASKS);
@@ -325,6 +328,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
+                populateUi();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -338,6 +342,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = index;
                 _fragments[index].update();
                 _viewPager.setCurrentItem(_currentFragment, true);
+                populateUi();
             }
         }
     };

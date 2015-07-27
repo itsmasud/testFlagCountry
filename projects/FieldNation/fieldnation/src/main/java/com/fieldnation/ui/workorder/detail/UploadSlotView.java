@@ -16,10 +16,11 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 
-import java.util.LinkedList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 
 public class UploadSlotView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("UploadSlotView");
@@ -34,9 +35,10 @@ public class UploadSlotView extends RelativeLayout {
     private Workorder _workorder;
     private UploadSlot _slot;
     private Listener _listener;
-    private List<String> _uploadingFiles;
+    private Set<String> _uploadingFiles = new HashSet<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
+    private WorkorderClient _workorderClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -62,14 +64,21 @@ public class UploadSlotView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _uploadingFiles = new LinkedList<>();
-
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _docsList = (LinearLayout) findViewById(R.id.docs_list);
         _uploadList = (LinearLayout) findViewById(R.id.upload_list);
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
 
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(getContext());
+
         populateUi();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        _workorderClient.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
     public void setListener(Listener listener) {
@@ -82,7 +91,7 @@ public class UploadSlotView extends RelativeLayout {
         _docListener = listener;
         _profileId = profileId;
 
-        _uploadingFiles.clear();
+        subscribe();
         populateUi();
     }
 
@@ -98,6 +107,10 @@ public class UploadSlotView extends RelativeLayout {
         final UploadedDocument[] docs = _slot.getUploadedDocuments();
         if (docs != null && docs.length > 0) {
             Log.v(TAG, "docs: " + docs.length + " " + _docsList.getChildCount());
+
+            for (UploadedDocument doc : docs) {
+                _uploadingFiles.remove(doc.getFileName());
+            }
 
             if (_docsList.getChildCount() > docs.length) {
                 _docsList.removeViews(docs.length - 1, _docsList.getChildCount() - docs.length);
@@ -134,6 +147,7 @@ public class UploadSlotView extends RelativeLayout {
             ForLoopRunnable r = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
                 @Override
                 public void next(int i) throws Exception {
+                    Log.v(TAG, "UF: new view " + i);
                     UploadedDocumentView v = null;
                     if (i < _uploadList.getChildCount()) {
                         v = (UploadedDocumentView) _uploadList.getChildAt(i);
@@ -141,11 +155,11 @@ public class UploadSlotView extends RelativeLayout {
                         v = new UploadedDocumentView(getContext());
                         _uploadList.addView(v);
                     }
-                    v.setUploading(_uploadingFiles.get(i));
+                    v.setUploading((String) (_uploadingFiles.toArray()[i]));
                     v.setListener(null);
                 }
             };
-            postDelayed(r, new Random().nextInt(1000));
+            postDelayed(r, new Random().nextInt(1000) + 1000);
         } else {
             _uploadList.removeAllViews();
             _uploadList.setVisibility(View.GONE);
@@ -182,6 +196,41 @@ public class UploadSlotView extends RelativeLayout {
 //                _listener.onUploadClick(UploadSlotView.this, _slot);
 //        }
 //    };
+    private void subscribe() {
+        if (_workorder == null)
+            return;
+
+        if (_slot == null)
+            return;
+
+        if (!_workorderClient.isConnected())
+            return;
+
+        Log.v(TAG, "subscribe, " + _workorder.getWorkorderId() + ", " + _slot.getSlotId());
+        _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _slot.getSlotId());
+    }
+
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "onConnected()");
+            subscribe();
+        }
+
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed);
+            if (slotId == _slot.getSlotId()) {
+                if (isComplete || failed) {
+//                    _uploadingFiles.remove(filename);
+                } else {
+                    _uploadingFiles.add(filename);
+                }
+
+                populateUi();
+            }
+        }
+    };
 
     public interface Listener {
         void onUploadClick(UploadSlotView view, UploadSlot slot);

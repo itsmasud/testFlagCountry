@@ -506,6 +506,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
@@ -513,6 +516,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         intent.putExtra(PARAM_LOCAL_PATH, filePath);
         intent.putExtra(PARAM_FILE_NAME, filename);
         context.startService(intent);
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
     }
 
     public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
@@ -787,25 +794,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGet(null, true);
             } else {
-                onGet(Workorder.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, Workorder>() {
+                    @Override
+                    protected Workorder doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Workorder workorder) {
+                        onGet(workorder, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, Workorder>() {
-//                @Override
-//                protected Workorder doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Workorder workorder) {
-//                    onGet(workorder);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGet(Workorder workorder, boolean failed) {
@@ -816,25 +822,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGetSignature(null, true);
             } else {
-                onGetSignature(Signature.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, Signature>() {
+                    @Override
+                    protected Signature doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Signature signature) {
+                        onGetSignature(signature, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, Signature>() {
-//                @Override
-//                protected Signature doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Signature signature) {
-//                    onGetSignature(signature);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGetSignature(Signature signature, boolean failed) {
@@ -844,25 +849,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGetBundle(null, true);
             } else {
-                onGetBundle(com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
+                    @Override
+                    protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(com.fieldnation.data.workorder.Bundle bundle) {
+                        onGetBundle(bundle, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
-//                @Override
-//                protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(com.fieldnation.data.workorder.Bundle bundle) {
-//                    onGetBundle(bundle);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
