@@ -158,7 +158,6 @@ public class ReasonCoView extends RelativeLayout {
             _expires = _expiresCheckBox.isChecked();
 
             if (_expires && _listener != null)
-                _expiresCheckBox.setChecked(false);
                 _datePicker.show(_fm, TAG);
         }
     };
