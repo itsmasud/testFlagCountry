@@ -108,6 +108,10 @@ public class UploadSlotView extends RelativeLayout {
         if (docs != null && docs.length > 0) {
             Log.v(TAG, "docs: " + docs.length + " " + _docsList.getChildCount());
 
+            for (UploadedDocument doc : docs) {
+                _uploadingFiles.remove(doc.getFileName());
+            }
+
             if (_docsList.getChildCount() > docs.length) {
                 _docsList.removeViews(docs.length - 1, _docsList.getChildCount() - docs.length);
             }
@@ -125,7 +129,6 @@ public class UploadSlotView extends RelativeLayout {
                     UploadedDocument doc = _docs[i];
                     v.setData(_workorder, _profileId, doc);
                     v.setListener(_docListener);
-                    _uploadingFiles.remove(doc.getFileName());
                 }
             };
             postDelayed(r, new Random().nextInt(1000));
@@ -156,7 +159,7 @@ public class UploadSlotView extends RelativeLayout {
                     v.setListener(null);
                 }
             };
-            postDelayed(r, new Random().nextInt(1000));
+            postDelayed(r, new Random().nextInt(1000) + 1000);
         } else {
             _uploadList.removeAllViews();
             _uploadList.setVisibility(View.GONE);
