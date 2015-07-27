@@ -16,8 +16,8 @@
     <string name="activity_login_password">Password</string>
 
     <string name="activity_message_list_title">Messages</string>
-    <string name="activity_message_list_empty_message_headline">No Messages</string>
-    <string name="activity_message_list_empty_message_sub_headline">Start the conversation</string>
+    <string name="activity_message_list_empty_message_headline">No Message History</string>
+    <string name="activity_message_list_empty_message_sub_headline">Tap to chat</string>
 
     <string name="activity_payments_list_title">Payments</string>
 
@@ -214,7 +214,7 @@
     <string name="then">then</string>
     <string name="per_hour_up_to">per hour up to</string>
     <string name="additional_hours">additional hours</string>
-    <string name="documents_to_review">Documents to Review</string>
+    <string name="no_documents_headline">No documents</string>
     <string name="documents_to_upload">Documents to Upload</string>
     <string name="my_additional_files">My Additional Files</string>
     <string name="upload_file">Upload File</string>
@@ -243,7 +243,7 @@
     <string name="provider_must_have_the_following_skillsets_colon">Provider must have the following skillsets:</string>
     <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
     <string name="prerequisites">Prerequisites</string>
-    <string name="this_work_order_has_no_notification_at_this_time">This work order has no notifications at this time.</string>
+    <string name="this_work_order_has_no_notification_at_this_time">No Notification History</string>
     <string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>
     <string name="view_all_tasks">View All Tasks</string>
     <string name="scope_of_work">Scope of Work</string>
