@@ -31,7 +31,7 @@
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
                     android:gravity="center"
-                    android:text="DOCUMENTS TO REVIEW"
+                    android:text="@string/no_documents_headline"
                     android:textColor="@color/fn_brandcolor" />
 
                 <LinearLayout
