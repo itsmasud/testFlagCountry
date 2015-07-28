@@ -443,11 +443,11 @@ public class DrawerView extends RelativeLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            if (file == null || url == null || failed)
+        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
+            if (drawable == null || url == null || failed)
                 return;
 
-            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+            Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             addProfilePhoto();
         }

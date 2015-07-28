@@ -4,7 +4,9 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.location.Location;
 import android.os.Environment;
 import android.text.Html;
@@ -47,6 +49,12 @@ public class misc {
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
+
+    public static Bitmap resizeBitmap(Bitmap source, int width, int height) {
+        Matrix m = new Matrix();
+        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+    }
 
     public static void printStackTrace(String message) {
         try {

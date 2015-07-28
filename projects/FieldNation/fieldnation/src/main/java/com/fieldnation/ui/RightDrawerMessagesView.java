@@ -14,14 +14,12 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.List;
@@ -164,11 +162,11 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            if (file == null || url == null)
+        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            if (bitmapDrawable == null || url == null)
                 return;
 
-            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+            Drawable pic = bitmapDrawable;
             _picCache.put(url, new WeakReference<>(pic));
         }
     };

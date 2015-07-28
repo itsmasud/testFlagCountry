@@ -49,7 +49,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // generate the bitmaps
             byte[] imageData = resultData.getByteArray();
-            Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+            Bitmap imageBitmap = misc.resizeBitmap(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 95, 95);
             Bitmap circleBitmap = misc.extractCircle(imageBitmap);
 
             // find the paths
