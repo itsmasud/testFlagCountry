@@ -9,10 +9,13 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -83,7 +86,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _contentLayout.setVisibility(View.GONE);
 
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
+        _usernameEditText.setOnEditorActionListener(_onEditorUserName);
+
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+        _passwordEditText.setOnEditorActionListener(_onEditorPassword);
+
 
         _loginButton = (Button) findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
@@ -285,5 +292,38 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             startActivity(intent);
         }
     };
+
+
+    private final TextView.OnEditorActionListener _onEditorUserName = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                _passwordEditText.requestFocus();
+                handled = true;
+            }
+
+            return handled;
+        }
+    };
+
+
+    private final TextView.OnEditorActionListener _onEditorPassword = new TextView.OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                _loginButton_onClick.onClick(null);
+                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+                handled = true;
+            }
+            return handled;
+        }
+    };
+
+
 }
 
