@@ -20,7 +20,7 @@ import com.fieldnation.utils.misc;
 import java.util.Calendar;
 
 public class PaymentWorkorderView extends RelativeLayout {
-    private static final String TAG = "ui.payment.PaymentWorkorderView";
+    private static final String TAG = "PaymentWorkorderView";
     // UI
     // status
     private View _statusView;

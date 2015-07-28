@@ -17,7 +17,11 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.utils.ISO8601;
 
+import java.text.ParseException;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -107,6 +111,29 @@ public class UploadSlotView extends RelativeLayout {
         final UploadedDocument[] docs = _slot.getUploadedDocuments();
         if (docs != null && docs.length > 0) {
             Log.v(TAG, "docs: " + docs.length + " " + _docsList.getChildCount());
+
+            Arrays.sort(docs, new Comparator<UploadedDocument>() {
+                @Override
+                public int compare(UploadedDocument lhs, UploadedDocument rhs) {
+                    try {
+                        long l = ISO8601.toUtc(lhs.getUploadedTime());
+                        long r = ISO8601.toUtc(rhs.getUploadedTime());
+
+                        Log.v(TAG, "lhs/" + lhs.getUploadedTime() + "/" + l);
+                        Log.v(TAG, "rhs/" + rhs.getUploadedTime() + "/" + r);
+
+                        if (l > r)
+                            return -1;
+                        else if (l < r)
+                            return 1;
+                        else
+                            return 0;
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    return 0;
+                }
+            });
 
             for (UploadedDocument doc : docs) {
                 _uploadingFiles.remove(doc.getFileName());
