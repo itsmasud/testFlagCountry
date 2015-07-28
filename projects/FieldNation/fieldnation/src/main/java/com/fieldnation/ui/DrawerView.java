@@ -433,8 +433,12 @@ public class DrawerView extends RelativeLayout {
         public void onGotProfile(Profile profile) {
             if (_profile == null || profile.getUserId() != _profile.getUserId()) {
                 _profilePic = null;
-
                 _profile = profile;
+
+                if (_picView != null) {
+                    _picView.setProfilePic(R.drawable.missing_circle);
+                }
+
                 populateUi();
             }
         }
