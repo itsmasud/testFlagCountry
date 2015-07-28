@@ -70,7 +70,6 @@ public class MessageRcvdView extends RelativeLayout {
 
     public void setMessage(Message message) {
         _message = message;
-
         populateUi();
     }
 
@@ -118,12 +117,14 @@ public class MessageRcvdView extends RelativeLayout {
 
         @Override
         public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            if (file == null) return;
+            if (file == null) {
+                _picView.setProfilePic(R.drawable.missing_circle);
+                return;
+            }
 
             Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
-
         }
     };
 }
