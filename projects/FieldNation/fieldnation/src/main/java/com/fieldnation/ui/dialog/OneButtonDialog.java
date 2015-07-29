@@ -4,8 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.Html;
-import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 2/6/2015.
@@ -88,10 +88,9 @@ public class OneButtonDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
         _titleTextView.setText(_title);
-        _bodyTextView.setText(Html.fromHtml(_body));
-//        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-//        _bodyTextView.setText(misc.htmlify(_body));
-        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
+//        _bodyTextView.setText(_body);
+//        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         _button.setText(_buttonText);
     }
 
