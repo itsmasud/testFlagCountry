@@ -22,6 +22,7 @@ public class MessageTileView extends RelativeLayout {
     private String[] _substatus;
     private Listener _listener;
     private int _memoryClass;
+    private boolean _imageRetried = false;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -62,6 +63,7 @@ public class MessageTileView extends RelativeLayout {
         _message = message;
         _listener = listener;
         _picView.setProfilePic(R.drawable.missing_circle);
+        _imageRetried = false;
 
         populateUi();
     }
@@ -116,7 +118,8 @@ public class MessageTileView extends RelativeLayout {
         } else {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
                 Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
-                if (result == null) {
+                if (result == null && !_imageRetried) {
+                    _imageRetried = true;
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {

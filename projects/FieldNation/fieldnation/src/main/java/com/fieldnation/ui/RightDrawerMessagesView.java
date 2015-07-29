@@ -107,7 +107,7 @@ public class RightDrawerMessagesView extends FrameLayout {
 
     private final PagingAdapter<Message> _adapter = new PagingAdapter<Message>() {
         @Override
-        public View getView(int page, int position, Message object, View convertView, ViewGroup parent) {
+        public View getView(Message object, View convertView, ViewGroup parent) {
             MessageTileView v = null;
             if (convertView == null) {
                 v = new MessageTileView(parent.getContext());

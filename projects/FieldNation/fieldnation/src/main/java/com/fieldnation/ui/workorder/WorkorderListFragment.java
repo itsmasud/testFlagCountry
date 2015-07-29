@@ -125,7 +125,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
 
-        _adapter.setListener(_adapterListener);
+        _adapter.setOnLoadingCompleteListener(_adapterListener);
 
         _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
         _listView.setDivider(null);
@@ -772,7 +772,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
-        public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
+        public View getView(Workorder object, View convertView, ViewGroup parent) {
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -782,7 +782,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            v.setWorkorder(object, _gpsLocationService.getLocation());
+            if (_gpsLocationService != null && _gpsLocationService.getLocation() != null)
+                v.setWorkorder(object, _gpsLocationService.getLocation());
+            else
+                v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
             v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 
@@ -795,7 +798,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
+    private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
         @Override
         public void onLoadingComplete() {
 //            Log.v(TAG, "_adapterListener.onLoadingComplete");
