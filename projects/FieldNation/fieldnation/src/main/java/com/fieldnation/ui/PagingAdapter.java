@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -19,20 +20,29 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private static final String TAG = "PagingAdapter";
 
     private RateMeView _rateMeView = null;
+
+    private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
+    private Set<Integer> _loadingPages = new HashSet<>();
+
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;
     private boolean _noMorePages = false;
-    private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
-    private Set<Integer> _loadingPages = new HashSet<>();
-    private int _size;
-    private Listener _listener;
+
+    private int _size = 0;
+    private OnLoadingCompleteListener _onLoadingCompleteListener;
 
     public PagingAdapter() {
         _showRateMe = GlobalState.getContext().showRateMe();
     }
 
     public void setPage(int page, List<T> items) {
-//        Log.v(TAG, "setPage()");
+        Log.v(TAG, "setPage()");
+
+        if (_loadingPages.contains(page)) {
+            _loadingPages.remove(page);
+        }
+
+        // if list is empty, then this is the last page
         if (items == null || items.size() == 0) {
             int i = page;
             while (_pages.containsKey(i)) {
@@ -40,29 +50,30 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 i++;
             }
             countItems();
+
+            if (_loadingPages.size() == 0) {
+                setNoMorePages();
+            }
+
+            // list is not empty
         } else if (items.size() > 0) {
             _pages.put(page, items);
             countItems();
-        }
 
-        if (_loadingPages.contains(page)) {
-            _loadingPages.remove(page);
-        }
-
-        if (_loadingPages.size() == 0) {
-            setNoMorePages();
-            if (_listener != null)
-                _listener.onLoadingComplete();
+            if (_onLoadingCompleteListener != null) {
+                _onLoadingCompleteListener.onLoadingComplete();
+            }
         }
 
         notifyDataSetChanged();
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
+    public void setOnLoadingCompleteListener(OnLoadingCompleteListener onLoadingCompleteListener) {
+        _onLoadingCompleteListener = onLoadingCompleteListener;
     }
 
     public void refreshPages() {
+        Log.v(TAG, "refreshPages");
         for (int i = 0; i <= _pages.size(); i++) {
             preRequestPage(i, false);
         }
@@ -80,17 +91,16 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     }
 
     public void setNoMorePages() {
-        // Log.v(TAG, "setNoMorePages()");
+        Log.v(TAG, "setNoMorePages()");
         _noMorePages = true;
-        notifyDataSetChanged();
-        if (_listener != null) {
-            _listener.onLoadingComplete();
+        if (_onLoadingCompleteListener != null) {
+            _onLoadingCompleteListener.onLoadingComplete();
         }
     }
 
     @Override
     public void registerDataSetObserver(DataSetObserver observer) {
-        // Log.v(TAG, "registerDataSetObserver()");
+//        Log.v(TAG, "registerDataSetObserver()");
         super.registerDataSetObserver(observer);
         if (!_noMorePages && !_loadingPages.contains(_pages.size())) {
             requestPage(_pages.size(), true);
@@ -116,8 +126,9 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         // find the page that has this item
         int count = 0;
         List<T> page = null;
-        for (int i = 0; i < _pages.size(); i++) {
-            page = _pages.get(i);
+        int pageNum;
+        for (pageNum = 0; pageNum < _pages.size(); pageNum++) {
+            page = _pages.get(pageNum);
             count = count + page.size();
             if (count > position)
                 break;
@@ -126,6 +137,8 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         // if  not last page, and there could be more pages then request the next page
         if (_pages.get(_pages.size() - 1) == page && !_noMorePages) {
             preRequestPage(_pages.size(), true);
+        } else if (!_pages.containsKey(pageNum + 1) && !_noMorePages) {
+            preRequestPage(pageNum + 1, true);
         }
 
         // find the begining of the page
@@ -136,7 +149,6 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-//        Log.v(TAG, "getItemId()");
         return position;
     }
 
@@ -151,38 +163,13 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
             }
             GlobalState.getContext().setRateMeShown();
             return _rateMeView;
-        } else if (position > _rateMePosition && _showRateMe) {
-            position--;
         }
 
-        int count = 0;
-        List<T> page = null;
-        int page_num = 0;
-//        Log.v(TAG, "_pages:" + _pages.size());
-        for (page_num = 0; page_num < _pages.size(); page_num++) {
-            page = _pages.get(page_num);
-            if (page == null) {
-//                Log.v(TAG, "page is null");
-                continue;
-            }
-            count = count + page.size();
-            if (count > position)
-                break;
-        }
-
-        // if  not last page, and there could be more pages then request the next page
-        if (_pages.get(_pages.size() - 1) == page && !_noMorePages) {
-            preRequestPage(_pages.size(), true);
-        }
-
-
-        // find the begining of the page
-        count = count - page.size();
         // get the page
-        T obj = page.get(position - count);
+        T obj = (T) getItem(position);
 
         // create the view
-        return getView(page_num, position - count, obj, convertView, parent);
+        return getView(obj, convertView, parent);
     }
 
     private void preRequestPage(int page, boolean allowCache) {
@@ -200,11 +187,11 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         }
     };
 
-    public abstract View getView(int page, int position, T object, View convertView, ViewGroup parent);
+    public abstract View getView(T object, View convertView, ViewGroup parent);
 
     public abstract void requestPage(int page, boolean allowCache);
 
-    public interface Listener {
+    public interface OnLoadingCompleteListener {
         void onLoadingComplete();
     }
 

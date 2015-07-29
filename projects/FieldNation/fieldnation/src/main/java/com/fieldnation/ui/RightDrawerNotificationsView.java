@@ -91,7 +91,7 @@ public class RightDrawerNotificationsView extends FrameLayout {
 
     private final PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>() {
         @Override
-        public View getView(int page, int position, Notification object, View convertView, ViewGroup parent) {
+        public View getView(Notification object, View convertView, ViewGroup parent) {
             NotificationView v = null;
             if (convertView == null) {
                 v = new NotificationView(parent.getContext());

@@ -26,7 +26,8 @@
                 android:layout_marginBottom="16dp"
                 android:hint="@string/activity_login_username"
                 android:imeOptions="actionNext"
-                android:text="@string/auth_default_username" />
+                android:text="@string/auth_default_username"
+                android:singleLine="true"/>
 
             <EditText
                 android:id="@+id/password_edittext"

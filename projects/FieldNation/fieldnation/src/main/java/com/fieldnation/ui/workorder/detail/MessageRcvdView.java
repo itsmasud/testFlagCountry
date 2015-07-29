@@ -17,7 +17,6 @@ import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 
@@ -70,7 +69,6 @@ public class MessageRcvdView extends RelativeLayout {
 
     public void setMessage(Message message) {
         _message = message;
-
         populateUi();
     }
 
@@ -117,8 +115,13 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
+        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            if (bitmapDrawable == null) {
+                _picView.setProfilePic(R.drawable.missing_circle);
+                return;
+            }
+
+            Drawable pic = bitmapDrawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }

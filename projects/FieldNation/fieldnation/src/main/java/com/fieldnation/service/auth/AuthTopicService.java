@@ -16,6 +16,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.AuthActivity;
 
 import java.util.List;
@@ -389,7 +390,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 }
 
                 Log.v(TAG, _authToken.toJson().display());
+                ProfileClient.get(AuthTopicService.this);
                 setState(AuthState.AUTHENTICATED);
+
             }
         }
 
