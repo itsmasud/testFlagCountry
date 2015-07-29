@@ -18,7 +18,7 @@ import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.utils.misc;
 
 public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "SummaryView";
+    private static final String TAG = "WorkSummaryView";
 
     // UI
     private TextView _projectNameTextView;
