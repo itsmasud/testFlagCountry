@@ -119,6 +119,7 @@ public class ReasonCoView extends RelativeLayout {
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         populateUi();
     }
 
@@ -134,8 +135,10 @@ public class ReasonCoView extends RelativeLayout {
         // expiration stuff
         _expiresCheckBox.setChecked(_expires);
         if (_expires) {
+            _expiresCheckBox.setChecked(true);
             _expiresButton.setVisibility(View.VISIBLE);
         } else {
+            _expiresCheckBox.setChecked(false);
             _expiresButton.setVisibility(View.GONE);
         }
         if (_expirationDate != null) {
@@ -146,25 +149,26 @@ public class ReasonCoView extends RelativeLayout {
             _reset = false;
             _tacCheckBox.setChecked(false);
         }
-
     }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final OnClickListener _expires_onClick = new OnClickListener() {
+    private final View.OnClickListener _expires_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _expires = _expiresCheckBox.isChecked();
 
-            if (_expires && _listener != null) {
+            if (_expires) {
                 _expiresCheckBox.setChecked(false);
                 _datePicker.show(_fm, TAG);
+            } else if (_listener != null) {
+                _listener.onExpirationChange(false, null);
             }
         }
     };
 
-    private final OnClickListener _tacCheck_onClick = new OnClickListener() {
+    private final View.OnClickListener _tacCheck_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _tacAccepted = _tacCheckBox.isChecked();
@@ -181,7 +185,7 @@ public class ReasonCoView extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _tac_onClick = new OnClickListener() {
+    private final View.OnClickListener _tac_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)

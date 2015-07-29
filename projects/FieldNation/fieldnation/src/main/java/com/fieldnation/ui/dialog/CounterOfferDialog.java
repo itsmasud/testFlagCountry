@@ -505,14 +505,15 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     for (int i = 0; i < _expenses.size(); i++) {
                         exp[i] = _expenses.get(i);
                     }
-                    int seconds = 0;
 
-
-                    try {
-                        seconds = (int) (ISO8601.toUtc(_expirationDate)
-                                - System.currentTimeMillis()) / 1000;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    int seconds = -1;
+                    if (_expires) {
+                        try {
+                            seconds = (int) (ISO8601.toUtc(_expirationDate)
+                                    - System.currentTimeMillis()) / 1000;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
 
                     _listener.onOk(_workorder, _counterReason, _expires, seconds, _counterPay, _counterSchedule, exp);
