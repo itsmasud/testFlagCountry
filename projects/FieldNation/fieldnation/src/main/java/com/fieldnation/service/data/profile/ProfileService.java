@@ -12,7 +12,7 @@ import com.fieldnation.service.objectstore.StoredObject;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileService extends MSService implements ProfileConstants {
-    private static final String TAG = "ProfileDataService";
+    private static final String TAG = "ProfileService";
 
     @Override
     public void onDestroy() {
@@ -70,9 +70,9 @@ public class ProfileService extends MSService implements ProfileConstants {
     }
 
     private void listNotifications(Intent intent) {
-        Log.v(TAG, "listNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        Log.v(TAG, "listNotifications(" + page + ", " + isSync + ")");
 
         StoredObject obj = null;
         if (!isSync) {

@@ -13,8 +13,8 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.misc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * Created by Michael Carver on 3/12/2015.
@@ -57,25 +57,15 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             File tempFolder = new File(storagePath);
             tempFolder.mkdirs();
 
-            // generate the pngs
-            File imageFile = File.createTempFile("photo", "img", tempFolder);
-            FileOutputStream fout = new FileOutputStream(imageFile, false);
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            fout.close();
-
-            File circleFile = File.createTempFile("photo", "img", tempFolder);
-            fout = new FileOutputStream(circleFile, false);
-            circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            fout.close();
-
-            // push into data store
-            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile, "PhotoCache.png", false);
-            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile, "PhotoCacheCircle.png", false);
-
-            // delete temporary stuff
-            imageFile.delete();
-            circleFile.delete();
+            ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
+            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
             imageBitmap.recycle();
+
+
+            ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
+            circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
+            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
             circleBitmap.recycle();
 
             // build the response

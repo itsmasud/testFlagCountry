@@ -10,6 +10,7 @@ import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GlobalState;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -19,7 +20,7 @@ import java.util.Hashtable;
  * Created by Michael Carver on 3/12/2015.
  */
 public class PhotoClient extends TopicClient implements PhotoConstants {
-    private final String TAG = UniqueTag.makeTag("PhotoDataClient");
+    private final String TAG = UniqueTag.makeTag("PhotoClient");
 
     private static final Hashtable<String, WeakReference<BitmapDrawable>> _pictureCache = new Hashtable<>();
 
@@ -33,6 +34,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
     }
 
     public static void get(Context context, String url, boolean getCircle, boolean isSync) {
+        misc.printStackTrace("PhotoClient.get()");
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_CIRCLE, getCircle);

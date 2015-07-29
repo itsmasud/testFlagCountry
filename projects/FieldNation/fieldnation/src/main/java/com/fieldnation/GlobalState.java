@@ -149,13 +149,13 @@ public class GlobalState extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "onAuthenticated");
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
             AuthTopicClient.dispatchRequestCommand(GlobalState.this);
-//            GlobalTopicClient.dispatchNetworkDisconnected(getContext());
         }
     };
 
