@@ -124,7 +124,6 @@ public class DiscountDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
              if (_amountEditText.getText().toString().isEmpty() || _amountEditText.getText().toString().isEmpty()) {
-                Toast.makeText(getActivity(), R.string.toast_could_not_complete_discount, Toast.LENGTH_LONG).show();
                 return;
             }
             DiscountDialog.this.dismiss();
