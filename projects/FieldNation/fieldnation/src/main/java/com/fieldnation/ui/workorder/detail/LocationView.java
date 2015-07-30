@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -127,49 +128,66 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _navigateButton.setVisibility(VISIBLE);
         }
 
-        try {
-            if (_isDrawn)
-                return;
+        new AsyncTaskEx<Object, Object, LatLng>() {
+            @Override
+            protected LatLng doInBackground(Object... params) {
+                try {
+                    if (_isDrawn)
+                        return null;
 
-//            _isDrawn = true;
+                    // _isDrawn = true;
 
-            _mapView.clear();
+                    Location location = _workorder.getLocation();
+                    // get address location
+                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    List<Address> addrs = geocoder.getFromLocationName(location.getFullAddressOneLine(), 1);
+                    if (addrs == null || addrs.size() == 0) {
+                        // can't get a location, should render accordingly
+                        return null;
+                    }
 
-            // get address location
-            Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
-            List<Address> addrs = geocoder.getFromLocationName(location.getFullAddressOneLine(), 1);
-            LatLng ll = new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
+                    return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
 
-            Log.v(TAG, "Getting user location");
-            _mapView.setUserLocationEnabled(true);
-            LatLng user = _mapView.getUserLocation();
-            _mapView.setUserLocationEnabled(false);
-            Log.v(TAG, "Getting user location done");
+            @Override
+            protected void onPostExecute(LatLng destination) {
+                _mapView.clear();
 
-            Marker marker = new Marker(_mapView, "Work", "", ll);
-            marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
-            _mapView.addMarker(marker);
+                if (destination != null) {
 
-            marker = new Marker(_mapView, "Me", "", user);
-            marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
-            _mapView.addMarker(marker);
+                    Log.v(TAG, "Getting user location");
+                    _mapView.setUserLocationEnabled(true);
+                    LatLng user = _mapView.getUserLocation();
+                    _mapView.setUserLocationEnabled(false);
+                    Log.v(TAG, "Getting user location done");
 
-            Set<LatLng> lls = new HashSet<>();
-            lls.add(ll);
-            lls.add(user);
+                    Marker marker = new Marker(_mapView, "Work", "", destination);
+                    marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
+                    _mapView.addMarker(marker);
 
-            _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
-            _mapView.setZoom(_mapView.getZoomLevel() - 1);
+                    marker = new Marker(_mapView, "Me", "", user);
+                    marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
+                    _mapView.addMarker(marker);
 
-            _distanceTextView.setText(misc.to2Decimal(ll.distanceTo(user) * 0.000621371) + " miles");
-            _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
+                    Set<LatLng> lls = new HashSet<>();
+                    lls.add(destination);
+                    lls.add(user);
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
+                    _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
+                    _mapView.setZoom(_mapView.getZoomLevel() - 1);
 
-            _navigateButton.setVisibility(GONE);
-            _mapLayout.setVisibility(GONE);
-        }
+                    _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
+                    _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
+                } else {
+                    _navigateButton.setVisibility(GONE);
+                    _mapLayout.setVisibility(GONE);
+                }
+            }
+        }.executeEx();
     }
 
     public void showMap(Uri geoLocation) {
@@ -186,6 +204,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _navigate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_navigate_onClick");
             if (_workorder != null && !_workorder.getIsRemoteWork()) {
                 Location location = _workorder.getLocation();
                 if (location != null) {
@@ -208,6 +227,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _map_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_map_onClick");
             if (_workorder != null && !_workorder.getIsRemoteWork()) {
                 Location location = _workorder.getLocation();
                 if (location != null) {
