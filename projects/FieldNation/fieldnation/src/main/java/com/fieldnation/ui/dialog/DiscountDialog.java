@@ -12,6 +12,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.R;
 
@@ -112,7 +113,7 @@ public class DiscountDialog extends DialogFragmentBase {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                _okButton_onClick.onClick(null);
+                _amountEditText.requestFocus();
                 handled = true;
             }
             return handled;
@@ -122,9 +123,14 @@ public class DiscountDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+             if (_amountEditText.getText().toString().isEmpty() || _amountEditText.getText().toString().isEmpty()) {
+                Toast.makeText(getActivity(), R.string.toast_could_not_complete_discount, Toast.LENGTH_LONG).show();
+                return;
+            }
             DiscountDialog.this.dismiss();
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount());
+
         }
     };
 
