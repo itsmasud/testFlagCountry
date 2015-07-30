@@ -56,22 +56,23 @@
             android:id="@+id/address_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clickable="true"
             android:orientation="horizontal"
             android:padding="16dp">
 
             <com.fieldnation.ui.IconFontTextView
                 style="@style/Text_Title"
-                android:layout_gravity="center_vertical"
                 android:layout_width="20dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:gravity="center"
                 android:text="@string/icfont_map_marker"
                 android:textColor="@color/fn_light_text" />
 
             <LinearLayout
-                android:layout_gravity="center_vertical"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
                 android:layout_marginLeft="16dp"
                 android:orientation="vertical">
 
