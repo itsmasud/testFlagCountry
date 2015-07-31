@@ -253,6 +253,7 @@
     <string name="post_visit">Post Visit</string>
     <string name="edit">Edit</string>
     <string name="uploading">Uploading...</string>
+    <string name="downloading">Downloading...</string>
     <string name="deleting">Deleting...</string>
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>

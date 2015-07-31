@@ -31,7 +31,9 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
@@ -526,7 +528,13 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDownload(long documentId, File file, boolean failed) {
+        public void onDownload(long documentId, File file, int state) {
+            if (file == null) {
+                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                    ToastClient.toast(GlobalState.getContext(), "Couldn't download file", Toast.LENGTH_SHORT);
+                return;
+            }
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
             startActivity(intent);

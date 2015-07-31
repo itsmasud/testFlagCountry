@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -11,10 +13,12 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.util.Hashtable;
 
 public class DocumentView extends RelativeLayout {
@@ -25,14 +29,18 @@ public class DocumentView extends RelativeLayout {
     // UI
     private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
-
     private TextView _dateTextView;
     private TextView _byTextView;
     private TextView _usernameTextView;
+    private ProgressBar _progressBar;
+    private TextView _statusTextView;
+    private LinearLayout _usernameLayout;
 
     // Data
     private Workorder _workorder;
     private Document _document;
+    private DocumentClient _docClient;
+    private boolean _isLoading = false;
 
     static {
         _ICFN_FILES.put("png", R.string.icfont_file_png);
@@ -74,6 +82,13 @@ public class DocumentView extends RelativeLayout {
         _byTextView = (TextView) findViewById(R.id.by_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
+        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        _statusTextView = (TextView) findViewById(R.id.status_textview);
+        _usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
+
+        _docClient = new DocumentClient(_docClient_listener);
+        _docClient.connect(getContext());
+
         setOnClickListener(_this_onClick);
     }
 
@@ -84,6 +99,27 @@ public class DocumentView extends RelativeLayout {
         _document = document;
         _workorder = workorder;
         populateUi();
+    }
+
+    public void setLoading(boolean isloading, int messageResId) {
+        _isLoading = isloading;
+        if (isloading) {
+            _progressBar.setVisibility(View.VISIBLE);
+            _statusTextView.setVisibility(View.VISIBLE);
+            _usernameLayout.setVisibility(View.GONE);
+            _dateTextView.setVisibility(View.GONE);
+            _statusTextView.setText(messageResId);
+        } else {
+            _progressBar.setVisibility(View.GONE);
+            _statusTextView.setVisibility(View.GONE);
+            _usernameLayout.setVisibility(View.VISIBLE);
+            _dateTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    public void setDownloading(String filename) {
+        setLoading(true, R.string.downloading);
+        _filenameTextView.setText(filename);
     }
 
     private void populateUi() {
@@ -130,6 +166,34 @@ public class DocumentView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final DocumentClient.Listener _docClient_listener = new DocumentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _docClient.subDocument();
+        }
+
+        @Override
+        public void onDownload(long documentId, File file, int state) {
+            if (_document == null)
+                return;
+
+            if (_document.getDocumentId() != documentId)
+                return;
+
+            if (state == DocumentConstants.PARAM_STATE_START) {
+                setDownloading(_document.getFileName());
+            } else {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setLoading(false, R.string.downloading);
+                    }
+                }, 1000);
+            }
+        }
+    };
+
+
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
