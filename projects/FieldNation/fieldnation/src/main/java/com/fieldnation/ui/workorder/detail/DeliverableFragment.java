@@ -529,7 +529,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onDownload(long documentId, File file, int state) {
-            if (file == null) {
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(GlobalState.getContext(), "Couldn't download file", Toast.LENGTH_SHORT);
                 return;
