@@ -4,6 +4,8 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -95,6 +97,7 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(0);
             if (_listener != null)
                 _listener.onChange(0);
+            hideKeyboard(v);
         }
     };
 
@@ -124,6 +127,7 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(2);
             if (_listener != null)
                 _listener.onChange(2);
+            hideKeyboard(v);
         }
     };
 
@@ -133,6 +137,7 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(3);
             if (_listener != null)
                 _listener.onChange(3);
+            hideKeyboard(v);
         }
     };
 
@@ -160,6 +165,13 @@ public class WorkorderTabView extends RelativeLayout {
         } else {
             _alertTextView.setVisibility(VISIBLE);
             _alertTextView.setText(count + "");
+        }
+    }
+
+    private void hideKeyboard(View v) {
+        if (v != null) {
+            InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 
