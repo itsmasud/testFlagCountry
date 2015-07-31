@@ -29,6 +29,25 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
         }
     }
 
+    // entry points
+
+    @Override
+    public Result handleStart(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pDownload":
+                    return handleDownloadStart(context, transaction, params);
+            }
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return Result.ERROR;
+        }
+        return Result.FINISH;
+    }
+
     @Override
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
@@ -36,7 +55,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
-                    return handleDownload(context, transaction, params, resultData);
+                    return handleDownloadFinish(context, transaction, params, resultData);
             }
 
         } catch (Exception ex) {
@@ -50,14 +69,32 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
-            DocumentDispatch.download(context, params.getLong("documentId"), null, true, transaction.isSync());
+            String action = params.getString("action");
+            switch (action) {
+                case "pDownload":
+                    return handleDownloadFail(context, transaction, params, resultData);
+            }
+
         } catch (Exception ex) {
             ex.printStackTrace();
+            return Result.ERROR;
         }
         return Result.FINISH;
     }
 
-    private Result handleDownload(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException, IOException {
+
+    // handlers
+    public Result handleDownloadStart(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        String filename = params.getString("filename");
+        long documentId = params.getLong("documentId");
+
+        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, false);
+
+        return Result.FINISH;
+    }
+
+
+    private Result handleDownloadFinish(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException, IOException {
         String filename = params.getString("filename");
         long documentId = params.getLong("documentId");
 
@@ -68,7 +105,15 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             obj = StoredObject.put(context, PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
         }
 
-        DocumentDispatch.download(context, documentId, obj.getFile(), false, transaction.isSync());
+        DocumentDispatch.download(context, documentId, obj.getFile(), PARAM_STATE_FINISH, transaction.isSync());
+
+        return Result.FINISH;
+    }
+
+
+    private Result handleDownloadFail(Context context, WebTransaction transaction, JsonObject params,
+                                      HttpResult resultData) throws ParseException {
+        DocumentDispatch.download(context, params.getLong("documentId"), null, PARAM_STATE_FINISH, transaction.isSync());
 
         return Result.FINISH;
     }

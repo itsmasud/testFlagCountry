@@ -48,7 +48,7 @@ public class DocumentService extends MSService implements DocumentConstants {
         StoredObject obj = StoredObject.get(context, PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
-                DocumentDispatch.download(context, documentId, obj.getFile(), false, isSync);
+                DocumentDispatch.download(context, documentId, obj.getFile(), PARAM_STATE_FINISH, isSync);
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

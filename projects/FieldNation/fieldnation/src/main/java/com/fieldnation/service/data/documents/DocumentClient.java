@@ -58,15 +58,17 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         }
 
         private void preOnDownload(Bundle bundle) {
-            if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
-                onDownload(bundle.getLong(PARAM_DOCUMENT_ID), null, true);
-            } else {
-                onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
-                        (File) bundle.getSerializable(PARAM_FILE), false);
-            }
+            File file = null;
+            int state = bundle.getInt(PARAM_STATE);
+
+            if (bundle.containsKey(PARAM_FILE))
+                file = (File) bundle.getSerializable(PARAM_FILE);
+
+            onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
+                    file, state);
         }
 
-        public void onDownload(long documentId, File file, boolean failed) {
+        public void onDownload(long documentId, File file, int state) {
         }
 
 
