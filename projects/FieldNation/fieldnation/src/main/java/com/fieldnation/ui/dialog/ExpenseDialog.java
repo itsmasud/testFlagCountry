@@ -18,10 +18,13 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.service.toast.ToastClient;
 
 public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ExpenseDialog";
@@ -154,7 +157,7 @@ public class ExpenseDialog extends DialogFragmentBase {
         return _descriptionEditText.getText().toString();
     }
 
-    public Double getAmount() {
+    public Double isValidAmount() {
         try {
             return Double.parseDouble(_amountEditText.getText().toString());
         } catch (Exception ex) {
@@ -170,6 +173,19 @@ public class ExpenseDialog extends DialogFragmentBase {
                 return null;
         } catch (Exception ex) {
             return null;
+        }
+    }
+
+    private boolean isValidAmount(String _amount) {
+        try {
+            double amount = Double.parseDouble(_amount);
+            if ((int) (amount * 100) < 10) {
+                return false;
+            } else {
+                return true;
+            }
+        } catch (Exception ex) {
+            return false;
         }
     }
 
@@ -205,8 +221,15 @@ public class ExpenseDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (_amountEditText.getText().toString().isEmpty() || _descriptionEditText.getText().toString().isEmpty())
+                return;
+            if (!isValidAmount(_amountEditText.getText().toString())) {
+                ToastClient.toast(GlobalState.getContext(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                return;
+            }
             if (_listener != null)
-                _listener.onOk(getDescription(), getAmount(), getCategory());
+                _listener.onOk(getDescription(), isValidAmount(), getCategory());
 
             ExpenseDialog.this.dismiss();
         }

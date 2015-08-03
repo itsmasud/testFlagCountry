@@ -86,6 +86,7 @@
     <string name="toast_downloading">Downloading</string>
     <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>
     <string name="toast_could_not_complete_discount">Error occurred. Please fill the input box.</string>
+    <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
 
     <string name="notification_title_start_upload">Starting Upload...</string>
     <string name="notification_context_getting_file">Getting file</string>
