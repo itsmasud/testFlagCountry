@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
@@ -14,9 +15,11 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.CardView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -192,6 +195,11 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
+                if (misc.isEmptyOrNull(_inputView.getInputText())) {
+                    ToastClient.toast(GlobalState.getContext(), "Please enter a message", Toast.LENGTH_SHORT);
+                    return;
+                }
+
                 _refreshView.startRefreshing();
 
                 Log.v(TAG, "_send_onClick");
