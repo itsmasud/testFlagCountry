@@ -11,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -25,7 +26,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import java.util.Calendar;
 
 public class ConfirmDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ConfirmDialog";
+    private static final String TAG = "ConfirmDialog";
 
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
@@ -34,6 +35,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private static final String STATE_TAC_ACCEPT = "STATE_TAC_ACCEPT";
 
     // Ui
+    private LinearLayout _startDateLayout;
     private Button _startDateButton;
     private Button _durationButton;
     private Button _okButton;
@@ -99,7 +101,9 @@ public class ConfirmDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_confirm, container, false);
 
-        _startDateButton = (Button) v.findViewById(R.id.start_date_button);
+        _startDateLayout = (LinearLayout)v.findViewById(R.id.startDate_layout);
+
+        _startDateButton = (Button) v.findViewById(R.id.startDate_button);
         _startDateButton.setOnClickListener(_startDate_onClick);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);
@@ -196,7 +200,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         if (_schedule.isExact()) {
             try {
                 _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-                _startDateButton.setVisibility(View.GONE);
+                _startDateLayout.setVisibility(View.GONE);
                 setDuration(3600000);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -207,7 +211,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
                 _startCalendar = cal;
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateButton.setVisibility(View.VISIBLE);
+                _startDateLayout.setVisibility(View.VISIBLE);
                 setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -330,11 +334,11 @@ public class ConfirmDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds);
+        void onOk(Workorder workorder, String startDate, long durationMilliseconds);
 
-        public void onCancel(Workorder workorder);
+        void onCancel(Workorder workorder);
 
-        public void termsOnClick(Workorder workorder);
+        void termsOnClick(Workorder workorder);
     }
 
 }

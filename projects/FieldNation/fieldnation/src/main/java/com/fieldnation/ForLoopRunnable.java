@@ -5,6 +5,8 @@ import android.os.Handler;
 
 /**
  * Created by Michael Carver on 1/5/2015.
+ * This is a simple runnable that mimics a for loop, only it uses a {@Link Handler} to do the
+ * stepping. Useful for building large lists in the UI
  */
 public abstract class ForLoopRunnable implements Runnable {
     private int i;
@@ -20,7 +22,7 @@ public abstract class ForLoopRunnable implements Runnable {
     }
 
     public ForLoopRunnable(int count, Handler handler) {
-        this(count, handler, 50);
+        this(count, handler, 250);
     }
 
     @Override

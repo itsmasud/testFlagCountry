@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +10,7 @@ import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -24,7 +24,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 10/29/2014.
  */
 public class CustomFieldDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.CustomFieldDialog";
+    private static final String TAG = "CustomFieldDialog";
 
     // State
     private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
@@ -33,6 +33,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private TextView _titleTextView;
     private EditText _textEditText;
     private Button _dateTimeButton;
+    private LinearLayout _spinnerLayout;
     private Spinner _spinner;
     private RelativeLayout _tipLayout;
     private TextView _tipTextView;
@@ -85,6 +86,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
+        _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
+
         _spinner = (Spinner) v.findViewById(R.id.spinner);
 
         _tipLayout = (RelativeLayout) v.findViewById(R.id.tip_layout);
@@ -131,7 +134,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
-        _spinner.setVisibility(View.GONE);
+        _spinnerLayout.setVisibility(View.GONE);
         _tipLayout.setVisibility(View.GONE);
 
         if (!misc.isEmptyOrNull(_customField.getTip())) {
@@ -162,7 +165,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 }
                 break;
             case LIST:
-                _spinner.setVisibility(View.VISIBLE);
+                _spinnerLayout.setVisibility(View.VISIBLE);
                 if (_customField.getPredefinedValues() != null) {
                     Log.v(TAG, "PredefinedValues");
                     for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
@@ -170,11 +173,11 @@ public class CustomFieldDialog extends DialogFragmentBase {
                             _customField.getPredefinedValues()[i] = "";
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(),
-                            android.R.layout.simple_spinner_item,
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
+                            R.layout.view_spinner_item,
                             _customField.getPredefinedValues());
 
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
                     _spinner.setAdapter(adapter);
                     if (!misc.isEmptyOrNull(_customField.getValue())) {
                         String val = _customField.getValue();
@@ -223,6 +226,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
 
     public interface Listener {
-        public void onOk(CustomField field, String value);
+        void onOk(CustomField field, String value);
     }
 }

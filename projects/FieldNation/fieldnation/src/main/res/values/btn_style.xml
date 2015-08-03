@@ -1,88 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <dimen name="btn_shadow_left">3dp</dimen>
+    <dimen name="btn_shadow_right">3dp</dimen>
+    <dimen name="btn_shadow_top">3dp</dimen>
+    <dimen name="btn_shadow_bottom">3dp</dimen>
+
+    <dimen name="btn_corner_radius">2dp</dimen>
+    <dimen name="btn_gradient_corner_radius">4dp</dimen>
+
+    <dimen name="btn_gradient_padding">1dp</dimen>
+
+    <dimen name="btn_status_left">2dp</dimen>
+    <dimen name="btn_status_bottom">2dp</dimen>
+    <dimen name="btn_status_top">2dp</dimen>
+
+    <color name="btn_status_orange_fill">@color/fn_brandcolor</color>
+    <color name="btn_status_orange_top">@color/fn_brandcolor_80</color>
+    <color name="btn_status_orange_center">@color/fn_brandcolor_0</color>
+    <color name="btn_status_orange_bottom">#05000000</color>
+    <color name="btn_status_orange_pressed">@color/fn_brandcolor_medium</color>
+
+    <color name="btn_status_white_fill">#FFF0F0F0</color>
+    <color name="btn_status_white_top">#CCF0F0F0</color>
+    <color name="btn_status_white_center">#00F0F0F0</color>
+    <color name="btn_status_white_bottom">#05000000</color>
+    <color name="btn_status_white_pressed">#FFC0C0C0</color>
+
+    <color name="btn_status_green_fill">@color/fn_accent_color</color>
+    <color name="btn_status_green_top">@color/fn_accent_color_80</color>
+    <color name="btn_status_green_center">@color/fn_accent_color_0</color>
+    <color name="btn_status_green_bottom">#05000000</color>
+    <color name="btn_status_green_pressed">@color/fn_accent_color_medium</color>
+
+    <color name="btn_status_gray_fill">@color/fn_light_text</color>
+    <color name="btn_status_gray_top">@color/fn_light_text_80</color>
+    <color name="btn_status_gray_center">@color/fn_light_text_0</color>
+    <color name="btn_status_gray_bottom">#05000000</color>
+
+    <color name="btn_status_black_fill">@color/fn_dark_text</color>
+    <color name="btn_status_black_top">@color/fn_dark_text_80</color>
+    <color name="btn_status_black_center">@color/fn_dark_text_0</color>
+    <color name="btn_status_black_bottom">#05000000</color>
+
+
     <dimen name="Button_Touch_Target">48dp</dimen>
     <dimen name="buttonTouchTarget_Material">48dp</dimen>
 
-
-    <color name="btn_white_fg">#FF000000</color>
-    <color name="btn_orange_fg">#FFFFFFFF</color>
-    <color name="btn_green_fg">#FFFFFFFF</color>
-    <color name="btn_gray_fg">#FF000000</color>
-
-    <style name="ButtonWhite" parent="@android:style/Widget.Button">
-        <item name="android:textColor">@color/btn_white_fg</item>
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:layout_height">48dp</item>
+    <style name="Material.Button" parent="Text_Button">
+        <item name="android:layout_height">@dimen/button_height</item>
         <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
+        <item name="android:minWidth">@dimen/button_min_width</item>
+        <item name="android:layout_marginLeft">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginRight">@dimen/button_horr_margin</item>
+        <item name="android:layout_marginTop">@dimen/button_vert_margin</item>
+        <item name="android:layout_marginBottom">@dimen/button_vert_margin</item>
+        <item name="android:paddingLeft">@dimen/button_horr_padding</item>
+        <item name="android:paddingRight">@dimen/button_horr_padding</item>
     </style>
 
-    <style name="ButtonWhiteMaterial" parent="@android:style/Widget.Button">
-        <item name="android:textColor">@color/btn_white_fg</item>
-        <item name="android:background">@drawable/btn_white_material</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-    </style>
-
-    <style name="ButtonOrange" parent="@android:style/Widget.Button">
-        <item name="android:textColor">@color/btn_orange_fg</item>
-        <item name="android:background">@drawable/btn_orange</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-    </style>
-
-    <style name="ButtonOrangeMaterial" parent="@android:style/Widget.Button">
-        <item name="android:textColor">@color/btn_orange_fg</item>
-        <item name="android:background">@drawable/btn_orange_material</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-    </style>
-
-    <style name="ButtonGreen" parent="@android:style/Widget.Button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">@color/btn_green_fg</item>
-        <item name="android:background">@drawable/btn_green</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-    </style>
-
-    <style name="ButtonGray" parent="@android:style/Widget.Button">
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:textColor">@color/btn_white_fg</item>
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:layout_height">48dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-    </style>
-
-    <style name="ButtonSpinner" parent="android:Widget.Holo.Light.Spinner">
-        <item name="android:layout_height">36dp</item>
-        <item name="android:layout_marginBottom">6dp</item>
-        <item name="android:layout_marginTop">6dp</item>
-
-    </style>
-
-    <style name="ButtonTextLink" parent="Text_Button">
+    <style name="Material.Button.Flat" parent="Material.Button">
         <item name="android:background">@null</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:textColor">@color/text_link_color</item>
-        <item name="android:layout_gravity">right|center_vertical</item>
-        <item name="android:gravity">center</item>
-        <item name="android:layout_width">wrap_content</item>
-        <item name="android:layout_height">@dimen/dialogButtonHeight</item>
+        <item name="android:textColor">@color/fn_clickable_text</item>
     </style>
 
-    <style name="Button.Material.Flat" parent="ButtonTextLink"></style>
+    <style name="Material.Button.Raised.White" parent="Material.Button">
+        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:textColor">@color/fn_dark_button_text</item>
+    </style>
 
+    <style name="Material.Button.Raised.Green" parent="Material.Button">
+        <item name="android:background">@drawable/btn_green</item>
+        <item name="android:textColor">@color/fn_white_text</item>
+    </style>
+
+    <style name="Material.Button.Raised.Orange" parent="Material.Button">
+        <item name="android:background">@drawable/btn_orange</item>
+        <item name="android:textColor">@color/fn_white_text</item>
+    </style>
+
+    <style name="Material.Button.Raised.Gray" parent="Material.Button">
+        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:textColor">@color/fn_dark_button_text</item>
+    </style>
+
+    <!--<style name="ButtonSpinner" parent="android:Widget.Holo.Light.Spinner">-->
+    <!--<item name="android:layout_height">36dp</item>-->
+    <!--<item name="android:layout_marginBottom">6dp</item>-->
+    <!--<item name="android:layout_marginTop">6dp</item>-->
+    <!--</style>-->
+
+    <style name="Material.Button.Circle">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+        <item name="android:background">@drawable/ic_circle_blue</item>
+        <item name="android:textColor">@color/fn_white_text</item>
+    </style>
 
 </resources>

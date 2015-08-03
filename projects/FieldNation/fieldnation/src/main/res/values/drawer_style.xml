@@ -1,25 +1,65 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <color name="drawerBackground">#FFf8f9f4</color>
-    <color name="drawerHighlightBackground">#FFc0e4bc</color>
-    <color name="drawerHighlightBorder">#FF5cc087</color>
-    <color name="drawerForeground">#FFcecfc0</color>
-    <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
-    <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
-    <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
 
-    <dimen name="drawer_padding">5dp</dimen>
-    <dimen name="drawer_item_paddingLeft">5dp</dimen>
-    <dimen name="drawer_item_paddingTop">20dp</dimen>
-    <dimen name="drawer_item_paddingRight">5dp</dimen>
-    <dimen name="drawer_item_paddingBottom">20dp</dimen>
-    <dimen name="drawer_item_icon_paddingRight">10dp</dimen>
-    <dimen name="drawer_icon_width">36dp</dimen>
-    <dimen name="drawer_icon_height">36dp</dimen>
+    <dimen name="drawer_padding">4dp</dimen>
+    <dimen name="drawer_item_paddingLeft">16dp</dimen>
+    <dimen name="drawer_item_paddingTop">16dp</dimen>
+    <dimen name="drawer_item_paddingRight">8dp</dimen>
+    <dimen name="drawer_item_paddingBottom">16dp</dimen>
+    <dimen name="drawer_item_icon_paddingRight">16dp</dimen>
+    <dimen name="drawer_icon_width">32dp</dimen>
+    <dimen name="drawer_icon_height">32dp</dimen>
 
     <style name="Drawer">
-        <item name="android:background">@color/drawerBackground</item>
-        <item name="android:padding">@dimen/drawer_padding</item>
+        <item name="android:background">@color/fn_menu_bg</item>
+    </style>
+
+    <style name="DrawerProfileContainer">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+
+        <item name="android:layout_marginBottom">16dp</item>
+        <item name="android:paddingBottom">16dp</item>
+
+        <item name="android:paddingLeft">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+
+        <!--<item name="android:background">@color/drawer_item_background</item>-->
+
+        <item name="android:paddingTop">16dp</item>
+        <item name="android:layout_marginTop">16dp</item>
+    </style>
+
+    <style name="DrawerProfileImage">
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="DrawerProfileDataContainer">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">16dp</item>
+    </style>
+
+    <style name="DrawerProfileName" parent="Text_Title">
+        <item name="android:textSize">18sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DrawerProfileDetails" parent="Text_Body_1">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DrawerProfileButton" parent="Material.Button.Flat">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:src">@drawable/ic_nav_arrow</item>
+        <!--<item name="android:background">@color/drawer_item_background</item>-->
     </style>
 
     <style name="DrawerItem">
@@ -28,30 +68,78 @@
         <item name="android:paddingRight">@dimen/drawer_item_paddingRight</item>
         <item name="android:paddingBottom">@dimen/drawer_item_paddingBottom</item>
         <item name="android:background">@color/drawer_item_background</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DrawerItemTitle" parent="Text_Title">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
+
+    <style name="DrawerItemSubtitle" parent="Text_Subhead">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
     <style name="DrawerEsitmatedAmount">
-        <item name="android:background">@drawable/pay_nav_green</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingLeft">10dp</item>
-        <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
+        <item name="android:background">@color/fn_accent_color</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <style name="DrawerPaidAmount">
-        <item name="android:background">@drawable/pay_nav_gray</item>
-        <item name="android:textColor">@color/drawerPaymentAmountForeground</item>
-        <item name="android:paddingRight">10dp</item>
-        <item name="android:paddingLeft">10dp</item>
+        <item name="android:background">@color/fn_dark_text</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:paddingRight">12dp</item>
+        <item name="android:paddingLeft">12dp</item>
+        <item name="android:layout_marginRight">16dp</item>
+        <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <style name="DrawerItemIcon">
-        <item name="android:paddingRight">@dimen/drawer_item_icon_paddingRight</item>
-        <item name="android:src">@drawable/ic_todo</item>
+        <item name="android:layout_marginRight">@dimen/drawer_item_icon_paddingRight</item>
         <item name="android:layout_width">@dimen/drawer_icon_width</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:layout_alignParentTop">true</item>
+        <item name="android:layout_alignParentLeft">true</item>
+    </style>
+
+    <style name="DrawerItemTextFont">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">@dimen/drawer_item_icon_paddingRight</item>
+        <item name="android:textColor">@color/fn_light_text</item>
+        <item name="android:textSize">32sp</item>
+
     </style>
 
     <style name="DrawerSeparator">
-        <item name="android:background">@color/drawerForeground</item>
+        <item name="android:background">@color/fn_divider</item>
+        <item name="android:layout_height">2px</item>
+        <item name="android:layout_width">match_parent</item>
     </style>
 
+    <style name="DrawerSubitem">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">8dp</item>
+        <item name="android:paddingTop">8dp</item>
+        <item name="android:paddingLeft">16dp</item>
+        <item name="android:paddingRight">16dp</item>
+        <item name="android:gravity">center_vertical</item>
+        <item name="android:background">@color/drawer_item_background</item>
+    </style>
+
+    <style name="DrawerSubitemTitle" parent="Text_Subhead">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+    </style>
 </resources>

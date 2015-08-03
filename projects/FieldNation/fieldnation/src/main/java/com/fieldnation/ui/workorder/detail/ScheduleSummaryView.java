@@ -8,18 +8,16 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 
 public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.ScheduleSummaryView";
-
-    private static final int WEB_SUBMIT_WORKLOG = 1;
+    private static final String TAG = "ScheduleSummaryView";
 
     // UI
-    private TextView _arriveTimeTextView;
-    private TextView _coLabelTextView;
-    private TextView _coTextView;
+    private TextView _dateTextView;
+    private TextView _timeTextView;
+    private LinearLayout _durationLayout;
+    private TextView _durationTextView;
 
     // Data
     private Workorder _workorder;
@@ -44,9 +42,11 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         if (isInEditMode())
             return;
 
-        _arriveTimeTextView = (TextView) findViewById(R.id.arrivetime_view);
-        _coLabelTextView = (TextView) findViewById(R.id.colabel_textview);
-        _coTextView = (TextView) findViewById(R.id.co_textview);
+        _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _durationLayout = (LinearLayout) findViewById(R.id.duration_layout);
+        _durationTextView = (TextView) findViewById(R.id.duration_textview);
+
 
         setVisibility(View.GONE);
     }
@@ -56,7 +56,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     /*-*************************************-*/
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
     }
@@ -65,34 +65,26 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         if (_workorder == null)
             return;
 
-        {
-            String display = null;
-            if (_workorder.getEstimatedSchedule() != null)
-                display = _workorder.getEstimatedSchedule().getDisplayString(true);
-            else if (_workorder.getSchedule() != null)
-                display = _workorder.getSchedule().getDisplayString(false);
-
-            if (display != null)
-                _arriveTimeTextView.setText(display);
-        }
-
-        _coLabelTextView.setVisibility(View.GONE);
-        _coTextView.setVisibility(View.GONE);
-
-        if (_workorder.getCounterOfferInfo() != null
-                && _workorder.getCounterOfferInfo().getSchedule() != null) {
-            Schedule schedule = _workorder.getCounterOfferInfo().getSchedule();
-
-            String display = schedule.getDisplayString(false);
-            if (display != null) {
-                _coTextView.setText(schedule.getDisplayString(false));
-                _coTextView.setVisibility(View.VISIBLE);
-                _coLabelTextView.setVisibility(View.VISIBLE);
+        if (_workorder.getEstimatedSchedule() != null) {
+            _dateTextView.setText(_workorder.getEstimatedSchedule().getFormatedDate());
+            _timeTextView.setText(_workorder.getEstimatedSchedule().getFormatedTime());
+            if (_workorder.getEstimatedSchedule().getDuration() != null) {
+                _durationLayout.setVisibility(VISIBLE);
+                _durationTextView.setText(_workorder.getEstimatedSchedule().getDuration() + " hours");
             } else {
-                _coTextView.setVisibility(View.GONE);
-                _coLabelTextView.setVisibility(View.GONE);
+                _durationLayout.setVisibility(GONE);
+            }
+        } else {
+            _dateTextView.setText(_workorder.getSchedule().getFormatedDate());
+            _timeTextView.setText(_workorder.getSchedule().getFormatedTime());
+            if (_workorder.getSchedule().getDuration() != null) {
+                _durationLayout.setVisibility(VISIBLE);
+                _durationTextView.setText(_workorder.getSchedule().getDuration() + " hours");
+            } else {
+                _durationLayout.setVisibility(GONE);
             }
         }
+
         setVisibility(View.VISIBLE);
     }
 }

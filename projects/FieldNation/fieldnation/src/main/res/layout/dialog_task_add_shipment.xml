@@ -5,27 +5,31 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="?attr/dialogTitleStyle"
-            android:text="Assign/Add New" />
-
         <LinearLayout
-            android:id="@+id/shipments_linearlayout"
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/title_textview"
+                style="?attr/dialogTitleStyle"
+                android:text="Assign/Add New" />
+
+            <LinearLayout
+                android:id="@+id/shipments_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </LinearLayout>
 
         <LinearLayout
-            style="?attr/dialogActionBarStyle"
             android:id="@+id/action_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            style="?attr/dialogActionBarStyle"
             android:orientation="horizontal">
 
             <Button

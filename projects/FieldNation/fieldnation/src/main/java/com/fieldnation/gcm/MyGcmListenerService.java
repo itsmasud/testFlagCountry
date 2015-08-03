@@ -19,6 +19,7 @@ package com.fieldnation.gcm;
 import android.os.Bundle;
 import android.util.Log;
 
+import com.fieldnation.GlobalTopicClient;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {
@@ -38,9 +39,16 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
-        // TODO do something with the message
+        GlobalTopicClient.dispatchGcm(this, message);
     }
     // [END receive_message]
+
+    @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
 
     /**
      * Create and show a simple notification containing the received GCM message.

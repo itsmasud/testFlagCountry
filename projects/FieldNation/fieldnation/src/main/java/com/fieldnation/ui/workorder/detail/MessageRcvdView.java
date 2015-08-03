@@ -1,48 +1,38 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.ResultReceiver;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
-import com.fieldnation.rpc.client.PhotoService;
-import com.fieldnation.rpc.common.PhotoServiceConstants;
+import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.lang.ref.WeakReference;
 import java.text.ParseException;
-import java.util.Random;
 
 public class MessageRcvdView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.MessageRcvdView";
+    private static final String TAG = "MessageRcvdView";
 
-    private int WEB_GET_PHOTO = 1;
     // UI
     private TextView _messageTextView;
-    private ImageView _profileImageView;
+    private ProfilePicView _picView;
     private TextView _timeTextView;
-    private ImageView _checkImageView;
     private TextView _usernameTextView;
 
     // Data
-    private GlobalState _gs;
+    private PhotoClient _photos;
     private Message _message = null;
-    private PhotoService _service;
-    private Random _rand = new Random();
-    private Drawable _profilePic = null;
+    private WeakReference<Drawable> _profilePic = null;
 
     public MessageRcvdView(Context context) {
         super(context);
@@ -62,37 +52,28 @@ public class MessageRcvdView extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_message_rcvd, this);
 
-        _gs = (GlobalState) getContext().getApplicationContext();
-
         _messageTextView = (TextView) findViewById(R.id.message_textview);
-        _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _checkImageView = (ImageView) findViewById(R.id.check_imageview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
-        _service = new PhotoService(_gs, _resultReceiver);
+        _photos = new PhotoClient(_photo_listener);
+        _photos.connect(getContext());
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        _photos.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
     public void setMessage(Message message) {
         _message = message;
-
         populateUi();
     }
 
-    private void getPhoto() {
-        if (_service == null)
-            return;
-
-        if (_message == null)
-            return;
-
-        WEB_GET_PHOTO = _rand.nextInt();
-        if (_message.getFromUser().getPhotoThumbUrl() != null)
-            _gs.startService(_service.getPhoto(WEB_GET_PHOTO, _message.getFromUser().getPhotoThumbUrl(), true));
-    }
-
     private void populateUi() {
-        if (_service == null)
+        if (_photos == null)
             return;
 
         if (_message == null)
@@ -102,42 +83,47 @@ public class MessageRcvdView extends RelativeLayout {
             _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
             _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
         } catch (Exception ex) {
-            ex.printStackTrace();
-            _messageTextView.setText("");
+            _messageTextView.setText(_message.getMessage());
         }
-        
+
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        if (_message.isRead()) {
-            _checkImageView.setBackgroundResource(R.drawable.ic_check_grey);
-        } else {
-            _checkImageView.setBackgroundResource(R.drawable.ic_message_thumb);
-        }
+        _picView.setAlertOn(!_message.isRead());
 
-        _usernameTextView.setText(_message.getFromUser().getFirstname());
+        _usernameTextView.setText(_message.getFromUser().getFirstName());
 
-        if (_profilePic == null) {
-            _profileImageView.setBackgroundResource(R.drawable.missing);
-            getPhoto();
-        } else {
-            _profileImageView.setBackgroundDrawable(_profilePic);
+        if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
+            _picView.setProfilePic(R.drawable.missing_circle);
+            String url = _message.getFromUser().getPhotoUrl();
+            if (!misc.isEmptyOrNull(url)) {
+                PhotoClient.get(getContext(), url, true, false);
+                _photos.subGet(url, true, false);
+            }
+        } else if (_profilePic != null && _profilePic.get() != null) {
+            _picView.setProfilePic(_profilePic.get());
         }
     }
 
-    private ResultReceiver _resultReceiver = new ResultReceiver(new Handler()) {
+    private PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
-        protected void onReceiveResult(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_PHOTO) {
-                Bitmap photo = resultData.getParcelable(PhotoServiceConstants.KEY_RESPONSE_DATA);
-                _profilePic = new BitmapDrawable(getContext().getResources(), photo);
-                _profileImageView.setBackgroundDrawable(_profilePic);
+        public void onConnected() {
+            populateUi();
+        }
+
+        @Override
+        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            if (bitmapDrawable == null) {
+                _picView.setProfilePic(R.drawable.missing_circle);
+                return;
             }
-            super.onReceiveResult(resultCode, resultData);
+
+            Drawable pic = bitmapDrawable;
+            _profilePic = new WeakReference<>(pic);
+            _picView.setProfilePic(pic);
         }
     };
-
 }

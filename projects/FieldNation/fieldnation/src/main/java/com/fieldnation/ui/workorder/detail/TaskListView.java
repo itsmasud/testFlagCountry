@@ -16,9 +16,10 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
+import java.util.Random;
 
 public class TaskListView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.TaskListView";
+    private static final String TAG = "TaskListView";
 
     // UI
     private TextView _preVisistTextView;
@@ -66,7 +67,7 @@ public class TaskListView extends RelativeLayout {
         _listener = l;
     }
 
-    public void setData(Workorder workorder, List<Task> tasks, boolean isCached) {
+    public void setData(Workorder workorder, List<Task> tasks) {
         _tasks = tasks;
         _workorder = workorder;
 
@@ -95,6 +96,10 @@ public class TaskListView extends RelativeLayout {
             _onSiteLayout.setVisibility(View.GONE);
             _postVisitLayout.setVisibility(View.GONE);
 
+            if (_preVisistList.getChildCount() > _tasks.size()) {
+                _preVisistList.removeViews(_tasks.size() - 1, _preVisistList.getChildCount() - _tasks.size());
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 @Override
                 public void next(int i) throws Exception {
@@ -112,15 +117,8 @@ public class TaskListView extends RelativeLayout {
                         row.setOnTaskClickListener(_task_onClick);
                     }
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    if (_preVisistList.getChildCount() > count) {
-                        _preVisistList.removeViews(count - 1, count - _preVisistList.getChildCount());
-                    }
-                }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         } else {
             ForLoopRunnable r = new ForLoopRunnable(_tasks.size(), new Handler()) {
                 private int pre = 0;
@@ -185,7 +183,7 @@ public class TaskListView extends RelativeLayout {
                     }
                 }
             };
-            post(r);
+            postDelayed(r, new Random().nextInt(1000));
         }
     }
 

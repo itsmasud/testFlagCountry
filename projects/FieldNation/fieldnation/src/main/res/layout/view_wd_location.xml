@@ -1,52 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:mapbox="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location Details" />
-
-    <TextView
-        android:id="@+id/address_textview"
-        style="@style/TextViewLink"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Location Name\n1234 Somewhere Street\nSomeplace, MN 55408" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/distance_textview"
-        style="@style/TextViewLink"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="3.5 mi" />
+        <TextView
+            style="@style/Text_Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="LOCATION" />
 
-    <TextView
-        android:id="@+id/remotely_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done Remotely" />
+        <TextView
+            android:id="@+id/noLocation_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:gravity="center_horizontal"
+            android:text="No Location, work is done remotely."
+            android:visibility="gone" />
 
-    <TextView
-        android:id="@+id/contactinfo_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="First Last\nfirst.last@domain.com\n555-555-1234" />
+        <RelativeLayout
+            android:id="@+id/map_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/description_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Other stuff" />
+            <com.mapbox.mapboxsdk.views.MapView
+                android:id="@+id/mapview"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="@color/fn_light_text"
+                mapbox:accessToken="@string/mapbox_accessToken"
+                mapbox:mapid="@string/mapbox_mapid" />
 
-    <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
+            <View
+                android:id="@+id/click_overlay"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignBottom="@+id/mapview"
+                android:layout_alignLeft="@+id/mapview"
+                android:layout_alignRight="@+id/mapview"
+                android:layout_alignTop="@+id/mapview" />
+        </RelativeLayout>
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/address_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:orientation="horizontal"
+            android:padding="16dp">
+
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/Text_Title"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/icfont_map_marker"
+                android:textColor="@color/fn_light_text" />
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/address_textview"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="740 Valencia St, San Francisco, CA" />
+
+                <TextView
+                    android:id="@+id/distance_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="65.46 miles" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <View
+            style="@style/DividerFull"
+            android:layout_width="match_parent"
+            android:layout_marginBottom="16dp" />
+    </LinearLayout>
+
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/navigate_button"
+        style="@style/Material.Button.Circle"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="140dp"
+        android:text="@string/icfont_car"
+        android:textSize="24sp" />
+</RelativeLayout>

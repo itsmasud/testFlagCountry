@@ -24,7 +24,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 
 public class ExpenseDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.ExpenseDialog";
+    private static String TAG = "ExpenseDialog";
 
     // State
     private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
@@ -107,8 +107,11 @@ public class ExpenseDialog extends DialogFragmentBase {
     private void setCategories(ExpenseCategory[] categories) {
         try {
             _categories = categories;
-            _adapter = new ArrayAdapter<ExpenseCategory>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+            _adapter = new ArrayAdapter<>(getActivity(),
+                    R.layout.view_spinner_item,
                     categories);
+            _adapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _categorySpinner.setAdapter(_adapter);
             _categorySpinner.setSelection(0);
         } catch (Exception ex) {
@@ -210,8 +213,8 @@ public class ExpenseDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String description, double amount, ExpenseCategory category);
+        void onOk(String description, double amount, ExpenseCategory category);
 
-        public void onCancel();
+        void onCancel();
     }
 }

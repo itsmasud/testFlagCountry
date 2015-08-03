@@ -66,7 +66,6 @@ public class Profile implements Parcelable {
             return true;
 
         return _canViewPayments;
-//        return false;
     }
 
     public String getCity() {
@@ -227,7 +226,7 @@ public class Profile implements Parcelable {
         @Override
         public Profile createFromParcel(Parcel source) {
             try {
-                return Profile.fromJson(new JsonObject(source.readString()));
+                return Profile.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -247,7 +246,7 @@ public class Profile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }
 

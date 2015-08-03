@@ -6,7 +6,7 @@ import android.os.Handler;
 /**
  * Created by michael.carver on 12/23/2014.
  */
-public abstract class FileUploadTopicReceiver extends TopicReceiver {
+abstract class FileUploadTopicReceiver extends TopicReceiver {
 
     public FileUploadTopicReceiver(Handler handler) {
         super(handler);

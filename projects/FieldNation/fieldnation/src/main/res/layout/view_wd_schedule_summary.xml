@@ -1,40 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="vertical">
 
-    <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/schedule" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
-    <TextView
-        android:id="@+id/arrivetime_view"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST." />
+        <TextView
+            style="@style/Text_Subhead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center"
+            android:text="SCHEDULE" />
 
-    <TextView
-        android:id="@+id/colabel_textview"
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/counter_offer"
-        android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:orientation="horizontal">
 
-    <TextView
-        android:id="@+id/co_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You will need to arrive exactly on Friday March 14, 2014 at exactly 11:00 am CST."
-        android:visibility="gone" />
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/Text_Subhead"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:text="@string/icfont_calendar"
+                android:textColor="@color/fn_light_text" />
+
+            <TextView
+                android:id="@+id/date_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="Wednesday, Dec 40, 2103\nWednesday, Dec 15, 2103" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/Text_Subhead"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:text="@string/icfont_clock"
+                android:textColor="@color/fn_light_text" />
+
+            <TextView
+                android:id="@+id/time_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="1:00am - 2:15pm (CST)" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:id="@+id/duration_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/Text_Subhead"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:text="@string/icfont_stopwatch"
+                android:textColor="@color/fn_light_text" />
+
+            <TextView
+                android:id="@+id/duration_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:text="For 6 Hours" />
+        </LinearLayout>
+
+
+    </LinearLayout>
 
     <View
-        style="@style/WorkorderDetail_Separator"
-        android:layout_width="match_parent" />
-
+        style="@style/DividerFull"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 </LinearLayout>

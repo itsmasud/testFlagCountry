@@ -1,19 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/WorkorderDetail"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <com.fieldnation.ui.OverScrollView
         android:id="@+id/scroll_view"
-        style="@style/WorkorderDetail"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <LinearLayout
-            style="@style/WorkorderDetail_Data"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
             android:orientation="vertical">
 
             <!-- top action bar -->
@@ -26,10 +24,15 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/WorkorderDetail_FieldTitle"
-                    android:layout_width="wrap_content"
+                    style="@style/Text_Subhead"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/documents_to_review" />
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="DOCUMENTS TO REVIEW"
+                    android:textColor="@color/fn_brandcolor" />
 
                 <LinearLayout
                     android:id="@+id/review_list"
@@ -40,12 +43,19 @@
 
                 <TextView
                     android:id="@+id/nodocs_textview"
-                    style="@style/WorkorderDetail_Field_Bold"
+                    style="@style/Text_Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No documents to view at this time"
+                    android:layout_marginBottom="16dp"
+                    android:gravity="center"
+                    android:text="@string/no_documents_headline"
                     android:visibility="gone" />
             </LinearLayout>
+
+            <View
+                style="@style/DividerFull"
+                android:layout_marginBottom="16dp"
+                android:layout_marginTop="16dp" />
 
             <LinearLayout
                 android:id="@+id/files_layout"
@@ -62,5 +72,17 @@
         android:layout_height="250dp"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
+
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/navigate_button"
+        style="@style/Material.Button.Circle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="+"
+        android:textSize="32sp"
+        android:visibility="gone" />
 
 </RelativeLayout>

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/profile_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
+            android:orientation="vertical" />
+
+        <LinearLayout
+            android:id="@+id/add_layout"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <ImageView
+                style="@style/DrawerItemIcon"
+                android:src="@drawable/ic_drawer_plus" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/DrawerProfileName"
+                    android:text="Add Profile" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/manage_layout"
+            style="@style/DrawerItem"
+            android:orientation="horizontal">
+
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/DrawerItemTextFont"
+                android:text="@string/icfont_people_2" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/DrawerProfileName"
+                    android:text="Manage Profiles" />
+
+            </LinearLayout>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

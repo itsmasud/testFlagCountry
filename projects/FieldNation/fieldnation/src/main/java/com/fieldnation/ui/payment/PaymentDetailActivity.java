@@ -1,22 +1,14 @@
 package com.fieldnation.ui.payment;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
-
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.PaymentService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -31,6 +23,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private static final int WEB_GET_PAY = 1;
 
     // UI
+    private View _paymentHeaderLayout;
     private TextView _idTextView;
     private TextView _paymentTextView;
     private TextView _paymentTypeTextView;
@@ -42,15 +35,17 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
     // Data
     private long _paymentId = -1;
-    private PaymentService _service;
+    private PaymentClient _paymentClient;
     private Payment _paid;
     private PaymentDetailAdapter _adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_payments_detail);
+    public int getLayoutResource() {
+        return R.layout.activity_payments_detail;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
 
         if (intent == null) {
@@ -66,6 +61,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             finish();
         }
 
+        _paymentHeaderLayout = findViewById(R.id.paymentheader_layout);
         _idTextView = (TextView) findViewById(R.id.id_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
@@ -76,21 +72,35 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
+        requestData();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _paymentClient = new PaymentClient(_paymentClient_listener);
+        _paymentClient.connect(this);
+    }
+
+    @Override
+    protected void onPause() {
+        _paymentClient.disconnect(this);
+        super.onPause();
     }
 
     private void requestData() {
-        if (_service == null)
-            return;
-
-        startService(_service.getPayment(WEB_GET_PAY, _paymentId, false));
+        PaymentClient.get(this, _paymentId);
     }
 
     private void populateUi() {
-        if (_service == null)
+        if (_listView == null)
             return;
 
-        if (_paid == null)
+        if (_paid == null || _paid.getPaymentId() != _paymentId) {
+            _listView.setVisibility(View.GONE);
+            _paymentHeaderLayout.setVisibility(View.GONE);
             return;
+        }
 
         try {
             if (_paid.getDatePaid() != null) {
@@ -100,7 +110,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
                 when = misc.formatDate(cal);
 
                 _dateTextView.setVisibility(View.VISIBLE);
-                _dateTextView.setText(this.getString(R.string.estimated) + " " + when);
+                _dateTextView.setText("Paid On " + when);
             } else {
                 _dateTextView.setVisibility(View.GONE);
             }
@@ -108,9 +118,15 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             _dateTextView.setVisibility(View.GONE);
         }
 
-        _workorderCountTextView.setText(_paid.getWorkorders().length + " " + this.getString(R.string.work_orders));
+        if (_paid.getWorkorders().length == 1) {
+            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Order");
+        } else if (_paid.getWorkorders().length > 1) {
+            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
+        }
 
-        if (_paid.getFees() != null && _paid.getFees().length > 0) {
+        if (_paid.getFees() != null && _paid.getFees().length == 1) {
+            _feesCountTextView.setText(_paid.getFees().length + " Fee");
+        } else if (_paid.getFees() != null && _paid.getFees().length > 1) {
             _feesCountTextView.setText(_paid.getFees().length + " Fees");
         } else {
             _feesCountTextView.setText("0 Fees");
@@ -118,65 +134,29 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _idTextView.setText("Payment Id " + _paid.getPaymentId());
+        _idTextView.setText("Payment ID: " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
         String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
         _paymentTypeTextView.setText(paymethod);
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
-    }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new PaymentService(PaymentDetailActivity.this, username, authToken, _resultReceiver);
-            requestData();
-        }
+        _listView.setVisibility(View.VISIBLE);
+        _paymentHeaderLayout.setVisibility(View.VISIBLE);
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
+    private PaymentClient.Listener _paymentClient_listener = new PaymentClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_PAY) {
-                byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
-
-                Log.v(TAG, new String(data));
-
-                try {
-                    _paid = Payment.fromJson(new JsonObject(new String(data)));
-                    populateUi();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                Log.v(TAG, "BP");
-            }
+        public void onConnected() {
+            _paymentClient.subGet(-1, false);
         }
 
         @Override
-        public Context getContext() {
-            return PaymentDetailActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
+        public void onGet(long paymentId, Payment payment, boolean failed) {
+            _paid = payment;
+            populateUi();
         }
     };
-
-    @Override
-    public void onRefresh() {
-        // TODO Method Stub: onRefresh()
-        Log.v(TAG, "Method Stub: onRefresh()");
-    }
 }

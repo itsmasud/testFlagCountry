@@ -7,8 +7,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 public class Task implements Parcelable {
 
     @Json(name = "alertOnCompletion")
@@ -149,7 +147,7 @@ public class Task implements Parcelable {
 
     public Long getSlotId() {
         if (_slotId != null)
-            return _slotId;
+        return _slotId;
 
         if (_identifier != null)
             return (long) _identifier;
@@ -224,18 +222,13 @@ public class Task implements Parcelable {
         return 0;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
-    }
-
     public static final Parcelable.Creator<Task> CREATOR = new Parcelable.Creator<Task>() {
 
         @Override
         public Task createFromParcel(Parcel source) {
             try {
-                return Task.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return Task.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -247,4 +240,8 @@ public class Task implements Parcelable {
         }
     };
 
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
 }

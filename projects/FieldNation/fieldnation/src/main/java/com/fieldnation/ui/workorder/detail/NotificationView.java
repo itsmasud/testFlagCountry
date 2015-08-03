@@ -1,7 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
+import android.text.Spannable;
 import android.text.method.LinkMovementMethod;
+import android.text.style.URLSpan;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -12,21 +16,23 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 public class NotificationView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.NotificationView";
+    private static final String TAG = "NotificationView";
 
     // UI
     private ImageView _alertThumbImageView;
     private TextView _messageTextView;
-    private TextView _usernameTextView;
     private TextView _dateTextView;
+    private View _clickOverlay;
 
     // Data
     private Notification _notification;
     private boolean _isTruncated = true;
+    private URLSpan _span = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -54,9 +60,10 @@ public class NotificationView extends RelativeLayout {
 
         _alertThumbImageView = (ImageView) findViewById(R.id.alertthumb_imageview);
         _messageTextView = (TextView) findViewById(R.id.message_textview);
-        _messageTextView.setOnClickListener(_message_onClick);
-        _usernameTextView = (TextView) findViewById(R.id.username_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _clickOverlay = findViewById(R.id.click_overlay);
+
+        _clickOverlay.setOnClickListener(_this_onClick);
     }
 
     /*-*************************************-*/
@@ -68,34 +75,62 @@ public class NotificationView extends RelativeLayout {
     }
 
     private void rePopulate() {
-        String msg = _notification.getMessage();
-        _messageTextView.setText(misc.linkifyHtml(msg, Linkify.ALL));
-        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
-
-        _usernameTextView.setText(_notification.getFromUser().getFullName());
+        _messageTextView.setVisibility(View.VISIBLE);
         try {
-            _dateTextView.setText(misc.formatDateTime(ISO8601.toCalendar(_notification.getDate()), false));
+            Spannable msg = misc.linkifyHtml(_notification.getMessage(), Linkify.ALL);
+            _messageTextView.setText(msg);
+            _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            if (_notification.getWorkorder() == null) {
+                URLSpan[] spans = msg.getSpans(0, msg.length(), URLSpan.class);
+                if (spans.length > 0) {
+                    _span = spans[0];
+                }
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            if (misc.isEmptyOrNull(_notification.getMessage())) {
+                _messageTextView.setVisibility(View.GONE);
+            } else {
+                _messageTextView.setText(_notification.getMessage());
+            }
+        }
+        _messageTextView.setClickable(false);
+
+        try {
+            long milliseconds = System.currentTimeMillis() - ISO8601.toCalendar(_notification.getDate()).getTimeInMillis();
+
+            _dateTextView.setText(misc.toRoundDuration(milliseconds));
         } catch (Exception e) {
             _dateTextView.setText(_notification.getDate());
+        }
+
+        if (_notification.getViewed() == 1) {
+            _alertThumbImageView.setVisibility(GONE);
+        } else {
+            _alertThumbImageView.setVisibility(VISIBLE);
         }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _message_onClick = new View.OnClickListener() {
+    private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_isTruncated) {
-                _messageTextView.setText(_notification.getMessage());
-                _isTruncated = false;
+            if (_notification.getWorkorder() != null) {
+                Intent intent = new Intent(getContext(), WorkorderActivity.class);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorder().getWorkorderId());
+                getContext().startActivity(intent);
+            } else if (_notification.getWorkorderId() != null) {
+                Intent intent = new Intent(getContext(), WorkorderActivity.class);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorderId());
+                getContext().startActivity(intent);
+            } else if (_span != null) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_span.getURL()));
+                getContext().startActivity(intent);
             } else {
-                _isTruncated = true;
-                String msg = _notification.getMessage();
-                if (msg.length() > 170) {
-                    msg = msg.substring(0, 170) + "...";
-                }
-                _messageTextView.setText(msg);
             }
         }
     };

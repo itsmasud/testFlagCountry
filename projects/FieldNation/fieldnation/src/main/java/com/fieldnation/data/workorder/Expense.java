@@ -103,8 +103,8 @@ public class Expense implements Parcelable {
         @Override
         public Expense createFromParcel(Parcel source) {
             try {
-                return Expense.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return Expense.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -123,7 +123,7 @@ public class Expense implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

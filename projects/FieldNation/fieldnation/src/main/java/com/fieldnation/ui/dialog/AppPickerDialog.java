@@ -24,14 +24,14 @@ import java.util.List;
 import java.util.Set;
 
 public class AppPickerDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.AppPickerDialog";
+    private static final String TAG = "AppPickerDialog";
 
     // Ui
     private ListView _items;
 
     // Data
-    private List<AppPickerPackage> _activityList = new LinkedList<AppPickerPackage>();
-    private Set<String> _packages = new HashSet<String>();
+    private final List<AppPickerPackage> _activityList = new LinkedList<>();
+    private final Set<String> _packages = new HashSet<>();
     private Listener _listener;
 
     /*-*****************************-*/
@@ -100,7 +100,7 @@ public class AppPickerDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onClick(AppPickerPackage pack);
+        void onClick(AppPickerPackage pack);
     }
 
 }

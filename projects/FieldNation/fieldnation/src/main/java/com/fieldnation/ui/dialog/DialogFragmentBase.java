@@ -16,7 +16,7 @@ import java.util.List;
  * Created by michael.carver on 11/13/2014.
  */
 public class DialogFragmentBase extends DialogFragment {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.DialogFragmentBase");
+    private static final String TAG = UniqueTag.makeTag("DialogFragmentBase");
 
     // State
     private static final String STATE_TAG = "STATE_TAG";

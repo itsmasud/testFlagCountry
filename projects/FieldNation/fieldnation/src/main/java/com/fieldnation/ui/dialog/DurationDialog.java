@@ -15,7 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 
 public class DurationDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.DurationDialog";
+    private static final String TAG = "DurationDialog";
 
     // State
     private static final String STATE_NUMBER = "STATE_NUMBER";
@@ -194,8 +194,8 @@ public class DurationDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(long timeMilliseconds);
+        void onOk(long timeMilliseconds);
 
-        public void onCancel();
+        void onCancel();
     }
 }

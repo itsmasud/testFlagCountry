@@ -1,6 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <declare-styleable name="ActivityTheme">
+        <attr name="activityMainStyle" format="reference" />
+        <attr name="activitySignatureStyle" format="reference" />
+        <attr name="activitySplashStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="LoginTheme">
+        <attr name="activityLoginStyle" format="reference" />
+        <attr name="loginFaderStyle" format="reference" />
+        <attr name="loginPageStyle" format="reference" />
+        <attr name="loginStiltStyle" format="reference" />
+        <attr name="loginLogoStyle" format="reference" />
+        <attr name="loginContentStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="DrawerTheme">
+        <attr name="drawerStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="Toolbar">
+        <attr name="fnToolbarStyle" format="reference" />
+        <attr name="fnToolbarTabListStyle" format="reference" />
+        <attr name="fnToolbarTabListContainerStyle" format="reference" />
+    </declare-styleable>
+
     <declare-styleable name="WorkorderDetail_ProgressLabel">
         <attr name="text" format="string"></attr>
     </declare-styleable>
@@ -18,12 +43,17 @@
         <attr name="tileTextBodyStyle" format="reference" />
         <attr name="tileTextStatusStyle" format="reference" />
         <attr name="tileActionBarStyle" format="reference" />
-        <attr name="tileEditText" format="reference" />
-        <attr name="tileEditTextOneLineStyle" format="reference" />
         <attr name="tileCheckBoxStyle" format="reference" />
         <attr name="tileSpinnerButtonStyle" format="reference" />
         <attr name="tileButtonStyle" format="reference" />
         <attr name="tileDividerStyle" format="reference" />
+        <attr name="tileDividerPartStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="CardTheme">
+        <attr name="cardStyle" format="reference" />
+        <attr name="cardContainerStyle" format="reference" />
+        <attr name="cardOverlayStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="ButtonTheme">
@@ -33,7 +63,7 @@
         <attr name="buttonGreenStyle" format="reference" />
         <attr name="buttonGrayStyle" format="reference" />
         <attr name="buttonSpinnerStyle" format="reference" />
-        <attr name="buttonTextLinkStyle" format="reference" />
+        <attr name="buttonFlatStyle" format="reference" />
     </declare-styleable>
 
     <declare-styleable name="DialogThemes">
@@ -42,7 +72,6 @@
         <attr name="dialogTitleStyle" format="reference" />
         <attr name="dialogLabelStyle" format="reference" />
         <attr name="dialogCaptionStyle" format="reference" />
-        <attr name="dialogEditTextStyle" format="reference" />
         <attr name="dialogActionBarStyle" format="reference" />
         <attr name="dialogCancelButtonStyle" format="reference" />
         <attr name="dialogOkButtonStyle" format="reference" />

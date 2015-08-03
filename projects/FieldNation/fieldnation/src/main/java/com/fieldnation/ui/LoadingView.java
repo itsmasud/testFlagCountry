@@ -110,7 +110,7 @@ public class LoadingView extends RelativeLayout {
 		setVisibility(View.GONE);
 	}
 
-	private View.OnTouchListener _cetner_onTouch = new View.OnTouchListener() {
+	private final View.OnTouchListener _cetner_onTouch = new View.OnTouchListener() {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {

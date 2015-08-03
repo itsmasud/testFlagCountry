@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.FragmentActivity;
@@ -9,19 +8,13 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.server.ClockReceiver;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.TopicShutdownReciever;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -30,10 +23,8 @@ import com.fieldnation.ui.dialog.UpdateDialog;
  * Created by michael.carver on 12/5/2014.
  */
 public abstract class AuthFragmentActivity extends FragmentActivity {
-    private static final String TAG_BASE = "ui.AuthFragmentActivity";
+    private static final String TAG_BASE = "AuthFragmentActivity";
     private String TAG = TAG_BASE;
-
-    private static final int AUTH_SERVICE = 1;
 
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
@@ -47,13 +38,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private TwoButtonDialog _coiWarningDialog;
 
     // Services
-    private ProfileService _service;
-    private TopicShutdownReciever _shutdownListener;
+    private GlobalTopicClient _globalTopicClient;
 
     // Data
     private Profile _profile;
     private boolean _profileBounceProtect = false;
-    protected boolean isPaused = true;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -73,8 +62,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         if (TAG.equals(TAG_BASE)) {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
-
-        ClockReceiver.registerClock(this);
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
         _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
@@ -96,25 +83,18 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onResume() {
-        isPaused = false;
         super.onResume();
-        AuthTopicService.subscribeAuthState(this, AUTH_SERVICE, TAG, _authReceiver);
-        _shutdownListener = new TopicShutdownReciever(this, new Handler(), TAG + ":SHUTDOWN");
-        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-        Topics.subscrubeProfileUpdated(this, TAG + ":PROFILE", _topicReceiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
                 "OK", _notProvider_listener);
-
-        gotProfile();
     }
 
     @Override
     protected void onPause() {
-        isPaused = true;
-        TopicService.delete(this, TAG);
-        TopicService.unRegisterListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE);
+        _globalTopicClient.disconnect(this);
         super.onPause();
     }
 
@@ -124,22 +104,14 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    protected void onDestroy() {
-        if (_shutdownListener != null)
-            _shutdownListener.onPause();
-        TopicService.unRegisterListener(this, 0, TAG + ":PROFILE", Topics.TOPIC_PROFILE_UPDATE);
-        super.onDestroy();
-    }
-
-    private void gotProfile() {
+    private void gotProfile(Profile profile) {
         if (_profileBounceProtect)
             return;
 
-        if (isPaused)
+        if (_profile == null)
             return;
 
-        if (_profile == null)
+        if (isFinishing())
             return;
 
         _profileBounceProtect = true;
@@ -149,28 +121,28 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             return;
         }
         GlobalState gs = GlobalState.getContext();
-        if (!_profile.getAcceptedTos() && (gs.canRemindTos() || _profile.isTosRequired())) {
+        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
-            if (_profile.isTosRequired()) {
+            if (profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
                 _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_hard, _profile.insurancePercent()),
+                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
                         getString(R.string.btn_accept),
                         _acceptTerms_listener);
             } else {
                 Log.v(TAG, "Asking Tos, soft");
                 _acceptTermsDialog.setData(
                         getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_soft, _profile.insurancePercent(), _profile.daysUntilRequired()),
+                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), profile.daysUntilRequired()),
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
             _acceptTermsDialog.show();
-        } else if (!_profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
+        } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),
-                    getString(R.string.dialog_coi_body, _profile.insurancePercent()),
+                    getString(R.string.dialog_coi_body, profile.insurancePercent()),
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
@@ -178,7 +150,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _coiWarningDialog.show();
         } else {
             Log.v(TAG, "tos/coi check done");
-            onProfile(_profile);
+            onProfile(profile);
             _profileBounceProtect = false;
         }
     }
@@ -193,12 +165,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicService.requestAuthRemove(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicService.requestAuthRemove(AuthFragmentActivity.this);
+            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
         }
     };
 
@@ -207,7 +179,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            startService(_service.acceptTos(0, _profile.getUserId()));
+            ProfileClient.actionAcceptTos(AuthFragmentActivity.this, _profile.getUserId());
         }
 
         @Override
@@ -218,7 +190,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile();
+                    gotProfile(_profile);
                 }
             });
         }
@@ -236,7 +208,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile();
+                    gotProfile(_profile);
                 }
             });
         }
@@ -248,7 +220,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
-                    gotProfile();
+                    gotProfile(_profile);
                 }
             });
         }
@@ -258,68 +230,44 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
     };
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(AuthFragmentActivity.this);
+        public void onConnected() {
+            _globalTopicClient.registerGotProfile();
+            _globalTopicClient.registerUpdateApp();
+            _globalTopicClient.registerAppShutdown();
+            _globalTopicClient.registerNetworkState();
         }
 
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileService(AuthFragmentActivity.this, username, authToken, _webReceiver);
-            }
-            AuthFragmentActivity.this.onAuthentication(username, authToken, isNew);
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
+            gotProfile(profile);
+
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            AuthFragmentActivity.this.onAuthenticationFailed(networkDown);
+        public void onNeedAppUpdate() {
+            _updateDialog.show();
         }
 
         @Override
-        public void onAuthenticationInvalidated() {
-            AuthFragmentActivity.this.onAuthenticationInvalidated();
+        public void onShutdown() {
         }
+
+        @Override
+        public void onNetworkConnected() {
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+        }
+
+        @Override
+        public void onNetworkConnecting() {
+        }
+
     };
-
-    private final WebResultReceiver _webReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "WebResultReceiver");
-            _profileBounceProtect = false;
-            Topics.dispatchProfileInvalid(AuthFragmentActivity.this);
-        }
-
-        @Override
-        public Context getContext() {
-            return AuthFragmentActivity.this;
-        }
-    };
-
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_NEED_UPDATE.equals(topicId)) {
-                _updateDialog.show();
-            }
-
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile();
-            }
-        }
-    };
-
-    public abstract void onAuthentication(String username, String authToken, boolean isNew);
-
-    public void onAuthenticationFailed(boolean networkDown) {
-    }
-
-    public void onAuthenticationInvalidated() {
-    }
 
     // Menu
     @Override
@@ -331,6 +279,4 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
-    public abstract void onRefresh();
 }

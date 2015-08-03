@@ -19,7 +19,7 @@ import com.sleepbot.datetimepicker.time.TimePickerDialog;
 import java.util.Calendar;
 
 public class ExpiresDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.ExpiresDialog";
+    private static final String TAG = "ExpiresDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -94,7 +94,6 @@ public class ExpiresDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-
     public void show(Workorder workorder) {
         _isDateSet = false;
         _workorder = workorder;
@@ -156,7 +155,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String dateTime);
+        void onOk(Workorder workorder, String dateTime);
     }
 
 }

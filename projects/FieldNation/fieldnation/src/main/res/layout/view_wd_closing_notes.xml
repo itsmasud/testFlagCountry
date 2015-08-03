@@ -5,50 +5,55 @@
     android:orientation="vertical">
 
     <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/closing_notes" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="CLOSING NOTES" />
 
     <TextView
-        android:id="@+id/notes_textview"
+        android:id="@+id/noNotes_textview"
+        style="@style/Text_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="top"
-        android:padding="5dp" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="You Currently have no closing notes entered."
+        android:visibility="gone" />
 
-    <LinearLayout
-        android:id="@+id/edit_layout"
+    <FrameLayout
+        android:id="@+id/notesCard_layout"
+        style="@style/Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginBottom="16dp">
 
-        <ImageView
-            android:id="@+id/edit_imageview"
-            android:layout_width="wrap_content"
+        <FrameLayout
+            style="@style/CardContainer"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/ic_edit_8" />
+            android:padding="16dp">
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginRight="5dp"
-            android:visibility="gone" />
+            <TextView
+                android:id="@+id/notes_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_paragraph" />
+        </FrameLayout>
+    </FrameLayout>
 
-        <TextView
-            style="@style/TextViewLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/edit" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/add_button"
+        style="?attr/buttonGrayStyle"
+        android:layout_gravity="right"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="ENTER NOTES" />
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

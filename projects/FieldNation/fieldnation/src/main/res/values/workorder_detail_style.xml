@@ -1,21 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- workorder detail colors -->
-    <color name="workorder_detail_bg">@color/fn_gray</color>
-    <color name="workorder_detail_separator_color">#FFe6e6e6</color>
-
-    <style name="WorkorderDetail">
-        <item name="android:background">@color/workorder_detail_bg</item>
-    </style>
-
-    <style name="WorkorderDetail_Data">
-        <item name="android:paddingLeft">20dp</item>
-        <item name="android:paddingRight">20dp</item>
-    </style>
-
     <style name="WorkorderDetail_Separator">
-        <item name="android:background">@color/workorder_detail_separator_color</item>
+        <item name="android:background">@color/fn_divider</item>
         <item name="android:layout_height">2px</item>
         <item name="android:layout_marginTop">10dp</item>
         <item name="android:layout_marginBottom">10dp</item>
@@ -33,15 +20,15 @@
     <style name="WorkorderDetail_Field_Bold">
         <item name="android:paddingBottom">15dp</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">#FF2d2e00</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
     </style>
 
     <style name="WorkorderDetail_FieldTitle" parent="WorkorderDetail_Field">
-        <item name="android:textColor">#FF97976e</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
     </style>
 
     <style name="WorkorderDetail_Field_Gray" parent="WorkorderDetail_Field">
-        <item name="android:textColor">#FFc8c7c2</item>
+        <item name="android:textColor">@color/fn_light_text</item>
     </style>
 
     <style name="WorkorderDetail_FieldSubTitle" parent="WorkorderDetail_FieldTitle">

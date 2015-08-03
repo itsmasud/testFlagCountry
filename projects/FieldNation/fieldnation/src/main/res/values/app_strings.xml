@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>
+    <string name="mapbox_mapid">jacobbeasley.ggg811om</string>
 
     <!-- general strings -->
     <string name="placeholder_word">Word</string>
@@ -14,6 +16,8 @@
     <string name="activity_login_password">Password</string>
 
     <string name="activity_message_list_title">Messages</string>
+    <string name="activity_message_list_empty_message_headline">No Message History</string>
+    <string name="activity_message_list_empty_message_sub_headline">Tap to chat</string>
 
     <string name="activity_payments_list_title">Payments</string>
 
@@ -32,39 +36,56 @@
     <string name="activity_signature_info_title">Signature Info</string>
     <string name="activity_signature_name">Tap to set signer\'s name</string>
 
-    <string name="btn_ok">OK</string>
+    <string name="btn_accept">ACCEPT</string>
+    <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
+    <string name="btn_acknowledge">ACKNOWLEDGE</string>
+    <string name="btn_add_shipment">ADD SHIPMENT</string>
+    <string name="btn_add_signature">ADD SIGNATURE</string>
+    <string name="btn_add_expense">ADD EXPENSE</string>
+    <string name="btn_add_discount">ADD DISCOUNT</string>
     <string name="btn_add">ADD</string>
-    <string name="btn_send">SEND</string>
-    <string name="btn_save">SAVE</string>
-    <string name="btn_done">DONE</string>
-    <string name="btn_clear">Clear</string>
+    <string name="btn_call">CALL US</string>
+    <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
-    <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_check_in">CHECK IN</string>
+    <string name="btn_check_out">CHECK OUT</string>
+    <string name="btn_closing_notes">CLOSING NOTES</string>
     <string name="btn_confirm">CONFIRM</string>
-    <string name="btn_never">Never</string>
-    <string name="btn_closing_notes">Closing Notes</string>
-    <string name="btn_mark_completed">Mark Completed</string>
-    <string name="btn_acknowledge_hold">Acknowledge Hold</string>
-    <string name="btn_check_in">Check In</string>
-    <string name="btn_check_out">Check Out</string>
-    <string name="btn_reject">REJECT</string>
-    <string name="btn_sign_off">SIGN OFF</string>
-    <string name="btn_login">LOGIN</string>
-    <string name="btn_update_now">UPDATE NOW</string>
-    <string name="btn_add_shipment">Add Shipment</string>
-    <string name="btn_submit">SUBMIT</string>
-    <string name="btn_no_thanks">NO THANKS</string>
+    <string name="btn_continue">CONTINUE</string>
+    <string name="btn_done">DONE</string>
+    <string name="btn_email">EMAIL US</string>
+    <string name="btn_faq">FREQUENTLY ASKED QUESTIONS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
+    <string name="btn_later">LATER</string>
+    <string name="btn_login">LOGIN</string>
+    <string name="btn_mark_completed">MARK COMPLETED</string>
+    <string name="btn_never">NEVER</string>
+    <string name="btn_no_later">NEVER SHOW AGAIN</string>
+    <string name="btn_no_thanks">NO THANKS</string>
+    <string name="btn_not_interested">NOT INTERESTED</string>
     <string name="btn_not_now">NOT NOW</string>
-    <string name="btn_accept">Accept</string>
-    <string name="btn_later">Remind me later</string>
-    <string name="btn_no_later">Never show again</string>
-    <string name="btn_withdraw_request">Withdraw Request</string>
+    <string name="btn_ok">OK</string>
+    <string name="btn_payments">PAYMENTS</string>
+    <string name="btn_reject">REJECT</string>
+    <string name="btn_request">REQUEST</string>
+    <string name="btn_save">SAVE</string>
+    <string name="btn_send">SEND</string>
+    <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_counter">COUNTER</string>
+    <string name="btn_sign_off">SIGN OFF</string>
+    <string name="btn_submit">SUBMIT</string>
+    <string name="btn_update_now">UPDATE NOW</string>
+    <string name="btn_view_counter">VIEW COUNTER</string>
+    <string name="btn_withdraw_request">WITHDRAW</string>
+    <string name="btn_yes">YES</string>
+    <string name="btn_no">NO</string>
 
-    <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to account.</string>
+
+    <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_could_not_complete_request">Could not complete request</string>
     <string name="toast_downloading">Downloading</string>
     <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>
+    <string name="toast_could_not_complete_discount">Error occurred. Please fill the input box.</string>
 
     <string name="notification_title_start_upload">Starting Upload...</string>
     <string name="notification_context_getting_file">Getting file</string>
@@ -73,7 +94,15 @@
     <string name="notification_failed">Failed!</string>
     <string name="notification_success">Success!</string>
 
-    <string name="fieldnation_expected_fee_percentage">Expected Field Nation Fee (%1$.1f%%)</string>
+    <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
+    <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>
+
+    <string name="dialog_withdraw_title">Withdraw Request?</string>
+    <string name="dialog_withdraw_body">Are you sure you want to withdraw your request?</string>
+
+    <string name="dialog_feedback_body">We\'re actively trying to improve the Field Nation App to better cater to your needs.\r\n\r\nPlease let us know how we can make this happen.</string>
+
+    <string name="dialog_help_body">We are more than happy to lend a helping hand! Feel free to contact us.</string>
 
     <string name="dialog_review_title">Review App?</string>
     <string name="dialog_review_message">Would you like to review this app in the play store?</string>
@@ -134,8 +163,17 @@
         To upload a certificate of insurance and avoid the additional fee, log into the website
         from a computer and follow the instructions.</string>
 
+    <string name="dialog_terms_title">Terms and Conditions</string>
+    <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
 
-    <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders.</string>
+
+    <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
+
+    <string name="tab_assigned">ASSIGNED</string>
+    <string name="tab_completed">COMPLETED</string>
+    <string name="tab_canceled">CANCELED</string>
+    <string name="tab_available">AVAILABLE</string>
+    <string name="tab_requested">REQUESTED</string>
 
     <string name="workorder_card_status_selected">Selected</string>
     <string name="time_logged">Time Logged</string>
@@ -150,7 +188,7 @@
     <string name="try_again">Action failed, please try again</string>
     <string name="not_interested">Not Interested</string>
     <string name="bundle">Bundle</string>
-    <string name="tracking_id">Tracking ID</string>
+    <string name="tracking_number">Tracking number</string>
     <string name="carrier_name">Carrier Name</string>
     <string name="carrier">Carrier</string>
     <string name="shipment_description">Shipment Description</string>
@@ -169,6 +207,7 @@
     <string name="fixed_rate">Fixed Rate</string>
     <string name="max_hours">Max Hours</string>
     <string name="per_device_rate">Per Device Rate</string>
+    <string name="explanation">Explanation</string>
     <string name="max_devices">Max Devices</string>
     <string name="pay_of">Pay of</string>
     <string name="per_hour_for_the_first">per hour for the first</string>
@@ -176,13 +215,14 @@
     <string name="then">then</string>
     <string name="per_hour_up_to">per hour up to</string>
     <string name="additional_hours">additional hours</string>
-    <string name="documents_to_review">Documents to Review</string>
+    <string name="no_documents_headline">No documents</string>
     <string name="documents_to_upload">Documents to Upload</string>
     <string name="my_additional_files">My Additional Files</string>
     <string name="upload_file">Upload File</string>
     <string name="status_colon">Status: </string>
     <string name="continue_the_conversation">Continue the conversation...</string>
     <string name="start_the_conversation">Start the conversation...</string>
+    <string name="write_your_message">Write your message...</string>
     <string name="pending">...pending</string>
     <string name="shipment">Shipment</string>
     <string name="schedule">Schedule</string>
@@ -204,7 +244,7 @@
     <string name="provider_must_have_the_following_skillsets_colon">Provider must have the following skillsets:</string>
     <string name="provider_must_confirm_assignment">Provider must confirm assignment</string>
     <string name="prerequisites">Prerequisites</string>
-    <string name="this_work_order_has_no_notification_at_this_time">This work order has no notifications at this time.</string>
+    <string name="this_work_order_has_no_notification_at_this_time">No Notification History</string>
     <string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>
     <string name="view_all_tasks">View All Tasks</string>
     <string name="scope_of_work">Scope of Work</string>
@@ -213,6 +253,7 @@
     <string name="post_visit">Post Visit</string>
     <string name="edit">Edit</string>
     <string name="uploading">Uploading...</string>
+    <string name="downloading">Downloading...</string>
     <string name="deleting">Deleting...</string>
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>
@@ -235,7 +276,7 @@
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="date_colon">Date:</string>
     <string name="time_colon">Time:</string>
-    <string name="date_and_time_colon">Date and Time:</string>
+    <string name="date_and_time">Date and Time</string>
     <string name="counter_offers">Counter Offers</string>
     <string name="total_amount">Total Amount</string>
     <string name="between">Between</string>
@@ -286,27 +327,110 @@
     <string name="paid">Paid</string>
     <string name="confirm">Confirm</string>
 
-    <!-- Account Preferences -->
-    <string name="pref_sync">Sync Frequency</string>
+    <!-- Preferences -->
+    <!-- sync settings -->
+    <string name="pref_string_sync_category_title">Sync Settings</string>
 
-    <string-array name="pref_sync_titles">
-        <item>1 minute</item>
-        <item>15 minutes</item>
-        <item>30 minutes</item>
-        <item>1 hour</item>
-        <item>3 hours</item>
-        <item>6 hours</item>
-        <item>Never</item>
+    <string name="pref_key_sync_enabled">pref_key_sync_enabled</string>
+    <string name="pref_string_sync_enable_title">Enable sync</string>
+    <string name="pref_string_sync_enable_summary">Sync will download all of your data every day allowing you to access it while offline.</string>
+
+    <string name="pref_key_sync_start_time">pref_key_sync_start_time</string>
+    <string name="pref_string_sync_start_title">Start sync at</string>
+
+    <string name="pref_key_sync_require_wifi">pref_key_sync_require_wifi</string>
+    <string name="pref_string_sync_require_wifi_title">Only on wifi</string>
+    <string name="pref_string_sync_require_wifi_summary">Sync will only run when connected to wifi.</string>
+
+    <string name="pref_key_sync_require_power">pref_key_sync_require_power</string>
+    <string name="pref_string_sync_require_power_title">Only while charging</string>
+    <string name="pref_string_sync_require_power_summary">Sync will only run while device is charging.</string>
+
+    <!-- data settings -->
+    <string name="pref_string_data_settings_category_title">Data Settings</string>
+
+    <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
+    <string name="pref_string_data_remove_title">Remove unused data</string>
+    <string name="pref_string_data_remove_summary">Unused data will be removed from your device.</string>
+
+    <string name="pref_key_remove_rate">pref_key_remove_rate</string>
+    <string name="pref_default_remove_rate">7</string>
+    <string name="pref_string_remove_rate">Remove unused data older then</string>
+
+    <string-array name="pref_remove_titles">
+        <item>1 day</item>
+        <item>3 days</item>
+        <item>1 week</item>
+        <item>2 weeks</item>
+        <item>1 month </item>
+        <item>2 months</item>
+        <item>3 months</item>
+        <item>6 months</item>
     </string-array>
-    <string-array name="pref_sync_values">
+    <string-array name="pref_remove_values">
         <item>1</item>
-        <item>15</item>
+        <item>3</item>
+        <item>7</item>
+        <item>14</item>
         <item>30</item>
         <item>60</item>
+        <item>90</item>
         <item>180</item>
-        <item>360</item>
-        <item>-1</item>
     </string-array>
+
+    <string name="pref_key_profile_photo_wifi_only">pref_key_profile_photo_wifi_only</string>
+    <string name="pref_string_profile_photo_wifi_title">Use wifi to download profile images</string>
+    <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
+
+    <string name="icfont_arrow_r">\uF106</string>
+    <string name="icfont_bundle">\uF10D</string>
+    <string name="icfont_calendar">\uF10E</string>
+    <string name="icfont_check">\uF10F</string>
+    <!--<string name="icfont_circle_checked_filled">\uF110</string>-->
+    <!--<string name="icfont_circle_checked">\uF111</string>-->
+    <string name="icfont_clock">\uF115</string>
+    <string name="icfont_feedback">\uF116</string>
+    <string name="icfont_people_2">\uF117</string>
+    <string name="icfont_credit_card">\uF11B</string>
+    <string name="icfont_dollar">\uF11E</string>
+    <string name="icfont_file_doc">\uF121</string>
+    <string name="icfont_file_docx">\uF122</string>
+    <string name="icfont_file_none">\uF123</string>
+    <string name="icfont_file_jpg">\uF124</string>
+    <string name="icfont_file_pdf">\uF125</string>
+    <string name="icfont_file_png">\uF126</string>
+    <string name="icfont_file_xls">\uF127</string>
+    <string name="icfont_hiring">\uF12D</string>
+    <string name="icfont_map_marker">\uF133</string>
+    <string name="icfont_logout">\uF134</string>
+    <string name="icfont_search">\uF135</string>
+    <string name="icfont_message_alert">\uF137</string>
+    <string name="icfont_cash">\uF139</string>
+    <string name="icfont_person">\uF13D</string>
+    <string name="icfont_stopwatch">\uF143</string>
+    <string name="icfont_help">\uF149</string>
+    <string name="icfont_trash">\uF14A</string>
+    <string name="icfont_shipments">\uF14B</string>
+    <string name="icfont_x">\uF14F</string>
+    <string name="icfont_star">\uF153</string>
+    <string name="icfont_settings">\uF154</string>
+    <string name="icfont_profile_pic">\uF156</string>
+    <string name="icfont_debug">\uF15D</string>
+    <string name="icfont_menu">\uF16A</string>
+    <string name="icfont_messages_action_filled">\uF167</string>
+    <string name="icfont_clipboard">\uF168</string>
+    <string name="icfont_alert_action_filled">\uF169</string>
+    <string name="icfont_circle">\uF16E</string>
+    <string name="icfont_circle_checked">\uF16F</string>
+    <string name="icfont_missing">\uF175</string>
+    <string name="icfont_car">\uF176</string>
+    <string name="icfont_circle_dollar">\uF177</string>
+    <string name="icfont_circle_truck">\uF178</string>
+    <string name="icfont_circle_pen">\uF179</string>
+    <string name="icfont_back_arrow">\uF183</string>
+    <!--<string name="icfont_messages_action">\uF17C</string>-->
+    <!--<string name="icfont_alert_action">\uF17D</string>-->
+
 
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
@@ -330,6 +454,10 @@
     <string-array name="schedule_types">
         <item>Range</item>
         <item>Exact</item>
+    </string-array>
+    <string-array name="direction_list">
+        <item>Ship To Site</item>
+        <item>Ship From Site</item>
     </string-array>
 
     <!-- workorder status list -->

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="FieldNation.Material.ToolBar" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:textColorPrimary">@color/fn_white_text</item>
+        <!--<item name="toolbarNavigationButtonStyle">@style/Material.Button.Raised.Orange</item>-->
+    </style>
+
+    <style name="FieldNation.Material.ToolBarNavigationButtonStyle" parent="Material.Button.Raised.Orange">
+
+    </style>
+</resources>

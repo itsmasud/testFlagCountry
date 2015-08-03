@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.ResultReceiver;
 
 import com.fieldnation.Log;
-import com.fieldnation.topics.Topics;
 import com.fieldnation.utils.Stopwatch;
 
 /**
@@ -15,8 +14,8 @@ import com.fieldnation.utils.Stopwatch;
  *
  * @author michael.carver
  */
-public abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
-    private static final String TAG = "WebResultReceiver";
+abstract class WebResultReceiver extends ResultReceiver implements WebServiceConstants {
+    private static final String TAG = "rpc.common.WebServiceResultReceiver";
 
     public WebResultReceiver(Handler handler) {
         super(handler);
@@ -34,7 +33,9 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
             Log.v(TAG, "onSuccess time: " + stopwatch.finish());
         } else {
             if (ERROR_NETWORK_ERROR.equals(errorType)) {
-                Topics.dispatchNetworkDown(getContext());
+//                Topics.dispatchNetworkDown(getContext());
+            } else if (ERROR_SESSION_INVALID.equals(errorType)) {
+//                AuthTopicService.requestAuthInvalid(getContext());
             }
             onError(resultCode, resultData, errorType);
         }
@@ -49,18 +50,6 @@ public abstract class WebResultReceiver extends ResultReceiver implements WebSer
     public void onError(int resultCode, Bundle resultData, String errorType) {
         Log.v(TAG, "onError[" + resultCode + "] " + errorType);
         Log.v(TAG, resultData.toString());
-        try {
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    Topics.dispatchNetworkUp(getContext());
-                }
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-
         try {
             Log.v(TAG, new String(resultData.getByteArray(KEY_RESPONSE_DATA)));
         } catch (Exception ex) {

@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +24,13 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 12/1/2014.
  */
 public class SignOffFragment extends FragmentBase {
-    private static final String TAG = "ui.SignOffFragment";
+    private static final String TAG = "SignOffFragment";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -219,7 +220,7 @@ public class SignOffFragment extends FragmentBase {
                     _waitLogs = false;
                 }
             };
-            _container.post(r);
+            _container.postDelayed(r, new Random().nextInt(1000));
 
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
@@ -273,7 +274,7 @@ public class SignOffFragment extends FragmentBase {
 
                 }
             };
-            _container.post(r);
+            _container.postDelayed(r, new Random().nextInt(1000));
         } else {
             _tasksDivider.setVisibility(View.GONE);
             _tasksTextView.setVisibility(View.GONE);
@@ -301,7 +302,7 @@ public class SignOffFragment extends FragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private View.OnClickListener _signOff_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _signOff_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -310,7 +311,7 @@ public class SignOffFragment extends FragmentBase {
         }
     };
 
-    private View.OnClickListener _reject_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _reject_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -319,8 +320,8 @@ public class SignOffFragment extends FragmentBase {
     };
 
     public interface Listener {
-        public void signOffOnClick();
+        void signOffOnClick();
 
-        public void rejectOnClick();
+        void rejectOnClick();
     }
 }

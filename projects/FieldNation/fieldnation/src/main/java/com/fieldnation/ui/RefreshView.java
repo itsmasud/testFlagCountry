@@ -4,7 +4,6 @@ import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.animation.Animation;
@@ -15,13 +14,12 @@ import android.widget.RelativeLayout;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 11/25/2014.
  */
 public class RefreshView extends RelativeLayout implements OnOverScrollListener {
-    private final String TAG = UniqueTag.makeTag("ui.RefreshView");
+    private final String TAG = UniqueTag.makeTag("RefreshView");
 
     private static final int STATE_IDLE = 0;
     private static final int STATE_PULLING = 1;
@@ -128,7 +126,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
 
-    private Animator.AnimatorListener _moveToRefresh_listener = new Animator.AnimatorListener() {
+    private final Animator.AnimatorListener _moveToRefresh_listener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
             _state = STATE_MOVE_TO_REFRESH;
@@ -152,7 +150,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         }
     };
 
-    private Animator.AnimatorListener _hiding_listener = new Animator.AnimatorListener() {
+    private final Animator.AnimatorListener _hiding_listener = new Animator.AnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
             _state = STATE_HIDING;
@@ -281,7 +279,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
     public interface Listener {
-        public void onStartRefresh();
+        void onStartRefresh();
     }
 
 }

@@ -12,11 +12,14 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.GlobalState;
 import com.fieldnation.R;
+import com.fieldnation.service.toast.ToastClient;
 
 public class DiscountDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.DiscountDialog";
+    private static String TAG = "DiscountDialog";
 
     // State
     private static final String STATE_TITLE = "STATE_TITLE";
@@ -99,7 +102,11 @@ public class DiscountDialog extends DialogFragmentBase {
     }
 
     private Double getAmount() {
-        return Double.parseDouble(_amountEditText.getText().toString());
+        try {
+            return Double.parseDouble(_amountEditText.getText().toString());
+        } catch (Exception ex) {
+            return 0.0;
+        }
     }
 
 	/*-*********************************-*/
@@ -112,7 +119,7 @@ public class DiscountDialog extends DialogFragmentBase {
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                _okButton_onClick.onClick(null);
+                _amountEditText.requestFocus();
                 handled = true;
             }
             return handled;
@@ -122,9 +129,16 @@ public class DiscountDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            // convert to penies
+            if ((int) (getAmount() * 100) < 10) {
+                ToastClient.toast(GlobalState.getContext(), "Amount must be more than $0.10", Toast.LENGTH_SHORT);
+                return;
+            }
+
             DiscountDialog.this.dismiss();
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount());
+
         }
     };
 
@@ -138,8 +152,8 @@ public class DiscountDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String description, double amount);
+        void onOk(String description, double amount);
 
-        public void onCancel();
+        void onCancel();
     }
 }

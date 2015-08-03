@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <resources>
+    <string name="app_name">Field Nation</string>
     <string name="auth_account_name">Field Nation</string>
     <string name="auth_default_username"></string>
     <string name="auth_default_password"></string>
@@ -10,7 +11,6 @@
     <string name="auth_account_type">com.fieldnation</string>
     <string name="auth_authority">com.fieldnation.service</string>
     <string name="web_fn_hostname">api.fieldnation.com</string>
-    <string name="app_name">Field Nation</string>
     <integer name="ga_local_dispatch_period">60</integer>
     <bool name="ga_dry_run">false</bool>
 

@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -17,11 +16,11 @@ import com.fieldnation.utils.misc;
 import java.util.Calendar;
 
 public class PaymentCardView extends RelativeLayout {
-    private static final String TAG = "ui.payment.PaymentCardView";
+    private static final String TAG = "PaymentCardView";
 
     private static final int[] _HEADER_BG = new int[]{
-            R.drawable.payment_summary_header_bg,
-            R.drawable.payment_summary_header_paid_bg};
+            R.drawable.card_title_green,
+            R.drawable.card_title_black};
 
     private TextView _titleTextView;
     private TextView _idTextView;
@@ -29,7 +28,7 @@ public class PaymentCardView extends RelativeLayout {
     private TextView _dateTextView;
     private TextView _amountTextView;
     private TextView _paymentTypeTextView;
-    private LinearLayout _paymentHeaderLayout;
+    private View _paymentHeaderLayout;
 
     private Payment _paymentInfo;
 
@@ -63,7 +62,7 @@ public class PaymentCardView extends RelativeLayout {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
         _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
-        _paymentHeaderLayout = (LinearLayout) findViewById(R.id.paymentheader_layout);
+        _paymentHeaderLayout = findViewById(R.id.paymentheader_layout);
 
         setOnClickListener(_this_onClick);
     }
@@ -88,7 +87,7 @@ public class PaymentCardView extends RelativeLayout {
     private void refresh() {
         // amount
         try {
-            _amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()).substring(1));
+            _amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()));
         } catch (Exception ex) {
             ex.printStackTrace();
             _amountTextView.setText("NA");
@@ -122,10 +121,10 @@ public class PaymentCardView extends RelativeLayout {
         }
         // payment_id
         try {
-            _idTextView.setText("Payment Id " + _paymentInfo.getPaymentId());
+            _idTextView.setText("Payment ID: " + _paymentInfo.getPaymentId());
         } catch (Exception ex) {
             ex.printStackTrace();
-            _idTextView.setText("Payment Id ???");
+            _idTextView.setText("Payment ID: ???");
         }
         // status
         try {

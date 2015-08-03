@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.os.Build;
+import android.graphics.RectF;
+import android.location.Location;
 import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
@@ -13,6 +15,8 @@ import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.widget.ScrollView;
 
@@ -41,9 +45,16 @@ import java.util.TimeZone;
 public class misc {
     private static final String HEXES = "0123456789ABCDEF";
     private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
+    private static NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
+
+    public static Bitmap resizeBitmap(Bitmap source, int width, int height) {
+        Matrix m = new Matrix();
+        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+    }
 
     public static void printStackTrace(String message) {
         try {
@@ -53,7 +64,24 @@ public class misc {
         }
     }
 
-    public static File dumpLogcat(Context context, String version) {
+    public static Location locationFromCoordinates(double lat, double lon) {
+        Location loc = new Location("reverseGeocoded");
+        loc.setLatitude(lat);
+        loc.setLongitude(lon);
+        return loc;
+    }
+
+    public static String cardinalDirectionBetween(Location start, Location end) {
+        return null;
+    }
+
+    public static int dpToPx(Context context, int dp) {
+        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
+        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+        return px;
+    }
+
+    public static File dumpLogcat(Context context) {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = context.getPackageName();
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
@@ -61,13 +89,6 @@ public class misc {
         File tempfile = new File(temppath + "/logcat-" + (System.currentTimeMillis() / 1000) + ".log");
         try {
             OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(tempfile));
-
-            fout.write("APP VERSION: " + version + "\n");
-            fout.write("MANUFACTURER: " + Build.MANUFACTURER + "\n");
-            fout.write("MODEL: " + Build.MODEL + "\n");
-            fout.write("RELEASE: " + Build.VERSION.RELEASE + "\n");
-            fout.write("SDK: " + Build.VERSION.SDK_INT + "\n");
-
             try {
                 Process process = Runtime.getRuntime().exec("logcat -d");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -86,6 +107,29 @@ public class misc {
             ex.printStackTrace();
         }
         return tempfile;
+    }
+
+    public static void flushLogs(Context context, long deathAge) {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = context.getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+
+        String[] files = temppath.list();
+
+        if (files == null)
+            return;
+
+        for (int i = 0; i < files.length; i++) {
+            File file = new File(temppath.getAbsolutePath() + "/" + files[i]);
+
+            Log.v("misc", "checking " + file.getAbsolutePath() + ":" + file.lastModified());
+
+            if (file.lastModified() + deathAge < System.currentTimeMillis()) {
+                Log.v("misc", "deleting " + file.getAbsolutePath());
+                file.delete();
+            }
+        }
+
     }
 
 /*
@@ -139,9 +183,18 @@ public class misc {
         return b;
     }
 
+    public static String to2Decimal(double value) {
+        return _maxTwoDecimal.format(value);
+    }
+
+    public static String to2Decimal(float value) {
+        return _maxTwoDecimal.format(value);
+    }
+
     public static String toCurrency(double money) {
         return _currencyFormat.format(money);
     }
+
 
     public static String toCurrencyTrim(double money) {
         String curr = _currencyFormat.format(money);
@@ -149,6 +202,23 @@ public class misc {
         if (curr.endsWith(".00"))
             return curr.substring(0, curr.length() - 3);
         return curr;
+    }
+
+    public static String toRoundDuration(long milliseconds) {
+
+        if (milliseconds < 60000) {
+            return milliseconds / 1000 + "s";
+        }
+
+        if (milliseconds < 3600000) {
+            return milliseconds / 60000 + "m";
+        }
+
+        if (milliseconds < 86400000) {
+            return milliseconds / 3600000 + "hr";
+        }
+
+        return milliseconds / 86400000 + "day";
     }
 
     public static Spannable linkifyHtml(String html, int linkifyMask) {
@@ -202,8 +272,13 @@ public class misc {
         int dist2 = Math.min(cx, cy);
         dist2 = dist2 * dist2;
 
+        int l1 = (dist2 * 94) / 100;
+        int l2 = (dist2 * 96) / 100;
+        int l3 = (dist2 * 98) / 100;
+
         int dx = 0;
         int dy = 0;
+
 
         for (int x = xoff; x < source.getWidth() - xoff; x++) {
             for (int y = yoff; y < source.getHeight() - yoff; y++) {
@@ -211,20 +286,20 @@ public class misc {
                 dy = cy - y;
                 int dist = dx * dx + dy * dy;
 
-                if (dist <= dist2 - 255) {
+                if (dist <= l1) {
                     destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
-                } else if (dist <= dist2 - 127) {
+                } else if (dist <= l2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 115) / 128) << 56 & 0xFF000000);
-                } else if (dist <= dist2 - 63) {
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
+                } else if (dist <= l3) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 51) / 64) << 56 & 0xFF000000);
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
                 } else if (dist <= dist2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 179) / 256) << 56 & 0xFF000000);
+                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
                 }
 
             }
@@ -337,6 +412,15 @@ public class misc {
 
     /**
      * @param calendar
+     * @return Wednesday, Jun 3, 2014
+     */
+    public static String formatDateReallyLong(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+    }
+
+    /**
+     * @param calendar
      * @param seconds
      * @return MM/DD/YYYY HH:MM:SS am/pm
      */
@@ -377,13 +461,14 @@ public class misc {
         if (Calendar.getInstance().get(Calendar.YEAR) > calendar.get(Calendar.YEAR)) {
             return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
         }
-        return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + formatTime(cal, false);
+        return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + formatTime(
+                cal, false);
     }
 
     /**
      * @param calendar
      * @param seconds  if true, then seconds are displayed.
-     * @return HH:MM:SS am/pm
+     * @return HH:MM:SSam/pm
      */
     public static String formatTime(Calendar calendar, boolean seconds) {
         calendar = applyTimeZone(calendar);
@@ -481,7 +566,7 @@ public class misc {
         long size = src.length();
         long pos = 0;
         int read = 0;
-        byte[] packet = new byte[10485760]; // 10MB
+        byte[] packet = new byte[1024]; // 10MB
 
         try {
             inFile = new BufferedInputStream(new FileInputStream(src));
@@ -752,6 +837,83 @@ public class misc {
         }
 
         return Data;
+    }
+
+    public static byte[] readAllFromStreamUntil(InputStream in, int packetSize, int expectedSize, int maxSize, long timeoutInMilli) throws IOException {
+        ByteArrayOutputStream bout = new ByteArrayOutputStream();
+
+        int read = 0;
+        int pos = 0;
+        int size = expectedSize;
+        long timeout = System.currentTimeMillis() + timeoutInMilli;
+
+        if (packetSize > expectedSize && expectedSize != -1) {
+            packetSize = expectedSize;
+        }
+
+        byte[] packet = new byte[packetSize];
+        boolean error = false;
+        boolean timedOut = false;
+        boolean complete = false;
+
+        try {
+            while (!error && !timedOut && !complete && bout.size() < maxSize) {
+
+				/*
+                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
+				 * break; }
+				 */
+
+                read = in.read(packet, 0, packetSize);
+
+                if (read > 0) {
+                    pos += read;
+
+                    if (size - pos < packetSize && size != -1) {
+                        packetSize = size - pos;
+                    }
+
+                    bout.write(packet, 0, read);
+                    timeout = System.currentTimeMillis() + timeoutInMilli;
+                } else if (read == 0) {
+                    try {
+                        Thread.sleep(100);
+                    } catch (Exception ex) {
+                    }
+                } else if (read == -1) {
+                    // error, stop
+                    error = true;
+                }
+
+                // finished, stop
+                if (pos == size && size != -1) {
+                    complete = true;
+                }
+
+                // read too much!
+                if (pos > size && size != -1) {
+                    error = true;
+                }
+
+                // timeout, stop
+                if (timeout < System.currentTimeMillis()) {
+                    timedOut = true;
+                }
+
+            }
+        } catch (IOException e) {
+            return bout.toByteArray();
+        }
+
+        if (timedOut && size != -1) {
+            return bout.toByteArray();
+        } else if (complete) {
+            return bout.toByteArray();
+        } else if (size == -1) {
+            return bout.toByteArray();
+        }
+
+        return null;
     }
 
     public static byte[] readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
@@ -1053,18 +1215,12 @@ public class misc {
 
         result = "";
 
-        if (days == 1) {
-            result += days + " day";
-        } else if (days > 0) {
+        if (days > 0) {
             result += days + " days ";
         }
-
-        if (hours == 1) {
-            result += hours + " hour ";
-        } else if (hours > 0) {
+        if (hours > 0) {
             result += hours + " hours ";
         }
-
         if (min > 0) {
             result += min + " min ";
         }

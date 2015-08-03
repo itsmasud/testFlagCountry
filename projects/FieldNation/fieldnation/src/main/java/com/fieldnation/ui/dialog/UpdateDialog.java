@@ -3,30 +3,15 @@ package com.fieldnation.ui.dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.topics.Topics;
 
 /**
  * Created by Michael Carver on 1/16/2015.
  */
-public class UpdateDialog extends DialogFragmentBase {
-    private final String TAG = UniqueTag.makeTag("ui.dialog.UpdateDialog");
-
-    // Ui
-    private Button _okButton;
-
-    // Data
+public class UpdateDialog extends OneButtonDialog {
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -36,35 +21,32 @@ public class UpdateDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setStyle(DialogFragment.STYLE_NO_TITLE, 0);
+    public void show() {
+        setData(getString(R.string.dialog_update_title),
+                getString(R.string.dialog_update_message),
+                getString(R.string.btn_update_now),
+                _super_listener);
+
+        super.show();
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        View v = inflater.inflate(R.layout.dialog_need_update, container, false);
-
-        _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
-        
-        return v;
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-        Topics.dispatchShutdown(getActivity());
-    }
-
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final OneButtonDialog.Listener _super_listener = new Listener() {
         @Override
-        public void onClick(View v) {
+        public void onButtonClick() {
             Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
             startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
             dismiss();
         }
+
+        @Override
+        public void onCancel() {
+            GlobalTopicClient.dispatchAppShutdown(getActivity());
+        }
     };
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+
+    }
 }

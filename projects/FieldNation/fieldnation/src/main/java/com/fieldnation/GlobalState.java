@@ -4,30 +4,31 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.graphics.Typeface;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.os.Build;
-import android.os.Bundle;
-import android.os.Handler;
+import android.os.Environment;
+import android.preference.PreferenceManager;
+import android.support.multidex.MultiDex;
 
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.ProfileService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.rpc.server.DataCacheNode;
-import com.fieldnation.rpc.server.PhotoCacheNode;
-import com.fieldnation.rpc.server.Ws;
-import com.fieldnation.topics.GaTopic;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.Topics;
-import com.fieldnation.utils.misc;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthTopicService;
+import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.transaction.WebTransactionService;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Logger;
 import com.google.android.gms.analytics.Tracker;
+
+import java.io.File;
+import java.util.Calendar;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -35,7 +36,9 @@ import com.google.android.gms.analytics.Tracker;
  * @author michael.carver
  */
 public class GlobalState extends Application {
-    private static final String TAG = "GlobalState";
+    private final String TAG = UniqueTag.makeTag("GlobalState");
+
+    public static final long DAY = 86400000;
 
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
@@ -43,30 +46,48 @@ public class GlobalState extends Application {
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
     public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
-    public static final String PREF_PROFILE_ID = "PREF_PROFILE_ID";
+    public static final String PREF_INSTALL_TIME = "PREF_INSTALL_TIME";
+    public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
+    public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
 
-    private Tracker _tracker;
-    private ProfileService _service;
-    private Profile _profile;
     private static GlobalState _context;
 
+    private Tracker _tracker;
+    private Profile _profile;
+    private GoogleAnalyticsTopicClient _gaTopicClient;
+    private GlobalTopicClient _globalTopicClient;
+    private ProfileClient _profileClient;
+    private AuthTopicClient _authTopicClient;
     private int _memoryClass;
+    private Typeface _iconFont;
+
+    @Override
+    protected void attachBaseContext(Context base) {
+        super.attachBaseContext(base);
+
+        MultiDex.install(this);
+    }
 
     public GlobalState() {
         super();
-
-        Ws.USE_HTTPS = BuildConfig.USE_HTTPS;
+        Log.v(TAG, "GlobalState");
     }
 
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
+
+        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
+
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);
 
+        startService(new Intent(this, AuthTopicService.class));
+        startService(new Intent(this, WebCrawlerService.class));
+
+        _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
         _context = this;
-        DataCacheNode.flush(this);
-        PhotoCacheNode.flush(this);
         new ExpenseCategories(this);
 
         getTracker();
@@ -75,19 +96,22 @@ public class GlobalState extends Application {
             System.setProperty("http.keepalive", "false");
         }
 
-//        Log.v(TAG, "MANUFACTURER: " + Build.MANUFACTURER);
-//        Log.v(TAG, "MODEL: " + Build.MODEL);
-//        Log.v(TAG, "RELEASE: " + Build.VERSION.RELEASE);
-//        Log.v(TAG, "SDK: " + Build.VERSION.SDK_INT);
+        _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
+        _gaTopicClient.connect(this);
 
-        GaTopic.subscribeEvent(this, TAG, _gaevent_receiver);
-        GaTopic.subscribeScreenView(this, TAG, _gaevent_receiver);
-        GaTopic.subscribeTiming(this, TAG, _gaevent_receiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalTopicClient.connect(this);
 
-        AuthTopicService.subscribeAuthState(this, 0, TAG + ":AuthTopicService", _authReceiver);
-        Topics.subscribeProfileInvalidated(this, TAG + ":ProfileService", _profile_topicReceiver);
+        _profileClient = new ProfileClient(_profile_listener);
+        _profileClient.connect(this);
 
+        _authTopicClient = new AuthTopicClient(_authTopic_listener);
+        _authTopicClient.connect(this);
 
+        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
+        Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
+
+        setInstallTime();
     }
 
     public int getMemoryClass() {
@@ -96,6 +120,10 @@ public class GlobalState extends Application {
 
     @Override
     public void onTerminate() {
+        _gaTopicClient.disconnect(this);
+        _profileClient.disconnect(this);
+        _globalTopicClient.disconnect(this);
+        _authTopicClient.disconnect(this);
         super.onTerminate();
         _context = null;
     }
@@ -104,122 +132,100 @@ public class GlobalState extends Application {
         return _context;
     }
 
+    public Typeface getIconFont() {
+        return _iconFont;
+    }
+
     /*-**********************-*/
     /*-         Auth         -*/
     /*-**********************-*/
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(GlobalState.this);
+        public void onConnected() {
+            Log.v(TAG, "onConnected");
+            _authTopicClient.registerAuthState();
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }
 
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new ProfileService(GlobalState.this, username, authToken, _resultReciever);
-                if (_profile == null)
-                    startService(_service.getMyUserInformation(0, true));
-            }
+        public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "onAuthenticated");
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
-    };
-
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        private boolean isCached;
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new AsyncTaskEx<Bundle, Object, Profile>() {
-                @Override
-                protected Profile doInBackground(Bundle... params) {
-                    Bundle resultData = params[0];
-                    try {
-                        JsonObject obj = new JsonObject(new String(
-                                resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-                        isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-                        return Profile.fromJson(obj);
-                    } catch (Exception e) {
-
-                    }
-                    return null;
-                }
-
-                @Override
-                protected void onPostExecute(Profile profile) {
-                    super.onPostExecute(profile);
-                    if (profile == null) {
-                        if (_service != null)
-                            startService(_service.getMyUserInformation(0, false));
-                    } else {
-                        _profile = profile;
-                        Topics.dispatchProfileUpdated(GlobalState.this, _profile);
-
-                        if (isCached && _service != null)
-                            startService(_service.getMyUserInformation(0, false));
-
-                        try {
-                            Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
-                            Intent intent = new Intent(GlobalState.this, clazz);
-                            startService(intent);
-                        } catch (Exception ex) {
-                            ex.printStackTrace();
-                        }
-
-                    }
-                }
-            }.executeEx(resultData);
-        }
-
-        @Override
-        public Context getContext() {
-            return GlobalState.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            _service = null;
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(GlobalState.this, true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(GlobalState.this, false);
+        public void onNotAuthenticated() {
+            Log.v(TAG, "onNotAuthenticated");
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
         }
     };
 
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
-    public Profile getProfile() {
-        return _profile;
-    }
-
-    private final TopicReceiver _profile_topicReceiver = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_INVALIDATED.equals(topicId)) {
-                if (_service != null) {
-                    startService(
-                            _service.getMyUserInformation(0, false));
-                } else {
-                    // TODO Profile invalid, but no service... what to do?
-                    Log.v(TAG, "Profile invalid, but no service... what to do?");
+        public void onConnected() {
+            _globalTopicClient.registerProfileInvalid(GlobalState.this);
+            _globalTopicClient.registerNetworkConnect();
+            _globalTopicClient.registerNetworkState();
+        }
+
+        @Override
+        public void onProfileInvalid() {
+            ProfileClient.get(GlobalState.this);
+        }
+
+        @Override
+        public void onNetworkConnected() {
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+        }
+
+        @Override
+        public void onNetworkConnecting() {
+        }
+
+        @Override
+        public void onNetworkConnect() {
+            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            startService(new Intent(GlobalState.this, WebTransactionService.class));
+        }
+
+        @Override
+        public void onNetworkDisconnected() {
+        }
+    };
+
+    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "_profile_listener.onConnected");
+            _profileClient.subGet();
+            ProfileClient.get(GlobalState.this);
+        }
+
+        @Override
+        public void onGet(Profile profile, boolean failed) {
+            Log.v(TAG, "onProfile");
+            if (profile != null) {
+                _profile = profile;
+                GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+
+                try {
+                    Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
+                    Intent intent = new Intent(GlobalState.this, clazz);
+                    startService(intent);
+                } catch (Exception ex) {
+                    ex.printStackTrace();
                 }
+            } else {
+                // TODO should do something... like retry or logout
             }
         }
     };
+
+    public Profile getProfile() {
+        return _profile;
+    }
 
     /*-*********************-*/
     /*-         GA          -*/
@@ -227,7 +233,7 @@ public class GlobalState extends Application {
     private synchronized Tracker getTracker() {
         if (_tracker == null) {
             GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
+//            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
             analytics.enableAutoActivityReports(this);
             analytics.setLocalDispatchPeriod(getResources().getInteger(R.integer.ga_local_dispatch_period));
             analytics.setDryRun(getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
@@ -239,84 +245,57 @@ public class GlobalState extends Application {
         return _tracker;
     }
 
-    private final TopicReceiver _gaevent_receiver = new TopicReceiver(new Handler()) {
+    private final GoogleAnalyticsTopicClient.Listener _gaTopicClient_listener = new GoogleAnalyticsTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (GaTopic.EVENT.equals(topicId)) {
-                String category = parcel.getString(GaTopic.EVENT_PARAM_CATEGORY);
-                String action = parcel.getString(GaTopic.EVENT_PARAM_ACTION);
-                String label = parcel.getString(GaTopic.EVENT_PARAM_LABEL);
+        public void onConnected() {
+            _gaTopicClient.registerEvents();
+            _gaTopicClient.registerScreenView();
+            _gaTopicClient.registerTiming();
+        }
 
-                Long value = null;
-                if (parcel.containsKey(GaTopic.EVENT_PARAM_VALUE)) {
-                    value = parcel.getLong(GaTopic.EVENT_PARAM_VALUE);
-                }
+        @Override
+        public void onGaEvent(String category, String action, String label, Long value) {
+            Tracker t = getTracker();
 
-                sendGaEvent(category, action, label, value);
-            } else if (GaTopic.SCREENVIEW.equals(topicId)) {
-                String screenName = parcel.getString(GaTopic.SCREENVIEW_PARAM_NAME);
+            HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
 
-                sendGaScreen(screenName);
-            } else if (GaTopic.TIMING.equals(topicId)) {
-                String category = null;
-                String variable = null;
-                String label = null;
-                Long value = null;
+            event.setCategory(category).setAction(action).setLabel(label);
 
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_CATEGORY))
-                    category = parcel.getString(GaTopic.TIMING_PARAM_CATEGORY);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_LABEL))
-                    label = parcel.getString(GaTopic.EVENT_PARAM_LABEL);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_VARIABLE))
-                    variable = parcel.getString(GaTopic.TIMING_PARAM_VARIABLE);
-
-                if (parcel.containsKey(GaTopic.TIMING_PARAM_VALUE))
-                    value = parcel.getLong(GaTopic.TIMING_PARAM_VALUE);
-
-                sendGaTiming(category, variable, label, value);
+            if (value != null) {
+                event.setValue(value);
             }
+
+            t.send(event.build());
+        }
+
+        @Override
+        public void onGaScreen(String screenName) {
+            Tracker t = getTracker();
+            t.setScreenName(screenName);
+            t.send(new HitBuilders.AppViewBuilder().build());
+        }
+
+        @Override
+        public void onGaTiming(String category, String variable, String label, Long value) {
+            HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
+            Tracker t = getTracker();
+
+            if (category != null)
+                timing.setCategory(category);
+
+            if (variable != null)
+                timing.setVariable(variable);
+
+            if (label != null)
+                timing.setLabel(label);
+
+            if (value != null)
+                timing.setValue(value);
+
+            t.send(timing.build());
         }
     };
 
-    public void sendGaEvent(String category, String action, String label, Long value) {
-        Tracker t = getTracker();
-        HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
-
-        event.setCategory(category).setAction(action).setLabel(label);
-
-        if (value != null) {
-            event.setValue(value);
-        }
-
-        t.send(event.build());
-    }
-
-    public void sendGaScreen(String screenName) {
-        Tracker t = getTracker();
-        t.setScreenName(screenName);
-        t.send(new HitBuilders.AppViewBuilder().build());
-    }
-
-    public void sendGaTiming(String category, String variable, String label, Long value) {
-        HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
-        Tracker t = getTracker();
-
-        if (category != null)
-            timing.setCategory(category);
-
-        if (variable != null)
-            timing.setVariable(variable);
-
-        if (label != null)
-            timing.setLabel(label);
-
-        if (value != null)
-            timing.setValue(value);
-
-        t.send(timing.build());
-    }
 
     public boolean canRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
@@ -328,7 +307,7 @@ public class GlobalState extends Application {
 
     public void setCoiReminded() {
         Log.v(TAG, "setCoiReminded");
-        misc.printStackTrace("setCoiReminded");
+        // misc.printStackTrace("setCoiReminded");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
@@ -355,18 +334,13 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+    public boolean shouldShowReviewDialog() {
+        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
+    }
+
     public boolean hasShownReviewDialog() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         return settings.contains(PREF_SHOWN_REVIEW_DIALOG);
-    }
-
-    public boolean hasCompletedWorkorder() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.contains(PREF_COMPLETED_WORKORDER);
-    }
-
-    public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
     }
 
     public void setShownReviewDialog() {
@@ -376,10 +350,129 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+    public boolean hasCompletedWorkorder() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.contains(PREF_COMPLETED_WORKORDER);
+    }
+
     public void setCompletedWorkorder() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
         edit.apply();
+    }
+
+    public void setInstallTime() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (settings.contains(PREF_INSTALL_TIME))
+            return;
+
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getInstallTime() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_INSTALL_TIME)) {
+            SharedPreferences.Editor edit = settings.edit();
+            edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+            edit.apply();
+            return System.currentTimeMillis();
+        }
+
+        return settings.getLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+    }
+
+    public void setRateMeInteracted() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getRateMeInteracted() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_RATE_INTERACTION)) {
+            return -1;
+        }
+
+        return settings.getLong(PREF_RATE_INTERACTION, System.currentTimeMillis());
+    }
+
+    public void setRateMeShown() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_RATE_SHOWN, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public long getRateMeShown() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+
+        if (!settings.contains(PREF_RATE_SHOWN))
+            return -1;
+
+        return settings.getLong(PREF_RATE_SHOWN, 0);
+    }
+
+    public boolean showRateMe() {
+        // if under 10 days, then no
+        if (System.currentTimeMillis() - getInstallTime() < DAY * 10) {
+            Log.v(TAG, "showRateMe: 10 day check failed");
+            return false;
+        }
+
+        // if hasn't completed a work order, then no
+        if (!hasCompletedWorkorder()) {
+            Log.v(TAG, "showRateMe: completed check failed");
+            return false;
+        }
+
+        // if have interacted before, then no
+        if (System.currentTimeMillis() - getRateMeInteracted() < DAY) {
+            Log.v(TAG, "showRateMe:  failed");
+            return false;
+        }
+
+        // if not in the time restraints, then no
+        Calendar cal = Calendar.getInstance();
+        if (cal.get(Calendar.HOUR_OF_DAY) <= 11) {
+            Log.v(TAG, "showRateMe:  time check failed");
+            return false;
+        }
+
+        // if shown before, check time.
+        if (System.currentTimeMillis() - getRateMeShown() < DAY * 10) {
+            Log.v(TAG, "showRateMe:  shown before check failed");
+            return false;
+        }
+
+        Log.v(TAG, "showRateMe:  ok!");
+        return true;
+    }
+
+    public String getStoragePath() {
+        File externalPath = Environment.getExternalStorageDirectory();
+        String packageName = getPackageName();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
+    }
+
+    public boolean haveWifi() {
+        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return wifi.isConnected();
+    }
+
+    public boolean isCharging() {
+        Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+        return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
+                || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
     }
 }

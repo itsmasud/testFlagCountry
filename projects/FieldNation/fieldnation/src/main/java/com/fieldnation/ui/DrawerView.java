@@ -3,33 +3,28 @@ package com.fieldnation.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalState;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.data.payment.PaymentClient;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -37,7 +32,9 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -45,37 +42,50 @@ import java.util.Calendar;
  * @author michael.carver
  */
 public class DrawerView extends RelativeLayout {
-    private static final String TAG = "ui.DrawerView";
+    private static final String STAG = "DrawerView";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     // UI
+    private LinearLayout _profileContainerLayout;
+    private ProfilePicView _picView;
+    private TextView _profileNameTextView;
+    private TextView _profileCompanyTextView;
+    private ImageButton _profileExpandButton;
+    private TextView _providerIdTextView;
+    private NavProfileDetailListView _profileListView;
+    private LinearLayout _linkContainerView;
+
+    // items
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
-    private LinearLayout _paymentView;
-    //    private RelativeLayout _settingsView;
-    private RelativeLayout _logoutView;
+    private RelativeLayout _paymentView;
     private TextView _paidAmountTextView;
     private TextView _paidDateTextView;
     private TextView _estimatedAmountTextView;
     private TextView _estimatedDateTextView;
     private RelativeLayout _estimatedLayout;
     private RelativeLayout _paidLayout;
-    private TextView _versionTextView;
-    private LinearLayout _feedbackLayout;
-    private Button _feedbackButton;
-    private LinearLayout _reviewLayout;
-    private Button _reviewButton;
-    private Button _callButton;
-    private TextView _providerIdTextView;
 
-    private LinearLayout _sendLogLayout;
-    private Button _sendLogButton;
+    // sub items
+    private LinearLayout _settingsView;
+    private LinearLayout _feedbackView;
+    private LinearLayout _debugView;
+    private LinearLayout _helpView;
+    private LinearLayout _logoutView;
+
+    // misc
+    private TextView _versionTextView;
 
     // Data
-    private PaymentService _dataService;
     private Payment _paidPayment = null;
     private Payment _estPayment = null;
-    private int _nextPage = 0;
+
     private Profile _profile = null;
+    private WeakReference<Drawable> _profilePic = null;
+
+    private PaymentClient _paymentClient;
+    private PhotoClient _photoClient;
+    private GlobalTopicClient _globalTopicClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -101,25 +111,33 @@ public class DrawerView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        AuthTopicService.subscribeAuthState(getContext(), 0, TAG, _authReceiver);
+        // profile
+        _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
+        _profileContainerLayout.setOnClickListener(_profileContainerLayout_onClick);
 
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _picView.setProfilePic(R.drawable.missing_circle);
+        _profileNameTextView = (TextView) findViewById(R.id.profile_name_textview);
+        _profileNameTextView.setVisibility(View.GONE);
+        _profileCompanyTextView = (TextView) findViewById(R.id.profile_company_textview);
+        _profileCompanyTextView.setVisibility(View.GONE);
         _providerIdTextView = (TextView) findViewById(R.id.providerid_textview);
         _providerIdTextView.setVisibility(View.GONE);
+        _profileExpandButton = (ImageButton) findViewById(R.id.profileexpand_button);
+        _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
+        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+
+        // Items
+        _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
         _myworkView = (RelativeLayout) findViewById(R.id.mywork_view);
         _myworkView.setOnClickListener(_myworkView_onClick);
 
         _marketView = (RelativeLayout) findViewById(R.id.market_view);
         _marketView.setOnClickListener(_marketView_onClick);
 
-        _paymentView = (LinearLayout) findViewById(R.id.payment_view);
+        _paymentView = (RelativeLayout) findViewById(R.id.payment_view);
         _paymentView.setOnClickListener(_paymentView_onClick);
-
-//        _settingsView = (RelativeLayout) findViewById(R.id.settings_view);
-//        _settingsView.setOnClickListener(_settingsView_onClick);
-
-        _logoutView = (RelativeLayout) findViewById(R.id.logout_view);
-        _logoutView.setOnClickListener(_logoutView_onClick);
 
         _paidLayout = (RelativeLayout) findViewById(R.id.paid_layout);
         _paidAmountTextView = (TextView) findViewById(R.id.paidamount_textview);
@@ -129,71 +147,156 @@ public class DrawerView extends RelativeLayout {
         _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
         _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
 
+        // Sub items
+        _settingsView = (LinearLayout) findViewById(R.id.settings_view);
+        _settingsView.setOnClickListener(_settingsView_onClick);
+
+        _debugView = (LinearLayout) findViewById(R.id.debug_view);
+        _debugView.setOnClickListener(_debugView_onClick);
+
+        _feedbackView = (LinearLayout) findViewById(R.id.feedback_view);
+        _feedbackView.setOnClickListener(_feedback_onClick);
+
+        _helpView = (LinearLayout) findViewById(R.id.help_view);
+        _helpView.setOnClickListener(_help_onClick);
+
+        _logoutView = (LinearLayout) findViewById(R.id.logout_view);
+        _logoutView.setOnClickListener(_logoutView_onClick);
+
+        // other status
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
-            _versionTextView.setText("v" + BuildConfig.VERSION_NAME);
+            _versionTextView.setText("Version " +
+                    (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             _versionTextView.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _versionTextView.setVisibility(View.GONE);
         }
 
-        _feedbackLayout = (LinearLayout) findViewById(R.id.feedback_layout);
-        _feedbackButton = (Button) findViewById(R.id.feedback_button);
-        _feedbackButton.setOnClickListener(_feedback_onClick);
-
-        _sendLogLayout = (LinearLayout) findViewById(R.id.sendlog_layout);
-        _sendLogButton = (Button) findViewById(R.id.sendlog_button);
-        _sendLogButton.setOnClickListener(_sendlog_onClick);
-
-        _reviewLayout = (LinearLayout) findViewById(R.id.review_layout);
-        _reviewButton = (Button) findViewById(R.id.review_button);
-        _reviewButton.setOnClickListener(_review_onClick);
-
-        _callButton = (Button) findViewById(R.id.call_button);
-        _callButton.setOnClickListener(_call_onClick);
-
-        _sendLogButton.setVisibility(View.VISIBLE);
         if (BuildConfig.FLAVOR.equals("prod")) {
-            _feedbackLayout.setVisibility(View.GONE);
             if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
-                _reviewLayout.setVisibility(View.VISIBLE);
             } else {
-                _reviewLayout.setVisibility(View.GONE);
             }
         } else {
-            _feedbackLayout.setVisibility(View.VISIBLE);
-            _reviewLayout.setVisibility(View.GONE);
         }
 
-        Topics.subscrubeProfileUpdated(getContext(), TAG + ":PROFILE", _topicReceiver);
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(getContext());
+
+        _photoClient = new PhotoClient(_photo_listener);
+        _photoClient.connect(getContext());
+
+        _paymentClient = new PaymentClient(_payment_listener);
+        _paymentClient.connect(getContext());
+
+        PaymentClient.list(getContext(), 0);
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG);
-        TopicService.delete(getContext(), TAG + ":PROFILE");
-        super.finalize();
+    protected void onDetachedFromWindow() {
+        _globalTopicClient.disconnect(getContext());
+        _photoClient.disconnect(getContext());
+        _paymentClient.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
-    private void gotProfile() {
+    private void populateUi() {
+        if (_estPayment != null) {
+            _estimatedLayout.setVisibility(VISIBLE);
+            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
+            _estimatedDateTextView.setText("Pending");
+        } else {
+            _estimatedLayout.setVisibility(GONE);
+        }
+
+        if (_profile != null && _profile.getCanViewPayments()) {
+            _paymentView.setVisibility(VISIBLE);
+            if (_paidPayment != null) {
+                _paidLayout.setVisibility(VISIBLE);
+                _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
+                try {
+                    Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
+                    _paidDateTextView.setText("Paid " + misc.formatDate(cal));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _paidDateTextView.setText("");
+                }
+            } else {
+                _paidLayout.setVisibility(GONE);
+            }
+        } else {
+            _paymentView.setVisibility(GONE);
+        }
+
+        if (_profile != null) {
+            _providerIdTextView.setVisibility(VISIBLE);
+            _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
+
+            _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
+            _profileNameTextView.setVisibility(VISIBLE);
+
+            // TODO add service company name
+            subPhoto();
+            addProfilePhoto();
+        }
+    }
+
+    private void addProfilePhoto() {
+        if (_profile == null || _photoClient == null || !_photoClient.isConnected()) {
+            _picView.setProfilePic(R.drawable.missing_circle);
+            return;
+        }
+
+        if (_profilePic == null || _profilePic.get() == null) {
+            _picView.setProfilePic(R.drawable.missing_circle);
+            if (!misc.isEmptyOrNull(_profile.getPhoto().getLarge())) {
+                PhotoClient.get(getContext(), _profile.getPhoto().getLarge(), true, false);
+            }
+        } else {
+            _picView.setProfilePic(_profilePic.get());
+        }
+    }
+
+    private void attachAnimations() {
+        Context context = getContext();
+        if (context instanceof Activity) {
+            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
+        }
+
+    }
+
+    private void subPhoto() {
         if (_profile == null)
             return;
 
-        _providerIdTextView.setVisibility(View.VISIBLE);
-        _providerIdTextView.setText("Provider Id: " + _profile.getUserId());
+        if (_profile.getPhoto() == null)
+            return;
+
+        if (misc.isEmptyOrNull(_profile.getPhoto().getLarge()))
+            return;
+
+        _photoClient.subGet(_profile.getPhoto().getLarge(), true, false);
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                Log.v(TAG, "TOPIC_PROFILE_UPDATE");
-                parcel.setClassLoader(getContext().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-                gotProfile();
+        public void onClick(View v) {
+        }
+    };
+
+    private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
+            if (_profileExpandButton.isActivated()) {
+                _profileListView.setVisibility(View.VISIBLE);
+                _linkContainerView.setVisibility(View.GONE);
+            } else {
+                _profileListView.setVisibility(View.GONE);
+                _linkContainerView.setVisibility(View.VISIBLE);
             }
         }
     };
@@ -206,10 +309,55 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _sendlog_onClick = new OnClickListener() {
+    /*-*************************************-*/
+    /*-				Item Events				-*/
+    /*-*************************************-*/
+    private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext(), BuildConfig.VERSION_NAME);
+            MyWorkActivity.startNew(getContext());
+            attachAnimations();
+        }
+    };
+
+    private final View.OnClickListener _marketView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), MarketActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+        }
+    };
+
+    private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), PaymentListActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+        }
+    };
+
+    /*-*****************************************-*/
+    /*-				Subitem Events				-*/
+    /*-*****************************************-*/
+    private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent = new Intent(getContext(), SettingsActivity.class);
+//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            getContext().startActivity(intent);
+            attachAnimations();
+//            AuthTopicClient.dispatchInvalidateCommand(getContext());
+        }
+    };
+
+    private final View.OnClickListener _debugView_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            File tempfile = misc.dumpLogcat(getContext());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
@@ -223,58 +371,44 @@ public class DrawerView extends RelativeLayout {
     private final OnClickListener _feedback_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://docs.google.com/forms/d/1ImIpsrdzWdVUytIjEcKfGpbNFHm0cZP0q_ZHI2FUb48/viewform?usp=send_form"));
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
-        }
-    };
-    private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            MyWorkActivity.startNew(getContext());
-            attachAnimations();
-        }
-    };
-    private final View.OnClickListener _marketView_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getContext(), MarketActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+*/
+/*
+            File tempfile = misc.dumpLogcat(getContext());
+            Intent intent = new Intent(Intent.ACTION_SEND);
+            intent.setType("plain/text");
+            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
+            intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
-            attachAnimations();
-        }
-    };
-    private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(getContext(), PaymentListActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
-//            AuthTopicService.requestAuthInvalid(getContext(), false);
+*/
 
+//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+
+            // Feedback Dialog
+            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
         }
     };
-    private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
+
+    private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-//            Intent intent = new Intent(getContext(), SettingsActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-//            getContext().startActivity(intent);
-//            attachAnimations();
-//            AuthTopicService.requestAuthInvalid(getContext(), false);
+            GlobalTopicClient.dispatchShowHelpDialog(getContext());
         }
     };
+
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicService.requestAuthRemove(getContext());
+            AuthTopicClient.dispatchRemoveCommand(getContext());
 
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());
             attachAnimations();
-            AuthTopicService.requestAuthInvalid(getContext(), false);
-//            Topics.dispatchNetworkDown(getContext());
         }
     };
 
@@ -286,165 +420,87 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+    /*-*********************************************-*/
+    /*-				System/web Events				-*/
+    /*-*********************************************-*/
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_dataService == null || isNew) {
-                _dataService = new PaymentService(getContext(), username, authToken, _resultReciever);
-
-                getContext().startService(_dataService.getAll(1, 0, true));
-                _nextPage = 1;
-            }
+        public void onConnected() {
+            _globalTopicClient.registerGotProfile();
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _dataService = null;
-        }
+        public void onGotProfile(Profile profile) {
+            if (_profile == null || profile.getUserId() != _profile.getUserId()) {
+                _profilePic = null;
+                _profile = profile;
 
-        @Override
-        public void onAuthenticationInvalidated() {
-            _dataService = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(getContext());
-        }
-    };
-
-    private class PaymentParseAsyncTask extends AsyncTaskEx<Bundle, Object, Payment[]> {
-        @Override
-        protected Payment[] doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-
-            Payment selPaid = _paidPayment;
-            Payment selEst = _estPayment;
-            try {
-                JsonArray ja = new JsonArray(new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA)));
-
-                for (int i = 0; i < ja.size(); i++) {
-                    try {
-                        Payment payment = Payment.fromJson(ja.getJsonObject(i));
-
-                        if (payment == null) {
-                            continue;
-                        }
-
-                        if (payment.getDatePaid() == null)
-                            continue;
-
-                        Log.v(TAG, payment.getDatePaid());
-                        long date = ISO8601.toUtc(payment.getDatePaid());
-
-                        if ("paid".equals(payment.getStatus())) {
-                            if (selPaid == null || date >= ISO8601.toUtc(selPaid.getDatePaid())) {
-                                selPaid = payment;
-                            }
-                        } else {
-                            if (selEst == null || date >= ISO8601.toUtc(selEst.getDatePaid())) {
-                                selEst = payment;
-                            }
-                        }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
+                if (_picView != null) {
+                    _picView.setProfilePic(R.drawable.missing_circle);
                 }
 
-                if (ja.size() == 0) {
-                    return new Payment[]{selPaid, selEst};
-                } else {
-                    if (_dataService != null) {
-                        getContext().startService(_dataService.getAll(1, _nextPage, true));
-                        _nextPage++;
-                    }
-                    return new Payment[]{selPaid, selEst};
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Payment[] payments) {
-            super.onPostExecute(payments);
-            if (payments != null) {
-                _paidPayment = payments[0];
-                _estPayment = payments[1];
                 populateUi();
             }
         }
-    }
+    };
 
-    private void populateUi() {
-        if (_estPayment != null) {
-            _estimatedLayout.setVisibility(View.VISIBLE);
-            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
-            try {
-                Calendar cal = ISO8601.toCalendar(_estPayment.getDatePaid());
-                _estimatedDateTextView.setText("Estimated " + misc.formatDate(cal));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _estimatedDateTextView.setText("");
-            }
-        } else {
-            _estimatedLayout.setVisibility(View.GONE);
-        }
-
-        if (_paidPayment != null) {
-            _paidLayout.setVisibility(View.VISIBLE);
-            _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
-            try {
-                Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
-                _paidDateTextView.setText("Estimated " + misc.formatDate(cal));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                _paidDateTextView.setText("");
-            }
-        } else {
-            _paidLayout.setVisibility(View.GONE);
-        }
-
-        if (_profile != null && _profile.getCanViewPayments()) {
-            _paymentView.setVisibility(View.VISIBLE);
-        } else {
-            _paymentView.setVisibility(View.GONE);
-        }
-    }
-
-    private final WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
+    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new PaymentParseAsyncTask().executeEx(resultData);
+        public void onConnected() {
+            subPhoto();
         }
 
         @Override
-        public Context getContext() {
-            return DrawerView.this.getContext();
-        }
+        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
+            if (drawable == null || url == null || failed)
+                return;
 
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-
-            _dataService = null;
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
+            Drawable pic = drawable;
+            _profilePic = new WeakReference<>(pic);
+            addProfilePhoto();
         }
     };
 
-    private void attachAnimations() {
-        Context context = getContext();
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
+    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _paymentClient.subList();
         }
 
-    }
+        @Override
+        public void onList(int page, List<Payment> list, boolean failed) {
+            if (list == null || list.size() == 0 || failed) {
+                return;
+            }
+            PaymentClient.list(getContext(), page + 1);
+
+            for (int i = 0; i < list.size(); i++) {
+                try {
+                    Payment payment = list.get(i);
+
+                    if (payment == null)
+                        continue;
+
+                    if (payment.getDatePaid() == null)
+                        continue;
+
+                    long date = ISO8601.toUtc(payment.getDatePaid());
+
+                    if ("paid".equals(payment.getStatus())) {
+                        if (_paidPayment == null || date >= ISO8601.toUtc(_paidPayment.getDatePaid())) {
+                            _paidPayment = payment;
+                        }
+                    } else {
+                        if (_estPayment == null || date >= ISO8601.toUtc(_estPayment.getDatePaid())) {
+                            _estPayment = payment;
+                        }
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+            }
+            populateUi();
+        }
+    };
 }
+

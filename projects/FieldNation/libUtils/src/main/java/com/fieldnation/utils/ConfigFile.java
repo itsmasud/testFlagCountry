@@ -18,10 +18,10 @@ import java.util.Hashtable;
  * 
  */
 public class ConfigFile {
-	private static Hashtable<String, ConfigFile> _configFiles = new Hashtable<String, ConfigFile>();
+	private static final Hashtable<String, ConfigFile> _configFiles = new Hashtable<String, ConfigFile>();
 
-	private Hashtable<String, String> _parameters;
-	private String _filename;
+	private final Hashtable<String, String> _parameters;
+	private final String _filename;
 
 
 	/**

@@ -1,70 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileStyle"
+    style="@style/Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/content_layout"
-        style="?attr/tileContainerStyle"
+    <LinearLayout
+        style="@style/CardContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:layout_toLeftOf="@+id/delete_imagebutton"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    style="?attr/tileTextBodyStyle"
-                    android:id="@+id/description_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginRight="10dp"
-                    android:layout_toLeftOf="@+id/cost_textview"
-                    android:text="Description" />
-
-                <TextView
-                    style="?attr/tileTextBodyStyle"
-                    android:id="@+id/cost_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_gravity="right"
-                    android:text="$5.50" />
-            </RelativeLayout>
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
 
             <TextView
-                style="?attr/tileTextStatusStyle"
-                android:id="@+id/category_textview"
+                android:id="@+id/description_textview"
+                style="?attr/tileTextBodyStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:singleLine="true"
-                android:maxLines="1"
-                android:text="Category" />
-        </LinearLayout>
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="10dp"
+                android:layout_toLeftOf="@+id/cost_textview"
+                android:text="Description" />
 
-        <ImageButton
-            android:id="@+id/delete_imagebutton"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_delete" />
-    </RelativeLayout>
+            <TextView
+                android:id="@+id/cost_textview"
+                style="?attr/tileTextBodyStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_gravity="right"
+                android:text="$5.50" />
+        </RelativeLayout>
 
-    <View
-        style="?attr/tileDividerStyle"
-        android:layout_alignBottom="@+id/content_layout" />
-
+        <TextView
+            android:id="@+id/category_textview"
+            style="?attr/tileTextStatusStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Category" />
+    </LinearLayout>
 </RelativeLayout>

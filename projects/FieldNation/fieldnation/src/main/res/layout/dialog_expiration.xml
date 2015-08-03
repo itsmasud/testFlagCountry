@@ -5,30 +5,47 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="?attr/dialogTitleStyle"
-            android:text="@string/request_workorder" />
-
-        <TextView
-            style="@style/WorkorderDetail_Field_Bold"
+        <LinearLayout
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@string/when_does_this_request_expire" />
+            android:orientation="vertical">
 
-        <Button
-            android:id="@+id/expiration_button"
-            style="?android:attr/spinnerStyle"
-            android:gravity="center_horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="48dp"
-            android:layout_marginLeft="10dp"
-            android:text="@string/btn_never" />
+            <TextView
+                android:id="@+id/title_textview"
+                style="?attr/dialogTitleStyle"
+                android:text="@string/request_workorder" />
+
+            <TextView
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:text="@string/when_does_this_request_expire" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <Button
+                    android:id="@+id/expiration_button"
+                    style="@style/SpinnerButton"
+                    android:text="@string/btn_never" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"

@@ -15,7 +15,7 @@ import com.fieldnation.data.workorder.Schedule;
  * Created by michael.carver on 11/5/2014.
  */
 public class ScheduleCoView extends RelativeLayout {
-    private static final String TAG = "ui.dialog.ScheduleCoView";
+    private static final String TAG = "ScheduleCoView";
 
     // Ui
     private TextView _statusTextView;
@@ -100,7 +100,7 @@ public class ScheduleCoView extends RelativeLayout {
     /*-             Events          -*/
     /*-*****************************-*/
 
-    private View.OnClickListener _clear_onClick = new OnClickListener() {
+    private final View.OnClickListener _clear_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -108,7 +108,7 @@ public class ScheduleCoView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _change_onClick = new OnClickListener() {
+    private final View.OnClickListener _change_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -117,8 +117,8 @@ public class ScheduleCoView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onClear();
+        void onClear();
 
-        public void onChange(Schedule schedule);
+        void onChange(Schedule schedule);
     }
 }

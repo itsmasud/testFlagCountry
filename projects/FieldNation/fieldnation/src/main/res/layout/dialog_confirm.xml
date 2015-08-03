@@ -21,33 +21,68 @@
                 android:layout_height="wrap_content"
                 android:text="Confirm schedule" />
 
-            <TextView
-                style="?attr/dialogLabelStyle"
-                android:text="Arrival Time" />
+            <LinearLayout
+                android:id="@+id/startDate_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
 
-            <Button
-                android:layout_gravity="left"
-                android:id="@+id/start_date_button"
-                style="?attr/buttonTextLinkStyle"
-                android:text="March 4, 2014 and March 5, 2015" />
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="Arrival Time" />
+
+                <Button
+                    android:id="@+id/startDate_button"
+                    style="@style/SpinnerButton"
+                    android:text="@string/placeholder_date_long" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
             <TextView
                 android:id="@+id/schedule_textview"
                 style="?attr/dialogCaptionStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
                 android:text="Arrival time must be between\n\tTuesday, March 4, 2014 at 11:00 am and\n\tTuesday, March 4, 2014 at 11:00 am CST" />
 
-            <TextView
-                android:layout_marginTop="8dp"
-                style="?attr/dialogLabelStyle"
-                android:text="Duration" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/duration_button"
-                android:layout_gravity="left"
-                style="?attr/buttonTextLinkStyle"
-                android:text="4 hours" />
+                <TextView
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:text="Job Durration" />
+
+                <Button
+                    android:id="@+id/duration_button"
+                    style="@style/SpinnerButton"
+                    android:text="@string/placeholder_word" />
+
+                <View
+                    style="@style/DividerFull"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_dark_text_80" />
+            </LinearLayout>
 
 
             <LinearLayout
@@ -63,14 +98,12 @@
 
                 <Button
                     android:id="@+id/tac_button"
-                    style="?attr/buttonTextLinkStyle"
-                    android:maxLines="1"
+                    style="?attr/buttonFlatStyle"
                     android:gravity="left|center_vertical"
+                    android:maxLines="1"
                     android:text="@string/terms_and_conditions" />
             </LinearLayout>
         </LinearLayout>
-
-        <View style="?attr/dialogDividerStyle" />
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"

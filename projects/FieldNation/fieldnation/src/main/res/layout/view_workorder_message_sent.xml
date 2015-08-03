@@ -1,41 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MessageView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/message_layout"
+    <TextView
+        android:id="@+id/message_textview"
+        style="@style/MessageView_MessageSent"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_toLeftOf="@+id/profile_imageview"
+        android:text="@string/placeholder_paragraph" />
 
-        <TextView
-            android:id="@+id/message_textview"
-            style="@style/MessageView_MessageSent"
-            android:layout_toLeftOf="@+id/profile_imageview"
-            android:text="@string/placeholder_paragraph" />
-
-        <ImageView
-            android:id="@+id/profile_imageview"
-            style="@style/MessageView_ProfileImageSent"
-            android:layout_alignParentRight="true" />
-    </RelativeLayout>
-
-    <LinearLayout
-        style="@style/MessageView_StatusBarSent"
+    <TextView
+        android:id="@+id/status_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
         android:layout_below="@+id/message_layout"
-        android:orientation="horizontal">
-
-        <ImageView style="@style/MessageView_Status_Clock" />
-
-        <TextView
-            android:id="@+id/time_textview"
-            style="@style/MessageView_Status_Time"
-            android:text="@string/placeholder_date_short" />
-
-        <ImageView
-            android:id="@+id/check_imageview"
-            style="@style/MessageView_Status_Orange" />
-    </LinearLayout>
-
-</RelativeLayout>
+        android:layout_gravity="right"
+        android:layout_marginRight="12dp"
+        android:text="Delivered" />
+</LinearLayout>

@@ -1,16 +1,13 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/container"
+<com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionbardrawerview"
     android:layout_width="match_parent"
-    android:background="@color/activity_bg"
-    android:layout_height="match_parent"
-    tools:context=".ui.workorder.WorkorderActivity">
+    android:layout_height="match_parent">
 
     <!-- The main content view -->
-
-    <RelativeLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <com.fieldnation.ui.workorder.WorkorderTabView
             android:id="@+id/tabview"
@@ -20,25 +17,7 @@
         <android.support.v4.view.ViewPager
             android:id="@+id/content_viewpager"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@+id/tabview" />
-
-        <!-- loading layout -->
-
-        <com.fieldnation.ui.ReconnectWarningView
-            android:id="@+id/reconnect_view"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-    </RelativeLayout>
-    <!-- The navigation drawer -->
-
-    <com.fieldnation.ui.DrawerView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start" />
-
-</android.support.v4.widget.DrawerLayout>
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    
+</com.fieldnation.ui.ActionBarDrawerView>

@@ -11,7 +11,7 @@ import java.util.List;
  * Created by michael.carver on 12/10/2014.
  */
 public class Shape {
-    private static final String TAG = "shortstraw.Shape";
+    private static final String TAG = "Shape";
 
     private static final float THRESHOLD = 0.95F;
     private static final int WINDOW = 3;
@@ -26,7 +26,7 @@ public class Shape {
 
 
     public Shape() {
-        _points = new LinkedList<Point>();
+        _points = new LinkedList<>();
     }
 
     public void add(Point p) {
@@ -81,7 +81,7 @@ public class Shape {
             return false;
         }
 
-        List<Point> resampled = new LinkedList<Point>();
+        List<Point> resampled = new LinkedList<>();
 
         float dist = 0;
         float sd;
@@ -118,7 +118,7 @@ public class Shape {
     private void getCorners() {
         Log.v(TAG, "getCorners");
         float[] straws = new float[_points.size()];
-        List<Integer> corners = new LinkedList<Integer>();
+        List<Integer> corners = new LinkedList<>();
 
         corners.add(0);
 

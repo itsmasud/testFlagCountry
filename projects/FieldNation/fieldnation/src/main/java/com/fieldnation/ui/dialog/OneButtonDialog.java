@@ -4,9 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +21,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
+    private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -41,6 +39,14 @@ public class OneButtonDialog extends DialogFragmentBase {
     /*-*************************************-*/
     public static OneButtonDialog getInstance(FragmentManager fm, String tag) {
         return getInstance(fm, tag, OneButtonDialog.class);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("title", _title);
+        outState.putString("body", _body);
+        outState.putString("buttonText", _buttonText);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -63,17 +69,28 @@ public class OneButtonDialog extends DialogFragmentBase {
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("title"))
+                _title = savedInstanceState.getString("title");
+
+            if (savedInstanceState.containsKey("body"))
+                _body = savedInstanceState.getString("body");
+
+            if (savedInstanceState.containsKey("buttonText"))
+                _buttonText = savedInstanceState.getString("buttonText");
+        }
+//        reset();
+
         return v;
     }
 
     @Override
-    public void reset() {
-        Log.v(TAG, "reset");
-        super.reset();
-
+    public void onResume() {
+        super.onResume();
         _titleTextView.setText(_title);
         _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//        _bodyTextView.setText(_body);
+//        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         _button.setText(_buttonText);
     }
 
@@ -88,7 +105,7 @@ public class OneButtonDialog extends DialogFragmentBase {
             reset();
     }
 
-    private View.OnClickListener _button_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -105,8 +122,8 @@ public class OneButtonDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onButtonClick();
+        void onButtonClick();
 
-        public void onCancel();
+        void onCancel();
     }
 }

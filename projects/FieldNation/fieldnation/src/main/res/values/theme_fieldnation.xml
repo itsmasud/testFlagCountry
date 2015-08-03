@@ -1,122 +1,200 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <style name="FieldNation.Material.Theme" parent="FieldNation.Base.Theme">
+    <style name="FieldNation.Material.Theme" parent="FieldNation.ActionBar.Theme">
         <!-- Main theme colors v21+ -->
         <!--   your app branding color for the app bar -->
-        <!--<item name="colorPrimary">#FFFF0000</item>-->
+        <item name="colorPrimary">@color/fn_grad_start</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <!--<item name="colorPrimaryDark">#FF00FF00</item>-->
+        <item name="colorPrimaryDark">@color/fn_grad_end</item>
         <!--   theme UI controls like checkboxes and text fields -->
-        <!--<item name="colorAccent">#FF3fcca9</item>-->
-
-        <item name="android:buttonStyle">@style/Button.Material.Flat</item>
-
-        <item name="tileStyle">@style/Tile.Material</item>
-        <item name="tileContainerStyle">@style/TileContainer.Material</item>
-        <item name="tileTextTitleStyle">@style/TileTextTitle.Material</item>
-        <item name="tileTextBodyStyle">@style/TileTextBody.Material</item>
-        <item name="tileTextStatusStyle">@style/TileTextStatus.Material</item>
-        <item name="tileActionBarStyle">@style/TileActionBar.Material</item>
-        <item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine.Material</item>
-        <item name="tileCheckBoxStyle">@style/TileCheckBox.Material</item>
-        <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton.Material</item>
-    </style>
-
-    <style name="FieldNation.Base.Theme" parent="FieldNation.ActionBar.Theme">
+        <!--<item name="colorAccent">@color/fn_brandcolor</item>-->
+        <item name="colorAccent">@color/fn_clickable_text</item>
+        <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowBackground">@color/black</item>
 
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <!--<item name="android:windowBackground">@color/black</item>-->
 
-        <item name="android:textColorLink">@color/text_link_color</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
+        <item name="android:textColorLink">@color/fn_clickable_text</item>
+
+        <!--<item name="android:buttonStyle">@style/Button.Material.Flat</item>-->
 
         <!-- android widgets -->
-        <item name="android:editTextStyle">@style/EditText</item>
-        <item name="android:buttonStyle">?attr/buttonDefaultStyle</item>
-        <item name="android:radioButtonStyle">@style/RadioButton</item>
+        <!--<item name="android:editTextStyle">@style/EditText</item>-->
+        <!--<item name="android:buttonStyle">?attr/buttonDefaultStyle</item>-->
+        <!--<item name="android:radioButtonStyle">@style/RadioButton</item>-->
+
+        <!-- login styles -->
+        <item name="activityLoginStyle">@style/Login.Activity</item>
+        <item name="loginFaderStyle">@style/Login.Fader</item>
+        <item name="loginPageStyle">@style/Login.Page</item>
+        <item name="loginStiltStyle">@style/Login.Stilt</item>
+        <item name="loginLogoStyle">@style/Login.Logo</item>
+        <item name="loginContentStyle">@style/Login.Content</item>
+        <!--<item name="loginEditTextStyle">@style/Login.EditText</item>-->
+
+        <!-- drawer styles -->
+        <item name="drawerStyle">@style/Drawer</item>
+        <!-- toolbar -->
+        <item name="fnToolbarStyle">@style/toolbarStyle</item>
+        <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
+        <item name="fnToolbarTabListContainerStyle">@style/toolbarTabListContainerStyle</item>
+        <item name="toolbarNavigationButtonStyle">
+            @style/FieldNation.Material.ToolBarNavigationButtonStyle
+        </item>
+
+        <!-- activities -->
+        <item name="activityMainStyle">@style/ActivityMain</item>
+        <item name="activitySignatureStyle">@style/SignatureActivity</item>
+        <item name="activitySplashStyle">@style/SplashActivity</item>
 
         <!-- dividers -->
         <item name="dividerFullStyle">@style/DividerFull</item>
         <item name="dividerPartialStyle">@style/DividerPart</item>
 
         <!-- buttons -->
-        <item name="buttonDefaultStyle">@style/ButtonWhite</item>
-        <item name="buttonWhiteStyle">@style/ButtonWhite</item>
-        <item name="buttonOrangeStyle">@style/ButtonOrange</item>
-        <item name="buttonGreenStyle">@style/ButtonGreen</item>
-        <item name="buttonGrayStyle">@style/ButtonGray</item>
-        <item name="buttonSpinnerStyle">@style/ButtonSpinner</item>
-        <item name="buttonTextLinkStyle">@style/ButtonTextLink</item>
-
+        <item name="buttonDefaultStyle">@style/Material.Button.Raised.White</item>
+        <item name="buttonWhiteStyle">@style/Material.Button.Raised.White</item>
+        <item name="buttonOrangeStyle">@style/Material.Button.Raised.Orange</item>
+        <item name="buttonGreenStyle">@style/Material.Button.Raised.Green</item>
+        <item name="buttonGrayStyle">@style/Material.Button.Raised.Gray</item>
+        <item name="buttonFlatStyle">@style/Material.Button.Flat</item>
 
         <!-- tile styles -->
-        <item name="tileStyle">@style/Tile</item>
-        <item name="tileContainerStyle">@style/TileContainer</item>
-        <item name="tileTextTitleStyle">@style/TileTextTitle</item>
-        <item name="tileTextBodyStyle">@style/TileTextBody</item>
-        <item name="tileTextStatusStyle">@style/TileTextStatus</item>
-        <item name="tileActionBarStyle">@style/TileActionBar</item>
-        <item name="tileEditText">@style/TileEditText</item>
-        <item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine</item>
-        <item name="tileCheckBoxStyle">@style/TileCheckBox</item>
-        <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton</item>
-        <item name="tileButtonStyle">@style/TileButton</item>
-        <item name="tileDividerStyle">@style/TileDivider</item>
+        <item name="tileStyle">@style/Tile.Material</item>
+        <item name="tileContainerStyle">@style/TileContainer.Material</item>
+        <item name="tileTextTitleStyle">@style/TileTextTitle.Material</item>
+        <item name="tileTextBodyStyle">@style/TileTextBody.Material</item>
+        <item name="tileTextStatusStyle">@style/TileTextStatus.Material</item>
+        <item name="tileActionBarStyle">@style/TileActionBar.Material</item>
+        <!--<item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine.Material</item>-->
+        <item name="tileCheckBoxStyle">@style/TileCheckBox.Material</item>
+        <!--<item name="tileEditText">@style/TileEditText</item>-->
+        <item name="tileButtonStyle">@style/TileButton.Material</item>
+        <item name="tileDividerStyle">@style/TileDivider.Material</item>
+        <item name="tileDividerPartStyle">@style/TileDividerPart.Material</item>
+
+        <!-- card styles -->
+        <item name="cardStyle">@style/Card</item>
+        <item name="cardContainerStyle">@style/CardContainer</item>
 
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>
-        <item name="dialogContainerStyle">@style/DialogContainer</item>
-        <item name="dialogTitleStyle">@style/DialogTitle</item>
-        <item name="dialogLabelStyle">@style/DialogLabel</item>
-        <item name="dialogCaptionStyle">@style/DialogCaption</item>
-        <item name="dialogEditTextStyle">@style/DialogEditText</item>
-        <item name="dialogActionBarStyle">@style/DialogActionBar</item>
-        <item name="dialogCancelButtonStyle">@style/DialogCancelButton</item>
-        <item name="dialogOkButtonStyle">@style/DialogOkButton</item>
-        <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen</item>
-        <item name="dialogSpinnerButtonStyle">@style/DialogSpinnerButton</item>
+        <item name="dialogContainerStyle">@style/DialogContainer.Material</item>
+        <item name="dialogTitleStyle">@style/DialogTitle.Material</item>
+        <item name="dialogLabelStyle">@style/DialogLabel.Material</item>
+        <item name="dialogCaptionStyle">@style/DialogCaption.Material</item>
+        <!--<item name="dialogEditTextStyle">@style/DialogEditText.Material</item>-->
+        <item name="dialogActionBarStyle">@style/DialogActionBar.Material</item>
+        <item name="dialogCancelButtonStyle">@style/DialogCancelButton.Material</item>
+        <item name="dialogOkButtonStyle">@style/DialogOkButton.Material</item>
+        <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen.Material</item>
         <item name="dialogBodyStyle">@style/DialogBody</item>
         <item name="dialogDividerStyle">@style/DialogDivider</item>
 
     </style>
 
-    <style name="FieldNation.ActionBar.Theme" parent="@style/Theme.AppCompat.Light">
-        <item name="actionBarStyle">@style/FieldNation.ActionBar.Solid</item>
-        <item name="actionBarTabTextStyle">@style/FieldNation.ActionBar.TabTextStyle</item>
-        <item name="actionBarTabStyle">@style/FieldNation.ActionBar.TabViewStyle</item>
-        <item name="actionMenuTextColor">@color/white</item>
+    <!--
+        <style name="FieldNation.Base.Theme" parent="FieldNation.ActionBar.Theme">
+            <item name="android:windowNoTitle">true</item>
+            <item name="android:windowContentOverlay">@null</item>
+            <item name="android:windowBackground">@color/black</item>
+
+
+            <item name="android:textColorLink">@color/text_link_color</item>
+
+            &lt;!&ndash; android widgets &ndash;&gt;
+            <item name="android:editTextStyle">@style/EditText</item>
+            <item name="android:buttonStyle">?attr/buttonDefaultStyle</item>
+            <item name="android:radioButtonStyle">@style/RadioButton</item>
+
+            &lt;!&ndash; dividers &ndash;&gt;
+            <item name="dividerFullStyle">@style/DividerFull</item>
+            <item name="dividerPartialStyle">@style/DividerPart</item>
+
+            &lt;!&ndash; buttons &ndash;&gt;
+            &lt;!&ndash;<item name="buttonDefaultStyle">@style/ButtonWhite</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonWhiteStyle">@style/ButtonWhite</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonOrangeStyle">@style/ButtonOrange</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonGreenStyle">@style/ButtonGreen</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonGrayStyle">@style/ButtonGray</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonSpinnerStyle">@style/ButtonSpinner</item>&ndash;&gt;
+            &lt;!&ndash;<item name="buttonTextLinkStyle">@style/ButtonTextLink</item>&ndash;&gt;
+
+
+            &lt;!&ndash; tile styles &ndash;&gt;
+            <item name="tileStyle">@style/Tile</item>
+            <item name="tileContainerStyle">@style/TileContainer</item>
+            <item name="tileTextTitleStyle">@style/TileTextTitle</item>
+            <item name="tileTextBodyStyle">@style/TileTextBody</item>
+            <item name="tileTextStatusStyle">@style/TileTextStatus</item>
+            <item name="tileActionBarStyle">@style/TileActionBar</item>
+            <item name="tileEditText">@style/TileEditText</item>
+            <item name="tileEditTextOneLineStyle">@style/TileEditTextOneLine</item>
+            <item name="tileCheckBoxStyle">@style/TileCheckBox</item>
+            <item name="tileSpinnerButtonStyle">@style/TileSpinnerButton</item>
+            <item name="tileButtonStyle">@style/TileButton</item>
+            <item name="tileDividerStyle">@style/TileDivider</item>
+
+            &lt;!&ndash; dialogs &ndash;&gt;
+            <item name="dialogStyle">@style/Dialog</item>
+            <item name="dialogContainerStyle">@style/DialogContainer</item>
+            <item name="dialogTitleStyle">@style/DialogTitle</item>
+            <item name="dialogLabelStyle">@style/DialogLabel</item>
+            <item name="dialogCaptionStyle">@style/DialogCaption</item>
+            <item name="dialogEditTextStyle">@style/DialogEditText</item>
+            <item name="dialogActionBarStyle">@style/DialogActionBar</item>
+            <item name="dialogCancelButtonStyle">@style/DialogCancelButton</item>
+            <item name="dialogOkButtonStyle">@style/DialogOkButton</item>
+            <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen</item>
+            <item name="dialogSpinnerButtonStyle">@style/DialogSpinnerButton</item>
+            <item name="dialogBodyStyle">@style/DialogBody</item>
+            <item name="dialogDividerStyle">@style/DialogDivider</item>
+
+        </style>
+    -->
+
+    <style name="FieldNation.ActionBar.Theme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <!--<item name="actionBarStyle">@style/FieldNation.ActionBar.Solid</item>-->
+        <!--<item name="actionBarTabTextStyle">@style/FieldNation.ActionBar.TabTextStyle</item>-->
+        <!--<item name="actionBarTabStyle">@style/FieldNation.ActionBar.TabViewStyle</item>-->
+        <!--<item name="actionMenuTextColor">@color/white</item>-->
 
         <item name="android:windowMinWidthMajor">90%</item>
         <item name="android:windowMinWidthMinor">90%</item>
+
+        <item name="android:colorBackground">@color/fn_primary_bg</item>
+        <item name="android:windowBackground">@color/fn_primary_bg</item>
     </style>
 
-    <style name="FieldNation.ActionBar.Solid" parent="@style/Widget.AppCompat.ActionBar.Solid">
-        <item name="background">@drawable/actionbar_background</item>
-        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
-        <item name="titleTextStyle">@style/FieldNation.ActionBar.TextStyle</item>
-        <item name="actionMenuTextColor">@color/white</item>
-    </style>
+    <!--<style name="FieldNation.ActionBar.Solid" parent="@style/Widget.AppCompat.ActionBar.Solid">-->
+    <!--<item name="background">@drawable/actionbar_background</item>-->
+    <!--<item name="backgroundStacked">@drawable/actionbar_stacked_background</item>-->
+    <!--<item name="titleTextStyle">@style/FieldNation.ActionBar.TextStyle</item>-->
+    <!--<item name="actionMenuTextColor">@color/white</item>-->
+    <!--</style>-->
 
-    <style name="FieldNation.ActionBar.Transparent" parent="@style/Widget.AppCompat.ActionBar">
-        <item name="background">@drawable/actionbar_background</item>
-        <item name="backgroundStacked">@drawable/actionbar_stacked_background</item>
-        <item name="titleTextStyle">@style/FieldNation.ActionBar.TextStyle</item>
-        <item name="actionMenuTextColor">@color/white</item>
-    </style>
+    <!--<style name="FieldNation.ActionBar.Transparent" parent="@style/Widget.AppCompat.ActionBar">-->
+    <!--<item name="background">@drawable/actionbar_background</item>-->
+    <!--<item name="backgroundStacked">@drawable/actionbar_stacked_background</item>-->
+    <!--<item name="titleTextStyle">@style/FieldNation.ActionBar.TextStyle</item>-->
+    <!--<item name="actionMenuTextColor">@color/white</item>-->
+    <!--</style>-->
 
-    <style name="FieldNation.ActionBar.TextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">
-        <item name="android:textColor">@color/white</item>
-    </style>
+    <!--<style name="FieldNation.ActionBar.TextStyle" parent="@style/TextAppearance.AppCompat.Widget.ActionBar.Title">-->
+    <!--<item name="android:textColor">@color/white</item>-->
+    <!--</style>-->
 
-    <style name="FieldNation.ActionBar.TabTextStyle" parent="@style/Widget.AppCompat.ActionBar.TabText">
-        <item name="android:textColor">@color/white</item>
-    </style>
+    <!--<style name="FieldNation.ActionBar.TabTextStyle" parent="@style/Widget.AppCompat.ActionBar.TabText">-->
+    <!--<item name="android:textColor">@color/white</item>-->
+    <!--</style>-->
 
-    <style name="FieldNation.ActionBar.TabViewStyle" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">
-        <item name="android:background">@drawable/actionbar_tab</item>
-        <item name="android:paddingLeft">0dp</item>
-        <item name="android:layout_marginLeft">0dp</item>
-    </style>
+    <!--<style name="FieldNation.ActionBar.TabViewStyle" parent="@style/Widget.AppCompat.Light.ActionBar.TabView">-->
+    <!--<item name="android:background">@drawable/actionbar_tab</item>-->
+    <!--<item name="android:paddingLeft">0dp</item>-->
+    <!--<item name="android:layout_marginLeft">0dp</item>-->
+    <!--</style>-->
 
 </resources>

@@ -5,39 +5,40 @@
     android:orientation="vertical">
 
     <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/shipment" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="SHIPMENTS" />
 
     <LinearLayout
         android:id="@+id/shipments_linearlayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:orientation="vertical" />
 
-    <LinearLayout
-        android:id="@+id/add_layout"
+    <TextView
+        android:id="@+id/noShipments_textview"
+        style="@style/Text_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="No shipments are associated with this work order."
+        android:visibility="gone" />
 
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/ic_shipment_truck" />
-
-        <TextView
-            style="@style/TextViewLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/btn_add_shipment" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/add_button"
+        style="?attr/buttonGrayStyle"
+        android:layout_gravity="right"
+        android:layout_marginRight="16dp"
+        android:text="ADD SHIPMENT" />
 
     <View
-        android:layout_width="match_parent"
-        style="@style/WorkorderDetail_Separator" />
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

@@ -2,21 +2,21 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:background="#FFFFFFFF"
-    android:padding="5dp">
+    android:background="@color/fn_menu_bg"
+    android:padding="8dp">
 
     <ImageView
         android:id="@+id/icon_imageview"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
-        android:layout_marginRight="5dp"
+        android:layout_marginRight="8dp"
         android:src="@null" />
 
     <TextView
-        style="?attr/tileTextTitleStyle"
         android:id="@+id/name_textview"
+        style="?attr/tileTextTitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"

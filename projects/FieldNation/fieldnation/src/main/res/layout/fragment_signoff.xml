@@ -1,58 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_height="match_parent"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_height="match_parent"
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
         android:orientation="vertical">
 
         <RelativeLayout
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:background="#FF000000"
             android:layout_width="match_parent"
-            android:layout_height="60dp">
+            android:layout_height="60dp"
+            android:background="@color/fn_dark_text"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp">
 
             <TextView
-                android:layout_centerVertical="true"
                 style="@style/Text_Headline"
-                android:textColor="#FFFFFFFF"
-                android:alpha="1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Review &amp; Sign" />
+                android:layout_centerVertical="true"
+                android:alpha="1"
+                android:text="Review &amp; Sign"
+                android:textColor="@color/fn_white_text" />
 
             <RelativeLayout
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
                 android:layout_width="120dp"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true">
 
                 <View
+                    android:layout_width="0dp"
+                    android:layout_height="2dp"
+                    android:layout_alignLeft="@+id/circles_layout"
+                    android:layout_alignRight="@+id/circles_layout"
                     android:layout_marginLeft="18dp"
                     android:layout_marginRight="18dp"
                     android:layout_marginTop="7dp"
-                    android:background="#FFFFFFFF"
-                    android:layout_alignLeft="@+id/circles_layout"
-                    android:layout_alignRight="@+id/circles_layout"
-                    android:layout_width="0dp"
-                    android:layout_height="2dp" />
+                    android:background="@color/fn_white_text" />
 
                 <LinearLayout
                     android:id="@+id/circles_layout"
                     android:layout_width="match_parent"
-                    android:orientation="horizontal"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
                     <LinearLayout
-                        android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
+                        android:layout_weight="1"
                         android:gravity="center_horizontal"
-                        android:orientation="vertical"
-                        android:layout_marginRight="8dp">
+                        android:orientation="vertical">
 
                         <ImageView
                             android:layout_width="16dp"
@@ -61,19 +61,19 @@
 
                         <TextView
                             style="@style/Text_Caption"
-                            android:textSize="10dp"
-                            android:alpha="1"
-                            android:textColor="#FFFFFFFF"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Review" />
+                            android:alpha="1"
+                            android:text="Review"
+                            android:textColor="@color/fn_white_text"
+                            android:textSize="10dp" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="8dp"
+                        android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
 
@@ -84,18 +84,18 @@
 
                         <TextView
                             style="@style/Text_Caption"
-                            android:textSize="10dp"
-                            android:alpha="1"
-                            android:textColor="#FFFFFFFF"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Sign" />
+                            android:alpha="1"
+                            android:text="Sign"
+                            android:textColor="@color/fn_white_text"
+                            android:textSize="10dp" />
                     </LinearLayout>
 
                     <LinearLayout
-                        android:layout_weight="1"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
+                        android:layout_weight="1"
                         android:gravity="center_horizontal"
                         android:orientation="vertical">
 
@@ -106,12 +106,12 @@
 
                         <TextView
                             style="@style/Text_Caption"
-                            android:alpha="1"
-                            android:textSize="10dp"
-                            android:textColor="#FFFFFFFF"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Done" />
+                            android:alpha="1"
+                            android:text="Done"
+                            android:textColor="@color/fn_white_text"
+                            android:textSize="10dp" />
                     </LinearLayout>
 
                 </LinearLayout>
@@ -122,14 +122,15 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbarStyle="outsideOverlay"
-            android:padding="10dp">
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:scrollbarStyle="outsideOverlay">
 
             <LinearLayout
                 android:id="@+id/container"
-                android:background="#FFeeeeee"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/fn_transparent"
                 android:orientation="vertical">
 
                 <ImageView
@@ -168,9 +169,9 @@
 
                 <LinearLayout
                     android:id="@+id/time_list"
-                    android:animateLayoutChanges="false"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:animateLayoutChanges="false"
                     android:orientation="vertical" />
 
                 <View
@@ -188,8 +189,8 @@
                 <LinearLayout
                     android:id="@+id/tasks_list"
                     android:layout_width="match_parent"
-                    android:animateLayoutChanges="false"
                     android:layout_height="wrap_content"
+                    android:animateLayoutChanges="false"
                     android:orientation="vertical" />
 
                 <View
@@ -207,33 +208,35 @@
                 <TextView
                     android:id="@+id/closingnotes_textview"
                     style="@style/WorkorderDetail_Field"
-                    android:layout_height="wrap_content"
-                    android:layout_width="match_parent" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
 
                 <LinearLayout
+                    style="?attr/dialogActionBarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
                     android:orientation="horizontal">
 
                     <Button
                         android:id="@+id/reject_button"
-                        style="@style/ButtonWhiteMaterial"
+                        style="?attr/buttonWhiteStyle"
                         android:layout_width="150dp"
-                        android:layout_weight="1"
                         android:layout_gravity="right"
                         android:layout_marginBottom="8dp"
-                        android:layout_marginTop="8dp"
                         android:layout_marginRight="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_weight="1"
                         android:text="@string/btn_reject" />
 
                     <Button
                         android:id="@+id/signoff_button"
-                        style="@style/ButtonOrangeMaterial"
+                        style="?attr/buttonOrangeStyle"
                         android:layout_width="150dp"
-                        android:layout_weight="1"
                         android:layout_gravity="right"
                         android:layout_marginBottom="8dp"
                         android:layout_marginTop="8dp"
+                        android:layout_weight="1"
                         android:text="@string/btn_sign_off" />
                 </LinearLayout>
             </LinearLayout>

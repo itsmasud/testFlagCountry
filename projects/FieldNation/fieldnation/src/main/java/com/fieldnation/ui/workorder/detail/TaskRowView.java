@@ -1,36 +1,33 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.AttributeSet;
-
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.FileUploadTopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.misc;
 
 public class TaskRowView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.TaskRowView");
+    private final String TAG = UniqueTag.makeTag("TaskRowView");
 
     // Ui
-    private CheckBox _checkbox;
+    private IconFontTextView _iconView;
+    private TextView _descriptionTextView;
 
     // Data
     private Workorder _workorder;
+    private WorkorderClient _workorderClient;
     private Task _task;
     private Listener _listener = null;
-    private String _uploadUrl;
 
     public TaskRowView(Context context) {
         super(context);
@@ -53,18 +50,26 @@ public class TaskRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _checkbox = (CheckBox) findViewById(R.id.checkbox);
-        _checkbox.setOnClickListener(_checkbox_onClick);
+        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(getContext());
+
+        setOnClickListener(_checkbox_onClick);
 
         populateUi();
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG);
+    protected void onDetachedFromWindow() {
+        _workorderClient.disconnect(getContext());
+        _workorderClient = null;
+        super.onDetachedFromWindow();
+    }
 
-        super.finalize();
+    public void setOnTaskClickListener(Listener listener) {
+        _listener = listener;
     }
 
     public void setData(Workorder workorder, Task task) {
@@ -72,8 +77,7 @@ public class TaskRowView extends RelativeLayout {
         _workorder = workorder;
 
         if (_task.getSlotId() != null) {
-            _uploadUrl = _workorder.getWorkorderId() + "/deliverables/" + _task.getSlotId();
-            Topics.subscribeFileUpload(getContext(), TAG, _uploadReceiver);
+            subscribeUpload();
         }
 
 
@@ -81,73 +85,96 @@ public class TaskRowView extends RelativeLayout {
     }
 
     private void populateUi() {
-        if (_checkbox == null)
+        if (_iconView == null)
             return;
+
         if (_workorder == null)
             return;
 
-        _checkbox.setEnabled(_workorder.canModifyTasks());
+        setEnabled(_workorder.canModifyTasks());
+
+        if (_workorder.canModifyTasks()) {
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+        } else {
+            _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+        }
+
 
         TaskType type = _task.getTaskType();
 
         if (misc.isEmptyOrNull(_task.getDescription())) {
-            _checkbox.setText(type.getDisplay(getContext()));
+            _descriptionTextView.setText(type.getDisplay(getContext()));
         } else {
-            _checkbox.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
+            _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
         }
-
-        _checkbox.setChecked(_task.getCompleted());
-
+        updateCheckBox();
     }
 
+    private void updateCheckBox() {
+        if (_workorder.canModifyTasks()) {
+            // set enabled
+            if (_task.getCompleted()) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+                _iconView.setText(R.string.icfont_circle_checked);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text));
+                _iconView.setText(R.string.icfont_circle);
+            }
+        } else {
+            if (_task.getCompleted()) {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icfont_circle_checked);
+            } else {
+                _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+                _iconView.setText(R.string.icfont_circle);
+            }
+        }
+    }
+
+    private void subscribeUpload() {
+        if (_workorder == null)
+            return;
+
+        if (_task == null || _task.getSlotId() == null)
+            return;
+
+        if (_workorderClient == null)
+            return;
+
+        if (!_workorderClient.isConnected())
+            return;
+
+
+        _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _task.getSlotId());
+    }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
 
-    private FileUploadTopicReceiver _uploadReceiver = new FileUploadTopicReceiver(new Handler()) {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        public void onStart(String url, String filename) {
-            if (_task != null && _workorder != null) {
-                if (url.contains(_uploadUrl)) {
-                    Log.v(TAG, "This task is uploading a file..." + url);
-                    TaskType type = _task.getTaskType();
-                    _checkbox.setText(type.getDisplay(getContext()) + "\nUploading: " + filename);
-                }
-            }
+        public void onConnected() {
+            subscribeUpload();
         }
 
         @Override
-        public void onFinish(String url, String filename) {
-            if (_task != null && _workorder != null) {
-                if (url.contains(_uploadUrl)) {
-                    Log.v(TAG, "This task is uploading a file..." + url);
-                    TaskType type = _task.getTaskType();
-                    _checkbox.setText(type.getDisplay(getContext()) + "\n" + filename);
-                }
-            }
-        }
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            TaskType type = _task.getTaskType();
 
-        @Override
-        public void onError(String url, String filename, String message) {
-            if (_task != null && _workorder != null) {
-                if (url.contains(_uploadUrl)) {
-                    Log.v(TAG, "This task is uploading a file..." + url);
-                    TaskType type = _task.getTaskType();
-                    _checkbox.setText(type.getDisplay(getContext()) + "\nFailed: " + filename);
-                }
+            if (!isComplete) {
+                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading: " + filename);
+            } else {
+                _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + filename);
             }
         }
     };
 
-    public void setOnTaskClickListener(Listener listener) {
-        _listener = listener;
-    }
 
-    private View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _checkbox.setChecked(_task.getCompleted());
+            updateCheckBox();
 
             if (_listener != null) {
                 _listener.onTaskClick(_task);
@@ -156,7 +183,7 @@ public class TaskRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onTaskClick(Task task);
+        void onTaskClick(Task task);
     }
 
 }

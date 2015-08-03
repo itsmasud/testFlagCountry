@@ -2,8 +2,8 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- material style -->
-    <color name="tileTextColor_Material">@color/black</color>
-    <color name="tileBackGroundColor_Material">@color/white</color>
+    <color name="tileTextColor_Material">@color/fn_dark_text</color>
+    <color name="tileBackGroundColor_Material">@color/fn_menu_bg</color>
     <dimen name="tileContentPadding_Material">16dp</dimen>
     <dimen name="tileActionBarBottom_Material">8dp</dimen>
     <dimen name="tileActionBarMargins_material">8dp</dimen>
@@ -17,23 +17,23 @@
         <item name="android:background">@color/tileBackGroundColor_Material</item>
     </style>
 
-    <style name="TileTextTitle.Material" parent="@style/Text_Headline">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+    <style name="TileTextTitle.Material" parent="@style/Text_Title">
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
-    <style name="TileTextBody.Material" parent="@style/Text_Body_2">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+    <style name="TileTextBody.Material" parent="@style/Text_Body_1">
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
     <style name="TileTextStatus.Material" parent="@style/Text_Caption">
-        <item name="android:textColor">@color/tileTextColor_Material</item>
+        <!--<item name="android:textColor">@color/tileTextColor_Material</item>-->
     </style>
 
     <style name="TileActionBar.Material">
         <item name="android:background">@color/tileBackGroundColor_Material</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/Button_Touch_Target</item>
-        <item name="android:layout_marginBottom">@dimen/tileActionBarBottom_Material</item>
+        <item name="android:paddingBottom">@dimen/tileActionBarBottom_Material</item>
         <item name="android:paddingLeft">@dimen/tileActionBarMargins_material</item>
         <item name="android:paddingRight">@dimen/tileActionBarMargins_material</item>
         <item name="android:gravity">left</item>
@@ -55,8 +55,16 @@
         <item name="android:layout_marginBottom">6dp</item>
     </style>
 
-    <style name="TileSpinnerButton.Material" parent="@android:style/Widget.Spinner">
-
+    <style name="TileButton.Material" parent="Material.Button.Raised.White">
+        <item name="android:layout_marginLeft">4dp</item>
+        <item name="android:layout_marginRight">4dp</item>
     </style>
+
+
+    <style name="TileSpinnerButton.Material" parent="@android:style/Widget.Spinner"></style>
+
+    <style name="TileDivider.Material" parent="DividerFull" />
+
+    <style name="TileDividerPart.Material" parent="DividerPart" />
 
 </resources>

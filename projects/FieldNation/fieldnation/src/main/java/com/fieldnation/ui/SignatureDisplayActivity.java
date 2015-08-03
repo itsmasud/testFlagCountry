@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -18,19 +19,16 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.misc;
 
-import java.util.Objects;
+import java.util.Random;
 
 /**
  * Created by michael.carver on 12/9/2014.
  */
 public class SignatureDisplayActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.SignatureDisplayActivity";
+    private static final String TAG = "SignatureDisplayActivity";
 
     // State
     private static final String STATE_SIGNATURE = "STATE_SIGNATURE";
@@ -40,9 +38,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     // Intent Params
     public static final String INTENT_PARAM_SIGNATURE = "ui.SignatureDisplayActivity:INTENT_PARAM_SIGNATURE";
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
-
-    // Web
-    public static int WEB_GET_SIGNATURE = 1;
 
     // Ui
     private TextView _titleTextView;
@@ -64,7 +59,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private TextView _nameTextView;
     private Button _doneButton;
 
-    private LoadingView _loadingView;
 
     // Data
     private Signature _signature;
@@ -72,13 +66,15 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private long _signatureId = -1;
 
     // Service
-    private WorkorderService _service;
-
+    private WorkorderClient _workorderClient;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signature_display);
+    public int getLayoutResource() {
+        return R.layout.activity_signature_display;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
@@ -101,7 +97,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _doneButton = (Button) findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
 
-        _loadingView = (LoadingView) findViewById(R.id.loading_view);
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(this);
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
@@ -158,12 +155,12 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     _signature = (Signature) objects[0];
                     _workorder = (Workorder) objects[1];
                     _signatureId = (Long) objects[2];
-                    populateUi(true);
+                    populateUi();
                 }
             }.executeEx(savedInstanceState);
         }
-
     }
+
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -178,34 +175,34 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderService(this, username, authToken, _resultReceiver);
-            getData();
-        }
-    }
 
     private void getData() {
-        if (_service == null)
-            return;
-
         if (_workorder == null)
             return;
 
-        _loadingView.setVisibility(View.VISIBLE);
+        if (_workorderClient == null)
+            return;
 
-        startService(
-                _service.getSignature(WEB_GET_SIGNATURE, _workorder.getWorkorderId(), _signatureId, true));
+        if (_workorderClient.isConnected()) {
+            _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
+        }
+
+        WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        populateUi(false);
+        populateUi();
     }
 
-    private void populateUi(boolean isCached) {
+    @Override
+    protected void onPause() {
+        _workorderClient.disconnect(this);
+        super.onPause();
+    }
+
+    private void populateUi() {
         if (_signature == null)
             return;
 
@@ -215,13 +212,18 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (_workorder == null)
             return;
 
-        _signatureView.setSignatureJson(_signature.getSignature(), true);
+        if (_signature.getSignatureFormat().equals("svg")) {
+            _signatureView.setSignatureSvg(_signature.getSignature(), true);
+        } else {
+            _signatureView.setSignatureJson(_signature.getSignature(), true);
+        }
+
         _nameTextView.setText(_signature.getPrintName());
 
         _titleTextView.setText(_workorder.getTitle());
         _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         _descriptionTextView.setLinksClickable(false);
-        _descriptionTextView.setLinkTextColor(0xFF000000);
+        _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.fn_dark_text));
 
         final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {
@@ -241,7 +243,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     _timeLinearLayout.addView(v);
                 }
             };
-            _timeLinearLayout.post(r);
+            _timeLinearLayout.postDelayed(r, new Random().nextInt(1000));
         } else {
             _timeLinearLayout.setVisibility(View.GONE);
             _timeTextView.setVisibility(View.GONE);
@@ -255,9 +257,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _tasksLinearLayout.setVisibility(View.VISIBLE);
 
             _tasksLinearLayout.removeAllViews();
-            for (int i = 0; i < tasks.length; i++) {
-                Task task = tasks[i];
-
+            for (Task task : tasks) {
                 String display = "";
                 if (task.getTypeId() != null) {
                     TaskType type = task.getTaskType();
@@ -292,72 +292,29 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
             _closingNotesLabelTextView.setVisibility(View.GONE);
         }
 
-        _loadingView.setVisibility(View.GONE);
     }
 
-    @Override
-    public void onRefresh() {
-    }
-
-    private class SignatureParseAsyncTask extends AsyncTaskEx<Bundle, Object, Signature> {
-        private boolean isCached;
-
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        protected Signature doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-            isCached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-            Signature signature = null;
-
-            try {
-                JsonObject obj = new JsonObject(data);
-                signature = Signature.fromJson(obj);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-
-            return signature;
+        public void onConnected() {
         }
 
         @Override
-        protected void onPostExecute(Signature signature) {
-            super.onPostExecute(signature);
-
-            if (signature != null) {
-                _signature = signature;
-                populateUi(isCached);
-            } else {
-                // Todo re-request? pop error?
-            }
-
+        public void onGetSignature(Signature signature, boolean failed) {
+            _signature = signature;
+            populateUi();
         }
-    }
+    };
 
     /*-*************************************-*/
     /*-                 Events              -*/
     /*-*************************************-*/
-    private View.OnClickListener _done_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _done_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             finish();
         }
     };
-
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public Context getContext() {
-            return SignatureDisplayActivity.this;
-        }
-
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            if (resultCode == WEB_GET_SIGNATURE) {
-                new SignatureParseAsyncTask().executeEx(resultData);
-            }
-        }
-    };
-
 
     public static void startIntent(Context context, long signatureId, Workorder workorder) {
         new AsyncTaskEx<Object, Object, Object>() {
@@ -370,7 +327,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
                 Intent intent = new Intent(context, SignatureDisplayActivity.class);
                 intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-                intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
+                intent.putExtra(INTENT_PARAM_WORKORDER, (Parcelable) workorder);
                 if (!(context instanceof Activity)) {
                     intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 }

@@ -14,10 +14,10 @@ import android.widget.BaseAdapter;
  * 
  */
 public class NotificationListAdapter extends BaseAdapter {
-	private static final String TAG = "ui.workorder.NotificationListAdapter";
+	private static final String TAG = "NotificationListAdapter";
 
 	// data
-	private List<Notification> _notes = new LinkedList<Notification>();
+	private List<Notification> _notes = new LinkedList<>();
 
 	public NotificationListAdapter() {
 	}

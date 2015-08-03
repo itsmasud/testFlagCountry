@@ -91,8 +91,9 @@ public class ExpenseCoView extends RelativeLayout {
         _expensesList.removeAllViews();
         for (int i = 0; i < _expenses.size(); i++) {
             ExpenseView v = new ExpenseView(getContext());
-            v.setListener(_expense_listener);
             v.setData(_workorder, _expenses.get(i));
+            v.setOnClickListener(_expense_onClick);
+            v.setOnLongClickListener(_expense_onLongClick);
             _expensesList.addView(v);
         }
     }
@@ -105,11 +106,23 @@ public class ExpenseCoView extends RelativeLayout {
         }
     };
 
-    private final ExpenseView.Listener _expense_listener = new ExpenseView.Listener() {
+    private final View.OnClickListener _expense_onClick = new OnClickListener() {
         @Override
-        public void onDelete(ExpenseView view, Expense expense) {
-            if (_listener != null)
-                _listener.removeExpense(expense);
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.editExpense(((ExpenseView) v).getExpense());
+            }
+        }
+    };
+
+    private final View.OnLongClickListener _expense_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            if (_listener != null) {
+                _listener.removeExpense(((ExpenseView) v).getExpense());
+                return true;
+            }
+            return false;
         }
     };
 
@@ -122,11 +135,13 @@ public class ExpenseCoView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void addExpense();
+        void addExpense();
 
-        public void removeExpense(Expense expense);
+        void removeExpense(Expense expense);
 
-        public void reset();
+        void reset();
+
+        void editExpense(Expense expense);
     }
 
 }

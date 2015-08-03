@@ -8,9 +8,6 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.ResultReceiver;
 
-
-import com.fieldnation.Log;
-
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
@@ -18,14 +15,14 @@ import java.util.Set;
 /**
  * Created by michael.carver on 12/12/2014.
  */
-public class TopicService extends Service {
-    private static final String TAG = "topics.TopicService";
+class TopicService extends Service {
+    private static final String TAG = "TopicService";
 
     private Hashtable<String, Bundle> _lastSent;
 
     @Override
     public void onCreate() {
-        Log.v(TAG, "onCreate");
+//        Log.v(TAG, "onCreate");
         super.onCreate();
         _lastSent = new Hashtable<>();
     }
@@ -33,13 +30,13 @@ public class TopicService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
-            Log.v(TAG, "onStartCommand no data");
+//            Log.v(TAG, "onStartCommand no data");
             return START_STICKY;
         }
 
         String action = intent.getAction();
 
-        Log.v(TAG, "onStateCommand " + action);
+//        Log.v(TAG, "onStateCommand " + action);
 
         if (TopicConstants.ACTION_REGISTER_LISTENER.equals(action)) {
             register(intent);
@@ -58,7 +55,7 @@ public class TopicService extends Service {
         try {
             receiver.send(code, bundle);
         } catch (Exception ex) {
-            Log.e(TAG, tag);
+//            Log.e(TAG, tag);
             ex.printStackTrace();
             synchronized (TAG) {
                 TopicClient.delete(tag);
@@ -68,7 +65,7 @@ public class TopicService extends Service {
 
     @Override
     public void onDestroy() {
-        Log.v(TAG, "onDestroy");
+//        Log.v(TAG, "onDestroy");
         TopicClient.reset();
         _lastSent = new Hashtable<>();
         super.onDestroy();
@@ -80,7 +77,7 @@ public class TopicService extends Service {
         int resultCode = intent.getIntExtra(TopicConstants.PARAM_RESULT_CODE, 0);
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
 
-        Log.v(TAG, "register(" + tag + ", " + topicId + ")");
+//        Log.v(TAG, "register(" + tag + ", " + topicId + ")");
 
         TopicClient c = null;
         synchronized (TAG) {
@@ -113,7 +110,7 @@ public class TopicService extends Service {
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
 
-        Log.v(TAG, "unregister " + tag + ":" + topicId);
+//        Log.v(TAG, "unregister " + tag + ":" + topicId);
 
         TopicClient c = null;
         synchronized (TAG) {
@@ -130,7 +127,7 @@ public class TopicService extends Service {
     private void delete(Intent intent) {
         String tag = intent.getStringExtra(TopicConstants.PARAM_TAG);
 
-        Log.v(TAG, "delete " + tag);
+//        Log.v(TAG, "delete " + tag);
 
         synchronized (TAG) {
             TopicClient.delete(tag);
@@ -138,7 +135,7 @@ public class TopicService extends Service {
     }
 
     private void dispatch(Intent intent) {
-        Log.v(TAG, "dispatch");
+//        Log.v(TAG, "dispatch");
         Bundle parcel = intent.getBundleExtra(TopicConstants.PARAM_TOPIC_PARCEL);
         String topicId = intent.getStringExtra(TopicConstants.PARAM_TOPIC_ID);
         boolean doKeep = intent.getBooleanExtra(TopicConstants.PARAM_KEEP_LAST_SENT, true);
@@ -153,8 +150,8 @@ public class TopicService extends Service {
             clients = TopicClient.getSet(topicId);
             iter = clients.iterator();
         }
-        Log.v(TAG, "Topic: " + topicId);
-        Log.v(TAG, "Clients: " + clients.size());
+//        Log.v(TAG, "dispatch topic: " + topicId);
+//        Log.v(TAG, "Clients: " + clients.size());
         while (iter.hasNext()) {
             TopicClient c = iter.next();
             //Log.v(TAG, "Client: " + c.tag);

@@ -11,7 +11,7 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/Text_Display_2"
+            style="@style/Text_Display_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
@@ -27,7 +27,7 @@
     </LinearLayout>
 
     <Button
-        style="@style/Button.Material.Flat"
+        style="@style/Material.Button.Flat"
         android:id="@+id/done_button"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

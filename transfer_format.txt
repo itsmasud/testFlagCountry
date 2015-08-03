@@ -1,0 +1,28 @@
+{
+	"checkin": true,
+	"checkout": true,
+	"complete": true,
+	"request": true,
+
+	"uploadDeliverable":[
+		{ "taskId": 1234,
+			"slotId": 1234,
+			"fileName": "Picture.png" },
+		
+		{ "slotId": 1234,
+			"fileName": "Picture.png" },
+	],
+
+	"completeTask":[
+		{ "type": "signatureJson",
+			"printName": "Some Guy",
+			"taskId": 1234 },
+
+		{ "type": "phone",
+			"taskId": 1234 }
+	],
+
+	"addSignatureJson":[
+		{ "printName": "Some Guy" }
+	]
+}

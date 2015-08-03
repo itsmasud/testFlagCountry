@@ -1,69 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Payment"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="8dp"
+    android:layout_marginRight="8dp"
     android:orientation="vertical">
 
-    <LinearLayout
-        android:id="@+id/paymentheader_layout"
-        style="@style/Payment_Header"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/title_textview"
-            style="@style/Payment_Header_Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:gravity="left"
-            android:text="Processing"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/id_textview"
-            style="@style/Payment_Header_Text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="3dp"
-            android:layout_weight="1"
-            android:gravity="right"
-            android:text="ID 425"
-            android:textAppearance="?android:attr/textAppearanceSmall" />
-    </LinearLayout>
 
     <RelativeLayout
-        style="@style/Payment_Body"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@drawable/card_bg"
+        android:paddingBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="40dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
             android:layout_toLeftOf="@+id/amount_layout"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/description_textview"
+                style="@style/Text_Menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="3dp"
-                android:text="3 Work Orders / + 2 Fees"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textStyle="bold" />
+                android:text="3 Work Orders / + 2 Fees" />
 
             <TextView
                 android:id="@+id/date_textview"
+                style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estimated 05/21/14"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:text="Estimated 05/21/14" />
         </LinearLayout>
 
         <LinearLayout
@@ -71,42 +43,70 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
             android:gravity="right"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                android:id="@+id/amount_textview"
+                style="@style/Text_Menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <TextView
-                    android:id="@+id/moneysymbol_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="top"
-                    android:text="@string/symbol_money"
-                    android:textAppearance="?android:attr/textAppearanceSmall" />
-
-                <TextView
-                    android:id="@+id/amount_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="10,007.00"
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:textSize="24sp" />
-            </LinearLayout>
+                android:lines="1"
+                android:maxLines="1"
+                android:text="$10,007.00" />
 
             <TextView
                 android:id="@+id/paymenttype_textview"
+                style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="right"
                 android:lines="1"
                 android:maxLines="1"
-                android:text="Direct Deposit"
-                android:textAppearance="?android:attr/textAppearanceSmall" />
+                android:text="Direct Deposit" />
         </LinearLayout>
     </RelativeLayout>
 
-</LinearLayout>
+    <View
+        android:id="@+id/paymentheader_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/header_container_layout"
+        android:layout_alignLeft="@+id/header_container_layout"
+        android:layout_alignRight="@+id/header_container_layout"
+        android:layout_alignTop="@+id/header_container_layout"
+        android:background="@drawable/card_title_black" />
+
+    <LinearLayout
+        android:id="@+id/header_container_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:orientation="horizontal"
+        android:paddingBottom="6dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:paddingTop="8dp">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="left"
+            android:text="Processing"
+            android:textColor="@color/fn_white_text" />
+
+        <TextView
+            android:id="@+id/id_textview"
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="right"
+            android:text="ID 425"
+            android:textColor="@color/fn_white_text" />
+    </LinearLayout>
+
+</RelativeLayout>

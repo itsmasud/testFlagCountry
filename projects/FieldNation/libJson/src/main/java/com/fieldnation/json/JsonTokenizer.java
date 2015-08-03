@@ -18,10 +18,9 @@ public class JsonTokenizer {
             return;
 
         char c = _source.charAt(_index);
-        while ((c == ' ' || c == '\t' || c == '\r' || c == '\n') && _index < _source.length()) {
+        while (c == ' ' || c == '\t' || c == '\r' || c == '\n' && _index < _source.length()) {
             _index++;
-            if (_index < _source.length())
-                c = _source.charAt(_index);
+            c = _source.charAt(_index);
         }
     }
 
@@ -92,7 +91,7 @@ public class JsonTokenizer {
         if (isNextTokenNull()) {
             _index += 4;
             //_temp = _temp.substring(4).trim();
-            return JsonObject.JsonNULL;
+            return null;
         } else if (isNextTokenString()) {
             return parseString();
         } else if (isNextTokenStartObject()) {

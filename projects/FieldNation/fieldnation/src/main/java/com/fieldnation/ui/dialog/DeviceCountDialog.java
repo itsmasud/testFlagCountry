@@ -4,7 +4,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,13 +15,12 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 10/28/2014.
  */
 public class DeviceCountDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.DeviceCountDialog");
+    private static final String TAG = UniqueTag.makeTag("DeviceCountDialog");
 
     // State
     private static final String MAX_COUNT = "STATE_MAX_COUNT";
@@ -102,7 +100,7 @@ public class DeviceCountDialog extends DialogFragmentBase {
     }
 
     public void setListener(Listener listener) {
-        Log.v(TAG, "setListener");
+        Log.v(TAG, "setOnLoadingCompleteListener");
         _listener = listener;
     }
 
@@ -147,8 +145,8 @@ public class DeviceCountDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onOk(Workorder workorder, int count);
+        void onOk(Workorder workorder, int count);
 
-        public void onCancel();
+        void onCancel();
     }
 }

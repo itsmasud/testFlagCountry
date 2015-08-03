@@ -15,7 +15,7 @@ import com.fieldnation.R;
  * Created by michael.carver on 12/9/2014.
  */
 public class SorryFragment extends FragmentBase {
-    private static final String TAG = "ui.SorryFragment";
+    private static final String TAG = "SorryFragment";
 
     // Ui
     private Button _doneButton;
@@ -77,7 +77,7 @@ public class SorryFragment extends FragmentBase {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private View.OnClickListener _done_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _done_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _listener.onDoneClick();

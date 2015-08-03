@@ -16,7 +16,7 @@ import com.fieldnation.utils.misc;
  * Created by michael.carver on 11/5/2014.
  */
 public class PaymentCoView extends RelativeLayout {
-    private static final String TAG = "ui.dialog.PaymentCoView";
+    private static final String TAG = "PaymentCoView";
 
     // Ui
     private TextView _statusTextView;
@@ -116,7 +116,7 @@ public class PaymentCoView extends RelativeLayout {
     /*-*************************-*/
     /*-         Events          -*/
     /*-*************************-*/
-    private View.OnClickListener _clear_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _clear_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -124,7 +124,7 @@ public class PaymentCoView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _change_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _change_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -133,8 +133,8 @@ public class PaymentCoView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onClearClick();
+        void onClearClick();
 
-        public void onChangeClick(Pay pay);
+        void onChangeClick(Pay pay);
     }
 }

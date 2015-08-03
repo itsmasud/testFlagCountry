@@ -60,11 +60,13 @@
         <item name="android:layout_alignParentRight">true</item>
     </style>
 
-    <style name="MessageView_Status_Clock">
-        <item name="android:layout_width">12dp</item>
-        <item name="android:layout_height">12dp</item>
+    <style name="MessageView_Status_Clock_IconFont">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_marginRight">5dp</item>
-        <item name="android:background">@drawable/ic_clock</item>
+        <item name="android:textColor">@color/fn_light_text</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">@string/icfont_clock</item>
         <item name="android:layout_gravity">center_vertical</item>
     </style>
 
@@ -78,16 +80,22 @@
         <item name="android:layout_marginRight">5dp</item>
     </style>
 
-    <style name="MessageView_Status_Check">
-        <item name="android:layout_width">16dp</item>
-        <item name="android:layout_height">16dp</item>
-        <item name="android:background">@drawable/ic_check_grey</item>
+    <style name="MessageView_Status_Check_IconFont">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginRight">5dp</item>
+        <item name="android:textColor">@color/fn_light_text</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:text">@string/icfont_people_2</item>
+        <item name="android:layout_gravity">center_vertical</item>
     </style>
 
-    <style name="MessageView_Status_Orange">
-        <item name="android:layout_width">16dp</item>
-        <item name="android:layout_height">16dp</item>
-        <item name="android:background">@drawable/ic_message_thumb</item>
+    <style name="MessageView_Status_Orange_IconFont">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/fn_brandcolor</item>
+        <item name="android:text">@string/icfont_message_alert</item>
     </style>
 
 </resources>

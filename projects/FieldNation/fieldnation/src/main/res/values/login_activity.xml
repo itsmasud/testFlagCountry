@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="Login"></style>
+
+    <style name="Login.Activity" parent="AppTheme">
+        <item name="android:background">@color/fn_primary_bg</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:animateLayoutChanges">true</item>
+    </style>
+
+    <style name="Login.EditText" parent="@android:style/Widget.EditText">
+        <item name="android:textColor">@color/fn_dark_text</item>
+        <item name="android:background">@drawable/login_edittext_bg</item>
+        <item name="android:textColorHintInverse">@color/fn_light_text</item>
+        <item name="android:ems">10</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:paddingBottom">8dp</item>
+    </style>
+
+    <style name="Login.Fader">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/fn_primary_bg</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+    <style name="Login.Page">
+        <item name="android:layout_width">400dp</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_centerHorizontal">true</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:animateLayoutChanges">true</item>
+    </style>
+
+    <style name="Login.Stilt">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">64dp</item>
+    </style>
+
+    <style name="Login.Logo">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">128dp</item>
+        <item name="android:layout_marginBottom">32dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="android:src">@drawable/fn_logo</item>
+    </style>
+
+    <style name="Login.Content">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginBottom">128dp</item>
+        <item name="android:paddingLeft">30dp</item>
+        <item name="android:paddingRight">30dp</item>
+    </style>
+
+</resources>
