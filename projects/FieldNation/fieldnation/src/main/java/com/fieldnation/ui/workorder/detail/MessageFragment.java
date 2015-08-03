@@ -19,6 +19,7 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.CardView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -194,8 +195,10 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
-                if (_inputView.getInputText().trim().isEmpty())
+                if (misc.isEmptyOrNull(_inputView.getInputText())) {
+                    ToastClient.toast(GlobalState.getContext(), "Please enter a message", Toast.LENGTH_SHORT);
                     return;
+                }
 
                 _refreshView.startRefreshing();
 
