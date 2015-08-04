@@ -6,69 +6,57 @@
     android:orientation="horizontal">
 
     <Button
-        android:id="@+id/checkin_button"
+        android:id="@+id/leftWhite_button"
         style="?attr/buttonWhiteStyle"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:text="@string/btn_check_in"
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/checkout_button"
+        android:id="@+id/leftGreen_button"
         style="?attr/buttonGreenStyle"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:text="@string/btn_check_out"
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/acknowledge_button"
+        android:id="@+id/leftOrange_button"
         style="?attr/buttonOrangeStyle"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:text="@string/btn_acknowledge_hold"
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/complete_button"
-        style="?attr/buttonOrangeStyle"
+        android:id="@+id/rightWhite_button"
+        style="?attr/buttonWhiteStyle"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:text="@string/btn_mark_completed"
         android:visibility="gone" />
 
     <Button
-        android:id="@+id/closingnotes_button"
-        style="?attr/buttonOrangeStyle"
-        android:layout_width="0dp"
-        android:layout_height="48dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_weight="1"
-        android:text="@string/btn_closing_notes"
-        android:visibility="gone" />
-
-    <Button
-        android:id="@+id/confirm_button"
+        android:id="@+id/rightGreen_button"
         style="?attr/buttonGreenStyle"
         android:layout_width="0dp"
-        android:layout_height="48dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_weight="1"
-        android:text="@string/btn_confirm"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/rightOrange_button"
+        style="?attr/buttonOrangeStyle"
+        android:layout_width="0dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
         android:visibility="gone" />
 
 </LinearLayout>

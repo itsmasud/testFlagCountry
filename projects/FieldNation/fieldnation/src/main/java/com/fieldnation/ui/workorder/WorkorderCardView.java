@@ -785,7 +785,7 @@ public class WorkorderCardView extends RelativeLayout {
 
     public void buildStatusCompleted() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
-            case PENDINGREVIEWED:
+            case PENDINGREVIEW:
 //                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);

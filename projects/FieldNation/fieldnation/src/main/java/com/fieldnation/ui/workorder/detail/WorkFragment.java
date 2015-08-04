@@ -126,7 +126,6 @@ public class WorkFragment extends WorkorderFragment {
     private CounterOfferSummaryView _coSummaryView;
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
-    private ActionView _actionView;
     private RefreshView _refreshView;
     private PayDialog _payDialog;
 
@@ -201,9 +200,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
-
-        _actionView = (ActionView) view.findViewById(R.id.action_view);
-        _actionView.setListener(_actionView_listener);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -447,10 +443,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_discountListView != null) {
             _discountListView.setWorkorder(_workorder);
-        }
-
-        if (_actionView != null) {
-            _actionView.setWorkorder(_workorder);
         }
 
         if (_topBar != null) {
@@ -1056,11 +1048,6 @@ public class WorkFragment extends WorkorderFragment {
 
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
-        public void onComplete() {
-            _markCompleteDialog.show(_workorder);
-        }
-
-        @Override
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
@@ -1072,16 +1059,60 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onAcknowledgeHold() {
+            WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
+
+            setLoading(true);
+        }
+
+        @Override
+        public void onMarkIncomplete() {
+            // TODO onMarkIncomplete STUB
+        }
+
+        @Override
+        public void onViewPayment() {
+
+        }
+
+        @Override
         public void onCheckIn() {
             Log.v(TAG, "onCheckIn");
             startCheckin();
         }
 
         @Override
-        public void onAcknowledge() {
-            WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
+        public void onNotInterested() {
+            _declineDialog.show();
+        }
 
-            setLoading(true);
+        @Override
+        public void onRequest() {
+            if (_workorder.isBundle()) {
+                _acceptBundleWOExpiresDialog.show(_workorder);
+            } else {
+                _expiresDialog.show(_workorder);
+            }
+        }
+
+        @Override
+        public void onAccept() {
+            // TODO onAccept STUB
+        }
+
+        @Override
+        public void onWithdraw() {
+            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), _workorder.getWorkorderId());
+        }
+
+        @Override
+        public void onViewCounter() {
+            _counterOfferDialog.show(_workorder);
+        }
+
+        @Override
+        public void onReadyToGo() {
+            // TODO onReadyToGo STUB
         }
 
         @Override
@@ -1097,45 +1128,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onEnterClosingNotes() {
             showClosingNotesDialog();
         }
-    };
-
-    private final ActionView.Listener _actionView_listener = new ActionView.Listener() {
 
         @Override
-        public void onRequest(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOExpiresDialog.show(workorder);
-            } else {
-                _expiresDialog.show(workorder);
-            }
-        }
-
-        @Override
-        public void onShowCounterOfferDialog(Workorder workorder) {
-            _counterOfferDialog.show(workorder);
-        }
-
-        @Override
-        public void onWithdrawRequest(Workorder workorder) {
-            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), workorder.getWorkorderId());
-        }
-
-        @Override
-        public void onNotInterested(Workorder workorder) {
-            _declineDialog.show();
-        }
-
-        @Override
-        public void onConfirmAssignment(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOConfirmDialog.show(workorder);
-            } else {
-                _confirmDialog.show(_workorder, workorder.getSchedule());
-            }
-        }
-
-        @Override
-        public void onComplete(Workorder workorder) {
+        public void onMarkComplete() {
             _markCompleteDialog.show(_workorder);
         }
     };

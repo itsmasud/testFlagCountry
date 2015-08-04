@@ -9,18 +9,18 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class ActionBarTopView extends RelativeLayout {
     private static final String TAG = "ActionBarTopView";
 
     // Ui
-    private Button _checkinButton;
-    private Button _checkoutButton;
-    private Button _acknowledgeButton;
-    private Button _completeButton;
-    private Button _confirmButton;
-    private Button _closingNotesButton;
+    private Button _leftWhiteButton;
+    private Button _leftGreenButton;
+    private Button _leftOrangeButton;
+    private Button _rightWhiteButton;
+    private Button _rightGreenButton;
+    private Button _rightOrangeButton;
 
     // Data
     private Listener _listener;
@@ -47,18 +47,12 @@ public class ActionBarTopView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _checkinButton = (Button) findViewById(R.id.checkin_button);
-        _checkinButton.setOnClickListener(_checkin_onClick);
-        _checkoutButton = (Button) findViewById(R.id.checkout_button);
-        _checkoutButton.setOnClickListener(_checkout_onClick);
-        _acknowledgeButton = (Button) findViewById(R.id.acknowledge_button);
-        _acknowledgeButton.setOnClickListener(_acknowledge_onClick);
-        _completeButton = (Button) findViewById(R.id.complete_button);
-        _completeButton.setOnClickListener(_complete_onClick);
-        _confirmButton = (Button) findViewById(R.id.confirm_button);
-        _confirmButton.setOnClickListener(_confirm_onClick);
-        _closingNotesButton = (Button) findViewById(R.id.closingnotes_button);
-        _closingNotesButton.setOnClickListener(_closing_onClick);
+        _leftWhiteButton = (Button) findViewById(R.id.leftWhite_button);
+        _leftGreenButton = (Button) findViewById(R.id.leftGreen_button);
+        _leftOrangeButton = (Button) findViewById(R.id.leftOrange_button);
+        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
+        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
+        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
 
         setVisibility(View.GONE);
     }
@@ -66,37 +60,76 @@ public class ActionBarTopView extends RelativeLayout {
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        _checkinButton.setVisibility(View.GONE);
-        _checkoutButton.setVisibility(View.GONE);
-        _acknowledgeButton.setVisibility(View.GONE);
-        _completeButton.setVisibility(View.GONE);
-        _confirmButton.setVisibility(View.GONE);
-        _closingNotesButton.setVisibility(View.GONE);
-        _completeButton.setEnabled(true);
+        _leftWhiteButton.setVisibility(View.GONE);
+        _leftGreenButton.setVisibility(View.GONE);
+        _leftOrangeButton.setVisibility(View.GONE);
+        _rightWhiteButton.setVisibility(View.GONE);
+        _rightGreenButton.setVisibility(View.GONE);
+        _rightOrangeButton.setVisibility(View.GONE);
+        setVisibility(View.GONE);
 
-        if (_workorder.canCheckout()) {
-            _checkoutButton.setVisibility(View.VISIBLE);
-            setVisibility(VISIBLE);
-        }
-        if (_workorder.canCheckin()) {
-            _checkinButton.setVisibility(View.VISIBLE);
-            setVisibility(VISIBLE);
-        }
-        if (_workorder.canAckHold()) {
-            _acknowledgeButton.setVisibility(View.VISIBLE);
-            setVisibility(VISIBLE);
-        }
-        if (_workorder.canConfirm()) {
-            _confirmButton.setVisibility(View.VISIBLE);
-            setVisibility(VISIBLE);
-        }
+        WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
-        if (_workorder.canComplete()) {
-            _completeButton.setVisibility(View.VISIBLE);
-        } else if (_workorder.areTasksComplete()
-                && misc.isEmptyOrNull(_workorder.getClosingNotes())
-                && _workorder.canChangeClosingNotes()) {
-            _closingNotesButton.setVisibility(View.VISIBLE);
+        switch (substatus) {
+            case AVAILABLE:
+                // not interested
+                // request
+                setVisibility(View.VISIBLE);
+                break;
+            case ROUTED:
+                // not interested, accept work
+                setVisibility(View.VISIBLE);
+                break;
+            case REQUESTED:
+                // withdraw/withdraw request
+                // if provider has countered then View Counter
+                setVisibility(View.VISIBLE);
+                break;
+            case CONFIRMED:
+                // Ready-To-Go if needed
+                setVisibility(View.VISIBLE);
+                break;
+            case UNCONFIRMED:
+                // Confirm
+                setVisibility(View.VISIBLE);
+                break;
+            case CHECKEDOUT:
+                // check in, or check in again
+                // if everything is done except closing notes then closing notes
+                // else if everything is done, Mark Complete
+                setVisibility(View.VISIBLE);
+                break;
+            case CHECKEDIN:
+                // Check out
+                setVisibility(View.VISIBLE);
+                break;
+            case ONHOLD_ACKNOWLEDGED:
+                // nothing
+                break;
+            case ONHOLD_UNACKNOWLEDGED:
+                // ack hold
+                setVisibility(View.VISIBLE);
+                break;
+            case PENDINGREVIEW: // marked completed
+                // mark incomplete
+                setVisibility(View.VISIBLE);
+                break;
+            case INREVIEW:
+                // nothing
+                break;
+            case PAID: // completed
+                // view payment
+                setVisibility(View.VISIBLE);
+                break;
+            case CANCELED:
+                // nothing
+                break;
+            case CANCELED_LATEFEEPAID:
+                // view fee
+                setVisibility(View.VISIBLE);
+                break;
+            default:
+                break;
         }
     }
 
@@ -107,6 +140,70 @@ public class ActionBarTopView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onNotInterested();
+            }
+        }
+    };
+
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onRequest();
+            }
+        }
+    };
+
+    private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onAccept();
+            }
+        }
+    };
+
+
+    private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onWithdraw();
+            }
+        }
+    };
+
+    private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onViewCounter();
+            }
+        }
+    };
+
+    private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onReadyToGo();
+            }
+        }
+    };
+
+    private final View.OnClickListener _markComplete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onMarkComplete();
+            }
+        }
+    };
+
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -142,29 +239,54 @@ public class ActionBarTopView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onAcknowledge();
+                _listener.onAcknowledgeHold();
         }
     };
 
-    private final View.OnClickListener _complete_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _markIncomplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onComplete();
+                _listener.onMarkIncomplete();
         }
     };
 
+    private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onViewPayment();
+        }
+    };
+
+
     public interface Listener {
-        void onCheckIn();
+        void onNotInterested();
 
-        void onCheckOut();
+        void onRequest();
 
-        void onAcknowledge();
+        void onAccept();
 
-        void onComplete();
+        void onWithdraw();
+
+        void onViewCounter();
+
+        void onReadyToGo();
 
         void onConfirm();
 
+        void onCheckIn();
+
         void onEnterClosingNotes();
+
+        void onMarkComplete();
+
+        void onCheckOut();
+
+        void onAcknowledgeHold();
+
+        void onMarkIncomplete();
+
+        void onViewPayment();
     }
 }
