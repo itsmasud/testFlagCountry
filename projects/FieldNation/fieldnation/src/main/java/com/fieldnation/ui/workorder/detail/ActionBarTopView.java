@@ -158,16 +158,6 @@ public class ActionBarTopView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onAccept();
-            }
-        }
-    };
-
-
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -264,8 +254,6 @@ public class ActionBarTopView extends RelativeLayout {
         void onNotInterested();
 
         void onRequest();
-
-        void onAccept();
 
         void onWithdraw();
 

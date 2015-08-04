@@ -1096,11 +1096,6 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAccept() {
-            // TODO onAccept STUB
-        }
-
-        @Override
         public void onWithdraw() {
             WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), _workorder.getWorkorderId());
         }
