@@ -19,6 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
@@ -202,7 +203,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO validate input
+            if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())
+                    || misc.isEmptyOrNull(_descriptionEditText.getText().toString()))
+                return;
+
             if (_listener != null) {
                 if (_taskId != 0) {
                     if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
