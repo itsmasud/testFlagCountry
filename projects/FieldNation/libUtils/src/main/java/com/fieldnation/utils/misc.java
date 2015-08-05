@@ -8,6 +8,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.location.Location;
+import android.os.Build;
 import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
@@ -81,7 +82,7 @@ public class misc {
         return px;
     }
 
-    public static File dumpLogcat(Context context) {
+    public static File dumpLogcat(Context context, String version) {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = context.getPackageName();
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
@@ -89,6 +90,13 @@ public class misc {
         File tempfile = new File(temppath + "/logcat-" + (System.currentTimeMillis() / 1000) + ".log");
         try {
             OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(tempfile));
+
+            fout.write("APP VERSION: " + version + "\n");
+            fout.write("MANUFACTURER: " + Build.MANUFACTURER + "\n");
+            fout.write("MODEL: " + Build.MODEL + "\n");
+            fout.write("RELEASE: " + Build.VERSION.RELEASE + "\n");
+            fout.write("SDK: " + Build.VERSION.SDK_INT + "\n");
+
             try {
                 Process process = Runtime.getRuntime().exec("logcat -d");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
