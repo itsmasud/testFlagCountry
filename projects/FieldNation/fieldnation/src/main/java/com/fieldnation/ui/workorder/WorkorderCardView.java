@@ -75,7 +75,7 @@ public class WorkorderCardView extends RelativeLayout {
     private TextView _basisTextView;
     private Button _actionButton;
     private Button _actionButtonGreen;
-    private Button _actionButtonGray;
+    private Button _actionButtonWhite;
     private Button _actionButtonOrange;
 
     // loading layout
@@ -167,8 +167,8 @@ public class WorkorderCardView extends RelativeLayout {
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
 //        _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
-        _actionButtonGray = (Button) findViewById(R.id.action_button_gray);
-        _actionButtonGray.setOnClickListener(_actionButton_onClick);
+        _actionButtonWhite = (Button) findViewById(R.id.action_button_white);
+        _actionButtonWhite.setOnClickListener(_actionButton_onClick);
 
         _actionButtonGreen = (Button) findViewById(R.id.action_button_green);
         _actionButtonGreen.setOnClickListener(_actionButton_onClick);
@@ -343,13 +343,13 @@ public class WorkorderCardView extends RelativeLayout {
         _statusTextView.setTextColor(getContext().getResources().getColor(_workorder.getStatusTextColor()));
         switch (_workorder.getStatus().getStatusIntent()) {
             case NORMAL:
-                _actionButton = _actionButtonGray;
+                _actionButton = _actionButtonWhite;
                 break;
             case SUCCESS:
                 _actionButton = _actionButtonGreen;
                 break;
             case WAITING:
-                _actionButton = _actionButtonGray;
+                _actionButton = _actionButtonWhite;
                 break;
             case WARNING:
                 _actionButton = _actionButtonOrange;
@@ -587,7 +587,7 @@ public class WorkorderCardView extends RelativeLayout {
         _clientNameTextView.setVisibility(GONE);
         _distanceTextView.setVisibility(GONE);
         _paymentLayout.setVisibility(GONE);
-        _actionButtonGray.setVisibility(GONE);
+        _actionButtonWhite.setVisibility(GONE);
         _actionButtonGreen.setVisibility(GONE);
         _actionButtonOrange.setVisibility(GONE);
         _locationTextView.setVisibility(GONE);

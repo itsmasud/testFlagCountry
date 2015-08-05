@@ -33,9 +33,9 @@
     <color name="btn_status_green_bottom">#05000000</color>
     <color name="btn_status_green_pressed">@color/fn_accent_color_medium</color>
 
-    <color name="btn_status_gray_fill">@color/fn_light_text</color>
-    <color name="btn_status_gray_top">@color/fn_light_text_80</color>
-    <color name="btn_status_gray_center">@color/fn_light_text_0</color>
+    <color name="btn_status_gray_fill">#FF999999</color>
+    <color name="btn_status_gray_top">#CC999999</color>
+    <color name="btn_status_gray_center">#00999999</color>
     <color name="btn_status_gray_bottom">#05000000</color>
 
     <color name="btn_status_black_fill">@color/fn_dark_text</color>
@@ -80,8 +80,8 @@
     </style>
 
     <style name="Material.Button.Raised.Gray" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/fn_dark_button_text</item>
+        <item name="android:background">@drawable/btn_gray</item>
+        <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <!--<style name="ButtonSpinner" parent="android:Widget.Holo.Light.Spinner">-->

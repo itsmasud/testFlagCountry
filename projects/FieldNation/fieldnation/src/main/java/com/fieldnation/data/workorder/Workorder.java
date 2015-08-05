@@ -363,7 +363,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getIsCounter() {
-        return _isCounter;
+        if (_isCounter != null)
+            return _isCounter;
+
+        return false;
     }
 
     public Boolean getIsDeliverablesUploaded() {
