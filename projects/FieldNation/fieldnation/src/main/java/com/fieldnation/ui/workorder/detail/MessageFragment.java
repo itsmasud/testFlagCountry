@@ -37,6 +37,7 @@ public class MessageFragment extends WorkorderFragment {
     private List<Message> _messages = new LinkedList<>();
     private MessagesAdapter _adapter;
     private boolean _isSubbed = false;
+    private boolean _isMessageSent = false;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -127,7 +128,10 @@ public class MessageFragment extends WorkorderFragment {
         if (_refreshView == null)
             return;
 
-        _refreshView.startRefreshing();
+        if (_isMessageSent) {
+        } else
+            _refreshView.startRefreshing();
+
 
 //        _messages.clear();
         if (_adapter != null)
@@ -140,6 +144,7 @@ public class MessageFragment extends WorkorderFragment {
 
     @Override
     public void setLoading(boolean isLoading) {
+        if (_isMessageSent) return;
         if (_refreshView != null) {
             if (isLoading) {
                 _refreshView.startRefreshing();
@@ -166,6 +171,10 @@ public class MessageFragment extends WorkorderFragment {
             getAdapter().setMessages(_messages);
             _listview.setSelection(getAdapter().getCount() - 1);
         }
+
+        if (_isMessageSent)
+            return;
+
         _refreshView.refreshComplete();
     }
 
@@ -192,8 +201,7 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
-                _refreshView.startRefreshing();
-
+                _isMessageSent = true;
                 Log.v(TAG, "_send_onClick");
 
                 WorkorderClient.actionAddMessage(getActivity(),
