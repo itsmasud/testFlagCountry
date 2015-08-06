@@ -75,6 +75,8 @@ import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.ui.payment.PaymentDetailActivity;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -1060,6 +1062,9 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkFragment", 1);
+
             WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
 
             setLoading(true);
@@ -1072,7 +1077,17 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onViewPayment() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
 
+            if (_workorder.getPaymentId() != null) {
+                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
+                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _workorder.getPaymentId());
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
+                startActivity(intent);
+            }
         }
 
         @Override
@@ -1097,6 +1112,9 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onWithdraw() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST, "WorkFragment", 1);
+
             WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), _workorder.getWorkorderId());
         }
 
@@ -1107,7 +1125,10 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReadyToGo() {
-            // TODO onReadyToGo STUB
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkFragment", 1);
+
+            WorkorderClient.actionReadyToGo(GlobalState.getContext(), _workorder.getWorkorderId());
         }
 
         @Override
