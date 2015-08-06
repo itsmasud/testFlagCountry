@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -162,6 +163,7 @@ public class WorkorderTabView extends RelativeLayout {
             _alertTextView.setText(count + "");
         }
     }
+
 
 //    public void hideTab(int index) {
 //        _layouts[index].setVisibility(View.GONE);
