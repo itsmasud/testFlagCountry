@@ -81,6 +81,8 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -196,6 +198,7 @@ public class WorkFragment extends WorkorderFragment {
         _payView.setListener(_paymentView_listener);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
+        _coSummaryView.setListener(_coSummary_listener);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
@@ -426,9 +429,9 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_locView != null) {
-                    Stopwatch watch = new Stopwatch(true);
+            Stopwatch watch = new Stopwatch(true);
             _locView.setWorkorder(_workorder);
-                    Log.v(TAG, "_locView time: " + watch.finish());
+            Log.v(TAG, "_locView time: " + watch.finish());
         }
 
         if (_scheduleView != null) {
@@ -1226,6 +1229,13 @@ public class WorkFragment extends WorkorderFragment {
         public void onShowTerms(Workorder workorder) {
             _termsDialog.show(getString(R.string.dialog_terms_title),
                     getString(R.string.dialog_terms_body));
+        }
+    };
+
+    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
+        @Override
+        public void onCounterOffer() {
+            _counterOfferDialog.show(_workorder);
         }
     };
 
