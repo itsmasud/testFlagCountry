@@ -32,7 +32,6 @@ public class MessageFragment extends WorkorderFragment {
     private MessageInputView _inputView;
     private CardView _emptyMessageLayout;
 
-
     // Data
     private Workorder _workorder;
     private WorkorderClient _workorderClient;
@@ -52,7 +51,6 @@ public class MessageFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
-
 
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
