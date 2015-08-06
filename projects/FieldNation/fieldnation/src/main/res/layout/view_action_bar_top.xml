@@ -77,4 +77,15 @@
         android:layout_weight="1"
         android:visibility="gone" />
 
+    <Button
+        android:id="@+id/readyToGo_button"
+        style="?attr/buttonGreenStyle"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:text="@string/btn_ready_to_go"
+        android:visibility="gone" />
+
 </LinearLayout>
