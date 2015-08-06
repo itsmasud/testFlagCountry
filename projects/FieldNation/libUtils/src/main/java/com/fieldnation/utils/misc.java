@@ -18,6 +18,7 @@ import android.text.util.Linkify;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
 
 import org.w3c.dom.Element;
@@ -1275,6 +1276,13 @@ public class misc {
         }
 
         return result;
+    }
+
+    public static void hideKeyboard(View v) {
+        if (v != null) {
+            InputMethodManager inputManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
     }
 
 }

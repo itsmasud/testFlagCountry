@@ -96,7 +96,6 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(0);
             if (_listener != null)
                 _listener.onChange(0);
-            hideKeyboard(v);
         }
     };
 
@@ -126,7 +125,6 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(2);
             if (_listener != null)
                 _listener.onChange(2);
-            hideKeyboard(v);
         }
     };
 
@@ -136,7 +134,6 @@ public class WorkorderTabView extends RelativeLayout {
             setSelected(3);
             if (_listener != null)
                 _listener.onChange(3);
-            hideKeyboard(v);
         }
     };
 
@@ -167,12 +164,6 @@ public class WorkorderTabView extends RelativeLayout {
         }
     }
 
-    private void hideKeyboard(View v) {
-        if (v != null) {
-            InputMethodManager inputManager = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }
-    }
 
 //    public void hideTab(int index) {
 //        _layouts[index].setVisibility(View.GONE);

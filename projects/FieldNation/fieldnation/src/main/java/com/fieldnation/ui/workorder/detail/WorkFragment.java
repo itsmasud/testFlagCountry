@@ -24,6 +24,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
 import com.fieldnation.AsyncTaskEx;
@@ -79,6 +80,7 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -407,6 +409,9 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_workorder == null)
             return;
 
@@ -1597,4 +1602,7 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "_profileClient_listener.onAction");
         }
     };
+
+
+
 }
