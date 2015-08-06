@@ -15,9 +15,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
+import android.widget.Toast;
 
+import com.fieldnation.GlobalState;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.service.toast.ToastClient;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";
@@ -64,6 +68,18 @@ public class PayDialog extends DialogFragmentBase {
     private boolean _showExplanation;
     private int _mode = MODE_FIXED;
 
+
+    // Payable & Hours
+    private static double MINIMUM_PAYABLE_AMOUNT = .01;
+    private double _fixedAmount;
+    private double _hourlyRateAmount;
+    private double _maxHours;
+    private double _deviceRate;
+    private int _maxDevices;
+    private double blendedHourlyAmount;
+    private double _blendedMaxHours;
+    private double _extraHourly;
+    private double _extraMaxHours;
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -172,6 +188,59 @@ public class PayDialog extends DialogFragmentBase {
         _pay = pay;
         super.show();
     }
+
+    private Double getAmount(String _amount) {
+        try {
+            double amount = Double.parseDouble(_amount);
+            if ((int) (amount * 100) < 10) {
+                return 0.0;
+            } else {
+                return amount;
+            }
+        } catch (Exception ex) {
+            return 0.0;
+        }
+    }
+
+    private Integer getNumberOfDevice(String _noStr) {
+        try {
+            int _no = Integer.parseInt(_noStr);
+            return _no;
+        } catch (Exception ex) {
+            return 0;
+        }
+    }
+
+
+    private boolean isValidAmount() {
+        try {
+
+            switch (_mode) {
+                case MODE_FIXED:
+                    _fixedAmount = getAmount(_fixedEditText.getText().toString());
+                    return _fixedAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                case MODE_HOURLY:
+                    _hourlyRateAmount = getAmount((_hourlyRateEditText.getText().toString()));
+                    _maxHours = getAmount((_maxHoursEditText.getText().toString()));
+                    return _hourlyRateAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                case MODE_PER_DEVICE:
+                    _deviceRate = getAmount((_deviceRateEditText.getText().toString()));
+                    _maxDevices = getNumberOfDevice((_maxDevicesEditText.getText().toString()));
+                    return _deviceRate > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                case MODE_BLENDED:
+                    blendedHourlyAmount = getAmount((_blendedHourlyEditText.getText().toString()));
+                    _blendedMaxHours = getAmount((_blendedMaxHoursEditText.getText().toString()));
+                    _extraHourly = getAmount((_extraHourlyEditText.getText().toString()));
+                    _extraMaxHours = getAmount((_extraMaxHoursEditText.getText().toString()));
+                    return (blendedHourlyAmount > MINIMUM_PAYABLE_AMOUNT && _extraHourly > MINIMUM_PAYABLE_AMOUNT)  ? true : false;
+            }
+        } catch (Exception ex) {
+            return false;
+        }
+        return false;
+
+    }
+
 
     private Pay makePay() {
         Pay pay = null;
@@ -300,6 +369,11 @@ public class PayDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (!isValidAmount()) {
+                ToastClient.toast(GlobalState.getContext(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                return;
+            }
+
             dismiss();
             if (_listener == null)
                 return;

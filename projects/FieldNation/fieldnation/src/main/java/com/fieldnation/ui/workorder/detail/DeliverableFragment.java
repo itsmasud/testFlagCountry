@@ -44,6 +44,7 @@ import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -242,6 +243,9 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_workorder == null)
             return;
 
