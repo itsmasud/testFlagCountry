@@ -13,11 +13,11 @@ import com.fieldnation.GlobalState;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
+import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.CardView;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.misc;
 
@@ -30,7 +30,6 @@ public class MessageFragment extends WorkorderFragment {
     // UI
     private ListView _listview;
     private MessageInputView _inputView;
-    private RefreshView _refreshView;
     private CardView _emptyMessageLayout;
 
 
@@ -54,7 +53,6 @@ public class MessageFragment extends WorkorderFragment {
         super.onViewCreated(view, savedInstanceState);
         Log.v(TAG, "onViewCreated");
 
-        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
 
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
@@ -110,7 +108,7 @@ public class MessageFragment extends WorkorderFragment {
         Log.v(TAG, "update");
 
         if (getActivity() != null && _workorder != null)
-            WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false);
+            WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false, false);
     }
 
     @Override
@@ -127,33 +125,16 @@ public class MessageFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
-        if (_refreshView == null)
-            return;
-
-        _refreshView.startRefreshing();
-
-//        _messages.clear();
-        if (_adapter != null)
-            _adapter.notifyDataSetChanged();
-
         Log.v(TAG, "getMessages");
 
-        WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false);
+        WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false, false);
     }
 
     @Override
     public void setLoading(boolean isLoading) {
-        if (_refreshView != null) {
-            if (isLoading) {
-                _refreshView.startRefreshing();
-            } else {
-                _refreshView.refreshComplete();
-            }
-        }
     }
 
     private void rebuildList() {
-
         // debug testing
         Log.v(TAG, "rebuildList");
         if (_messages == null || _messages.size() == 0) {
@@ -169,7 +150,6 @@ public class MessageFragment extends WorkorderFragment {
             getAdapter().setMessages(_messages);
             _listview.setSelection(getAdapter().getCount() - 1);
         }
-        _refreshView.refreshComplete();
     }
 
     private MessagesAdapter getAdapter() {
@@ -195,14 +175,17 @@ public class MessageFragment extends WorkorderFragment {
         @Override
         public void onClick(View v) {
             if (getActivity() != null) {
+
                 if (misc.isEmptyOrNull(_inputView.getInputText())) {
                     ToastClient.toast(GlobalState.getContext(), "Please enter a message", Toast.LENGTH_SHORT);
                     return;
                 }
-
-                _refreshView.startRefreshing();
-
                 Log.v(TAG, "_send_onClick");
+
+                _messages.add(new Message(_workorder.getWorkorderId(),
+                        User.fromJson(GlobalState.getContext().getProfile().toJson()),
+                        _inputView.getInputText()));
+                rebuildList();
 
                 WorkorderClient.actionAddMessage(getActivity(),
                         _workorder.getWorkorderId(), _inputView.getInputText());
