@@ -6,38 +6,43 @@
 
     <LinearLayout
         android:id="@+id/profile_container"
-        style="@style/DrawerProfileContainer"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="8dp">
 
         <com.fieldnation.ui.ProfilePicView
             android:id="@+id/pic_view"
             style="@style/DrawerProfileImage"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true" />
 
         <LinearLayout
             android:id="@+id/profile_layout"
-            style="@style/DrawerProfileDataContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_toRightOf="@+id/pic_view"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/profile_name_textview"
-                style="@style/DrawerProfileName"
+                style="@style/TextAppearance.AppCompat.Subhead"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Firstname Lastname"
-                android:textColor="@color/fn_white_text" />
-
-            <TextView
-                android:id="@+id/profile_company_textview"
-                style="@style/DrawerProfileDetails"
-                android:text="Company Name"
-                android:textColor="@color/fn_white_text" />
+                android:textColor="@color/fn_dark_text" />
 
             <TextView
                 android:id="@+id/providerid_textview"
-                style="@style/DrawerProfileDetails"
+                style="@style/Base.TextAppearance.AppCompat.Caption"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Provider Id: 12354654"
-                android:textColor="@color/fn_white_text" />
+                android:textColor="@color/fn_dark_text_50" />
 
         </LinearLayout>
     </LinearLayout>

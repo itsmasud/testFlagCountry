@@ -23,14 +23,13 @@ import java.util.Random;
 /**
  * Created by Shoyeb Ahmed on 08/07/2015.
  */
-public class ProfileIndividualListLayout extends RelativeLayout{
+public class ProfileIndividualListLayout extends RelativeLayout {
     private static final String TAG = "ProfileIndividualListLayout";
 
     // UI
     private LinearLayout _profileContainerLayout;
     private ProfilePicView _picView;
     private TextView _profileNameTextView;
-    private TextView _profileCompanyTextView;
     private TextView _providerIdTextView;
 
 
@@ -62,14 +61,8 @@ public class ProfileIndividualListLayout extends RelativeLayout{
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
         _profileNameTextView = (TextView) findViewById(R.id.profile_name_textview);
-        _profileNameTextView.setVisibility(View.GONE);
-        _profileCompanyTextView = (TextView) findViewById(R.id.profile_company_textview);
-        _profileCompanyTextView.setVisibility(View.GONE);
         _providerIdTextView = (TextView) findViewById(R.id.providerid_textview);
-        _providerIdTextView.setVisibility(View.GONE);
     }
-
-
 
     /*-*********************************-*/
     /*-             Events              -*/
@@ -79,7 +72,4 @@ public class ProfileIndividualListLayout extends RelativeLayout{
         public void onClick(View v) {
         }
     };
-
-
-
 }

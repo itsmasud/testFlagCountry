@@ -13,7 +13,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:animateLayoutChanges="true"
-            android:orientation="vertical" />
+            android:orientation="vertical">
+
+            <com.fieldnation.ui.ProfileIndividualListLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
         <LinearLayout
             android:id="@+id/add_layout"
