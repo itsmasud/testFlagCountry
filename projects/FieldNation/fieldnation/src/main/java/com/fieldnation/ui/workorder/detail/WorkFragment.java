@@ -12,7 +12,6 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -776,10 +775,7 @@ public class WorkFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(GlobalState.getContext().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
