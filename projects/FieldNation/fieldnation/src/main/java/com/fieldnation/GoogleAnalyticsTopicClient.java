@@ -40,9 +40,12 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         CHECKIN("Checkin"),
         CHECKOUT("Checkout"),
         COMPLETE_WORK("CompleteWork"),
+        INCOMPLETE_WORK("IncompleteWork"),
         START_MAP("ViewLocation"),
         COMPLETE_FN_EARNED("CompleteWorkFnEarned"),
         COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
+        INCOMPLETE_FN_EARNED("IncompleteWorkFnEarned"),
+        INCOMPLETE_FN_EARNED_GROSS("IncompleteWorkFnEarnedGross"),
         CLICK("ActionClick"),
         VIEW_PAY("ViewPayments"),
         WITHDRAW_REQUEST("WithdrawRequest");

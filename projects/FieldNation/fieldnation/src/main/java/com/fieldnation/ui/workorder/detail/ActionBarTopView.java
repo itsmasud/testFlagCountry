@@ -163,6 +163,8 @@ public class ActionBarTopView extends RelativeLayout {
 
         void onComplete();
 
+        void onIncomplete();
+
         void onConfirm();
 
         void onEnterClosingNotes();

@@ -68,6 +68,7 @@ import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkCompleteDialog;
+import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
@@ -145,6 +146,7 @@ public class WorkFragment extends WorkorderFragment {
     private ExpenseDialog _expenseDialog;
     private ExpiresDialog _expiresDialog;
     private MarkCompleteDialog _markCompleteDialog;
+    private MarkIncompleteDialog _markIncompleteDialog;
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsDialog _termsDialog;
@@ -343,6 +345,7 @@ public class WorkFragment extends WorkorderFragment {
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
+        _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -370,6 +373,7 @@ public class WorkFragment extends WorkorderFragment {
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
+        _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
     }
 
     @Override
@@ -932,6 +936,37 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
+
+    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+
+        // TODO: I am not pretty sure about the following method
+        @Override
+        public void onContinueClick() {
+            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_WORK, "WorkFragment", 1);
+            try {
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_FN_EARNED, "WorkFragment",
+                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            try {
+                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_FN_EARNED_GROSS, "WorkFragment",
+                        (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+
+            WorkorderClient.actionIncomplete(getActivity(), _workorder.getWorkorderId());
+            GlobalState.getContext().setIncompletedWorkorder();
+
+            setLoading(true);
+        }
+    };
+
+
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
@@ -1058,6 +1093,10 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onComplete() {
             _markCompleteDialog.show(_workorder);
+        }
+
+        public void onIncomplete() {
+            _markIncompleteDialog.show(_workorder);
         }
 
         @Override

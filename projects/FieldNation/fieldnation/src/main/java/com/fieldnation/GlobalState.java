@@ -42,6 +42,7 @@ public class GlobalState extends Application {
 
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
+    public static final String PREF_INCOMPLETED_WORKORDER = "PREF_HAS_INCOMPLETED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
@@ -359,6 +360,13 @@ public class GlobalState extends Application {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
+        edit.apply();
+    }
+
+    public void setIncompletedWorkorder() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_INCOMPLETED_WORKORDER, true);
         edit.apply();
     }
 

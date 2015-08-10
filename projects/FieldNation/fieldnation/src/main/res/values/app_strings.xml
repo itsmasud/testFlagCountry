@@ -59,6 +59,7 @@
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_mark_completed">MARK COMPLETED</string>
+    <string name="btn_mark_incompleted">MARK INCOMPLETED</string>
     <string name="btn_never">NEVER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
     <string name="btn_no_thanks">NO THANKS</string>
