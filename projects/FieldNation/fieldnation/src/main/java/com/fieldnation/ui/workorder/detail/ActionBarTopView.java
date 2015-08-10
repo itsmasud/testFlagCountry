@@ -96,7 +96,7 @@ public class ActionBarTopView extends RelativeLayout {
                 _leftWhiteButton.setOnClickListener(_notInterested_onClick);
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_accept);
-                _rightOrangeButton.setOnClickListener(_request_onClick);
+                _rightOrangeButton.setOnClickListener(_confirmAssignment_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case COUNTEROFFERED:
@@ -237,6 +237,15 @@ public class ActionBarTopView extends RelativeLayout {
         }
     };
 
+    private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onConfirmAssignment();
+            }
+        }
+    };
+
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -333,6 +342,8 @@ public class ActionBarTopView extends RelativeLayout {
         void onNotInterested();
 
         void onRequest();
+
+        void onConfirmAssignment();
 
         void onWithdraw();
 

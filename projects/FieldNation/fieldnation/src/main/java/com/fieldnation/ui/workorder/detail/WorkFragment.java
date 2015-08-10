@@ -1153,6 +1153,15 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onConfirmAssignment() {
+            if (_workorder.isBundle()) {
+                _acceptBundleWOConfirmDialog.show(_workorder);
+            } else {
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+            }
+        }
+
+        @Override
         public void onWithdraw() {
             GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
                     GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST, "WorkFragment", 1);
