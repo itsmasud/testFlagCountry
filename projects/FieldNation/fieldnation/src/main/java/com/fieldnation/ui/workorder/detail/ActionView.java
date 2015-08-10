@@ -20,6 +20,7 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private Button _notInterestedButton;
     private Button _counterOfferButton;
     private Button _completeButton;
+    private Button _incompleteButton;
     private Button _withdrawRequestButton;
     private ProgressBar _progressBar;
 
@@ -62,6 +63,9 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
         _completeButton = (Button) findViewById(R.id.complete_button);
         _completeButton.setOnClickListener(_complete_onClick);
+
+        _incompleteButton = (Button) findViewById(R.id.incomplete_button);
+        _completeButton.setOnClickListener(_incomplete_onClick);
 
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
 
@@ -181,6 +185,14 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
         }
     };
 
+    private final View.OnClickListener _incomplete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onIncomplete(_workorder);
+        }
+    };
+
     private final View.OnClickListener _counteroffer_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -191,6 +203,8 @@ public class ActionView extends RelativeLayout implements WorkorderRenderer {
 
     public interface Listener {
         void onComplete(Workorder workorder);
+
+        void onIncomplete(Workorder workorder);
 
         void onNotInterested(Workorder workorder);
 
