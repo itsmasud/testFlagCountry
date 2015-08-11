@@ -48,6 +48,7 @@
     <string name="btn_clear">CLEAR</string>
     <string name="btn_cancel">CANCEL</string>
     <string name="btn_check_in">CHECK IN</string>
+    <string name="btn_check_in_again">CHECK IN AGAIN</string>
     <string name="btn_check_out">CHECK OUT</string>
     <string name="btn_closing_notes">CLOSING NOTES</string>
     <string name="btn_confirm">CONFIRM</string>
@@ -59,6 +60,7 @@
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
     <string name="btn_mark_completed">MARK COMPLETED</string>
+    <string name="btn_mark_incomplete">MARK INCOMPLETE</string>
     <string name="btn_never">NEVER</string>
     <string name="btn_no_later">NEVER SHOW AGAIN</string>
     <string name="btn_no_thanks">NO THANKS</string>
@@ -66,6 +68,7 @@
     <string name="btn_not_now">NOT NOW</string>
     <string name="btn_ok">OK</string>
     <string name="btn_payments">PAYMENTS</string>
+    <string name="btn_fees">FEES</string>
     <string name="btn_reject">REJECT</string>
     <string name="btn_request">REQUEST</string>
     <string name="btn_save">SAVE</string>
@@ -79,6 +82,7 @@
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
     <string name="btn_no">NO</string>
+    <string name="btn_ready_to_go">READY TO GO</string>
 
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>

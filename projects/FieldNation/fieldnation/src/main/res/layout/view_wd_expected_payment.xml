@@ -177,9 +177,4 @@
             </LinearLayout>
         </RelativeLayout>
     </RelativeLayout>
-
-    <!--<View-->
-        <!--style="@style/WorkorderDetail_Separator"-->
-        <!--android:layout_width="match_parent" />-->
-
 </LinearLayout>

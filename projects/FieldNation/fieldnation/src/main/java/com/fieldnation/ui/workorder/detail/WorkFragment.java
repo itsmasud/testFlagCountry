@@ -12,8 +12,6 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -76,6 +74,8 @@ import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.ui.payment.PaymentDetailActivity;
+import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -129,7 +129,6 @@ public class WorkFragment extends WorkorderFragment {
     private CounterOfferSummaryView _coSummaryView;
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
-    private ActionView _actionView;
     private RefreshView _refreshView;
     private PayDialog _payDialog;
 
@@ -168,7 +167,6 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
-    private Handler _handler = new Handler();
 
 
 	/*-*************************************-*/
@@ -199,15 +197,13 @@ public class WorkFragment extends WorkorderFragment {
         _payView.setListener(_paymentView_listener);
 
         _coSummaryView = (CounterOfferSummaryView) view.findViewById(R.id.counterOfferSummary_view);
+        _coSummaryView.setListener(_coSummary_listener);
 
         _expenseListView = (ExpenseListLayout) view.findViewById(R.id.expenseListLayout_view);
         _expenseListView.setListener(_expenseListView_listener);
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
-
-        _actionView = (ActionView) view.findViewById(R.id.action_view);
-        _actionView.setListener(_actionView_listener);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -411,8 +407,6 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
-        misc.printStackTrace(TAG + ".populateUi");
-
         misc.hideKeyboard(getView());
 
         if (_workorder == null)
@@ -420,7 +414,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
-
 
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
@@ -435,14 +428,9 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         if (_locView != null) {
-            _handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Stopwatch watch = new Stopwatch(true);
-                    _locView.setWorkorder(_workorder);
-                    Log.v(TAG, "_locView time: " + watch.finish());
-                }
-            }, 1000);
+            Stopwatch watch = new Stopwatch(true);
+            _locView.setWorkorder(_workorder);
+            Log.v(TAG, "_locView time: " + watch.finish());
         }
 
         if (_scheduleView != null) {
@@ -479,12 +467,6 @@ public class WorkFragment extends WorkorderFragment {
             Stopwatch watch = new Stopwatch(true);
             _discountListView.setWorkorder(_workorder);
             Log.v(TAG, "_discountListView time: " + watch.finish());
-        }
-
-        if (_actionView != null) {
-            Stopwatch watch = new Stopwatch(true);
-            _actionView.setWorkorder(_workorder);
-            Log.v(TAG, "_actionView time: " + watch.finish());
         }
 
         if (_topBar != null) {
@@ -793,10 +775,7 @@ public class WorkFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(GlobalState.getContext().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -1113,11 +1092,6 @@ public class WorkFragment extends WorkorderFragment {
 
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
-        public void onComplete() {
-            _markCompleteDialog.show(_workorder);
-        }
-
-        @Override
         public void onCheckOut() {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
@@ -1129,16 +1103,83 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onAcknowledgeHold() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkFragment", 1);
+
+            WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
+
+            setLoading(true);
+        }
+
+        @Override
+        public void onMarkIncomplete() {
+            // TODO onMarkIncomplete STUB
+        }
+
+        @Override
+        public void onViewPayment() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
+
+            if (_workorder.getPaymentId() != null) {
+                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
+                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _workorder.getPaymentId());
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
+                startActivity(intent);
+            }
+        }
+
+        @Override
         public void onCheckIn() {
             Log.v(TAG, "onCheckIn");
             startCheckin();
         }
 
         @Override
-        public void onAcknowledge() {
-            WorkorderClient.actionAcknowledgeHold(GlobalState.getContext(), _workorder.getWorkorderId());
+        public void onNotInterested() {
+            _declineDialog.show();
+        }
 
-            setLoading(true);
+        @Override
+        public void onRequest() {
+            if (_workorder.isBundle()) {
+                _acceptBundleWOExpiresDialog.show(_workorder);
+            } else {
+                _expiresDialog.show(_workorder);
+            }
+        }
+
+        @Override
+        public void onConfirmAssignment() {
+            if (_workorder.isBundle()) {
+                _acceptBundleWOConfirmDialog.show(_workorder);
+            } else {
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+            }
+        }
+
+        @Override
+        public void onWithdraw() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST, "WorkFragment", 1);
+
+            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), _workorder.getWorkorderId());
+        }
+
+        @Override
+        public void onViewCounter() {
+            _counterOfferDialog.show(_workorder);
+        }
+
+        @Override
+        public void onReadyToGo() {
+            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkFragment", 1);
+
+            WorkorderClient.actionReadyToGo(GlobalState.getContext(), _workorder.getWorkorderId());
         }
 
         @Override
@@ -1154,45 +1195,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onEnterClosingNotes() {
             showClosingNotesDialog();
         }
-    };
-
-    private final ActionView.Listener _actionView_listener = new ActionView.Listener() {
 
         @Override
-        public void onRequest(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOExpiresDialog.show(workorder);
-            } else {
-                _expiresDialog.show(workorder);
-            }
-        }
-
-        @Override
-        public void onShowCounterOfferDialog(Workorder workorder) {
-            _counterOfferDialog.show(workorder);
-        }
-
-        @Override
-        public void onWithdrawRequest(Workorder workorder) {
-            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), workorder.getWorkorderId());
-        }
-
-        @Override
-        public void onNotInterested(Workorder workorder) {
-            _declineDialog.show();
-        }
-
-        @Override
-        public void onConfirmAssignment(Workorder workorder) {
-            if (workorder.isBundle()) {
-                _acceptBundleWOConfirmDialog.show(workorder);
-            } else {
-                _confirmDialog.show(_workorder, workorder.getSchedule());
-            }
-        }
-
-        @Override
-        public void onComplete(Workorder workorder) {
+        public void onMarkComplete() {
             _markCompleteDialog.show(_workorder);
         }
     };
@@ -1229,6 +1234,13 @@ public class WorkFragment extends WorkorderFragment {
         public void onShowTerms(Workorder workorder) {
             _termsDialog.show(getString(R.string.dialog_terms_title),
                     getString(R.string.dialog_terms_body));
+        }
+    };
+
+    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
+        @Override
+        public void onCounterOffer() {
+            _counterOfferDialog.show(_workorder);
         }
     };
 
@@ -1654,6 +1666,5 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "_profileClient_listener.onAction");
         }
     };
-
-
 }
+
