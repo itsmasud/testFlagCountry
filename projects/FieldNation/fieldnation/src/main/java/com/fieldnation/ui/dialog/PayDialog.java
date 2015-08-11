@@ -333,6 +333,7 @@ public class PayDialog extends DialogFragmentBase {
             _maxDevicesEditText.setText((_pay.getMaxDevice() + "").trim());
             _deviceRateEditText.requestFocus();
         }
+        _explanationEditText.setText(_pay.getDescription());
     }
 
     @Override
