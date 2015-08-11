@@ -363,12 +363,6 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
-    public void setIncompletedWorkorder() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_INCOMPLETED_WORKORDER, true);
-        edit.apply();
-    }
 
     public void setInstallTime() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);

@@ -942,27 +942,7 @@ public class WorkFragment extends WorkorderFragment {
         // TODO: I am not pretty sure about the following method
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_WORK, "WorkFragment", 1);
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_FN_EARNED, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.INCOMPLETE_FN_EARNED_GROSS, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
 
-            WorkorderClient.actionIncomplete(getActivity(), _workorder.getWorkorderId());
-            GlobalState.getContext().setIncompletedWorkorder();
-
-            setLoading(true);
         }
     };
 
@@ -1176,6 +1156,11 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onComplete(Workorder workorder) {
             _markCompleteDialog.show(_workorder);
+        }
+
+        @Override
+        public void onIncomplete(Workorder workorder) {
+            _markIncompleteDialog.show(_workorder);
         }
     };
 

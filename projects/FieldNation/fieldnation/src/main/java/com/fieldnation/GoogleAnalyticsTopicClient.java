@@ -44,8 +44,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         START_MAP("ViewLocation"),
         COMPLETE_FN_EARNED("CompleteWorkFnEarned"),
         COMPLETE_FN_EARNED_GROSS("CompleteWorkFnEarnedGross"),
-        INCOMPLETE_FN_EARNED("IncompleteWorkFnEarned"),
-        INCOMPLETE_FN_EARNED_GROSS("IncompleteWorkFnEarnedGross"),
+        MARK_INCOMPLETE("MarkIncomplete"),
         CLICK("ActionClick"),
         VIEW_PAY("ViewPayments"),
         WITHDRAW_REQUEST("WithdrawRequest");
