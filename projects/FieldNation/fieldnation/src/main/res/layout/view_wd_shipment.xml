@@ -31,7 +31,7 @@
 
     <Button
         android:id="@+id/add_button"
-        style="?attr/buttonGrayStyle"
+        style="?attr/buttonWhiteStyle"
         android:layout_gravity="right"
         android:layout_marginRight="16dp"
         android:text="ADD SHIPMENT" />

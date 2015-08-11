@@ -3,6 +3,8 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -27,9 +29,11 @@ public class CounterOfferSummaryView extends LinearLayout {
     private LinearLayout _scheduleLayout;
     private TextView _scheduleTextView;
     private LinearLayout _expenseLayout;
+    private Button _counterOfferButton;
 
     // Data
     private Workorder _workorder;
+    private Listener _listener;
 
     public CounterOfferSummaryView(Context context) {
         super(context);
@@ -57,11 +61,18 @@ public class CounterOfferSummaryView extends LinearLayout {
         _scheduleLayout = (LinearLayout) findViewById(R.id.schedule_layout);
         _scheduleTextView = (TextView) findViewById(R.id.schedule_textview);
         _expenseLayout = (LinearLayout) findViewById(R.id.expense_layout);
+
+        _counterOfferButton = (Button) findViewById(R.id.counterOffer_button);
+        _counterOfferButton.setOnClickListener(_counterOffer_onClick);
     }
 
     public void setData(Workorder workorder) {
         _workorder = workorder;
         populateUi();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void populateUi() {
@@ -126,4 +137,17 @@ public class CounterOfferSummaryView extends LinearLayout {
             }
         }
     }
+
+    private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onCounterOffer();
+        }
+    };
+
+    public interface Listener {
+        void onCounterOffer();
+    }
+
 }

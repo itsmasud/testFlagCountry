@@ -83,4 +83,15 @@
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
+
+    <Button
+        android:id="@+id/counterOffer_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_gravity="right"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:text="CHANGE COUNTER" />
+
 </LinearLayout>
