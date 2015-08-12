@@ -362,6 +362,7 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+
     public void setInstallTime() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
 

@@ -368,3 +368,4 @@ public class ActionBarTopView extends RelativeLayout {
         void onViewPayment();
     }
 }
+

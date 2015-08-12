@@ -968,6 +968,17 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
+
+    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+
+        // TODO: I am not pretty sure about the following method
+        @Override
+        public void onContinueClick() {
+
+        }
+    };
+
+
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
@@ -1114,7 +1125,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onMarkIncomplete() {
-            // TODO onMarkIncomplete STUB
+            _markIncompleteDialog.show(_workorder);
         }
 
         @Override

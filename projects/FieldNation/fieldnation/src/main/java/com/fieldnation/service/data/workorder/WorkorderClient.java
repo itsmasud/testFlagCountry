@@ -413,6 +413,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
+    // incomplete workorder
+    public static void actionIncomplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionIncomplete(context, workorderId);
+    }
+
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
         WorkorderTransactionBuilder.actionClosingNotes(context, workorderId, closingNotes);
     }
