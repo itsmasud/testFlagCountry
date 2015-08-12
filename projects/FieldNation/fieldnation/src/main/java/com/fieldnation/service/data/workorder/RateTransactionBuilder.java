@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.rate;
+package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
