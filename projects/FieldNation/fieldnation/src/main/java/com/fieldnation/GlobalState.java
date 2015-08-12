@@ -28,9 +28,10 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.Calendar;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -79,6 +80,9 @@ public class GlobalState extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
+
+
+
         Log.v(TAG, "onCreate");
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -115,8 +119,6 @@ public class GlobalState extends Application {
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
         setInstallTime();
-
-
     }
 
     public int getMemoryClass() {
@@ -213,6 +215,9 @@ public class GlobalState extends Application {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;
+
+                Crashlytics.setLong("userId", _profile.getUserId());
+
                 GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
 
                 try {
