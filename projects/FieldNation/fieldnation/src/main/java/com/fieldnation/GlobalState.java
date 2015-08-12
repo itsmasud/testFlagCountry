@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -27,6 +28,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.Calendar;
 
@@ -76,6 +78,7 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         Log.v(TAG, "onCreate");
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -112,6 +115,8 @@ public class GlobalState extends Application {
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
         setInstallTime();
+
+
     }
 
     public int getMemoryClass() {
