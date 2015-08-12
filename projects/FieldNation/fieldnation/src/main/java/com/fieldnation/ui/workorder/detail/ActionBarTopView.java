@@ -19,6 +19,7 @@ public class ActionBarTopView extends RelativeLayout {
     private Button _checkoutButton;
     private Button _acknowledgeButton;
     private Button _completeButton;
+    private Button _incompleteButton;
     private Button _confirmButton;
     private Button _closingNotesButton;
 
@@ -55,6 +56,8 @@ public class ActionBarTopView extends RelativeLayout {
         _acknowledgeButton.setOnClickListener(_acknowledge_onClick);
         _completeButton = (Button) findViewById(R.id.complete_button);
         _completeButton.setOnClickListener(_complete_onClick);
+        _incompleteButton = (Button) findViewById(R.id.incomplete_button);
+        _incompleteButton.setOnClickListener(_incomplete_onClick);
         _confirmButton = (Button) findViewById(R.id.confirm_button);
         _confirmButton.setOnClickListener(_confirm_onClick);
         _closingNotesButton = (Button) findViewById(R.id.closingnotes_button);
@@ -70,8 +73,10 @@ public class ActionBarTopView extends RelativeLayout {
         _checkoutButton.setVisibility(View.GONE);
         _acknowledgeButton.setVisibility(View.GONE);
         _completeButton.setVisibility(View.GONE);
+        _incompleteButton.setVisibility(View.GONE);
         _confirmButton.setVisibility(View.GONE);
         _closingNotesButton.setVisibility(View.GONE);
+        _completeButton.setEnabled(true);
         _completeButton.setEnabled(true);
 
         if (_workorder.canCheckout()) {
@@ -97,6 +102,11 @@ public class ActionBarTopView extends RelativeLayout {
                 && misc.isEmptyOrNull(_workorder.getClosingNotes())
                 && _workorder.canChangeClosingNotes()) {
             _closingNotesButton.setVisibility(View.VISIBLE);
+        }
+
+        if (_workorder.canIncomplete()) {
+            _incompleteButton.setVisibility(View.VISIBLE);
+            setVisibility(VISIBLE);
         }
     }
 
@@ -151,6 +161,14 @@ public class ActionBarTopView extends RelativeLayout {
         public void onClick(View v) {
             if (_listener != null)
                 _listener.onComplete();
+        }
+    };
+
+    private final View.OnClickListener _incomplete_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onIncomplete();
         }
     };
 

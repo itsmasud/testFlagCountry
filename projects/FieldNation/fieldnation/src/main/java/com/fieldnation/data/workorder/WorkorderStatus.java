@@ -5,6 +5,7 @@ public enum WorkorderStatus {
     ASSIGNED("STATUS_ASSIGNED"),
     INPROGRESS("STATUS_INPROGRESS"), // == assigned
     COMPLETED("STATUS_COMPLETED"),
+    INCOMPLETED("STATUS_INCOMPLETED"),
     CANCELED("STATUS_CANCELLED"),
     PAID("STATUS_PAID"), // == completed
     APPROVED("STATUS_APPROVED"), // == completed

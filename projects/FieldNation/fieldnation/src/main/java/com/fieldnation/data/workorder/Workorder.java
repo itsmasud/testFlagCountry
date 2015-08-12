@@ -692,6 +692,13 @@ public class Workorder implements Parcelable {
         return false;
     }
 
+    public boolean canIncomplete() {
+        if (getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED) {
+            return true;
+        }
+        return false;
+    }
+
     public boolean canChangeExpenses() {
         WorkorderStatus status = getWorkorderStatus();
         WorkorderSubstatus substatus = getWorkorderSubstatus();
