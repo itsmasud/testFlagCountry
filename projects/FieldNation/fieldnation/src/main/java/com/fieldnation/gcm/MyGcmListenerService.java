@@ -17,9 +17,9 @@
 package com.fieldnation.gcm;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.Log;
 import com.google.android.gms.gcm.GcmListenerService;
 
 public class MyGcmListenerService extends GcmListenerService {

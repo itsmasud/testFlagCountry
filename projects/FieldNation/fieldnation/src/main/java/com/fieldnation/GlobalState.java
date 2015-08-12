@@ -15,6 +15,7 @@ import android.os.Environment;
 import android.preference.PreferenceManager;
 import android.support.multidex.MultiDex;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -29,6 +30,8 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.util.Calendar;
+
+import io.fabric.sdk.android.Fabric;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -76,6 +79,12 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
+        Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+        Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
+        Crashlytics.setString("phone_model", Build.MODEL);
+        Crashlytics.setString("release", Build.VERSION.RELEASE);
+        Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
         Log.v(TAG, "onCreate");
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -208,6 +217,9 @@ public class GlobalState extends Application {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;
+
+                Crashlytics.setLong("user_id", _profile.getUserId());
+
                 GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
 
                 try {
