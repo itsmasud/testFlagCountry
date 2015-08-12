@@ -23,7 +23,6 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -34,7 +33,6 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -83,7 +81,6 @@ public class DrawerView extends RelativeLayout {
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
 
-    private PaymentClient _paymentClient;
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
 
@@ -185,18 +182,12 @@ public class DrawerView extends RelativeLayout {
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(getContext());
-
-        _paymentClient = new PaymentClient(_payment_listener);
-        _paymentClient.connect(getContext());
-
-        PaymentClient.list(getContext(), 0);
     }
 
     @Override
     protected void onDetachedFromWindow() {
         _globalTopicClient.disconnect(getContext());
         _photoClient.disconnect(getContext());
-        _paymentClient.disconnect(getContext());
         super.onDetachedFromWindow();
     }
 
@@ -357,11 +348,11 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _debugView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
+            File tempfile = misc.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
@@ -458,48 +449,6 @@ public class DrawerView extends RelativeLayout {
             Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             addProfilePhoto();
-        }
-    };
-
-    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
-        @Override
-        public void onConnected() {
-            _paymentClient.subList();
-        }
-
-        @Override
-        public void onList(int page, List<Payment> list, boolean failed) {
-            if (list == null || list.size() == 0 || failed) {
-                return;
-            }
-            PaymentClient.list(getContext(), page + 1);
-
-            for (int i = 0; i < list.size(); i++) {
-                try {
-                    Payment payment = list.get(i);
-
-                    if (payment == null)
-                        continue;
-
-                    if (payment.getDatePaid() == null)
-                        continue;
-
-                    long date = ISO8601.toUtc(payment.getDatePaid());
-
-                    if ("paid".equals(payment.getStatus())) {
-                        if (_paidPayment == null || date >= ISO8601.toUtc(_paidPayment.getDatePaid())) {
-                            _paidPayment = payment;
-                        }
-                    } else {
-                        if (_estPayment == null || date >= ISO8601.toUtc(_estPayment.getDatePaid())) {
-                            _estPayment = payment;
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            populateUi();
         }
     };
 }

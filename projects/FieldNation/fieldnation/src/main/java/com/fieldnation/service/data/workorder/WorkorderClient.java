@@ -193,11 +193,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
-    public static void listMessages(Context context, long workorderId, boolean isSync) {
+    public static void listMessages(Context context, long workorderId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -366,6 +367,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionReadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
 
         String payload = "";
@@ -406,6 +411,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
+    }
+
+    // incomplete workorder
+    public static void actionIncomplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionIncomplete(context, workorderId);
     }
 
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {

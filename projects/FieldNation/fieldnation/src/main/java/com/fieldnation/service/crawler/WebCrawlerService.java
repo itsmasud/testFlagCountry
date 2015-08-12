@@ -448,7 +448,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "WorkorderDetailWorker running" + workorder.getWorkorderId());
             incRequestCounter(3);
             incrementPendingRequestCounter(1);
-            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true, false);
             WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkorderId(), true);
             WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
 

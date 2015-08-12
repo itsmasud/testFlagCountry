@@ -184,6 +184,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void actionComplete(Context context, long workorderId) {
         action(context, workorderId, "complete", null, null, null);
     }
+    public static void actionIncomplete(Context context, long workorderId) {
+        action(context, workorderId, "incomplete", null, null, null);
+    }
 
     public static void actionCheckin(Context context, long workorderId) {
         action(context, workorderId, "checkin", null,

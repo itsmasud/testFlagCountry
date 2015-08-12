@@ -44,6 +44,7 @@ import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -242,6 +243,9 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_workorder == null)
             return;
 
@@ -481,10 +485,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(GlobalState.getContext().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);

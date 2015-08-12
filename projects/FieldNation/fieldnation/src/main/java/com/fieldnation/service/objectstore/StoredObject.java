@@ -628,7 +628,8 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static boolean delete(Context context, StoredObject obj) {
-        if (obj.isFile()) {
+
+        if (obj != null && obj.getFile() != null && obj.isFile()) {
             obj.getFile().delete();
         }
 

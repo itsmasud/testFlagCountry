@@ -141,8 +141,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     private void listMessages(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (!isSync) {
+        if (!isSync && allowCache) {
             StoredObject obj = StoredObject.get(this, PSO_MESSAGE_LIST, workorderId);
             if (obj != null) {
                 try {
@@ -152,7 +153,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 }
             }
         }
-
         WorkorderTransactionBuilder.listMessages(this, workorderId, false, isSync);
     }
 
