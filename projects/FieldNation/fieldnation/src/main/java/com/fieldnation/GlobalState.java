@@ -80,9 +80,11 @@ public class GlobalState extends Application {
     public void onCreate() {
         super.onCreate();
         Fabric.with(this, new Crashlytics());
-
-
-
+        Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+        Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
+        Crashlytics.setString("phone_model", Build.MODEL);
+        Crashlytics.setString("release", Build.VERSION.RELEASE);
+        Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
         Log.v(TAG, "onCreate");
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -216,7 +218,7 @@ public class GlobalState extends Application {
             if (profile != null) {
                 _profile = profile;
 
-                Crashlytics.setLong("userId", _profile.getUserId());
+                Crashlytics.setLong("user_id", _profile.getUserId());
 
                 GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
 

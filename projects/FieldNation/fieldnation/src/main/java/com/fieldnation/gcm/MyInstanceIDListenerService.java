@@ -17,8 +17,8 @@
 package com.fieldnation.gcm;
 
 import android.content.Intent;
-import android.util.Log;
 
+import com.fieldnation.Log;
 import com.google.android.gms.iid.InstanceIDListenerService;
 
 public class MyInstanceIDListenerService extends InstanceIDListenerService {
