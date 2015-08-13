@@ -43,14 +43,20 @@
                 mapbox:accessToken="@string/mapbox_accessToken"
                 mapbox:mapid="@string/mapbox_mapid" />
 
+            <TextView
+                android:id="@+id/noMap_TextView"
+                style="@style/TextAppearance.AppCompat.Body1"
+                android:layout_width="match_parent"
+                android:layout_height="150dp"
+                android:background="#FF73b6e6"
+                android:gravity="center"
+                android:text="No Location data\n Cannot display map"
+                android:textColor="@color/fn_white_text" />
+
             <View
                 android:id="@+id/click_overlay"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBottom="@+id/mapview"
-                android:layout_alignLeft="@+id/mapview"
-                android:layout_alignRight="@+id/mapview"
-                android:layout_alignTop="@+id/mapview" />
+                android:layout_width="match_parent"
+                android:layout_height="150dp" />
         </RelativeLayout>
 
         <LinearLayout

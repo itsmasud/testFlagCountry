@@ -43,6 +43,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private RelativeLayout _mapLayout;
     private TextView _noLocationTextView;
     private LinearLayout _addressLayout;
+    private TextView _noMapTextView;
 
     // Data
     private Workorder _workorder;
@@ -82,6 +83,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
         _addressLayout.setOnClickListener(_map_onClick);
 
+        _noMapTextView = (TextView) findViewById(R.id.noMap_TextView);
+
         setVisibility(View.GONE);
     }
 
@@ -111,6 +114,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
         _addressTextView.setText(location.getFullAddressOneLine());
         _distanceTextView.setText("Could not calculate distance.");
+        _noMapTextView.setVisibility(GONE);
 
         setVisibility(VISIBLE);
 
@@ -165,33 +169,39 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Stopwatch watch = new Stopwatch(true);
                 _mapView.clear();
 
-                if (destination != null) {
-                    Log.v(TAG, "Getting user location");
-                    _mapView.setUserLocationEnabled(true);
-                    LatLng user = _mapView.getUserLocation();
-                    _mapView.setUserLocationEnabled(false);
-                    Log.v(TAG, "Getting user location done");
+                try {
+                    if (destination != null) {
+                        Log.v(TAG, "Getting user location");
+                        _mapView.setUserLocationEnabled(true);
+                        LatLng user = _mapView.getUserLocation();
+                        _mapView.setUserLocationEnabled(false);
+                        Log.v(TAG, "Getting user location done");
 
-                    Marker marker = new Marker(_mapView, "Work", "", destination);
-                    marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
-                    _mapView.addMarker(marker);
+                        Marker marker = new Marker(_mapView, "Work", "", destination);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
+                        _mapView.addMarker(marker);
 
-                    marker = new Marker(_mapView, "Me", "", user);
-                    marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
-                    _mapView.addMarker(marker);
+                        marker = new Marker(_mapView, "Me", "", user);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
+                        _mapView.addMarker(marker);
 
-                    Set<LatLng> lls = new HashSet<>();
-                    lls.add(destination);
-                    lls.add(user);
+                        Set<LatLng> lls = new HashSet<>();
+                        lls.add(destination);
+                        lls.add(user);
 
-                    _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
-                    _mapView.setZoom(_mapView.getZoomLevel() - 1);
+                        _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
+                        _mapView.setZoom(_mapView.getZoomLevel() - 1);
 
-                    _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
-                    _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
-                } else {
-                    _navigateButton.setVisibility(GONE);
-                    _mapLayout.setVisibility(GONE);
+                        _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
+                        _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
+                    } else {
+                        _navigateButton.setVisibility(GONE);
+                        _mapLayout.setVisibility(GONE);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _noMapTextView.setVisibility(VISIBLE);
+                    _mapView.setVisibility(GONE);
                 }
                 Log.v(TAG, "onPostExecute time: " + watch.finish());
             }
