@@ -43,7 +43,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private RelativeLayout _mapLayout;
     private TextView _noLocationTextView;
     private LinearLayout _addressLayout;
-    private TextView _noMapTextView;
+    private RelativeLayout _noMapLayout;
 
     // Data
     private Workorder _workorder;
@@ -83,7 +83,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
         _addressLayout.setOnClickListener(_map_onClick);
 
-        _noMapTextView = (TextView) findViewById(R.id.noMap_TextView);
+        _noMapLayout = (RelativeLayout) findViewById(R.id.noMap_layout);
 
         setVisibility(View.GONE);
     }
@@ -114,7 +114,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
         _addressTextView.setText(location.getFullAddressOneLine());
         _distanceTextView.setText("Could not calculate distance.");
-        _noMapTextView.setVisibility(GONE);
+        _noMapLayout.setVisibility(GONE);
 
         setVisibility(VISIBLE);
 
@@ -200,7 +200,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    _noMapTextView.setVisibility(VISIBLE);
+                    _noMapLayout.setVisibility(VISIBLE);
                     _mapView.setVisibility(GONE);
                 }
                 Log.v(TAG, "onPostExecute time: " + watch.finish());

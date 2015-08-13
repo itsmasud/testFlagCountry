@@ -43,15 +43,43 @@
                 mapbox:accessToken="@string/mapbox_accessToken"
                 mapbox:mapid="@string/mapbox_mapid" />
 
-            <TextView
-                android:id="@+id/noMap_TextView"
-                style="@style/TextAppearance.AppCompat.Body1"
+            <RelativeLayout
+                android:id="@+id/noMap_layout"
                 android:layout_width="match_parent"
-                android:layout_height="150dp"
-                android:background="#FF73b6e6"
-                android:gravity="center"
-                android:text="No Location data\n Cannot display map"
-                android:textColor="@color/fn_white_text" />
+                android:layout_height="150dp">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/no_map" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:gravity="center"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Text_Subhead"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="MAP NOT AVAILABLE"
+                        android:textColor="@color/fn_dark_text" />
+
+                    <TextView
+                        style="@style/Text_Body_1"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center"
+                        android:text="Check your GPS settings or location's address"
+                        android:textColor="@color/fn_dark_text" />
+                </LinearLayout>
+
+            </RelativeLayout>
 
             <View
                 android:id="@+id/click_overlay"
