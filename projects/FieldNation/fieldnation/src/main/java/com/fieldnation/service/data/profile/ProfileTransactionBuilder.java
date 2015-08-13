@@ -2,7 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
@@ -139,7 +139,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             body.put("record", "register-mobile-device");
             body.put("data.item_type", "gcm");
             body.put("data.device_id", deviceId);
-            body.put("data.user_id", GlobalState.getContext().getProfile().getUserId());
+            body.put("data.user_id", App.get().getProfile().getUserId());
 
             http.body("[" + body.toString() + "]");
 

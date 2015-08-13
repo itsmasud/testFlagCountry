@@ -13,7 +13,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
@@ -130,7 +130,7 @@ public class FeedbackDialog extends DialogFragmentBase {
                 _listener.onOk(_messageEditText.getText().toString());
             }
 
-            HelpClient.sendFeedback(GlobalState.getContext(), _messageEditText.getText().toString(), null, null, null);
+            HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, null, null);
 
         }
     };

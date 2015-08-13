@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -49,7 +49,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "onCreate");
 
         int threadCount = 4;
-        if (GlobalState.getContext().getMemoryClass() <= 64) {
+        if (App.get().getMemoryClass() <= 64) {
             threadCount = 4;
         } else {
             threadCount = 8;
@@ -110,14 +110,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-            boolean haveWifi = GlobalState.getContext().haveWifi();
+            boolean haveWifi = App.get().haveWifi();
 
             Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
-                boolean pluggedIn = GlobalState.getContext().isCharging();
+                boolean pluggedIn = App.get().isCharging();
                 Log.v(TAG, "HavePower " + pluggedIn);
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;

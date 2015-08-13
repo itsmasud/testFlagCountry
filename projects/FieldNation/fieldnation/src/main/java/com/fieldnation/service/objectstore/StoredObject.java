@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
 
@@ -306,7 +306,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (id != -1) {
 //            Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
-            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
+            String appFileStore = App.get().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
             File dest = new File(appFileStore + "/" + id + "_" + filename);
 
@@ -379,7 +379,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (id != -1) {
 //            Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
-            String appFileStore = GlobalState.getContext().getStoragePath() + "/FileStore";
+            String appFileStore = App.get().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
             File dest = new File(appFileStore + "/" + id + "_" + filename);
 

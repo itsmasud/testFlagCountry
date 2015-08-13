@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.utils.misc;
@@ -94,7 +94,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
 
                             if (result == null) {
                                 if (file != null) {
-                                    result = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+                                    result = new BitmapDrawable(App.get().getResources(), file.getAbsolutePath());
                                     _pictureCache.put(key, new WeakReference<>(result));
                                 }
                             }
