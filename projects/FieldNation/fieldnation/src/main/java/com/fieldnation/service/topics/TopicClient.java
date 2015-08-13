@@ -11,7 +11,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -209,7 +209,7 @@ public class TopicClient implements TopicConstants {
             }
 
             if (msg.getData() != null) {
-                msg.getData().setClassLoader(GlobalState.getContext().getClassLoader());
+                msg.getData().setClassLoader(App.get().getClassLoader());
             }
 
             switch (msg.what) {

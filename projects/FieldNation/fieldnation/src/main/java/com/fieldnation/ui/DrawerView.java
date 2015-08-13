@@ -15,7 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -171,7 +171,7 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (BuildConfig.FLAVOR.equals("prod")) {
-            if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
+            if (((App) getContext().getApplicationContext()).shouldShowReviewDialog()) {
             } else {
             }
         } else {

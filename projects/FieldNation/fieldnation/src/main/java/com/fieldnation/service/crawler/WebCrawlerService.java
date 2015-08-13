@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -125,10 +125,10 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "flushing data");
                 StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
 
-                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + GlobalState.getContext().haveWifi());
+                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
                 // only flush if we have wifi, so that the app can get new ones without
                 // worrying about cell traffic
-                if (_imageDaysToLive > -1 && GlobalState.getContext().haveWifi()) {
+                if (_imageDaysToLive > -1 && App.get().haveWifi()) {
                     long days = _imageDaysToLive * 86400000;
                     long cutoff = System.currentTimeMillis();
                     List<StoredObject> list = StoredObject.list(WebCrawlerService.this, "PhotoCache");

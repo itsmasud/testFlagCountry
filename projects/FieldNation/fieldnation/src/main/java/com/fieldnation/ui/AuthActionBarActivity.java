@@ -15,7 +15,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -188,7 +188,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _notProviderDialog.show();
             return;
         }
-        GlobalState gs = GlobalState.getContext();
+        App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
@@ -271,7 +271,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         public void onNegative() {
             // hide, continue
             _profileBounceProtect = false;
-            GlobalState.getContext().setTosReminded();
+            App.get().setTosReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -289,7 +289,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setCoiReminded();
+            App.get().setCoiReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -301,7 +301,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         @Override
         public void onNegative() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setNeverRemindCoi();
+            App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {

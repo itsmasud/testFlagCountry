@@ -20,7 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -215,7 +215,7 @@ public class ExpenseDialog extends DialogFragmentBase {
                 return;
 
             if (getAmount() < 0.1) {
-                ToastClient.toast(GlobalState.getContext(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
             if (_listener != null)

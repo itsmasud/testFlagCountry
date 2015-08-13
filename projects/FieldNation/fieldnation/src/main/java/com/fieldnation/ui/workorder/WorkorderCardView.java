@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -814,7 +814,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _paymentLayout.setVisibility(VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
-                Profile profile = GlobalState.getContext().getProfile();
+                Profile profile = App.get().getProfile();
                 if (profile != null && profile.getCanViewPayments()) {
                     _actionButton.setVisibility(VISIBLE);
                     _actionButton.setText(R.string.btn_payments);
@@ -856,7 +856,7 @@ public class WorkorderCardView extends RelativeLayout {
             case CANCELED_LATEFEEPAID:
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                Profile profile = GlobalState.getContext().getProfile();
+                Profile profile = App.get().getProfile();
                 if (profile != null && profile.getCanViewPayments()) {
                     _actionButton.setVisibility(VISIBLE);
                     _actionButton.setText(R.string.btn_payments);
