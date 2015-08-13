@@ -82,6 +82,8 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
+
         StringBuilder sb = new StringBuilder();
         List<String> indicies = new LinkedList<>();
 
