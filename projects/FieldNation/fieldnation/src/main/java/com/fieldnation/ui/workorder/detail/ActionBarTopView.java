@@ -146,9 +146,9 @@ public class ActionBarTopView extends RelativeLayout {
 
                 // if everything is done except closing notes then closing notes
                 if (_workorder.canComplete()) {
-//                    _rightOrangeButton.setVisibility(VISIBLE);
-//                    _rightOrangeButton.setText(R.string.btn_mark_completed);
-//                    _rightOrangeButton.setOnClickListener(_markComplete_onClick);
+                    _rightOrangeButton.setVisibility(VISIBLE);
+                    _rightOrangeButton.setText(R.string.btn_mark_completed);
+                    _rightOrangeButton.setOnClickListener(_markComplete_onClick);
 
                     // else if everything is done, Mark Complete
                 } else if (_workorder.areTasksComplete()
@@ -180,10 +180,10 @@ public class ActionBarTopView extends RelativeLayout {
                 break;
             case PENDINGREVIEW: // marked completed
                 // mark incomplete
-//                _rightGrayButton.setVisibility(VISIBLE);
-//                _rightGrayButton.setText(R.string.btn_mark_incomplete);
-//                _rightGrayButton.setOnClickListener(_markIncomplete_onClick);
-//                setVisibility(View.VISIBLE);
+                _rightGrayButton.setVisibility(VISIBLE);
+                _rightGrayButton.setText(R.string.btn_mark_incomplete);
+                _rightGrayButton.setOnClickListener(_markIncomplete_onClick);
+                setVisibility(View.VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
             case INREVIEW:
@@ -368,3 +368,4 @@ public class ActionBarTopView extends RelativeLayout {
         void onViewPayment();
     }
 }
+

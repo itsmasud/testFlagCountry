@@ -5,7 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 
 import java.util.HashSet;
@@ -32,7 +32,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private OnLoadingCompleteListener _onLoadingCompleteListener;
 
     public PagingAdapter() {
-        _showRateMe = GlobalState.getContext().showRateMe();
+        _showRateMe = App.get().showRateMe();
     }
 
     public void setPage(int page, List<T> items) {
@@ -161,7 +161,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView = new RateMeView(parent.getContext());
                 _rateMeView.setListener(_rateMe_listener);
             }
-            GlobalState.getContext().setRateMeShown();
+            App.get().setRateMeShown();
             return _rateMeView;
         }
 

@@ -19,7 +19,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
@@ -207,12 +207,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(GlobalState.getContext(), "Missing tracking number", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), "Missing tracking number", Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(GlobalState.getContext(), "Missing description", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), "Missing description", Toast.LENGTH_SHORT);
                 return;
             }
 

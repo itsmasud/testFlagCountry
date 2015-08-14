@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
@@ -156,7 +156,7 @@ public class MessageFragment extends WorkorderFragment {
 
         try {
             if (_adapter == null) {
-                _adapter = new MessagesAdapter(GlobalState.getContext().getProfile());
+                _adapter = new MessagesAdapter(App.get().getProfile());
                 _listview.setAdapter(_adapter);
             }
             return _adapter;
@@ -175,13 +175,13 @@ public class MessageFragment extends WorkorderFragment {
             if (getActivity() != null) {
 
                 if (misc.isEmptyOrNull(_inputView.getInputText())) {
-                    ToastClient.toast(GlobalState.getContext(), "Please enter a message", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
                     return;
                 }
                 Log.v(TAG, "_send_onClick");
 
                 _messages.add(new Message(_workorder.getWorkorderId(),
-                        User.fromJson(GlobalState.getContext().getProfile().toJson()),
+                        User.fromJson(App.get().getProfile().toJson()),
                         _inputView.getInputText()));
                 rebuildList();
 

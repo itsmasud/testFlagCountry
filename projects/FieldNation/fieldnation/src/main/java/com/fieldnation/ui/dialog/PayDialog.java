@@ -17,8 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
-import com.fieldnation.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
@@ -371,7 +370,7 @@ public class PayDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (!isValidAmount()) {
-                ToastClient.toast(GlobalState.getContext(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
 

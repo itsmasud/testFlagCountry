@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 
 /**
  * Created by Michael Carver on 5/7/2015.
@@ -29,6 +29,6 @@ public class IconFontTextView extends TextView {
         if (isInEditMode())
             return;
 
-        setTypeface(GlobalState.getContext().getIconFont());
+        setTypeface(App.get().getIconFont());
     }
 }

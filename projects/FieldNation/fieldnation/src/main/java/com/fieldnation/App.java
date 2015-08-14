@@ -13,8 +13,11 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -30,12 +33,14 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.File;
 import java.util.Calendar;
 
+import io.fabric.sdk.android.Fabric;
+
 /**
  * Defines some global values that will be shared between all objects.
  *
  * @author michael.carver
  */
-public class GlobalState extends Application {
+public class App extends Application {
     private final String TAG = UniqueTag.makeTag("GlobalState");
 
     public static final long DAY = 86400000;
@@ -50,7 +55,7 @@ public class GlobalState extends Application {
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
 
-    private static GlobalState _context;
+    private static App _context;
 
     private Tracker _tracker;
     private Profile _profile;
@@ -68,7 +73,7 @@ public class GlobalState extends Application {
         MultiDex.install(this);
     }
 
-    public GlobalState() {
+    public App() {
         super();
         Log.v(TAG, "GlobalState");
     }
@@ -76,6 +81,12 @@ public class GlobalState extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
+        Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+        Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
+        Crashlytics.setString("phone_model", Build.MODEL);
+        Crashlytics.setString("release", Build.VERSION.RELEASE);
+        Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
         Log.v(TAG, "onCreate");
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -128,7 +139,7 @@ public class GlobalState extends Application {
         _context = null;
     }
 
-    public static GlobalState getContext() {
+    public static App get() {
         return _context;
     }
 
@@ -144,7 +155,7 @@ public class GlobalState extends Application {
         public void onConnected() {
             Log.v(TAG, "onConnected");
             _authTopicClient.registerAuthState();
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
 
         @Override
@@ -155,7 +166,7 @@ public class GlobalState extends Application {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
     };
 
@@ -165,19 +176,19 @@ public class GlobalState extends Application {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerProfileInvalid(GlobalState.this);
+            _globalTopicClient.registerProfileInvalid(App.this);
             _globalTopicClient.registerNetworkConnect();
             _globalTopicClient.registerNetworkState();
         }
 
         @Override
         public void onProfileInvalid() {
-            ProfileClient.get(GlobalState.this);
+            ProfileClient.get(App.this);
         }
 
         @Override
         public void onNetworkConnected() {
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
 
         @Override
@@ -186,8 +197,8 @@ public class GlobalState extends Application {
 
         @Override
         public void onNetworkConnect() {
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
-            startService(new Intent(GlobalState.this, WebTransactionService.class));
+            AuthTopicClient.dispatchRequestCommand(App.this);
+            startService(new Intent(App.this, WebTransactionService.class));
         }
 
         @Override
@@ -200,7 +211,7 @@ public class GlobalState extends Application {
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
             _profileClient.subGet();
-            ProfileClient.get(GlobalState.this);
+            ProfileClient.get(App.this);
         }
 
         @Override
@@ -208,11 +219,14 @@ public class GlobalState extends Application {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;
-                GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+
+                Crashlytics.setLong("user_id", _profile.getUserId());
+
+                GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
                 try {
                     Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
-                    Intent intent = new Intent(GlobalState.this, clazz);
+                    Intent intent = new Intent(App.this, clazz);
                     startService(intent);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -362,6 +376,7 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+
     public void setInstallTime() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
 
@@ -474,5 +489,25 @@ public class GlobalState extends Application {
         int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
                 || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+    }
+
+    public boolean isLocationEnabled(){
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+            try {
+                locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        }else{
+            locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
     }
 }

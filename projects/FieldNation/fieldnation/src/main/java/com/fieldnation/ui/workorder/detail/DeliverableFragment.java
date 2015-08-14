@@ -20,7 +20,7 @@ import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
 import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -485,7 +485,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(GlobalState.getContext().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -518,7 +518,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            WorkorderClient.get(GlobalState.getContext(), workorderId, false);
+            WorkorderClient.get(App.get(), workorderId, false);
         }
     };
 
@@ -532,7 +532,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDownload(long documentId, File file, int state) {
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
-                    ToastClient.toast(GlobalState.getContext(), "Couldn't download file", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
                 return;
             }
 

@@ -24,7 +24,7 @@
         android:required="false" />
 
     <application
-        android:name=".GlobalState"
+        android:name=".App"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
