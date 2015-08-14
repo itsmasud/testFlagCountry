@@ -27,8 +27,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 47
-        versionName "2.0.47"
+        versionCode 48
+        versionName "2.0.48"
         multiDexEnabled true
     }
 
@@ -96,12 +96,12 @@ dependencies {
     compile project(':libDateTimePicker')
     compile 'com.android.support:multidex:1.0.0'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') { transitive = true }
-    compile 'com.google.android.gms:play-services:7.5.+'
-    compile 'com.google.android.gms:play-services-gcm:7.5.+'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.google.android.gms:play-services:7.8.+'
+    compile 'com.google.android.gms:play-services-gcm:7.8.+'
+    compile 'com.android.support:design:22.2.+'
+    compile 'com.android.support:appcompat-v7:22.2.+'
+    compile 'com.android.support:support-v4:22.2.+'
+    compile 'com.android.support:recyclerview-v7:22.2.+'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
         transitive = true;
     }

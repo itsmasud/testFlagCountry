@@ -39,7 +39,6 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginLeft="8dp"
-                android:layout_toLeftOf="@+id/writeMessage_button"
                 android:layout_toRightOf="@+id/close_button"
                 android:text="Messages" />
         </RelativeLayout>
