@@ -294,6 +294,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
 
+    /*-*************************************-*/
+    /*-             Ratings               -*/
+    /*-*************************************-*/
+    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+    }
+
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
