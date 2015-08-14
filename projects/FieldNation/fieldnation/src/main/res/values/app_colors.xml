@@ -86,6 +86,7 @@
     <color name="fn_dark_text">#FF1e1e1e</color>
     <color name="fn_dark_text_80">#CC1e1e1e</color>
     <color name="fn_dark_text_50">#801e1e1e</color>
+    <color name="fn_dark_text_25">#3F1e1e1e</color>
     <color name="fn_dark_text_0">#001e1e1e</color>
 
     <color name="fn_clickable_text">#FF2196F3</color>
