@@ -97,6 +97,7 @@ public class TopicService extends Service implements TopicConstants {
 
     @Override
     public void onLowMemory() {
+        Log.v(TAG, "onLowMemory");
         pruneStickies();
         super.onLowMemory();
     }
@@ -155,6 +156,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void register(Bundle bundle, Messenger replyTo) {
+        Log.v(TAG, "register");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
@@ -183,6 +185,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void unregister(Bundle bundle) {
+        Log.v(TAG, "unregister");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
@@ -194,6 +197,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void deleteUser(Bundle bundle) {
+        Log.v(TAG, "deleteUser");
         String userTag = bundle.getString(PARAM_USER_TAG);
 
 //        Log.v(TAG, "deleteUser " + userTag);
@@ -205,6 +209,7 @@ public class TopicService extends Service implements TopicConstants {
 
     // sends events
     private void dispatchEvent(Bundle bundle) {
+        Log.v(TAG, "dispatchEvent");
         String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
 //        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         Sticky stickyType = (Sticky) bundle.getSerializable(PARAM_STICKY);
@@ -247,6 +252,7 @@ public class TopicService extends Service implements TopicConstants {
 
     // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
+        Log.v(TAG, "dispatchEvent");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
@@ -262,6 +268,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     public static void dispatchEvent(Context context, Bundle event) {
+        Log.v(TAG, "dispatchEvent");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtras(event);
         context.startService(intent);
