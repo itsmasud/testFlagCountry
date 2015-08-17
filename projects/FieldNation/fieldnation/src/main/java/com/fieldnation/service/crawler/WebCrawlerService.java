@@ -7,8 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -456,9 +456,13 @@ public class WebCrawlerService extends Service {
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
                 for (Signature sig : sigs) {
+                    try {
 //                    Log.v(TAG, "getSignature");
-                    incRequestCounter(1);
-                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                        WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                        incRequestCounter(1);
+                    } catch (Exception ex){
+                        ex.printStackTrace();
+                    }
                 }
             }
 
@@ -468,9 +472,13 @@ public class WebCrawlerService extends Service {
                     UploadedDocument[] docs = slot.getUploadedDocuments();
                     if (docs != null && docs.length > 0) {
                         for (UploadedDocument doc : docs) {
-                            incRequestCounter(1);
-                            DocumentClient.downloadDocument(_context, doc.getId(),
-                                    doc.getDownloadLink(), doc.getFileName(), true);
+                            try {
+                                DocumentClient.downloadDocument(_context, doc.getId(),
+                                        doc.getDownloadLink(), doc.getFileName(), true);
+                                incRequestCounter(1);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -479,9 +487,13 @@ public class WebCrawlerService extends Service {
             Document[] documents = workorder.getDocuments();
             if (documents != null && documents.length > 0) {
                 for (Document doc : documents) {
-                    incRequestCounter(1);
-                    DocumentClient.downloadDocument(_context, doc.getDocumentId(),
-                            doc.getFilePath(), doc.getFileName(), true);
+                    try {
+                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
+                                doc.getFilePath(), doc.getFileName(), true);
+                        incRequestCounter(1);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
 
