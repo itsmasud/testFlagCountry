@@ -52,7 +52,11 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/datetime_button"
                     android:gravity="center_vertical"
-                    android:visibility="visible" />
+                    android:visibility="visible">
+                    <!--<requestFocus />-->
+                </EditText>
+
+
 
                 <com.fieldnation.ui.IconFontButton
                     android:id="@+id/datetime_button"
