@@ -11,6 +11,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.utils.Stopwatch;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -47,6 +48,8 @@ public class TopicService extends Service implements TopicConstants {
 
     @Override
     public int onStartCommand(final Intent intent, int flags, int startId) {
+        Stopwatch stopwatch = new Stopwatch(true);
+        Log.v(TAG, "onStartCommand start");
         _lastStartId = startId;
 
         if (intent != null && intent.getExtras() != null) {
@@ -59,13 +62,15 @@ public class TopicService extends Service implements TopicConstants {
             pruneStickies();
         }
 
+        Log.v(TAG, "onStartCommand time:" + stopwatch.finish());
+
         return START_NOT_STICKY;
     }
 
     @Override
     public IBinder onBind(Intent intent) {
         _bindCount++;
-//        Log.v(TAG, "onBind:" + _bindCount);
+        Log.v(TAG, "onBind:" + _bindCount);
         return _me.getBinder();
     }
 
@@ -203,7 +208,6 @@ public class TopicService extends Service implements TopicConstants {
         String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
 //        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         Sticky stickyType = (Sticky) bundle.getSerializable(PARAM_STICKY);
-
 
         synchronized (TAG) {
             String topicId = topicIdTree[0];

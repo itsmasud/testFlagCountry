@@ -460,7 +460,7 @@ public class WebCrawlerService extends Service {
 //                    Log.v(TAG, "getSignature");
                         WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
                         incRequestCounter(1);
-                    } catch (Exception ex){
+                    } catch (Exception ex) {
                         ex.printStackTrace();
                     }
                 }
