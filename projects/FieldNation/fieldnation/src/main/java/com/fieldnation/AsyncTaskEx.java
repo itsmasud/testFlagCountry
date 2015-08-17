@@ -11,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class AsyncTaskEx<Params, Progress, Result> extends AsyncTask<Params, Progress, Result> {
+    private static final String TAG = "AsyncTaskEx";
 
     private static final int CPU_COUNT = Runtime.getRuntime().availableProcessors();
     private static final int CORE_POOL_SIZE = CPU_COUNT + 1;
@@ -25,14 +26,13 @@ public abstract class AsyncTaskEx<Params, Progress, Result> extends AsyncTask<Pa
         }
     };
 
-    private static final BlockingQueue<Runnable> sPoolWorkQueue
-            = new LinkedBlockingQueue<Runnable>();
+    private static final BlockingQueue<Runnable> sPoolWorkQueue = new LinkedBlockingQueue<>();
 
-    public static final Executor THREAD_POOL_EXECUTOR
-            = new ThreadPoolExecutor(CORE_POOL_SIZE, MAXIMUM_POOL_SIZE, KEEP_ALIVE,
-            TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
+    public static final Executor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(CORE_POOL_SIZE,
+            MAXIMUM_POOL_SIZE, KEEP_ALIVE, TimeUnit.SECONDS, sPoolWorkQueue, sThreadFactory);
 
     public AsyncTask<Params, Progress, Result> executeEx(Params... params) {
+        Log.v(TAG, "Queue: " + sPoolWorkQueue.size());
         return super.executeOnExecutor(THREAD_POOL_EXECUTOR, params);
     }
 }
