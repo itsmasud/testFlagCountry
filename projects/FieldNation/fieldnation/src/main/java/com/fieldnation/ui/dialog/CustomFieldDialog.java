@@ -191,13 +191,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
             case PHONE:
                 _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
                 break;
-//                _textEditText.setVisibility(View.VISIBLE);
-//                _textEditText.getEditableText().clear();
-            //_textEditText.setText("", TextView.BufferType.EDITABLE);
-//                if (!misc.isEmptyOrNull(_customField.getValue())) {
-//                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-//                }
-//                break;
             case LIST:
                 _spinnerLayout.setVisibility(View.VISIBLE);
                 if (_customField.getPredefinedValues() != null) {
