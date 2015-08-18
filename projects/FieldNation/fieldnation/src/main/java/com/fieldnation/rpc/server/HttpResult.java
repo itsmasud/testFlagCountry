@@ -102,7 +102,15 @@ public class HttpResult {
     public byte[] getByteArray() {
         if (_file != null && _baResults == null) {
             try {
-                _baResults = misc.readAllFromStream(new FileInputStream(_file), 1024, -1, 1000);
+                FileInputStream fin = null;
+                try {
+                    fin = new FileInputStream(_file);
+                    _baResults = misc.readAllFromStream(fin, 1024, -1, 1000);
+                } finally {
+                    if (fin != null) {
+                        fin.close();
+                    }
+                }
             } catch (IOException e) {
             }
         }

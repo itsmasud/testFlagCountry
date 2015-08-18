@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
@@ -80,6 +81,12 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .penaltyDeath()
+                .build());
+
         super.onCreate();
         Fabric.with(this, new Crashlytics());
         Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
@@ -491,11 +498,11 @@ public class App extends Application {
                 || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
     }
 
-    public boolean isLocationEnabled(){
+    public boolean isLocationEnabled() {
         int locationMode = 0;
         String locationProviders;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
             try {
                 locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
 
@@ -505,7 +512,7 @@ public class App extends Application {
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
 
-        }else{
+        } else {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }

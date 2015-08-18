@@ -453,49 +453,49 @@ public class WebCrawlerService extends Service {
             WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
 
             // get signatures
-            Signature[] sigs = workorder.getSignatureList();
-            if (sigs != null && sigs.length > 0) {
-                for (Signature sig : sigs) {
-                    try {
-//                    Log.v(TAG, "getSignature");
-                        WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
-                        incRequestCounter(1);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
+//            Signature[] sigs = workorder.getSignatureList();
+//            if (sigs != null && sigs.length > 0) {
+//                for (Signature sig : sigs) {
+//                    try {
+////                    Log.v(TAG, "getSignature");
+//                        WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+//                        incRequestCounter(1);
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
 
-            UploadSlot[] slots = workorder.getUploadSlots();
-            if (slots != null && slots.length > 0) {
-                for (UploadSlot slot : slots) {
-                    UploadedDocument[] docs = slot.getUploadedDocuments();
-                    if (docs != null && docs.length > 0) {
-                        for (UploadedDocument doc : docs) {
-                            try {
-                                DocumentClient.downloadDocument(_context, doc.getId(),
-                                        doc.getDownloadLink(), doc.getFileName(), true);
-                                incRequestCounter(1);
-                            } catch (Exception ex) {
-                                ex.printStackTrace();
-                            }
-                        }
-                    }
-                }
-            }
+//            UploadSlot[] slots = workorder.getUploadSlots();
+//            if (slots != null && slots.length > 0) {
+//                for (UploadSlot slot : slots) {
+//                    UploadedDocument[] docs = slot.getUploadedDocuments();
+//                    if (docs != null && docs.length > 0) {
+//                        for (UploadedDocument doc : docs) {
+//                            try {
+//                                DocumentClient.downloadDocument(_context, doc.getId(),
+//                                        doc.getDownloadLink(), doc.getFileName(), true);
+//                                incRequestCounter(1);
+//                            } catch (Exception ex) {
+//                                ex.printStackTrace();
+//                            }
+//                        }
+//                    }
+//                }
+//            }
 
-            Document[] documents = workorder.getDocuments();
-            if (documents != null && documents.length > 0) {
-                for (Document doc : documents) {
-                    try {
-                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
-                                doc.getFilePath(), doc.getFileName(), true);
-                        incRequestCounter(1);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                }
-            }
+//            Document[] documents = workorder.getDocuments();
+//            if (documents != null && documents.length > 0) {
+//                for (Document doc : documents) {
+//                    try {
+//                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
+//                                doc.getFilePath(), doc.getFileName(), true);
+//                        incRequestCounter(1);
+//                    } catch (Exception ex) {
+//                        ex.printStackTrace();
+//                    }
+//                }
+//            }
 
             return true;
         }

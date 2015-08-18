@@ -209,7 +209,7 @@ public class TopicService extends Service implements TopicConstants {
 
     // sends events
     private void dispatchEvent(Bundle bundle) {
-        Log.v(TAG, "dispatchEvent");
+        Log.v(TAG, "dispatchEvent " + bundle.getString(PARAM_TOPIC_ID));
         String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
 //        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         Sticky stickyType = (Sticky) bundle.getSerializable(PARAM_STICKY);
@@ -252,7 +252,7 @@ public class TopicService extends Service implements TopicConstants {
 
     // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
-        Log.v(TAG, "dispatchEvent");
+        Log.v(TAG, "dispatchEvent " + topicId);
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
@@ -268,7 +268,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     public static void dispatchEvent(Context context, Bundle event) {
-        Log.v(TAG, "dispatchEvent");
+        Log.v(TAG, "dispatchEvent " + event);
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtras(event);
         context.startService(intent);
