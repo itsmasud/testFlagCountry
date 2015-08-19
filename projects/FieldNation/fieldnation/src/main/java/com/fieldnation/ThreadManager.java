@@ -21,6 +21,7 @@ public class ThreadManager {
     }
 
     public void shutdown() {
+        Log.v(TAG, "shutdown start");
         for (int i = 0; i < _threads.size(); i++) {
             _threads.get(i).finish();
         }
@@ -38,6 +39,7 @@ public class ThreadManager {
             if (thread.isAlive())
                 thread.interrupt();
         }
+        Log.v(TAG, "shutdown end");
     }
 
     public void wakeUp() {

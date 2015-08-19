@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
@@ -34,33 +35,26 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
     }
 
-
-    /*
-    public static void dispatchNotAuthenticated(Context context) {
-        dispatchAuthState(context, AuthState.NOT_AUTHENTICATED);
-    }
-
-    public static void dispatchAuthenticating(Context context) {
-        dispatchAuthState(context, AuthState.AUTHENTICATING);
-    }
-*/
-
-    public static void dispatchAuthenticated(Context context, OAuth auth) {
+    public static void dispatchAuthenticated(final Context context, OAuth auth) {
         if (context == null)
             return;
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
-        bundle.putParcelable(PARAM_OAUTH, auth);
+        new AsyncTaskEx<OAuth, Object, Bundle>() {
+            @Override
+            protected Bundle doInBackground(OAuth... params) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
+                bundle.putParcelable(PARAM_OAUTH, params[0]);
+                return bundle;
+            }
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
+            @Override
+            protected void onPostExecute(Bundle bundle) {
+                TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
+                super.onPostExecute(bundle);
+            }
+        }.executeEx(auth);
     }
-
-/*
-    public static void dispatchRemoving(Context context) {
-        dispatchAuthState(context, AuthState.REMOVING);
-    }
-*/
 
     public boolean registerAuthState() {
         return register(TOPIC_AUTH_STATE, TAG);

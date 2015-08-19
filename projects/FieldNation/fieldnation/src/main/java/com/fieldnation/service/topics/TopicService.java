@@ -1,6 +1,5 @@
 package com.fieldnation.service.topics;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,22 +10,23 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.service.MSService;
 import com.fieldnation.utils.Stopwatch;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public class TopicService extends Service implements TopicConstants {
+public class TopicService extends MSService implements TopicConstants {
     private static final String TAG = "TopicService";
 
     private Messenger _me = new Messenger(new IncomeHandler(this));
     private Hashtable<String, StickyContainer> _stickies;
     private int _bindCount = 0;
-    private int _lastStartId = -1;
 
     private Handler _handler;
 
@@ -37,7 +37,7 @@ public class TopicService extends Service implements TopicConstants {
     /*-*****************************-*/
     @Override
     public void onCreate() {
-//        Log.v(TAG, "onCreate");
+        Log.v(TAG, "onCreate");
         super.onCreate();
         synchronized (TAG) {
             _stickies = new Hashtable<>();
@@ -47,10 +47,14 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     @Override
-    public int onStartCommand(final Intent intent, int flags, int startId) {
+    public int getMaxWorkerCount() {
+        return 2;
+    }
+
+    @Override
+    public void processIntent(Intent intent) {
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "onStartCommand start");
-        _lastStartId = startId;
 
         if (intent != null && intent.getExtras() != null) {
             dispatchEvent(intent.getExtras());
@@ -63,8 +67,12 @@ public class TopicService extends Service implements TopicConstants {
         }
 
         Log.v(TAG, "onStartCommand time:" + stopwatch.finish());
+    }
 
-        return START_NOT_STICKY;
+    @Override
+    public void addIntent(List<Intent> intents, Intent intent) {
+        super.addIntent(intents, intent);
+        Log.v(TAG, "intents " + intents.size());
     }
 
     @Override
@@ -145,12 +153,11 @@ public class TopicService extends Service implements TopicConstants {
                     msg.replyTo = _me;
                     messenger.send(msg);
                 } catch (Exception ex) {
-//                    Log.e(TAG, ex.getLocalizedMessage() + ": " + userTag);
+                    Log.e(TAG, ex.getLocalizedMessage() + ": " + userTag);
                     synchronized (TAG) {
                         TopicUser.deleteUser(userTag);
                     }
                 }
-
             }
         });
     }
@@ -160,7 +167,7 @@ public class TopicService extends Service implements TopicConstants {
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-//        Log.v(TAG, "register(" + userTag + ", " + topicId + ")");
+        Log.v(TAG, "register(" + userTag + ", " + topicId + ")");
         TopicUser c = null;
         synchronized (TAG) {
             c = TopicUser.getUser(userTag);
@@ -185,11 +192,10 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void unregister(Bundle bundle) {
-        Log.v(TAG, "unregister");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-//        Log.v(TAG, "unregister " + userTag + ":" + topicId);
+        Log.v(TAG, "unregister " + userTag + ":" + topicId);
 
         synchronized (TAG) {
             TopicUser.unregisterUser(userTag, topicId);
@@ -197,19 +203,20 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     private void deleteUser(Bundle bundle) {
-        Log.v(TAG, "deleteUser");
+        //Log.v(TAG, "deleteUser");
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-//        Log.v(TAG, "deleteUser " + userTag);
+        Log.v(TAG, "deleteUser " + userTag);
 
         synchronized (TAG) {
             TopicUser.deleteUser(userTag);
         }
+        Log.v(TAG, "deleteUser end");
     }
 
     // sends events
     private void dispatchEvent(Bundle bundle) {
-        Log.v(TAG, "dispatchEvent " + bundle.getString(PARAM_TOPIC_ID));
+        Log.v(TAG, "dispatchEvent(" + bundle.getString(PARAM_TOPIC_ID) + ")");
         String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
 //        String rootTopicId = (topicId.contains("/") ? topicId.substring(0, topicId.indexOf("/")) : null);
         Sticky stickyType = (Sticky) bundle.getSerializable(PARAM_STICKY);
@@ -242,17 +249,11 @@ public class TopicService extends Service implements TopicConstants {
                                     stickyType));
             }
         }
-
-
-        // Todo shutdown?
-//        if (topicId.equals(.TOPIC_SHUTDOWN)) {
-//            shutdown();
-//        }
     }
 
     // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
-        Log.v(TAG, "dispatchEvent " + topicId);
+        Log.v(TAG, "dispatchEvent(" + topicId + ")");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
@@ -268,7 +269,7 @@ public class TopicService extends Service implements TopicConstants {
     }
 
     public static void dispatchEvent(Context context, Bundle event) {
-        Log.v(TAG, "dispatchEvent " + event);
+        Log.v(TAG, "dispatchEvent(" + event + ")");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtras(event);
         context.startService(intent);
