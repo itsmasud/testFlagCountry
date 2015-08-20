@@ -42,10 +42,16 @@ public class ThreadManager {
         Log.v(TAG, "shutdown end");
     }
 
+    private static int _wakeupcount = 0;
+
     public void wakeUp() {
+        _wakeupcount++;
+        Log.v(TAG, "wakeUp " + _wakeupcount);
         synchronized (THREAD_PAUSE) {
             THREAD_PAUSE.notifyAll();
         }
+        _wakeupcount--;
+        Log.v(TAG, "/wakeUp " + _wakeupcount);
     }
 
     public static abstract class ManagedThread extends Thread {
@@ -53,7 +59,7 @@ public class ThreadManager {
         private final Object THREAD_PAUSE;
 
         public ManagedThread(ThreadManager manager) {
-            super();
+            super("ManagedThread");
             THREAD_PAUSE = manager.THREAD_PAUSE;
         }
 
@@ -69,7 +75,7 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    THREAD_PAUSE.wait();
+                    THREAD_PAUSE.wait(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

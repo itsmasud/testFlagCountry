@@ -37,8 +37,8 @@ public class TopicService extends MSService implements TopicConstants {
     /*-*****************************-*/
     @Override
     public void onCreate() {
-        Log.v(TAG, "onCreate");
         super.onCreate();
+        Log.v(TAG, "onCreate");
         synchronized (TAG) {
             _stickies = new Hashtable<>();
         }
@@ -48,13 +48,13 @@ public class TopicService extends MSService implements TopicConstants {
 
     @Override
     public int getMaxWorkerCount() {
-        return 2;
+        return 1;
     }
 
     @Override
     public void processIntent(Intent intent) {
         Stopwatch stopwatch = new Stopwatch(true);
-        Log.v(TAG, "onStartCommand start");
+        Log.v(TAG, "processIntent start");
 
         if (intent != null && intent.getExtras() != null) {
             dispatchEvent(intent.getExtras());
@@ -66,7 +66,7 @@ public class TopicService extends MSService implements TopicConstants {
             pruneStickies();
         }
 
-        Log.v(TAG, "onStartCommand time:" + stopwatch.finish());
+        Log.v(TAG, "processIntent time:" + stopwatch.finish());
     }
 
     @Override
@@ -111,6 +111,7 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     private void pruneStickies() {
+        Stopwatch stopwatch = new Stopwatch(true);
         Hashtable<String, StickyContainer> ns = new Hashtable<>();
         synchronized (TAG) {
             Set<String> keys = _stickies.keySet();
@@ -127,6 +128,7 @@ public class TopicService extends MSService implements TopicConstants {
             Log.v(TAG, "Pruning stickies done: " + ns.size() + "/" + _stickies.size());
             _stickies = ns;
         }
+        Log.v(TAG, "pruneStickies " + stopwatch.finish());
     }
 
     @Override
@@ -179,15 +181,18 @@ public class TopicService extends MSService implements TopicConstants {
         response.putString(PARAM_TOPIC_ID, topicId);
         sendEvent(replyTo, WHAT_REGISTER_LISTENER, response, c.userTag);
 
+        StickyContainer sticky = null;
         synchronized (TAG) {
             if (_stickies.containsKey(topicId)) {
-                Log.v(TAG, "sticky " + topicId);
-
-                bundle = new Bundle();
-                bundle.putString(PARAM_TOPIC_ID, topicId);
-                bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _stickies.get(topicId).parcel);
-                sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
+                sticky = _stickies.get(topicId);
             }
+        }
+        if (sticky != null) {
+            Log.v(TAG, "sticky " + topicId);
+            bundle = new Bundle();
+            bundle.putString(PARAM_TOPIC_ID, topicId);
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _stickies.get(topicId).parcel);
+            sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
         }
     }
 
@@ -223,12 +228,13 @@ public class TopicService extends MSService implements TopicConstants {
 
         synchronized (TAG) {
             String topicId = topicIdTree[0];
-            Log.v(TAG, "dispatch(" + topicId + ", " + stickyType + ")");
+            Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
             // exact match
             Set<TopicUser> users = TopicUser.getUsers(topicId);
             for (TopicUser c : users) {
                 sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
             }
+
             if (stickyType != Sticky.NONE) {
                 _stickies.put(topicId, new StickyContainer(
                         bundle.getParcelable(PARAM_TOPIC_PARCELABLE),
@@ -237,16 +243,18 @@ public class TopicService extends MSService implements TopicConstants {
 
             for (int i = 1; i < topicIdTree.length; i++) {
                 topicId += "/" + topicIdTree[i];
-                Log.v(TAG, "dispatch(" + topicId + ", " + stickyType + ")");
+                Log.v(TAG, "dispatchEvent(" + topicId + ", " + stickyType + ")");
 
                 users = TopicUser.getUsers(topicId);
                 for (TopicUser c : users) {
                     sendEvent(c.messenger, WHAT_DISPATCH_EVENT, bundle, c.userTag);
                 }
-                if (stickyType != Sticky.NONE)
+
+                if (stickyType != Sticky.NONE) {
                     _stickies.put(topicId,
                             new StickyContainer(bundle.getParcelable(PARAM_TOPIC_PARCELABLE),
                                     stickyType));
+                }
             }
         }
     }
@@ -257,11 +265,11 @@ public class TopicService extends MSService implements TopicConstants {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
-        if (payload != null)
-            //noinspection RedundantCast, casting is there to ensure we call the correct overloaded method
+        if (payload != null) {
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
-        else
+        } else {
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
+        }
 
         intent.putExtra(PARAM_STICKY, stickyType);
 
@@ -273,22 +281,6 @@ public class TopicService extends MSService implements TopicConstants {
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtras(event);
         context.startService(intent);
-    }
-
-    public static Bundle createEvent(String topicId, Parcelable payload, Sticky stickyType) {
-        Bundle bundle = new Bundle();
-
-        bundle.putString(PARAM_TOPIC_ID, topicId);
-
-        if (payload != null)
-            //noinspection RedundantCast, casting is there to ensure we call the correct overloaded method
-            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
-        else
-            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
-
-        bundle.putSerializable(PARAM_STICKY, stickyType);
-
-        return bundle;
     }
 
     /*-**********************************-*/
@@ -306,10 +298,10 @@ public class TopicService extends MSService implements TopicConstants {
         public void handleMessage(Message msg) {
             TopicService svc = _wr.get();
             if (svc == null) {
-                super.handleMessage(msg);
                 return;
             }
-
+            Stopwatch stopwatch = new Stopwatch(true);
+            Log.v(TAG, "handleMessage");
             switch (msg.what) {
                 case WHAT_REGISTER_LISTENER:
                     svc.register(msg.getData(), msg.replyTo);
@@ -324,13 +316,11 @@ public class TopicService extends MSService implements TopicConstants {
                     svc.unregister(msg.getData());
                     break;
             }
-
-            super.handleMessage(msg);
+            Log.v(TAG, "/handleMessage " + stopwatch.finish());
         }
     }
 
     private class StickyContainer {
-
         public Parcelable parcel;
         public long createdDate;
         public Sticky stickyType;
