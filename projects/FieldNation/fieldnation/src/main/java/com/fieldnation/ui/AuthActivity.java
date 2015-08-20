@@ -33,6 +33,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.utils.misc;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -201,6 +202,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            misc.hideKeyboard(v);
             startService(new Intent(AuthActivity.this, ProfileService.class));
             startService(new Intent(AuthActivity.this, WebTransactionService.class));
 
@@ -316,8 +318,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             boolean handled = false;
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 _loginButton_onClick.onClick(null);
-                InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
                 handled = true;
             }
             return handled;
