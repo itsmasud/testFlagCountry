@@ -250,7 +250,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             _expirationDate = (Calendar) _pickerCal.clone();
-            _textEditText.setText(ISO8601.fromCalendar(_expirationDate));
+            _textEditText.setText(ISO8601.formatForCF(_expirationDate));
 
         }
     };
