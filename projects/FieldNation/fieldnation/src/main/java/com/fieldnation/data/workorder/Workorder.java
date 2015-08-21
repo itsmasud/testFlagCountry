@@ -663,11 +663,14 @@ public class Workorder implements Parcelable {
 
     public boolean canRequestPayIncrease() {
         WorkorderStatus status = getStatus().getWorkorderStatus();
-        return (status == WorkorderStatus.ASSIGNED
+        WorkorderSubstatus substatus = getWorkorderSubstatus();
+        return ((status == WorkorderStatus.ASSIGNED && (substatus != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
+                && substatus != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED))
                 || status == WorkorderStatus.INPROGRESS)
                 && getPay() != null
                 && !getPay().hidePay();
     }
+
 
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
