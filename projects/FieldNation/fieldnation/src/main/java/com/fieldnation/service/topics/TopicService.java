@@ -11,7 +11,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.Log;
 import com.fieldnation.service.MSService;
-import com.fieldnation.utils.Stopwatch;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -53,7 +52,6 @@ public class TopicService extends MSService implements TopicConstants {
 
     @Override
     public void processIntent(Intent intent) {
-        Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "processIntent start");
 
         if (intent != null && intent.getExtras() != null) {
@@ -65,8 +63,6 @@ public class TopicService extends MSService implements TopicConstants {
 
             pruneStickies();
         }
-
-        Log.v(TAG, "processIntent time:" + stopwatch.finish());
     }
 
     @Override
@@ -111,7 +107,6 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     private void pruneStickies() {
-        Stopwatch stopwatch = new Stopwatch(true);
         Hashtable<String, StickyContainer> ns = new Hashtable<>();
         synchronized (TAG) {
             Set<String> keys = _stickies.keySet();
@@ -128,7 +123,6 @@ public class TopicService extends MSService implements TopicConstants {
             Log.v(TAG, "Pruning stickies done: " + ns.size() + "/" + _stickies.size());
             _stickies = ns;
         }
-        Log.v(TAG, "pruneStickies " + stopwatch.finish());
     }
 
     @Override
@@ -300,7 +294,6 @@ public class TopicService extends MSService implements TopicConstants {
             if (svc == null) {
                 return;
             }
-            Stopwatch stopwatch = new Stopwatch(true);
             Log.v(TAG, "handleMessage");
             switch (msg.what) {
                 case WHAT_REGISTER_LISTENER:
@@ -316,7 +309,6 @@ public class TopicService extends MSService implements TopicConstants {
                     svc.unregister(msg.getData());
                     break;
             }
-            Log.v(TAG, "/handleMessage " + stopwatch.finish());
         }
     }
 

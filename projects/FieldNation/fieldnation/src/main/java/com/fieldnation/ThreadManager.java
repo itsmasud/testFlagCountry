@@ -42,16 +42,10 @@ public class ThreadManager {
         Log.v(TAG, "shutdown end");
     }
 
-    private static int _wakeupcount = 0;
-
     public void wakeUp() {
-        _wakeupcount++;
-        Log.v(TAG, "wakeUp " + _wakeupcount);
         synchronized (THREAD_PAUSE) {
             THREAD_PAUSE.notifyAll();
         }
-        _wakeupcount--;
-        Log.v(TAG, "/wakeUp " + _wakeupcount);
     }
 
     public static abstract class ManagedThread extends Thread {

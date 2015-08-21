@@ -106,7 +106,7 @@ public class WebCrawlerService extends Service {
         }
 
         Log.v(TAG, "Do nothing");
-        stopSelf();
+        startActivityMonitor();
 
         return START_STICKY;
     }
@@ -424,8 +424,6 @@ public class WebCrawlerService extends Service {
 
         @Override
         public boolean doWork() {
-            Log.v(TAG, "doWork");
-
             if (System.currentTimeMillis() - _lastRequestTime > 5000) {
                 try {
                     Thread.sleep(50);

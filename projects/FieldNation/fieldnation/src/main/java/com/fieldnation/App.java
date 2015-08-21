@@ -12,6 +12,8 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
+import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
@@ -26,6 +28,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.github.anrwatchdog.ANRWatchDog;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -41,7 +44,8 @@ import io.fabric.sdk.android.Fabric;
  * @author michael.carver
  */
 public class App extends Application {
-    private final String TAG = UniqueTag.makeTag("GlobalState");
+    private static final String STAG = "FNApplication";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public static final long DAY = 86400000;
 
@@ -66,6 +70,8 @@ public class App extends Application {
     private int _memoryClass;
     private Typeface _iconFont;
 
+    private ANRWatchDog _anrWatchDog;
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -80,20 +86,27 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
-//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                .detectAll()
-//                .penaltyLog()
-//                .penaltyDeath()
-//                .build());
+        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                .detectAll()    // detect everything potentially suspect
+                .penaltyLog()   // penalty is to write to log
+                .build());
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+                .build());
 
         super.onCreate();
+        Log.v(TAG, "onCreate");
+
         Fabric.with(this, new Crashlytics());
         Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
         Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
         Crashlytics.setString("phone_model", Build.MODEL);
         Crashlytics.setString("release", Build.VERSION.RELEASE);
         Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
-        Log.v(TAG, "onCreate");
+
+        _anrWatchDog = new ANRWatchDog(1000);
+        _anrWatchDog.start();
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
@@ -129,6 +142,36 @@ public class App extends Application {
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
         setInstallTime();
+
+//        new Thread(_anrReport).start();
+    }
+
+    private Runnable _anrReport = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                anrReport();
+            }
+
+        }
+    };
+
+    public static void anrReport() {
+        final Thread mainThread = Looper.getMainLooper().getThread();
+        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
+
+        StringBuilder trace = new StringBuilder();
+        for (StackTraceElement elem : mainStackTrace) {
+            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
+        }
+
+        Log.v(STAG, trace.toString());
     }
 
     public int getMemoryClass() {
@@ -166,7 +209,6 @@ public class App extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
-            Log.v(TAG, "onAuthenticated");
         }
 
         @Override
