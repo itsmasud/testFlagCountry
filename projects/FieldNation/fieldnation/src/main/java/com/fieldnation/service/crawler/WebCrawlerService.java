@@ -54,6 +54,7 @@ public class WebCrawlerService extends Service {
     private boolean _isRunning = false;
     private long _imageDaysToLive = -1;
     private boolean _runningPurge = false;
+    private boolean _monitorRunning = false;
 
     public WebCrawlerService() {
         super();
@@ -178,15 +179,20 @@ public class WebCrawlerService extends Service {
     private void startActivityMonitor() {
         if (_activityHandler == null)
             _activityHandler = new Handler();
-        _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+
+        if (!_monitorRunning) {
+            _monitorRunning = true;
+            _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+        }
     }
 
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
-            // check timer
+            _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 60000
                     && !_runningPurge) {
+
                 // shutdown
                 stopSelf();
             } else {
