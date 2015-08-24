@@ -7,8 +7,8 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -54,6 +54,7 @@ public class WebCrawlerService extends Service {
     private boolean _isRunning = false;
     private long _imageDaysToLive = -1;
     private boolean _runningPurge = false;
+    private boolean _monitorRunning = false;
 
     public WebCrawlerService() {
         super();
@@ -106,7 +107,7 @@ public class WebCrawlerService extends Service {
         }
 
         Log.v(TAG, "Do nothing");
-        stopSelf();
+        startActivityMonitor();
 
         return START_STICKY;
     }
@@ -178,15 +179,20 @@ public class WebCrawlerService extends Service {
     private void startActivityMonitor() {
         if (_activityHandler == null)
             _activityHandler = new Handler();
-        _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+
+        if (!_monitorRunning) {
+            _monitorRunning = true;
+            _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+        }
     }
 
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
-            // check timer
+            _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 60000
                     && !_runningPurge) {
+
                 // shutdown
                 stopSelf();
             } else {
@@ -424,11 +430,9 @@ public class WebCrawlerService extends Service {
 
         @Override
         public boolean doWork() {
-            Log.v(TAG, "doWork");
-
             if (System.currentTimeMillis() - _lastRequestTime > 5000) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -456,9 +460,14 @@ public class WebCrawlerService extends Service {
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
                 for (Signature sig : sigs) {
-//                    Log.v(TAG, "getSignature");
-                    incRequestCounter(1);
-                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                    try {
+                        // Log.v(TAG, "getSignature");
+                        WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                        incRequestCounter(1);
+                        //Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
 
@@ -468,9 +477,14 @@ public class WebCrawlerService extends Service {
                     UploadedDocument[] docs = slot.getUploadedDocuments();
                     if (docs != null && docs.length > 0) {
                         for (UploadedDocument doc : docs) {
-                            incRequestCounter(1);
-                            DocumentClient.downloadDocument(_context, doc.getId(),
-                                    doc.getDownloadLink(), doc.getFileName(), true);
+                            try {
+                                DocumentClient.downloadDocument(_context, doc.getId(),
+                                        doc.getDownloadLink(), doc.getFileName(), true);
+                                incRequestCounter(1);
+                                //Thread.sleep(1000);
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }
                 }
@@ -479,9 +493,14 @@ public class WebCrawlerService extends Service {
             Document[] documents = workorder.getDocuments();
             if (documents != null && documents.length > 0) {
                 for (Document doc : documents) {
-                    incRequestCounter(1);
-                    DocumentClient.downloadDocument(_context, doc.getDocumentId(),
-                            doc.getFilePath(), doc.getFileName(), true);
+                    try {
+                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
+                                doc.getFilePath(), doc.getFileName(), true);
+                        incRequestCounter(1);
+                        //Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }
 
