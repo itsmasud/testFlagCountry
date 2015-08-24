@@ -28,6 +28,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -86,14 +87,16 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
-        StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-                .detectAll()    // detect everything potentially suspect
-                .penaltyLog()   // penalty is to write to log
-                .build());
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-                .build());
+//        if (BuildConfig.DEBUG) {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectAll()    // detect everything potentially suspect
+//                    .penaltyLog()   // penalty is to write to log
+//                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectAll()
+//                    .penaltyLog()
+//                    .build());
+//        }
 
         super.onCreate();
         Log.v(TAG, "onCreate");
@@ -106,6 +109,18 @@ public class App extends Application {
         Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
 
         _anrWatchDog = new ANRWatchDog(1000);
+        _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
+            @Override
+            public void onAppNotResponding(ANRError error) {
+                Crashlytics.logException(error);
+            }
+        });
+        _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
+            @Override
+            public void onInterrupted(InterruptedException exception) {
+                Crashlytics.logException(exception);
+            }
+        });
         _anrWatchDog.start();
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
@@ -146,33 +161,33 @@ public class App extends Application {
 //        new Thread(_anrReport).start();
     }
 
-    private Runnable _anrReport = new Runnable() {
-        @Override
-        public void run() {
-            while (true) {
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+//    private Runnable _anrReport = new Runnable() {
+//        @Override
+//        public void run() {
+//            while (true) {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                anrReport();
+//            }
+//
+//        }
+//    };
 
-                anrReport();
-            }
-
-        }
-    };
-
-    public static void anrReport() {
-        final Thread mainThread = Looper.getMainLooper().getThread();
-        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
-
-        StringBuilder trace = new StringBuilder();
-        for (StackTraceElement elem : mainStackTrace) {
-            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
-        }
-
-        Log.v(STAG, trace.toString());
-    }
+//    public static void anrReport() {
+//        final Thread mainThread = Looper.getMainLooper().getThread();
+//        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
+//
+//        StringBuilder trace = new StringBuilder();
+//        for (StackTraceElement elem : mainStackTrace) {
+//            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
+//        }
+//
+//        Log.v(STAG, trace.toString());
+//    }
 
     public int getMemoryClass() {
         return _memoryClass;
