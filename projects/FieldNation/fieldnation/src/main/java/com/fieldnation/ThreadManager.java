@@ -21,6 +21,7 @@ public class ThreadManager {
     }
 
     public void shutdown() {
+        Log.v(TAG, "shutdown start");
         for (int i = 0; i < _threads.size(); i++) {
             _threads.get(i).finish();
         }
@@ -38,6 +39,7 @@ public class ThreadManager {
             if (thread.isAlive())
                 thread.interrupt();
         }
+        Log.v(TAG, "shutdown end");
     }
 
     public void wakeUp() {
@@ -51,7 +53,7 @@ public class ThreadManager {
         private final Object THREAD_PAUSE;
 
         public ManagedThread(ThreadManager manager) {
-            super();
+            super("ManagedThread");
             THREAD_PAUSE = manager.THREAD_PAUSE;
         }
 
@@ -67,7 +69,7 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    THREAD_PAUSE.wait();
+                    THREAD_PAUSE.wait(1000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

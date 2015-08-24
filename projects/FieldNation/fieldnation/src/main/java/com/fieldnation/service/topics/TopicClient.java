@@ -21,7 +21,7 @@ import java.util.Set;
  * Created by Michael Carver on 2/27/2015.
  */
 public class TopicClient implements TopicConstants {
-//    public static final String TAG = "TopicClient";
+    public static final String TAG = "TopicClient";
 
     private boolean _isConnected = false;
     private Messenger _rcvService = new Messenger(new IncomeHandler(this));

@@ -34,7 +34,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
     }
 
     public static void get(Context context, String url, boolean getCircle, boolean isSync) {
-        misc.printStackTrace("PhotoClient.get()");
+        // misc.printStackTrace("PhotoClient.get()");
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_CIRCLE, getCircle);
