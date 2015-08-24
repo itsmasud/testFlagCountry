@@ -102,6 +102,12 @@
                 android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
                 android:visibility="gone" />
 
+            <Button
+                android:id="@+id/readMore_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="match_parent"
+                android:text="@string/btn_read_more" />
+
         </LinearLayout>
 
         <LinearLayout
