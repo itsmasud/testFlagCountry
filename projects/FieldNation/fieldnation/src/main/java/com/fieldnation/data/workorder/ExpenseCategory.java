@@ -5,48 +5,49 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpenseCategory {
-	@Json(name = "id")
-	private Integer _id;
-	@Json(name="name")
-	private String _name;
+    @Json(name = "id")
+    private Integer _id;
+    @Json(name = "name")
+    private String _name;
 
-	public ExpenseCategory() {
-	}
-	public Integer getId(){
-		return _id;
-	}
+    public ExpenseCategory() {
+    }
 
-	public String getName() {
-		return _name;
-	}
+    public Integer getId() {
+        return _id;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public static JsonObject toJson(ExpenseCategory expenseCategory) {
-		try {
-			return Serializer.serializeObject(expenseCategory);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static ExpenseCategory fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(ExpenseCategory.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(ExpenseCategory expenseCategory) {
+        try {
+            return Serializer.serializeObject(expenseCategory);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
+    public static ExpenseCategory fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(ExpenseCategory.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    /*-*************************************************-*/
+    /*-				Human Generated Code				-*/
 	/*-*************************************************-*/
-	/*-				Human Generated Code				-*/
-	/*-*************************************************-*/
-	@Override
-	public String toString() {
-		return getName();
-	}
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
