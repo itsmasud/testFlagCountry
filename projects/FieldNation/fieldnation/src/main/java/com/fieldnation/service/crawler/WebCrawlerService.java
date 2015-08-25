@@ -33,6 +33,7 @@ import com.fieldnation.utils.misc;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Michael Carver on 4/21/2015.
@@ -221,9 +222,10 @@ public class WebCrawlerService extends Service {
         // if clock is not set, set it
         long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
 
+        Random random = new Random();
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
-        cal.set(Calendar.MINUTE, (int) (runTime % 60));
+        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
+        cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
 
         long nextTime = cal.getTimeInMillis();
         if (nextTime < System.currentTimeMillis()) {
