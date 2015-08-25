@@ -212,6 +212,9 @@ public class UploadedDocumentView extends RelativeLayout {
 
         @Override
         public boolean onLongClick(View v) {
+            if (_doc == null || _doc.getUploaderUserId() == null)
+                return false;
+
             if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
 
                 if (_listener != null)
