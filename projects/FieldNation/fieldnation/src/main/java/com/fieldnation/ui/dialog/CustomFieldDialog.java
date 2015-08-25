@@ -1,6 +1,5 @@
 package com.fieldnation.ui.dialog;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -9,7 +8,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,7 +19,6 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -250,7 +247,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             _expirationDate = (Calendar) _pickerCal.clone();
-            _textEditText.setText(ISO8601.formatForCF(_expirationDate));
+            _textEditText.setText(misc.formatDateTimeForCF(_expirationDate));
 
         }
     };

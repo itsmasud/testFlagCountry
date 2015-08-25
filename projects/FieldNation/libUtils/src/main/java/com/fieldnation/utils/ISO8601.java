@@ -27,9 +27,6 @@ public final class ISO8601 {
         return _sdf;
     }
 
-    private static SimpleDateFormat getSDFForCF() {
-        return new SimpleDateFormat("MM/dd/yyyy h:mm a");
-    }
 
     public static String fromUTC(long utcMilliseconds) {
         final Calendar cal = Calendar.getInstance();
@@ -46,11 +43,6 @@ public final class ISO8601 {
         return formatted.substring(0, 22) + ":" + formatted.substring(22);
     }
 
-
-    public static String formatForCF(final Calendar calendar) {
-        Date date = calendar.getTime();
-        return getSDFForCF().format(date);
-    }
 
     /**
      * Get current date and time formatted as ISO 8601 string.
