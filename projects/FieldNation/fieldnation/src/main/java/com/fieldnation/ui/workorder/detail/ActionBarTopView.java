@@ -102,9 +102,9 @@ public class ActionBarTopView extends RelativeLayout {
             case COUNTEROFFERED:
             case REQUESTED:
                 // withdraw/withdraw request
-                _leftGrayButton.setVisibility(VISIBLE);
-                _leftGrayButton.setText(R.string.btn_withdraw_request);
-                _leftGrayButton.setOnClickListener(_withdraw_onClick);
+                _leftWhiteButton.setVisibility(VISIBLE);
+                _leftWhiteButton.setText(R.string.btn_withdraw_request);
+                _leftWhiteButton.setOnClickListener(_withdraw_onClick);
 
                 // if provider has countered then View Counter
                 if (_workorder.getIsCounter()) {
@@ -180,9 +180,9 @@ public class ActionBarTopView extends RelativeLayout {
                 break;
             case PENDINGREVIEW: // marked completed
                 // mark incomplete
-                _rightGrayButton.setVisibility(VISIBLE);
-                _rightGrayButton.setText(R.string.btn_mark_incomplete);
-                _rightGrayButton.setOnClickListener(_markIncomplete_onClick);
+                _rightWhiteButton.setVisibility(VISIBLE);
+                _rightWhiteButton.setText(R.string.btn_mark_incomplete);
+                _rightWhiteButton.setOnClickListener(_markIncomplete_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
