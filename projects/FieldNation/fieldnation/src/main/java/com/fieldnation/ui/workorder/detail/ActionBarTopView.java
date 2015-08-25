@@ -154,18 +154,18 @@ public class ActionBarTopView extends RelativeLayout {
                 } else if (_workorder.areTasksComplete()
                         && misc.isEmptyOrNull(_workorder.getClosingNotes())
                         && _workorder.canChangeClosingNotes()) {
-                    _rightWhiteButton.setVisibility(VISIBLE);
-                    _rightWhiteButton.setText(R.string.btn_closing_notes);
-                    _rightWhiteButton.setOnClickListener(_closing_onClick);
+                    _rightOrangeButton.setVisibility(VISIBLE);
+                    _rightOrangeButton.setText(R.string.btn_closing_notes);
+                    _rightOrangeButton.setOnClickListener(_closing_onClick);
                 }
 
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDIN:
                 // Check out
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_check_out);
-                _rightWhiteButton.setOnClickListener(_checkout_onClick);
+                _rightGreenButton.setVisibility(VISIBLE);
+                _rightGreenButton.setText(R.string.btn_check_out);
+                _rightGreenButton.setOnClickListener(_checkout_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case ONHOLD_ACKNOWLEDGED:
