@@ -76,10 +76,22 @@ public class User {
     }
 
     public String getPhotoThumbUrl() {
+        if ("/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
         return _photoThumbUrl;
     }
 
     public String getPhotoUrl() {
+        if ("/images/missing.png".equals(_photoUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoUrl))
+            return null;
+
         return _photoUrl;
     }
 
