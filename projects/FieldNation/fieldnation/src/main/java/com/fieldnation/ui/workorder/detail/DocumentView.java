@@ -177,7 +177,7 @@ public class DocumentView extends RelativeLayout {
             if (_document == null)
                 return;
 
-            if (_document.getDocumentId() != documentId)
+            if (_document.getDocumentId() == null || _document.getDocumentId() != documentId)
                 return;
 
             if (state == DocumentConstants.PARAM_STATE_START) {
