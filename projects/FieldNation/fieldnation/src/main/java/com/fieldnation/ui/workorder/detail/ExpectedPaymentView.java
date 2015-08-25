@@ -130,7 +130,11 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
             _insuraceFeeTextView.setVisibility(VISIBLE);
             _insurancePercentTextView.setVisibility(VISIBLE);
             _insuraceFeeTextView.setText(misc.toCurrency(pay.getExpectedInsuranceFee()));
-            _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            try {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            } catch (Exception ex) {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), 10));
+            }
         }
     }
 }
