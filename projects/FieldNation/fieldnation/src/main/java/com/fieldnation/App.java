@@ -13,7 +13,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
@@ -87,6 +86,7 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
+        // enable when trying to find ANRs and other weird bugs
 //        if (BuildConfig.DEBUG) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                    .detectAll()    // detect everything potentially suspect
@@ -103,10 +103,8 @@ public class App extends Application {
 
         Fabric.with(this, new Crashlytics());
         Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-        Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
-        Crashlytics.setString("phone_model", Build.MODEL);
-        Crashlytics.setString("release", Build.VERSION.RELEASE);
         Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
+        Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
         _anrWatchDog = new ANRWatchDog(1000);
         _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
@@ -158,36 +156,36 @@ public class App extends Application {
 
         setInstallTime();
 
-//        new Thread(_anrReport).start();
+//            new Thread(_anrReport).start();
     }
 
-//    private Runnable _anrReport = new Runnable() {
-//        @Override
-//        public void run() {
-//            while (true) {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                anrReport();
-//            }
-//
-//        }
-//    };
+    private Runnable _anrReport = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-//    public static void anrReport() {
-//        final Thread mainThread = Looper.getMainLooper().getThread();
-//        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
-//
-//        StringBuilder trace = new StringBuilder();
-//        for (StackTraceElement elem : mainStackTrace) {
-//            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
-//        }
-//
-//        Log.v(STAG, trace.toString());
-//    }
+                anrReport();
+            }
+
+        }
+    };
+
+    public static void anrReport() {
+        final Thread mainThread = Looper.getMainLooper().getThread();
+        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
+
+        StringBuilder trace = new StringBuilder();
+        for (StackTraceElement elem : mainStackTrace) {
+            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
+        }
+
+        Log.v(STAG, trace.toString());
+    }
 
     public int getMemoryClass() {
         return _memoryClass;
