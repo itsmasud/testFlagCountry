@@ -60,12 +60,12 @@
 
                 <com.fieldnation.ui.IconFontButton
                     android:id="@+id/datetime_button"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
+                    android:layout_width="42dp"
+                    android:layout_height="42dp"
                     android:layout_alignParentRight="true"
                     android:text="@string/icfont_calendar"
-                    android:textSize="36sp"
-                    android:visibility="gone" />
+                    android:textSize="24sp"
+                    android:visibility="visible" />
             </RelativeLayout>
 
             <LinearLayout

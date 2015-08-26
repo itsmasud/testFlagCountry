@@ -1295,6 +1295,16 @@ public class misc {
         }
     }
 
+    public static String formatDateForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public static String formatTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("h:mm a").format(date);
+    }
+
     public static String formatDateTimeForCF(final Calendar calendar) {
         Date date = calendar.getTime();
         return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);

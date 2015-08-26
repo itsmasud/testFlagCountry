@@ -229,6 +229,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     }
 
 
+
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
@@ -247,7 +248,25 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             _expirationDate = (Calendar) _pickerCal.clone();
-            _textEditText.setText(misc.formatDateTimeForCF(_expirationDate));
+
+            switch (_customField.getFieldType()) {
+                case DATE:
+                    _textEditText.setText(misc.formatDateForCF(_expirationDate));
+                    break;
+                case DATETIME:
+                    _textEditText.setText(misc.formatDateTimeForCF(_expirationDate));
+                    break;
+                case TIME:
+                    _textEditText.setText(misc.formatTimeForCF(_expirationDate));
+                    break;
+            }
+
+
+
+
+
+
+
 
         }
     };
