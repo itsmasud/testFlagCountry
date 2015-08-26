@@ -65,7 +65,7 @@
                     android:layout_alignParentRight="true"
                     android:text="@string/icfont_calendar"
                     android:textSize="24sp"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </RelativeLayout>
 
             <LinearLayout
