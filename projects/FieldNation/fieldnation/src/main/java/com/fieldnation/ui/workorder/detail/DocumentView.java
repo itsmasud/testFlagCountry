@@ -197,6 +197,10 @@ public class DocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_document == null || _document.getDocumentId() == null) {
+                return;
+            }
+
             if (_workorder.canChangeDeliverables()) {
                 DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
                         _document.getFilePath(), _document.getFileName(), false);
