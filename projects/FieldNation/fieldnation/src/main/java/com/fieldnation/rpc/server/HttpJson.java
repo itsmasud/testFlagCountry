@@ -73,7 +73,6 @@ public class HttpJson {
         String url = protocol + hostname + path + params;
 
         Crashlytics.log("HttpJson: url=" + url);
-        Crashlytics.setString("last_http", url);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
