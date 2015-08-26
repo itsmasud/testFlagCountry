@@ -151,7 +151,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         if (!misc.isEmptyOrNull(_customField.getTip())) {
             _tipLayout.setVisibility(View.VISIBLE);
             if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-                _tipTextView.setText(_customField.getTip() + "\n(Format: " + _customField.getCustomFieldFormat() + ")");
+                _tipTextView.setText(_customField.getTip() + " (Format: " + _customField.getCustomFieldFormat() + ")");
             } else {
                 _tipTextView.setText(_customField.getTip());
             }
@@ -190,6 +190,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 break;
             case LIST:
                 _spinnerLayout.setVisibility(View.VISIBLE);
+                _textEditText.setVisibility(View.GONE);
                 if (_customField.getPredefinedValues() != null) {
                     Log.v(TAG, "PredefinedValues");
                     for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
@@ -229,7 +230,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
     }
 
 
-
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
@@ -260,12 +260,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _textEditText.setText(misc.formatTimeForCF(_expirationDate));
                     break;
             }
-
-
-
-
-
-
 
 
         }
