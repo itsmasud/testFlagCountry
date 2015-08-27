@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -560,7 +561,15 @@ public class DeliverableFragment extends WorkorderFragment {
             } else {
                 String name = file.getName();
                 name = name.substring(name.indexOf("_") + 1);
-                ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+
+                Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                    PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                    ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                } else {
+                    ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                }
             }
         }
     };
