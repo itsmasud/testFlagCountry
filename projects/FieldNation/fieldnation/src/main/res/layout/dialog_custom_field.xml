@@ -52,15 +52,22 @@
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/datetime_button"
                     android:gravity="center_vertical"
-                    android:visibility="visible" />
+                    android:visibility="visible">
+                    <!--<requestFocus />-->
+                </EditText>
 
                 <com.fieldnation.ui.IconFontButton
                     android:id="@+id/datetime_button"
-                    android:layout_width="48dp"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_width="wrap_content"
                     android:layout_height="48dp"
                     android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="0dp"
+                    android:minWidth="0dp"
+                    android:paddingRight="0dp"
                     android:text="@string/icfont_calendar"
-                    android:textSize="36sp"
+                    android:textSize="16sp"
                     android:visibility="gone" />
             </RelativeLayout>
 
