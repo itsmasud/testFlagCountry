@@ -67,7 +67,7 @@
                         android:layout_height="wrap_content"
                         android:gravity="center"
                         android:text="MAP NOT AVAILABLE"
-                        android:textColor="@color/fn_dark_text" />
+                        android:textColor="@color/fn_white_text" />
 
                     <TextView
                         style="@style/Text_Body_1"
@@ -76,7 +76,7 @@
                         android:layout_marginBottom="8dp"
                         android:gravity="center"
                         android:text="Check your GPS settings or location's address"
-                        android:textColor="@color/fn_dark_text" />
+                        android:textColor="@color/fn_white_text" />
                 </LinearLayout>
 
             </RelativeLayout>

@@ -5,11 +5,11 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadSlot {
-	@Json(name="maxFileSize")
-	private String _maxFileSize;
+    @Json(name = "maxFileSize")
+    private String _maxFileSize;
     @Json(name = "maxFiles")
     private Integer _maxFiles;
-//	@Json(name="minFileSize")
+    //	@Json(name="minFileSize")
 //	private Object _minFileSize;
     @Json(name = "minFiles")
     private Integer _minFiles;
@@ -24,9 +24,10 @@ public class UploadSlot {
 
     public UploadSlot() {
     }
-	public String getMaxFileSize(){
-		return _maxFileSize;
-	}
+
+    public String getMaxFileSize() {
+        return _maxFileSize;
+    }
 
     public Integer getMaxFiles() {
         return _maxFiles;

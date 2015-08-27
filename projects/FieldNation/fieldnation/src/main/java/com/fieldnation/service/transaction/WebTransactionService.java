@@ -23,6 +23,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -231,6 +232,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // at some point call the web service
             JsonObject request = trans.getRequest().copy();
+            String handlerName = null;
+            HttpResult result = null;
             try {
                 // apply authentication if needed
                 if (trans.useAuth()) {
@@ -249,7 +252,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 Log.v(TAG, request.display());
 
-                String handlerName = trans.getHandlerName();
+                handlerName = trans.getHandlerName();
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
@@ -272,13 +275,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
 
                 // perform request
-                HttpResult result = HttpJson.run(context, request);
+                result = HttpJson.run(context, request);
 
                 // debug output
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    Log.v(TAG, result.getString());
+                    // Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -347,6 +350,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                             break;
                     }
                 }
+            } catch (MalformedURLException ex) {
+                if (handlerName != null && result != null)
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                WebTransaction.delete(context, trans.getId());
+                Transform.deleteTransaction(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
                 GlobalTopicClient.dispatchNetworkDisconnected(context);

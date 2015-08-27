@@ -519,10 +519,15 @@ public class WorkorderCardView extends RelativeLayout {
                 _distanceTextView.setText("Remote");
             } else if (location.getGeo() != null && _gpsLocation != null) {
                 _distanceTextView.setVisibility(VISIBLE);
-                LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
-                LatLng myLoc = new LatLng(_gpsLocation);
+                try {
+                    LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                    LatLng myLoc = new LatLng(_gpsLocation);
 
-                _distanceTextView.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                    _distanceTextView.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _distanceTextView.setText("Unknown mi");
+                }
             } else {
                 _distanceTextView.setVisibility(GONE);
             }

@@ -2,6 +2,7 @@ package com.fieldnation.rpc.server;
 
 import android.content.Context;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -70,6 +71,8 @@ public class HttpJson {
         checkUrlOptions(params);
 
         String url = protocol + hostname + path + params;
+
+        Crashlytics.log("HttpJson: url=" + url);
 
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
