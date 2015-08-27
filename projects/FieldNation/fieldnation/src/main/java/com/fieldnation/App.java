@@ -282,6 +282,7 @@ public class App extends Application {
                 _profile = profile;
 
                 Crashlytics.setLong("user_id", _profile.getUserId());
+                Crashlytics.setUserIdentifier(_profile.getUserId() + "");
 
                 GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
@@ -535,6 +536,13 @@ public class App extends Application {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = getPackageName();
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
+    }
+
+    public String getDownloadsFolder() {
+        File externalPath = Environment.getExternalStorageDirectory();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Download");
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }
