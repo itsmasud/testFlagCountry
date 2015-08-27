@@ -19,8 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
-import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -234,14 +235,6 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
-    private void tryActivityResult() {
-        if (_activityResult != null) {
-            Log.v(TAG, "recovering");
-            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
-                _activityResult = null;
-        }
-    }
-
     private void populateUi() {
 
         misc.hideKeyboard(getView());
@@ -329,6 +322,13 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
+    private void tryActivityResult() {
+        if (_activityResult != null) {
+            Log.v(TAG, "recovering");
+            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
+                _activityResult = null;
+        }
+    }
 
     private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
@@ -536,9 +536,32 @@ public class DeliverableFragment extends WorkorderFragment {
                 return;
             }
 
+            // todo, maybe this should be put somewhere else
+            new AsyncTaskEx<File, Object, Object>() {
+                @Override
+                protected Object doInBackground(File... params) {
+                    try {
+                        File f = params[0];
+                        String name = f.getName();
+                        name = name.substring(name.indexOf("_") + 1);
+                        misc.copyFile(f, new File(App.get().getDownloadsFolder() + "/" + name));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
+            }.executeEx(file);
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
-            startActivity(intent);
+
+            if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                String name = file.getName();
+                name = name.substring(name.indexOf("_") + 1);
+                ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+            }
         }
     };
 }

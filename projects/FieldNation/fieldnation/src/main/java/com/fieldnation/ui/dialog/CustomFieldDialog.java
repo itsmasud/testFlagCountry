@@ -88,7 +88,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         View v = inflater.inflate(R.layout.dialog_custom_field, container);
 
-
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
