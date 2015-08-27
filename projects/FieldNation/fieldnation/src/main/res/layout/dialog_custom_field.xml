@@ -60,7 +60,7 @@
                     android:id="@+id/datetime_button"
                     style="?attr/buttonFlatStyle"
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
+                    android:layout_height="48dp"
                     android:layout_alignParentRight="true"
                     android:layout_centerVertical="true"
                     android:layout_margin="0dp"
