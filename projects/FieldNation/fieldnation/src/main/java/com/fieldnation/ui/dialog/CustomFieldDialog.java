@@ -12,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -40,7 +39,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
     private Spinner _spinner;
-    private RelativeLayout _tipLayout;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
@@ -97,11 +95,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-
         _spinner = (Spinner) v.findViewById(R.id.spinner);
-
-        _tipLayout = (RelativeLayout) v.findViewById(R.id.tip_layout);
-
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -135,7 +129,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     private void populateUi() {
         if (_textEditText == null || _dateTimeButton == null || _spinner == null ||
-                _tipLayout == null || _tipTextView == null || _customField == null)
+                _tipTextView == null || _customField == null)
             return;
 
         _titleTextView.setText(_customField.getLabel());
@@ -145,17 +139,17 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
         _spinnerLayout.setVisibility(View.GONE);
-        _tipLayout.setVisibility(View.GONE);
+        _tipTextView.setVisibility(View.GONE);
 
         if (!misc.isEmptyOrNull(_customField.getTip())) {
-            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setVisibility(View.VISIBLE);
             if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-                _tipTextView.setText(_customField.getTip() + " (Format: " + _customField.getCustomFieldFormat() + ")");
+                _tipTextView.setText(_customField.getTip() + " (" + _customField.getCustomFieldFormat() + ")");
             } else {
                 _tipTextView.setText(_customField.getTip());
             }
         } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setVisibility(View.VISIBLE);
             _tipTextView.setText(_customField.getCustomFieldFormat());
         }
 
