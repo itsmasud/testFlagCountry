@@ -106,7 +106,7 @@ public class App extends Application {
         Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
         Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
-        _anrWatchDog = new ANRWatchDog(1000);
+        _anrWatchDog = new ANRWatchDog(5000);
         _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
             @Override
             public void onAppNotResponding(ANRError error) {
