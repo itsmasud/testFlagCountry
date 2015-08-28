@@ -13,7 +13,6 @@ import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.os.Looper;
-import android.os.StrictMode;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
@@ -87,6 +86,7 @@ public class App extends Application {
 
     @Override
     public void onCreate() {
+        // enable when trying to find ANRs and other weird bugs
 //        if (BuildConfig.DEBUG) {
 //            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 //                    .detectAll()    // detect everything potentially suspect
@@ -101,27 +101,31 @@ public class App extends Application {
         super.onCreate();
         Log.v(TAG, "onCreate");
 
-        Fabric.with(this, new Crashlytics());
-        Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-        Crashlytics.setString("phone_manufaturer", Build.MANUFACTURER);
-        Crashlytics.setString("phone_model", Build.MODEL);
-        Crashlytics.setString("release", Build.VERSION.RELEASE);
-        Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
+        // only run crashlytics when in debug mode.
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+            Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+            Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
+            Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
-        _anrWatchDog = new ANRWatchDog(1000);
-        _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
-            @Override
-            public void onAppNotResponding(ANRError error) {
-                Crashlytics.logException(error);
-            }
-        });
-        _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
-            @Override
-            public void onInterrupted(InterruptedException exception) {
-                Crashlytics.logException(exception);
-            }
-        });
-        _anrWatchDog.start();
+            _anrWatchDog = new ANRWatchDog(5000);
+            _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
+                @Override
+                public void onAppNotResponding(ANRError error) {
+                    Crashlytics.logException(error);
+                }
+            });
+            _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
+                @Override
+                public void onInterrupted(InterruptedException exception) {
+                    Crashlytics.logException(exception);
+                }
+            });
+            _anrWatchDog.start();
+        } else {
+            _anrWatchDog = new ANRWatchDog(5000);
+            _anrWatchDog.start();
+        }
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
@@ -158,36 +162,36 @@ public class App extends Application {
 
         setInstallTime();
 
-//        new Thread(_anrReport).start();
+//            new Thread(_anrReport).start();
     }
 
-//    private Runnable _anrReport = new Runnable() {
-//        @Override
-//        public void run() {
-//            while (true) {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                anrReport();
-//            }
-//
-//        }
-//    };
+    private Runnable _anrReport = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
-//    public static void anrReport() {
-//        final Thread mainThread = Looper.getMainLooper().getThread();
-//        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
-//
-//        StringBuilder trace = new StringBuilder();
-//        for (StackTraceElement elem : mainStackTrace) {
-//            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
-//        }
-//
-//        Log.v(STAG, trace.toString());
-//    }
+                anrReport();
+            }
+
+        }
+    };
+
+    public static void anrReport() {
+        final Thread mainThread = Looper.getMainLooper().getThread();
+        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
+
+        StringBuilder trace = new StringBuilder();
+        for (StackTraceElement elem : mainStackTrace) {
+            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
+        }
+
+        Log.v(STAG, trace.toString());
+    }
 
     public int getMemoryClass() {
         return _memoryClass;
@@ -284,6 +288,7 @@ public class App extends Application {
                 _profile = profile;
 
                 Crashlytics.setLong("user_id", _profile.getUserId());
+                Crashlytics.setUserIdentifier(_profile.getUserId() + "");
 
                 GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
@@ -537,6 +542,13 @@ public class App extends Application {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = getPackageName();
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName);
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
+    }
+
+    public String getDownloadsFolder() {
+        File externalPath = Environment.getExternalStorageDirectory();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Download");
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }

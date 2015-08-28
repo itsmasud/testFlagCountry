@@ -177,7 +177,7 @@ public class DocumentView extends RelativeLayout {
             if (_document == null)
                 return;
 
-            if (_document.getDocumentId() != documentId)
+            if (_document.getDocumentId() == null || _document.getDocumentId() != documentId)
                 return;
 
             if (state == DocumentConstants.PARAM_STATE_START) {
@@ -197,6 +197,10 @@ public class DocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_document == null || _document.getDocumentId() == null) {
+                return;
+            }
+
             if (_workorder.canChangeDeliverables()) {
                 DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
                         _document.getFilePath(), _document.getFileName(), false);

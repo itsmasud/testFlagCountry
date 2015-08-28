@@ -5,113 +5,114 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ShipmentTracking {
-	@Json(name = "carrier")
-	private String _carrier;
-	@Json(name = "carrierOther")
-	private String _carrierOther;
-	@Json(name="currentStatus")
-	private String _currentStatus;
-	@Json(name="dateArrived")
-	private Object _dateArrived;
-	@Json(name="dateCreated")
-	private Integer _dateCreated;
-	@Json(name="dateOfFirstTrackedActivity")
-	private Object _dateOfFirstTrackedActivity;
-	@Json(name="dateProjectedToArrive")
-	private Object _dateProjectedToArrive;
-	@Json(name="deleted")
-	private Integer _deleted;
-	@Json(name = "direction")
-	private String _direction;
-	@Json(name="name")
-	private String _name;
-	@Json(name = "trackingId")
-	private String _trackingId;
-	@Json(name="userId")
-	private Integer _userId;
-	@Json(name="workorderId")
-	private Integer _workorderId;
-	@Json(name="workorderShipmentId")
-	private Integer _workorderShipmentId;
+    @Json(name = "carrier")
+    private String _carrier;
+    @Json(name = "carrierOther")
+    private String _carrierOther;
+    @Json(name = "currentStatus")
+    private String _currentStatus;
+    @Json(name = "dateArrived")
+    private Object _dateArrived;
+    @Json(name = "dateCreated")
+    private Integer _dateCreated;
+    @Json(name = "dateOfFirstTrackedActivity")
+    private Object _dateOfFirstTrackedActivity;
+    @Json(name = "dateProjectedToArrive")
+    private Object _dateProjectedToArrive;
+    @Json(name = "deleted")
+    private Integer _deleted;
+    @Json(name = "direction")
+    private String _direction;
+    @Json(name = "name")
+    private String _name;
+    @Json(name = "trackingId")
+    private String _trackingId;
+    @Json(name = "userId")
+    private Integer _userId;
+    @Json(name = "workorderId")
+    private Integer _workorderId;
+    @Json(name = "workorderShipmentId")
+    private Integer _workorderShipmentId;
 
-	public ShipmentTracking() {
-	}
-	public String getCarrier(){
-		return _carrier;
-	}
+    public ShipmentTracking() {
+    }
 
-	public String getCarrierOther(){
-		return _carrierOther;
-	}
+    public String getCarrier() {
+        return _carrier;
+    }
 
-	public String getCurrentStatus(){
-		return _currentStatus;
-	}
+    public String getCarrierOther() {
+        return _carrierOther;
+    }
 
-	public Object getDateArrived(){
-		return _dateArrived;
-	}
+    public String getCurrentStatus() {
+        return _currentStatus;
+    }
 
-	public Integer getDateCreated(){
-		return _dateCreated;
-	}
+    public Object getDateArrived() {
+        return _dateArrived;
+    }
 
-	public Object getDateOfFirstTrackedActivity(){
-		return _dateOfFirstTrackedActivity;
-	}
+    public Integer getDateCreated() {
+        return _dateCreated;
+    }
 
-	public Object getDateProjectedToArrive(){
-		return _dateProjectedToArrive;
-	}
+    public Object getDateOfFirstTrackedActivity() {
+        return _dateOfFirstTrackedActivity;
+    }
 
-	public Integer getDeleted(){
-		return _deleted;
-	}
+    public Object getDateProjectedToArrive() {
+        return _dateProjectedToArrive;
+    }
 
-	public String getDirection() {
-		return _direction;
-	}
+    public Integer getDeleted() {
+        return _deleted;
+    }
 
-	public String getName(){
-		return _name;
-	}
+    public String getDirection() {
+        return _direction;
+    }
 
-	public String getTrackingId(){
-		return _trackingId;
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public Integer getUserId(){
-		return _userId;
-	}
+    public String getTrackingId() {
+        return _trackingId;
+    }
 
-	public Integer getWorkorderId(){
-		return _workorderId;
-	}
+    public Integer getUserId() {
+        return _userId;
+    }
 
-	public Integer getWorkorderShipmentId(){
-		return _workorderShipmentId;
-	}
+    public Integer getWorkorderId() {
+        return _workorderId;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public Integer getWorkorderShipmentId() {
+        return _workorderShipmentId;
+    }
 
-	public static JsonObject toJson(ShipmentTracking shipmentTracking) {
-		try {
-			return Serializer.serializeObject(shipmentTracking);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static ShipmentTracking fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(ShipmentTracking.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(ShipmentTracking shipmentTracking) {
+        try {
+            return Serializer.serializeObject(shipmentTracking);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static ShipmentTracking fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(ShipmentTracking.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

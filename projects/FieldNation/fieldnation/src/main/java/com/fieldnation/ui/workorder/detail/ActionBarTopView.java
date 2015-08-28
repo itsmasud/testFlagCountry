@@ -102,9 +102,9 @@ public class ActionBarTopView extends RelativeLayout {
             case COUNTEROFFERED:
             case REQUESTED:
                 // withdraw/withdraw request
-                _leftGrayButton.setVisibility(VISIBLE);
-                _leftGrayButton.setText(R.string.btn_withdraw_request);
-                _leftGrayButton.setOnClickListener(_withdraw_onClick);
+                _leftWhiteButton.setVisibility(VISIBLE);
+                _leftWhiteButton.setText(R.string.btn_withdraw_request);
+                _leftWhiteButton.setOnClickListener(_withdraw_onClick);
 
                 // if provider has countered then View Counter
                 if (_workorder.getIsCounter()) {
@@ -154,18 +154,18 @@ public class ActionBarTopView extends RelativeLayout {
                 } else if (_workorder.areTasksComplete()
                         && misc.isEmptyOrNull(_workorder.getClosingNotes())
                         && _workorder.canChangeClosingNotes()) {
-                    _rightWhiteButton.setVisibility(VISIBLE);
-                    _rightWhiteButton.setText(R.string.btn_closing_notes);
-                    _rightWhiteButton.setOnClickListener(_closing_onClick);
+                    _rightOrangeButton.setVisibility(VISIBLE);
+                    _rightOrangeButton.setText(R.string.btn_closing_notes);
+                    _rightOrangeButton.setOnClickListener(_closing_onClick);
                 }
 
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDIN:
                 // Check out
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_check_out);
-                _rightWhiteButton.setOnClickListener(_checkout_onClick);
+                _rightGreenButton.setVisibility(VISIBLE);
+                _rightGreenButton.setText(R.string.btn_check_out);
+                _rightGreenButton.setOnClickListener(_checkout_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case ONHOLD_ACKNOWLEDGED:
@@ -180,9 +180,9 @@ public class ActionBarTopView extends RelativeLayout {
                 break;
             case PENDINGREVIEW: // marked completed
                 // mark incomplete
-                _rightGrayButton.setVisibility(VISIBLE);
-                _rightGrayButton.setText(R.string.btn_mark_incomplete);
-                _rightGrayButton.setOnClickListener(_markIncomplete_onClick);
+                _rightWhiteButton.setVisibility(VISIBLE);
+                _rightWhiteButton.setText(R.string.btn_mark_incomplete);
+                _rightWhiteButton.setOnClickListener(_markIncomplete_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:

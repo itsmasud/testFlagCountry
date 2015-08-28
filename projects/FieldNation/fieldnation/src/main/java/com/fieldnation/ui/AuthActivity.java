@@ -15,7 +15,6 @@ import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.view.inputmethod.EditorInfo;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -295,21 +294,17 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-
     private final TextView.OnEditorActionListener _onEditorUserName = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             boolean handled = false;
-
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
                 _passwordEditText.requestFocus();
                 handled = true;
             }
-
             return handled;
         }
     };
-
 
     private final TextView.OnEditorActionListener _onEditorPassword = new TextView.OnEditorActionListener() {
 
@@ -323,7 +318,5 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return handled;
         }
     };
-
-
 }
 

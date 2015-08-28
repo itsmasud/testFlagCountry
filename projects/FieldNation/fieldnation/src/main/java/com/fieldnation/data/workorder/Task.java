@@ -147,7 +147,7 @@ public class Task implements Parcelable {
 
     public Long getSlotId() {
         if (_slotId != null)
-        return _slotId;
+            return _slotId;
 
         if (_identifier != null)
             return (long) _identifier;

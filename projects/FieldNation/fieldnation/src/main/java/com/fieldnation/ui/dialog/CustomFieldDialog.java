@@ -3,6 +3,7 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,7 +12,6 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -19,6 +19,10 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.utils.misc;
+import com.fourmob.datetimepicker.date.DatePickerDialog;
+import com.sleepbot.datetimepicker.time.TimePickerDialog;
+
+import java.util.Calendar;
 
 /**
  * Created by michael.carver on 10/29/2014.
@@ -35,14 +39,19 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
     private Spinner _spinner;
-    private RelativeLayout _tipLayout;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
 
+    // Dialogs
+    private DatePickerDialog _datePicker;
+    private TimePickerDialog _timePicker;
+
     // Data
     private CustomField _customField;
     private Listener _listener;
+    private Calendar _pickerCal;
+    private Calendar _expirationDate;
 
 
     /*-*****************************-*/
@@ -77,7 +86,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         View v = inflater.inflate(R.layout.dialog_custom_field, container);
 
-
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
@@ -87,11 +95,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-
         _spinner = (Spinner) v.findViewById(R.id.spinner);
-
-        _tipLayout = (RelativeLayout) v.findViewById(R.id.tip_layout);
-
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -125,7 +129,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     private void populateUi() {
         if (_textEditText == null || _dateTimeButton == null || _spinner == null ||
-                _tipLayout == null || _tipTextView == null || _customField == null)
+                _tipTextView == null || _customField == null)
             return;
 
         _titleTextView.setText(_customField.getLabel());
@@ -135,37 +139,51 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
         _spinnerLayout.setVisibility(View.GONE);
-        _tipLayout.setVisibility(View.GONE);
+        _tipTextView.setVisibility(View.GONE);
 
         if (!misc.isEmptyOrNull(_customField.getTip())) {
-            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setVisibility(View.VISIBLE);
             if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-                _tipTextView.setText(_customField.getTip() + "\n(Format: " + _customField.getCustomFieldFormat() + ")");
+                _tipTextView.setText(_customField.getTip() + " (" + _customField.getCustomFieldFormat() + ")");
             } else {
                 _tipTextView.setText(_customField.getTip());
             }
         } else if (!misc.isEmptyOrNull(_customField.getCustomFieldFormat())) {
-            _tipLayout.setVisibility(View.VISIBLE);
+            _tipTextView.setVisibility(View.VISIBLE);
             _tipTextView.setText(_customField.getCustomFieldFormat());
         }
 
+        _textEditText.setVisibility(View.VISIBLE);
+        _textEditText.getEditableText().clear();
+        //_textEditText.setText("", TextView.BufferType.EDITABLE);
+        if (!misc.isEmptyOrNull(_customField.getValue())) {
+            _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+        }
         switch (type) {
             case DATE:
+                _dateTimeButton.setVisibility(View.VISIBLE);
+                _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_DATE);
+                break;
             case DATETIME:
+                _dateTimeButton.setVisibility(View.VISIBLE);
+                _textEditText.setInputType(InputType.TYPE_CLASS_DATETIME);
+                break;
             case TIME:
-                //_dateTimeButton.setVisibility(View.VISIBLE);
+                _dateTimeButton.setVisibility(View.VISIBLE);
+                _textEditText.setInputType(InputType.TYPE_DATETIME_VARIATION_TIME);
+                break;
             case TEXT:
+                _textEditText.setInputType(InputType.TYPE_CLASS_TEXT);
+                break;
             case NUMBER:
+                _textEditText.setInputType(InputType.TYPE_CLASS_NUMBER);
+                break;
             case PHONE:
-                _textEditText.setVisibility(View.VISIBLE);
-                _textEditText.getEditableText().clear();
-                //_textEditText.setText("", TextView.BufferType.EDITABLE);
-                if (!misc.isEmptyOrNull(_customField.getValue())) {
-                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
-                }
+                _textEditText.setInputType(InputType.TYPE_CLASS_PHONE);
                 break;
             case LIST:
                 _spinnerLayout.setVisibility(View.VISIBLE);
+                _textEditText.setVisibility(View.GONE);
                 if (_customField.getPredefinedValues() != null) {
                     Log.v(TAG, "PredefinedValues");
                     for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
@@ -193,12 +211,76 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 }
                 break;
         }
+
+        _pickerCal = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance();
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker.setCloseOnSingleTapDay(true);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                false, false);
+
     }
+
+
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
+            _pickerCal.set(year, month, day);
+            _expirationDate = (Calendar) _pickerCal.clone();
+            switch (_customField.getFieldType()) {
+                case DATE:
+                    _textEditText.setText(misc.formatDateForCF(_expirationDate));
+                    break;
+                case DATETIME:
+                    _timePicker.show(_fm, datePickerDialog.getTag());
+                    break;
+            }
+
+        }
+    };
+
+
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+
+        @Override
+        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+            String tag = view.getTag();
+            _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
+                    _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            _expirationDate = (Calendar) _pickerCal.clone();
+
+            switch (_customField.getFieldType()) {
+                case DATETIME:
+                    _textEditText.setText(misc.formatDateTimeForCF(_expirationDate));
+                    break;
+                case TIME:
+                    _textEditText.setText(misc.formatTimeForCF(_expirationDate));
+                    break;
+            }
+
+
+        }
+    };
+
 
     private final View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO need to get date/time
+
+            switch (_customField.getFieldType()) {
+                case DATETIME:
+                    _datePicker.show(_fm, TAG);
+                    break;
+                case DATE:
+                    _datePicker.setCloseOnSingleTapDay(false);
+                    _datePicker.show(_fm, TAG);
+                    break;
+                case TIME:
+                    _timePicker.show(_fm, TAG);
+                    break;
+            }
         }
     };
 

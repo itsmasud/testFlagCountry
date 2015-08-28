@@ -234,12 +234,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         } else if (_state == AuthState.AUTHENTICATING) {
             // retry later if authenticating
             Log.v(TAG, "removeAccount retry later");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    removeAccount();
-                }
-            }, 1000);
+            setState(AuthState.REMOVING);
+            AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
+            new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
+            _account = null;
         }
     }
 

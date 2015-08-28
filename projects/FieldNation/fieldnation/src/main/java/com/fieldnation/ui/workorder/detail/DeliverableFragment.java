@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,8 +20,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.ActivityResult;
-import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -234,14 +236,6 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
-    private void tryActivityResult() {
-        if (_activityResult != null) {
-            Log.v(TAG, "recovering");
-            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
-                _activityResult = null;
-        }
-    }
-
     private void populateUi() {
 
         misc.hideKeyboard(getView());
@@ -329,6 +323,13 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
+    private void tryActivityResult() {
+        if (_activityResult != null) {
+            Log.v(TAG, "recovering");
+            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
+                _activityResult = null;
+        }
+    }
 
     private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
@@ -536,9 +537,40 @@ public class DeliverableFragment extends WorkorderFragment {
                 return;
             }
 
+            // todo, maybe this should be put somewhere else
+            new AsyncTaskEx<File, Object, Object>() {
+                @Override
+                protected Object doInBackground(File... params) {
+                    try {
+                        File f = params[0];
+                        String name = f.getName();
+                        name = name.substring(name.indexOf("_") + 1);
+                        misc.copyFile(f, new File(App.get().getDownloadsFolder() + "/" + name));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
+                }
+            }.executeEx(file);
+
             Intent intent = new Intent(Intent.ACTION_VIEW);
             intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
-            startActivity(intent);
+
+            if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                String name = file.getName();
+                name = name.substring(name.indexOf("_") + 1);
+
+                Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                    PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                    ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                } else {
+                    ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                }
+            }
         }
     };
 }
