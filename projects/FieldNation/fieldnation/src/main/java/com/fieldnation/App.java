@@ -287,8 +287,10 @@ public class App extends Application {
             if (profile != null) {
                 _profile = profile;
 
-                Crashlytics.setLong("user_id", _profile.getUserId());
-                Crashlytics.setUserIdentifier(_profile.getUserId() + "");
+                if (!BuildConfig.DEBUG) {
+                    Crashlytics.setLong("user_id", _profile.getUserId());
+                    Crashlytics.setUserIdentifier(_profile.getUserId() + "");
+                }
 
                 GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
