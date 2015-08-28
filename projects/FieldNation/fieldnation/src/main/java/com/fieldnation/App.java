@@ -101,25 +101,31 @@ public class App extends Application {
         super.onCreate();
         Log.v(TAG, "onCreate");
 
-        Fabric.with(this, new Crashlytics());
-        Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-        Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
-        Crashlytics.setBool("debug", BuildConfig.DEBUG);
+        // only run crashlytics when in debug mode.
+        if (!BuildConfig.DEBUG) {
+            Fabric.with(this, new Crashlytics());
+            Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+            Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
+            Crashlytics.setBool("debug", BuildConfig.DEBUG);
 
-        _anrWatchDog = new ANRWatchDog(5000);
-        _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
-            @Override
-            public void onAppNotResponding(ANRError error) {
-                Crashlytics.logException(error);
-            }
-        });
-        _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
-            @Override
-            public void onInterrupted(InterruptedException exception) {
-                Crashlytics.logException(exception);
-            }
-        });
-        _anrWatchDog.start();
+            _anrWatchDog = new ANRWatchDog(5000);
+            _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
+                @Override
+                public void onAppNotResponding(ANRError error) {
+                    Crashlytics.logException(error);
+                }
+            });
+            _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
+                @Override
+                public void onInterrupted(InterruptedException exception) {
+                    Crashlytics.logException(exception);
+                }
+            });
+            _anrWatchDog.start();
+        } else {
+            _anrWatchDog = new ANRWatchDog(5000);
+            _anrWatchDog.start();
+        }
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
