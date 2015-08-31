@@ -9,8 +9,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-import com.fieldnation.BuildConfig;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
@@ -400,8 +399,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 return;
             }
 
-            if (!BuildConfig.DEBUG)
-                Crashlytics.setLong("last_workorder", workorder.getWorkorderId());
+            Debug.setLong("last_workorder", workorder.getWorkorderId());
 
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
