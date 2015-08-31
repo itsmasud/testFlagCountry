@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
 
 public class Message {
     @Json(name = "fromUser")
@@ -26,9 +27,17 @@ public class Message {
     @Json(name = "toUser")
     private User _toUser;
     @Json(name = "workorderId")
-    private Integer _workorderId;
+    private Long _workorderId;
 
     public Message() {
+    }
+
+    public Message(long workorderId, User fromUser, String message) {
+        _workorderId = workorderId;
+        _fromUser = fromUser;
+        _message = message;
+        _isRead = false;
+        _msgCreateDate = ISO8601.now();
     }
 
     public User getFromUser() {
@@ -74,7 +83,7 @@ public class Message {
         return _toUser;
     }
 
-    public Integer getWorkorderId() {
+    public Long getWorkorderId() {
         return _workorderId;
     }
 

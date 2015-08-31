@@ -120,11 +120,6 @@
                 android:gravity="center"
                 android:text="View Bundle Details"
                 android:visibility="gone" />
-
-            <com.fieldnation.ui.workorder.detail.ActionView
-                android:id="@+id/action_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
 
 

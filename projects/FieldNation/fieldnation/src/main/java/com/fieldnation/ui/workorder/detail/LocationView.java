@@ -19,6 +19,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
@@ -42,6 +43,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private RelativeLayout _mapLayout;
     private TextView _noLocationTextView;
     private LinearLayout _addressLayout;
+    private RelativeLayout _noMapLayout;
 
     // Data
     private Workorder _workorder;
@@ -81,6 +83,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
         _addressLayout.setOnClickListener(_map_onClick);
 
+        _noMapLayout = (RelativeLayout) findViewById(R.id.noMap_layout);
+
         setVisibility(View.GONE);
     }
 
@@ -89,9 +93,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         try {
             if (_workorder == null || workorder == null)
                 _isDrawn = false;
-            else if (!_workorder.toJson().toString().equals(workorder.toJson().toString())) {
-                _isDrawn = false;
-            }
         } catch (Exception ex) {
             _isDrawn = false;
             ex.printStackTrace();
@@ -102,6 +103,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateUi() {
+        Stopwatch stopwatch = new Stopwatch(true);
         if (_workorder == null)
             return;
 
@@ -112,16 +114,20 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
         _addressTextView.setText(location.getFullAddressOneLine());
         _distanceTextView.setText("Could not calculate distance.");
+        _noMapLayout.setVisibility(GONE);
 
         setVisibility(VISIBLE);
 
         if (location == null || _workorder.getIsRemoteWork()) {
+            _mapView.setVisibility(GONE);
             _mapLayout.setVisibility(GONE);
             _noLocationTextView.setVisibility(VISIBLE);
             _addressLayout.setVisibility(GONE);
             _navigateButton.setVisibility(GONE);
+            Log.v(TAG, "no location time: " + stopwatch.finish());
             return;
         } else {
+            _mapView.setVisibility(VISIBLE);
             _mapLayout.setVisibility(VISIBLE);
             _noLocationTextView.setVisibility(GONE);
             _addressLayout.setVisibility(VISIBLE);
@@ -131,21 +137,26 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         new AsyncTaskEx<Object, Object, LatLng>() {
             @Override
             protected LatLng doInBackground(Object... params) {
+                Context context = (Context) params[0];
                 try {
                     if (_isDrawn)
                         return null;
 
                     // _isDrawn = true;
 
+                    Stopwatch stopwatch = new Stopwatch(true);
+
                     Location location = _workorder.getLocation();
                     // get address location
-                    Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+                    Geocoder geocoder = new Geocoder(context, Locale.getDefault());
                     List<Address> addrs = geocoder.getFromLocationName(location.getFullAddressOneLine(), 1);
                     if (addrs == null || addrs.size() == 0) {
                         // can't get a location, should render accordingly
+                        Log.v(TAG, "inBackground time: " + stopwatch.finish());
                         return null;
                     }
 
+                    Log.v(TAG, "inBackground time: " + stopwatch.finish());
                     return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -155,39 +166,47 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
             @Override
             protected void onPostExecute(LatLng destination) {
+                Stopwatch watch = new Stopwatch(true);
                 _mapView.clear();
 
-                if (destination != null) {
+                try {
+                    if (destination != null) {
+                        Log.v(TAG, "Getting user location");
+                        _mapView.setUserLocationEnabled(true);
+                        LatLng user = _mapView.getUserLocation();
+                        _mapView.setUserLocationEnabled(false);
+                        Log.v(TAG, "Getting user location done");
 
-                    Log.v(TAG, "Getting user location");
-                    _mapView.setUserLocationEnabled(true);
-                    LatLng user = _mapView.getUserLocation();
-                    _mapView.setUserLocationEnabled(false);
-                    Log.v(TAG, "Getting user location done");
+                        Marker marker = new Marker(_mapView, "Work", "", destination);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
+                        _mapView.addMarker(marker);
 
-                    Marker marker = new Marker(_mapView, "Work", "", destination);
-                    marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
-                    _mapView.addMarker(marker);
+                        marker = new Marker(_mapView, "Me", "", user);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
+                        _mapView.addMarker(marker);
 
-                    marker = new Marker(_mapView, "Me", "", user);
-                    marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
-                    _mapView.addMarker(marker);
+                        Set<LatLng> lls = new HashSet<>();
+                        lls.add(destination);
+                        lls.add(user);
 
-                    Set<LatLng> lls = new HashSet<>();
-                    lls.add(destination);
-                    lls.add(user);
+                        _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
+                        _mapView.setZoom(_mapView.getZoomLevel() - 1);
 
-                    _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
-                    _mapView.setZoom(_mapView.getZoomLevel() - 1);
-
-                    _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
-                    _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
-                } else {
-                    _navigateButton.setVisibility(GONE);
-                    _mapLayout.setVisibility(GONE);
+                        _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
+                        _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
+                    } else {
+                        _navigateButton.setVisibility(GONE);
+                        _mapLayout.setVisibility(GONE);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _noMapLayout.setVisibility(VISIBLE);
+                    _mapView.setVisibility(GONE);
                 }
+                Log.v(TAG, "onPostExecute time: " + watch.finish());
             }
-        }.executeEx();
+        }.executeEx(getContext());
+        Log.v(TAG, "populateUi time: " + stopwatch.finish());
     }
 
     public void showMap(Uri geoLocation) {

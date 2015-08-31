@@ -12,8 +12,11 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Looper;
 import android.preference.PreferenceManager;
+import android.provider.Settings;
 import android.support.multidex.MultiDex;
+import android.text.TextUtils;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
@@ -23,6 +26,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -35,8 +39,9 @@ import java.util.Calendar;
  *
  * @author michael.carver
  */
-public class GlobalState extends Application {
-    private final String TAG = UniqueTag.makeTag("GlobalState");
+public class App extends Application {
+    private static final String STAG = "FNApplication";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public static final long DAY = 86400000;
 
@@ -50,7 +55,7 @@ public class GlobalState extends Application {
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
 
-    private static GlobalState _context;
+    private static App _context;
 
     private Tracker _tracker;
     private Profile _profile;
@@ -61,6 +66,7 @@ public class GlobalState extends Application {
     private int _memoryClass;
     private Typeface _iconFont;
 
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -68,15 +74,30 @@ public class GlobalState extends Application {
         MultiDex.install(this);
     }
 
-    public GlobalState() {
+    public App() {
         super();
         Log.v(TAG, "GlobalState");
     }
 
     @Override
     public void onCreate() {
+        // enable when trying to find ANRs and other weird bugs
+//        if (BuildConfig.DEBUG) {
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectAll()    // detect everything potentially suspect
+//                    .penaltyLog()   // penalty is to write to log
+//                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectAll()
+//                    .penaltyLog()
+//                    .build());
+//        }
+
         super.onCreate();
         Log.v(TAG, "onCreate");
+        _context = this;
+
+        Debug.init();
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
@@ -87,7 +108,6 @@ public class GlobalState extends Application {
         startService(new Intent(this, WebCrawlerService.class));
 
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
-        _context = this;
         new ExpenseCategories(this);
 
         getTracker();
@@ -112,6 +132,36 @@ public class GlobalState extends Application {
         Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
         setInstallTime();
+
+//            new Thread(_anrReport).start();
+    }
+
+    private Runnable _anrReport = new Runnable() {
+        @Override
+        public void run() {
+            while (true) {
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+
+                anrReport();
+            }
+
+        }
+    };
+
+    public static void anrReport() {
+        final Thread mainThread = Looper.getMainLooper().getThread();
+        final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
+
+        StringBuilder trace = new StringBuilder();
+        for (StackTraceElement elem : mainStackTrace) {
+            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
+        }
+
+        Log.v(STAG, trace.toString());
     }
 
     public int getMemoryClass() {
@@ -128,7 +178,7 @@ public class GlobalState extends Application {
         _context = null;
     }
 
-    public static GlobalState getContext() {
+    public static App get() {
         return _context;
     }
 
@@ -144,18 +194,17 @@ public class GlobalState extends Application {
         public void onConnected() {
             Log.v(TAG, "onConnected");
             _authTopicClient.registerAuthState();
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
 
         @Override
         public void onAuthenticated(OAuth oauth) {
-            Log.v(TAG, "onAuthenticated");
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
     };
 
@@ -165,19 +214,19 @@ public class GlobalState extends Application {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerProfileInvalid(GlobalState.this);
+            _globalTopicClient.registerProfileInvalid(App.this);
             _globalTopicClient.registerNetworkConnect();
             _globalTopicClient.registerNetworkState();
         }
 
         @Override
         public void onProfileInvalid() {
-            ProfileClient.get(GlobalState.this);
+            ProfileClient.get(App.this);
         }
 
         @Override
         public void onNetworkConnected() {
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
+            AuthTopicClient.dispatchRequestCommand(App.this);
         }
 
         @Override
@@ -186,8 +235,8 @@ public class GlobalState extends Application {
 
         @Override
         public void onNetworkConnect() {
-            AuthTopicClient.dispatchRequestCommand(GlobalState.this);
-            startService(new Intent(GlobalState.this, WebTransactionService.class));
+            AuthTopicClient.dispatchRequestCommand(App.this);
+            startService(new Intent(App.this, WebTransactionService.class));
         }
 
         @Override
@@ -200,7 +249,7 @@ public class GlobalState extends Application {
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
             _profileClient.subGet();
-            ProfileClient.get(GlobalState.this);
+            ProfileClient.get(App.this);
         }
 
         @Override
@@ -208,11 +257,22 @@ public class GlobalState extends Application {
             Log.v(TAG, "onProfile");
             if (profile != null) {
                 _profile = profile;
-                GlobalTopicClient.dispatchGotProfile(GlobalState.this, profile);
+
+                Debug.setLong("user_id", _profile.getUserId());
+                Debug.setUserIdentifier(_profile.getUserId() + "");
+
+                if (!misc.isEmptyOrNull(_profile.getEmail()))
+                    Debug.setUserEmail(_profile.getEmail());
+
+                if (!misc.isEmptyOrNull(_profile.getFirstname()) && !misc.isEmptyOrNull(_profile.getLastname())) {
+                    Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
+                }
+
+                GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
                 try {
                     Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
-                    Intent intent = new Intent(GlobalState.this, clazz);
+                    Intent intent = new Intent(App.this, clazz);
                     startService(intent);
                 } catch (Exception ex) {
                     ex.printStackTrace();
@@ -362,6 +422,7 @@ public class GlobalState extends Application {
         edit.apply();
     }
 
+
     public void setInstallTime() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
 
@@ -463,6 +524,13 @@ public class GlobalState extends Application {
         return temppath.getAbsolutePath();
     }
 
+    public String getDownloadsFolder() {
+        File externalPath = Environment.getExternalStorageDirectory();
+        File temppath = new File(externalPath.getAbsolutePath() + "/Download");
+        temppath.mkdirs();
+        return temppath.getAbsolutePath();
+    }
+
     public boolean haveWifi() {
         ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
@@ -474,5 +542,25 @@ public class GlobalState extends Application {
         int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
         return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
                 || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+    }
+
+    public boolean isLocationEnabled() {
+        int locationMode = 0;
+        String locationProviders;
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            try {
+                locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
+
+            } catch (Settings.SettingNotFoundException e) {
+                e.printStackTrace();
+            }
+
+            return locationMode != Settings.Secure.LOCATION_MODE_OFF;
+
+        } else {
+            locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
+            return !TextUtils.isEmpty(locationProviders);
+        }
     }
 }

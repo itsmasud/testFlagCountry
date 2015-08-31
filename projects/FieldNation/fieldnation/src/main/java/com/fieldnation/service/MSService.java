@@ -60,7 +60,7 @@ public abstract class MSService extends Service {
             synchronized (LOCK) {
                 addIntent(_intents, intent);
 
-                Log.v(TAG, "intents " + _intents.size());
+//                Log.v(TAG, "intents " + _intents.size());
             }
         }
 
@@ -131,7 +131,7 @@ public abstract class MSService extends Service {
                     intent = _intents.remove(0);
                 }
 
-                Log.v(TAG, "intents " + _intents.size());
+//                Log.v(TAG, "intents " + _intents.size());
             }
 
             if (intent != null) {

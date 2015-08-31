@@ -52,7 +52,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
     }
 
     private Result handleFeedback(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
-        ToastClient.snackbar(context, "Success! Your feeback has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+        ToastClient.snackbar(context, "Success! Your feedback has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
         return Result.FINISH;
     }

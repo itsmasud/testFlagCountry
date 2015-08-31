@@ -11,7 +11,7 @@ public enum WorkorderSubstatus {
     ONHOLD_ACKNOWLEDGED("SUBSTATUS_ONHOLD_ACKNOWLEDGED"),
     CHECKEDIN("SUBSTATUS_CHECKEDIN"),
     CHECKEDOUT("SUBSTATUS_CHECKEDOUT"),
-    PENDINGREVIEWED("SUBSTATUS_PENDINGREVIEW"),
+    PENDINGREVIEW("SUBSTATUS_PENDINGREVIEW"),
     INREVIEW("SUBSTATUS_INREVIEW"),
     APPROVED_PROCESSINGPAYMENT("SUBSTATUS_APPROVED_PROCESSINGPAYMENT"),
     PAID("SUBSTATUS_PAID"),
@@ -22,7 +22,7 @@ public enum WorkorderSubstatus {
 
     private String _value;
 
-    private WorkorderSubstatus(String value) {
+    WorkorderSubstatus(String value) {
         _value = value;
 
     }

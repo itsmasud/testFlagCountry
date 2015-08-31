@@ -9,7 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -206,7 +206,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
         if (_completeWorkorder) {
             WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
-            GlobalState.getContext().setCompletedWorkorder();
+            App.get().setCompletedWorkorder();
             GoogleAnalyticsTopicClient.dispatchEvent(
                     SignOffActivity.this,
                     "WorkorderActivity",

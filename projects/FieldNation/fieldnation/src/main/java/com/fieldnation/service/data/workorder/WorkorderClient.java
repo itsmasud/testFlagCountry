@@ -6,6 +6,8 @@ import android.location.Location;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
@@ -193,11 +195,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
-    public static void listMessages(Context context, long workorderId, boolean isSync) {
+    public static void listMessages(Context context, long workorderId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -294,6 +297,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
 
+    /*-*************************************-*/
+    /*-             Ratings               -*/
+    /*-*************************************-*/
+    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+    }
+
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
@@ -366,6 +380,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionReadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
 
         String payload = "";
@@ -405,7 +423,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
+        Answers.getInstance().logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
+    }
+
+    // incomplete workorder
+    public static void actionIncomplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionIncomplete(context, workorderId);
     }
 
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
@@ -421,12 +445,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
+        Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
@@ -446,10 +472,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -457,18 +485,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 

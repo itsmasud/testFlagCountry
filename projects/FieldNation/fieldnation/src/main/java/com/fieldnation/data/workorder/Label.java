@@ -5,59 +5,60 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Label {
-	@Json(name = "action")
-	private String _action;
-	@Json(name="description")
-	private String _description;
-	@Json(name="labelId")
-	private Integer _labelId;
-	@Json(name="name")
-	private String _name;
-	@Json(name="type")
-	private String _type;
+    @Json(name = "action")
+    private String _action;
+    @Json(name = "description")
+    private String _description;
+    @Json(name = "labelId")
+    private Integer _labelId;
+    @Json(name = "name")
+    private String _name;
+    @Json(name = "type")
+    private String _type;
 
-	public Label() {
-	}
-	public String getAction(){
-		return _action;
-	}
+    public Label() {
+    }
 
-	public String getDescription() {
-		return _description;
-	}
+    public String getAction() {
+        return _action;
+    }
 
-	public Integer getLabelId(){
-		return _labelId;
-	}
+    public String getDescription() {
+        return _description;
+    }
 
-	public String getName(){
-		return _name;
-	}
+    public Integer getLabelId() {
+        return _labelId;
+    }
 
-	public String getType(){
-		return _type;
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public String getType() {
+        return _type;
+    }
 
-	public static JsonObject toJson(Label label) {
-		try {
-			return Serializer.serializeObject(label);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Label fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Label.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Label label) {
+        try {
+            return Serializer.serializeObject(label);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Label fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Label.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

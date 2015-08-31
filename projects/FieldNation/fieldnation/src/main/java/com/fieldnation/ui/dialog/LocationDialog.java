@@ -2,6 +2,7 @@ package com.fieldnation.ui.dialog;
 
 import android.support.v4.app.FragmentManager;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 
 /**
@@ -22,23 +23,23 @@ public class LocationDialog extends TwoButtonDialog {
     }
 
     public void show(boolean hard, Listener listener) {
+        _listener = listener;
+        _hard = hard;
         if (_hard) {
-            setData(getString(R.string.dialog_location_title),
-                    getString(R.string.dialog_location_hard),
-                    getString(R.string.btn_gps_settings),
-                    getString(R.string.btn_cancel),
+            setData(App.get().getString(R.string.dialog_location_title),
+                    App.get().getString(R.string.dialog_location_hard),
+                    App.get().getString(R.string.btn_gps_settings),
+                    App.get().getString(R.string.btn_cancel),
                     _super_listener
             );
         } else {
-            setData(getString(R.string.dialog_location_title),
-                    getString(R.string.dialog_location_soft),
-                    getString(R.string.btn_gps_settings),
-                    getString(R.string.btn_not_now),
+            setData(App.get().getString(R.string.dialog_location_title),
+                    App.get().getString(R.string.dialog_location_soft),
+                    App.get().getString(R.string.btn_gps_settings),
+                    App.get().getString(R.string.btn_not_now),
                     _super_listener
             );
         }
-        _listener = listener;
-        _hard = hard;
         super.show();
     }
 

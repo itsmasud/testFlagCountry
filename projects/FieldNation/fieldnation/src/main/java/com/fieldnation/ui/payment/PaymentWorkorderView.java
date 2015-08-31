@@ -84,7 +84,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _actionGreenButton = (Button) findViewById(R.id.action_button_green);
         _actionGreenButton.setVisibility(GONE);
 
-        _actionGrayButton = (Button) findViewById(R.id.action_button_gray);
+        _actionGrayButton = (Button) findViewById(R.id.action_button_white);
         _actionGrayButton.setVisibility(GONE);
 
         _actionOrangeButton = (Button) findViewById(R.id.action_button_orange);

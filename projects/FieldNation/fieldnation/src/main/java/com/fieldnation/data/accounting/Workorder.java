@@ -5,71 +5,72 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
-	@Json(name = "amount")
-	private Double _amount;
-	@Json(name="clientName")
-	private String _clientName;
-	@Json(name="endTime")
-	private String _endTime;
-	@Json(name="fullWorkDescription")
-	private String _fullWorkDescription;
-	@Json(name="startTime")
-	private String _startTime;
-	@Json(name="title")
-	private String _title;
-	@Json(name="workorderId")
-	private long _workorderId;
+    @Json(name = "amount")
+    private Double _amount;
+    @Json(name = "clientName")
+    private String _clientName;
+    @Json(name = "endTime")
+    private String _endTime;
+    @Json(name = "fullWorkDescription")
+    private String _fullWorkDescription;
+    @Json(name = "startTime")
+    private String _startTime;
+    @Json(name = "title")
+    private String _title;
+    @Json(name = "workorderId")
+    private long _workorderId;
 
-	public Workorder() {
-	}
-	public Double getAmount(){
-		return _amount;
-	}
+    public Workorder() {
+    }
 
-	public String getClientName(){
-		return _clientName;
-	}
+    public Double getAmount() {
+        return _amount;
+    }
 
-	public String getEndTime(){
-		return _endTime;
-	}
+    public String getClientName() {
+        return _clientName;
+    }
 
-	public String getFullWorkDescription(){
-		return _fullWorkDescription;
-	}
+    public String getEndTime() {
+        return _endTime;
+    }
 
-	public String getStartTime(){
-		return _startTime;
-	}
+    public String getFullWorkDescription() {
+        return _fullWorkDescription;
+    }
 
-	public String getTitle(){
-		return _title;
-	}
+    public String getStartTime() {
+        return _startTime;
+    }
 
-	public long getWorkorderId(){
-		return _workorderId;
-	}
+    public String getTitle() {
+        return _title;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public long getWorkorderId() {
+        return _workorderId;
+    }
 
-	public static JsonObject toJson(Workorder workorder) {
-		try {
-			return Serializer.serializeObject(workorder);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Workorder fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Workorder.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Workorder workorder) {
+        try {
+            return Serializer.serializeObject(workorder);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static Workorder fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Workorder.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

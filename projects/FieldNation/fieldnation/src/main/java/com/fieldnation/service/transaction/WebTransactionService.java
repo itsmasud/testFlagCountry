@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -23,6 +23,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "onCreate");
 
         int threadCount = 4;
-        if (GlobalState.getContext().getMemoryClass() <= 64) {
+        if (App.get().getMemoryClass() <= 64) {
             threadCount = 4;
         } else {
             threadCount = 8;
@@ -110,14 +111,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-            boolean haveWifi = GlobalState.getContext().haveWifi();
+            boolean haveWifi = App.get().haveWifi();
 
             Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
-                boolean pluggedIn = GlobalState.getContext().isCharging();
+                boolean pluggedIn = App.get().isCharging();
                 Log.v(TAG, "HavePower " + pluggedIn);
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;
@@ -231,6 +232,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // at some point call the web service
             JsonObject request = trans.getRequest().copy();
+            String handlerName = null;
+            HttpResult result = null;
             try {
                 // apply authentication if needed
                 if (trans.useAuth()) {
@@ -249,7 +252,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 Log.v(TAG, request.display());
 
-                String handlerName = trans.getHandlerName();
+                handlerName = trans.getHandlerName();
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
@@ -272,13 +275,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
 
                 // perform request
-                HttpResult result = HttpJson.run(context, request);
+                result = HttpJson.run(context, request);
 
                 // debug output
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    Log.v(TAG, result.getString());
+                    // Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -347,6 +350,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                             break;
                     }
                 }
+            } catch (MalformedURLException ex) {
+                if (handlerName != null && result != null)
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                WebTransaction.delete(context, trans.getId());
+                Transform.deleteTransaction(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
                 GlobalTopicClient.dispatchNetworkDisconnected(context);

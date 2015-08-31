@@ -4,66 +4,67 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class SlotData{
-	@Json(name="maxFileSize")
-	private Long _maxFileSize;
-	@Json(name="maxFiles")
-	private Integer _maxFiles;
-	@Json(name="minFileSize")
-	private Long _minFileSize;
-	@Json(name="minFiles")
-	private Integer _minFiles;
-	@Json(name="slotId")
-	private Integer _slotId;
-	@Json(name="slotName")
-	private String _slotName;
+public class SlotData {
+    @Json(name = "maxFileSize")
+    private Long _maxFileSize;
+    @Json(name = "maxFiles")
+    private Integer _maxFiles;
+    @Json(name = "minFileSize")
+    private Long _minFileSize;
+    @Json(name = "minFiles")
+    private Integer _minFiles;
+    @Json(name = "slotId")
+    private Integer _slotId;
+    @Json(name = "slotName")
+    private String _slotName;
 
-	public SlotData(){
-	}
-	public Long getMaxFileSize(){
-		return _maxFileSize;
-	}
+    public SlotData() {
+    }
 
-	public Integer getMaxFiles(){
-		return _maxFiles;
-	}
+    public Long getMaxFileSize() {
+        return _maxFileSize;
+    }
 
-	public Long getMinFileSize(){
-		return _minFileSize;
-	}
+    public Integer getMaxFiles() {
+        return _maxFiles;
+    }
 
-	public Integer getMinFiles(){
-		return _minFiles;
-	}
+    public Long getMinFileSize() {
+        return _minFileSize;
+    }
 
-	public Integer getSlotId(){
-		return _slotId;
-	}
+    public Integer getMinFiles() {
+        return _minFiles;
+    }
 
-	public String getSlotName(){
-		return _slotName;
-	}
+    public Integer getSlotId() {
+        return _slotId;
+    }
 
-	public JsonObject toJson(){
-		return toJson(this);
-	}
+    public String getSlotName() {
+        return _slotName;
+    }
 
-	public static JsonObject toJson(SlotData slotData) {
-		try {
-			return Serializer.serializeObject(slotData);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static SlotData fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(SlotData.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(SlotData slotData) {
+        try {
+            return Serializer.serializeObject(slotData);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    public static SlotData fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(SlotData.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
 }

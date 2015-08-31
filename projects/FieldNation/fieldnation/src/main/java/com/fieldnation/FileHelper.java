@@ -42,9 +42,7 @@ public class FileHelper {
                 return;
             } else {
                 // generate temp file
-                File externalPath = Environment.getExternalStorageDirectory();
-                String packageName = context.getPackageName();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+                File temppath = new File(App.get().getStoragePath() + "/temp");
                 temppath.mkdirs();
                 tempfile = File.createTempFile("DATA", null, temppath);
             }

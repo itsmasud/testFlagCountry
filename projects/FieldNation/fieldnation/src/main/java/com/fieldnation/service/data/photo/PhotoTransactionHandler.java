@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -53,7 +53,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             Bitmap circleBitmap = misc.extractCircle(imageBitmap);
 
             // find the paths
-            String storagePath = GlobalState.getContext().getStoragePath() + "/temp";
+            String storagePath = App.get().getStoragePath() + "/temp";
             File tempFolder = new File(storagePath);
             tempFolder.mkdirs();
 
