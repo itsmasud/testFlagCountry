@@ -26,6 +26,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -94,6 +95,7 @@ public class App extends Application {
 
         super.onCreate();
         Log.v(TAG, "onCreate");
+        _context = this;
 
         Debug.init();
 
@@ -106,7 +108,6 @@ public class App extends Application {
         startService(new Intent(this, WebCrawlerService.class));
 
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
-        _context = this;
         new ExpenseCategories(this);
 
         getTracker();
@@ -259,6 +260,13 @@ public class App extends Application {
 
                 Debug.setLong("user_id", _profile.getUserId());
                 Debug.setUserIdentifier(_profile.getUserId() + "");
+
+                if (!misc.isEmptyOrNull(_profile.getEmail()))
+                    Debug.setUserEmail(_profile.getEmail());
+
+                if (!misc.isEmptyOrNull(_profile.getFirstname()) && !misc.isEmptyOrNull(_profile.getLastname())) {
+                    Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
+                }
 
                 GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
