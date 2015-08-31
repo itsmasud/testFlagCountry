@@ -18,7 +18,6 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -27,16 +26,13 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.github.anrwatchdog.ANRError;
-import com.github.anrwatchdog.ANRWatchDog;
+import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.util.Calendar;
-
-import io.fabric.sdk.android.Fabric;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -70,7 +66,6 @@ public class App extends Application {
     private int _memoryClass;
     private Typeface _iconFont;
 
-    private ANRWatchDog _anrWatchDog;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -100,32 +95,9 @@ public class App extends Application {
 
         super.onCreate();
         Log.v(TAG, "onCreate");
+        _context = this;
 
-        // only run crashlytics when in debug mode.
-        if (!BuildConfig.DEBUG) {
-            Fabric.with(this, new Crashlytics());
-            Crashlytics.setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
-            Crashlytics.setString("sdk", Build.VERSION.SDK_INT + "");
-            Crashlytics.setBool("debug", BuildConfig.DEBUG);
-
-            _anrWatchDog = new ANRWatchDog(5000);
-            _anrWatchDog.setANRListener(new ANRWatchDog.ANRListener() {
-                @Override
-                public void onAppNotResponding(ANRError error) {
-                    Crashlytics.logException(error);
-                }
-            });
-            _anrWatchDog.setInterruptionListener(new ANRWatchDog.InterruptionListener() {
-                @Override
-                public void onInterrupted(InterruptedException exception) {
-                    Crashlytics.logException(exception);
-                }
-            });
-            _anrWatchDog.start();
-        } else {
-            _anrWatchDog = new ANRWatchDog(5000);
-            _anrWatchDog.start();
-        }
+        Debug.init();
 
         PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
 
@@ -136,7 +108,6 @@ public class App extends Application {
         startService(new Intent(this, WebCrawlerService.class));
 
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
-        _context = this;
         new ExpenseCategories(this);
 
         getTracker();
@@ -287,8 +258,15 @@ public class App extends Application {
             if (profile != null) {
                 _profile = profile;
 
-                Crashlytics.setLong("user_id", _profile.getUserId());
-                Crashlytics.setUserIdentifier(_profile.getUserId() + "");
+                Debug.setLong("user_id", _profile.getUserId());
+                Debug.setUserIdentifier(_profile.getUserId() + "");
+
+                if (!misc.isEmptyOrNull(_profile.getEmail()))
+                    Debug.setUserEmail(_profile.getEmail());
+
+                if (!misc.isEmptyOrNull(_profile.getFirstname()) && !misc.isEmptyOrNull(_profile.getLastname())) {
+                    Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
+                }
 
                 GlobalTopicClient.dispatchGotProfile(App.this, profile);
 
