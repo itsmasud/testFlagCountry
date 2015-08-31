@@ -41,10 +41,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         Log.v(TAG, "STATIC!");
     }
 
-    /*-*********************************-*/
-    /*-             Life Cycle          -*/
-    /*-*********************************-*/
-
+    /*-*************************************-*/
+    /*-             Life Cycle              -*/
+    /*-*************************************-*/
     public AuthTopicService() {
         super();
         Log.v(TAG, "Construct");
@@ -99,39 +98,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             }
         }
     }
-
-    private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
-        @Override
-        public void onAccountsUpdated(Account[] accounts) {
-            Log.v(TAG, "onAccountsUpdated");
-            List<OAuth> auths = OAuth.list(AuthTopicService.this);
-            String type = getAccountType();
-            if (auths == null || auths.size() == 0)
-                return;
-
-            for (int j = 0; j < auths.size(); j++) {
-                OAuth auth = auths.get(j);
-                boolean match = false;
-                for (Account account : accounts) {
-                    if (account.type.equals(type)) {
-                        if (auth.getUsername().equals(account.name)) {
-                            match = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!match) {
-                    // what now?
-                    auth.delete(AuthTopicService.this);
-                    _authToken = null;
-                    _account = null;
-                    setState(AuthState.NOT_AUTHENTICATED);
-                    requestToken();
-                }
-            }
-        }
-    };
 
     private final GlobalTopicClient.Listener _globalTopicClientListener = new GlobalTopicClient.Listener() {
         @Override
@@ -305,6 +271,43 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         }
     }
 
+    /*-****************************-*/
+    /*-         Callbacks          -*/
+    /*-****************************-*/
+    private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
+
+        @Override
+        public void onAccountsUpdated(Account[] accounts) {
+            Log.v(TAG, "onAccountsUpdated");
+            List<OAuth> auths = OAuth.list(AuthTopicService.this);
+            String type = getAccountType();
+            if (auths == null || auths.size() == 0)
+                return;
+
+            for (int j = 0; j < auths.size(); j++) {
+                OAuth auth = auths.get(j);
+                boolean match = false;
+                for (Account account : accounts) {
+                    if (account.type.equals(type)) {
+                        if (auth.getUsername().equals(account.name)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!match) {
+                    // what now?
+                    auth.delete(AuthTopicService.this);
+                    _authToken = null;
+                    _account = null;
+                    setState(AuthState.NOT_AUTHENTICATED);
+                    requestToken();
+                }
+            }
+        }
+    };
+
     private final FutureWaitAsyncTask.Listener _futureWaitAsync_remove = new FutureWaitAsyncTask.Listener() {
         @Override
         public void onComplete(Object result) {
@@ -373,6 +376,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                         // account fail, check if app is too old
                         onAppIsOld();
                     } else {
+                        Log.v(TAG, "!KEY_AUTH_FAILED_MESSAGE");
                     }
                 }
             } else {
@@ -390,7 +394,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 Log.v(TAG, _authToken.toJson().display());
                 ProfileClient.get(AuthTopicService.this);
                 setState(AuthState.AUTHENTICATED);
-
             }
         }
 
