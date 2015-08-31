@@ -126,13 +126,14 @@ public class SplashActivity extends AuthFragmentActivity {
 
         Log.v(TAG, "doNextStep");
 
-        if (_profile.isProvider()) {
-            if (!_calledMyWork) {
-                _calledMyWork = true;
-                MyWorkActivity.startNew(this);
-                finish();
-            }
+        _profile.isProvider();
+//        if (_profile.isProvider()) {
+        if (!_calledMyWork) {
+            _calledMyWork = true;
+            MyWorkActivity.startNew(this);
+            finish();
         }
+//        }
 
     }
 

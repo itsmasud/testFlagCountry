@@ -117,8 +117,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
-            _notProviderDialog.show();
-            return;
+//            _notProviderDialog.show();
+//            return;
         }
         App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
