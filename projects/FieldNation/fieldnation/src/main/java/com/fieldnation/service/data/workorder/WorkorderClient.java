@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
@@ -423,7 +424,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
-        Answers.getInstance().logCustom(new CustomEvent("MarkComplete"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
@@ -445,14 +447,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
-        Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
-        Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
@@ -472,12 +476,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -485,22 +491,26 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 

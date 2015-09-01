@@ -50,6 +50,10 @@ public class Debug {
         }
     }
 
+    public static boolean isCrashlyticsRunning() {
+        return _crashlytics != null;
+    }
+
     public static void setLong(String name, long value) {
         if (_crashlytics == null)
             return;
