@@ -12,7 +12,6 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -169,6 +168,8 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
+
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
 
 	/*-*************************************-*/
@@ -374,6 +375,10 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -719,12 +724,13 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (!isAdded()) {
-            new Handler().postDelayed(new Runnable() {
+            Log.v(TAG, "onActivityResult -> try later");
+            _untilAdded.add(new Runnable() {
                 @Override
                 public void run() {
                     onActivityResult(requestCode, resultCode, data);
                 }
-            }, 100);
+            });
             return;
         }
 
