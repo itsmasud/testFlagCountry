@@ -25,9 +25,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.FileHelper;
-import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
@@ -168,6 +168,8 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
+
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
 
 	/*-*************************************-*/
@@ -373,6 +375,10 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -716,7 +722,18 @@ public class WorkFragment extends WorkorderFragment {
     };
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (!isAdded()) {
+            Log.v(TAG, "onActivityResult -> try later");
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
+
         Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
         if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)

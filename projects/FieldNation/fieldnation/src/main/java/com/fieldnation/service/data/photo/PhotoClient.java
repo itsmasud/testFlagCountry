@@ -6,8 +6,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.utils.misc;
@@ -34,6 +34,8 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
     }
 
     public static void get(Context context, String url, boolean getCircle, boolean isSync) {
+        if (misc.isEmptyOrNull(url))
+            return;
         // misc.printStackTrace("PhotoClient.get()");
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
