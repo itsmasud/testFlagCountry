@@ -14,10 +14,12 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -287,6 +289,12 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                ToastClient.toast(v.getContext(), "Please enter as required.", Toast.LENGTH_SHORT);
+                return;
+            }
+
             dismiss();
             switch (_customField.getFieldType()) {
                 case LIST:
