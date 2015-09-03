@@ -21,19 +21,19 @@
                 android:angle="-90"
                 android:centerColor="@color/btn_status_white_center"
                 android:endColor="@color/btn_status_white_bottom"
-                android:startColor="@color/btn_status_white_top" />
+                android:startColor="@color/btn_status_white_top_disabled" />
 
             <corners android:radius="@dimen/btn_gradient_corner_radius" />
         </shape>
     </item>
 
     <item
-        android:top="@dimen/btn_shadow_top"
         android:bottom="@dimen/btn_shadow_bottom"
         android:left="@dimen/btn_shadow_left"
-        android:right="@dimen/btn_shadow_right">
+        android:right="@dimen/btn_shadow_right"
+        android:top="@dimen/btn_shadow_top">
         <shape>
-            <solid android:color="@color/btn_status_white_pressed" />
+            <solid android:color="@color/btn_status_white_disabled" />
             <corners android:radius="@dimen/btn_corner_radius" />
         </shape>
     </item>

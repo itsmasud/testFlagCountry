@@ -21,7 +21,7 @@
                 android:angle="-90"
                 android:centerColor="@color/btn_status_orange_center"
                 android:endColor="@color/btn_status_orange_bottom"
-                android:startColor="@color/btn_status_orange_top" />
+                android:startColor="@color/btn_status_orange_top_disabled" />
 
             <corners android:radius="@dimen/btn_gradient_corner_radius" />
         </shape>
@@ -33,7 +33,7 @@
         android:left="@dimen/btn_shadow_left"
         android:right="@dimen/btn_shadow_right">
         <shape>
-            <solid android:color="@color/btn_status_orange_pressed" />
+            <solid android:color="@color/btn_status_orange_disabled" />
             <corners android:radius="@dimen/btn_corner_radius" />
         </shape>
     </item>

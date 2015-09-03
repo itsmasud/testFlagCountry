@@ -169,12 +169,15 @@ public class WorkorderCardView extends RelativeLayout {
 
         _actionButtonWhite = (Button) findViewById(R.id.action_button_white);
         _actionButtonWhite.setOnClickListener(_actionButton_onClick);
+        _actionButtonWhite.setEnabled(false);
 
         _actionButtonGreen = (Button) findViewById(R.id.action_button_green);
         _actionButtonGreen.setOnClickListener(_actionButton_onClick);
+        _actionButtonGreen.setEnabled(false);
 
         _actionButtonOrange = (Button) findViewById(R.id.action_button_orange);
         _actionButtonOrange.setOnClickListener(_actionButton_onClick);
+        _actionButtonOrange.setEnabled(false);
         //_actionButton.setEnabled(false);
         //_actionButton.setMinTextSize(1F);
 
