@@ -65,22 +65,22 @@
     </style>
 
     <style name="Material.Button.Raised.White" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white</item>
+        <item name="android:background">@drawable/btn_bg_white</item>
         <item name="android:textColor">@color/fn_dark_button_text</item>
     </style>
 
     <style name="Material.Button.Raised.Green" parent="Material.Button">
-        <item name="android:background">@drawable/btn_green</item>
+        <item name="android:background">@drawable/btn_bg_green</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <style name="Material.Button.Raised.Orange" parent="Material.Button">
-        <item name="android:background">@drawable/btn_orange</item>
+        <item name="android:background">@drawable/btn_bg_orange</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
     <style name="Material.Button.Raised.Gray" parent="Material.Button">
-        <item name="android:background">@drawable/btn_gray</item>
+        <item name="android:background">@drawable/btn_bg_gray</item>
         <item name="android:textColor">@color/fn_white_text</item>
     </style>
 
