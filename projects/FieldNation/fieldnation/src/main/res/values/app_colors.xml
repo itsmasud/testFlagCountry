@@ -6,10 +6,10 @@
     <color name="fn_brandcolor_80">#CCFF5F00</color>
     <color name="fn_brandcolor_50">#80FF5F00</color>
     <color name="fn_brandcolor_40">#66FF5F00</color>
+    <color name="fn_brandcolor_30">#4CFF5F00</color>
     <color name="fn_brandcolor_0">#00FF5F00</color>
     <color name="fn_brandcolor_medium">#FFe65600</color>
     <color name="fn_brandcolor_dark">#FFbd4600</color>
-    <color name="fn_brandcolor_light">#FFffcfb3</color>
 
     <!--<color name="fn_brandcolor">#FFFF0000</color>-->
     <!--<color name="fn_brandcolor_medium">#FF770000</color>-->
@@ -58,7 +58,6 @@
     <color name="fn_accent_color_10">#193FD4AD</color>
     <color name="fn_accent_color_0">#003FD4AD</color>
     <color name="fn_accent_color_dark">#FF1e988a</color>
-    <color name="fn_accent_color_light">#FFc5f2e6</color>
 
     <!--<color name="fn_accent_color_light">#FF40deb7</color>-->
     <!--<color name="fn_accent_color_light_50">#8040deb7</color>-->
@@ -83,7 +82,9 @@
     <color name="fn_divider">#3F989898</color>
 
     <color name="fn_white_text">#FFFFFFFF</color>
+    <color name="fn_white_text_80">#CCFFFFFF</color>
     <color name="fn_white_text_50">#80FFFFFF</color>
+    <color name="fn_white_text_30">#4CFFFFFF</color>
 
     <color name="fn_light_text">#FF989898</color>
     <color name="fn_light_text_80">#CC989898</color>

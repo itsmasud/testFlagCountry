@@ -20,8 +20,8 @@
     <color name="btn_status_orange_center">@color/fn_brandcolor_0</color>
     <color name="btn_status_orange_bottom">#05000000</color>
     <color name="btn_status_orange_pressed">@color/fn_brandcolor_medium</color>
-    <color name="btn_status_orange_disabled">@color/fn_brandcolor_light</color>
-    <color name="btn_status_orange_top_disabled">@color/fn_brandcolor_light</color>
+    <color name="btn_status_orange_disabled">@color/fn_brandcolor_30</color>
+    <color name="btn_status_orange_top_disabled">@color/fn_brandcolor_30</color>
 
     <color name="btn_status_white_fill">#FFF0F0F0</color>
     <color name="btn_status_white_top">#CCF0F0F0</color>
@@ -36,8 +36,8 @@
     <color name="btn_status_green_center">@color/fn_accent_color_0</color>
     <color name="btn_status_green_bottom">#05000000</color>
     <color name="btn_status_green_pressed">@color/fn_accent_color_medium</color>
-    <color name="btn_status_green_disabled">@color/fn_accent_color_light</color>
-    <color name="btn_status_green_disabled_top">@color/fn_accent_color_light</color>
+    <color name="btn_status_green_disabled">@color/fn_accent_color_10</color>
+    <color name="btn_status_green_disabled_top">@color/fn_accent_color_10</color>
 
     <color name="btn_status_gray_fill">#FF999999</color>
     <color name="btn_status_gray_top">#CC999999</color>
