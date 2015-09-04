@@ -26,6 +26,7 @@ import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
@@ -97,6 +98,8 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+        Stopwatch mwatch = new Stopwatch(true);
+        Stopwatch watch = new Stopwatch(true);
         Log.v(TAG, "onCreate");
         // set the app context
         _context = this;
@@ -104,19 +107,39 @@ public class App extends Application {
         // start up the debugging tools
         Debug.init();
 
+        Log.v(TAG, "debug init time: " + watch.finishAndRestart());
+
         // configure preferences
-        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
+                return null;
+            }
+        }.executeEx();
+        Log.v(TAG, "preferenceManager time: " + watch.finishAndRestart());
 
         // discover the memory class of the device
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);
+        Log.v(TAG, "memoryClass time: " + watch.finishAndRestart());
 
         // trigger authentication and web crawler
-        startService(new Intent(this, AuthTopicService.class));
-        startService(new Intent(this, WebCrawlerService.class));
+        new AsyncTaskEx<Context, Object, Object>() {
+            @Override
+            protected Object doInBackground(Context... params) {
+                Context context = params[0];
+                startService(new Intent(context, TopicService.class));
+                startService(new Intent(context, AuthTopicService.class));
+                startService(new Intent(context, WebCrawlerService.class));
+                return null;
+            }
+        }.executeEx(this);
+        Log.v(TAG, "start services time: " + watch.finishAndRestart());
 
         // load the icon fonts
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
+        Log.v(TAG, "load iconfont time: " + watch.finishAndRestart());
 
         // read in exepense categories
         new ExpenseCategories(this);
@@ -145,12 +168,16 @@ public class App extends Application {
             }
         }.executeEx(this);
 
+        watch.finishAndRestart();
+        // TODO look at async task
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
         }
+        Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
+        // TODO look at using async task here
         _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
         _gaTopicClient.connect(this);
 
@@ -162,14 +189,16 @@ public class App extends Application {
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
+        Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
 //        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
 //        Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
         // set the app's install date
         setInstallTime();
-
+        Log.v(TAG, "set install time: " + watch.finishAndRestart());
 //            new Thread(_anrReport).start();
+        Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -488,15 +517,22 @@ public class App extends Application {
     }
 
 
-    public void setInstallTime() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+    private void setInstallTime() {
+        new AsyncTaskEx<Object, Object, Object>() {
 
-        if (settings.contains(PREF_INSTALL_TIME))
-            return;
+            @Override
+            protected Object doInBackground(Object... params) {
+                SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
 
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
-        edit.apply();
+                if (settings.contains(PREF_INSTALL_TIME))
+                    return null;
+
+                SharedPreferences.Editor edit = settings.edit();
+                edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+                edit.apply();
+                return null;
+            }
+        }.executeEx();
     }
 
     public long getInstallTime() {
