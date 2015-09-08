@@ -135,9 +135,10 @@ public class UploadSlotView extends RelativeLayout {
                 }
             });
 
-            for (UploadedDocument doc : docs) {
-                _uploadingFiles.remove(doc.getFileName());
-            }
+//            // bug
+//            for (UploadedDocument doc : docs) {
+//                _uploadingFiles.remove(doc.getFileName());
+//            }
 
             if (_docsList.getChildCount() > docs.length) {
                 _docsList.removeViews(docs.length - 1, _docsList.getChildCount() - docs.length);
@@ -248,7 +249,7 @@ public class UploadSlotView extends RelativeLayout {
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
             Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed);
             if (slotId == _slot.getSlotId()) {
-                if (failed) {
+                if (failed || isComplete) {
                     _uploadingFiles.remove(filename);
                 } else {
                     _uploadingFiles.add(filename);
