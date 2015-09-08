@@ -248,8 +248,8 @@ public class UploadSlotView extends RelativeLayout {
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
             Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed);
             if (slotId == _slot.getSlotId()) {
-                if (isComplete || failed) {
-//                    _uploadingFiles.remove(filename);
+                if (failed) {
+                    _uploadingFiles.remove(filename);
                 } else {
                     _uploadingFiles.add(filename);
                 }

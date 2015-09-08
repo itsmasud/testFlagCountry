@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
@@ -20,12 +21,15 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
+
+import javax.net.ssl.SSLException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -364,6 +368,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 ex.printStackTrace();
                 trans.requeue(context);
+            } catch (SSLException ex) {
+                ex.printStackTrace();
+                if (ex.getMessage().contains("Broken pipe")) {
+                    ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    Transform.deleteTransaction(context, trans.getId());
+                }
             } catch (Exception ex) {
                 // no freaking clue
                 ex.printStackTrace();
