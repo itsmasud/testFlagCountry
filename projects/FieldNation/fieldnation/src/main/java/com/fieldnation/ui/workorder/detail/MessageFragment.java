@@ -155,8 +155,8 @@ public class MessageFragment extends WorkorderFragment {
             return null;
 
         try {
-            if (_adapter == null) {
-                _adapter = new MessagesAdapter(App.get().getProfile());
+            if (_adapter == null && App.get().getProfile() != null) {
+                _adapter = new MessagesAdapter();
                 _listview.setAdapter(_adapter);
             }
             return _adapter;

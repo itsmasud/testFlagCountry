@@ -577,18 +577,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean subDeliverableUpload() {
-        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
-    }
-
-    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
-        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
-
-        topicId += "/" + workorderId + "/" + uploadSlotId;
-
-        return register(topicId, TAG);
-    }
-
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
@@ -607,6 +595,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
             }
         });
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
+    }
+
+    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId, TAG);
     }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
