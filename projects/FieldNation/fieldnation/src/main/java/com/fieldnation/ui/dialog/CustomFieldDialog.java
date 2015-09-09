@@ -3,7 +3,9 @@ package com.fieldnation.ui.dialog;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -91,6 +93,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
+        _textEditText.addTextChangedListener(_textEditText_watcherListener);
         Log.v(TAG, "onCreateView() _textEditText = " + _textEditText.toString());
 
         _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
@@ -101,7 +104,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(_ok_onClick);
+        _okButton.setOnClickListener(null);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -137,6 +140,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _titleTextView.setText(_customField.getLabel());
 
         CustomField.FieldType type = _customField.getFieldType();
+
 
         _textEditText.setVisibility(View.GONE);
         _dateTimeButton.setVisibility(View.GONE);
@@ -290,11 +294,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
 
-            if (misc.isEmptyOrNull(_textEditText.getText().toString())) {
-                ToastClient.toast(v.getContext(), "Please enter as required.", Toast.LENGTH_SHORT);
-                return;
-            }
-
             dismiss();
             switch (_customField.getFieldType()) {
                 case LIST:
@@ -311,6 +310,26 @@ public class CustomFieldDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
+        }
+    };
+
+
+    private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (_textEditText.getText().toString().trim().length() > 0) {
+                _okButton.setOnClickListener(_ok_onClick);
+                _okButton.setEnabled(true);
+            } else {
+                _okButton.setOnClickListener(null);
+                _okButton.setEnabled(false);
+
+            }
+        }
+
+        public void afterTextChanged(Editable s) {
         }
     };
 
