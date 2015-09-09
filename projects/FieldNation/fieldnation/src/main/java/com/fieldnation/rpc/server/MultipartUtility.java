@@ -1,7 +1,10 @@
 package com.fieldnation.rpc.server;
 
+import android.net.Uri;
+
+import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.IOException;
@@ -47,6 +50,7 @@ public class MultipartUtility {
         httpConn.setDoOutput(true); // indicates POST method
         httpConn.setDoInput(true);
         httpConn.setRequestProperty("Content-Type", "multipart/form-data; boundary=" + boundary);
+        httpConn.setChunkedStreamingMode(1024);
         outputStream = httpConn.getOutputStream();
         writer = new PrintWriter(new OutputStreamWriter(outputStream, charset), true);
     }
@@ -82,9 +86,32 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
-        Log.v(TAG, "Start upload...." + ISO8601.now());
+        Stopwatch stopwatch = new Stopwatch(true);
+        Log.v(TAG, "Start upload....");
         misc.copyStream(inputStream, outputStream, 1024, length, 1000);
-        Log.v(TAG, "Finish upload...." + ISO8601.now());
+        Log.v(TAG, "Finish upload...." + stopwatch.finish());
+        outputStream.flush();
+
+        writer.append(LINE_FEED);
+        writer.flush();
+    }
+
+    public void addFilePart(String fieldName, String filename, Uri uri, String contentType) throws IOException {
+        Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + contentType + ")");
+
+        writer.append("--").append(boundary).append(LINE_FEED);
+        writer.append("Content-Disposition: form-data; name=\"").append(fieldName)
+                .append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
+        writer.append("Content-Type: ").append(contentType).append(LINE_FEED);
+        writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
+        writer.append(LINE_FEED);
+        writer.flush();
+
+        InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
+        Stopwatch stopwatch = new Stopwatch(true);
+        Log.v(TAG, "Start upload....");
+        misc.copyStream(inputStream, outputStream, 1024, -1, 1000);
+        Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
 
         writer.append(LINE_FEED);

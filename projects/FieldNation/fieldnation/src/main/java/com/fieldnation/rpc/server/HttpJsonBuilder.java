@@ -1,5 +1,7 @@
 package com.fieldnation.rpc.server;
 
+import android.net.Uri;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
@@ -152,6 +154,16 @@ public class HttpJsonBuilder {
         JsonObject f = new JsonObject();
         f.put("filename", filename);
         f.put("soid", obj.getId());
+        f.put("contentType", URLConnection.guessContentTypeFromName(filename));
+        multiPartFiles.put(fieldName, f);
+        return this;
+    }
+
+    public HttpJsonBuilder multipartFile(String fieldName, String filename, Uri uri) throws ParseException {
+        getMultiPartFile();
+        JsonObject f = new JsonObject();
+        f.put("uri", uri.toString());
+        f.put("filename", filename);
         f.put("contentType", URLConnection.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;

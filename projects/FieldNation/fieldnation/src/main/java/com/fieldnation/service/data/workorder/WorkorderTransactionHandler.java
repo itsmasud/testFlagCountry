@@ -553,7 +553,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
                     break;
                 case "pUploadDeliverable":
-                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderid"), params.getLong("slotId"), params.getString("filename"), false, true);
+                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderId"), params.getLong("slotId"), params.getString("filename"), false, true);
                     break;
                 case "pActionRequest":
                     return handleActionRequestFail(context, transaction, params, resultData);
