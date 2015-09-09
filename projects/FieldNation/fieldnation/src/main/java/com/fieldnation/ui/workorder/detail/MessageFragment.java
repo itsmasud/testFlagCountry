@@ -155,8 +155,8 @@ public class MessageFragment extends WorkorderFragment {
             return null;
 
         try {
-            if (_adapter == null) {
-                _adapter = new MessagesAdapter(App.get().getProfile());
+            if (_adapter == null && App.get().getProfile() != null) {
+                _adapter = new MessagesAdapter();
                 _listview.setAdapter(_adapter);
             }
             return _adapter;
@@ -178,15 +178,20 @@ public class MessageFragment extends WorkorderFragment {
                     ToastClient.toast(App.get(), "Please enter a message", Toast.LENGTH_SHORT);
                     return;
                 }
+
+                if (App.get().getProfile() == null) {
+                    ToastClient.toast(App.get(), "Can't send message right now, please try again later", Toast.LENGTH_LONG);
+                    return;
+                }
+
                 Log.v(TAG, "_send_onClick");
 
                 _messages.add(new Message(_workorder.getWorkorderId(),
-                        User.fromJson(App.get().getProfile().toJson()),
-                        _inputView.getInputText()));
+                        User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));
                 rebuildList();
 
-                WorkorderClient.actionAddMessage(getActivity(),
-                        _workorder.getWorkorderId(), _inputView.getInputText());
+                WorkorderClient.actionAddMessage(getActivity(), _workorder.getWorkorderId(),
+                        _inputView.getInputText());
 
                 _inputView.clearText();
             }
