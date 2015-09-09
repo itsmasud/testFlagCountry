@@ -159,7 +159,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
-        _globalClient.disconnect(this);
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(this);
         super.onPause();
     }
 
