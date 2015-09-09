@@ -12,6 +12,7 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
@@ -734,30 +736,41 @@ public class WorkFragment extends WorkorderFragment {
             return;
         }
 
-        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+        try {
+            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
 
-            if (data == null) {
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
-                        _tempFile.getAbsolutePath());
-            } else {
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
+                if (data == null) {
+                    WorkorderClient.uploadDeliverable(getActivity(),
+                            _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
+                            _tempFile.getAbsolutePath());
+                } else {
+                    WorkorderClient.uploadDeliverable(getActivity(),
+                            _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
+                }
+            } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                App gs = (App) getActivity().getApplication();
+                if (gs.shouldShowReviewDialog()) {
+                    showReviewDialog();
+                    gs.setShownReviewDialog();
+                    requestWorkorder();
+                }
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+                startCheckin();
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
             }
-        } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            App gs = (App) getActivity().getApplication();
-            if (gs.shouldShowReviewDialog()) {
-                showReviewDialog();
-                gs.setShownReviewDialog();
-                requestWorkorder();
-            }
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
-            startCheckin();
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-            startCheckOut();
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            // Todo this could cause an infinite loop, revisit later
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 100);
         }
     }
 
