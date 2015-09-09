@@ -12,6 +12,7 @@ import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
+import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
@@ -25,7 +26,9 @@ import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
@@ -65,6 +68,7 @@ public class App extends Application {
     private AuthTopicClient _authTopicClient;
     private int _memoryClass;
     private Typeface _iconFont;
+    private Handler _handler = new Handler();
 
 
     @Override
@@ -94,28 +98,86 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+        Stopwatch mwatch = new Stopwatch(true);
+        Stopwatch watch = new Stopwatch(true);
         Log.v(TAG, "onCreate");
+        // set the app context
         _context = this;
 
+        // start up the debugging tools
         Debug.init();
 
-        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
+        Log.v(TAG, "debug init time: " + watch.finishAndRestart());
 
+        // configure preferences
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
+                return null;
+            }
+        }.executeEx();
+        Log.v(TAG, "preferenceManager time: " + watch.finishAndRestart());
+
+        // discover the memory class of the device
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);
+        Log.v(TAG, "memoryClass time: " + watch.finishAndRestart());
 
-        startService(new Intent(this, AuthTopicService.class));
-        startService(new Intent(this, WebCrawlerService.class));
+        // trigger authentication and web crawler
+        new AsyncTaskEx<Context, Object, Object>() {
+            @Override
+            protected Object doInBackground(Context... params) {
+                Context context = params[0];
+                startService(new Intent(context, TopicService.class));
+                startService(new Intent(context, AuthTopicService.class));
+                startService(new Intent(context, WebCrawlerService.class));
+                return null;
+            }
+        }.executeEx(this);
+        Log.v(TAG, "start services time: " + watch.finishAndRestart());
 
+        // load the icon fonts
         _iconFont = Typeface.createFromAsset(getAssets(), "fonts/fnicons.ttf");
+        Log.v(TAG, "load iconfont time: " + watch.finishAndRestart());
+
+        // read in exepense categories
         new ExpenseCategories(this);
 
-        getTracker();
+        // GoogleAnalytics.getInstance(context) has been causing ANRs, so I'm running this in a separate thread for now
+        new AsyncTaskEx<App, Object, Tracker>() {
+            @Override
+            protected Tracker doInBackground(App... params) {
+                Stopwatch stopwatch = new Stopwatch(true);
+                App app = params[0];
+                GoogleAnalytics analytics = GoogleAnalytics.getInstance(app);
+                analytics.enableAutoActivityReports(app);
+                analytics.setLocalDispatchPeriod(app.getResources().getInteger(R.integer.ga_local_dispatch_period));
+                analytics.setDryRun(app.getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
+                Tracker tracker = analytics.newTracker(R.xml.ga_config);
+                tracker.enableAdvertisingIdCollection(true);
+                tracker.enableAutoActivityTracking(true);
+                tracker.enableExceptionReporting(false);
+                Log.v(TAG, "Get Tracker time: " + stopwatch.finish());
+                return tracker;
+            }
 
+            @Override
+            protected void onPostExecute(Tracker tracker) {
+                _tracker = tracker;
+            }
+        }.executeEx(this);
+
+        watch.finishAndRestart();
+        // TODO look at async task
+        // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
         }
+        Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
+        // set up event listeners
+        // TODO look at using async task here
         _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
         _gaTopicClient.connect(this);
 
@@ -127,13 +189,16 @@ public class App extends Application {
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(this);
+        Log.v(TAG, "start topic clients time: " + watch.finishAndRestart());
 
-        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
-        Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
+//        SharedPreferences syncSettings = PreferenceManager.getDefaultSharedPreferences(this);
+//        Log.v(TAG, "BP: " + syncSettings.getLong("pref_key_sync_start_time", 0));
 
+        // set the app's install date
         setInstallTime();
-
+        Log.v(TAG, "set install time: " + watch.finishAndRestart());
 //            new Thread(_anrReport).start();
+        Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
     private Runnable _anrReport = new Runnable() {
@@ -290,18 +355,13 @@ public class App extends Application {
     /*-*********************-*/
     /*-         GA          -*/
     /*-*********************-*/
+
+    /**
+     * Get's the google analytics tracker.
+     *
+     * @return The tracker object, can be null!
+     */
     private synchronized Tracker getTracker() {
-        if (_tracker == null) {
-            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
-//            analytics.getLogger().setLogLevel(Logger.LogLevel.VERBOSE);
-            analytics.enableAutoActivityReports(this);
-            analytics.setLocalDispatchPeriod(getResources().getInteger(R.integer.ga_local_dispatch_period));
-            analytics.setDryRun(getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
-            _tracker = analytics.newTracker(R.xml.ga_config);
-            _tracker.enableAdvertisingIdCollection(true);
-            _tracker.enableAutoActivityTracking(true);
-            _tracker.enableExceptionReporting(false);
-        }
         return _tracker;
     }
 
@@ -314,8 +374,19 @@ public class App extends Application {
         }
 
         @Override
-        public void onGaEvent(String category, String action, String label, Long value) {
+        public void onGaEvent(final String category, final String action, final String label, final Long value) {
             Tracker t = getTracker();
+
+            // if tracker is null, then queue this event to be handled later
+            if (t == null) {
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onGaEvent(category, action, label, value);
+                    }
+                }, 100);
+                return;
+            }
 
             HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
 
@@ -329,16 +400,39 @@ public class App extends Application {
         }
 
         @Override
-        public void onGaScreen(String screenName) {
+        public void onGaScreen(final String screenName) {
             Tracker t = getTracker();
+
+            // if tracker is null, then queue this event to be handled later
+            if (t == null) {
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onGaScreen(screenName);
+                    }
+                }, 100);
+                return;
+            }
+
             t.setScreenName(screenName);
             t.send(new HitBuilders.AppViewBuilder().build());
         }
 
         @Override
-        public void onGaTiming(String category, String variable, String label, Long value) {
+        public void onGaTiming(final String category, final String variable, final String label, final Long value) {
             HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
             Tracker t = getTracker();
+
+            // if tracker is null, then queue this event to be handled later
+            if (t == null) {
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onGaTiming(category, variable, label, value);
+                    }
+                }, 100);
+                return;
+            }
 
             if (category != null)
                 timing.setCategory(category);
@@ -423,15 +517,22 @@ public class App extends Application {
     }
 
 
-    public void setInstallTime() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+    private void setInstallTime() {
+        new AsyncTaskEx<Object, Object, Object>() {
 
-        if (settings.contains(PREF_INSTALL_TIME))
-            return;
+            @Override
+            protected Object doInBackground(Object... params) {
+                SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
 
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
-        edit.apply();
+                if (settings.contains(PREF_INSTALL_TIME))
+                    return null;
+
+                SharedPreferences.Editor edit = settings.edit();
+                edit.putLong(PREF_INSTALL_TIME, System.currentTimeMillis());
+                edit.apply();
+                return null;
+            }
+        }.executeEx();
     }
 
     public long getInstallTime() {
@@ -514,6 +615,10 @@ public class App extends Application {
 
         Log.v(TAG, "showRateMe:  ok!");
         return true;
+    }
+
+    public boolean isSdCardAvailable() {
+        return android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
     }
 
     public String getStoragePath() {

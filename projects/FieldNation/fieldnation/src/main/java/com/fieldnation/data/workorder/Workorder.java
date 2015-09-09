@@ -615,8 +615,8 @@ public class Workorder implements Parcelable {
     private static final int[] _STATUS_BUTTON_FG = {R.color.fn_dark_button_text,
             R.color.fn_white_text, R.color.fn_white_text, R.color.fn_white_text};
 
-    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white,
-            R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white};
+    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_bg_white,
+            R.drawable.btn_bg_orange, R.drawable.btn_bg_green, R.drawable.btn_bg_white};
 
     private int _buttonAction = 0;
     private int _notInterestedAction = 0;

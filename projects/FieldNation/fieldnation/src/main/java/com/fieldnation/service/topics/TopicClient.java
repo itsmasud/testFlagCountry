@@ -39,7 +39,10 @@ public class TopicClient implements TopicConstants {
 
     public void connect(Context context) {
 //        Log.v(TAG, "connect");
-        context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(
+                new Intent(context, TopicService.class),
+                _serviceConnection,
+                Context.BIND_AUTO_CREATE);
     }
 
     public void disconnect(Context context, String userTag) {

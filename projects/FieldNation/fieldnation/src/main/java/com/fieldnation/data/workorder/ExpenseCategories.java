@@ -38,6 +38,7 @@ public class ExpenseCategories {
             if (_listener != null)
                 _listener.onHaveCategories(_categories);
         } else {
+            // TODO look at async task
             try {
                 InputStream is = _context.getResources().openRawResource(R.raw.expensecategories);
                 //noinspection ConstantConditions, can't be null beacuse resource always exists
