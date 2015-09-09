@@ -153,10 +153,14 @@ public class UploadSlotView extends RelativeLayout {
                     if (v == null) {
                         v = new UploadedDocumentView(getContext());
                         _docsList.addView(v);
+                        UploadedDocument doc = _docs[i];
+                        v.setData(_workorder, _profileId, doc);
+                        v.setListener(_docListener);
+                    } else {
+                        UploadedDocument doc = _docs[i];
+                        v.setData(_workorder, _profileId, doc);
+                        v.setListener(_docListener);
                     }
-                    UploadedDocument doc = _docs[i];
-                    v.setData(_workorder, _profileId, doc);
-                    v.setListener(_docListener);
                 }
             };
             postDelayed(r, new Random().nextInt(1000));
@@ -176,15 +180,20 @@ public class UploadSlotView extends RelativeLayout {
                 @Override
                 public void next(int i) throws Exception {
                     Log.v(TAG, "UF: new view " + i);
-                    UploadedDocumentView v = null;
-                    if (i < _uploadList.getChildCount()) {
-                        v = (UploadedDocumentView) _uploadList.getChildAt(i);
-                    } else {
+                    UploadedDocumentView v = (UploadedDocumentView) _uploadList.getChildAt(i);
+                    if (v == null) {
                         v = new UploadedDocumentView(getContext());
                         _uploadList.addView(v);
                     }
                     v.setUploading((String) (_uploadingFiles.toArray()[i]));
                     v.setListener(null);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    if (_uploadList.getChildCount() > _uploadingFiles.size()) {
+                        _uploadList.removeViews(_uploadingFiles.size() - 1, _uploadList.getChildCount() - _uploadingFiles.size());
+                    }
                 }
             };
             postDelayed(r, new Random().nextInt(1000) + 1000);

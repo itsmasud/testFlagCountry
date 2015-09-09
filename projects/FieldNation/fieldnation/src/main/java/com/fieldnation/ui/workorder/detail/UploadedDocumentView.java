@@ -143,6 +143,10 @@ public class UploadedDocumentView extends RelativeLayout {
         populateUi();
     }
 
+    public UploadedDocument getUploadedDocument() {
+        return _doc;
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
