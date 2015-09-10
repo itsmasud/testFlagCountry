@@ -303,9 +303,15 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // Bad request
                     // need to report this
                     // need to re-auth?
-                    Thread.sleep(5000);
-                    trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+
+                    if (result.getString().equals("You don't have permission to see this workorder")) {
+                        WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                        WebTransaction.delete(context, trans.getId());
+                    } else {
+                        Thread.sleep(5000);
+                        trans.requeue(context);
+                        AuthTopicClient.dispatchRequestCommand(context);
+                    }
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
                     Log.v(TAG, "Reauth");
@@ -318,7 +324,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // not found?... error
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                     WebTransaction.delete(context, trans.getId());
-                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
@@ -329,7 +334,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 } else if (result.getResponseCode() / 100 != 2) {
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                     WebTransaction.delete(context, trans.getId());
-                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                 }
 
@@ -343,11 +347,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         case ERROR:
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                             WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
                             break;
                         case FINISH:
                             WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
                             break;
                         case REQUEUE:
                             trans.requeue(context);
@@ -358,7 +360,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (handlerName != null && result != null)
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                 WebTransaction.delete(context, trans.getId());
-                Transform.deleteTransaction(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
                 GlobalTopicClient.dispatchNetworkDisconnected(context);
@@ -373,7 +374,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (ex.getMessage().contains("Broken pipe")) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
-                    Transform.deleteTransaction(context, trans.getId());
+                    WebTransaction.delete(context, trans.getId());
                 }
             } catch (Exception ex) {
                 // no freaking clue
@@ -382,6 +383,5 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
             return true;
         }
-
     }
 }
