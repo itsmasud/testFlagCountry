@@ -1,6 +1,7 @@
 package com.fieldnation.rpc.server;
 
 import android.content.Context;
+import android.net.Uri;
 
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
@@ -8,7 +9,6 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -21,7 +21,7 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public static HttpResult run(Context context, JsonObject request) throws ParseException, IOException {
+    public static HttpResult run(Context context, JsonObject request) throws Exception {
         String protocol = "";
         String path = "";
         String params = "";
@@ -109,16 +109,25 @@ public class HttpJson {
                 while (e.hasNext()) {
                     String key = e.next();
                     JsonObject fo = files.getJsonObject(key);
-                    String filename = fo.getString("filename");
-                    long soId = fo.getLong("soid");
-                    String contentType = fo.getString("contentType");
-                    StoredObject so = StoredObject.get(context, soId);
 
-                    Log.v(TAG, so.getFile().toString() + ":" + so.getFile().length());
-                    if (so.isFile()) {
-                        util.addFilePart(key, filename, new FileInputStream(so.getFile()), (int) so.getFile().length());
+                    if (fo.has("soid")) {
+                        String filename = fo.getString("filename");
+                        long soId = fo.getLong("soid");
+                        String contentType = fo.getString("contentType");
+                        StoredObject so = StoredObject.get(context, soId);
+
+                        Log.v(TAG, so.getFile().toString() + ":" + so.getFile().length());
+                        if (so.isFile()) {
+                            util.addFilePart(key, filename, new FileInputStream(so.getFile()), (int) so.getFile().length());
+                        } else {
+                            util.addFilePart(key, filename, so.getData(), contentType);
+                        }
                     } else {
-                        util.addFilePart(key, filename, so.getData(), contentType);
+                        String uri = fo.getString("uri");
+                        String filename = fo.getString("filename");
+                        String contentType = fo.getString("contentType");
+
+                        util.addFilePart(key, filename, Uri.parse(uri), contentType);
                     }
                 }
                 util.finish();

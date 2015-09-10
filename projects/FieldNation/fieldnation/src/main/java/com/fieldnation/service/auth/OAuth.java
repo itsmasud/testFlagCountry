@@ -14,7 +14,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -192,7 +191,7 @@ public class OAuth implements Parcelable {
 
     public static OAuth authenticate(Context context, String host, String path, String grantType,
                                      String clientId, String clientSecret, String username,
-                                     String password) throws ParseException, IOException {
+                                     String password) throws Exception {
 
         HttpJsonBuilder builder = new HttpJsonBuilder()
                 .method("POST")
