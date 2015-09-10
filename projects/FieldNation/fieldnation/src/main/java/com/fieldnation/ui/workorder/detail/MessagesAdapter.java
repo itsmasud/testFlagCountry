@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Message;
@@ -16,14 +17,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class MessagesAdapter extends BaseAdapter {
-    private static final String TAG = "ui.workorder.detail.MessagesAdapter";
+    private static final String TAG = "MessagesAdapter";
 
     private List<Message> _messages = new LinkedList<>();
-    private Profile _profile;
 
-    public MessagesAdapter(Profile profile) {
+    public MessagesAdapter() {
         super();
-        _profile = profile;
     }
 
     private MessageSentView getMessageSentView(Context context) {
@@ -90,10 +89,12 @@ public class MessagesAdapter extends BaseAdapter {
             return convertView;
         }
 
+        Profile profile = App.get().getProfile();
+
         Log.v(TAG, "getView(" + position + ") / " + _messages.size());
         Message message = _messages.get(position);
         if (message.getFromUser().getUserId() != null
-                && message.getFromUser().getUserId().equals(_profile.getUserId())) {
+                && message.getFromUser().getUserId().equals(profile.getUserId())) {
             MessageSentView v = null;
 
             if (convertView == null) {

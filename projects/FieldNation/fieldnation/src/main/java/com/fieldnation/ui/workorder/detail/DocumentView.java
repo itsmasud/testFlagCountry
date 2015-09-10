@@ -92,6 +92,15 @@ public class DocumentView extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_docClient != null) {
+            _docClient.disconnect(getContext());
+            _docClient = null;
+        }
+        super.onDetachedFromWindow();
+    }
+
     /*-*************************-*/
     /*-			Methods			-*/
     /*-*************************-*/

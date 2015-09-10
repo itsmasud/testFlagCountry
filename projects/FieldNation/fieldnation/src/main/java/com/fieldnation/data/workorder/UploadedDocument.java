@@ -16,34 +16,14 @@ public class UploadedDocument implements Parcelable {
     private Integer _fileSize;
     @Json(name = "fileType")
     private String _fileType;
-    //	@Json(name="note")
-    //	private String _note;
-    //    @Json(name = "reviewComment")
-    //    private String _reviewComment;
-    //    @Json(name = "reviewUserId")
-    //    private Integer _reviewUserId;
-    //	@Json(name = "reviewUserName")
-    //	private String _reviewUserName;
-    //    @Json(name = "status")
-    //    private Integer _status;
-    //    @Json(name = "storageSrc")
-    //    private String _storageSrc;
-    //    @Json(name = "storageType")
-    //    private String _storageType;
-    //	@Json(name="thumbnailFilename")
-    //	private String _thumbnailFilename;
     @Json(name = "uploadedTime")
     private String _uploadedTime;
     @Json(name = "uploaderUserId")
     private Integer _uploaderUserId;
     @Json(name = "uploaderUserName")
     private String _uploaderUserName;
-    //    @Json(name = "workorderId")
-    //    private Integer _workorderId;
     @Json(name = "workorderUploadId")
     private Integer _id;
-    //    @Json(name = "workorderUploadSlotId")
-    //    private Integer _workorderUploadSlotId;
 
     public UploadedDocument() {
     }
@@ -64,34 +44,6 @@ public class UploadedDocument implements Parcelable {
         return _fileType;
     }
 
-    //    public String getReviewComment() {
-    //        return _reviewComment;
-    //    }
-    //
-    //    public Integer getReviewUserId() {
-    //        return _reviewUserId;
-    //    }
-    //
-    //    public String getReviewUserName() {
-    //        return _reviewUserName;
-    //    }
-    //
-    //    public Integer getStatus() {
-    //        return _status;
-    //    }
-    //
-    //    public String getStorageSrc() {
-    //        return _storageSrc;
-    //    }
-    //
-    //    public String getStorageType() {
-    //        return _storageType;
-    //    }
-    //
-    //    public String getThumbnailFilename() {
-    //        return _thumbnailFilename;
-    //    }
-
     public String getUploadedTime() {
         return _uploadedTime;
     }
@@ -104,17 +56,9 @@ public class UploadedDocument implements Parcelable {
         return _uploaderUserName;
     }
 
-    //    public Integer getWorkorderId() {
-    //        return _workorderId;
-    //    }
-
     public Integer getId() {
         return _id;
     }
-
-    //    public Integer getWorkorderUploadSlotId() {
-    //        return _workorderUploadSlotId;
-    //    }
 
     public JsonObject toJson() {
         return toJson(this);

@@ -3,8 +3,10 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
 import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
@@ -25,6 +27,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
@@ -560,16 +563,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean subDeliverableUpload() {
-        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
-    }
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
+        Log.v(STAG, "requestUploadDeliverable");
 
-    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
-        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
 
-        topicId += "/" + workorderId + "/" + uploadSlotId;
-
-        return register(topicId, TAG);
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_URI, uri);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        context.startService(intent);
     }
 
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
@@ -580,10 +585,28 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
 
             @Override
+            public void fromUri(String filename, Uri uri) {
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, uri);
+            }
+
+            @Override
             public void fail(String reason) {
                 Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
+                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
             }
         });
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
+    }
+
+    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId, TAG);
     }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
@@ -668,12 +691,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         payload.getString(PARAM_FILE_NAME),
                         payload.getBoolean(PARAM_IS_COMPLETE), true);
 
+            } else {
+                onUploadDeliverable(
+                        payload.getLong(PARAM_WORKORDER_ID),
+                        payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                        payload.getString(PARAM_FILE_NAME),
+                        payload.getBoolean(PARAM_IS_COMPLETE), false);
             }
-            onUploadDeliverable(
-                    payload.getLong(PARAM_WORKORDER_ID),
-                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
-                    payload.getString(PARAM_FILE_NAME),
-                    payload.getBoolean(PARAM_IS_COMPLETE), false);
         }
 
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
