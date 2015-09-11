@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.LinearLayout;
 
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -24,6 +25,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
     private static final String STATE_SHOWING_DIALOG = "STATE_SHOWING_DIALOG";
 
+    // UI
+    private OverScrollView _scrollView;
+    private LinearLayout _reviewList;
+
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
@@ -39,6 +44,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.view_uploading_documents_list);
+
+        _reviewList = (LinearLayout) findViewById(R.id.review_list);
+
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
                 _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
@@ -94,7 +102,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             if (profile != null)
                 Log.v(TAG, profile.toJson().display());
             _profile = profile;
-            doNextStep();
+//            doNextStep();
         }
     };
 
@@ -107,33 +115,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         @Override
         public void onAuthenticated(OAuth oauth) {
             _isAuth = true;
-            doNextStep();
+//            doNextStep();
         }
 
         @Override
         public void onNotAuthenticated() {
-            AuthTopicClient.dispatchRequestCommand(ShareRequestActivity.this);
+            //Todo: If application is not logged-in, need to show login screen
+         AuthTopicClient.dispatchRequestCommand(ShareRequestActivity.this);
         }
     };
-
-    private void doNextStep() {
-        if (!_isAuth)
-            return;
-
-        if (_profile == null)
-            return;
-
-        Log.v(TAG, "doNextStep");
-
-        if (_profile.isProvider()) {
-            if (!_calledMyWork) {
-                _calledMyWork = true;
-                MyWorkActivity.startNew(this);
-                finish();
-            }
-        }
-
-    }
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, ShareRequestActivity.class);
