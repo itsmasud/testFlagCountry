@@ -775,6 +775,17 @@ public class misc {
         return sb.toString();
     }
 
+    public static String longToHex(long value, int length) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            sb.append(HEXES.charAt((int) (0x0F & (value >> (i * 4)))));
+        }
+        sb = sb.reverse();
+
+        return sb.toString();
+    }
+
     public static String parseXML(String Value) {
         StringBuilder result = new StringBuilder();
         int tabs = 0;

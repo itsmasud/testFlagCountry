@@ -811,9 +811,11 @@ public class WorkFragment extends WorkorderFragment {
                     info.activityInfo.name));
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
