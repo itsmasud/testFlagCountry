@@ -19,9 +19,9 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.ActivityResult;
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -51,6 +51,8 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.net.URLConnection;
 import java.security.SecureRandom;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -92,7 +94,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // Temporary storage
-    private ActivityResult _activityResult = null;
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -185,6 +187,10 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(activity);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -248,8 +254,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
-
-        tryActivityResult();
 
         if (_workorder.canChangeDeliverables()) {
             _navigateButton.setVisibility(View.VISIBLE);
@@ -323,56 +327,47 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-    private void tryActivityResult() {
-        if (_activityResult != null) {
-            Log.v(TAG, "recovering");
-            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
-                _activityResult = null;
-        }
-    }
-
-    private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-
-        if (_workorder == null)
-            return false;
-
-        if (_uploadingSlotId < 0)
-            return false;
-
-        if (getActivity() == null)
-            return false;
-
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT
-                || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
-
-            setLoading(true);
-
-            if (data == null) {
-                if (_tempFile == null)
-                    return false;
-
-                Log.v(TAG, "local path");
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _uploadingSlotId, _tempFile.getName(),
-                        _tempFile.getAbsolutePath());
-                return true;
-            } else {
-                Log.v(TAG, "from intent");
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(),
-                        _uploadingSlotId, data);
-                return true;
-            }
-        }
-        return true;
-    }
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        _activityResult = new ActivityResult(requestCode, resultCode, data);
-        tryActivityResult();
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (!isAdded()) {
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
+
+        try {
+            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
+
+                setLoading(true);
+
+                if (data == null) {
+                    Log.v(TAG, "local path");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, _tempFile.getName(), _tempFile.getAbsolutePath());
+
+                } else {
+                    Log.v(TAG, "from intent");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, data);
+                }
+            }
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 100);
+        }
     }
 
     /*-*********************************-*/

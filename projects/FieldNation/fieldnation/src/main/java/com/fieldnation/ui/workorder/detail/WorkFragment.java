@@ -739,19 +739,24 @@ public class WorkFragment extends WorkorderFragment {
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
+                setLoading(true);
+
                 if (data == null) {
-                    WorkorderClient.uploadDeliverable(getActivity(),
-                            _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
-                            _tempFile.getAbsolutePath());
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), _tempFile.getName(), _tempFile.getAbsolutePath());
+
                 } else {
-                    WorkorderClient.uploadDeliverable(getActivity(),
-                            _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), data);
                 }
+
             } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 App gs = (App) getActivity().getApplication();
+
                 if (gs.shouldShowReviewDialog()) {
                     showReviewDialog();
                     gs.setShownReviewDialog();
