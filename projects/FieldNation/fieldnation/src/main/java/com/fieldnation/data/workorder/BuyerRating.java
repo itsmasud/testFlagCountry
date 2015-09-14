@@ -5,57 +5,63 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class BuyerRating {
-    @Json(name = "buyerRateComments")
-    private String _buyerRateComments;
+    @Json(name = "avgRating")
+    private Double _avgRating;
+    @Json(name = "clearExpectationRatingPercent")
+    private Double _clearExpectationRatingPercent;
     @Json(name = "companyLogo")
     private String _companyLogo;
-//    @Json(name = "dayLeftToGivingBuyerRating")
-//	private Integer _dayLeftToGivingBuyerRating;
-    @Json(name = "ratingId")
-    private Integer _ratingId;
-    @Json(name = "respectful")
-    private Integer _respectful;
-    @Json(name = "scopeRating")
-    private Integer _scopeRating;
-    @Json(name = "starRate")
-    private Integer _starRate;
+    @Json(name = "currentApprovalTimeGrade")
+    private String _currentApprovalTimeGrade;
+    @Json(name = "currentReviewPeriod")
+    private Integer _currentReviewPeriod;
+    @Json(name = "dayLeftToGivingBuyerRating")
+    private Boolean _dayLeftToGivingBuyerRating;
+    @Json(name = "professionalismRatingPercent")
+    private Double _professionalismRatingPercent;
+    @Json(name = "totalRating")
+    private Integer _totalRating;
     @Json(name = "workorderManagerId")
-    private Integer _workorderManagerId;
+    private Long _workorderManagerId;
     @Json(name = "workorderManagerName")
     private String _workorderManagerName;
 
     public BuyerRating() {
     }
 
-    public String getBuyerRateComments() {
-        return _buyerRateComments;
+    public Double getAvgRating() {
+        return _avgRating;
+    }
+
+    public Double getClearExpectationRatingPercent() {
+        return _clearExpectationRatingPercent;
     }
 
     public String getCompanyLogo() {
         return _companyLogo;
     }
 
-//	public Integer getDayLeftToGivingBuyerRating(){
-//        return _dayLeftToGivingBuyerRating;
-//    }
-
-    public Integer getRatingId() {
-        return _ratingId;
+    public String getCurrentApprovalTimeGrade() {
+        return _currentApprovalTimeGrade;
     }
 
-    public Integer getRespectful() {
-        return _respectful;
+    public Integer getCurrentReviewPeriod() {
+        return _currentReviewPeriod;
     }
 
-    public Integer getScopeRating() {
-        return _scopeRating;
+    public Boolean getDayLeftToGivingBuyerRating() {
+        return _dayLeftToGivingBuyerRating;
     }
 
-    public Integer getStarRate() {
-        return _starRate;
+    public Double getProfessionalismRatingPercent() {
+        return _professionalismRatingPercent;
     }
 
-    public Integer getWorkorderManagerId() {
+    public Integer getTotalRating() {
+        return _totalRating;
+    }
+
+    public Long getWorkorderManagerId() {
         return _workorderManagerId;
     }
 
