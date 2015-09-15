@@ -168,15 +168,17 @@
             android:process=":frontside" />
 
 
-
-        <activity android:name=".ui.ShareRequestActivity"
+        <activity
+            android:name=".ui.ShareRequestActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
             android:process=":frontside">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
-                <action android:name="android.intent.action.SEND_MULTIPLE"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
                 <action android:name="android.intent.action.MAIN" />
+                                
+
                 <data android:mimeType="*/*" />
             </intent-filter>
 

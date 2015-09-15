@@ -2,18 +2,30 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.view.View;
 import android.view.Window;
 import android.widget.LinearLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.workorder.Document;
+import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.ui.workorder.detail.DocumentView;
+import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * Created by shoaib.ahmed on Sept/08/2015.
@@ -47,47 +59,131 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _reviewList = (LinearLayout) findViewById(R.id.review_list);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
-                _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
-            }
-            if (savedInstanceState.containsKey(STATE_PROFILE)) {
-                _profile = savedInstanceState.getParcelable(STATE_PROFILE);
-            }
+//        if (savedInstanceState != null) {
+//            if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
+//                _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
+//            }
+//            if (savedInstanceState.containsKey(STATE_PROFILE)) {
+//                _profile = savedInstanceState.getParcelable(STATE_PROFILE);
+//            }
+//        }
+
+
+        // Get intent, action and MIME type
+        Intent intent = getIntent();
+        String action = intent.getAction();
+        String type = intent.getType();
+
+//        if (Intent.ACTION_SEND.equals(action) && type != null) {
+//            if (Intent.ACTION_SEND_MULTIPLE.equals(action) && type != null) {
+//                handleSendMultipleImages(intent); // Handle multiple images being sent
+//            }
+//        }
+
+        //make sure it's an action and type we can handle
+        if(action.equals(Intent.ACTION_SEND)){
+            //content is being shared
+            Log.v(TAG, "file received");
         }
+        else if(action.equals(Intent.ACTION_MAIN)){
+            //app has been launched directly, not from share list
+            Log.v(TAG, "file received");
+
+        }
+
+
+        else if(action.equals(Intent.ACTION_SEND_MULTIPLE)){
+            //app has been launched directly, not from share list
+            Log.v(TAG, "file received");
+
+        }
+
+        else{
+            Log.v(TAG, "file received" + action);
+        }
+
+
 
         Log.v(TAG, "onCreate");
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        outState.putBoolean(STATE_IS_AUTH, _isAuth);
-        if (_profile != null) {
-            outState.putParcelable(STATE_PROFILE, _profile);
         }
-        super.onSaveInstanceState(outState);
+
+        @Override
+        protected void onSaveInstanceState (Bundle outState){
+            outState.putBoolean(STATE_IS_AUTH, _isAuth);
+            if (_profile != null) {
+                outState.putParcelable(STATE_PROFILE, _profile);
+            }
+            super.onSaveInstanceState(outState);
+        }
+
+        @Override
+        protected void onResume () {
+            Log.v(TAG, "onResume");
+            super.onResume();
+            startService(new Intent(this, AuthTopicService.class));
+            _globalClient = new GlobalTopicClient(_globalTopic_listener);
+            _globalClient.connect(this);
+            _authClient = new AuthTopicClient(_authTopic_listener);
+            _authClient.connect(this);
+
+            AuthTopicClient.dispatchRequestCommand(this);
+        }
+
+        @Override
+        protected void onPause () {
+            _globalClient.disconnect(this);
+            _authClient.disconnect(this);
+            super.onPause();
+        }
+
+
+//    private void populateUi() {
+//
+//        if (_profile == null)
+//            return;
+//
+//
+//        Stopwatch stopwatch = new Stopwatch(true);
+//        final UploadingDocument[] docs = _workorder.getDocuments();
+//        if (docs != null && docs.length > 0) {
+//            Log.v(TAG, "_reviewList.getChildCount() " + _reviewList.getChildCount());
+//            Log.v(TAG, "docs.length " + docs.length);
+//
+//            if (_reviewList.getChildCount() > docs.length) {
+//                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
+//            }
+//
+//            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
+//                private final UploadingDocument[] _docs = docs;
+//
+//                @Override
+//                public void next(int i) throws Exception {
+//                    ShareRequestRowView v = null;
+//                    if (i < _reviewList.getChildCount()) {
+//                        v = (ShareRequestRowView) _reviewList.getChildAt(i);
+//                    } else {
+//                        v = new ShareRequestRowView(ShareRequestActivity.this);
+//                        _reviewList.addView(v);
+//                    }
+//                    UploadingDocument doc = _docs[i];
+//                    v.setData(doc);
+//                }
+//            };
+//            _reviewList.postDelayed(r, new Random().nextInt(1000));
+//        } else {
+//            _reviewList.removeAllViews();
+//        }
+//        Log.v(TAG, "pop docs time " + stopwatch.finish());
+//    }
+
+
+    private void handleSendMultipleImages(Intent intent) {
+        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        if (imageUris != null) {
+            // Update UI to reflect multiple images being shared
+            Log.v(TAG, "file received " );
+        }
     }
-
-    @Override
-    protected void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
-        startService(new Intent(this, AuthTopicService.class));
-        _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(this);
-        _authClient = new AuthTopicClient(_authTopic_listener);
-        _authClient.connect(this);
-
-        AuthTopicClient.dispatchRequestCommand(this);
-    }
-
-    @Override
-    protected void onPause() {
-        _globalClient.disconnect(this);
-        _authClient.disconnect(this);
-        super.onPause();
-    }
-
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
@@ -121,7 +217,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         @Override
         public void onNotAuthenticated() {
             //Todo: If application is not logged-in, need to show login screen
-         AuthTopicClient.dispatchRequestCommand(ShareRequestActivity.this);
+            AuthTopicClient.dispatchRequestCommand(ShareRequestActivity.this);
         }
     };
 
