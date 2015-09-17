@@ -87,6 +87,7 @@ public class WebCrawlerService extends Service {
         // we're not allowed to run, stop
         if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false)) {
             Log.v(TAG, "sync disabled, quiting");
+            startActivityMonitor();
             return START_NOT_STICKY;
         }
 
@@ -109,7 +110,6 @@ public class WebCrawlerService extends Service {
 
         Log.v(TAG, "Do nothing");
         startActivityMonitor();
-
         return START_STICKY;
     }
 
