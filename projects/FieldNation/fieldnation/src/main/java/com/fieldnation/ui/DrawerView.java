@@ -393,7 +393,7 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicClient.dispatchRemoveCommand(getContext());
+            AuthTopicClient.removeCommand(getContext());
 
             Log.v(TAG, "SplashActivity");
             SplashActivity.startNew(getContext());

@@ -1,8 +1,10 @@
 package com.fieldnation.ui;
 
+import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Window;
 
 import com.fieldnation.GlobalTopicClient;
@@ -71,7 +73,7 @@ public class SplashActivity extends AuthFragmentActivity {
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
 
-        AuthTopicClient.dispatchRequestCommand(this);
+        AuthTopicClient.requestCommand(this);
     }
 
     @Override
@@ -102,7 +104,7 @@ public class SplashActivity extends AuthFragmentActivity {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _authClient.registerAuthState();
+            _authClient.subAuthStateChange();
         }
 
         @Override
@@ -113,7 +115,7 @@ public class SplashActivity extends AuthFragmentActivity {
 
         @Override
         public void onNotAuthenticated() {
-            AuthTopicClient.dispatchRequestCommand(SplashActivity.this);
+            AuthTopicClient.requestCommand(SplashActivity.this);
         }
     };
 
