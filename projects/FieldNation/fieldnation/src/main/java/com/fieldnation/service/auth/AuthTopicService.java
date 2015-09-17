@@ -66,7 +66,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -83,6 +83,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
         }
+        stopSelf();
         super.onDestroy();
     }
 
@@ -92,9 +93,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _state = state;
             Log.v(TAG, state.name());
             if (_state == AuthState.AUTHENTICATED) {
-                AuthTopicClient.dispatchAuthenticated(this, _authToken);
+                AuthTopicClient.authenticated(this, _authToken);
             } else {
-                AuthTopicClient.dispatchAuthState(this, _state);
+                AuthTopicClient.authStateChange(this, _state);
             }
         }
     }
@@ -117,10 +118,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
-            _authTopicClient.registerInvalidateCommand();
-            _authTopicClient.registerRemoveCommand();
-            _authTopicClient.registerRequestCommand();
-            _authTopicClient.registerAccountAddedCommand();
+            _authTopicClient.subInvalidateCommand();
+            _authTopicClient.subRemoveCommand();
+            _authTopicClient.subRequestCommand();
+            _authTopicClient.subAccountAddedCommand();
         }
 
         @Override
@@ -190,6 +191,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void removeAccount() {
         Log.v(TAG, "removeAccount");
+        if (_account == null)
+            return;
+
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
@@ -197,6 +201,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _account = null;
         } else if (_state == AuthState.NOT_AUTHENTICATED) {
             Log.v(TAG, "removeAccount do nothing");
+
         } else if (_state == AuthState.AUTHENTICATING) {
             // retry later if authenticating
             Log.v(TAG, "removeAccount retry later");
@@ -217,14 +222,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
-        Intent intent = new Intent(this, AuthActivity.class);
-
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        AuthTopicClient.needUsernameAndPassword(this, authenticatorResponse);
     }
 
     /**
