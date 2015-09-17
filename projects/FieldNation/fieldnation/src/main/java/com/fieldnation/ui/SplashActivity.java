@@ -109,12 +109,14 @@ public class SplashActivity extends AuthFragmentActivity {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "onAuthenticated");
             _isAuth = true;
             doNextStep();
         }
 
         @Override
         public void onNotAuthenticated() {
+            Log.v(TAG, "onNotAuthenticated");
             AuthTopicClient.requestCommand(SplashActivity.this);
         }
     };
@@ -135,7 +137,6 @@ public class SplashActivity extends AuthFragmentActivity {
                 finish();
             }
         }
-
     }
 
     public static void startNew(Context context) {

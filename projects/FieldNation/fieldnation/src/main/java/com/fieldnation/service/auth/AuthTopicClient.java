@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.Sticky;
@@ -111,7 +112,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_AUTHENTICATOR_RESPONSE, authenticatorResponse);
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_NEED_PASSWORD, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_NEED_PASSWORD, bundle, Sticky.FOREVER);
     }
 
     public boolean subNeedUsernameAndPassword() {
@@ -155,7 +156,11 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
                     break;
                 case TOPIC_AUTH_COMMAND_NEED_PASSWORD:
                     Bundle bundle = (Bundle) payload;
-                    onNeedUsernameAndPassword(bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE));
+                    if (bundle.containsKey(PARAM_AUTHENTICATOR_RESPONSE)
+                            && bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE) != null) {
+                        AuthTopicClient.needUsernameAndPassword(App.get(), null);
+                        onNeedUsernameAndPassword(bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE));
+                    }
                     break;
             }
         }

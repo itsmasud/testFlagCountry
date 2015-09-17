@@ -191,6 +191,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void removeAccount() {
         Log.v(TAG, "removeAccount");
+        if (_account == null)
+            return;
+
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
@@ -198,6 +201,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _account = null;
         } else if (_state == AuthState.NOT_AUTHENTICATED) {
             Log.v(TAG, "removeAccount do nothing");
+
         } else if (_state == AuthState.AUTHENTICATING) {
             // retry later if authenticating
             Log.v(TAG, "removeAccount retry later");
