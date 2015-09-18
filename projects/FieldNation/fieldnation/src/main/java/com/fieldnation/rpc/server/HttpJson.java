@@ -114,7 +114,7 @@ public class HttpJson {
                         String filename = fo.getString("filename");
                         long soId = fo.getLong("soid");
                         String contentType = fo.getString("contentType");
-                        StoredObject so = StoredObject.get(context, soId);
+                        StoredObject so = StoredObject.get(soId);
 
                         Log.v(TAG, so.getFile().toString() + ":" + so.getFile().length());
                         if (so.isFile()) {
@@ -135,7 +135,7 @@ public class HttpJson {
 
         } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {
             long soid = request.getLong(HttpJsonBuilder.PARAM_WEB_BODY_SOID);
-            StoredObject so = StoredObject.get(context, soid);
+            StoredObject so = StoredObject.get(soid);
             conn.setDoOutput(true);
             OutputStream out = conn.getOutputStream();
             if (so.isFile()) {

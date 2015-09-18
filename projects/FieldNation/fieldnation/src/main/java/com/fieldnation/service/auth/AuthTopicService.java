@@ -277,7 +277,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onAccountsUpdated(Account[] accounts) {
             Log.v(TAG, "onAccountsUpdated");
-            List<OAuth> auths = OAuth.list(AuthTopicService.this);
+            List<OAuth> auths = OAuth.list();
             String type = getAccountType();
             if (auths == null || auths.size() == 0)
                 return;
@@ -380,7 +380,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             } else {
                 // have token string, get the full token
                 Log.v(TAG, "have token");
-                _authToken = OAuth.lookup(AuthTopicService.this, bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
+                _authToken = OAuth.lookup(bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
 
                 if (_authToken == null) {
                     _account = null;

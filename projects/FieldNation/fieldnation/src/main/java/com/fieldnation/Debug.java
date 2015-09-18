@@ -58,8 +58,8 @@ public class Debug {
                 }
             }.executeEx();
         } else {
-            _anrWatchDog = new ANRWatchDog(5000);
-            _anrWatchDog.start();
+//            _anrWatchDog = new ANRWatchDog(5000);
+//            _anrWatchDog.start();
         }
     }
 

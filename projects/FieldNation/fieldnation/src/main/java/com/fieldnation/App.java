@@ -213,7 +213,6 @@ public class App extends Application {
 
                 anrReport();
             }
-
         }
     };
 
@@ -350,6 +349,14 @@ public class App extends Application {
 
     public Profile getProfile() {
         return _profile;
+    }
+
+    public static int getProfileId() {
+        Profile profile = get().getProfile();
+        if (profile != null && profile.getUserId() != null) {
+            return profile.getUserId();
+        }
+        return -1;
     }
 
     /*-*********************-*/

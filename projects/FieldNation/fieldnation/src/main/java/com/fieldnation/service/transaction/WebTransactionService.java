@@ -117,19 +117,19 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
             boolean haveWifi = App.get().haveWifi();
 
-            Log.v(TAG, "HaveWifi " + haveWifi);
+            // Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
                 boolean pluggedIn = App.get().isCharging();
-                Log.v(TAG, "HavePower " + pluggedIn);
+                // Log.v(TAG, "HavePower " + pluggedIn);
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;
                 }
             }
             _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-            Log.v(TAG, "allowSync time: " + watch.finish());
+            // Log.v(TAG, "allowSync time: " + watch.finish());
         }
         return _allowSync;
     }
