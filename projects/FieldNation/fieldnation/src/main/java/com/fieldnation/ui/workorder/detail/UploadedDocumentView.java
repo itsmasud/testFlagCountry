@@ -94,7 +94,16 @@ public class UploadedDocumentView extends RelativeLayout {
         setLoading(false, 0);
     }
 
-	/*-*************************-*/
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_docClient != null) {
+            _docClient.disconnect(getContext());
+            _docClient = null;
+        }
+        super.onDetachedFromWindow();
+    }
+
+    /*-*************************-*/
     /*-			Methods			-*/
     /*-*************************-*/
 
@@ -132,6 +141,10 @@ public class UploadedDocumentView extends RelativeLayout {
         _profileId = profileId;
         _workorder = workorder;
         populateUi();
+    }
+
+    public UploadedDocument getUploadedDocument() {
+        return _doc;
     }
 
     public void setListener(Listener listener) {
@@ -212,6 +225,9 @@ public class UploadedDocumentView extends RelativeLayout {
 
         @Override
         public boolean onLongClick(View v) {
+            if (_doc == null || _doc.getUploaderUserId() == null)
+                return false;
+
             if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
 
                 if (_listener != null)

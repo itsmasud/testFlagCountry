@@ -18,7 +18,6 @@
             android:pivotY="50%"
             android:drawable="@drawable/ic_nav_arrow_r" />
     </item>
-    <!--<item android:drawable="@drawable/btn_orange_disabled" android:state_enabled="false" />-->
     <item >
         <rotate
             android:fromDegrees="0"

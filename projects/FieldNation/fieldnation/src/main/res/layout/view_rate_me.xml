@@ -29,7 +29,7 @@
 
             <Button
                 android:id="@+id/cancel_button"
-                style="?attr/buttonGrayStyle"
+                style="?attr/buttonWhiteStyle"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="NOT REALLY" />
@@ -40,7 +40,7 @@
 
             <Button
                 android:id="@+id/ok_button"
-                style="?attr/buttonGrayStyle"
+                style="?attr/buttonWhiteStyle"
                 android:layout_width="wrap_content"
                 android:layout_weight="1"
                 android:text="LOVE IT" />

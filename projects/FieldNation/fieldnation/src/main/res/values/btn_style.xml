@@ -20,23 +20,31 @@
     <color name="btn_status_orange_center">@color/fn_brandcolor_0</color>
     <color name="btn_status_orange_bottom">#05000000</color>
     <color name="btn_status_orange_pressed">@color/fn_brandcolor_medium</color>
+    <color name="btn_status_orange_disabled">@color/fn_brandcolor_30</color>
+    <color name="btn_status_orange_top_disabled">@color/fn_brandcolor_30</color>
 
     <color name="btn_status_white_fill">#FFF0F0F0</color>
     <color name="btn_status_white_top">#CCF0F0F0</color>
     <color name="btn_status_white_center">#00F0F0F0</color>
     <color name="btn_status_white_bottom">#05000000</color>
     <color name="btn_status_white_pressed">#FFC0C0C0</color>
+    <color name="btn_status_white_disabled">#FFF0F0F0</color>
+    <color name="btn_status_white_top_disabled">#66F0F0F0</color>
 
     <color name="btn_status_green_fill">@color/fn_accent_color</color>
     <color name="btn_status_green_top">@color/fn_accent_color_80</color>
     <color name="btn_status_green_center">@color/fn_accent_color_0</color>
     <color name="btn_status_green_bottom">#05000000</color>
     <color name="btn_status_green_pressed">@color/fn_accent_color_medium</color>
+    <color name="btn_status_green_disabled">@color/fn_accent_color_10</color>
+    <color name="btn_status_green_disabled_top">@color/fn_accent_color_10</color>
 
-    <color name="btn_status_gray_fill">@color/fn_light_text</color>
-    <color name="btn_status_gray_top">@color/fn_light_text_80</color>
-    <color name="btn_status_gray_center">@color/fn_light_text_0</color>
+    <color name="btn_status_gray_fill">#FF999999</color>
+    <color name="btn_status_gray_top">#CC999999</color>
+    <color name="btn_status_gray_center">#00999999</color>
     <color name="btn_status_gray_bottom">#05000000</color>
+    <color name="btn_status_gray_disabled">#80999999</color>
+    <color name="btn_status_gray_disabled_top">#66999999</color>
 
     <color name="btn_status_black_fill">@color/fn_dark_text</color>
     <color name="btn_status_black_top">@color/fn_dark_text_80</color>
@@ -61,27 +69,27 @@
 
     <style name="Material.Button.Flat" parent="Material.Button">
         <item name="android:background">@null</item>
-        <item name="android:textColor">@color/fn_clickable_text</item>
+        <item name="android:textColor">@color/btn_fg_flat</item>
     </style>
 
     <style name="Material.Button.Raised.White" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/fn_dark_button_text</item>
+        <item name="android:background">@drawable/btn_bg_white</item>
+        <item name="android:textColor">@color/btn_fg_white</item>
     </style>
 
     <style name="Material.Button.Raised.Green" parent="Material.Button">
-        <item name="android:background">@drawable/btn_green</item>
-        <item name="android:textColor">@color/fn_white_text</item>
+        <item name="android:background">@drawable/btn_bg_green</item>
+        <item name="android:textColor">@color/btn_fg_green</item>
     </style>
 
     <style name="Material.Button.Raised.Orange" parent="Material.Button">
-        <item name="android:background">@drawable/btn_orange</item>
-        <item name="android:textColor">@color/fn_white_text</item>
+        <item name="android:background">@drawable/btn_bg_orange</item>
+        <item name="android:textColor">@color/btn_fg_orange</item>
     </style>
 
     <style name="Material.Button.Raised.Gray" parent="Material.Button">
-        <item name="android:background">@drawable/btn_white</item>
-        <item name="android:textColor">@color/fn_dark_button_text</item>
+        <item name="android:background">@drawable/btn_bg_gray</item>
+        <item name="android:textColor">@color/btn_fg_gray</item>
     </style>
 
     <!--<style name="ButtonSpinner" parent="android:Widget.Holo.Light.Spinner">-->

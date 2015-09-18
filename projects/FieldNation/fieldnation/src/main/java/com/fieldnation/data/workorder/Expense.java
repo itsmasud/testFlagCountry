@@ -7,8 +7,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 public class Expense implements Parcelable {
 
     @Json(name = "approved")
@@ -81,7 +79,7 @@ public class Expense implements Parcelable {
 
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
     public Expense(String description, double amount, ExpenseCategory category) {
         if (category != null) {
             _categoryId = category.getId();

@@ -18,10 +18,14 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ExpenseDialog";
@@ -205,6 +209,15 @@ public class ExpenseDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (misc.isEmptyOrNull(_amountEditText.getText().toString())
+                    || misc.isEmptyOrNull(_descriptionEditText.getText().toString()))
+                return;
+
+            if (getAmount() < 0.1) {
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                return;
+            }
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount(), getCategory());
 

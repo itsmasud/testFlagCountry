@@ -213,8 +213,8 @@
                         android:visibility="visible" />
 
                     <Button
-                        android:id="@+id/action_button_gray"
-                        style="?attr/buttonGrayStyle"
+                        android:id="@+id/action_button_white"
+                        style="?attr/buttonWhiteStyle"
                         android:minWidth="150dp"
                         android:text="@string/placeholder_phrase"
                         android:visibility="visible" />

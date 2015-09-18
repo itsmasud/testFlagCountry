@@ -14,7 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 
@@ -131,7 +131,7 @@ public class DiscountDialog extends DialogFragmentBase {
         public void onClick(View v) {
             // convert to penies
             if ((int) (getAmount() * 100) < 10) {
-                ToastClient.toast(GlobalState.getContext(), "Amount must be more than $0.10", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), "Amount must be more than $0.10", Toast.LENGTH_SHORT);
                 return;
             }
 

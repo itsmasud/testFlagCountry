@@ -6,8 +6,8 @@ import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.utils.misc;
@@ -34,7 +34,9 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
     }
 
     public static void get(Context context, String url, boolean getCircle, boolean isSync) {
-        misc.printStackTrace("PhotoClient.get()");
+        if (misc.isEmptyOrNull(url))
+            return;
+        // misc.printStackTrace("PhotoClient.get()");
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_CIRCLE, getCircle);
@@ -94,7 +96,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
 
                             if (result == null) {
                                 if (file != null) {
-                                    result = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+                                    result = new BitmapDrawable(App.get().getResources(), file.getAbsolutePath());
                                     _pictureCache.put(key, new WeakReference<>(result));
                                 }
                             }

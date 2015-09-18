@@ -88,7 +88,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
         String filename = params.getString("filename");
         long documentId = params.getLong("documentId");
 
-        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, false);
+        DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.isSync());
 
         return Result.FINISH;
     }

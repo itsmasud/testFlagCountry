@@ -3,6 +3,7 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.Sticky;
@@ -12,6 +13,7 @@ import com.fieldnation.service.topics.TopicService;
  * Created by Michael Carver on 4/20/2015.
  */
 public class WorkorderDispatch implements WorkorderConstants {
+    private static final String TAG = "WorkorderDispatch";
 
     public static void get(Context context, JsonObject workorder, long workorderId, boolean failed, boolean isSync) {
         Bundle bundle = new Bundle();
@@ -196,6 +198,8 @@ public class WorkorderDispatch implements WorkorderConstants {
 //    }
 
     public static void uploadDeliverable(Context context, long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+        Log.v(TAG, "uploadDeliverable");
+
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);

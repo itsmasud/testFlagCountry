@@ -1,6 +1,7 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Intent;
+import android.net.Uri;
 
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
@@ -141,8 +142,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     private void listMessages(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (!isSync) {
+        if (!isSync && allowCache) {
             StoredObject obj = StoredObject.get(this, PSO_MESSAGE_LIST, workorderId);
             if (obj != null) {
                 try {
@@ -152,7 +154,6 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 }
             }
         }
-
         WorkorderTransactionBuilder.listMessages(this, workorderId, false, isSync);
     }
 
@@ -216,8 +217,12 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
+        Uri uri = (Uri) intent.getParcelableExtra(PARAM_URI);
 
-        WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, workorderId, uploadSlotId);
+        if (uri != null)
+            WorkorderTransactionBuilder.uploadDeliverable(this, uri, filename, workorderId, uploadSlotId);
+        else
+            WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, workorderId, uploadSlotId);
     }
 
     private void getDeliverable(Intent intent) {

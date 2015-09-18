@@ -186,7 +186,7 @@ public class WoProgressBar extends RelativeLayout {
                 _nodes[2].setLabel(getResources().getString(R.string.in_progress)); //In Progress
                 _nodes[3].setLabel(getResources().getString(R.string.completed)); //Completed
                 break;
-            case PENDINGREVIEWED:
+            case PENDINGREVIEW:
                 _nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
                 _nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
                 _nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);

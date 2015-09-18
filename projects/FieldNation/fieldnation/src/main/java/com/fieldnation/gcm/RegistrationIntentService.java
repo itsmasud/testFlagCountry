@@ -18,8 +18,8 @@ package com.fieldnation.gcm;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;

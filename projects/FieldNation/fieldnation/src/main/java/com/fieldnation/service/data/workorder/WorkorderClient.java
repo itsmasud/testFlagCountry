@@ -3,10 +3,15 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
@@ -22,6 +27,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
@@ -193,11 +199,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
-    public static void listMessages(Context context, long workorderId, boolean isSync) {
+    public static void listMessages(Context context, long workorderId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -294,6 +301,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
 
+    /*-*************************************-*/
+    /*-             Ratings               -*/
+    /*-*************************************-*/
+    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+    }
+
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
@@ -366,6 +384,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionReadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
 
         String payload = "";
@@ -405,7 +427,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
+    }
+
+    // incomplete workorder
+    public static void actionIncomplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionIncomplete(context, workorderId);
     }
 
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
@@ -421,12 +450,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
@@ -446,10 +479,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -457,18 +494,26 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        if (Debug.isCrashlyticsRunning())
+            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 
@@ -518,16 +563,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean subDeliverableUpload() {
-        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
-    }
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
+        Log.v(STAG, "requestUploadDeliverable");
 
-    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
-        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
 
-        topicId += "/" + workorderId + "/" + uploadSlotId;
-
-        return register(topicId, TAG);
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_URI, uri);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        context.startService(intent);
     }
 
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
@@ -538,10 +585,28 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
 
             @Override
+            public void fromUri(String filename, Uri uri) {
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, uri);
+            }
+
+            @Override
             public void fail(String reason) {
                 Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
+                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
             }
         });
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
+    }
+
+    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId, TAG);
     }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
@@ -626,12 +691,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         payload.getString(PARAM_FILE_NAME),
                         payload.getBoolean(PARAM_IS_COMPLETE), true);
 
+            } else {
+                onUploadDeliverable(
+                        payload.getLong(PARAM_WORKORDER_ID),
+                        payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                        payload.getString(PARAM_FILE_NAME),
+                        payload.getBoolean(PARAM_IS_COMPLETE), false);
             }
-            onUploadDeliverable(
-                    payload.getLong(PARAM_WORKORDER_ID),
-                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
-                    payload.getString(PARAM_FILE_NAME),
-                    payload.getBoolean(PARAM_IS_COMPLETE), false);
         }
 
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {

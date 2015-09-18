@@ -2,7 +2,7 @@ package com.fieldnation.ui.dialog;
 
 import android.support.v4.app.FragmentManager;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 
 /**
@@ -19,7 +19,7 @@ public class TermsDialog extends OneButtonDialog {
     }
 
     public void show(String title, String body) {
-        setData(title, body, GlobalState.getContext().getString(R.string.btn_done), _super_listener);
+        setData(title, body, App.get().getString(R.string.btn_done), _super_listener);
 
         super.show();
     }

@@ -12,11 +12,13 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
 
 /**
@@ -125,12 +127,17 @@ public class FeedbackDialog extends DialogFragmentBase {
     private final View.OnClickListener _send_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (misc.isEmptyOrNull(_messageEditText.getText().toString())) {
+                ToastClient.toast(App.get(), "Please enter a feedback", Toast.LENGTH_SHORT);
+                return;
+            }
+
             dismiss();
             if (_listener != null) {
                 _listener.onOk(_messageEditText.getText().toString());
             }
 
-            HelpClient.sendFeedback(GlobalState.getContext(), _messageEditText.getText().toString(), null, null, null);
+            HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, null, null);
 
         }
     };

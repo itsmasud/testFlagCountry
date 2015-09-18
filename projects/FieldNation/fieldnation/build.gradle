@@ -1,5 +1,20 @@
+buildscript {
+    repositories {
+        maven { url 'https://maven.fabric.io/public' }
+    }
+
+    dependencies {
+        classpath 'io.fabric.tools:gradle:1.+'
+    }
+}
 apply plugin: 'com.android.application'
+
+repositories {
+    maven { url 'https://maven.fabric.io/public' }
+}
+
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 22
@@ -12,8 +27,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 45
-        versionName "2.0.45"
+        versionCode 54
+        versionName "2.0.54"
         multiDexEnabled true
     }
 
@@ -79,12 +94,16 @@ dependencies {
     compile project(':libJson')
     compile project(':libUtils')
     compile project(':libDateTimePicker')
-    compile 'com.android.support:multidex:1.0.0'
-    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.3@aar') { transitive = true }
-    compile 'com.google.android.gms:play-services:7.5.+'
-    compile 'com.google.android.gms:play-services-gcm:7.5.+'
-    compile 'com.android.support:design:22.2.0'
-    compile 'com.android.support:appcompat-v7:22.2.0'
-    compile 'com.android.support:support-v4:22.2.0'
-    compile 'com.android.support:recyclerview-v7:22.2.0'
+    compile 'com.android.support:multidex:1.0.1'
+    compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') { transitive = true }
+    compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'com.google.android.gms:play-services-gcm:7.8'
+    compile 'com.android.support:design:22.2.1'
+    compile 'com.android.support:appcompat-v7:22.2.1'
+    compile 'com.android.support:support-v4:22.2.1'
+    compile 'com.android.support:recyclerview-v7:22.2.1'
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
+        transitive = true;
+    }
+    compile 'com.github.anrwatchdog:anrwatchdog:1.1.1'
 }
