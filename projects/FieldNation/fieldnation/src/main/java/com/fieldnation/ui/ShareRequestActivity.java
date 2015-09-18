@@ -4,28 +4,34 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
+import android.support.design.widget.TextInputLayout;
+import android.support.v4.view.MenuItemCompat;
+import android.view.Menu;
 import android.view.View;
-import android.view.Window;
+import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
+import android.widget.Toast;
 
-import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
+import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.UploadingDocument;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.ui.workorder.detail.DocumentView;
-import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
 
 import java.util.ArrayList;
-import java.util.Random;
+import java.util.List;
 
 /**
  * Created by shoaib.ahmed on Sept/08/2015.
@@ -39,7 +45,19 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     // UI
     private OverScrollView _scrollView;
-    private LinearLayout _reviewList;
+    private RefreshView _refreshView;
+    private LinearLayout _sendToLayout;
+    private Spinner _workorderSpinner;
+    private Spinner _tasksSpinner;
+    private Button _okButton;
+    private Button _cancelButton;
+
+
+    // Data
+    private WorkorderClient _workorderClient;
+
+    // state data
+    private WorkorderDataSelector _displayView = WorkorderDataSelector.ASSIGNED;
 
     private Profile _profile = null;
     private boolean _isAuth = false;
@@ -55,19 +73,28 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.view_uploading_documents_list);
+        setContentView(R.layout.activity_share_request);
 
-        _reviewList = (LinearLayout) findViewById(R.id.review_list);
+        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView.setListener(_refreshView_listener);
 
-//        if (savedInstanceState != null) {
-//            if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
-//                _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
-//            }
-//            if (savedInstanceState.containsKey(STATE_PROFILE)) {
-//                _profile = savedInstanceState.getParcelable(STATE_PROFILE);
-//            }
-//        }
+        _scrollView = (OverScrollView) findViewById(R.id.scroll_view);
+        _scrollView.setOnOverScrollListener(_refreshView);
 
+        _workorderSpinner = (Spinner) findViewById(R.id.workorder_spinner);
+        _workorderSpinner.setOnItemSelectedListener(_workorder_selected);
+
+        _tasksSpinner = (Spinner) findViewById(R.id.tasks_spinner);
+        _tasksSpinner.setOnItemSelectedListener(_tasks_selected);
+
+
+        _sendToLayout = (LinearLayout) findViewById(R.id.sendTo_layout);
+
+        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_okButton_onClick);
+
+        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
 
         // Get intent, action and MIME type
         Intent intent = getIntent();
@@ -81,60 +108,78 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 //        }
 
         //make sure it's an action and type we can handle
-        if(action.equals(Intent.ACTION_SEND)){
+        if (action.equals(Intent.ACTION_SEND)) {
             //content is being shared
             Log.v(TAG, "file received");
-        }
-        else if(action.equals(Intent.ACTION_MAIN)){
+        } else if (action.equals(Intent.ACTION_MAIN)) {
             //app has been launched directly, not from share list
             Log.v(TAG, "file received");
 
-        }
-
-
-        else if(action.equals(Intent.ACTION_SEND_MULTIPLE)){
+        } else if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
             //app has been launched directly, not from share list
             Log.v(TAG, "file received");
 
-        }
-
-        else{
+        } else {
             Log.v(TAG, "file received" + action);
         }
 
 
-
         Log.v(TAG, "onCreate");
-        }
+    }
 
-        @Override
-        protected void onSaveInstanceState (Bundle outState){
-            outState.putBoolean(STATE_IS_AUTH, _isAuth);
-            if (_profile != null) {
-                outState.putParcelable(STATE_PROFILE, _profile);
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putBoolean(STATE_IS_AUTH, _isAuth);
+        if (_profile != null) {
+            outState.putParcelable(STATE_PROFILE, _profile);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
+        startService(new Intent(this, AuthTopicService.class));
+        _globalClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalClient.connect(this);
+        _authClient = new AuthTopicClient(_authTopic_listener);
+        _authClient.connect(this);
+
+        AuthTopicClient.dispatchRequestCommand(this);
+
+//        if (_workorderClient != null && _workorderClient.isConnected())
+//            _adapter.refreshPages();
+
+        setLoading(true);
+    }
+
+    @Override
+    protected void onPause() {
+        _globalClient.disconnect(this);
+        _authClient.disconnect(this);
+        super.onPause();
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+
+        return true;
+    }
+
+    private void setLoading(boolean loading) {
+        Log.v(TAG, "setLoading()");
+        // misc.printStackTrace("setLoading(" + loading + ")");
+        if (_refreshView != null) {
+            if (loading) {
+                _refreshView.startRefreshing();
+            } else {
+                _refreshView.refreshComplete();
             }
-            super.onSaveInstanceState(outState);
         }
-
-        @Override
-        protected void onResume () {
-            Log.v(TAG, "onResume");
-            super.onResume();
-            startService(new Intent(this, AuthTopicService.class));
-            _globalClient = new GlobalTopicClient(_globalTopic_listener);
-            _globalClient.connect(this);
-            _authClient = new AuthTopicClient(_authTopic_listener);
-            _authClient.connect(this);
-
-            AuthTopicClient.dispatchRequestCommand(this);
-        }
-
-        @Override
-        protected void onPause () {
-            _globalClient.disconnect(this);
-            _authClient.disconnect(this);
-            super.onPause();
-        }
+    }
 
 
 //    private void populateUi() {
@@ -177,13 +222,39 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 //    }
 
 
-    private void handleSendMultipleImages(Intent intent) {
-        ArrayList<Uri> imageUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        if (imageUris != null) {
-            // Update UI to reflect multiple images being shared
-            Log.v(TAG, "file received " );
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+        @Override
+        public void onStartRefresh() {
+//            if (_workorder != null) {
+//                _workorder.dispatchOnChange();
+//            }
         }
-    }
+    };
+
+
+    private final AdapterView.OnItemSelectedListener _workorder_selected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            //Todo: Populate _tasksSpinner when the
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+
+    private final AdapterView.OnItemSelectedListener _tasks_selected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            //Todo: not sure
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
@@ -220,6 +291,48 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             AuthTopicClient.dispatchRequestCommand(ShareRequestActivity.this);
         }
     };
+
+    private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+
+        }
+    };
+
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+        }
+    };
+
+    /*-*****************************-*/
+    /*-             WEB             -*/
+    /*-*****************************-*/
+//    private final WorkorderClient.Listener _workorderData_listener = new WorkorderClient.Listener() {
+//        @Override
+//        public void onConnected() {
+//            Log.v(TAG, "_workorderData_listener.onConnected");
+//            _workorderClient.subList(_displayView);
+//            _workorderClient.subGet(false);
+//            _workorderClient.subActions();
+//            _adapter.refreshPages();
+//        }
+//
+//        @Override
+//        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
+//            Log.v(TAG, "_workorderData_listener.onList");
+//            if (!selector.equals(_displayView))
+//                return;
+//            if (list != null)
+//                addPage(page, list);
+//        }
+//
+//        @Override
+//        public void onAction(long workorderId, String action, boolean failed) {
+//            _adapter.refreshPages();
+//        }
+//    };
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, ShareRequestActivity.class);
