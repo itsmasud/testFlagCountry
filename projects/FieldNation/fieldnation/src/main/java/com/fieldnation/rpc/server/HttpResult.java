@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -47,7 +47,7 @@ public class HttpResult {
         _baResults = misc.readAllFromStreamUntil(in, 1024, -1, 102400, 1000);
         if (_baResults != null && _baResults.length >= 102400) {
             // temp file
-            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+            File tempFolder = new File(App.get().getStoragePath() + "/temp");
             tempFolder.mkdirs();
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
@@ -102,7 +102,15 @@ public class HttpResult {
     public byte[] getByteArray() {
         if (_file != null && _baResults == null) {
             try {
-                _baResults = misc.readAllFromStream(new FileInputStream(_file), 1024, -1, 1000);
+                FileInputStream fin = null;
+                try {
+                    fin = new FileInputStream(_file);
+                    _baResults = misc.readAllFromStream(fin, 1024, -1, 1000);
+                } finally {
+                    if (fin != null) {
+                        fin.close();
+                    }
+                }
             } catch (IOException e) {
             }
         }

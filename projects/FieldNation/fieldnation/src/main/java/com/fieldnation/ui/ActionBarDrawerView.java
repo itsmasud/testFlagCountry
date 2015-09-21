@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 6/10/2015.
@@ -62,10 +63,12 @@ public class ActionBarDrawerView extends FrameLayout {
     }
 
     public void showMessageNav() {
+        misc.hideKeyboard(this);
         _messageDrawerView.animateShow();
     }
 
     public void showNotificationNav() {
+        misc.hideKeyboard(this);
         _notificationDrawerView.animateShow();
     }
 

@@ -4,6 +4,8 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
@@ -25,7 +27,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     // State
-    public static void dispatchAuthState(Context context, AuthState state) {
+    public static void authStateChange(Context context, AuthState state) {
         if (context == null)
             return;
 
@@ -34,80 +36,87 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
     }
 
-
-    /*
-    public static void dispatchNotAuthenticated(Context context) {
-        dispatchAuthState(context, AuthState.NOT_AUTHENTICATED);
-    }
-
-    public static void dispatchAuthenticating(Context context) {
-        dispatchAuthState(context, AuthState.AUTHENTICATING);
-    }
-*/
-
-    public static void dispatchAuthenticated(Context context, OAuth auth) {
+    public static void authenticated(final Context context, OAuth auth) {
         if (context == null)
             return;
 
-        Bundle bundle = new Bundle();
-        bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
-        bundle.putParcelable(PARAM_OAUTH, auth);
+        new AsyncTaskEx<OAuth, Object, Bundle>() {
+            @Override
+            protected Bundle doInBackground(OAuth... params) {
+                Bundle bundle = new Bundle();
+                bundle.putInt(PARAM_STATE, AuthState.AUTHENTICATED.ordinal());
+                bundle.putParcelable(PARAM_OAUTH, params[0]);
+                return bundle;
+            }
 
-        TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
+            @Override
+            protected void onPostExecute(Bundle bundle) {
+                TopicService.dispatchEvent(context, TOPIC_AUTH_STATE, bundle, Sticky.FOREVER);
+                super.onPostExecute(bundle);
+            }
+        }.executeEx(auth);
     }
 
-/*
-    public static void dispatchRemoving(Context context) {
-        dispatchAuthState(context, AuthState.REMOVING);
-    }
-*/
-
-    public boolean registerAuthState() {
+    public boolean subAuthStateChange() {
         return register(TOPIC_AUTH_STATE, TAG);
     }
 
-    public static void dispatchRequestCommand(Context context) {
+    public static void requestCommand(Context context) {
         if (context == null)
             return;
 
         TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REQUEST, null, Sticky.NONE);
     }
 
-    public boolean registerRequestCommand() {
+    public boolean subRequestCommand() {
         return register(TOPIC_AUTH_COMMAND_REQUEST, TAG);
     }
 
-    public static void dispatchInvalidateCommand(Context context) {
+    public static void invalidateCommand(Context context) {
         if (context == null)
             return;
 
         TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_INVALIDATE, null, Sticky.NONE);
     }
 
-    public boolean registerInvalidateCommand() {
+    public boolean subInvalidateCommand() {
         return register(TOPIC_AUTH_COMMAND_INVALIDATE, TAG);
     }
 
-    public static void dispatchRemoveCommand(Context context) {
+    public static void removeCommand(Context context) {
         if (context == null)
             return;
 
         TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_REMOVE, null, Sticky.NONE);
     }
 
-    public boolean registerRemoveCommand() {
+    public boolean subRemoveCommand() {
         return register(TOPIC_AUTH_COMMAND_REMOVE, TAG);
     }
 
-    public static void dispatchAddedAccountCommand(Context context) {
+    public static void addedAccountCommand(Context context) {
         if (context == null)
             return;
 
         TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, null, Sticky.NONE);
     }
 
-    public boolean registerAccountAddedCommand() {
+    public boolean subAccountAddedCommand() {
         return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, TAG);
+    }
+
+    public static void needUsernameAndPassword(Context context, Parcelable authenticatorResponse) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(PARAM_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        TopicService.dispatchEvent(context, TOPIC_AUTH_COMMAND_NEED_PASSWORD, bundle, Sticky.FOREVER);
+    }
+
+    public boolean subNeedUsernameAndPassword() {
+        return register(TOPIC_AUTH_COMMAND_NEED_PASSWORD, TAG);
     }
 
     public static abstract class Listener extends TopicClient.Listener {
@@ -145,6 +154,14 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
                 case TOPIC_AUTH_COMMAND_ADDED_ACCOUNT:
                     onCommandAddedAccount();
                     break;
+                case TOPIC_AUTH_COMMAND_NEED_PASSWORD:
+                    Bundle bundle = (Bundle) payload;
+                    if (bundle.containsKey(PARAM_AUTHENTICATOR_RESPONSE)
+                            && bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE) != null) {
+                        AuthTopicClient.needUsernameAndPassword(App.get(), null);
+                        onNeedUsernameAndPassword(bundle.getParcelable(PARAM_AUTHENTICATOR_RESPONSE));
+                    }
+                    break;
             }
         }
 
@@ -172,5 +189,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         public void onNotAuthenticated() {
         }
 
+        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+        }
     }
 }

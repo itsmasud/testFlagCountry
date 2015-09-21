@@ -6,8 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -20,11 +21,15 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
+
+import javax.net.ssl.SSLException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -49,7 +54,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "onCreate");
 
         int threadCount = 4;
-        if (GlobalState.getContext().getMemoryClass() <= 64) {
+        if (App.get().getMemoryClass() <= 64) {
             threadCount = 4;
         } else {
             threadCount = 8;
@@ -110,21 +115,21 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-            boolean haveWifi = GlobalState.getContext().haveWifi();
+            boolean haveWifi = App.get().haveWifi();
 
-            Log.v(TAG, "HaveWifi " + haveWifi);
+            // Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
-                boolean pluggedIn = GlobalState.getContext().isCharging();
-                Log.v(TAG, "HavePower " + pluggedIn);
+                boolean pluggedIn = App.get().isCharging();
+                // Log.v(TAG, "HavePower " + pluggedIn);
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;
                 }
             }
             _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-            Log.v(TAG, "allowSync time: " + watch.finish());
+            // Log.v(TAG, "allowSync time: " + watch.finish());
         }
         return _allowSync;
     }
@@ -133,8 +138,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         @Override
         public void onConnected() {
             Log.v(TAG, "AuthTopicClient.onConnected");
-            _authTopicClient.registerAuthState();
-            AuthTopicClient.dispatchRequestCommand(WebTransactionService.this);
+            _authTopicClient.subAuthStateChange();
+            AuthTopicClient.requestCommand(WebTransactionService.this);
         }
 
         @Override
@@ -231,6 +236,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // at some point call the web service
             JsonObject request = trans.getRequest().copy();
+            String handlerName = null;
+            HttpResult result = null;
             try {
                 // apply authentication if needed
                 if (trans.useAuth()) {
@@ -249,7 +256,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 Log.v(TAG, request.display());
 
-                String handlerName = trans.getHandlerName();
+                handlerName = trans.getHandlerName();
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
@@ -272,13 +279,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
 
                 // perform request
-                HttpResult result = HttpJson.run(context, request);
+                result = HttpJson.run(context, request);
 
                 // debug output
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    Log.v(TAG, result.getString());
+                    // Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -288,41 +295,45 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         && result.getString().equals("You must provide a valid OAuth token to make a request")) {
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
-                    AuthTopicClient.dispatchInvalidateCommand(context);
+                    AuthTopicClient.invalidateCommand(context);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() == 400) {
                     // Bad request
                     // need to report this
                     // need to re-auth?
-                    Thread.sleep(5000);
-                    trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+
+                    if (result.getString().equals("You don't have permission to see this workorder")) {
+                        WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                        WebTransaction.delete(context, trans.getId());
+                    } else {
+                        Thread.sleep(5000);
+                        trans.requeue(context);
+                        AuthTopicClient.requestCommand(context);
+                    }
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
-                    AuthTopicClient.dispatchInvalidateCommand(context);
+                    AuthTopicClient.invalidateCommand(context);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                     WebTransaction.delete(context, trans.getId());
-                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
                     Thread.sleep(5000);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                     WebTransaction.delete(context, trans.getId());
-                    Transform.deleteTransaction(context, trans.getId());
                     return true;
                 }
 
@@ -336,17 +347,19 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         case ERROR:
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result);
                             WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
                             break;
                         case FINISH:
                             WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
                             break;
                         case REQUEUE:
                             trans.requeue(context);
                             break;
                     }
                 }
+            } catch (MalformedURLException ex) {
+                if (handlerName != null && result != null)
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
                 GlobalTopicClient.dispatchNetworkDisconnected(context);
@@ -356,6 +369,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 ex.printStackTrace();
                 trans.requeue(context);
+            } catch (SSLException ex) {
+                ex.printStackTrace();
+                if (ex.getMessage().contains("Broken pipe")) {
+                    ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransaction.delete(context, trans.getId());
+                }
             } catch (Exception ex) {
                 // no freaking clue
                 ex.printStackTrace();
@@ -363,6 +383,5 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
             return true;
         }
-
     }
 }

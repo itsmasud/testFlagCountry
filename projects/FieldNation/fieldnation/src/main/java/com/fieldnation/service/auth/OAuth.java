@@ -14,7 +14,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -133,14 +132,14 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     public void delete(Context context) {
         if (_id != -1)
-            StoredObject.delete(context, _id);
+            StoredObject.delete(_id);
     }
 
-    public void save(Context context) {
-        StoredObject obj = StoredObject.put(context, "OAuthToken", _username, (byte[]) null);
+    public void save() {
+        StoredObject obj = StoredObject.put(0, "OAuthToken", _username, (byte[]) null);
         _id = obj.getId();
         obj.setData(toJson().toByteArray());
-        obj.save(context);
+        obj.save();
     }
 
     public void applyToRequest(JsonObject request) throws ParseException {
@@ -158,9 +157,9 @@ public class OAuth implements Parcelable {
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
     }
 
-    public static OAuth lookup(Context context, String username) {
+    public static OAuth lookup(String username) {
         try {
-            StoredObject obj = StoredObject.get(context, "OAuthToken", username);
+            StoredObject obj = StoredObject.get(0, "OAuthToken", username);
 
             if (obj == null)
                 return null;
@@ -172,9 +171,9 @@ public class OAuth implements Parcelable {
         return null;
     }
 
-    public static List<OAuth> list(Context context) {
+    public static List<OAuth> list() {
         try {
-            List<StoredObject> objs = StoredObject.list(context, "OAuthToken");
+            List<StoredObject> objs = StoredObject.list(0, "OAuthToken");
             List<OAuth> list = new LinkedList<>();
             for (int i = 0; i < objs.size(); i++) {
                 try {
@@ -192,7 +191,7 @@ public class OAuth implements Parcelable {
 
     public static OAuth authenticate(Context context, String host, String path, String grantType,
                                      String clientId, String clientSecret, String username,
-                                     String password) throws ParseException, IOException {
+                                     String password) throws Exception {
 
         HttpJsonBuilder builder = new HttpJsonBuilder()
                 .method("POST")
@@ -215,7 +214,7 @@ public class OAuth implements Parcelable {
         token.put("username", username);
         token.put("host", host);
         OAuth auth = OAuth.fromJson(token);
-        auth.save(context);
+        auth.save();
         return auth;
     }
 

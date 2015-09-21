@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpectedPayment;
@@ -126,11 +126,15 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
             _insuraceFeeTextView.setVisibility(GONE);
             _insurancePercentTextView.setVisibility(GONE);
         } else {
-            Profile profile = GlobalState.getContext().getProfile();
+            Profile profile = App.get().getProfile();
             _insuraceFeeTextView.setVisibility(VISIBLE);
             _insurancePercentTextView.setVisibility(VISIBLE);
             _insuraceFeeTextView.setText(misc.toCurrency(pay.getExpectedInsuranceFee()));
-            _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            try {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            } catch (Exception ex) {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), 10F));
+            }
         }
     }
 }

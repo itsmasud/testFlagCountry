@@ -3,7 +3,9 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 
+import com.fieldnation.App;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -183,6 +185,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void actionComplete(Context context, long workorderId) {
         action(context, workorderId, "complete", null, null, null);
+    }
+
+    public static void actionIncomplete(Context context, long workorderId) {
+        action(context, workorderId, "incomplete", null, null, null);
     }
 
     public static void actionCheckin(Context context, long workorderId) {
@@ -385,6 +391,48 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+
+    public static Intent actionPostRatingIntent(Context context, int satisfactionRating, int scopeRating,
+                                                int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        try {
+            String body = "";
+
+            // parameterized body
+            body += "topic=android";
+            body += "&satisfaction_rating=" + satisfactionRating;
+            body += "&scope_rating=" + scopeRating;
+            body += "&respect_rating=" + respectRating;
+            body += "&respect_comment=" + respectComment;
+            body += "&recommend_buyer=" + recommendBuyer;
+            body += "&other_comments=" + otherComments;
+
+
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/rate");
+
+            if (body != null) {
+                http.body(body);
+
+                http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
+            }
+
+            return WebTransactionBuilder.builder(context)
+                    .priority(Priority.LOW)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pRating(satisfactionRating, scopeRating, respectRating,
+                            respectComment, recommendBuyer, otherComments, workorderId))
+                    .useAuth(true)
+                    .request(http)
+                    .makeIntent();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+        return null;
+    }
+
+
     /*-************************************-*/
     /*-             Signatures             -*/
     /*-************************************-*/
@@ -495,7 +543,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //    }
 
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -503,6 +551,32 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
+                    .doNotRead();
+
+            if (uploadSlotId != 0) {
+                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
+            }
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
+                    .useAuth(true)
+                    .request(builder)
+                    .send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
+                    .multipartFile("file", filename, uri)
                     .doNotRead();
 
             if (uploadSlotId != 0) {

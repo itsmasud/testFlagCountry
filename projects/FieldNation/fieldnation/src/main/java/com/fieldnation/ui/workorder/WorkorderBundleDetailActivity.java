@@ -148,6 +148,12 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+            // TODO Method Stub: actionReadyToGo()
+            Log.v(TAG, "Method Stub: actionReadyToGo()");
+        }
+
+        @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());

@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -124,7 +125,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // todo parse json and put Profile/id ?
         ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
 
-        StoredObject.put(context, PSO_PROFILE, profileId, data);
+        StoredObject.put((int) profileId, PSO_PROFILE, profileId, data);
 
         return Result.FINISH;
     }
@@ -137,7 +138,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync());
 
-        StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
+        StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
         return Result.FINISH;
     }
@@ -150,7 +151,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync());
 
-        StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
+        StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
         return Result.FINISH;
     }

@@ -41,10 +41,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         Log.v(TAG, "STATIC!");
     }
 
-    /*-*********************************-*/
-    /*-             Life Cycle          -*/
-    /*-*********************************-*/
-
+    /*-*************************************-*/
+    /*-             Life Cycle              -*/
+    /*-*************************************-*/
     public AuthTopicService() {
         super();
         Log.v(TAG, "Construct");
@@ -67,7 +66,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -84,6 +83,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);
         }
+        stopSelf();
         super.onDestroy();
     }
 
@@ -93,45 +93,12 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _state = state;
             Log.v(TAG, state.name());
             if (_state == AuthState.AUTHENTICATED) {
-                AuthTopicClient.dispatchAuthenticated(this, _authToken);
+                AuthTopicClient.authenticated(this, _authToken);
             } else {
-                AuthTopicClient.dispatchAuthState(this, _state);
+                AuthTopicClient.authStateChange(this, _state);
             }
         }
     }
-
-    private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
-        @Override
-        public void onAccountsUpdated(Account[] accounts) {
-            Log.v(TAG, "onAccountsUpdated");
-            List<OAuth> auths = OAuth.list(AuthTopicService.this);
-            String type = getAccountType();
-            if (auths == null || auths.size() == 0)
-                return;
-
-            for (int j = 0; j < auths.size(); j++) {
-                OAuth auth = auths.get(j);
-                boolean match = false;
-                for (Account account : accounts) {
-                    if (account.type.equals(type)) {
-                        if (auth.getUsername().equals(account.name)) {
-                            match = true;
-                            break;
-                        }
-                    }
-                }
-
-                if (!match) {
-                    // what now?
-                    auth.delete(AuthTopicService.this);
-                    _authToken = null;
-                    _account = null;
-                    setState(AuthState.NOT_AUTHENTICATED);
-                    requestToken();
-                }
-            }
-        }
-    };
 
     private final GlobalTopicClient.Listener _globalTopicClientListener = new GlobalTopicClient.Listener() {
         @Override
@@ -151,10 +118,10 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
-            _authTopicClient.registerInvalidateCommand();
-            _authTopicClient.registerRemoveCommand();
-            _authTopicClient.registerRequestCommand();
-            _authTopicClient.registerAccountAddedCommand();
+            _authTopicClient.subInvalidateCommand();
+            _authTopicClient.subRemoveCommand();
+            _authTopicClient.subRequestCommand();
+            _authTopicClient.subAccountAddedCommand();
         }
 
         @Override
@@ -224,6 +191,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void removeAccount() {
         Log.v(TAG, "removeAccount");
+        if (_account == null)
+            return;
+
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
@@ -231,15 +201,14 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             _account = null;
         } else if (_state == AuthState.NOT_AUTHENTICATED) {
             Log.v(TAG, "removeAccount do nothing");
+
         } else if (_state == AuthState.AUTHENTICATING) {
             // retry later if authenticating
             Log.v(TAG, "removeAccount retry later");
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    removeAccount();
-                }
-            }, 1000);
+            setState(AuthState.REMOVING);
+            AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
+            new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
+            _account = null;
         }
     }
 
@@ -253,14 +222,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {
         Log.v(TAG, "onNeedUserNameAndPassword");
-        Intent intent = new Intent(this, AuthActivity.class);
-
-        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
-
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+        AuthTopicClient.needUsernameAndPassword(this, authenticatorResponse);
     }
 
     /**
@@ -306,6 +268,43 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             requestAuthTokenFromAccountManager();
         }
     }
+
+    /*-****************************-*/
+    /*-         Callbacks          -*/
+    /*-****************************-*/
+    private final OnAccountsUpdateListener _accounts_updateListener = new OnAccountsUpdateListener() {
+
+        @Override
+        public void onAccountsUpdated(Account[] accounts) {
+            Log.v(TAG, "onAccountsUpdated");
+            List<OAuth> auths = OAuth.list();
+            String type = getAccountType();
+            if (auths == null || auths.size() == 0)
+                return;
+
+            for (int j = 0; j < auths.size(); j++) {
+                OAuth auth = auths.get(j);
+                boolean match = false;
+                for (Account account : accounts) {
+                    if (account.type.equals(type)) {
+                        if (auth.getUsername().equals(account.name)) {
+                            match = true;
+                            break;
+                        }
+                    }
+                }
+
+                if (!match) {
+                    // what now?
+                    auth.delete(AuthTopicService.this);
+                    _authToken = null;
+                    _account = null;
+                    setState(AuthState.NOT_AUTHENTICATED);
+                    requestToken();
+                }
+            }
+        }
+    };
 
     private final FutureWaitAsyncTask.Listener _futureWaitAsync_remove = new FutureWaitAsyncTask.Listener() {
         @Override
@@ -375,12 +374,13 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                         // account fail, check if app is too old
                         onAppIsOld();
                     } else {
+                        Log.v(TAG, "!KEY_AUTH_FAILED_MESSAGE");
                     }
                 }
             } else {
                 // have token string, get the full token
                 Log.v(TAG, "have token");
-                _authToken = OAuth.lookup(AuthTopicService.this, bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
+                _authToken = OAuth.lookup(bundle.getString(AccountManager.KEY_ACCOUNT_NAME));
 
                 if (_authToken == null) {
                     _account = null;
@@ -392,7 +392,6 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
                 Log.v(TAG, _authToken.toJson().display());
                 ProfileClient.get(AuthTopicService.this);
                 setState(AuthState.AUTHENTICATED);
-
             }
         }
 

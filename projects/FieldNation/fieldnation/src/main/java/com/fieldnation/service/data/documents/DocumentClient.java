@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 
@@ -53,6 +54,7 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_DOWNLOAD_DOCUMENT)) {
+                Log.v(STAG, "preOnDownload: " + topicId);
                 preOnDownload((Bundle) payload);
             }
         }

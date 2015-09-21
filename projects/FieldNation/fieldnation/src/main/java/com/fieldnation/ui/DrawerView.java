@@ -14,8 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.GlobalState;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -23,7 +23,6 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -34,7 +33,6 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
-import java.util.List;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -83,9 +81,9 @@ public class DrawerView extends RelativeLayout {
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
 
-    private PaymentClient _paymentClient;
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
+    private AuthTopicClient _authTopicClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -174,7 +172,7 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (BuildConfig.FLAVOR.equals("prod")) {
-            if (((GlobalState) getContext().getApplicationContext()).shouldShowReviewDialog()) {
+            if (((App) getContext().getApplicationContext()).shouldShowReviewDialog()) {
             } else {
             }
         } else {
@@ -186,17 +184,19 @@ public class DrawerView extends RelativeLayout {
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(getContext());
 
-        _paymentClient = new PaymentClient(_payment_listener);
-        _paymentClient.connect(getContext());
-
-        PaymentClient.list(getContext(), 0);
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(getContext());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _globalTopicClient.disconnect(getContext());
-        _photoClient.disconnect(getContext());
-        _paymentClient.disconnect(getContext());
+        if (_globalTopicClient != null && _authTopicClient.isConnected())
+            _globalTopicClient.disconnect(getContext());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(getContext());
+        if (_authTopicClient != null && _authTopicClient.isConnected())
+            _authTopicClient.disconnect(getContext());
+
         super.onDetachedFromWindow();
     }
 
@@ -347,21 +347,19 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
-//            AuthTopicClient.dispatchInvalidateCommand(getContext());
         }
     };
 
     private final View.OnClickListener _debugView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext());
+            File tempfile = misc.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Logcat log");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
             getContext().startActivity(intent);
@@ -404,11 +402,8 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicClient.dispatchRemoveCommand(getContext());
-
+            AuthTopicClient.removeCommand(getContext());
             Log.v(TAG, "SplashActivity");
-            SplashActivity.startNew(getContext());
-            attachAnimations();
         }
     };
 
@@ -423,6 +418,18 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subAuthStateChange();
+        }
+
+        @Override
+        public void onNotAuthenticated() {
+            SplashActivity.startNew(getContext());
+            attachAnimations();
+        }
+    };
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -458,48 +465,6 @@ public class DrawerView extends RelativeLayout {
             Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             addProfilePhoto();
-        }
-    };
-
-    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
-        @Override
-        public void onConnected() {
-            _paymentClient.subList();
-        }
-
-        @Override
-        public void onList(int page, List<Payment> list, boolean failed) {
-            if (list == null || list.size() == 0 || failed) {
-                return;
-            }
-            PaymentClient.list(getContext(), page + 1);
-
-            for (int i = 0; i < list.size(); i++) {
-                try {
-                    Payment payment = list.get(i);
-
-                    if (payment == null)
-                        continue;
-
-                    if (payment.getDatePaid() == null)
-                        continue;
-
-                    long date = ISO8601.toUtc(payment.getDatePaid());
-
-                    if ("paid".equals(payment.getStatus())) {
-                        if (_paidPayment == null || date >= ISO8601.toUtc(_paidPayment.getDatePaid())) {
-                            _paidPayment = payment;
-                        }
-                    } else {
-                        if (_estPayment == null || date >= ISO8601.toUtc(_estPayment.getDatePaid())) {
-                            _estPayment = payment;
-                        }
-                    }
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-            populateUi();
         }
     };
 }

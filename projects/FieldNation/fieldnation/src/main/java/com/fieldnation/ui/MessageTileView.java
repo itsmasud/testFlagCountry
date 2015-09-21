@@ -7,7 +7,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.utils.misc;
@@ -48,7 +48,7 @@ public class MessageTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _memoryClass = GlobalState.getContext().getMemoryClass();
+        _memoryClass = App.get().getMemoryClass();
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 

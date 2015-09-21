@@ -11,7 +11,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -21,7 +21,7 @@ import java.util.Set;
  * Created by Michael Carver on 2/27/2015.
  */
 public class TopicClient implements TopicConstants {
-//    public static final String TAG = "TopicClient";
+    public static final String TAG = "TopicClient";
 
     private boolean _isConnected = false;
     private Messenger _rcvService = new Messenger(new IncomeHandler(this));
@@ -39,7 +39,10 @@ public class TopicClient implements TopicConstants {
 
     public void connect(Context context) {
 //        Log.v(TAG, "connect");
-        context.bindService(new Intent(context, TopicService.class), _serviceConnection, Context.BIND_AUTO_CREATE);
+        context.bindService(
+                new Intent(context, TopicService.class),
+                _serviceConnection,
+                Context.BIND_AUTO_CREATE);
     }
 
     public void disconnect(Context context, String userTag) {
@@ -209,7 +212,7 @@ public class TopicClient implements TopicConstants {
             }
 
             if (msg.getData() != null) {
-                msg.getData().setClassLoader(GlobalState.getContext().getClassLoader());
+                msg.getData().setClassLoader(App.get().getClassLoader());
             }
 
             switch (msg.what) {
