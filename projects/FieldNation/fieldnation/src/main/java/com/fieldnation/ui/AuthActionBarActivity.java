@@ -1,9 +1,11 @@
 package com.fieldnation.ui;
 
+import android.accounts.AccountManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -57,6 +59,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;
+    private AuthTopicClient _authTopicClient;
 
     // Data
     private Profile _profile;
@@ -151,6 +154,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
@@ -161,6 +166,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     protected void onPause() {
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(this);
+
+        if (_authTopicClient != null && _authTopicClient.isConnected()) {
+            _authTopicClient.disconnect(this);
+        }
         super.onPause();
     }
 
@@ -251,12 +260,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
+            AuthTopicClient.removeCommand(AuthActionBarActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
+            AuthTopicClient.removeCommand(AuthActionBarActivity.this);
         }
     };
 
@@ -313,6 +322,25 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onCancel() {
+        }
+    };
+
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subNeedUsernameAndPassword();
+        }
+
+        @Override
+        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Intent intent = new Intent(AuthActionBarActivity.this, AuthActivity.class);
+
+            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     };
 
