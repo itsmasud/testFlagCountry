@@ -8,6 +8,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.workorder.User;
 
 /**
  * Created by Michael Carver on 2/23/2015.
@@ -18,6 +20,8 @@ public class NavProfileDetailListView extends RelativeLayout {
     private LinearLayout _profileList;
     private LinearLayout _addLayout;
     private LinearLayout _manageLayout;
+
+    private Profile _profile;
 
     public NavProfileDetailListView(Context context) {
         super(context);
@@ -47,6 +51,32 @@ public class NavProfileDetailListView extends RelativeLayout {
 
         _manageLayout = (LinearLayout) findViewById(R.id.manage_layout);
         _manageLayout.setOnClickListener(_manage_onClick);
+
+        populateUi();
+    }
+
+    public void setProfile(Profile profile) {
+        _profile = profile;
+
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_profileList == null)
+            return;
+
+        if (_profile == null)
+            return;
+
+        Profile[] users = _profile.getManagedProviders();
+
+        _profileList.removeAllViews();
+        for (int i = 0; i < users.length; i++) {
+            ProfileIndividualListLayout v = new ProfileIndividualListLayout(getContext());
+            v.setProfile(users[i]);
+            _profileList.addView(v);
+        }
+
     }
 
     private final OnClickListener _add_onClick = new OnClickListener() {
