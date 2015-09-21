@@ -82,6 +82,25 @@ public class ProfileTransactionBuilder implements ProfileConstants {
         }
     }
 
+    public static void switchUser(Context context, long userId) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(ProfileTransactionHandler.class)
+                    .handlerParams(ProfileTransactionHandler.pSwitchUser(userId))
+                    .key("SwitchUser / " + userId)
+                    .useAuth(true)
+                    .request(
+                            new HttpJsonBuilder()
+                                    .protocol("https")
+                                    .method("GET")
+                                    .path("/api/rest/v1/profile/" + userId + "/switch")
+                    ).send();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
     public static void action(Context context, long profileId, String action, String params,
                               String contentType, String body) {
         try {
