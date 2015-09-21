@@ -235,7 +235,14 @@ public class DrawerView extends RelativeLayout {
             _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
             _profileNameTextView.setVisibility(VISIBLE);
 
-            // TODO add service company name
+            if (_profile.getManagedProviders() != null && _profile.getManagedProviders().length > 1) {
+                _profileExpandButton.setVisibility(VISIBLE);
+            } else {
+                _profileExpandButton.setVisibility(GONE);
+            }
+
+            _profileListView.setProfile(_profile);
+
             subPhoto();
             addProfilePhoto();
         }
@@ -460,6 +467,11 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
             if (drawable == null || url == null || failed)
+                return;
+
+            if (_profile.getPhoto() == null
+                    || misc.isEmptyOrNull(_profile.getPhoto().getLarge())
+                    || !url.equals(_profile.getPhoto().getLarge()))
                 return;
 
             Drawable pic = drawable;

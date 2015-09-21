@@ -3,6 +3,7 @@ package com.fieldnation.data.profile;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -29,6 +30,8 @@ public class Profile implements Parcelable {
     private Boolean _isProvider;
     @Json(name = "lastname")
     private String _lastname;
+    @Json(name = "managedProviders")
+    private Profile[] _managedProviders;
     @Json(name = "marketplaceStatusOn")
     private Boolean _marketplaceStatusOn;
     @Json(name = "newNotificationCount")
@@ -104,6 +107,10 @@ public class Profile implements Parcelable {
 
     public String getLastname() {
         return _lastname;
+    }
+
+    public Profile[] getManagedProviders() {
+        return _managedProviders;
     }
 
     public Boolean getMarketplaceStatusOn() {
