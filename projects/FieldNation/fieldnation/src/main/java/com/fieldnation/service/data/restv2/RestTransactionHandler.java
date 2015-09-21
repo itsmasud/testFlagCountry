@@ -2,6 +2,7 @@ package com.fieldnation.service.data.restv2;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -78,7 +79,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
         RestDispatch.object(context, resultTag, objectType, id, json, sticky, transaction.isSync());
 
         // slow
-        StoredObject.put(context, objectType, id, resultData.getByteArray());
+        StoredObject.put(App.getProfileId(), objectType, id, resultData.getByteArray());
 
         return Result.FINISH;
 
@@ -113,7 +114,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
 
         RestDispatch.list(context, resultTag, objectType, envelope, sticky, transaction.isSync());
 
-        StoredObject.put(context, objectType + "List", envelope.getLong("page"), envelope.toByteArray());
+        StoredObject.put(App.getProfileId(), objectType + "List", envelope.getLong("page"), envelope.toByteArray());
 
         return Result.FINISH;
     }

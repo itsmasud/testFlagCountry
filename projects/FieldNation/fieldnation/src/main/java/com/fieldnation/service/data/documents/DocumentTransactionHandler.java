@@ -2,6 +2,7 @@ package com.fieldnation.service.data.documents;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -100,9 +101,9 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         StoredObject obj = null;
         if (resultData.isFile()) {
-            obj = StoredObject.put(context, PSO_DOCUMENT, documentId, resultData.getFile(), filename);
+            obj = StoredObject.put(App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getFile(), filename);
         } else {
-            obj = StoredObject.put(context, PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
+            obj = StoredObject.put(App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
         }
 
         DocumentDispatch.download(context, documentId, obj.getFile(), PARAM_STATE_FINISH, transaction.isSync());

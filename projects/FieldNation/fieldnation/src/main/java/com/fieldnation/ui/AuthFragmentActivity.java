@@ -1,7 +1,10 @@
 package com.fieldnation.ui;
 
+import android.accounts.AccountManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
@@ -39,6 +42,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     // Services
     private GlobalTopicClient _globalTopicClient;
+    private AuthTopicClient _authTopicClient;
 
     // Data
     private Profile _profile;
@@ -84,6 +88,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(this);
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(this);
 
@@ -94,7 +100,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     @Override
     protected void onPause() {
-        _globalTopicClient.disconnect(this);
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
+            _globalTopicClient.disconnect(this);
+
+        if (_authTopicClient != null && _authTopicClient.isConnected())
+            _authTopicClient.disconnect(this);
+
         super.onPause();
     }
 
@@ -165,12 +176,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
+            AuthTopicClient.removeCommand(AuthFragmentActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
+            AuthTopicClient.removeCommand(AuthFragmentActivity.this);
         }
     };
 
@@ -227,6 +238,25 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onCancel() {
+        }
+    };
+
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subNeedUsernameAndPassword();
+        }
+
+        @Override
+        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Intent intent = new Intent(AuthFragmentActivity.this, AuthActivity.class);
+
+            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
         }
     };
 

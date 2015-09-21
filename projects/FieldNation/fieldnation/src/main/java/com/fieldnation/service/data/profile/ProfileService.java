@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -51,7 +52,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         StoredObject obj = null;
 
         if (!isSync) {
-            obj = StoredObject.get(this, PSO_PROFILE, profileId);
+            obj = StoredObject.get((int) profileId, PSO_PROFILE, profileId);
             // get stored object
             // if exists, then pass it back
             if (obj != null) {
@@ -76,7 +77,7 @@ public class ProfileService extends MSService implements ProfileConstants {
 
         StoredObject obj = null;
         if (!isSync) {
-            obj = StoredObject.get(this, PSO_NOTIFICATION_PAGE, page + "");
+            obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
                     ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync);
@@ -99,7 +100,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         StoredObject obj = null;
 
         if (!isSync) {
-            obj = StoredObject.get(this, PSO_MESSAGE_PAGE, page);
+            obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
                     ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync);

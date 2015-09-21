@@ -71,7 +71,7 @@ public class SplashActivity extends AuthFragmentActivity {
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
 
-        AuthTopicClient.dispatchRequestCommand(this);
+        AuthTopicClient.requestCommand(this);
     }
 
     @Override
@@ -102,18 +102,20 @@ public class SplashActivity extends AuthFragmentActivity {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _authClient.registerAuthState();
+            _authClient.subAuthStateChange();
         }
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "onAuthenticated");
             _isAuth = true;
             doNextStep();
         }
 
         @Override
         public void onNotAuthenticated() {
-            AuthTopicClient.dispatchRequestCommand(SplashActivity.this);
+            Log.v(TAG, "onNotAuthenticated");
+            AuthTopicClient.requestCommand(SplashActivity.this);
         }
     };
 
@@ -126,15 +128,13 @@ public class SplashActivity extends AuthFragmentActivity {
 
         Log.v(TAG, "doNextStep");
 
-        _profile.isProvider();
-//        if (_profile.isProvider()) {
+        if (_profile.isProvider()) {
         if (!_calledMyWork) {
             _calledMyWork = true;
             MyWorkActivity.startNew(this);
             finish();
         }
-//        }
-
+        }
     }
 
     public static void startNew(Context context) {

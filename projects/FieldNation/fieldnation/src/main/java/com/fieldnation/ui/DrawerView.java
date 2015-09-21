@@ -83,6 +83,7 @@ public class DrawerView extends RelativeLayout {
 
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
+    private AuthTopicClient _authTopicClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -182,12 +183,20 @@ public class DrawerView extends RelativeLayout {
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(getContext());
+
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(getContext());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _globalTopicClient.disconnect(getContext());
-        _photoClient.disconnect(getContext());
+        if (_globalTopicClient != null && _authTopicClient.isConnected())
+            _globalTopicClient.disconnect(getContext());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(getContext());
+        if (_authTopicClient != null && _authTopicClient.isConnected())
+            _authTopicClient.disconnect(getContext());
+
         super.onDetachedFromWindow();
     }
 
@@ -393,11 +402,8 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            AuthTopicClient.dispatchRemoveCommand(getContext());
-
+            AuthTopicClient.removeCommand(getContext());
             Log.v(TAG, "SplashActivity");
-            SplashActivity.startNew(getContext());
-            attachAnimations();
         }
     };
 
@@ -412,6 +418,18 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subAuthStateChange();
+        }
+
+        @Override
+        public void onNotAuthenticated() {
+            SplashActivity.startNew(getContext());
+            attachAnimations();
+        }
+    };
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {

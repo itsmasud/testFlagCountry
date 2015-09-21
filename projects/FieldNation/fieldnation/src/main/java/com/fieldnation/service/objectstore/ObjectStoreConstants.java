@@ -9,6 +9,7 @@ public interface ObjectStoreConstants {
     int WHAT_DELETE_OBJECT = 4;
     int WHAT_LIST_OBJECTS = 5;
 
+    String PARAM_PROFILE_ID = "PARAM_PROFILE_ID";
     String PARAM_OBJECT_TYPE = "PARAM_OBJECT_TYPE";
     String PARAM_OBJECT_KEY = "PARAM_OBJECT_KEY";
     String PARAM_IS_FILE = "PARAM_IS_FILE";

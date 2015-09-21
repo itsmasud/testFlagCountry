@@ -12,6 +12,7 @@ import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
@@ -25,9 +26,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.FileHelper;
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
+import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
@@ -168,6 +170,8 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
+
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
 
 	/*-*************************************-*/
@@ -373,6 +377,10 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -716,31 +724,58 @@ public class WorkFragment extends WorkorderFragment {
     };
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (!isAdded()) {
+            Log.v(TAG, "onActivityResult -> try later");
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
 
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
+        try {
+            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if (data == null) {
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(), _tempFile.getName(),
-                        _tempFile.getAbsolutePath());
-            } else {
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _currentTask.getSlotId(), data);
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
+
+                setLoading(true);
+
+                if (data == null) {
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), _tempFile.getName(), _tempFile.getAbsolutePath());
+
+                } else {
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _currentTask.getSlotId(), data);
+                }
+
+            } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                App gs = (App) getActivity().getApplication();
+
+                if (gs.shouldShowReviewDialog()) {
+                    showReviewDialog();
+                    gs.setShownReviewDialog();
+                    requestWorkorder();
+                }
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+                startCheckin();
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
             }
-        } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-            App gs = (App) getActivity().getApplication();
-            if (gs.shouldShowReviewDialog()) {
-                showReviewDialog();
-                gs.setShownReviewDialog();
-                requestWorkorder();
-            }
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
-            startCheckin();
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-            startCheckOut();
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            // Todo this could cause an infinite loop, revisit later
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 100);
         }
     }
 
@@ -776,9 +811,11 @@ public class WorkFragment extends WorkorderFragment {
                     info.activityInfo.name));
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);

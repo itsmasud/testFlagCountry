@@ -377,7 +377,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
             _workorderClient.subActions(_workorderId);
+            _workorderClient.subDeliverableUpload();
             getData(true);
+        }
+
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            getData(false);
         }
 
         @Override
@@ -389,7 +395,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         @Override
         public void onGet(Workorder workorder, boolean failed) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
-            if (workorder == null) {
+            if (workorder == null || failed) {
                 try {
                     Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
                     finish();

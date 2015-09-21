@@ -205,12 +205,11 @@ public class TopicService extends MSService implements TopicConstants {
         //Log.v(TAG, "deleteUser");
         String userTag = bundle.getString(PARAM_USER_TAG);
 
-        Log.v(TAG, "deleteUser " + userTag);
-
+//        Log.v(TAG, "deleteUser " + userTag);
         synchronized (TAG) {
             TopicUser.deleteUser(userTag);
         }
-        Log.v(TAG, "deleteUser end");
+//        Log.v(TAG, "deleteUser end");
     }
 
     // sends events
