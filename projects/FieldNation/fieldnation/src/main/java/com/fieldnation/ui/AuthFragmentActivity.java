@@ -263,17 +263,16 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerGotProfile();
-            _globalTopicClient.registerUpdateApp();
-            _globalTopicClient.registerAppShutdown();
-            _globalTopicClient.registerNetworkState();
+            _globalTopicClient.subGotProfile();
+            _globalTopicClient.subUpdateApp();
+            _globalTopicClient.subAppShutdown();
+            _globalTopicClient.subNetworkState();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
             gotProfile(profile);
-
         }
 
         @Override

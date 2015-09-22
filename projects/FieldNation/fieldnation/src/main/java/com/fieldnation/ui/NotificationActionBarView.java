@@ -74,7 +74,7 @@ public class NotificationActionBarView extends RelativeLayout {
     private final GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _client.registerGotProfile();
+            _client.subGotProfile();
         }
 
         @Override

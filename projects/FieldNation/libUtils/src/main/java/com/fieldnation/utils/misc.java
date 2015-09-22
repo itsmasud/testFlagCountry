@@ -315,7 +315,6 @@ public class misc {
                     if (i < destpix.length)
                         destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
                 }
-
             }
         }
 
@@ -1286,11 +1285,11 @@ public class misc {
         result = "";
 
         if (only_available) {
-            if (!"00" .equals(days)) {
+            if (!"00".equals(days)) {
                 result = days + "d " + hours + "h " + min + "m " + sec + "s";
-            } else if (!"00" .equals(hours)) {
+            } else if (!"00".equals(hours)) {
                 result = hours + "h " + min + "m " + sec + "s";
-            } else if (!"00" .equals(min)) {
+            } else if (!"00".equals(min)) {
                 result = min + "m " + sec + "s";
             } else {
                 result = sec + "s";

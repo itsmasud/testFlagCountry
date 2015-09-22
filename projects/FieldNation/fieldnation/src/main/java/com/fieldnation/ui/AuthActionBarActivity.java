@@ -347,11 +347,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerGotProfile();
-            _globalClient.registerUpdateApp();
-            _globalClient.registerAppShutdown();
-            _globalClient.registerShowFeedbackDialog();
-            _globalClient.registerShowHelpDialog();
+            _globalClient.subGotProfile();
+            _globalClient.subUpdateApp();
+            _globalClient.subAppShutdown();
+            _globalClient.subShowFeedbackDialog();
+            _globalClient.subShowHelpDialog();
         }
 
         @Override

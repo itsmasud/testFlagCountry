@@ -337,7 +337,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                 }
 
-                GlobalTopicClient.dispatchNetworkConnected(context);
+                GlobalTopicClient.networkConnected(context);
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
@@ -362,7 +362,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
-                GlobalTopicClient.dispatchNetworkDisconnected(context);
+                GlobalTopicClient.networkDisconnected(context);
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {

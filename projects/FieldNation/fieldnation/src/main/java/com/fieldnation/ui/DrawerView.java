@@ -85,7 +85,6 @@ public class DrawerView extends RelativeLayout {
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
     private AuthTopicClient _authTopicClient;
-    private ProfileClient _profileClient;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -188,9 +187,6 @@ public class DrawerView extends RelativeLayout {
 
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(getContext());
-
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(getContext());
     }
 
     @Override
@@ -201,8 +197,6 @@ public class DrawerView extends RelativeLayout {
             _photoClient.disconnect(getContext());
         if (_authTopicClient != null && _authTopicClient.isConnected())
             _authTopicClient.disconnect(getContext());
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(getContext());
 
         super.onDetachedFromWindow();
     }
@@ -402,14 +396,14 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
+            GlobalTopicClient.showFeedbackDialog(getContext());
         }
     };
 
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.dispatchShowHelpDialog(getContext());
+            GlobalTopicClient.showHelpDialog(getContext());
         }
     };
 
@@ -447,7 +441,7 @@ public class DrawerView extends RelativeLayout {
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerGotProfile();
+            _globalTopicClient.subGotProfile();
         }
 
         @Override
@@ -484,30 +478,6 @@ public class DrawerView extends RelativeLayout {
             Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             addProfilePhoto();
-        }
-    };
-
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet();
-            _profileClient.subSwitchUser();
-        }
-
-        @Override
-        public void onSwitchUser(long userId, boolean failed) {
-            ProfileClient.get(getContext(), false);
-        }
-
-        @Override
-        public void onGet(Profile profile, boolean failed) {
-            if (_profile == null) {
-                return;
-            }
-
-            if ((long) profile.getUserId() != (long) _profile.getUserId()) {
-                MyWorkActivity.startNew(getContext());
-            }
         }
     };
 }

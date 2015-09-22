@@ -69,6 +69,7 @@ public class App extends Application {
     private int _memoryClass;
     private Typeface _iconFont;
     private Handler _handler = new Handler();
+    private boolean _switchingUser = false;
 
 
     @Override
@@ -278,9 +279,9 @@ public class App extends Application {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerProfileInvalid(App.this);
-            _globalTopicClient.registerNetworkConnect();
-            _globalTopicClient.registerNetworkState();
+            _globalTopicClient.subProfileInvalid(App.this);
+            _globalTopicClient.subNetworkConnect();
+            _globalTopicClient.subNetworkState();
         }
 
         @Override
@@ -313,6 +314,7 @@ public class App extends Application {
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
             _profileClient.subGet();
+            _profileClient.subSwitchUser();
             ProfileClient.get(App.this);
         }
 
@@ -332,7 +334,12 @@ public class App extends Application {
                     Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
                 }
 
-                GlobalTopicClient.dispatchGotProfile(App.this, profile);
+                GlobalTopicClient.gotProfile(App.this, profile);
+
+                if (_switchingUser) {
+                    GlobalTopicClient.userSwitched(App.this, profile);
+                    _switchingUser = false;
+                }
 
                 try {
                     Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
@@ -343,6 +350,14 @@ public class App extends Application {
                 }
             } else {
                 // TODO should do something... like retry or logout
+            }
+        }
+
+        @Override
+        public void onSwitchUser(long userId, boolean failed) {
+            if (!failed) {
+                _switchingUser = true;
+                ProfileClient.get(App.this, false);
             }
         }
     };

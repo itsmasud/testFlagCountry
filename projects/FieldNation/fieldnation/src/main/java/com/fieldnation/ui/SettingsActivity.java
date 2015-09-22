@@ -3,6 +3,7 @@ package com.fieldnation.ui;
 import android.os.Bundle;
 
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 
 /**
  * Gives the user the ability to configure the app

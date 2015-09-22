@@ -160,7 +160,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ProfileClient.switchUser(getContext(), _profile.getUserId());
+            SwitchUserActivity.startNew(getContext(), _profile.getUserId());
         }
     };
 
