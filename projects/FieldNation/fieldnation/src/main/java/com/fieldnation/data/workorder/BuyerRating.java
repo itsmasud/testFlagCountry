@@ -7,6 +7,8 @@ import com.fieldnation.json.annotations.Json;
 public class BuyerRating {
     @Json(name = "avgRating")
     private Double _avgRating;
+    @Json(name = "city")
+    private String _city;
     @Json(name = "clearExpectationRatingPercent")
     private Double _clearExpectationRatingPercent;
     @Json(name = "companyLogo")
@@ -19,6 +21,10 @@ public class BuyerRating {
     private Boolean _dayLeftToGivingBuyerRating;
     @Json(name = "professionalismRatingPercent")
     private Double _professionalismRatingPercent;
+    @Json(name = "state")
+    private String _state;
+    @Json(name = "timeToApproval")
+    private Integer _timeToApproval;
     @Json(name = "totalRating")
     private Integer _totalRating;
     @Json(name = "workorderManagerId")
@@ -31,6 +37,10 @@ public class BuyerRating {
 
     public Double getAvgRating() {
         return _avgRating;
+    }
+
+    public String getCity() {
+        return _city;
     }
 
     public Double getClearExpectationRatingPercent() {
@@ -55,6 +65,14 @@ public class BuyerRating {
 
     public Double getProfessionalismRatingPercent() {
         return _professionalismRatingPercent;
+    }
+
+    public String getState() {
+        return _state;
+    }
+
+    public Integer getTimeToApproval() {
+        return _timeToApproval;
     }
 
     public Integer getTotalRating() {

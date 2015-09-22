@@ -108,6 +108,9 @@ public class CompanySummaryView extends RelativeLayout {
             _newBuyerTextView.setVisibility(GONE);
             _starRating.setVisibility(VISIBLE);
             _detailsLayout.setVisibility(VISIBLE);
+
+            _daysTextView.setText(rating.getTimeToApproval() + " Days");
+
             if (rating.getAvgRating() != null) {
                 _starRating.setStars((int) (double) rating.getAvgRating());
                 _starRating.setVisibility(VISIBLE);
@@ -126,7 +129,8 @@ public class CompanySummaryView extends RelativeLayout {
             }
 
             if (rating.getTotalRating() != null) {
-//                _locationTextView.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
+                _locationTextView.setText(rating.getCity() + ", " + rating.getState());
                 _reviewsTextView.setVisibility(VISIBLE);
                 _reviewsTextView.setText(rating.getTotalRating() + " Reviews");
                 _newBuyerTextView.setVisibility(GONE);
@@ -135,16 +139,6 @@ public class CompanySummaryView extends RelativeLayout {
                 _locationTextView.setVisibility(GONE);
                 _reviewsTextView.setVisibility(GONE);
             }
-
-
-//            if (rating.getRespectful() != null && rating.getScopeRating() != null) {
-//                // gah! no data!
-//            }
-//            _buyerRatingLayout.setVisibility(GONE);
-
         }
-
-
     }
-
 }
