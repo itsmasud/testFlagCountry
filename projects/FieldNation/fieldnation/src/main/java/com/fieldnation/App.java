@@ -260,8 +260,8 @@ public class App extends Application {
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
-            _authTopicClient.registerAuthState();
-            AuthTopicClient.dispatchRequestCommand(App.this);
+            _authTopicClient.subAuthStateChange();
+            AuthTopicClient.requestCommand(App.this);
         }
 
         @Override
@@ -271,7 +271,7 @@ public class App extends Application {
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-            AuthTopicClient.dispatchRequestCommand(App.this);
+            AuthTopicClient.requestCommand(App.this);
         }
     };
 
@@ -293,7 +293,7 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
-            AuthTopicClient.dispatchRequestCommand(App.this);
+            AuthTopicClient.requestCommand(App.this);
         }
 
         @Override
@@ -302,7 +302,7 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnect() {
-            AuthTopicClient.dispatchRequestCommand(App.this);
+            AuthTopicClient.requestCommand(App.this);
             startService(new Intent(App.this, WebTransactionService.class));
         }
 

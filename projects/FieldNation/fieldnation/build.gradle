@@ -27,8 +27,8 @@ android {
     defaultConfig {
         minSdkVersion 11
         targetSdkVersion 22
-        versionCode 53
-        versionName "2.0.53"
+        versionCode 54
+        versionName "2.0.54"
         multiDexEnabled true
     }
 
@@ -102,7 +102,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:22.2.1'
     compile 'com.android.support:support-v4:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
-    compile('com.crashlytics.sdk.android:crashlytics:2.5.1@aar') {
+    compile('com.crashlytics.sdk.android:crashlytics:2.5.2@aar') {
         transitive = true;
     }
     compile 'com.github.anrwatchdog:anrwatchdog:1.1.1'

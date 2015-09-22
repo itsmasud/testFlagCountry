@@ -138,8 +138,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         @Override
         public void onConnected() {
             Log.v(TAG, "AuthTopicClient.onConnected");
-            _authTopicClient.registerAuthState();
-            AuthTopicClient.dispatchRequestCommand(WebTransactionService.this);
+            _authTopicClient.subAuthStateChange();
+            AuthTopicClient.requestCommand(WebTransactionService.this);
         }
 
         @Override
@@ -295,9 +295,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         && result.getString().equals("You must provide a valid OAuth token to make a request")) {
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
-                    AuthTopicClient.dispatchInvalidateCommand(context);
+                    AuthTopicClient.invalidateCommand(context);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() == 400) {
                     // Bad request
@@ -310,15 +310,15 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     } else {
                         Thread.sleep(5000);
                         trans.requeue(context);
-                        AuthTopicClient.dispatchRequestCommand(context);
+                        AuthTopicClient.requestCommand(context);
                     }
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
-                    AuthTopicClient.dispatchInvalidateCommand(context);
+                    AuthTopicClient.invalidateCommand(context);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
@@ -329,7 +329,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 } else if (result.getResponseCode() == 502) {
                     Thread.sleep(5000);
                     trans.requeue(context);
-                    AuthTopicClient.dispatchRequestCommand(context);
+                    AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result);
