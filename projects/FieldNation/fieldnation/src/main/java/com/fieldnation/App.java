@@ -14,6 +14,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
@@ -107,6 +108,13 @@ public class App extends Application {
 
         // start up the debugging tools
         Debug.init();
+
+        Debug.setBool("isUserAMonkey", ActivityManager.isUserAMonkey());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
+            Debug.setBool("isUserAGoat", um.isUserAGoat());
+        }
 
         Log.v(TAG, "debug init time: " + watch.finishAndRestart());
 
