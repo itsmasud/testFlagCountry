@@ -9,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
 
@@ -537,37 +538,42 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
     public static void flush(Context context, long deathAge) {
-        List<StoredObject> list = new LinkedList<>();
-        synchronized (TAG) {
-            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
-            try {
-                SQLiteDatabase db = helper.getReadableDatabase();
+        try {
+            List<StoredObject> list = new LinkedList<>();
+            synchronized (TAG) {
+                ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(context);
                 try {
-                    Cursor cursor = db.query(
-                            ObjectStoreSqlHelper.TABLE_NAME,
-                            ObjectStoreSqlHelper.getColumnNames(),
-                            Column.LAST_UPDATED + " < ? AND " + Column.EXPIRES + " = ?",
-                            new String[]{(System.currentTimeMillis() - deathAge) + "", "1"},
-                            null, null, null);
-
+                    SQLiteDatabase db = helper.getReadableDatabase();
                     try {
-                        while (cursor.moveToNext()) {
-                            list.add(new StoredObject(cursor));
+                        Cursor cursor = db.query(
+                                ObjectStoreSqlHelper.TABLE_NAME,
+                                ObjectStoreSqlHelper.getColumnNames(),
+                                Column.LAST_UPDATED + " < ? AND " + Column.EXPIRES + " = ?",
+                                new String[]{(System.currentTimeMillis() - deathAge) + "", "1"},
+                                null, null, null);
+
+                        try {
+                            while (cursor.moveToNext()) {
+                                list.add(new StoredObject(cursor));
+                            }
+                        } finally {
+                            cursor.close();
                         }
                     } finally {
-                        cursor.close();
+                        db.close();
                     }
                 } finally {
-                    db.close();
+                    helper.close();
                 }
-            } finally {
-                helper.close();
             }
-        }
 
-        for (int i = 0; i < list.size(); i++) {
-            StoredObject obj = list.get(i);
-            delete(context, obj);
+            for (int i = 0; i < list.size(); i++) {
+                StoredObject obj = list.get(i);
+                delete(context, obj);
+            }
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            ex.printStackTrace();
         }
     }
 
