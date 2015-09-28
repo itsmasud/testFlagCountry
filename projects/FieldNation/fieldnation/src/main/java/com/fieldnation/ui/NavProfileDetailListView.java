@@ -82,8 +82,9 @@ public class NavProfileDetailListView extends RelativeLayout {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (_listener != null)
-                        _listener.onUserSwitch(((ProfileIndividualListLayout) v).getUserId());
+                    long userId = ((ProfileIndividualListLayout) v).getUserId();
+                    if (_listener != null && _profile.getUserId() != userId)
+                        _listener.onUserSwitch(userId);
                 }
             });
             _profileList.addView(v);
