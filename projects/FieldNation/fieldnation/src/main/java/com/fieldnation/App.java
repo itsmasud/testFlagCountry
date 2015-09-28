@@ -374,7 +374,7 @@ public class App extends Application {
         return _profile;
     }
 
-    public static int getProfileId() {
+    public static long getProfileId() {
         Profile profile = get().getProfile();
         if (profile != null && profile.getUserId() != null) {
             return profile.getUserId();

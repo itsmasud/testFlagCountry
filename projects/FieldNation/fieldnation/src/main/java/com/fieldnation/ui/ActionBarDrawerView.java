@@ -26,6 +26,8 @@ public class ActionBarDrawerView extends FrameLayout {
     private RightDrawerNotificationsView _notificationDrawerView;
     private WarningView _warningView;
     private DrawerLayout _drawerLayout;
+    private DrawerView _drawerView;
+    private SwitchUserOverlayView _switchUserOverlayView;
 
     public ActionBarDrawerView(Context context) {
         super(context);
@@ -53,6 +55,10 @@ public class ActionBarDrawerView extends FrameLayout {
         _messageDrawerView = (RightDrawerMessagesView) findViewById(R.id.rightDrawerMessages_view);
         _notificationDrawerView = (RightDrawerNotificationsView) findViewById(R.id.rightDrawerNotifications_view);
         _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_content);
+        _drawerView = (DrawerView) findViewById(R.id.leftDrawerView);
+        _drawerView.setListener(_drawerView_lsitener);
+        _switchUserOverlayView = (SwitchUserOverlayView) findViewById(R.id.switchUserOverlayView);
+
     }
 
     private FrameLayout getBody() {
@@ -106,10 +112,17 @@ public class ActionBarDrawerView extends FrameLayout {
 
     @Override
     public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child.getId() == R.id.drawer_content) {
+        if (child.getId() == R.id.drawer_content || getBody() == null) {
             super.addView(child, index, params);
         } else {
             getBody().addView(child, index, params);
         }
     }
+
+    private final DrawerView.Listener _drawerView_lsitener = new DrawerView.Listener() {
+        @Override
+        public void onSwitchUser(long userId) {
+            _switchUserOverlayView.startSwitch(userId);
+        }
+    };
 }

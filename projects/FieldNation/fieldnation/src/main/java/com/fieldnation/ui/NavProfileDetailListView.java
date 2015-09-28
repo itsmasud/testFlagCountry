@@ -22,6 +22,7 @@ public class NavProfileDetailListView extends RelativeLayout {
     private LinearLayout _manageLayout;
 
     private Profile _profile;
+    private Listener _listener;
 
     public NavProfileDetailListView(Context context) {
         super(context);
@@ -61,6 +62,10 @@ public class NavProfileDetailListView extends RelativeLayout {
         populateUi();
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
     private void populateUi() {
         if (_profileList == null)
             return;
@@ -74,6 +79,13 @@ public class NavProfileDetailListView extends RelativeLayout {
         for (int i = 0; i < users.length; i++) {
             ProfileIndividualListLayout v = new ProfileIndividualListLayout(getContext());
             v.setProfile(users[i]);
+            v.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_listener != null)
+                        _listener.onUserSwitch(((ProfileIndividualListLayout) v).getUserId());
+                }
+            });
             _profileList.addView(v);
         }
 
@@ -92,4 +104,8 @@ public class NavProfileDetailListView extends RelativeLayout {
 
         }
     };
+
+    public interface Listener {
+        void onUserSwitch(long userId);
+    }
 }
