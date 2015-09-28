@@ -86,7 +86,7 @@ public class SplashActivity extends AuthFragmentActivity {
         @Override
         public void onConnected() {
             Log.v(TAG, "_globalTopic_listener.onConnected");
-            _globalClient.registerGotProfile();
+            _globalClient.subGotProfile();
         }
 
         @Override

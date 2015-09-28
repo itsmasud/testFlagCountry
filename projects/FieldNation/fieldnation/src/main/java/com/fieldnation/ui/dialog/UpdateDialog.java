@@ -41,7 +41,7 @@ public class UpdateDialog extends OneButtonDialog {
 
         @Override
         public void onCancel() {
-            GlobalTopicClient.dispatchAppShutdown(getActivity());
+            GlobalTopicClient.appShutdown(getActivity());
         }
     };
 

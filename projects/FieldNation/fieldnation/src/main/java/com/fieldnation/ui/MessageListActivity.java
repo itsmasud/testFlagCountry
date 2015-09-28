@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -30,8 +31,6 @@ public class MessageListActivity extends ItemListActivity<Message> {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-
     protected void onResume() {
         super.onResume();
         _profiles = new ProfileClient(_profile_listener);

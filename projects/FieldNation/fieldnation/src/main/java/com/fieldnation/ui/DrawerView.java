@@ -24,6 +24,7 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -395,14 +396,14 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
+            GlobalTopicClient.showFeedbackDialog(getContext());
         }
     };
 
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.dispatchShowHelpDialog(getContext());
+            GlobalTopicClient.showHelpDialog(getContext());
         }
     };
 
@@ -440,12 +441,12 @@ public class DrawerView extends RelativeLayout {
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerGotProfile();
+            _globalTopicClient.subGotProfile();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
-            if (_profile == null || profile.getUserId() != _profile.getUserId()) {
+            if (_profile == null || (long) profile.getUserId() != (long) _profile.getUserId()) {
                 _profilePic = null;
                 _profile = profile;
 

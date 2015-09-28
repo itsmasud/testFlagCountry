@@ -47,11 +47,12 @@ public class ProfileService extends MSService implements ProfileConstants {
     private void get(Intent intent) {
         Log.v(TAG, "get");
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
 
         StoredObject obj = null;
 
-        if (!isSync) {
+        if (!isSync && allowCache) {
             obj = StoredObject.get((int) profileId, PSO_PROFILE, profileId);
             // get stored object
             // if exists, then pass it back
@@ -64,7 +65,10 @@ public class ProfileService extends MSService implements ProfileConstants {
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (isSync
+                || allowCache
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
             ProfileTransactionBuilder.get(this, profileId, false);
         }

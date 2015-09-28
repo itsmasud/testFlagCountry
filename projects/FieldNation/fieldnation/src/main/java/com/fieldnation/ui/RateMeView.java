@@ -120,7 +120,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 2:
                     if (_listener != null) {
-                        GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
+                        GlobalTopicClient.showFeedbackDialog(getContext());
                         _listener.onHide();
                     }
                     break;

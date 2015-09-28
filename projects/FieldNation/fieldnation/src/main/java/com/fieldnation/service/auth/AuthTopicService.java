@@ -17,7 +17,6 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.AuthActivity;
 
 import java.util.List;
 
@@ -104,7 +103,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onConnected() {
             Log.v(TAG, "GlobalTopicClient.onConnected");
-            _globalTopicClient.registerAppShutdown();
+            _globalTopicClient.subAppShutdown();
         }
 
         @Override
@@ -217,7 +216,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     /*-*********************************-*/
     private void onAppIsOld() {
         Log.v(TAG, "onAppIsOld");
-        GlobalTopicClient.dispatchUpdateApp(this);
+        GlobalTopicClient.updateApp(this);
     }
 
     private void onNeedUserNameAndPassword(Parcelable authenticatorResponse) {

@@ -269,7 +269,7 @@ public class WebCrawlerService extends Service {
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
             _haveProfile = false;
-            ProfileClient.get(WebCrawlerService.this, 0, true);
+            ProfileClient.get(WebCrawlerService.this, 0, true, false);
             ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
             ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
         }

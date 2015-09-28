@@ -69,6 +69,17 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
+    public static void switchUser(Context context, long userId, boolean failed) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_SWITCH_USER);
+        bundle.putLong(PARAM_USER_ID, userId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        String topicId = TOPIC_ID_SWITCH_USER;
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
+    }
+
     public static void action(Context context, long profileId, String action, boolean failed) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, action);

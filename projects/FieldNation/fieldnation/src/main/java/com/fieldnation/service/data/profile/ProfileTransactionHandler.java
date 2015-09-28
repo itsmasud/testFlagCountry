@@ -53,6 +53,17 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         }
     }
 
+    public static byte[] pSwitchUser(long userId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pSwitchUser");
+            obj.put("userId", userId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public static byte[] pAction(long profileId, String action) {
         try {
             JsonObject obj = new JsonObject("action", "pAction");
@@ -79,6 +90,8 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     return handleListNotifications(context, transaction, resultData, params);
                 case "pListMessages":
                     return handleListMessages(context, transaction, resultData, params);
+                case "pSwitchUser":
+                    return handleSwitchUser(context, transaction, resultData, params);
                 case "pAction":
                     return handleAction(context, transaction, resultData, params);
             }
@@ -163,6 +176,16 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         String action = params.getString("param");
 
         ProfileDispatch.action(context, profileId, action, false);
+
+        return Result.FINISH;
+    }
+
+    private Result handleSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "handleSwitchUser");
+
+        long userId = params.getLong("userId");
+
+        ProfileDispatch.switchUser(context, userId, false);
 
         return Result.FINISH;
     }
