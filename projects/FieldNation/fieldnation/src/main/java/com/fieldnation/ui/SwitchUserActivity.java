@@ -19,7 +19,6 @@ public class SwitchUserActivity extends AuthFragmentActivity {
 
     public static final String INTENT_FIELD_TARGET_USER_ID = "SwitchUserActivity:INTENT_FIELD_TARGET_USER_ID";
 
-
     // Data
     private long _userId;
 

@@ -3,10 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
+    <com.fieldnation.ui.IconFontTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="Switching User" />
+        android:text="@string/icfont_clipboard"
+        android:textColor="@color/fn_brandcolor"
+        android:textSize="80sp" />
 
 </RelativeLayout>
