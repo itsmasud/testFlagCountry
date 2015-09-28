@@ -14,11 +14,13 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -34,6 +36,7 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.Calendar;
 
@@ -69,6 +72,7 @@ public class App extends Application {
     private int _memoryClass;
     private Typeface _iconFont;
     private Handler _handler = new Handler();
+    private boolean _switchingUser = false;
 
 
     @Override
@@ -106,6 +110,13 @@ public class App extends Application {
 
         // start up the debugging tools
         Debug.init();
+
+        Debug.setBool("isUserAMonkey", ActivityManager.isUserAMonkey());
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
+            Debug.setBool("isUserAGoat", um.isUserAGoat());
+        }
 
         Log.v(TAG, "debug init time: " + watch.finishAndRestart());
 
@@ -213,7 +224,6 @@ public class App extends Application {
 
                 anrReport();
             }
-
         }
     };
 
@@ -279,9 +289,9 @@ public class App extends Application {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerProfileInvalid(App.this);
-            _globalTopicClient.registerNetworkConnect();
-            _globalTopicClient.registerNetworkState();
+            _globalTopicClient.subProfileInvalid(App.this);
+            _globalTopicClient.subNetworkConnect();
+            _globalTopicClient.subNetworkState();
         }
 
         @Override
@@ -314,6 +324,7 @@ public class App extends Application {
         public void onConnected() {
             Log.v(TAG, "_profile_listener.onConnected");
             _profileClient.subGet();
+            _profileClient.subSwitchUser();
             ProfileClient.get(App.this);
         }
 
@@ -333,7 +344,12 @@ public class App extends Application {
                     Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
                 }
 
-                GlobalTopicClient.dispatchGotProfile(App.this, profile);
+                GlobalTopicClient.gotProfile(App.this, profile);
+
+                if (_switchingUser) {
+                    GlobalTopicClient.userSwitched(App.this, profile);
+                    _switchingUser = false;
+                }
 
                 try {
                     Class<?> clazz = Class.forName("com.fieldnation.gcm.RegistrationIntentService");
@@ -346,10 +362,26 @@ public class App extends Application {
                 // TODO should do something... like retry or logout
             }
         }
+
+        @Override
+        public void onSwitchUser(long userId, boolean failed) {
+            if (!failed) {
+                _switchingUser = true;
+                ProfileClient.get(App.this, false);
+            }
+        }
     };
 
     public Profile getProfile() {
         return _profile;
+    }
+
+    public static long getProfileId() {
+        Profile profile = get().getProfile();
+        if (profile != null && profile.getUserId() != null) {
+            return profile.getUserId();
+        }
+        return -1;
     }
 
     /*-*********************-*/

@@ -55,7 +55,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
     private HelpDialog _helpDialog;
-
+    
     // Services
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;
@@ -195,8 +195,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
-            _notProviderDialog.show();
-            return;
+//            _notProviderDialog.show();
+//            return;
         }
         App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
@@ -347,11 +347,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerGotProfile();
-            _globalClient.registerUpdateApp();
-            _globalClient.registerAppShutdown();
-            _globalClient.registerShowFeedbackDialog();
-            _globalClient.registerShowHelpDialog();
+            _globalClient.subGotProfile();
+            _globalClient.subUpdateApp();
+            _globalClient.subAppShutdown();
+            _globalClient.subShowFeedbackDialog();
+            _globalClient.subShowHelpDialog();
         }
 
         @Override

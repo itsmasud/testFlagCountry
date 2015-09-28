@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -46,12 +47,13 @@ public class ProfileService extends MSService implements ProfileConstants {
     private void get(Intent intent) {
         Log.v(TAG, "get");
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
 
         StoredObject obj = null;
 
-        if (!isSync) {
-            obj = StoredObject.get(this, PSO_PROFILE, profileId);
+        if (!isSync && allowCache) {
+            obj = StoredObject.get((int) profileId, PSO_PROFILE, profileId);
             // get stored object
             // if exists, then pass it back
             if (obj != null) {
@@ -63,7 +65,10 @@ public class ProfileService extends MSService implements ProfileConstants {
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (isSync
+                || allowCache
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
             ProfileTransactionBuilder.get(this, profileId, false);
         }
@@ -76,7 +81,7 @@ public class ProfileService extends MSService implements ProfileConstants {
 
         StoredObject obj = null;
         if (!isSync) {
-            obj = StoredObject.get(this, PSO_NOTIFICATION_PAGE, page + "");
+            obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
                     ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync);
@@ -99,7 +104,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         StoredObject obj = null;
 
         if (!isSync) {
-            obj = StoredObject.get(this, PSO_MESSAGE_PAGE, page);
+            obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
                     ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync);

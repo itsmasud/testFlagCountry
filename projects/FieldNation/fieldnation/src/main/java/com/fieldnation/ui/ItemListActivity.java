@@ -5,6 +5,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 
 import java.util.List;
 

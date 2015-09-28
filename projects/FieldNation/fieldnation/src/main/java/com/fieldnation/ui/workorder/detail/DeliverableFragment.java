@@ -498,7 +498,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerGotProfile();
+            _globalClient.subGotProfile();
         }
 
         @Override

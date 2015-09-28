@@ -11,6 +11,8 @@
     <color name="fn_brandcolor_medium">#FFe65600</color>
     <color name="fn_brandcolor_dark">#FFbd4600</color>
 
+    <color name="fn_yellow">#FFFF983D</color>
+
     <!--<color name="fn_brandcolor">#FFFF0000</color>-->
     <!--<color name="fn_brandcolor_medium">#FF770000</color>-->
     <!--<color name="fn_brandcolor_80">#CCFF0000</color>-->
@@ -106,6 +108,7 @@
 
     <color name="fn_drawer_shadow">#FF1e1e1e</color>
     <color name="fn_shadow">#55000000</color>
+    <color name="fn_black_25">#40000000</color>
     <color name="fn_transparent">#00000000</color>
 
     <!-- old colors -->

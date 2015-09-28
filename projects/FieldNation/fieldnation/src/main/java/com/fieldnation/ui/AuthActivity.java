@@ -154,7 +154,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
-        GlobalTopicClient.dispatchAppShutdown(this);
+        GlobalTopicClient.appShutdown(this);
         super.onBackPressed();
     }
 
@@ -164,8 +164,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerUpdateApp();
-            _globalClient.registerGotProfile();
+            _globalClient.subUpdateApp();
+            _globalClient.subGotProfile();
         }
 
         @Override
@@ -236,7 +236,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        GlobalTopicClient.dispatchNetworkDisconnected(AuthActivity.this);
+                        GlobalTopicClient.networkDisconnected(AuthActivity.this);
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                         _stiltView.setVisibility(View.VISIBLE);
@@ -246,7 +246,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     String error = auth.getErrorType();
 
                     if ("invalid_client".equals(error)) {
-                        GlobalTopicClient.dispatchUpdateApp(AuthActivity.this);
+                        GlobalTopicClient.updateApp(AuthActivity.this);
                     } else if (authToken != null) {
                         Log.v(TAG, "have authtoken");
                         Account account = new Account(_username, getString(R.string.auth_account_type));

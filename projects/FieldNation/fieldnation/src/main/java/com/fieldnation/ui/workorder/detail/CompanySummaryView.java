@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -22,11 +23,15 @@ public class CompanySummaryView extends RelativeLayout {
 
     private TextView _nameTextView;
     private StarView _starRating;
-    private LinearLayout _buyerRatingLayout;
+    private TextView _locationTextView;
+    private TextView _reviewsTextView;
+    private TextView _newBuyerTextView;
+    private LinearLayout _detailsLayout;
+    private ProgressBar _expectationsProgressBar;
+    private ProgressBar _professionalismProgressBar;
     private TextView _expectationsTextView;
     private TextView _professionalismTextView;
-    private TextView _approvalTextView;
-    private LinearLayout _detailLayout;
+    private TextView _daysTextView;
 
 
     private Workorder _workorder;
@@ -56,11 +61,15 @@ public class CompanySummaryView extends RelativeLayout {
 
         _nameTextView = (TextView) findViewById(R.id.company_textview);
         _starRating = (StarView) findViewById(R.id.star_rating);
-        _buyerRatingLayout = (LinearLayout) findViewById(R.id.buyerRating_layout);
-        _expectationsTextView = (TextView) findViewById(R.id.expectationsPercent_textview);
-        _professionalismTextView = (TextView) findViewById(R.id.professionalism_textview);
-        _approvalTextView = (TextView) findViewById(R.id.approval_textview);
-        _detailLayout = (LinearLayout) findViewById(R.id.detail_layout);
+        _locationTextView = (TextView) findViewById(R.id.location_textview);
+        _reviewsTextView = (TextView) findViewById(R.id.reviews_textview);
+        _newBuyerTextView = (TextView) findViewById(R.id.newBuyer_textview);
+        _detailsLayout = (LinearLayout) findViewById(R.id.details_layout);
+        _expectationsProgressBar = (ProgressBar) findViewById(R.id.expectations_progressBar);
+        _professionalismProgressBar = (ProgressBar) findViewById(R.id.professionalism_progressBar);
+        _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);
+        _professionalismTextView = (TextView) findViewById(R.id.professionalism_textView);
+        _daysTextView = (TextView) findViewById(R.id.days_textview);
 
         setVisibility(GONE);
     }
@@ -89,25 +98,47 @@ public class CompanySummaryView extends RelativeLayout {
 
         BuyerRating rating = _workorder.getBuyerRatingInfo();
 
-        if (rating == null) {
-            _buyerRatingLayout.setVisibility(GONE);
+        if (rating == null || rating.getTotalRating() == null) {
+            _newBuyerTextView.setVisibility(VISIBLE);
             _starRating.setVisibility(GONE);
+            _detailsLayout.setVisibility(GONE);
+            _locationTextView.setVisibility(GONE);
+            _reviewsTextView.setVisibility(GONE);
         } else {
-            if (rating.getStarRate() != null) {
-                _starRating.setStars(rating.getStarRate());
+            _newBuyerTextView.setVisibility(GONE);
+            _starRating.setVisibility(VISIBLE);
+            _detailsLayout.setVisibility(VISIBLE);
+
+            _daysTextView.setText(rating.getTimeToApproval() + " Days");
+
+            if (rating.getAvgRating() != null) {
+                _starRating.setStars((int) (double) rating.getAvgRating());
                 _starRating.setVisibility(VISIBLE);
             } else {
                 _starRating.setVisibility(GONE);
             }
 
-            if (rating.getRespectful() != null && rating.getScopeRating() != null) {
-                // gah! no data!
+            if (rating.getClearExpectationRatingPercent() != null) {
+                _expectationsProgressBar.setProgress((int) (double) rating.getClearExpectationRatingPercent());
+                _expectationsTextView.setText(((int) (double) rating.getClearExpectationRatingPercent()) + "%");
             }
-            _buyerRatingLayout.setVisibility(GONE);
 
+            if (rating.getProfessionalismRatingPercent() != null) {
+                _professionalismProgressBar.setProgress((int) (double) rating.getProfessionalismRatingPercent());
+                _professionalismTextView.setText(((int) (double) rating.getProfessionalismRatingPercent()) + "%");
+            }
+
+            if (rating.getTotalRating() != null) {
+                _locationTextView.setVisibility(VISIBLE);
+                _locationTextView.setText(rating.getCity() + ", " + rating.getState());
+                _reviewsTextView.setVisibility(VISIBLE);
+                _reviewsTextView.setText(rating.getTotalRating() + " Reviews");
+                _newBuyerTextView.setVisibility(GONE);
+            } else {
+                _newBuyerTextView.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(GONE);
+                _reviewsTextView.setVisibility(GONE);
+            }
         }
-
-
     }
-
 }

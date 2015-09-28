@@ -125,7 +125,7 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "Flushing logs");
                 misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
-                StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
+                StoredObject.flush(604800000); // 1 week
 
                 Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
                 // only flush if we have wifi, so that the app can get new ones without
@@ -133,22 +133,22 @@ public class WebCrawlerService extends Service {
                 if (_imageDaysToLive > -1 && App.get().haveWifi()) {
                     long days = _imageDaysToLive * 86400000;
                     long cutoff = System.currentTimeMillis();
-                    List<StoredObject> list = StoredObject.list(WebCrawlerService.this, "PhotoCache");
+                    List<StoredObject> list = StoredObject.list(App.getProfileId(), "PhotoCache");
 
                     Log.v(TAG, "Flushing photos");
                     int count = 0;
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(WebCrawlerService.this, obj);
+                            StoredObject.delete(obj);
                             count++;
                         }
                     }
 
-                    list = StoredObject.list(WebCrawlerService.this, "PhotoCacheCircle");
+                    list = StoredObject.list(App.getProfileId(), "PhotoCacheCircle");
 
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(WebCrawlerService.this, obj);
+                            StoredObject.delete(obj);
                             count++;
                         }
                     }
@@ -269,7 +269,7 @@ public class WebCrawlerService extends Service {
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
             _haveProfile = false;
-            ProfileClient.get(WebCrawlerService.this, 0, true);
+            ProfileClient.get(WebCrawlerService.this, 0, true, false);
             ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
             ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
         }
