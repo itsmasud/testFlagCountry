@@ -2,6 +2,7 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -83,7 +84,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         int page = params.getInt("page");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT_LIST, page, data);
+        StoredObject.put(App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
         PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync());
         return Result.FINISH;
@@ -95,7 +96,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT, paymentId, data);
+        StoredObject.put(App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
         PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
         return Result.FINISH;

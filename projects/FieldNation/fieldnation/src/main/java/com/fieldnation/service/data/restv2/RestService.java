@@ -2,6 +2,7 @@ package com.fieldnation.service.data.restv2;
 
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.Sticky;
@@ -49,7 +50,7 @@ public class RestService extends MSService implements RestConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
         Sticky sticky = (Sticky) intent.getSerializableExtra(PARAM_STICKY);
 
-        List<StoredObject> list = StoredObject.list(this, objectType);
+        List<StoredObject> list = StoredObject.list(App.getProfileId(), objectType);
 
         if (list != null && list.size() > 0) {
             for (StoredObject obj : list) {

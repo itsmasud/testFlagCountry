@@ -4,17 +4,19 @@ package com.fieldnation;
  * Created by Michael Carver on 5/20/2015.
  */
 public interface GlobalTopicConstants {
-    String TOPIC_APP_UPDATE = "GlobalTopicConstants:TOPIC_APP_UPDATE";
-    String TOPIC_GOT_PROFILE = "GlobalTopicConstants:TOPIC_GOT_PROFILE";
-    String TOPIC_PROFILE_INVALID = "GlobalTopicConstants:TOPIC_PROFILE_INVALID";
-    String TOPIC_SHUTDOWN = "GlobalTopicConstants:TOPIC_SHUTDOWN";
-    String TOPIC_NETWORK_STATE = "GlobalTopicConstants:TOPIC_NETWORK_STATE";
-    String TOPIC_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:TOPIC_NETWORK_COMMAND_CONNECT";
-    String TOPIC_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_GCM_MESSAGE";
+    String TOPIC_ID_APP_UPDATE = "GlobalTopicConstants:TOPIC_ID_APP_UPDATE";
+    String TOPIC_ID_GOT_PROFILE = "GlobalTopicConstants:TOPIC_ID_GOT_PROFILE";
+    String TOPIC_ID_PROFILE_INVALID = "GlobalTopicConstants:TOPIC_ID_PROFILE_INVALID";
+    String TOPIC_ID_SHUTDOWN = "GlobalTopicConstants:TOPIC_ID_SHUTDOWN";
+    String TOPIC_ID_NETWORK_STATE = "GlobalTopicConstants:TOPIC_ID_NETWORK_STATE";
+    String TOPIC_ID_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:TOPIC_ID_NETWORK_COMMAND_CONNECT";
+    String TOPIC_ID_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_ID_GCM_MESSAGE";
     String TOPIC_ID_SHOW_FEEDBACK = "GlobalTopicConstants:TOPIC_ID_SHOW_FEEDBACK";
     String TOPIC_ID_SHOW_HELP_DIALOG = "GlobalTopicConstants:TOPIC_ID_SHOW_HELP_DIALOG";
+    String TOPIC_ID_USER_SWITCHED = "GlobalTopicConstants:TOPIC_ID_USER_SWITCHED";
 
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
+    String PARAM_PROFILE = "PARAM_PROFILE";
     int NETWORK_STATE_CONNECTED = 1;
     int NETWORK_STATE_DISCONNECTED = 2;
     int NETWORK_STATE_CONNECTING = 3;

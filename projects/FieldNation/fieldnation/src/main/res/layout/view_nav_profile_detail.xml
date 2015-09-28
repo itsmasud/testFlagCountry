@@ -18,7 +18,8 @@
         <LinearLayout
             android:id="@+id/add_layout"
             style="@style/DrawerItem"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <ImageView
                 style="@style/DrawerItemIcon"
@@ -40,7 +41,8 @@
         <LinearLayout
             android:id="@+id/manage_layout"
             style="@style/DrawerItem"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            android:visibility="gone">
 
             <com.fieldnation.ui.IconFontTextView
                 style="@style/DrawerItemTextFont"

@@ -72,7 +72,7 @@ public class MessagesActionBarView extends RelativeLayout {
     private final GlobalTopicClient.Listener _client_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _client.registerGotProfile();
+            _client.subGotProfile();
         }
 
         @Override
