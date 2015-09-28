@@ -55,7 +55,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
     private HelpDialog _helpDialog;
-
+    
     // Services
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;

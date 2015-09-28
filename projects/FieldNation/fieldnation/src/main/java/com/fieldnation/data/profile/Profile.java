@@ -53,7 +53,7 @@ public class Profile implements Parcelable {
     @Json(name = "unreadMessageCount")
     private Integer _unreadMessageCount;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "workordersTotal")
     private Integer _workordersTotal;
 
@@ -153,7 +153,7 @@ public class Profile implements Parcelable {
         return _unreadMessageCount;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return _userId;
     }
 

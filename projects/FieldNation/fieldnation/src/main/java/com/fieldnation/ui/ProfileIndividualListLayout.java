@@ -69,7 +69,6 @@ public class ProfileIndividualListLayout extends RelativeLayout {
 
         // profile
         _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
-        _profileContainerLayout.setOnClickListener(_profileContainerLayout_onClick);
 
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -97,6 +96,10 @@ public class ProfileIndividualListLayout extends RelativeLayout {
 
         subPhoto();
         populateUi();
+    }
+
+    public long getUserId() {
+        return _profile.getUserId();
     }
 
     private void populateUi() {
@@ -157,12 +160,6 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            SwitchUserActivity.startNew(getContext(), _profile.getUserId());
-        }
-    };
 
     private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
         @Override

@@ -86,6 +86,8 @@ public class DrawerView extends RelativeLayout {
     private GlobalTopicClient _globalTopicClient;
     private AuthTopicClient _authTopicClient;
 
+    private Listener _listener;
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -126,6 +128,7 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+        _profileListView.setListener(_navlistener);
 
         // Items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -189,6 +192,14 @@ public class DrawerView extends RelativeLayout {
         _authTopicClient.connect(getContext());
     }
 
+    private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
+        @Override
+        public void onUserSwitch(long userId) {
+            if (_listener != null)
+                _listener.onSwitchUser(userId);
+        }
+    };
+
     @Override
     protected void onDetachedFromWindow() {
         if (_globalTopicClient != null && _authTopicClient.isConnected())
@@ -199,6 +210,10 @@ public class DrawerView extends RelativeLayout {
             _authTopicClient.disconnect(getContext());
 
         super.onDetachedFromWindow();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void populateUi() {
@@ -480,5 +495,9 @@ public class DrawerView extends RelativeLayout {
             addProfilePhoto();
         }
     };
+
+    public interface Listener {
+        void onSwitchUser(long userId);
+    }
 }
 

@@ -28,7 +28,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     private static final Random RAND = new Random(System.currentTimeMillis());
 
     private long _id;
-    private int _profileId;
+    private long _profileId;
     private String _objKey;
     private String _objName;
     private long _lastupdated;
@@ -43,7 +43,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     private void updateFromDatabase(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
-        _profileId = cursor.getInt(Column.PROFILE_ID.getIndex());
+        _profileId = cursor.getLong(Column.PROFILE_ID.getIndex());
         _objKey = cursor.getString(Column.OBJ_KEY.getIndex());
         _objName = cursor.getString(Column.OBJ_NAME.getIndex());
         _lastupdated = cursor.getLong(Column.LAST_UPDATED.getIndex());
@@ -61,7 +61,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     public StoredObject(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID);
-        _profileId = bundle.getInt(PARAM_PROFILE_ID);
+        _profileId = bundle.getLong(PARAM_PROFILE_ID);
         _objKey = bundle.getString(PARAM_OBJECT_KEY);
         _objName = bundle.getString(PARAM_OBJECT_TYPE);
         _lastupdated = bundle.getLong(PARAM_LAST_UPDATED);
@@ -76,7 +76,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
-        bundle.putInt(PARAM_PROFILE_ID, _profileId);
+        bundle.putLong(PARAM_PROFILE_ID, _profileId);
         bundle.putString(PARAM_OBJECT_KEY, _objKey);
         bundle.putString(PARAM_OBJECT_TYPE, _objName);
         bundle.putLong(PARAM_LAST_UPDATED, _lastupdated);
@@ -94,7 +94,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return _id;
     }
 
-    public int getProfileId() {
+    public long getProfileId() {
         return _profileId;
     }
 
@@ -189,7 +189,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     }
 
 
-    public static StoredObject get(int profileId, String objectTypeName, long objectKey) {
+    public static StoredObject get(long profileId, String objectTypeName, long objectKey) {
         return get(profileId, objectTypeName, objectKey + "");
     }
 
@@ -200,7 +200,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @param objectKey      the object key
      * @return the object, null if there was an error.
      */
-    public static StoredObject get(int profileId, String objectTypeName, String objectKey) {
+    public static StoredObject get(long profileId, String objectTypeName, String objectKey) {
         Log.v(TAG, "get(" + profileId + ", " + objectTypeName + ", " + objectKey + ")");
         // Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
         StoredObject obj = null;
@@ -280,19 +280,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, File file, String filename) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, File file, String filename) {
         return put(profileId, objectTypeName, objectKey + "", file, filename, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, File file, String filename, boolean expires) {
         return put(profileId, objectTypeName, objectKey + "", file, filename, expires);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, File file, String filename) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, File file, String filename) {
         return put(profileId, objectTypeName, objectKey, file, filename, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, File file, String filename, boolean expires) {
         Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", " + file + ", " + filename + ", " + expires + ")");
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
@@ -355,19 +355,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, byte[] data, String filename) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, byte[] data, String filename) {
         return put(profileId, objectTypeName, objectKey + "", data, filename, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, byte[] data, String filename, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, byte[] data, String filename, boolean expires) {
         return put(profileId, objectTypeName, objectKey + "", data, filename, expires);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, byte[] data, String filename) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, byte[] data, String filename) {
         return put(profileId, objectTypeName, objectKey, data, filename, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, byte[] data, String filename, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, byte[] data, String filename, boolean expires) {
         Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", byte[] data, " + filename + ", " + expires + ")");
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
@@ -433,19 +433,19 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, byte[] data) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, byte[] data) {
         return put(profileId, objectTypeName, objectKey + "", data, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, long objectKey, byte[] data, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, byte[] data, boolean expires) {
         return put(profileId, objectTypeName, objectKey + "", data, expires);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, byte[] data) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, byte[] data) {
         return put(profileId, objectTypeName, objectKey, data, true);
     }
 
-    public static StoredObject put(int profileId, String objectTypeName, String objectKey, byte[] data, boolean expires) {
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, byte[] data, boolean expires) {
         Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", byte[] data, " + expires + ")");
         // Log.v(TAG, "put3(" + objectTypeName + "/" + objectKey + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
@@ -487,7 +487,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return null;
     }
 
-    public static List<StoredObject> list(int profileId, String objectTypeName) {
+    public static List<StoredObject> list(long profileId, String objectTypeName) {
         Log.v(TAG, "list(" + profileId + ", " + objectTypeName + ")");
         List<StoredObject> list = new LinkedList<>();
 
@@ -520,7 +520,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         return list;
     }
 
-    public static List<StoredObject> list(int profileId, String objectTypeName, String[] keys) {
+    public static List<StoredObject> list(long profileId, String objectTypeName, String[] keys) {
         Log.v(TAG, "list(" + profileId + ", " + objectTypeName + ", String[] keys)");
         List<StoredObject> list = new LinkedList<>();
 
@@ -600,11 +600,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         }
     }
 
-    public static boolean delete(int profileId, String objectTypeName, long objkey) {
+    public static boolean delete(long profileId, String objectTypeName, long objkey) {
         return delete(profileId, objectTypeName, objkey + "");
     }
 
-    public static boolean delete(int profileId, String objectTypeName, String objkey) {
+    public static boolean delete(long profileId, String objectTypeName, String objkey) {
         Log.v(TAG, "delete(" + profileId + ", " + objectTypeName + ", " + objkey + ")");
         StoredObject obj = get(profileId, objectTypeName, objkey);
         if (obj != null && obj._isFile) {
