@@ -65,7 +65,7 @@ public class PhotoService extends MSService implements PhotoConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         // check cache
-        StoredObject obj = StoredObject.get(this, objectName, url);
+        StoredObject obj = StoredObject.get(App.getProfileId(), objectName, url);
 
         if (obj != null) {
             PhotoDispatch.get(this, obj.getFile(), url, getCircle, false, isSync);

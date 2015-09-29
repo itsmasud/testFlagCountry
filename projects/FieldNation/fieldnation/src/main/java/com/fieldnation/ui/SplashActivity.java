@@ -1,10 +1,8 @@
 package com.fieldnation.ui;
 
-import android.accounts.AccountManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.Window;
 
 import com.fieldnation.GlobalTopicClient;
@@ -88,7 +86,7 @@ public class SplashActivity extends AuthFragmentActivity {
         @Override
         public void onConnected() {
             Log.v(TAG, "_globalTopic_listener.onConnected");
-            _globalClient.registerGotProfile();
+            _globalClient.subGotProfile();
         }
 
         @Override
@@ -131,11 +129,11 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
-            if (!_calledMyWork) {
-                _calledMyWork = true;
-                MyWorkActivity.startNew(this);
-                finish();
-            }
+        if (!_calledMyWork) {
+            _calledMyWork = true;
+            MyWorkActivity.startNew(this);
+            finish();
+        }
         }
     }
 

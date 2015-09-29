@@ -39,7 +39,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
-        GlobalTopicClient.dispatchGcm(this, message);
+        GlobalTopicClient.gcm(this, message);
     }
     // [END receive_message]
 

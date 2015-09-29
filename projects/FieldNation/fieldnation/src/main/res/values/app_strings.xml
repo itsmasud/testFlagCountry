@@ -415,6 +415,7 @@
     <string name="icfont_cash">\uF139</string>
     <string name="icfont_person">\uF13D</string>
     <string name="icfont_stopwatch">\uF143</string>
+    <string name="icfont_workorder">\uF146</string>
     <string name="icfont_help">\uF149</string>
     <string name="icfont_trash">\uF14A</string>
     <string name="icfont_shipments">\uF14B</string>

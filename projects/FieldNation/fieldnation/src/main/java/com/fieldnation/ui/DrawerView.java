@@ -24,6 +24,7 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -85,6 +86,8 @@ public class DrawerView extends RelativeLayout {
     private GlobalTopicClient _globalTopicClient;
     private AuthTopicClient _authTopicClient;
 
+    private Listener _listener;
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -125,6 +128,7 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
+        _profileListView.setListener(_navlistener);
 
         // Items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -188,6 +192,14 @@ public class DrawerView extends RelativeLayout {
         _authTopicClient.connect(getContext());
     }
 
+    private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
+        @Override
+        public void onUserSwitch(long userId) {
+            if (_listener != null)
+                _listener.onSwitchUser(userId);
+        }
+    };
+
     @Override
     protected void onDetachedFromWindow() {
         if (_globalTopicClient != null && _authTopicClient.isConnected())
@@ -198,6 +210,10 @@ public class DrawerView extends RelativeLayout {
             _authTopicClient.disconnect(getContext());
 
         super.onDetachedFromWindow();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void populateUi() {
@@ -235,7 +251,14 @@ public class DrawerView extends RelativeLayout {
             _profileNameTextView.setText(_profile.getFirstname() + " " + _profile.getLastname());
             _profileNameTextView.setVisibility(VISIBLE);
 
-            // TODO add service company name
+            if (_profile.getManagedProviders() != null && _profile.getManagedProviders().length > 1) {
+                _profileExpandButton.setVisibility(VISIBLE);
+            } else {
+                _profileExpandButton.setVisibility(GONE);
+            }
+
+            _profileListView.setProfile(_profile);
+
             subPhoto();
             addProfilePhoto();
         }
@@ -388,14 +411,14 @@ public class DrawerView extends RelativeLayout {
 //            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-            GlobalTopicClient.dispatchShowFeedbackDialog(getContext());
+            GlobalTopicClient.showFeedbackDialog(getContext());
         }
     };
 
     private final OnClickListener _help_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.dispatchShowHelpDialog(getContext());
+            GlobalTopicClient.showHelpDialog(getContext());
         }
     };
 
@@ -433,12 +456,12 @@ public class DrawerView extends RelativeLayout {
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerGotProfile();
+            _globalTopicClient.subGotProfile();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
-            if (_profile == null || profile.getUserId() != _profile.getUserId()) {
+            if (_profile == null || (long) profile.getUserId() != (long) _profile.getUserId()) {
                 _profilePic = null;
                 _profile = profile;
 
@@ -462,10 +485,19 @@ public class DrawerView extends RelativeLayout {
             if (drawable == null || url == null || failed)
                 return;
 
+            if (_profile.getPhoto() == null
+                    || misc.isEmptyOrNull(_profile.getPhoto().getLarge())
+                    || !url.equals(_profile.getPhoto().getLarge()))
+                return;
+
             Drawable pic = drawable;
             _profilePic = new WeakReference<>(pic);
             addProfilePhoto();
         }
     };
+
+    public interface Listener {
+        void onSwitchUser(long userId);
+    }
 }
 

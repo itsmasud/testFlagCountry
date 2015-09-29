@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.location.Location;
 import android.net.Uri;
 
+import com.fieldnation.App;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -542,7 +543,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //    }
 
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()

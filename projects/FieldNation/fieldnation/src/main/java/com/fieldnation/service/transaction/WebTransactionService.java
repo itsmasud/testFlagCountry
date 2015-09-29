@@ -117,19 +117,19 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
             boolean haveWifi = App.get().haveWifi();
 
-            Log.v(TAG, "HaveWifi " + haveWifi);
+            // Log.v(TAG, "HaveWifi " + haveWifi);
 
             if (requireWifi && !haveWifi) {
                 _allowSync = false;
             } else {
                 boolean pluggedIn = App.get().isCharging();
-                Log.v(TAG, "HavePower " + pluggedIn);
+                // Log.v(TAG, "HavePower " + pluggedIn);
                 if (requirePower && !pluggedIn) {
                     _allowSync = false;
                 }
             }
             _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-            Log.v(TAG, "allowSync time: " + watch.finish());
+            // Log.v(TAG, "allowSync time: " + watch.finish());
         }
         return _allowSync;
     }
@@ -337,7 +337,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                 }
 
-                GlobalTopicClient.dispatchNetworkConnected(context);
+                GlobalTopicClient.networkConnected(context);
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
@@ -362,7 +362,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
-                GlobalTopicClient.dispatchNetworkDisconnected(context);
+                GlobalTopicClient.networkDisconnected(context);
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {

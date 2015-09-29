@@ -118,7 +118,7 @@ public class WarningView extends RelativeLayout {
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerNetworkState();
+            _globalClient.subNetworkState();
         }
 
         @Override
@@ -139,7 +139,7 @@ public class WarningView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WarningView.this.setVisibility(View.GONE);
-            GlobalTopicClient.dispatchNetworkConnect(getContext());
+            GlobalTopicClient.networkConnect(getContext());
         }
     };
 }

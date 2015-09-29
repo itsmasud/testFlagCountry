@@ -4,9 +4,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
-import sun.rmi.runtime.Log;
 
 /**
  * Helper class for handling ISO 8601 strings of the following format:

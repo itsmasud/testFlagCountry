@@ -35,14 +35,19 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     /*-             Commands            -*/
     /*-*********************************-*/
     public static void get(Context context) {
-        get(context, 0, false);
+        get(context, 0, false, true);
     }
 
-    public static void get(Context context, long profileId, boolean isSync) {
+    public static void get(Context context, boolean allowCache) {
+        get(context, 0, false, allowCache);
+    }
+
+    public static void get(Context context, long profileId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_PROFILE_ID, profileId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -111,6 +116,15 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         return register(topicId, TAG);
     }
 
+    public static void switchUser(Context context, long userId) {
+        ProfileTransactionBuilder.switchUser(context, userId);
+    }
+
+    public boolean subSwitchUser() {
+        String topicId = TOPIC_ID_SWITCH_USER;
+        return register(topicId, TAG);
+    }
+
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
@@ -158,7 +172,13 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                 preMessageList(bundle);
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preOnAction(bundle);
+            } else if (topicId.startsWith(TOPIC_ID_SWITCH_USER)) {
+                onSwitchUser(bundle.getLong(PARAM_USER_ID), bundle.getBoolean(PARAM_ERROR));
             }
+        }
+
+        public void onSwitchUser(long userId, boolean failed) {
+
         }
 
         private void preOnAction(Bundle payload) {

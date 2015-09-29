@@ -59,13 +59,13 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
-            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
+            StoredObject imageObj = StoredObject.put(App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
             imageBitmap.recycle();
 
 
             ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
             circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
-            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
+            StoredObject circleObj = StoredObject.put(App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
             circleBitmap.recycle();
 
             // build the response

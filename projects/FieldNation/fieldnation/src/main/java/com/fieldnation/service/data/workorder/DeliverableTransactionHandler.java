@@ -2,6 +2,7 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -90,7 +91,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         long deliverableId = params.getLong("deliverableId");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
+        StoredObject.put(App.getProfileId(), PSO_DELIVERABLE, deliverableId, data);
 
         WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.isSync());
 

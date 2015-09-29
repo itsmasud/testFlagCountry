@@ -302,17 +302,19 @@ public class misc {
                 } else if (dist <= l2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
                 } else if (dist <= l3) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
                 } else if (dist <= dist2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
                 }
-
             }
         }
 

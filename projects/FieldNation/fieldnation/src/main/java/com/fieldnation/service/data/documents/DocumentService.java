@@ -3,6 +3,7 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -45,7 +46,7 @@ public class DocumentService extends MSService implements DocumentConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        StoredObject obj = StoredObject.get(context, PSO_DOCUMENT, documentId);
+        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
                 DocumentDispatch.download(context, documentId, obj.getFile(), PARAM_STATE_FINISH, isSync);

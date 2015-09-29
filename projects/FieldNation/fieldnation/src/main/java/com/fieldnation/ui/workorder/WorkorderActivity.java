@@ -10,8 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
 import com.fieldnation.Debug;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
@@ -225,7 +227,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     @Override
     protected void onPause() {
-        _workorderClient.disconnect(this);
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(this);
+
         super.onPause();
     }
 
