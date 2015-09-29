@@ -275,6 +275,14 @@ public class WorkorderCardView extends RelativeLayout {
         _listener = listener;
     }
 
+
+    public void makeButtonsGone() {
+        _actionButtonOrange.setVisibility(View.GONE);
+        _statusTextView.setVisibility(View.GONE);
+    }
+
+
+
 	/*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
