@@ -15,6 +15,8 @@ public class ExpectedPayment {
     private Double _expectedFee;
     @Json(name = "expectedInsuranceFee")
     private Double _expectedInsuranceFee;
+    @Json(name = "expectedServiceFee")
+    private Double _expectedServiceFee;
     @Json(name = "expectedTotal")
     private Double _expectedTotal;
     @Json(name = "expensesApproved")
@@ -53,6 +55,10 @@ public class ExpectedPayment {
 
     public Double getExpectedInsuranceFee() {
         return _expectedInsuranceFee;
+    }
+
+    public Double getExpectedServiceFee() {
+        return _expectedServiceFee;
     }
 
     public Double getExpectedTotal() {
