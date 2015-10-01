@@ -1,44 +1,41 @@
 package com.fieldnation.ui;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.view.MenuItemCompat;
+import android.os.Parcelable;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.style.URLSpan;
+import android.text.util.Linkify;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.FileHelper;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.ShipmentTracking;
+import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.payment.PaymentDetailActivity;
-import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
+import com.fieldnation.ui.workorder.detail.TaskListView;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -52,7 +49,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private static final String STATE_SHOWING_DIALOG = "STATE_SHOWING_DIALOG";
 
     // UI
-    private OverScrollListView _listView;
+    private OverScrollListView _workorderListView;
+    private TaskListView _taskList;
+    private OverScrollListView _fileList;
     private RefreshView _refreshView;
     private EmptyWoListView _emptyView;
 
@@ -60,6 +59,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     // Data
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
+    private Workorder _workorder;
+    private List<Task> _tasks = null;
+    private Task _currentTask;
 
 
     // state data
@@ -85,10 +87,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _adapter.setOnLoadingCompleteListener(_adapterListener);
 
-        _listView = (OverScrollListView) findViewById(R.id.workorders_listview);
-        _listView.setDivider(null);
-        _listView.setOnOverScrollListener(_refreshView);
-        _listView.setAdapter(_adapter);
+        _workorderListView = (OverScrollListView) findViewById(R.id.workorders_listview);
+        _workorderListView.setDivider(null);
+        _workorderListView.setOnOverScrollListener(_refreshView);
+        _workorderListView.setAdapter(_adapter);
 
 
         _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
@@ -97,6 +99,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(this);
 
+
+        _taskList = (TaskListView) findViewById(R.id.tasks_listview);
+        _taskList.setTaskListViewListener(_taskListView_listener);
 
         Log.v(TAG, "onCreate");
     }
@@ -144,46 +149,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             }
         }
     }
-
-
-//    private void populateUi() {
-//
-//        if (_profile == null)
-//            return;
-//
-//
-//        Stopwatch stopwatch = new Stopwatch(true);
-//        final UploadingDocument[] docs = _workorder.getDocuments();
-//        if (docs != null && docs.length > 0) {
-//            Log.v(TAG, "_reviewList.getChildCount() " + _reviewList.getChildCount());
-//            Log.v(TAG, "docs.length " + docs.length);
-//
-//            if (_reviewList.getChildCount() > docs.length) {
-//                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
-//            }
-//
-//            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
-//                private final UploadingDocument[] _docs = docs;
-//
-//                @Override
-//                public void next(int i) throws Exception {
-//                    ShareRequestRowView v = null;
-//                    if (i < _reviewList.getChildCount()) {
-//                        v = (ShareRequestRowView) _reviewList.getChildAt(i);
-//                    } else {
-//                        v = new ShareRequestRowView(ShareRequestActivity.this);
-//                        _reviewList.addView(v);
-//                    }
-//                    UploadingDocument doc = _docs[i];
-//                    v.setData(doc);
-//                }
-//            };
-//            _reviewList.postDelayed(r, new Random().nextInt(1000));
-//        } else {
-//            _reviewList.removeAllViews();
-//        }
-//        Log.v(TAG, "pop docs time " + stopwatch.finish());
-//    }
 
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -301,6 +266,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             else
                 v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
+
             v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
             v.makeButtonsGone();
 
@@ -340,7 +306,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         @Override
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
@@ -349,7 +314,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
@@ -358,13 +322,18 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
-//            Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-//            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-////            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
-//            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-//            getActivity().startActivity(intent);
-//            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-                        Log.e(TAG, "onClick");
+            Log.e(TAG, "onClick_WorkorderCardView");
+
+            _workorderListView.setVisibility(View.GONE);
+
+            _tasks = new LinkedList<>();
+            for (Parcelable task : workorder.getTasks()) {
+                TaskType taskType = ((Task) task).getTaskType();
+                if (taskType.equals(TaskType.UPLOAD_FILE) || taskType.equals(TaskType.UPLOAD_PICTURE))
+                    _tasks.add((Task) task);
+            }
+            _taskList.setData(workorder, _tasks);
+            setLoading(true);
 
         }
 
@@ -376,6 +345,73 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         @Override
         public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
 
+        }
+    };
+
+
+    private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
+        @Override
+        public void onCheckin(Task task) {
+        }
+
+        @Override
+        public void onCheckout(Task task) {
+        }
+
+        @Override
+        public void onCloseOutNotes(Task task) {
+        }
+
+        @Override
+        public void onConfirmAssignment(Task task) {
+        }
+
+        @Override
+        public void onCustomField(Task task) {
+        }
+
+        @Override
+        public void onDownload(Task task) {
+
+        }
+
+        @Override
+        public void onEmail(Task task) {
+
+        }
+
+        @Override
+        public void onPhone(Task task) {
+
+        }
+
+        @Override
+        public void onShipment(Task task) {
+
+        }
+
+        @Override
+        public void onSignature(Task task) {
+
+        }
+
+        @Override
+        public void onUploadFile(Task task) {
+            _currentTask = task;
+        }
+
+        @Override
+        public void onUploadPicture(Task task) {
+            _currentTask = task;
+        }
+
+        @Override
+        public void onUniqueTask(Task task) {
+            if (task.getCompleted())
+                return;
+            WorkorderClient.actionCompleteTask(App.get(),
+                    _workorder.getWorkorderId(), task.getTaskId());
+            setLoading(true);
         }
     };
 
@@ -405,6 +441,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             _adapter.refreshPages();
+        }
+
+        @Override
+        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
         }
     };
 

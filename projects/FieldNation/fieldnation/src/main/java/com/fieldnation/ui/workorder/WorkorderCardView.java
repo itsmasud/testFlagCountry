@@ -277,8 +277,11 @@ public class WorkorderCardView extends RelativeLayout {
 
 
     public void makeButtonsGone() {
+        _actionButtonGreen.setVisibility(View.GONE);
+        _actionButtonWhite.setVisibility(View.GONE);
         _actionButtonOrange.setVisibility(View.GONE);
         _statusTextView.setVisibility(View.GONE);
+        _statusView.setVisibility(View.GONE);
     }
 
 
