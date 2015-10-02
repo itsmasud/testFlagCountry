@@ -104,7 +104,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
-        _okButton.setOnClickListener(null);
+        _okButton.setOnClickListener(_ok_onClick);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -190,6 +190,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
             case LIST:
                 _spinnerLayout.setVisibility(View.VISIBLE);
                 _textEditText.setVisibility(View.GONE);
+                _okButton.setEnabled(true);
                 if (_customField.getPredefinedValues() != null) {
                     Log.v(TAG, "PredefinedValues");
                     for (int i = 0; i < _customField.getPredefinedValues().length; i++) {
@@ -320,12 +321,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             if (_textEditText.getText().toString().trim().length() > 0) {
-                _okButton.setOnClickListener(_ok_onClick);
                 _okButton.setEnabled(true);
             } else {
-                _okButton.setOnClickListener(null);
                 _okButton.setEnabled(false);
-
             }
         }
 
