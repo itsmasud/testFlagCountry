@@ -342,10 +342,9 @@ public class WebCrawlerService extends Service {
             _workorderClient.subGet(true);
             _workorderClient.subListMessages(true);
 
-            incrementPendingRequestCounter(3);
-            incRequestCounter(3);
+            incrementPendingRequestCounter(2);
+            incRequestCounter(2);
             WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true, false);
-            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true, false);
             WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true, false);
         }
 
