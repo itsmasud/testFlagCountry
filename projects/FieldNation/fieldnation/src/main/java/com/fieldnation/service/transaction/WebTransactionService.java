@@ -285,7 +285,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    // Log.v(TAG, result.getString());
+                    Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
