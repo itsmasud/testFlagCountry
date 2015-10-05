@@ -50,6 +50,7 @@ public class TopicClient implements TopicConstants {
         delete(userTag);
         context.unbindService(_serviceConnection);
         _subscribed.clear();
+        _isConnected = false;
     }
 
     public boolean isConnected() {
