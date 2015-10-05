@@ -53,14 +53,6 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true" />
 
-                <TextView
-                    android:id="@+id/newBuyer_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:text="NEW BUYER"
-                    android:textColor="@color/fn_accent_color" />
-
             </RelativeLayout>
 
             <RelativeLayout
@@ -84,6 +76,15 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
                     android:text="32 Reviews" />
+
+                <TextView
+                    android:id="@+id/newBuyer_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="NEW BUYER"
+                    android:textColor="@color/fn_accent_color" />
+
             </RelativeLayout>
 
 
