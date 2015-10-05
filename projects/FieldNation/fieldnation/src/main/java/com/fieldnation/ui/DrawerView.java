@@ -84,7 +84,6 @@ public class DrawerView extends RelativeLayout {
 
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
-    private AuthTopicClient _authTopicClient;
 
     private Listener _listener;
 
@@ -187,9 +186,6 @@ public class DrawerView extends RelativeLayout {
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(getContext());
-
-        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(getContext());
     }
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
@@ -202,12 +198,10 @@ public class DrawerView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _authTopicClient.isConnected())
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
             _globalTopicClient.disconnect(getContext());
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(getContext());
-        if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(getContext());
 
         super.onDetachedFromWindow();
     }
@@ -441,18 +435,6 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
-    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _authTopicClient.subAuthStateChange();
-        }
-
-        @Override
-        public void onNotAuthenticated() {
-            SplashActivity.startNew(getContext());
-            attachAnimations();
-        }
-    };
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {

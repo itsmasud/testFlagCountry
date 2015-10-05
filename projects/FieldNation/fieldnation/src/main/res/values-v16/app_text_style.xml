@@ -81,6 +81,6 @@
     <style name="Text_Button" parent="@android:style/Widget.Button">
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:textSize">14sp</item>
-        <!--<item name="android:maxLines">1</item>-->
+        <item name="android:maxLines">1</item>
     </style>
 </resources>
