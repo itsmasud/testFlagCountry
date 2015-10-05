@@ -9,6 +9,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
@@ -201,38 +202,43 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object, null if there was an error.
      */
     public static StoredObject get(long profileId, String objectTypeName, String objectKey) {
-        Log.v(TAG, "get(" + profileId + ", " + objectTypeName + ", " + objectKey + ")");
-        // Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
-        StoredObject obj = null;
-        synchronized (TAG) {
-            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
-            try {
-                SQLiteDatabase db = helper.getReadableDatabase();
+        try {
+            Log.v(TAG, "get(" + profileId + ", " + objectTypeName + ", " + objectKey + ")");
+            // Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
+            StoredObject obj = null;
+            synchronized (TAG) {
+                ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
                 try {
-                    Cursor cursor = db.query(
-                            ObjectStoreSqlHelper.TABLE_NAME,
-                            ObjectStoreSqlHelper.getColumnNames(),
-                            Column.PROFILE_ID + "=? AND "
-                                    + Column.OBJ_NAME + "=? AND "
-                                    + Column.OBJ_KEY + "=?",
-                            new String[]{profileId + "", objectTypeName, objectKey},
-                            null, null, null, "1");
-
+                    SQLiteDatabase db = helper.getReadableDatabase();
                     try {
-                        if (cursor.moveToFirst()) {
-                            obj = new StoredObject(cursor);
+                        Cursor cursor = db.query(
+                                ObjectStoreSqlHelper.TABLE_NAME,
+                                ObjectStoreSqlHelper.getColumnNames(),
+                                Column.PROFILE_ID + "=? AND "
+                                        + Column.OBJ_NAME + "=? AND "
+                                        + Column.OBJ_KEY + "=?",
+                                new String[]{profileId + "", objectTypeName, objectKey},
+                                null, null, null, "1");
+
+                        try {
+                            if (cursor.moveToFirst()) {
+                                obj = new StoredObject(cursor);
+                            }
+                        } finally {
+                            cursor.close();
                         }
                     } finally {
-                        cursor.close();
+                        db.close();
                     }
                 } finally {
-                    db.close();
+                    helper.close();
                 }
-            } finally {
-                helper.close();
             }
+            return obj;
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            return null;
         }
-        return obj;
     }
 
     /**
