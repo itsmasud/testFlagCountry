@@ -195,9 +195,14 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
-        _globalClient.disconnect(getActivity());
-        _workorderClient.disconnect(getActivity());
-        _docClient.disconnect(getActivity());
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(getActivity());
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(getActivity());
+
+        if (_docClient != null && _docClient.isConnected())
+            _docClient.disconnect(getActivity());
         super.onDetach();
     }
 

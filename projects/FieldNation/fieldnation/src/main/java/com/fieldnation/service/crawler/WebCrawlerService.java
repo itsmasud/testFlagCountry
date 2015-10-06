@@ -9,6 +9,7 @@ import android.os.IBinder;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -222,10 +223,15 @@ public class WebCrawlerService extends Service {
         // if clock is not set, set it
         long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
 
-        Random random = new Random();
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
-        cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
+        if (BuildConfig.DEBUG) {
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
+            cal.set(Calendar.MINUTE, (int) (runTime % 60));
+        } else {
+            Random random = new Random();
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
+            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
+        }
 
         long nextTime = cal.getTimeInMillis();
         if (nextTime < System.currentTimeMillis()) {

@@ -37,6 +37,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import io.fabric.sdk.android.Fabric;
+
 import java.io.File;
 import java.util.Calendar;
 
@@ -208,7 +209,7 @@ public class App extends Application {
         // set the app's install date
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
-//            new Thread(_anrReport).start();
+        // new Thread(_anrReport).start();
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
@@ -217,7 +218,7 @@ public class App extends Application {
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

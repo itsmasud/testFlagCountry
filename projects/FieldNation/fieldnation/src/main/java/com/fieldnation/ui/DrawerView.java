@@ -23,6 +23,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
@@ -402,7 +403,7 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 
-//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+            // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
             GlobalTopicClient.showFeedbackDialog(getContext());

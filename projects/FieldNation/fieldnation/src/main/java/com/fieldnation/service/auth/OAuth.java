@@ -130,7 +130,7 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     /*-             Human Code          -*/
     /*-*********************************-*/
-    public void delete(Context context) {
+    public void delete() {
         if (_id != -1)
             StoredObject.delete(_id);
     }

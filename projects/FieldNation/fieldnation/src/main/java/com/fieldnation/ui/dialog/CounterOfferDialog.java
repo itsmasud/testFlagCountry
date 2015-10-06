@@ -25,6 +25,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -498,6 +499,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 }
 
                 _counterReason = _reasonView.getReason();
+
+//                if (misc.isEmptyOrNull(_counterReason)) {
+//                    Toast.makeText(getActivity(), "Counter offer reason cannot be null. Please enter a reason.", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
 
                 // Todo need to do some data validation
                 if (_listener != null) {

@@ -303,7 +303,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
         if (result != null) {
-            result.delete(result);
+            delete(result);
         }
 
         ContentValues v = new ContentValues();
@@ -600,10 +600,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
 
-        for (int i = 0; i < list.size(); i++) {
-            StoredObject obj = list.get(i);
-            delete(obj);
-        }
+        delete(list);
     }
 
     public static boolean delete(long profileId, String objectTypeName, long objkey) {
@@ -682,6 +679,41 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             ObjectStoreSqlHelper.TABLE_NAME,
                             Column.ID + "=?",
                             new String[]{obj.getId() + ""}) > 0;
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean delete(List<StoredObject> list) {
+        if (list.size() == 0)
+            return true;
+
+        for (StoredObject obj : list) {
+            if (obj != null && obj._isFile) {
+                obj._file.delete();
+            }
+        }
+
+        boolean success = false;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
+            try {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    String[] params = new String[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        params[i] = list.get(i).getId() + "";
+                    }
+
+                    success = db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + " IN (" + makePlaceholders(params.length) + ")",
+                            params) > 0;
                 } finally {
                     db.close();
                 }
