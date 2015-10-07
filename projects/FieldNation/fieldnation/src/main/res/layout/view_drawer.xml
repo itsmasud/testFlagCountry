@@ -28,14 +28,11 @@
 
                     <com.fieldnation.ui.ProfilePicView
                         android:id="@+id/pic_view"
-                        style="@style/DrawerProfileImage"
-                        android:layout_alignParentLeft="true"
-                        android:layout_centerVertical="true" />
+                        style="@style/DrawerProfileImage" />
 
                     <LinearLayout
                         android:id="@+id/profile_layout"
                         style="@style/DrawerProfileDataContainer"
-                        android:layout_toRightOf="@+id/pic_view"
                         android:orientation="vertical">
 
                         <TextView
@@ -191,7 +188,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_alignParentLeft="true"
-                                android:text="Pending" />
+                                android:text="@string/pending" />
 
                             <TextView
                                 android:id="@+id/estimatedamount_textview"
@@ -248,7 +245,7 @@
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
-                        android:text="Settings" />
+                        android:text="@string/settings" />
                 </LinearLayout>
 
                 <!-- Feedback -->
@@ -264,7 +261,7 @@
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
-                        android:text="Feedback" />
+                        android:text="@string/feedback" />
                 </LinearLayout>
 
                 <!-- Debug Log -->
@@ -280,7 +277,7 @@
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
-                        android:text="Debug log" />
+                        android:text="@string/debug_log" />
                 </LinearLayout>
 
                 <!-- Help -->
@@ -296,7 +293,7 @@
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
-                        android:text="Help" />
+                        android:text="@string/help" />
                 </LinearLayout>
 
                 <!-- Logout -->

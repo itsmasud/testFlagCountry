@@ -23,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:gravity="center"
-                android:text="COMPANY INFORMATION" />
+                android:text="@string/company_information" />
         </LinearLayout>
 
         <LinearLayout
@@ -82,7 +82,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="NEW BUYER"
+                    android:text="@string/new_buyer"
                     android:textColor="@color/fn_accent_color" />
 
             </RelativeLayout>
@@ -113,14 +113,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="16dp"
                             android:layout_marginBottom="4dp"
-                            android:text="Clear Expectations" />
+                            android:text="@string/clear_expectations" />
 
                         <TextView
                             style="@style/Text_Body_1"
                             android:layout_width="wrap_content"
                             android:layout_height="16dp"
                             android:layout_marginBottom="4dp"
-                            android:text="Professionalism" />
+                            android:text="@string/professionalism" />
 
                     </LinearLayout>
 
@@ -190,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentLeft="true"
-                        android:text="Time to approval" />
+                        android:text="@string/time_to_approval" />
 
                     <TextView
                         android:id="@+id/days_textview"

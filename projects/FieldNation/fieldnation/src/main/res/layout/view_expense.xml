@@ -23,7 +23,7 @@
                 android:layout_alignParentLeft="true"
                 android:layout_marginRight="10dp"
                 android:layout_toLeftOf="@+id/cost_textview"
-                android:text="Description" />
+                android:text="@string/description" />
 
             <TextView
                 android:id="@+id/cost_textview"
@@ -43,6 +43,6 @@
             android:ellipsize="end"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="Category" />
+            android:text="@string/category" />
     </LinearLayout>
 </RelativeLayout>

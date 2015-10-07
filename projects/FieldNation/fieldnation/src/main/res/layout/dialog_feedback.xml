@@ -17,7 +17,7 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Feedback" />
+                android:text="@string/feedback" />
 
             <TextView
                 android:layout_width="match_parent"
@@ -29,7 +29,7 @@
                 style="@style/EditText"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Enter feedback here"
+                android:hint="@string/enter_feedback_here"
                 android:imeOptions="actionDone"
                 android:selectAllOnFocus="true" />
         </LinearLayout>

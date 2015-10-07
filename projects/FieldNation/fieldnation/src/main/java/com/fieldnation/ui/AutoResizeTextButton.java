@@ -41,7 +41,7 @@ public class AutoResizeTextButton extends Button {
 
 	// Interface for resize notifications
 	public interface OnTextResizeListener {
-		public void onTextResize(Button textView, float oldSize, float newSize);
+		void onTextResize(Button textView, float oldSize, float newSize);
 	}
 
 	// Our ellipse string

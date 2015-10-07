@@ -694,20 +694,14 @@ public class Workorder implements Parcelable {
                 return false;
             }
 
-            if (!areCustomFieldsDone()) {
-                return false;
-            }
+            return areCustomFieldsDone();
 
-            return true;
         }
         return false;
     }
 
     public boolean canIncomplete() {
-        if (getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED) {
-            return true;
-        }
-        return false;
+        return getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED;
     }
 
     public boolean canChangeExpenses() {

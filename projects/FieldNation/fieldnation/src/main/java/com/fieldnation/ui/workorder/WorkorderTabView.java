@@ -180,6 +180,6 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Private				-*/
     /*-*********************************-*/
     public interface Listener {
-        public void onChange(int index);
+        void onChange(int index);
     }
 }

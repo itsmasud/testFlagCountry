@@ -28,14 +28,14 @@
                 style="@style/Text_Menu"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="3 Work Orders / + 2 Fees" />
+                android:text="@string/placeholder_phrase" />
 
             <TextView
                 android:id="@+id/date_textview"
                 style="@style/Text_Caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Estimated 05/21/14" />
+                android:text="@string/placeholder_date_short" />
         </LinearLayout>
 
         <LinearLayout
@@ -53,7 +53,7 @@
                 android:layout_height="wrap_content"
                 android:lines="1"
                 android:maxLines="1"
-                android:text="$10,007.00" />
+                android:text="@string/placeholder_money_long" />
 
             <TextView
                 android:id="@+id/paymenttype_textview"

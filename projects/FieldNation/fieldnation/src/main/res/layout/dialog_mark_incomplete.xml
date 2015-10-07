@@ -14,19 +14,19 @@
             style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mark as incomplete" />
+            android:text="@string/mark_as_incomplete" />
 
         <TextView
             style="?attr/dialogBodyStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You are about to mark this work order as incomplete." />
+            android:text="@string/mark_as_incomplete_warning" />
 
         <TextView
             style="?attr/dialogBodyStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Would you like to continue?" />
+            android:text="@string/would_you_like_to_continue" />
 
 
     </LinearLayout>
@@ -43,7 +43,7 @@
         <Button
             android:id="@+id/continue_button"
             style="?attr/dialogOkButtonStyle"
-            android:text="CONTINUE" />
+            android:text="@string/btn_continue" />
 
     </LinearLayout>
 

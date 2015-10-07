@@ -18,14 +18,13 @@
             <TextView
                 android:id="@+id/title_textview"
                 style="?attr/dialogTitleStyle"
-                android:text="Custom Field" />
+                android:text="@string/custom_field" />
 
             <TextView
                 android:id="@+id/tip_textview"
                 style="@style/Text_Caption"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/tiplabel_textview" />
+                android:layout_height="wrap_content" />
 
             <RelativeLayout
                 android:layout_width="match_parent"

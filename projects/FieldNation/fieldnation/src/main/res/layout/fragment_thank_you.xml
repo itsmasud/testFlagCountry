@@ -15,20 +15,20 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Thank You!" />
+            android:text="@string/thank_you" />
 
         <TextView
             style="@style/Text_Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Everything is good to go.\nSign off is complete." />
+            android:text="@string/everything_is_good_to_go" />
 
     </LinearLayout>
 
     <Button
-        style="@style/Material.Button.Flat"
         android:id="@+id/done_button"
+        style="@style/Material.Button.Flat"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="16dp"

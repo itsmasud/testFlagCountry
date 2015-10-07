@@ -17,7 +17,7 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Add Time" />
+                android:text="@string/add_time" />
 
             <!--<TextView-->
             <!--style="@style/Text_Body_1"-->
@@ -37,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="Start Time" />
+                    android:text="@string/start_time" />
 
                 <Button
                     android:id="@+id/start_spinner"
@@ -63,7 +63,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="End Time" />
+                    android:text="@string/end_time" />
 
                 <Button
                     android:id="@+id/end_spinner"

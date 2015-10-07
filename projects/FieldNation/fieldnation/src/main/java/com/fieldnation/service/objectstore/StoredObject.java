@@ -377,7 +377,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
         if (result != null) {
-            result.delete(result);
+            delete(result);
         }
 
         ContentValues v = new ContentValues();

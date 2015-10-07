@@ -30,7 +30,7 @@ public abstract class WorkorderFragment extends Fragment {
     }
 
     public interface LoadingListener {
-        public void setLoading(boolean isLoading);
+        void setLoading(boolean isLoading);
     }
 
 }

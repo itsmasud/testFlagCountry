@@ -218,7 +218,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
-        Uri uri = (Uri) intent.getParcelableExtra(PARAM_URI);
+        Uri uri = intent.getParcelableExtra(PARAM_URI);
 
         if (uri != null)
             WorkorderTransactionBuilder.uploadDeliverable(this, uri, filename, workorderId, uploadSlotId);

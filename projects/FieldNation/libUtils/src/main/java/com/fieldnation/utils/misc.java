@@ -325,10 +325,8 @@ public class misc {
         if (str == null)
             return true;
 
-        if (str.trim().equals(""))
-            return true;
+        return str.trim().equals("");
 
-        return false;
     }
 
     public static String capitalize(String src) {
@@ -1018,7 +1016,7 @@ public class misc {
     }
 
     public interface PacketListener {
-        public void onPacket(byte[] packet, int length);
+        void onPacket(byte[] packet, int length);
     }
 
     public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,

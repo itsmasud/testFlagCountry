@@ -26,8 +26,8 @@
                 android:layout_marginBottom="16dp"
                 android:hint="@string/activity_login_username"
                 android:imeOptions="actionNext"
-                android:text="@string/auth_default_username"
-                android:singleLine="true"/>
+                android:singleLine="true"
+                android:text="@string/auth_default_username" />
 
             <EditText
                 android:id="@+id/password_edittext"
@@ -60,7 +60,7 @@
                     style="?attr/buttonFlatStyle"
                     android:layout_centerHorizontal="true"
                     android:fontFamily="sans-serif-light"
-                    android:text="Forgot your password?" />
+                    android:text="@string/forgot_your_password" />
             </RelativeLayout>
 
         </LinearLayout>
@@ -78,7 +78,7 @@
             android:id="@+id/signup_button"
             style="?attr/buttonFlatStyle"
             android:fontFamily="sans-serif-light"
-            android:text="Don't have an account? Sign Up"
+            android:text="@string/dont_have_an_account_sign_up"
             android:visibility="visible" />
 
         <TextView
