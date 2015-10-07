@@ -1,11 +1,11 @@
 package com.fieldnation.ui.workorder;
 
-import com.fieldnation.data.workorder.Bundle;
-import com.fieldnation.data.workorder.Workorder;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.fieldnation.data.workorder.Bundle;
+import com.fieldnation.data.workorder.Workorder;
 
 public class BundleAdapter extends BaseAdapter {
     private static final String TAG = "BundleAdapter";

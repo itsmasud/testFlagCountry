@@ -3,7 +3,6 @@ package com.fieldnation.data.profile;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;

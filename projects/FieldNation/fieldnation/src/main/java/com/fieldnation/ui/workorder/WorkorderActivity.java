@@ -10,10 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
 import com.fieldnation.Debug;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;

@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.User;
 
 /**
  * Created by Michael Carver on 2/23/2015.
