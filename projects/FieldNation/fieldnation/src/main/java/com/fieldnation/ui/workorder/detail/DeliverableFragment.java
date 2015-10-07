@@ -158,6 +158,9 @@ public class DeliverableFragment extends WorkorderFragment {
         intent.addCategory(Intent.CATEGORY_OPENABLE);
         _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
+        Log.e(TAG, "onResume");
+
+
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -376,6 +379,8 @@ public class DeliverableFragment extends WorkorderFragment {
     private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
+
             if (_workorder.getUploadSlots().length > 1) {
                 _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
                 _uploadSlotDialog.setListener(new UploadSlotDialog.Listener() {
@@ -511,11 +516,13 @@ public class DeliverableFragment extends WorkorderFragment {
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "_workorderClient_listener.onConnected");
             _workorderClient.subDeliverableUpload();
         }
 
         @Override
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onUploadDeliverable");
             WorkorderClient.get(App.get(), workorderId, false);
         }
     };

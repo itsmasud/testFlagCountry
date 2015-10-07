@@ -2,34 +2,40 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.os.Parcelable;
+import android.os.Handler;
+import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Task;
-import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.ui.workorder.detail.TaskListView;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by shoaib.ahmed on Sept/08/2015.
@@ -43,7 +49,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     // UI
     private OverScrollListView _workorderListView;
-    private TaskListView _taskList;
+    private OverScrollView _uploadSlotScrollView;
+    private TextView _titleWorkorderTextView;
+    private LinearLayout _uploadSlotLayout;
+
+    private OverScrollView _sharedFilesScrollView;
+    private LinearLayout _sharedFilesLayout;
+    private TextView _titleTaskTextView;
+    private TextView _maxFilesNumberTextView;
+
     private OverScrollListView _fileList;
     private RefreshView _refreshView;
     private EmptyWoListView _emptyView;
@@ -53,8 +67,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
     private Workorder _workorder;
-    private List<Task> _tasks = null;
+    private List<UploadSlot> _uploadSlotList = null;
     private Task _currentTask;
+    private UploadSlot _currentUploadSlot;
+    private UploadingDocument[] _uploadingDocuments;
+    LayoutType layoutType;
+    ShareUploadSlotView[] shareUploadSlotViewList;
 
 
     // state data
@@ -85,17 +103,25 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _workorderListView.setOnOverScrollListener(_refreshView);
         _workorderListView.setAdapter(_adapter);
 
+        _uploadSlotScrollView = (OverScrollView) findViewById(R.id.uploadSolt_scrollView);
+        _uploadSlotScrollView.setOnOverScrollListener(_refreshView);
+        _uploadSlotLayout = (LinearLayout) findViewById(R.id.uploadSlot_layout);
+        _titleWorkorderTextView = (TextView) findViewById(R.id.titleWorkorder_textview);
+
+        _sharedFilesScrollView = (OverScrollView) findViewById(R.id.sharedFiles_scrollView);
+        _sharedFilesScrollView.setOnOverScrollListener(_refreshView);
+        _sharedFilesLayout = (LinearLayout) findViewById(R.id.filesList_layout);
+        _titleTaskTextView = (TextView) findViewById(R.id.titleTask_textview);
+        _maxFilesNumberTextView = (TextView) findViewById(R.id.maxFilesNumber_textview);
 
         _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
-
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(this);
 
+//        _currentLayoutType = "workorder";
 
-        _taskList = (TaskListView) findViewById(R.id.tasks_listview);
-        _taskList.setTaskListViewListener(_taskListView_listener);
-
+        layoutType = LayoutType.WORKORDER_LAYOUT;
         Log.v(TAG, "onCreate");
     }
 
@@ -109,13 +135,108 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_BACK:
+                Log.v(TAG, "onKeyDown");
+
+                switch (LayoutType.fromString(layoutType.getCurrentLayoutValue())) {
+                    case WORKORDER_LAYOUT:
+                        Log.v(TAG, "onKeyDown WORKORDER_LAYOUT");
+                        finish();
+                        break;
+
+                    case UPLOAD_SLOT_LAYOUT:
+                        layoutType = LayoutType.WORKORDER_LAYOUT;
+                        Log.v(TAG, "onKeyDown UPLOAD_SLOT_LAYOUT");
+                        _workorderListView.setVisibility(View.VISIBLE);
+                        _uploadSlotScrollView.setVisibility(View.GONE);
+                        _sharedFilesScrollView.setVisibility(View.GONE);
+                        break;
+
+                    case SHARED_FILES_LAYOUT:
+                        layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
+                        Log.v(TAG, "onKeyDown SHARED_FILES_LAYOUT");
+                        _workorderListView.setVisibility(View.GONE);
+                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+                        _sharedFilesScrollView.setVisibility(View.GONE);
+                        break;
+
+                }
+
+
+                return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+
+    @Override
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        Intent intent = getIntent();
+        String action = intent.getAction();
+//        String type = intent.getType();
+
+        if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
+            Log.e(TAG, "onResume ACTION_SEND_MULTIPLE");
+            handleSendMultipleImages(intent);
+        } else if (action.equals(Intent.ACTION_SEND)) {
+            Log.e(TAG, "onResume ACTION_SEND");
+            handleSendSingleFile(intent);
+        }
+
         setLoading(true);
         _gpsLocationService = new GpsLocationService(this);
 
     }
+
+    private void handleSendSingleFile(Intent intent) {
+        Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
+        _uploadingDocuments = new UploadingDocument[1];
+        if (fileUri != null) {
+            // Update UI to reflect image being shared
+            String fileName = getFileNameByUri(this, fileUri);
+            _uploadingDocuments[0] = new UploadingDocument(fileName);
+
+            Log.v(TAG, "handleSendImage: fileName" + fileName);
+
+        }
+    }
+
+    private void handleSendMultipleImages(Intent intent) {
+        ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        _uploadingDocuments = new UploadingDocument[fileUris.size()];
+
+        if (fileUris != null) {
+            for (int i = 0; i < fileUris.size(); i++) {
+                String fileName = getFileNameByUri(this, fileUris.get(i));
+                _uploadingDocuments[i] = new UploadingDocument(fileName);
+                Log.v(TAG, "handleSendMultipleImages: fileName" + fileName);
+            }
+        }
+    }
+
+
+    public static String getFileNameByUri(Context context, Uri uri) {
+        String fileName = "unknown";
+        Uri filePathUri = uri;
+        if (uri.getScheme().toString().compareTo("content") == 0) {
+            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                filePathUri = Uri.parse(cursor.getString(column_index));
+                fileName = filePathUri.getLastPathSegment().toString();
+            }
+        } else if (uri.getScheme().compareTo("file") == 0) {
+            fileName = filePathUri.getLastPathSegment().toString();
+        } else {
+            fileName = fileName + "_" + filePathUri.getLastPathSegment();
+        }
+        return fileName;
+    }
+
 
     @Override
     protected void onPause() {
@@ -147,34 +268,111 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
 
-//    public void getUploadSlotData(boolean allowCache) {
-//        Log.v(TAG, "getData");
-//        setLoading(true);
-////        WorkorderClient.get(ShareRequestActivity.this, _workorder.getWorkorderId(), allowCache);
-//        WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
-////        final UploadSlot[] slots = _workorder.getUploadSlots();
-//        final UploadSlot[] slots = _workorder.getUploadSlots();
-//        Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
-//
-//    }
-
-
-
     public void getData(boolean allowCache) {
         Log.v(TAG, "getData");
         setLoading(true);
-            WorkorderClient.get(this, _workorder.getWorkorderId(), allowCache);
+        WorkorderClient.get(this, _workorder.getWorkorderId(), allowCache);
     }
 
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-//            if (_workorder != null) {
-//                _workorder.dispatchOnChange();
-//            }
+            if (_workorder != null) {
+                _workorder.dispatchOnChange();
+            }
         }
     };
+
+
+    private void populateUploadSlotLayout() {
+        layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
+        _workorderListView.setVisibility(View.GONE);
+        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+
+        _titleWorkorderTextView.setText(_workorder.getTitle());
+        final UploadSlot[] slots = _workorder.getUploadSlots();
+        shareUploadSlotViewList = new ShareUploadSlotView[slots.length];
+
+        if (slots != null && slots.length > 0) {
+            Log.v(TAG, "US count: " + slots.length);
+            if (_uploadSlotLayout.getChildCount() > slots.length) {
+                _uploadSlotLayout.removeViews(slots.length - 1, _uploadSlotLayout.getChildCount() - slots.length);
+            }
+
+            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
+                private final UploadSlot[] _slots = slots;
+
+                @Override
+                public void next(int i) throws Exception {
+                    Log.v(TAG, "next" + slots.length);
+
+                    ShareUploadSlotView v = null;
+                    if (i < _uploadSlotLayout.getChildCount()) {
+                        v = (ShareUploadSlotView) _uploadSlotLayout.getChildAt(i);
+                    } else {
+                        v = new ShareUploadSlotView(ShareRequestActivity.this);
+//                        _uploadSlotLayout.addView(v);
+                    }
+//                    v.setData(_workorder, _profile.getUserId(), _slots[i]);
+                    v.setData(_workorder, _slots[i]);
+                    v.setListener(_shareUploadSlotView_listener);
+                    shareUploadSlotViewList[i] = v;
+                    _uploadSlotLayout.addView(v);
+
+                }
+            };
+            _uploadSlotLayout.postDelayed(r, new Random().nextInt(1000));
+        } else {
+            _uploadSlotLayout.removeAllViews();
+        }
+
+        setLoading(false);
+    }
+
+
+    private void populateSharedFilesLayout() {
+        layoutType = LayoutType.SHARED_FILES_LAYOUT;
+        _uploadSlotScrollView.setVisibility(View.GONE);
+        _sharedFilesScrollView.setVisibility(View.VISIBLE);
+
+        _titleTaskTextView.setText(_currentUploadSlot.getSlotName());
+        _maxFilesNumberTextView.setText("Select upto " + _currentUploadSlot.getMaxFiles() + " file(s)");
+
+        if (_uploadingDocuments != null && _uploadingDocuments.length > 0) {
+            Log.v(TAG, "UD count: " + _uploadingDocuments.length);
+            if (_sharedFilesLayout.getChildCount() > _uploadingDocuments.length) {
+                _sharedFilesLayout.removeViews(_uploadingDocuments.length - 1, _sharedFilesLayout.getChildCount() - _uploadingDocuments.length);
+            }
+
+            ForLoopRunnable r = new ForLoopRunnable(_uploadingDocuments.length, new Handler()) {
+                private final UploadingDocument[] uploadingDocument = _uploadingDocuments;
+
+                @Override
+                public void next(int i) throws Exception {
+                    Log.v(TAG, "next" + uploadingDocument.length);
+
+                    ShareRequestedFileRowView v = null;
+                    if (i < _sharedFilesLayout.getChildCount()) {
+                        v = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
+                    } else {
+                        v = new ShareRequestedFileRowView(ShareRequestActivity.this);
+//                        _uploadSlotLayout.addView(v);
+                    }
+//                    v.setData(_workorder, _profile.getUserId(), _slots[i]);
+                    v.setData(_workorder, uploadingDocument[i]);
+                    v.setListener(_shareRequestedFileRowView_listener);
+                    _sharedFilesLayout.addView(v);
+
+                }
+            };
+            _sharedFilesLayout.postDelayed(r, new Random().nextInt(1000));
+        } else {
+            _sharedFilesLayout.removeAllViews();
+        }
+
+        setLoading(false);
+    }
 
 
     private void requestList(int page, boolean allowCache) {
@@ -307,17 +505,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private final WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
         public void actionWithdrawRequest(WorkorderCardView view, final Workorder workorder) {
-
         }
 
         @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
@@ -340,15 +535,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Log.e(TAG, "onClick_WorkorderCardView");
             _workorder = workorder;
-            _workorder.addListener(_workorder_listener);
-
-            getData(true);
-            _workorderListView.setVisibility(View.GONE);
-
-            UploadSlot[] slot = _workorder.getUploadSlots();
-            int uploadSlots = slot.length;
 
             setLoading(true);
+
+            if (_workorderClient != null && _workorderClient.isConnected())
+                _workorderClient.disconnect(ShareRequestActivity.this);
+            _workorderClient = new WorkorderClient(_workorderClient_listener);
+            _workorderClient.connect(ShareRequestActivity.this);
+
 
         }
 
@@ -373,71 +567,27 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     };
 
 
-            private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
-        @Override
-        public void onCheckin(Task task) {
-        }
+    private ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
+        public void onClick(ShareUploadSlotView view, UploadSlot slot) {
+            Log.v(TAG, "_shareUploadSlotView_listener.onClick");
+            Log.v(TAG, "_shareUploadSlotView_listener.onClick" + slot.getSlotName());
+            for (ShareUploadSlotView shareUploadSlotView : shareUploadSlotViewList) {
+                shareUploadSlotView.changeToDefaultColor();
+            }
+            view.changeCheckStatus();
+            _currentUploadSlot = slot;
+            populateSharedFilesLayout();
 
-        @Override
-        public void onCheckout(Task task) {
-        }
-
-        @Override
-        public void onCloseOutNotes(Task task) {
-        }
-
-        @Override
-        public void onConfirmAssignment(Task task) {
-        }
-
-        @Override
-        public void onCustomField(Task task) {
-        }
-
-        @Override
-        public void onDownload(Task task) {
-
-        }
-
-        @Override
-        public void onEmail(Task task) {
-        }
-
-        @Override
-        public void onPhone(Task task) {
-
-        }
-
-        @Override
-        public void onShipment(Task task) {
-
-        }
-
-        @Override
-        public void onSignature(Task task) {
-
-        }
-
-        @Override
-        public void onUploadFile(Task task) {
-            _currentTask = task;
-        }
-
-        @Override
-        public void onUploadPicture(Task task) {
-            _currentTask = task;
-        }
-
-        @Override
-        public void onUniqueTask(Task task) {
-            if (task.getCompleted())
-                return;
-            WorkorderClient.actionCompleteTask(App.get(),
-                    _workorder.getWorkorderId(), task.getTaskId());
-            setLoading(true);
         }
     };
 
+    private ShareRequestedFileRowView.Listener _shareRequestedFileRowView_listener = new ShareRequestedFileRowView.Listener() {
+        @Override
+        public void onClick(ShareRequestedFileRowView view, UploadingDocument uploadingDocument) {
+            Log.v(TAG, "_shareRequestedFileRowView_listener.onClick");
+            view.changeCheckStatus();
+        }
+    };
 
     /*-*****************************-*/
     /*-             WEB             -*/
@@ -451,7 +601,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             _workorderClient.subActions();
             _workorderClient.subDeliverableUpload();
             _adapter.refreshPages();
-//            getData(true);
         }
 
         @Override
@@ -465,26 +614,95 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
-            getData(false);
+            Log.v(TAG, "_workorderData_listener.onAction " + workorderId + "/" + action);
+//            getData(false);
             _adapter.refreshPages();
-        }
-
-
-
-        @Override
-        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            getData(false);
         }
 
     };
 
 
 
+    /*-*****************************-*/
+    /*-             WEB-2           -*/
+    /*-*****************************-*/
 
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "_workorderClient_listener.onConnected " + _workorder.getWorkorderId());
+            _workorderClient.subGet(_workorder.getWorkorderId());
+            _workorderClient.subActions(_workorder.getWorkorderId());
+            _workorderClient.subDeliverableUpload();
+            getData(true);
+        }
+
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onUploadDeliverable ");
+            getData(false);
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
+            getData(false);
+        }
+
+        @Override
+        public void onGet(Workorder workorder, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onDetails");
+            if (workorder == null || failed) {
+                try {
+                    Toast.makeText(ShareRequestActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                    finish();
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return;
+            }
+
+            _workorder = workorder;
+            _workorder.addListener(_workorder_listener);
+
+            populateUploadSlotLayout();
+        }
+    };
+
+    public enum LayoutType {
+        TEXT(null),
+        WORKORDER_LAYOUT("workorder"),
+        UPLOAD_SLOT_LAYOUT("uploadslot"),
+        SHARED_FILES_LAYOUT("sharedfiles");
+
+        private final String _currentLayoutValue;
+
+        LayoutType(String currentLayoutValue) {
+            _currentLayoutValue = currentLayoutValue;
+        }
+
+        String getCurrentLayoutValue() {
+            return _currentLayoutValue;
+        }
+
+        public static LayoutType fromString(String type) {
+            LayoutType[] vs = values();
+
+            if (type == null) {
+                return TEXT;
+            }
+
+            for (LayoutType v : vs) {
+                if (type.equals(v._currentLayoutValue))
+                    return v;
+            }
+
+            Log.w(TAG, "invalid LayoutType of " + type + " found!!!");
+
+            return TEXT;
+
+
+        }
+    }
 
 }

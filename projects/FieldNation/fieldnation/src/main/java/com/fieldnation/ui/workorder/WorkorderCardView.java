@@ -293,6 +293,8 @@ public class WorkorderCardView extends RelativeLayout {
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_this_onClick.onClick");
+
             if (_listener != null) {
                 _listener.onClick(WorkorderCardView.this, _workorder);
             }

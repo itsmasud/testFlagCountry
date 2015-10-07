@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutCardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
@@ -13,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="@string/icfont_circle"
+            android:text="@string/icfont_circle_checked"
             android:textSize="32sp" />
 
         <LinearLayout
@@ -31,7 +32,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:singleLine="false"
-                android:text="File Name.ext" />
+                android:text="Upload slot title" />
 
         </LinearLayout>
     </RelativeLayout>

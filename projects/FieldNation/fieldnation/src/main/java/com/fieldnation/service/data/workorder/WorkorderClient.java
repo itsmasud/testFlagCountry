@@ -94,6 +94,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void get(Context context, long id, boolean allowCache, boolean isSync) {
+        Log.v("WorkorderClient", "get");
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_WORKORDER_ID, id);

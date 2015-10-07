@@ -22,6 +22,10 @@ public class UploadingDocument {
     public UploadingDocument() {
     }
 
+    public UploadingDocument(String fileName) {
+        _fileName = fileName;
+    }
+
     public Integer getDocumentId() {
         return _documentId;
     }
@@ -41,10 +45,6 @@ public class UploadingDocument {
     public String getFileType() {
         return _fileType;
     }
-
-
-
-
 
 
 }

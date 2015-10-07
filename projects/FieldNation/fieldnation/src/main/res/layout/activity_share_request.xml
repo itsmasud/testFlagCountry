@@ -20,23 +20,82 @@
             android:smoothScrollbar="true" />
 
 
-        <com.fieldnation.ui.workorder.detail.TaskListView
-            android:id="@+id/tasks_listview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:visibility="gone" />
-
-        <com.fieldnation.ui.OverScrollListView
-            android:id="@+id/files_listview"
+        <com.fieldnation.ui.OverScrollView
+            android:id="@+id/uploadSolt_scrollView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
-            android:animateLayoutChanges="true"
-            android:divider="@null"
-            android:dividerHeight="0dp"
-            android:smoothScrollbar="true"
-            android:visibility="gone" />
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Subhead"
+                    android:id="@+id/titleWorkorder_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="TASKS" />
+
+                <LinearLayout
+                    android:id="@+id/uploadSlot_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.fieldnation.ui.OverScrollView>
+
+        <com.fieldnation.ui.OverScrollView
+            android:id="@+id/sharedFiles_scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/Text_Subhead"
+                    android:id="@+id/titleTask_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="Task Title" />
+
+                <TextView
+                    style="@style/Text_Body_2"
+                    android:id="@+id/maxFilesNumber_textview"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="Select upto 5 files" />
+
+                <LinearLayout
+                    android:id="@+id/filesList_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.fieldnation.ui.OverScrollView>
+
+
 
         <com.fieldnation.ui.EmptyWoListView
             android:id="@+id/empty_view"
