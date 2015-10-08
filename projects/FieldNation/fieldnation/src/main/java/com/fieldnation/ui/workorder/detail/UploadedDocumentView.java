@@ -4,29 +4,33 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
+import java.util.Hashtable;
+
 public class UploadedDocumentView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.UploadedDocumentView";
+    private static final String TAG = "UploadedDocumentView";
+
+    private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
 
     // UI
-    private ImageView _fileTypeImageView;
+    private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _usernameTextView;
-    private ImageButton _deleteButton;
     private ProgressBar _progressBar;
     private TextView _statusTextView;
     private LinearLayout _usernameLayout;
@@ -36,8 +40,18 @@ public class UploadedDocumentView extends RelativeLayout {
     private UploadedDocument _doc;
     private long _profileId;
     private Listener _listener;
-    private int _loadingCounter = 0;
     private boolean _isLoading = false;
+    private DocumentClient _docClient;
+
+    static {
+        _ICFN_FILES.put("png", R.string.icfont_file_png);
+        _ICFN_FILES.put("doc", R.string.icfont_file_doc);
+        _ICFN_FILES.put("docx", R.string.icfont_file_docx);
+        _ICFN_FILES.put("jpg", R.string.icfont_file_jpg);
+        _ICFN_FILES.put("jpeg", R.string.icfont_file_jpg);
+        _ICFN_FILES.put("pdf", R.string.icfont_file_pdf);
+        _ICFN_FILES.put("xls", R.string.icfont_file_xls);
+    }
 
     /*-*****************************-*/
     /*-			Life Cycle			-*/
@@ -63,22 +77,33 @@ public class UploadedDocumentView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _fileTypeImageView = (ImageView) findViewById(R.id.filetype_imageview);
+        _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
-        _deleteButton = (ImageButton) findViewById(R.id.delete_imagebutton);
-        _deleteButton.setOnClickListener(_delete_onClick);
 
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
         _statusTextView = (TextView) findViewById(R.id.status_textview);
         _usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
 
+        _docClient = new DocumentClient(_docClient_listener);
+        _docClient.connect(getContext());
+
         setOnClickListener(_this_onClick);
+        setOnLongClickListener(_delete_onClick);
         setLoading(false, 0);
     }
 
-	/*-*************************-*/
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_docClient != null) {
+            _docClient.disconnect(getContext());
+            _docClient = null;
+        }
+        super.onDetachedFromWindow();
+    }
+
+    /*-*************************-*/
     /*-			Methods			-*/
     /*-*************************-*/
 
@@ -89,16 +114,13 @@ public class UploadedDocumentView extends RelativeLayout {
             _statusTextView.setVisibility(View.VISIBLE);
             _usernameLayout.setVisibility(View.GONE);
             _dateTextView.setVisibility(View.GONE);
-            _deleteButton.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
             _usernameLayout.setVisibility(View.VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
-            _deleteButton.setVisibility(View.VISIBLE);
         }
-
     }
 
     public void setUploading(String filename) {
@@ -108,12 +130,21 @@ public class UploadedDocumentView extends RelativeLayout {
         _filenameTextView.setText(filename);
     }
 
+    public void setDownloading(String filename) {
+        setLoading(true, R.string.downloading);
+        _filenameTextView.setText(filename);
+    }
+
     public void setData(Workorder workorder, long profileId, UploadedDocument deliverable) {
         setLoading(false, R.string.uploading);
         _doc = deliverable;
         _profileId = profileId;
         _workorder = workorder;
         populateUi();
+    }
+
+    public UploadedDocument getUploadedDocument() {
+        return _doc;
     }
 
     public void setListener(Listener listener) {
@@ -132,10 +163,17 @@ public class UploadedDocumentView extends RelativeLayout {
         }
         _usernameTextView.setText(_doc.getUploaderUserName());
 
-        if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
-            _deleteButton.setVisibility(View.VISIBLE);
-        } else {
-            _deleteButton.setVisibility(View.GONE);
+        try {
+            String ext = _doc.getFileName();
+            ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
+            if (_ICFN_FILES.containsKey(ext)) {
+                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+            } else {
+                _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
         }
 
         setClickable(_workorder.canViewDeliverables());
@@ -145,28 +183,64 @@ public class UploadedDocumentView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final DocumentClient.Listener _docClient_listener = new DocumentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _docClient.subDocument();
+        }
+
+        @Override
+        public void onDownload(long documentId, File file, int state) {
+            if (_doc == null)
+                return;
+
+            if (_doc.getId() != documentId)
+                return;
+
+            if (state == DocumentConstants.PARAM_STATE_START) {
+                setDownloading(_doc.getFileName());
+            } else {
+                postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        setLoading(false, R.string.downloading);
+                    }
+                }, 1000);
+            }
+        }
+    };
+
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_isLoading)
                 return;
-
-            FileHelper.viewOrDownloadFile(getContext(), _doc.getDownloadLink(),
-                    _doc.getFileName(), _doc.getFileType());
-
+            setDownloading(_doc.getFileName());
+            DocumentClient.downloadDocument(getContext(), _doc.getId(),
+                    _doc.getDownloadLink(), _doc.getFileName(), false);
         }
     };
 
-    private View.OnClickListener _delete_onClick = new View.OnClickListener() {
+    private final View.OnLongClickListener _delete_onClick = new View.OnLongClickListener() {
+
         @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.onDelete(UploadedDocumentView.this, _doc);
-            ((LinearLayout) getParent()).removeView(UploadedDocumentView.this);
+        public boolean onLongClick(View v) {
+            if (_doc == null || _doc.getUploaderUserId() == null)
+                return false;
+
+            if (_profileId == _doc.getUploaderUserId() && !_isLoading && _workorder.canChangeDeliverables()) {
+
+                if (_listener != null)
+                    _listener.onDelete(UploadedDocumentView.this, _doc);
+
+                return true;
+            } else {
+                return false;
+            }
         }
     };
 
     public interface Listener {
-        public void onDelete(UploadedDocumentView v, UploadedDocument document);
+        void onDelete(UploadedDocumentView v, UploadedDocument document);
     }
 }

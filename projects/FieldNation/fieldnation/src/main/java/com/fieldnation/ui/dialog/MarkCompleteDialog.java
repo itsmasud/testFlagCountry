@@ -17,7 +17,7 @@ import com.fieldnation.data.workorder.Workorder;
  * Created by michael.carver on 12/16/2014.
  */
 public class MarkCompleteDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.MarkCompleteDialog";
+    private static final String TAG = "MarkCompleteDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -113,7 +113,7 @@ public class MarkCompleteDialog extends DialogFragmentBase {
     /*-*****************************-*/
     /*-             Events          -*/
     /*-*****************************-*/
-    private View.OnClickListener _signature_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _signature_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -123,14 +123,14 @@ public class MarkCompleteDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
         }
     };
 
-    private View.OnClickListener _continue_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null) {
@@ -141,8 +141,8 @@ public class MarkCompleteDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onSignatureClick();
+        void onSignatureClick();
 
-        public void onContinueClick();
+        void onContinueClick();
     }
 }

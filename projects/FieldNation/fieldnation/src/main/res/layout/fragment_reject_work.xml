@@ -11,24 +11,24 @@
         android:orientation="vertical">
 
         <TextView
-            style="@style/Text_Display_2"
+            style="@style/Text_Display_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="Sorry to hear that" />
+            android:text="@string/sorry_to_hear_that" />
 
         <TextView
             style="@style/Text_Headline"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center_horizontal"
-            android:text="Please let me know what needs\nto be corrected." />
+            android:text="@string/please_let_me_know_what_needs_to_be_corrected" />
 
     </LinearLayout>
 
     <Button
-        style="@style/Button.Material.Flat"
         android:id="@+id/done_button"
+        style="@style/Material.Button.Flat"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_marginBottom="16dp"

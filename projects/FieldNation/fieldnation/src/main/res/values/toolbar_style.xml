@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="toolbarHeight">56dp</dimen>
+    <dimen name="toolbarTabHeight">48dp</dimen>
+
+    <style name="toolbarStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/toolbarHeight</item>
+        <item name="android:background">@drawable/fn_gradient</item>
+    </style>
+
+    <style name="toolbarTabListStyle">
+        <item name="android:background">@drawable/fn_gradient</item>
+    </style>
+
+    <style name="toolbarTabListContainerStyle">
+        <item name="android:layout_height">@dimen/toolbarTabHeight</item>
+    </style>
+</resources>

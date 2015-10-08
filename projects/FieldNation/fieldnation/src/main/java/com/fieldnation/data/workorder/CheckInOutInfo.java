@@ -15,8 +15,8 @@ public class CheckInOutInfo {
     private String _checkInTime;
     @Json(name = "checkOutDate")
     private String _checkOutDate;
-//    @Json(name = "checkOutDistance")
-//    private Double _checkOutDistance;
+    //	@Json(name="checkOutDistance")
+//	private Double _checkOutDistance;
     @Json(name = "checkOutId")
     private Integer _checkOutId;
     @Json(name = "checkOutTime")
@@ -31,9 +31,9 @@ public class CheckInOutInfo {
         return _checkInDate;
     }
 
-//    public Double getCheckInDistance() {
-//        return _checkInDistance;
-//    }
+//	public Double getCheckInDistance(){
+//		return _checkInDistance;
+//	}
 
     public Integer getCheckInId() {
         return _checkInId;
@@ -47,9 +47,9 @@ public class CheckInOutInfo {
         return _checkOutDate;
     }
 
-//    public Double getCheckOutDistance() {
-//        return _checkOutDistance;
-//    }
+//	public Double getCheckOutDistance(){
+//		return _checkOutDistance;
+//	}
 
     public Integer getCheckOutId() {
         return _checkOutId;

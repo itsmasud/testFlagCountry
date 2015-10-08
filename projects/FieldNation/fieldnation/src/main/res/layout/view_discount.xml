@@ -1,49 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <RelativeLayout
-        style="?attr/tileContainerStyle"
-        android:id="@+id/content_layout"
+        style="@style/CardContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:padding="16dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/tileTextBodyStyle"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/delete_imagebutton">
+            android:layout_alignParentLeft="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@+id/amount_textview"
+            android:text="Discount Title" />
 
-            <TextView
-                style="?attr/tileTextBodyStyle"
-                android:id="@+id/title_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Discount Title" />
-
-            <TextView
-                style="?attr/tileTextBodyStyle"
-                android:id="@+id/amount_textview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:text="$0.00" />
-        </RelativeLayout>
-
-        <ImageButton
-            android:id="@+id/delete_imagebutton"
+        <TextView
+            android:id="@+id/amount_textview"
+            style="?attr/tileTextBodyStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:background="@android:color/transparent"
-            android:src="@drawable/ic_delete" />
+            android:layout_gravity="right"
+            android:text="$0.00" />
+
     </RelativeLayout>
-
-    <View
-        style="?attr/tileDividerStyle"
-        android:layout_alignBottom="@+id/content_layout" />
-
-
 </RelativeLayout>

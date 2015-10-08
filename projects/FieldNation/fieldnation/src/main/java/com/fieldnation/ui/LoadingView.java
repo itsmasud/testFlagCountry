@@ -1,7 +1,5 @@
 package com.fieldnation.ui;
 
-import com.fieldnation.R;
-
 import android.content.Context;
 import android.os.Vibrator;
 import android.util.AttributeSet;
@@ -13,6 +11,8 @@ import android.view.animation.RotateAnimation;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.fieldnation.R;
 
 public class LoadingView extends RelativeLayout {
 
@@ -110,7 +110,7 @@ public class LoadingView extends RelativeLayout {
 		setVisibility(View.GONE);
 	}
 
-	private View.OnTouchListener _cetner_onTouch = new View.OnTouchListener() {
+	private final View.OnTouchListener _cetner_onTouch = new View.OnTouchListener() {
 
 		@Override
 		public boolean onTouch(View v, MotionEvent event) {

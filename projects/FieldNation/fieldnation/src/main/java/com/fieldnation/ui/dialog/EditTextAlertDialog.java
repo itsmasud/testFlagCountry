@@ -6,7 +6,7 @@ import android.widget.EditText;
 
 public class EditTextAlertDialog extends Builder {
 
-	private EditText _editText;
+	private final EditText _editText;
 
 	public EditTextAlertDialog(Context context, String title, String message) {
 		super(context);

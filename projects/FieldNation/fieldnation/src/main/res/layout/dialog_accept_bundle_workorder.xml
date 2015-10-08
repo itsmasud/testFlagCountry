@@ -2,7 +2,7 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="wrap_content">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,8 +17,8 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Accept Bundle"
-                android:layout_marginBottom="@dimen/dialogContentPadding" />
+                android:layout_marginBottom="@dimen/dialogContentPadding"
+                android:text="@string/accept_bundle" />
 
 
             <TextView
@@ -29,42 +29,34 @@
                 android:text="This workorder is part of a bundle of 10 workorders. By accepting this workorder you are accepting all of them." />
         </LinearLayout>
 
-
-        <LinearLayout
+        <RelativeLayout
             style="?attr/dialogActionBarStyle"
-            android:orientation="horizontal">
+            android:layout_width="match_parent"
+            android:gravity="left">
+
+            <Button
+                android:id="@+id/bundle_button"
+                style="@style/Material.Button.Flat"
+                android:layout_alignParentLeft="true"
+                android:layout_marginRight="8dp"
+                android:text="@string/btn_view_all" />
 
             <LinearLayout
-                android:layout_weight="1.0"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/bundle_button"
-                    style="?attr/buttonDefaultStyle"
-                    android:text="VIEW BUNDLE" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_gravity="center_vertical|right"
-                android:gravity="right"
-                android:layout_width="0dp"
-                android:layout_weight="1.50"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
                 android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/cancel_button"
-                    style="?attr/dialogCancelButtonStyle"
+                    style="@style/DialogCancelButton.Material"
                     android:text="@string/btn_cancel" />
 
                 <Button
                     android:id="@+id/ok_button"
-                    style="?attr/dialogOkButtonStyle"
-                    android:text="ACCEPT" />
+                    style="@style/DialogOkButton.Material"
+                    android:text="@string/btn_accept" />
             </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </LinearLayout>
 </ScrollView>

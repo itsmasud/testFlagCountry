@@ -1,9 +1,7 @@
 package com.fieldnation.ui.workorder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -11,16 +9,11 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.TopicService;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -30,21 +23,18 @@ import com.fieldnation.ui.workorder.detail.WorkFragment;
 import java.util.List;
 
 public class WorkorderActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.workorder.WorkorderActivity";
+    private static final String TAG = "WorkorderActivity";
 
-    public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderActivity:workorder_id";
-    public static final String INTENT_FIELD_CURRENT_TAB = "com.fieldnation.ui.workorder.WorkorderActivity:current_tab";
+    public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
+    public static final String INTENT_FIELD_WORKORDER = "WorkorderActivity:workorder";
+    public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
     public static final int TAB_DELIVERABLES = 2;
     public static final int TAB_NOTIFICATIONS = 3;
 
-    private static final int RPC_GET_DETAIL = 1;
-
     // SavedInstance fields
-    private static final String STATE_AUTHTOKEN = "STATE_AUTHTOKEN";
-    private static final String STATE_USERNAME = "STATE_USERNAME";
     private static final String STATE_WORKORDERID = "STATE_WORKORDERID";
     private static final String STATE_CURRENT_TAB = "STATE_CURRENT_TAB";
     private static final String STATE_CURRENTFRAG = "STATE_CURRENT_FRAG";
@@ -56,8 +46,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private WorkorderTabView _tabview;
 
     // Data
-    private String _authToken;
-    private String _username;
+    private WorkorderClient _workorderClient;
     private long _workorderId = 0;
     private int _currentTab = 0;
     private int _currentFragment = 0;
@@ -67,20 +56,25 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     // Services
     private PagerAdapter _pagerAdapter;
-    private WorkorderService _service;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_workorder);
 
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_workorder;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
         if (intent != null) {
             if (intent.hasExtra(INTENT_FIELD_WORKORDER_ID)) {
                 _workorderId = intent.getLongExtra(INTENT_FIELD_WORKORDER_ID, 0);
+            }
+            if (intent.hasExtra(INTENT_FIELD_WORKORDER)) {
+                _workorder = intent.getParcelableExtra(INTENT_FIELD_WORKORDER);
             }
             if (intent.hasExtra(INTENT_FIELD_CURRENT_TAB)) {
                 _currentTab = intent.getIntExtra(INTENT_FIELD_CURRENT_TAB, 0);
@@ -109,12 +103,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_AUTHTOKEN)) {
-                _authToken = savedInstanceState.getString(STATE_AUTHTOKEN);
-            }
-            if (savedInstanceState.containsKey(STATE_USERNAME)) {
-                _username = savedInstanceState.getString(STATE_USERNAME);
-            }
             if (savedInstanceState.containsKey(STATE_WORKORDERID)) {
                 _workorderId = savedInstanceState.getLong(STATE_WORKORDERID);
             }
@@ -126,9 +114,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
             }
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-            }
-            if (_authToken != null && _username != null) {
-                _service = new WorkorderService(this, _username, _authToken, _rpcReceiver);
             }
         }
 
@@ -146,19 +131,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
 //        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
         setLoading(true);
-        populateUi(true);
-
-        TopicService.dispatchTopic(this, "NOTIFICATION_TEST", null);
+        populateUi();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        if (_authToken != null)
-            outState.putString(STATE_AUTHTOKEN, _authToken);
-
-        if (_username != null)
-            outState.putString(STATE_USERNAME, _username);
-
         if (_workorderId != 0)
             outState.putLong(STATE_WORKORDERID, _workorderId);
 
@@ -172,26 +149,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
-    }
-
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderService(WorkorderActivity.this, username, authToken, _rpcReceiver);
-            getData(true);
-        }
-    }
-
-    @Override
-    public void onAuthenticationFailed(boolean networkDown) {
-        super.onAuthenticationFailed(networkDown);
-        _service = null;
-    }
-
-    @Override
-    public void onAuthenticationInvalidated() {
-        super.onAuthenticationInvalidated();
-        _service = null;
     }
 
     private void buildFragments(Bundle savedInstanceState) {
@@ -212,18 +169,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
                             _fragments[0].setPageRequestListener(_pageRequestListener);
                             _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
                         }
-
-//                        if (frag instanceof DetailFragment) {
-//                            _fragments[0] = (WorkorderFragment) frag;
-//                            _fragments[0].setPageRequestListener(_pageRequestListener);
-//                            _fragments[0].setLoadingListener(_workorderFrag_loadingListener);
-//                        }
-//
-//                        if (frag instanceof TasksFragment) {
-//                            _fragments[1] = (WorkorderFragment) frag;
-//                            _fragments[1].setPageRequestListener(_pageRequestListener);
-//                            _fragments[1].setLoadingListener(_workorderFrag_loadingListener);
-//                        }
 
                         if (frag instanceof MessageFragment) {
                             _fragments[1] = (WorkorderFragment) frag;
@@ -248,10 +193,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
             if (_fragments[0] == null)
                 _fragments[0] = new WorkFragment();
-//            if (_fragments[0] == null)
-//                _fragments[0] = new DetailFragment();
-//            if (_fragments[1] == null)
-//                _fragments[1] = new TasksFragment();
             if (_fragments[1] == null)
                 _fragments[1] = new MessageFragment();
             if (_fragments[2] == null)
@@ -275,7 +216,22 @@ public class WorkorderActivity extends AuthActionBarActivity {
         _viewPager.setCurrentItem(_currentTab, false);
     }
 
-    private void populateUi(boolean isCached) {
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+    }
+
+    @Override
+    protected void onPause() {
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(this);
+
+        super.onPause();
+    }
+
+    private void populateUi() {
         if (_workorder == null)
             return;
 
@@ -296,9 +252,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             _tabview.setMessagesCount(0);
         }
 
-        for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workorder, isCached);
-        }
+//        for (int i = 0; i < _fragments.length; i++) {
+//            _fragments[i].setWorkorder(_workorder);
+//        }
+
+        _fragments[_currentFragment].setWorkorder(_workorder);
+
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
 //            //_tabview.hideTab(TAB_TASKS);
@@ -312,13 +271,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         // WorkorderStatus.INPROGRESS) {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
-
-
-        if (isCached) {
-            getData(false);
-        } else {
-            setLoading(false);
-        }
+        // setLoading(false);
     }
 
     private void setLoading(boolean loading) {
@@ -327,16 +280,10 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     }
 
-    @Override
-    public void onRefresh() {
-        getData(false);
-    }
-
     public void getData(boolean allowCache) {
-        if (_service == null)
-            return;
+        Log.v(TAG, "getData");
         setLoading(true);
-        startService(_service.getDetails(RPC_GET_DETAIL, _workorderId, allowCache));
+        WorkorderClient.get(this, _workorderId, allowCache);
     }
 
     /*-*************************-*/
@@ -383,6 +330,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
+                populateUi();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -396,6 +344,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = index;
                 _fragments[index].update();
                 _viewPager.setCurrentItem(_currentFragment, true);
+                populateUi();
             }
         }
     };
@@ -403,6 +352,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
+            Log.v(TAG, "_workorder_listener");
             getData(false);
         }
     };
@@ -416,93 +366,52 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
 
     public interface PageRequestListener {
-        public void requestPage(Class<? extends WorkorderFragment> clazz);
+        void requestPage(Class<? extends WorkorderFragment> clazz);
     }
 
     /*-*****************************-*/
     /*-			Web Events			-*/
     /*-*****************************-*/
-    private class WorkorderParseAsyncTask extends AsyncTaskEx<Bundle, Object, Workorder> {
-        private boolean cached;
-        private boolean _isAllowed = true;
-
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        protected Workorder doInBackground(Bundle... params) {
-            Bundle resultData = params[0];
-            Workorder workorder = null;
-            try {
-                String data = new String(resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA));
-                Log.v(TAG, data);
-
-                if ("false".equals(data)) {
-                    _isAllowed = false;
-                }
-
-                workorder = Workorder.fromJson(new JsonObject(data));
-
-                workorder.addListener(_workorder_listener);
-                cached = resultData.getBoolean(WebServiceConstants.KEY_RESPONSE_CACHED);
-                Log.v(TAG, "Have workorder");
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return workorder;
+        public void onConnected() {
+            Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
+            _workorderClient.subGet(_workorderId);
+            _workorderClient.subActions(_workorderId);
+            _workorderClient.subDeliverableUpload();
+            getData(true);
         }
 
         @Override
-        protected void onPostExecute(Workorder workorder) {
-            super.onPostExecute(workorder);
-            if (workorder != null) {
-                _workorder = workorder;
-                populateUi(cached);
-            } else if (!_isAllowed) {
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            getData(false);
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
+            getData(false);
+        }
+
+        @Override
+        public void onGet(Workorder workorder, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onDetails");
+            if (workorder == null || failed) {
                 try {
                     Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
                     finish();
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
-            } else if (cached) {
-                getData(false);
-            }
-        }
-    }
-
-    private WebResultReceiver _rpcReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            new WorkorderParseAsyncTask().executeEx(resultData);
-        }
-
-        @Override
-        public Context getContext() {
-            return WorkorderActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            if (resultData.getInt(KEY_RESPONSE_CODE) == 403) {
-                try {
-                    Toast.makeText(WorkorderActivity.this,
-                            new String(resultData.getByteArray(KEY_RESPONSE_DATA)),
-                            Toast.LENGTH_LONG).show();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-                finish();
                 return;
             }
 
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
+            Debug.setLong("last_workorder", workorder.getWorkorderId());
+
+            workorder.addListener(_workorder_listener);
+            _workorder = workorder;
+            populateUi();
         }
     };
-
 }
+

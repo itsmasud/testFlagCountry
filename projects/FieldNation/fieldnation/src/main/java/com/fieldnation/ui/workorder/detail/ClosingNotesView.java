@@ -4,9 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.ImageView;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.fieldnation.R;
@@ -14,15 +14,13 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.misc;
 
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.ClosingNotesView";
-
-    private static final int WEB_SAVE_NOTES = 1;
+    private static final String TAG = "ClosingNotesView";
 
     // UI
+    private TextView _noNotesTextView;
+    private FrameLayout _notesCardLayout;
     private TextView _notesTextView;
-    private LinearLayout _editLayout;
-    private ImageView _editImageView;
-    private ProgressBar _progressBar;
+    private Button _addButton;
 
     // Data
     private Workorder _workorder;
@@ -44,14 +42,14 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         if (isInEditMode())
             return;
 
-        _editLayout = (LinearLayout) findViewById(R.id.edit_layout);
-        _editLayout.setOnClickListener(_notes_onClick);
-        _editImageView = (ImageView) findViewById(R.id.edit_imageview);
+        _noNotesTextView = (TextView) findViewById(R.id.noNotes_textview);
 
+        _notesCardLayout = (FrameLayout) findViewById(R.id.notesCard_layout);
+        _notesCardLayout.setOnClickListener(_notes_onClick);
         _notesTextView = (TextView) findViewById(R.id.notes_textview);
-        _notesTextView.setOnClickListener(_notes_onClick);
 
-        _progressBar = (ProgressBar) findViewById(R.id.progressBar);
+        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton.setOnClickListener(_notes_onClick);
     }
 
     public void setListener(Listener listener) {
@@ -59,7 +57,7 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
     }
@@ -67,8 +65,11 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private void refresh() {
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
             _notesTextView.setText(_workorder.getClosingNotes());
+            _notesCardLayout.setVisibility(VISIBLE);
+            _noNotesTextView.setVisibility(GONE);
         } else {
-            _notesTextView.setText("");
+            _notesCardLayout.setVisibility(GONE);
+            _noNotesTextView.setVisibility(VISIBLE);
             if (!_workorder.canChangeClosingNotes()) {
                 setVisibility(View.GONE);
                 return;
@@ -76,13 +77,12 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         }
         setVisibility(View.VISIBLE);
 
-
         if (_workorder.canChangeClosingNotes()) {
-            _editLayout.setVisibility(View.VISIBLE);
-            _notesTextView.setClickable(true);
+            _addButton.setVisibility(View.VISIBLE);
+            _notesCardLayout.setClickable(true);
         } else {
-            _editLayout.setVisibility(View.GONE);
-            _notesTextView.setClickable(false);
+            _addButton.setVisibility(View.GONE);
+            _notesCardLayout.setClickable(false);
         }
     }
 
@@ -101,6 +101,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
 
     public interface Listener {
-        public void onChangeClosingNotes(String closingNotes);
+        void onChangeClosingNotes(String closingNotes);
     }
 }

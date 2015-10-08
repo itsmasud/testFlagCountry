@@ -2,32 +2,52 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Address;
+import android.location.Geocoder;
 import android.net.Uri;
-import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.GoogleAnalyticsTopicClient;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
+import com.mapbox.mapboxsdk.geometry.BoundingBox;
+import com.mapbox.mapboxsdk.geometry.LatLng;
+import com.mapbox.mapboxsdk.overlay.Marker;
+import com.mapbox.mapboxsdk.views.MapView;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.workorder.detail.LocationView";
+    private static final String TAG = "LocationView";
 
     // UI
+    private MapView _mapView;
+    private View _clickOverlay;
     private TextView _addressTextView;
     private TextView _distanceTextView;
-    private TextView _contactInfoTextView;
-    private TextView _descriptionTextView;
-    private TextView _remoteTextView;
+    private Button _navigateButton;
+    private RelativeLayout _mapLayout;
+    private TextView _noLocationTextView;
+    private LinearLayout _addressLayout;
+    private RelativeLayout _noMapLayout;
 
     // Data
     private Workorder _workorder;
+    private boolean _isDrawn = false;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -44,93 +64,149 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (isInEditMode())
             return;
 
+        _mapView = (MapView) findViewById(R.id.mapview);
+
+        _clickOverlay = findViewById(R.id.click_overlay);
+        _clickOverlay.setOnClickListener(_map_onClick);
+
         _addressTextView = (TextView) findViewById(R.id.address_textview);
-        _addressTextView.setOnClickListener(_openMapOnClick);
 
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
-        _distanceTextView.setOnClickListener(_openMapOnClick);
 
-        _remoteTextView = (TextView) findViewById(R.id.remotely_textview);
+        _navigateButton = (Button) findViewById(R.id.navigate_button);
+        _navigateButton.setOnClickListener(_navigate_onClick);
 
-        _contactInfoTextView = (TextView) findViewById(R.id.contactinfo_textview);
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
+        _mapLayout = (RelativeLayout) findViewById(R.id.map_layout);
+
+        _noLocationTextView = (TextView) findViewById(R.id.noLocation_textview);
+
+        _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
+        _addressLayout.setOnClickListener(_map_onClick);
+
+        _noMapLayout = (RelativeLayout) findViewById(R.id.noMap_layout);
 
         setVisibility(View.GONE);
-
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
+        try {
+            if (_workorder == null || workorder == null)
+                _isDrawn = false;
+        } catch (Exception ex) {
+            _isDrawn = false;
+            ex.printStackTrace();
+        }
+
         _workorder = workorder;
-        refresh();
+        populateUi();
     }
 
-    private void refresh() {
-        Location location = _workorder.getLocation();
-
-        if (location == null) {
-            // TODO, EPIC FAIL, AND A BAD SOLUTION, MAKE THIS BETTER
-            this.setVisibility(GONE);
+    private void populateUi() {
+        Stopwatch stopwatch = new Stopwatch(true);
+        if (_workorder == null)
             return;
-        }
 
-        String fullAddr = location.getFullAddressAndContactName();
-        if (!misc.isEmptyOrNull(fullAddr)) {
-            _addressTextView.setText(fullAddr);
-            _addressTextView.setVisibility(View.VISIBLE);
+        if (_mapView == null)
+            return;
 
+        Location location = _workorder.getLocation();
+        _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
+        _addressTextView.setText(location.getFullAddressOneLine());
+        _distanceTextView.setText("Could not calculate distance.");
+        _noMapLayout.setVisibility(GONE);
+
+        setVisibility(VISIBLE);
+
+        if (location == null || _workorder.getIsRemoteWork()) {
+            _mapView.setVisibility(GONE);
+            _mapLayout.setVisibility(GONE);
+            _noLocationTextView.setVisibility(VISIBLE);
+            _addressLayout.setVisibility(GONE);
+            _navigateButton.setVisibility(GONE);
+            Log.v(TAG, "no location time: " + stopwatch.finish());
+            return;
         } else {
-            _addressTextView.setVisibility(View.GONE);
+            _mapView.setVisibility(VISIBLE);
+            _mapLayout.setVisibility(VISIBLE);
+            _noLocationTextView.setVisibility(GONE);
+            _addressLayout.setVisibility(VISIBLE);
+            _navigateButton.setVisibility(VISIBLE);
         }
 
-        _remoteTextView.setVisibility(View.GONE);
-        if (_workorder.getIsRemoteWork()) {
-            _remoteTextView.setVisibility(View.VISIBLE);
-            _distanceTextView.setVisibility(View.GONE);
-        } else if (_workorder.getDistance() != null) {
-            _distanceTextView.setText(_workorder.getDistance() + " mi");
-        } else if (location.getDistance() != null) {
-            _distanceTextView.setText(location.getDistance() + " mi");
-        }
+        new AsyncTaskEx<Object, Object, LatLng>() {
+            @Override
+            protected LatLng doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                try {
+                    if (_isDrawn)
+                        return null;
 
-        String contactInfo = "";
-        if (!misc.isEmptyOrNull(location.getContactName())) {
-            contactInfo += location.getContactName() + "\n";
-        }
-        if (!misc.isEmptyOrNull(location.getContactEmail())) {
-            contactInfo += location.getContactEmail() + "\n";
-        }
-        if (!misc.isEmptyOrNull(location.getContactPhone())) {
-            contactInfo += location.getContactPhone() + "\n";
-        }
+                    // _isDrawn = true;
 
-        contactInfo = contactInfo.trim();
+                    Stopwatch stopwatch = new Stopwatch(true);
 
-        if (!misc.isEmptyOrNull(contactInfo)) {
-            _contactInfoTextView.setText(contactInfo);
-            Linkify.addLinks(_contactInfoTextView, Linkify.ALL);
-            _contactInfoTextView.setVisibility(View.VISIBLE);
-        } else {
-            _contactInfoTextView.setVisibility(View.GONE);
-        }
+                    Location location = _workorder.getLocation();
+                    // get address location
+                    Geocoder geocoder = new Geocoder(context, Locale.getDefault());
+                    List<Address> addrs = geocoder.getFromLocationName(location.getFullAddressOneLine(), 1);
+                    if (addrs == null || addrs.size() == 0) {
+                        // can't get a location, should render accordingly
+                        Log.v(TAG, "inBackground time: " + stopwatch.finish());
+                        return null;
+                    }
 
-        if (!misc.isEmptyOrNull(location.getNotes())) {
-            _descriptionTextView.setText(location.getNotes());
-            Linkify.addLinks(_descriptionTextView, Linkify.ALL);
-            _descriptionTextView.setVisibility(VISIBLE);
-        } else {
-            _descriptionTextView.setVisibility(GONE);
-        }
+                    Log.v(TAG, "inBackground time: " + stopwatch.finish());
+                    return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
+                return null;
+            }
 
-        if (_addressTextView.getVisibility() != VISIBLE
-                && _descriptionTextView.getVisibility() != VISIBLE
-                && _contactInfoTextView.getVisibility() != VISIBLE
-                && _distanceTextView.getVisibility() != VISIBLE
-                && _remoteTextView.getVisibility() != VISIBLE) {
-            setVisibility(View.GONE);
-        } else {
-            setVisibility(View.VISIBLE);
-        }
+            @Override
+            protected void onPostExecute(LatLng destination) {
+                Stopwatch watch = new Stopwatch(true);
+                _mapView.clear();
+
+                try {
+                    if (destination != null) {
+                        Log.v(TAG, "Getting user location");
+                        _mapView.setUserLocationEnabled(true);
+                        LatLng user = _mapView.getUserLocation();
+                        _mapView.setUserLocationEnabled(false);
+                        Log.v(TAG, "Getting user location done");
+
+                        Marker marker = new Marker(_mapView, "Work", "", destination);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_location_pin));
+                        _mapView.addMarker(marker);
+
+                        marker = new Marker(_mapView, "Me", "", user);
+                        marker.setMarker(getResources().getDrawable(R.drawable.ic_user_location));
+                        _mapView.addMarker(marker);
+
+                        Set<LatLng> lls = new HashSet<>();
+                        lls.add(destination);
+                        lls.add(user);
+
+                        _mapView.zoomToBoundingBox(BoundingBox.fromLatLngs(lls), true, true, false);
+                        _mapView.setZoom(_mapView.getZoomLevel() - 1);
+
+                        _distanceTextView.setText(misc.to2Decimal(destination.distanceTo(user) * 0.000621371) + " miles");
+                        _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_transparent));
+                    } else {
+                        _navigateButton.setVisibility(GONE);
+                        _mapLayout.setVisibility(GONE);
+                    }
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _noMapLayout.setVisibility(VISIBLE);
+                    _mapView.setVisibility(GONE);
+                }
+                Log.v(TAG, "onPostExecute time: " + watch.finish());
+            }
+        }.executeEx(getContext());
+        Log.v(TAG, "populateUi time: " + stopwatch.finish());
     }
 
     public void showMap(Uri geoLocation) {
@@ -144,16 +220,20 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private View.OnClickListener _openMapOnClick = new View.OnClickListener() {
+    private final View.OnClickListener _navigate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_navigate_onClick");
             if (_workorder != null && !_workorder.getIsRemoteWork()) {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
-                        GaTopic.dispatchEvent(getContext(), "WorkorderActivity", GaTopic.ACTION_START_MAP, "WorkFragment", 1);
-                        String _fullAddress = misc.escapeForURL(location.getFullAddress());
-                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        GoogleAnalyticsTopicClient
+                                .dispatchEvent(getContext(), "WorkorderActivity",
+                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                        "WorkFragment", 1);
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                        String _uriString = "google.navigation:q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);
                         showMap(_uri);
                     } catch (Exception e) {
@@ -163,5 +243,26 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-
+    private final View.OnClickListener _map_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.v(TAG, "_map_onClick");
+            if (_workorder != null && !_workorder.getIsRemoteWork()) {
+                Location location = _workorder.getLocation();
+                if (location != null) {
+                    try {
+                        GoogleAnalyticsTopicClient
+                                .dispatchEvent(getContext(), "WorkorderActivity",
+                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                        "WorkFragment", 1);
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        showMap(_uri);
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+    };
 }

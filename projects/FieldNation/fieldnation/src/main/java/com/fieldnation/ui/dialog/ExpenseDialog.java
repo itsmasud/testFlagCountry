@@ -18,13 +18,17 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
+import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
-    private static String TAG = "ui.dialog.ExpenseDialog";
+    private static String TAG = "ExpenseDialog";
 
     // State
     private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
@@ -107,8 +111,11 @@ public class ExpenseDialog extends DialogFragmentBase {
     private void setCategories(ExpenseCategory[] categories) {
         try {
             _categories = categories;
-            _adapter = new ArrayAdapter<ExpenseCategory>(getActivity(), android.R.layout.simple_spinner_dropdown_item,
+            _adapter = new ArrayAdapter<>(getActivity(),
+                    R.layout.view_spinner_item,
                     categories);
+            _adapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _categorySpinner.setAdapter(_adapter);
             _categorySpinner.setSelection(0);
         } catch (Exception ex) {
@@ -202,6 +209,15 @@ public class ExpenseDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (misc.isEmptyOrNull(_amountEditText.getText().toString())
+                    || misc.isEmptyOrNull(_descriptionEditText.getText().toString()))
+                return;
+
+            if (getAmount() < 0.1) {
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                return;
+            }
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount(), getCategory());
 
@@ -210,8 +226,8 @@ public class ExpenseDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(String description, double amount, ExpenseCategory category);
+        void onOk(String description, double amount, ExpenseCategory category);
 
-        public void onCancel();
+        void onCancel();
     }
 }

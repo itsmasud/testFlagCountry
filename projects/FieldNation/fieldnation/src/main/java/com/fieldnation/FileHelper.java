@@ -12,12 +12,9 @@ import android.provider.OpenableColumns;
 import android.widget.Toast;
 
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 /**
  * Created by michael.carver on 11/20/2014.
@@ -35,22 +32,19 @@ public class FileHelper {
         try {
             File tempfile = null;
 
-            if (data != null && data.getExtras() != null && data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
+            if (data.getExtras() != null && data.getExtras().containsKey(MediaStore.EXTRA_OUTPUT)) {
                 Log.v(TAG, data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
                 tempfile = new File(data.getParcelableExtra(MediaStore.EXTRA_OUTPUT).toString());
                 listener.fileReady(tempfile.getName(), tempfile);
                 return;
             } else {
                 // generate temp file
-                File externalPath = Environment.getExternalStorageDirectory();
-                String packageName = context.getPackageName();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
+                File temppath = new File(App.get().getStoragePath() + "/temp");
                 temppath.mkdirs();
                 tempfile = File.createTempFile("DATA", null, temppath);
             }
 
             String filename = null;
-            boolean gotData = false;
 
             if ("inline-data".equals(data.getAction())) {
                 if (data.getExtras().getParcelable("data") instanceof Bitmap) {
@@ -59,17 +53,12 @@ public class FileHelper {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
                     fout.close();
                     filename = "Image-" + ISO8601.now() + ".png";
-                    gotData = true;
                 }
+
+                listener.fileReady(filename, tempfile);
+                return;
             } else if (data.getData() != null) {
                 Uri uri = data.getData();
-
-                InputStream in = context.getContentResolver().openInputStream(uri);
-                OutputStream out = new FileOutputStream(tempfile);
-                misc.copyStream(in, out, 1024, -1, 500);
-                out.close();
-                in.close();
-                gotData = true;
 
                 if (uri.getScheme().equals("file")) {
                     filename = uri.getLastPathSegment();
@@ -81,14 +70,12 @@ public class FileHelper {
                     c.close();
                 }
 
-            }
-
-            if (!gotData) {
-                listener.fail("Could not get image data");
+                listener.fromUri(filename, uri);
                 return;
             }
 
-            listener.fileReady(filename, tempfile);
+            listener.fail("Could not get image data");
+
 
 //            context.startService(_service.uploadDeliverable(
 //                    WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
@@ -152,8 +139,10 @@ public class FileHelper {
     }
 
     public interface Listener {
-        public void fileReady(String filename, File file);
+        void fileReady(String filename, File file);
 
-        public void fail(String reason);
+        void fromUri(String filename, Uri uri);
+
+        void fail(String reason);
     }
 }

@@ -17,7 +17,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class AcceptBundleDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.AcceptBundleDialog";
+    private static final String TAG = "AcceptBundleDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -137,6 +137,6 @@ public class AcceptBundleDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder);
+        void onOk(Workorder workorder);
     }
 }

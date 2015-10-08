@@ -10,7 +10,6 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -69,8 +68,8 @@ public class Workorder implements Parcelable {
     private Integer _daysSinceApprovedOrCanceled;
     @Json(name = "declinedWo")
     private Integer _declinedWo;
-    @Json(name = "deliverables")
-    private Deliverable[] _deliverables;
+    //    @Json(name = "deliverables")
+//    private Deliverable[] _deliverables;
     @Json(name = "discounts")
     private Discount[] _discounts;
     @Json(name = "displayCounterOffer")
@@ -93,8 +92,8 @@ public class Workorder implements Parcelable {
     private Boolean _hasMarketplaceAccess;
     @Json(name = "identifier")
     private String _identifier;
-    @Json(name = "increaseRequestInfo")
-    private IncreaseRequestInfo _increaseRequestInfo;
+    // @Json(name = "increaseRequestInfo")
+    // private IncreaseRequestInfo _increaseRequestInfo;
     @Json(name = "industry")
     private String _industry;
     @Json(name = "isAssignedToWorkorder")
@@ -303,9 +302,9 @@ public class Workorder implements Parcelable {
         return _declinedWo;
     }
 
-    public Deliverable[] getDeliverables() {
-        return _deliverables;
-    }
+//    public Deliverable[] getDeliverables() {
+//        return _deliverables;
+//    }
 
     public Discount[] getDiscounts() {
         return _discounts;
@@ -351,9 +350,9 @@ public class Workorder implements Parcelable {
         return _identifier;
     }
 
-    public IncreaseRequestInfo getIncreaseRequestInfo() {
-        return _increaseRequestInfo;
-    }
+//    public IncreaseRequestInfo getIncreaseRequestInfo() {
+//        return _increaseRequestInfo;
+//    }
 
     public String getIndustry() {
         return _industry;
@@ -364,7 +363,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getIsCounter() {
-        return _isCounter;
+        if (_isCounter != null)
+            return _isCounter;
+
+        return false;
     }
 
     public Boolean getIsDeliverablesUploaded() {
@@ -430,7 +432,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean getNeedsReadyToGo() {
-        return _needsReadyToGo;
+        if (_needsReadyToGo != null)
+            return _needsReadyToGo;
+
+        return false;
     }
 
     public Expense[] getOnlyApprovedAdditionalExpenses() {
@@ -591,6 +596,7 @@ public class Workorder implements Parcelable {
     public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
     public static final int BUTTON_ACTION_VIEW_PAYMENT = 7;
     public static final int BUTTON_ACTION_WITHDRAW_REQUEST = 8;
+    public static final int BUTTON_ACTION_READY_TO_GO = 9;
 
     public static final int NOT_INTERESTED_ACTION_NONE = 0;
     public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
@@ -603,20 +609,20 @@ public class Workorder implements Parcelable {
             R.drawable.card_status_green, R.drawable.card_status_gray};
 
     private static final int[] _STATUS_TEXT_TABLE = {
-            R.color.woCardStatusLabel1, R.color.woCardStatusLabel2,
-            R.color.woCardStatusLabel3, R.color.woCardStatusLabel4};
+            R.color.fn_dark_text, R.color.fn_white_text,
+            R.color.fn_white_text, R.color.fn_white_text};
 
-    private static final int[] _STATUS_BUTTON_FG = {R.color.btn_white_fg,
-            R.color.btn_orange_fg, R.color.btn_green_fg, R.color.btn_gray_fg};
+    private static final int[] _STATUS_BUTTON_FG = {R.color.fn_dark_button_text,
+            R.color.fn_white_text, R.color.fn_white_text, R.color.fn_white_text};
 
-    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_white,
-            R.drawable.btn_orange, R.drawable.btn_green, R.drawable.btn_white};
+    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_bg_white,
+            R.drawable.btn_bg_orange, R.drawable.btn_bg_green, R.drawable.btn_bg_white};
 
     private int _buttonAction = 0;
     private int _notInterestedAction = 0;
     // private Set<Integer> _labelIds = new HashSet<Integer>();
 
-    private final Set<Listener> _listeners = new HashSet<Workorder.Listener>();
+    private final Set<Listener> _listeners = new HashSet<>();
 
     public void addListener(Listener listener) {
         _listeners.add(listener);
@@ -655,6 +661,18 @@ public class Workorder implements Parcelable {
         return !fieldsToDo;
     }
 
+    public boolean canRequestPayIncrease() {
+        WorkorderStatus status = getStatus().getWorkorderStatus();
+        WorkorderSubstatus substatus = getWorkorderSubstatus();
+        return ((status == WorkorderStatus.ASSIGNED
+                && substatus != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
+                && substatus != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED)
+                || status == WorkorderStatus.INPROGRESS)
+                && getPay() != null
+                && !getPay().hidePay();
+    }
+
+
     public boolean canCounterOffer() {
         return getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
@@ -676,13 +694,14 @@ public class Workorder implements Parcelable {
                 return false;
             }
 
-            if (!areCustomFieldsDone()) {
-                return false;
-            }
+            return areCustomFieldsDone();
 
-            return true;
         }
         return false;
+    }
+
+    public boolean canIncomplete() {
+        return getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED;
     }
 
     public boolean canChangeExpenses() {
@@ -745,7 +764,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return canViewDeliverables();
+        return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
     public boolean canViewConfidentialInfo() {
@@ -937,11 +956,18 @@ public class Workorder implements Parcelable {
     private void buildStatusAssigned(Status status) {
         switch (status.getWorkorderSubstatus()) {
             case UNCONFIRMED: // green
-                _buttonAction = BUTTON_ACTION_ASSIGNMENT;
+                if (getNeedsReadyToGo())
+                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
+                else
+                    _buttonAction = BUTTON_ACTION_ASSIGNMENT;
+
                 _notInterestedAction = NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT;
                 break;
             case CONFIRMED: // white
-                _buttonAction = BUTTON_ACTION_CHECKIN;
+                if (getNeedsReadyToGo())
+                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
+                else
+                    _buttonAction = BUTTON_ACTION_CHECKIN;
                 break;
             case ONHOLD_UNACKNOWLEDGED: // orange
                 _buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
@@ -991,7 +1017,7 @@ public class Workorder implements Parcelable {
     }
 
     public interface Listener {
-        public void onChange(Workorder workorder);
+        void onChange(Workorder workorder);
     }
 
     /*-*********************************************-*/
@@ -1002,11 +1028,11 @@ public class Workorder implements Parcelable {
         @Override
         public Workorder createFromParcel(Parcel source) {
             try {
-                return Workorder.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
-                e.printStackTrace();
+                return Workorder.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
             }
-            return null;
         }
 
         @Override
@@ -1022,7 +1048,7 @@ public class Workorder implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

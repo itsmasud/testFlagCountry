@@ -1,24 +1,18 @@
 package com.fieldnation.ui.workorder;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.rpc.common.WebServiceConstants;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -26,7 +20,7 @@ import com.fieldnation.utils.misc;
 import java.text.NumberFormat;
 
 public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.workorder.WorkorderBundleDetailActivity";
+    private static final String TAG = "WorkorderBundleDetailActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";
     public static final String INTENT_FIELD_BUNDLE_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:bundle_id";
@@ -38,20 +32,22 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private TextView _distanceTextView;
     private TextView _dateTextView;
     private Button _requestButton;
-    private RelativeLayout _loadingLayout;
+//    private RelativeLayout _loadingLayout;
 
     // Data
     private long _workorderId = 0;
     private long _bundleId = 0;
-    private WorkorderService _service;
+    private WorkorderClient _workorderClient;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bundle_detail);
+    public int getLayoutResource() {
+        return R.layout.activity_bundle_detail;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Intent intent = getIntent();
 
         if (intent == null) {
@@ -77,21 +73,67 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _requestButton = (Button) findViewById(R.id.request_button);
         _requestButton.setOnClickListener(_request_onClick);
-        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
-        _loadingLayout.setVisibility(View.VISIBLE);
+//        _loadingLayout.setVisibility(View.VISIBLE);
         // TODO put into wait mode
     }
 
     @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            _service = new WorkorderService(WorkorderBundleDetailActivity.this, username, authToken, _resultReciever);
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-        }
+    protected void onResume() {
+        super.onResume();
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+
+        WorkorderClient.getBundle(this, _bundleId);
     }
 
-    private View.OnClickListener _request_onClick = new View.OnClickListener() {
+    @Override
+    protected void onPause() {
+        _workorderClient.disconnect(this);
+        super.onPause();
+    }
+
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderClient.subBundle();
+        }
+
+        @Override
+        public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
+            if (bundle == null) {
+                ToastClient.toast(WorkorderBundleDetailActivity.this, "Sorry, could not get bundle details.", Toast.LENGTH_LONG);
+                finish();
+                return;
+            }
+            _woBundle = bundle;
+            NumberFormat form = NumberFormat.getNumberInstance();
+            form.setMinimumFractionDigits(1);
+            form.setMaximumFractionDigits(1);
+
+            try {
+                _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
+            } catch (Exception ex) {
+            }
+            try {
+                _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
+            } catch (Exception ex) {
+            }
+            try {
+                _dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
+            } catch (Exception ex) {
+            }
+
+            _adapter = new BundleAdapter(_woBundle, _wocard_listener);
+
+            _listview.setAdapter(_adapter);
+
+//            _loadingLayout.setVisibility(View.GONE);
+        }
+    };
+
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO Method Stub: onClick()
@@ -99,74 +141,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     };
 
-    private WebResultReceiver _resultReciever = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            // TODO Method Stub: onSuccess()
-            Log.v(TAG, "Method Stub: onSuccess()");
-            Log.v(TAG, resultData.toString());
-            byte[] data = resultData.getByteArray(WebServiceConstants.KEY_RESPONSE_DATA);
-            Log.v(TAG, new String(data));
-            if (resultCode == WEB_GET_BUNDLE) {
-                try {
-                    _woBundle = com.fieldnation.data.workorder.Bundle.fromJson(new JsonObject(new String(data)));
-                    NumberFormat form = NumberFormat.getNumberInstance();
-                    form.setMinimumFractionDigits(1);
-                    form.setMaximumFractionDigits(1);
-
-                    try {
-                        _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
-                    } catch (Exception ex) {
-                    }
-                    try {
-                        _dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
-                    } catch (Exception ex) {
-                    }
-
-                    _adapter = new BundleAdapter(_woBundle, _wocard_listener);
-
-                    _listview.setAdapter(_adapter);
-
-                    _loadingLayout.setVisibility(View.GONE);
-                } catch (Exception e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return WorkorderBundleDetailActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
-        }
-    };
-
-    @Override
-    public void onRefresh() {
-        if (_service != null) {
-            startService(_service.getBundle(WEB_GET_BUNDLE, _bundleId, false));
-        }
-    }
-
     private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
-
         @Override
         public void viewCounter(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: viewCounter()
@@ -177,16 +152,12 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: onViewPayments()
             Log.v(TAG, "Method Stub: onViewPayments()");
-
         }
 
         @Override
-        public void onLongClick(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: onLongClick()
-            Log.v(TAG, "Method Stub: onLongClick()");
-            GaTopic.dispatchEvent(WorkorderBundleDetailActivity.this,
-                    "BundleActivity", GaTopic.ACTION_LONG_CLICK, "WorkorderCard", 1);
-
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+            // TODO Method Stub: actionReadyToGo()
+            Log.v(TAG, "Method Stub: actionReadyToGo()");
         }
 
         @Override
@@ -197,7 +168,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             // Todo set loading here
         }
 
-
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionRequest()
@@ -207,14 +177,14 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
 
         @Override
         public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionWithdrawRequest()
-            Log.v(TAG, "Method Stub: actionWithdrawRequest()");
+            // TODO actionWithdrawRequest
         }
 
         @Override
         public void actionCheckout(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionCheckout()
             Log.v(TAG, "Method Stub: actionCheckout()");
+
         }
 
         @Override
@@ -240,3 +210,4 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     };
 
 }
+

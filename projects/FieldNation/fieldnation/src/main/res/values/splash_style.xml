@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="SplashActivity">
+        <item name="android:background">@color/fn_primary_bg</item>
+    </style>
+</resources>

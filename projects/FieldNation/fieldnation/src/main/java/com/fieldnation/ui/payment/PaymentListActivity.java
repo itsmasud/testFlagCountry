@@ -1,35 +1,39 @@
 package com.fieldnation.ui.payment;
 
-import android.content.Intent;
-import android.os.ResultReceiver;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.rpc.client.PaymentService;
+import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.ItemListActivity;
 
-import java.util.LinkedList;
 import java.util.List;
 
 public class PaymentListActivity extends ItemListActivity<Payment> {
-    private static final String TAG = "ui.payment.PaymentListActivity";
+    private static final String TAG = "PaymentListActivity";
 
     // Data
-    private PaymentService _service;
+    private PaymentClient _paymentClient;
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _paymentClient = new PaymentClient(_payment_listener);
+        _paymentClient.connect(this);
+    }
 
     @Override
-    public Intent requestData(int resultCode, int page, boolean allowCache) {
-        if (_service == null)
-            return null;
+    protected void onPause() {
+        _paymentClient.disconnect(this);
+        super.onPause();
+    }
 
-        return _service.getAll(resultCode, page, allowCache);
+    @Override
+    public void requestData(int page) {
+        PaymentClient.list(this, page);
     }
 
     @Override
@@ -48,42 +52,15 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         return v;
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-    }
-
-    @Override
-    public void onAuthentication(String username, String authToken, boolean isNew, ResultReceiver resultReceiver) {
-        if (_service == null || isNew) {
-            _service = new PaymentService(this, username, authToken, resultReceiver);
-        }
-    }
-
-    @Override
-    public List<Payment> onParseData(int page, boolean isCached, byte[] data) {
-        JsonArray objects = null;
-        try {
-            objects = new JsonArray(new String(data));
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            return null;
+    private final PaymentClient.Listener _payment_listener = new PaymentClient.Listener() {
+        @Override
+        public void onConnected() {
+            _paymentClient.subList();
         }
 
-        List<Payment> list = new LinkedList<Payment>();
-        for (int i = 0; i < objects.size(); i++) {
-            try {
-                list.add(Payment.fromJson(objects.getJsonObject(i)));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+        @Override
+        public void onList(int page, List<Payment> list, boolean failed) {
+            addPage(page, list);
         }
-
-        return list;
-    }
-
-    @Override
-    public void invalidateService() {
-        _service = null;
-    }
+    };
 }

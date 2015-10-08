@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.detail.ShipmentSummary;
+import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 
 public class TaskShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.TaskShipmentAddDialog";
@@ -131,7 +131,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
                 return;
 
             for (int i = 0; i < shipments.length; i++) {
-                ShipmentSummary view = new ShipmentSummary(getActivity());
+                ShipmentRowView view = new ShipmentRowView(getActivity());
                 _shipmentsLayout.addView(view);
                 view.setData(_workorder, shipments[i]);
                 view.hideForTaskShipmentDialog();
@@ -145,7 +145,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
+    private final ShipmentAddDialog.Listener _addDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             if (_listener != null) {
@@ -165,7 +165,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private ShipmentSummary.Listener _summaryListener = new ShipmentSummary.Listener() {
+    private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
         @Override
         public void onDelete(ShipmentTracking shipment) {
             if (_listener != null) {
@@ -174,7 +174,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
 
         @Override
-        public void onAssign(ShipmentTracking shipment) {
+        public void onEdit(ShipmentTracking shipment) {
+            // TODO need to present an edit dialog
             dismiss();
             if (_listener != null) {
                 _listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
@@ -182,7 +183,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _add_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -192,7 +193,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -202,15 +203,15 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onCancel();
+        void onCancel();
 
-        public void onDelete(Workorder workorder, int shipmentId);
+        void onDelete(Workorder workorder, int shipmentId);
 
-        public void onAssign(Workorder workorder, int shipmentId, long taskId);
+        void onAssign(Workorder workorder, int shipmentId, long taskId);
 
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
+        void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+        void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
     }
 

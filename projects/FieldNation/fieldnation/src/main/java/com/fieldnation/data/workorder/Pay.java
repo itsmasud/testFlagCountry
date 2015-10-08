@@ -8,8 +8,6 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
-import java.text.ParseException;
-
 public class Pay implements Parcelable {
 
     @Json(name = "blendedAdditionalHours")
@@ -31,7 +29,7 @@ public class Pay implements Parcelable {
     @Json(name = "hidePay")
     private Boolean _hidePay;
     @Json(name = "maxDevice")
-    private Integer _maxDevice;
+    private Double _maxDevice;
     @Json(name = "maxHour")
     private Double _maxHour;
     @Json(name = "maximumAmount")
@@ -88,7 +86,7 @@ public class Pay implements Parcelable {
     }
 
     public Integer getMaxDevice() {
-        return _maxDevice;
+        return (int) (double) _maxDevice;
     }
 
     public Double getMaxHour() {
@@ -154,7 +152,7 @@ public class Pay implements Parcelable {
     public Pay(double deviceRate, int maxDevices) {
         _payRateBasis = "Per Device";
         _perDevice = deviceRate;
-        _maxDevice = maxDevices;
+        _maxDevice = (double) maxDevices;
     }
 
     public Pay(double hourlyRate, double maxHours, double extraRate, double extraMax) {
@@ -173,7 +171,7 @@ public class Pay implements Parcelable {
 
         // Todo, need to localize this
         if ("Fixed".equals(basis)) {
-            line1 = "Fixed " + misc.toCurrency(getFixedAmount());
+            line1 = misc.toCurrency(getFixedAmount()) + " Fixed";
         } else if ("Hourly".equals(basis)) {
             line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
         } else if ("Blended".equals(basis)) {
@@ -237,8 +235,8 @@ public class Pay implements Parcelable {
         @Override
         public Pay createFromParcel(Parcel source) {
             try {
-                return Pay.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return Pay.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -252,7 +250,7 @@ public class Pay implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

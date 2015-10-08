@@ -3,6 +3,7 @@ package com.fieldnation.json;
 import com.fieldnation.json.annotations.CollectionParameterType;
 import com.fieldnation.json.annotations.Json;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -71,7 +72,7 @@ public class Serializer {
             field.setAccessible(true);
 
             // check that it's annotated for us
-            Json anno = field.getAnnotation(Json.class);
+            Json anno = getAnnotation(field, Json.class);
             if (anno == null)
                 continue;
 
@@ -94,10 +95,6 @@ public class Serializer {
         if (isCollection(destClass)) {
             return unserializeCollection(destClass, (JsonArray) source, (Collection<Object>) init, paramType);
         }
-        if (hasInterface(JsonArray.class, destClass) || hasInterface(JsonObject.class, destClass)) {
-            return source;
-        }
-
         return unserializeObject(destClass, (JsonObject) source);
     }
 
@@ -179,18 +176,17 @@ public class Serializer {
             Field field = fields[i];
             field.setAccessible(true);
 
-            Json anno = field.getAnnotation(Json.class);
+            Json anno = getAnnotation(field, Json.class);
             if (anno == null)
                 continue;
 
             String jname = getFieldName(field, anno.name());
             Class<?> fieldclass = field.getType();
 
-            CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
+            CollectionParameterType collectionParameterType = getAnnotation(field, CollectionParameterType.class);
             try {
                 if (source.has(jname) && source.get(jname) != null) {
-                    // System.out.println("Parsing " + clazz.getName() + ":" +
-                    // jname);
+                    // System.out.println("Parsing " + clazz.getName() + ":" + jname);
                     Object value = null;
                     try {
                         if (collectionParameterType != null) {
@@ -250,6 +246,17 @@ public class Serializer {
         ParameterizedType superclass = (ParameterizedType) clazz.getGenericSuperclass();
         return superclass.getActualTypeArguments()[0];
 
+    }
+
+    public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationClass) {
+        for (int i = 0; i < 2; i++) {
+            try {
+                return field.getAnnotation(annotationClass);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        return null;
     }
 
     private static final Set<Class<?>> _PRIMITIVES = getPrimitives();

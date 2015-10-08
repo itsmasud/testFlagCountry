@@ -1,49 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MessageView"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_marginLeft="16dp"
+    android:layout_marginRight="16dp"
+    android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/message_layout"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content">
 
-        <ImageView
-            android:id="@+id/profile_imageview"
-            style="@style/MessageView_ProfileImageRcvd" />
+        <com.fieldnation.ui.ProfilePicView
+            android:id="@+id/pic_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp" />
 
         <TextView
             android:id="@+id/message_textview"
             style="@style/MessageView_MessageRcvd"
-            android:layout_toRightOf="@+id/profile_imageview"
+            android:layout_toRightOf="@+id/pic_view"
             android:text="@string/placeholder_paragraph" />
     </RelativeLayout>
 
-    <TextView
-        android:id="@+id/username_textview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/message_layout"
-        android:layout_marginLeft="58dp"
-        android:layout_below="@id/message_layout"
-        android:text="Name" />
-
     <LinearLayout
-        style="@style/MessageView_StatusBarRcvd"
-        android:layout_below="@+id/message_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="58dp"
         android:orientation="horizontal">
 
-        <ImageView style="@style/MessageView_Status_Clock" />
+        <TextView
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sent" />
 
         <TextView
             android:id="@+id/time_textview"
-            style="@style/MessageView_Status_Time"
-            android:text="@string/placeholder_date_short" />
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:text="2:30pm" />
 
-        <ImageView
-            android:id="@+id/check_imageview"
-            style="@style/MessageView_Status_Check" />
+        <TextView
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=", From" />
+
+        <TextView
+            android:id="@+id/username_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:text="Kevin Mccallister" />
+
     </LinearLayout>
-
-</RelativeLayout>
+</LinearLayout>

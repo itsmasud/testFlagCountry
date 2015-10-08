@@ -82,10 +82,6 @@
         </LinearLayout>
     </TabHost>
 
-    <View
-        style="?attr/dialogDividerStyle"
-        android:layout_above="@+id/actionbar_view" />
-
     <LinearLayout
         android:id="@+id/actionbar_view"
         style="?attr/dialogActionBarStyle"
@@ -95,12 +91,12 @@
         <Button
             android:id="@+id/back_button"
             style="?attr/dialogCancelButtonStyle"
-            android:text="BACK" />
+            android:text="@string/btn_back" />
 
         <Button
             android:id="@+id/ok_button"
             style="?attr/dialogOkButtonStyle"
-            android:text="NEXT" />
+            android:text="@string/btn_next" />
     </LinearLayout>
 
 

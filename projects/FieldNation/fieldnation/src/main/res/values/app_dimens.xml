@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!--Buttons-->
+    <dimen name="button_height">36dp</dimen>
+    <dimen name="button_horr_padding">12dp</dimen>
+    <dimen name="button_horr_margin">1dp</dimen>
+    <dimen name="button_vert_margin">4dp</dimen>
+    <dimen name="button_min_width">88dp</dimen>
 
-    <!--Dialogs-->
-
-    <!--Tiles-->
 </resources>

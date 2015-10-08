@@ -5,45 +5,48 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="?attr/dialogTitleStyle"
-            android:text="Add Discount" />
-
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            style="?attr/dialogContainerStyle"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Discount Description:" />
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/description_edittext"
-            style="@style/EditText"
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:hint="@string/description"
-            android:imeOptions="actionDone"
-            android:inputType="text" />
+            <TextView
+                android:id="@+id/title_textview"
+                style="?attr/dialogTitleStyle"
+                android:text="@string/add_discount" />
 
-        <TextView
-            style="@style/WorkorderDetail_FieldSubTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Amount:" />
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
 
-        <EditText
-            android:id="@+id/amount_edittext"
-            style="@style/EditText"
-            android:layout_width="fill_parent"
-            android:layout_height="48dp"
-            android:hint="@string/amount"
-            android:imeOptions="actionDone"
-            android:inputType="numberDecimal" />
+                <EditText
+                    android:id="@+id/description_edittext"
+                    style="@style/EditText"
+                    android:hint="@string/description"
+                    android:imeOptions="actionDone"
+                    android:inputType="text" />
+            </android.support.design.widget.TextInputLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp">
+
+                <EditText
+                    android:id="@+id/amount_edittext"
+                    style="@style/EditText"
+                    android:hint="@string/amount"
+                    android:imeOptions="actionDone"
+                    android:inputType="numberDecimal" />
+            </android.support.design.widget.TextInputLayout>
+
+        </LinearLayout>
 
         <LinearLayout
             style="?attr/dialogActionBarStyle"

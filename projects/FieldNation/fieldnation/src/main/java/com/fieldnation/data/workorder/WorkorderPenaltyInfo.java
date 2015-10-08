@@ -5,19 +5,26 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class WorkorderPenaltyInfo {
-
     @Json(name = "amount")
     private Double _amount;
+    @Json(name = "charge_type")
+    private Integer _chargeType;
     @Json(name = "charged")
     private Integer _charged;
-    @Json(name = "chargeType")
-    private Integer _chargeType;
+    @Json(name = "company_id")
+    private Integer _companyId;
+    @Json(name = "currencyString")
+    private String _currencyString;
+    @Json(name = "id")
+    private Integer _id;
     @Json(name = "name")
     private String _name;
-    @Json(name = "penaltyFeeId")
-    private Integer _penaltyFeeId;
-    @Json(name = "ruleExplanation")
+    @Json(name = "rule_explanation")
     private String _ruleExplanation;
+    @Json(name = "status")
+    private Integer _status;
+    @Json(name = "wocpf_id")
+    private Integer _wocpfId;
 
     public WorkorderPenaltyInfo() {
     }
@@ -26,24 +33,40 @@ public class WorkorderPenaltyInfo {
         return _amount;
     }
 
+    public Integer getChargeType() {
+        return _chargeType;
+    }
+
     public Integer getCharged() {
         return _charged;
     }
 
-    public Integer getChargeType() {
-        return _chargeType;
+    public Integer getCompanyId() {
+        return _companyId;
+    }
+
+    public String getCurrencyString() {
+        return _currencyString;
+    }
+
+    public Integer getId() {
+        return _id;
     }
 
     public String getName() {
         return _name;
     }
 
-    public Integer getPenaltyFeeId() {
-        return _penaltyFeeId;
-    }
-
     public String getRuleExplanation() {
         return _ruleExplanation;
+    }
+
+    public Integer getStatus() {
+        return _status;
+    }
+
+    public Integer getWocpfId() {
+        return _wocpfId;
     }
 
     public JsonObject toJson() {

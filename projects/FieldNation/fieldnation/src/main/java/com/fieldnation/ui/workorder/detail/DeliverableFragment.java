@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -12,57 +11,59 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.ActivityResult;
+import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.auth.client.AuthTopicReceiver;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
+import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
+import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.security.SecureRandom;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
-    private final String TAG = UniqueTag.makeTag("ui.workorder.detail.DeliverableFragment");
-
-    // pageRequest parameters
-    public static final String PR_TASK_ID = "PR_TASK_ID";
+    private final String TAG = UniqueTag.makeTag("DeliverableFragment");
 
     // activity result codes
     private static final int RESULT_CODE_BASE = 100;
     private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
     private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
 
-    // private static final int WEB_GET_DOCUMENTS = 1;
-    private static final int WEB_GET_PROFILE = 2;
-    private static final int WEB_DELETE_DELIVERABLE = 3;
-    private static final int WEB_SEND_DELIVERABLE = 4;
-    private static final int WEB_CHANGE = 5;
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -74,24 +75,27 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-
+    private Button _navigateButton;
     private AppPickerDialog _appPickerDialog;
+    private UploadSlotDialog _uploadSlotDialog;
+
+    // Dialog
+    private TwoButtonDialog _yesNoDialog;
 
     // Data
-    private Context _context;
     private Workorder _workorder;
-    private WorkorderService _service;
+    private WorkorderClient _workorderClient;
+    private GlobalTopicClient _globalClient;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
     private final SecureRandom _rand = new SecureRandom();
     private int _uploadingSlotId = -1;
-    private int _uploadCount = 0;
-    private int _deleteCount = 0;
     private File _tempFile;
+    private DocumentClient _docClient;
+
 
     // Temporary storage
-    private boolean _isCached = true;
-    private ActivityResult _activityResult = null;
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -130,26 +134,35 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
+        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appPickerDialog.setListener(_appdialog_listener);
+
+        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
+
+        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
+        _navigateButton.setOnClickListener(_navigationButton_onClick);
+
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+
         checkMedia();
 
         populateUi();
     }
 
     @Override
-    public void onActivityCreated(Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        _context = getActivity().getApplicationContext();
+    public void onResume() {
+        super.onResume();
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
-        _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Get Content");
+        _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
-        if (_context.getPackageManager().hasSystemFeature(
+        if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            _appPickerDialog.addIntent(_context.getPackageManager(), intent, "Take Picture");
+            _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
     }
 
@@ -167,31 +180,35 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _context = activity.getApplicationContext();
-        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _appPickerDialog.setListener(_appdialog_listener);
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(activity);
+
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(activity);
+
+        _docClient = new DocumentClient(_documentClient_listener);
+        _docClient.connect(activity);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        AuthTopicService.subscribeAuthState(_context, 0, TAG, _authReceiver);
-        Topics.subscrubeProfileUpdated(_context, TAG + ":ProfileService", _profile_topicService);
-    }
+    public void onDetach() {
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(getActivity());
 
-    @Override
-    public void onPause() {
-        TopicService.delete(_context, TAG);
-        TopicService.delete(_context, TAG + ":ProfileService");
-        super.onPause();
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(getActivity());
+
+        if (_docClient != null && _docClient.isConnected())
+            _docClient.disconnect(getActivity());
+        super.onDetach();
     }
 
     private boolean checkMedia() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return true;
-        } else {
-            return false;
-        }
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     @Override
@@ -202,17 +219,18 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _isCached = isCached;
         populateUi();
     }
 
     private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(_context, WorkorderActivity.class);
+        if (getActivity() == null)
+            return null;
+        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
         intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-        return PendingIntent.getActivity(_context, _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     @Override
@@ -226,16 +244,10 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
-    private void tryActivityResult() {
-        if (_activityResult != null) {
-            Log.v(TAG, "recovering");
-            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
-                _activityResult = null;
-        }
-
-    }
-
     private void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_workorder == null)
             return;
 
@@ -245,11 +257,19 @@ public class DeliverableFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
-        tryActivityResult();
+        if (_workorder.canChangeDeliverables()) {
+            _navigateButton.setVisibility(View.VISIBLE);
+        } else {
+            _navigateButton.setVisibility(View.GONE);
+        }
 
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
+            if (_reviewList.getChildCount() > docs.length) {
+                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
                 private final Document[] _docs = docs;
 
@@ -259,21 +279,14 @@ public class DeliverableFragment extends WorkorderFragment {
                     if (i < _reviewList.getChildCount()) {
                         v = (DocumentView) _reviewList.getChildAt(i);
                     } else {
-                        v = new DocumentView(_context);
+                        v = new DocumentView(getActivity());
                         _reviewList.addView(v);
                     }
                     Document doc = _docs[i];
                     v.setData(_workorder, doc);
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    if (_reviewList.getChildCount() > count) {
-                        _reviewList.removeViews(count - 1, _reviewList.getChildCount() - count);
-                    }
-                }
             };
-            _reviewList.post(r);
+            _reviewList.postDelayed(r, new Random().nextInt(1000));
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _reviewList.removeAllViews();
@@ -286,6 +299,10 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
+            if (_filesLayout.getChildCount() > slots.length) {
+                _filesLayout.removeViews(slots.length - 1, _filesLayout.getChildCount() - slots.length);
+            }
+
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
@@ -295,23 +312,15 @@ public class DeliverableFragment extends WorkorderFragment {
                     if (i < _filesLayout.getChildCount()) {
                         v = (UploadSlotView) _filesLayout.getChildAt(i);
                     } else {
-                        v = new UploadSlotView(_context);
+                        v = new UploadSlotView(getActivity());
                         _filesLayout.addView(v);
                     }
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
                 }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    Log.v(TAG, "US fin: " + count + "/" + _filesLayout.getChildCount());
-                    if (_filesLayout.getChildCount() > count) {
-                        _filesLayout.removeViews(count - 1, _filesLayout.getChildCount() - count);
-                    }
-                }
             };
-            _filesLayout.post(r);
+            _filesLayout.postDelayed(r, new Random().nextInt(1000));
         } else {
             _filesLayout.removeAllViews();
         }
@@ -320,57 +329,90 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-
-    private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-
-        if (_workorder == null)
-            return false;
-
-        if (_uploadingSlotId < 0)
-            return false;
-
-        if (_service == null)
-            return false;
-
-        if (getActivity() == null)
-            return false;
-
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
-
-            setLoading(true);
-
-            if (data == null) {
-                if (_tempFile == null)
-                    return false;
-
-                Log.v(TAG, "local path");
-                getActivity().startService(_service.uploadDeliverable(WEB_SEND_DELIVERABLE,
-                        _workorder.getWorkorderId(), _uploadingSlotId,
-                        _tempFile.getAbsolutePath(), getNotificationIntent()));
-
-                return true;
-            } else {
-                Log.v(TAG, "from intent");
-                getActivity().startService(_service.uploadDeliverable(
-                        WEB_SEND_DELIVERABLE, _workorder.getWorkorderId(),
-                        _uploadingSlotId, data, getNotificationIntent()));
-                return true;
-            }
-        }
-        return true;
-    }
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        _activityResult = new ActivityResult(requestCode, resultCode, data);
-        tryActivityResult();
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (!isAdded()) {
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
+
+        try {
+            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
+
+                setLoading(true);
+
+                if (data == null) {
+                    Log.v(TAG, "local path");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, _tempFile.getName(), _tempFile.getAbsolutePath());
+
+                } else {
+                    Log.v(TAG, "from intent");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, data);
+                }
+            }
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 100);
+        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workorder.getUploadSlots().length > 1) {
+                _uploadSlotDialog.setUploadSlots(_workorder.getUploadSlots());
+                _uploadSlotDialog.setListener(new UploadSlotDialog.Listener() {
+                    @Override
+                    public void onItemClick(int position) {
+                        UploadSlot slot = _workorder.getUploadSlots()[position];
+                        if (checkMedia()) {
+                            // start of the upload process
+                            _uploadingSlotId = slot.getSlotId();
+                            _appPickerDialog.show();
+                        } else if (getActivity() != null) {
+                            Toast.makeText(
+                                    getActivity(),
+                                    "Need External Storage, please insert storage device before continuing",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                        _uploadSlotDialog.dismiss();
+                    }
+                });
+                _uploadSlotDialog.show();
+            } else {
+                UploadSlot slot = _workorder.getUploadSlots()[0];
+                if (checkMedia()) {
+                    // start of the upload process
+                    _uploadingSlotId = slot.getSlotId();
+                    _appPickerDialog.show();
+                } else if (getActivity() != null) {
+                    Toast.makeText(
+                            getActivity(),
+                            "Need External Storage, please insert storage device before continuing",
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+        }
+    };
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
@@ -384,13 +426,29 @@ public class DeliverableFragment extends WorkorderFragment {
     private final UploadedDocumentView.Listener _uploaded_document_listener = new UploadedDocumentView.Listener() {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
-            _deleteCount++;
-            _context.startService(_service.deleteDeliverable(WEB_DELETE_DELIVERABLE,
-                    _workorder.getWorkorderId(),
-                    document.getWorkorderUploadId()));
+            final int documentId = document.getId();
+            _yesNoDialog.setData("Delete File",
+                    "Are you sure you want to delete this file?", "YES", "NO",
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                    documentId);
+                            setLoading(true);
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+
         }
     };
-
 
     // step 1, user taps on the add button
     private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
@@ -400,15 +458,14 @@ public class DeliverableFragment extends WorkorderFragment {
                 // start of the upload process
                 _uploadingSlotId = slot.getSlotId();
                 _appPickerDialog.show();
-            } else {
+            } else if (getActivity() != null) {
                 Toast.makeText(
-                        _context,
+                        getActivity(),
                         "Need External Storage, please insert storage device before continuing",
                         Toast.LENGTH_LONG).show();
             }
         }
     };
-
 
     // step 2, user selects an app to load the file with
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
@@ -423,20 +480,16 @@ public class DeliverableFragment extends WorkorderFragment {
                     info.activityInfo.applicationInfo.packageName,
                     info.activityInfo.name));
 
-            _uploadCount++;
-
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = _context.getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
-            // next: see onActivityResult()
         }
     };
 
@@ -444,107 +497,79 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final TopicReceiver _profile_topicService = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (getActivity() == null)
-                return;
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                parcel.setClassLoader(getActivity().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-            }
+        public void onConnected() {
+            _globalClient.subGotProfile();
+        }
+
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
             populateUi();
         }
     };
-    private final AuthTopicReceiver _authReceiver = new AuthTopicReceiver(new Handler()) {
+
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
-        public void onAuthentication(String username, String authToken, boolean isNew) {
-            if (_service == null || isNew) {
-                _service = new WorkorderService(_context, username, authToken, _resultReceiver);
-            }
+        public void onConnected() {
+            _workorderClient.subDeliverableUpload();
         }
 
         @Override
-        public void onAuthenticationFailed(boolean networkDown) {
-            _service = null;
-        }
-
-        @Override
-        public void onAuthenticationInvalidated() {
-            _service = null;
-        }
-
-        @Override
-        public void onRegister(int resultCode, String topicId) {
-            AuthTopicService.requestAuthentication(_context);
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            WorkorderClient.get(App.get(), workorderId, false);
         }
     };
 
-
-    private final WebResultReceiver _resultReceiver = new WebResultReceiver(
-            new Handler()) {
+    private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
         @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-            Log.v(TAG, "Method Stub: onSuccess()");
-            if (resultCode == WEB_GET_PROFILE) {
-                populateUi();
-            } else if (resultCode == WEB_DELETE_DELIVERABLE
-                    || resultCode == WEB_SEND_DELIVERABLE) {
-                Log.v(TAG, "WEB_DELETE_DELIVERABLE || WEB_SEND_DELIVERABLE");
-                if (resultCode == WEB_DELETE_DELIVERABLE)
-                    _deleteCount--;
+        public void onConnected() {
+            _docClient.subDocument();
+        }
 
-                if (resultCode == WEB_SEND_DELIVERABLE)
-                    _uploadCount--;
+        @Override
+        public void onDownload(long documentId, File file, int state) {
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                    ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
+                return;
+            }
 
-                if (_deleteCount < 0)
-                    _deleteCount = 0;
-                if (_uploadCount < 0)
-                    _uploadCount = 0;
-
-                // TODO, update individual UI elements when complete.
-                if (_deleteCount == 0 && _uploadCount == 0) {
-                    _workorder.dispatchOnChange();
-                    setLoading(true);
+            // todo, maybe this should be put somewhere else
+            new AsyncTaskEx<File, Object, Object>() {
+                @Override
+                protected Object doInBackground(File... params) {
+                    try {
+                        File f = params[0];
+                        String name = f.getName();
+                        name = name.substring(name.indexOf("_") + 1);
+                        misc.copyFile(f, new File(App.get().getDownloadsFolder() + "/" + name));
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
+                    return null;
                 }
+            }.executeEx(file);
 
-            } else if (resultCode == WEB_CHANGE) {
-                Log.v(TAG, "WEB_CHANGE");
-                setLoading(true);
-                _workorder.dispatchOnChange();
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
+
+            if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                startActivity(intent);
             } else {
-                Log.v(TAG, "unknown resultcode");
-            }
-        }
+                String name = file.getName();
+                name = name.substring(name.indexOf("_") + 1);
 
-        @Override
-        public Context getContext() {
-            return DeliverableFragment.this._context;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
+                Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                    PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                    ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                } else {
+                    ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
                 }
             }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
-            if (resultCode == WEB_DELETE_DELIVERABLE)
-                _deleteCount--;
-            if (resultCode == WEB_SEND_DELIVERABLE)
-                _uploadCount--;
-            _service = null;
-            try {
-                Toast.makeText(_context, R.string.toast_could_not_complete_request, Toast.LENGTH_LONG).show();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            setLoading(false);
         }
     };
-
 }

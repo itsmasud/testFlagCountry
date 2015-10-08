@@ -17,23 +17,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="By signing this work order you acknowledge that the work has been satisfactorily completed" />
+            android:text="@string/by_signing_this_work_order_notice" />
 
         <EditText
             android:id="@+id/name_edittext"
-            style="?attr/tileEditText"
+            style="@style/EditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/tileContentPadding"
-            android:hint="Enter your name" />
+            android:hint="@string/enter_your_name" />
     </LinearLayout>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_view"
-        android:layout_below="@+id/top_view"
-        android:background="@drawable/edittext_bg">
+        android:layout_below="@+id/top_view">
 
         <com.fieldnation.ui.SignatureView
             android:id="@+id/signature_view"
@@ -61,12 +60,12 @@
                 android:layout_width="fill_parent"
                 android:layout_height="1dp"
                 android:layout_gravity="bottom"
-                android:background="@color/SignatureCardGrey" />
+                android:background="@color/fn_divider" />
         </LinearLayout>
 
         <Button
             android:id="@+id/clear_button"
-            style="@style/Button.Material.Flat"
+            style="@style/Material.Button.Flat"
             android:layout_width="100dp"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
@@ -87,14 +86,14 @@
 
         <Button
             android:id="@+id/back_button"
-            style="@style/ButtonWhiteMaterial"
+            style="?attr/buttonWhiteStyle"
             android:layout_width="150dp"
             android:layout_centerVertical="true"
-            android:text="BACK TO REVIEW" />
+            android:text="@string/btn_back_to_review" />
 
         <Button
             android:id="@+id/submit_button"
-            style="@style/ButtonOrangeMaterial"
+            style="?attr/buttonOrangeStyle"
             android:layout_width="150dp"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"

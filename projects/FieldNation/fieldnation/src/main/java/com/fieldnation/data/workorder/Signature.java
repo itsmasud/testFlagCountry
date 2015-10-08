@@ -114,7 +114,7 @@ public class Signature implements Parcelable {
         @Override
         public Signature createFromParcel(Parcel source) {
             try {
-                return Signature.fromJson(new JsonObject(source.readString()));
+                return Signature.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -134,6 +134,6 @@ public class Signature implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }

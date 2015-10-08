@@ -15,7 +15,7 @@ public class ExpenseCategories {
 
     private static ExpenseCategory[] _categories = null;
 
-    private Context _context;
+    private final Context _context;
     // private WorkorderService _ws;
     private Listener _listener = null;
 
@@ -38,8 +38,10 @@ public class ExpenseCategories {
             if (_listener != null)
                 _listener.onHaveCategories(_categories);
         } else {
+            // TODO look at async task
             try {
                 InputStream is = _context.getResources().openRawResource(R.raw.expensecategories);
+                //noinspection ConstantConditions, can't be null beacuse resource always exists
                 JsonArray ja = new JsonArray(
                         new String(misc.readAllFromStream(is, 1024, -1, 1000)));
 
@@ -136,6 +138,6 @@ public class ExpenseCategories {
 //    };
 
     public interface Listener {
-        public void onHaveCategories(ExpenseCategory[] categories);
+        void onHaveCategories(ExpenseCategory[] categories);
     }
 }

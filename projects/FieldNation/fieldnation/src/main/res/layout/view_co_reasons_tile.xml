@@ -22,7 +22,7 @@
 
         <EditText
             android:id="@+id/request_reason_edittext"
-            style="?attr/tileEditText"
+            style="@style/EditText"
             android:layout_height="wrap_content"
             android:hint="@string/reason_for_request"
             android:inputType="textMultiLine"
@@ -38,13 +38,13 @@
                 android:id="@+id/expires_checkbox"
                 style="?attr/tileCheckBoxStyle"
                 android:layout_width="wrap_content"
-                android:text="Valid until" />
+                android:text="@string/valid_until" />
 
             <Button
                 android:id="@+id/expires_button"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:layout_width="wrap_content"
-                android:text="10/20/2014 11:11am" />
+                android:text="@string/placeholder_date_long" />
         </LinearLayout>
 
         <LinearLayout
@@ -56,11 +56,11 @@
                 android:id="@+id/tac_checkbox"
                 style="?attr/tileCheckBoxStyle"
                 android:layout_width="wrap_content"
-                android:text="I accept" />
+                android:text="@string/i_accept" />
 
             <Button
                 android:id="@+id/tac_button"
-                style="?attr/buttonTextLinkStyle"
+                style="?attr/buttonFlatStyle"
                 android:text="@string/terms_and_conditions" />
         </LinearLayout>
 

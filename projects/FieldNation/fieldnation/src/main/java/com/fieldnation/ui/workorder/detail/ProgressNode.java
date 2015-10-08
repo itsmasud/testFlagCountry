@@ -1,7 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.R;
-
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.util.AttributeSet;
@@ -9,6 +7,8 @@ import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.fieldnation.R;
 
 public class ProgressNode extends LinearLayout {
 

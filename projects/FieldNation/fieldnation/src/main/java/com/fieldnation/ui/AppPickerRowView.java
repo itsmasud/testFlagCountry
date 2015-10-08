@@ -63,6 +63,6 @@ public class AppPickerRowView extends RelativeLayout {
     };
 
     public interface OnClickListener {
-        public void onClick(AppPickerRowView row, AppPickerPackage pack);
+        void onClick(AppPickerRowView row, AppPickerPackage pack);
     }
 }

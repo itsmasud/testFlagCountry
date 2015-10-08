@@ -92,8 +92,60 @@ public class Schedule implements Parcelable {
         _endTime = endTime;
     }
 
-    // Todo, localize this
+    public String getFormatedDate() {
+        try {
+            if (!misc.isEmptyOrNull(getStartTime())) {
+                String when = "";
+                Calendar cal = null;
+                cal = ISO8601.toCalendar(getStartTime());
+                when = misc.formatDateReallyLong(cal);
+
+                // Wednesday, Dec 4, 2056
+                if (!misc.isEmptyOrNull(getEndTime())) {
+                    Calendar ecal = ISO8601.toCalendar(getEndTime());
+                    if (ecal.get(Calendar.YEAR) > 2000
+                            && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
+                        when += "\n";
+                        when += misc.formatDateReallyLong(cal);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
     public String getFormatedTime() {
+        try {
+            if (!misc.isEmptyOrNull(getStartTime())) {
+                String when = "";
+                Calendar cal = null;
+                cal = ISO8601.toCalendar(getStartTime());
+                when = misc.formatTime(cal, false);
+
+                if (!misc.isEmptyOrNull(getEndTime())) {
+                    cal = ISO8601.toCalendar(getEndTime());
+                    if (cal.get(Calendar.YEAR) > 2000) {
+                        when += " - ";
+                        when += misc.formatTime(cal, false);
+                    }
+                }
+                return when;
+            } else {
+                return null;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+    // Todo, localize this
+    public String getFormatedStartTime() {
         try {
             if (!misc.isEmptyOrNull(getStartTime())) {
                 String when = "";
@@ -142,7 +194,7 @@ public class Schedule implements Parcelable {
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
 
-                return "You will need to arrive exactly on " + dayDate + " at " + time + ".";
+                return "Exactly on " + dayDate + " @ " + time;
 
             } catch (ParseException e) {
                 e.printStackTrace();
@@ -157,7 +209,7 @@ public class Schedule implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\tAnd work for ";
+                    String msg = "Exactly on " + dayDate + " @ " + time + ".\n\t for ";
 
                     long length = ISO8601.toUtc(getEndTime()) - ISO8601.toUtc(getStartTime());
 
@@ -177,19 +229,19 @@ public class Schedule implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
+                    String msg = "Between " + dayDate + " @ " + time + "\nand";
 
                     Calendar cal2 = ISO8601.toCalendar(getEndTime());
 
                     // same day
                     if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
                         time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                        msg += time + ".";
+                        msg += time;
 
                     } else {
                         dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
                         time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                        msg += dayDate + " at " + time + ".";
+                        msg += dayDate + " @ " + time;
                     }
 
                     return msg;
@@ -214,8 +266,8 @@ public class Schedule implements Parcelable {
         @Override
         public Schedule createFromParcel(Parcel source) {
             try {
-                return Schedule.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException ex) {
+                return Schedule.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception ex) {
                 ex.printStackTrace();
             }
             return null;
@@ -234,7 +286,7 @@ public class Schedule implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 }

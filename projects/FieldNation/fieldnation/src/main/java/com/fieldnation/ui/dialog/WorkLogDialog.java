@@ -22,7 +22,7 @@ import java.text.ParseException;
 import java.util.Calendar;
 
 public class WorkLogDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.WorkLogDialog";
+    private static final String TAG = "WorkLogDialog";
 
     // State
     private static final String STATE_TITLE = "STATE_TITLE";
@@ -176,21 +176,21 @@ public class WorkLogDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _start_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _start_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, "start");
         }
     };
 
-    private View.OnClickListener _end_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _end_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _datePicker.show(_fm, "end");
         }
     };
 
-    private DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             String tag = datePickerDialog.getTag();
@@ -204,7 +204,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         }
     };
 
-    private TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
@@ -223,7 +223,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         }
     };
 
-    private View.OnClickListener _ok_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int deviceCount = -1;
@@ -240,7 +240,7 @@ public class WorkLogDialog extends DialogFragmentBase {
             }
         }
     };
-    private View.OnClickListener _cancel_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             dismiss();
@@ -250,8 +250,8 @@ public class WorkLogDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount);
+        void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount);
 
-        public void onCancel();
+        void onCancel();
     }
 }

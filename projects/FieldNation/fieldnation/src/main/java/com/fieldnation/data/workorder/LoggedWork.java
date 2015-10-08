@@ -7,15 +7,13 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 public class LoggedWork implements Parcelable {
-@Json(name="checkInDistance")
-	private Double _checkInDistance;
-	@Json(name="checkOutDistance")
-	private Double _checkOutDistance;
-	@Json(name="checkinHoursId")
-	private Integer _checkinHoursId;
+    @Json(name = "checkInDistance")
+    private Double _checkInDistance;
+    @Json(name = "checkOutDistance")
+    private Double _checkOutDistance;
+    @Json(name = "checkinHoursId")
+    private Integer _checkinHoursId;
     @Json(name = "checkinLat")
     private Double _checkinLat;
     @Json(name = "checkinLng")
@@ -24,16 +22,16 @@ public class LoggedWork implements Parcelable {
     private Double _checkoutLat;
     @Json(name = "checkoutLng")
     private Double _checkoutLng;
-	@Json(name="date2")
-	private String _date2;
-	@Json(name="date2Formatted")
-	private String _date2Formatted;
+    @Json(name = "date2")
+    private String _date2;
+    @Json(name = "date2Formatted")
+    private String _date2Formatted;
     @Json(name = "endDate")
     private String _endDate;
     @Json(name = "endTime")
     private String _endTime;
-	@Json(name="endTimeEdit")
-	private String _endTimeEdit;
+    @Json(name = "endTimeEdit")
+    private String _endTimeEdit;
     @Json(name = "hours")
     private Double _hours;
     @Json(name = "hoursType")
@@ -42,32 +40,33 @@ public class LoggedWork implements Parcelable {
     private Long _loggedHoursId;
     @Json(name = "noOfDevices")
     private Integer _noOfDevices;
-	@Json(name="noOfDevicesEdit")
-	private Integer _noOfDevicesEdit;
+    @Json(name = "noOfDevicesEdit")
+    private Integer _noOfDevicesEdit;
     @Json(name = "startDate")
     private String _startDate;
-	@Json(name="startDateEdit")
-	private String _startDateEdit;
-	@Json(name="startDateFormatted")
-	private String _startDateFormatted;
+    @Json(name = "startDateEdit")
+    private String _startDateEdit;
+    @Json(name = "startDateFormatted")
+    private String _startDateFormatted;
     @Json(name = "startTime")
     private String _startTime;
-	@Json(name="startTimeEdit")
-	private String _startTimeEdit;
+    @Json(name = "startTimeEdit")
+    private String _startTimeEdit;
 
     public LoggedWork() {
     }
-	public Double getCheckInDistance(){
-		return _checkInDistance;
-	}
 
-	public Double getCheckOutDistance(){
-		return _checkOutDistance;
-	}
+    public Double getCheckInDistance() {
+        return _checkInDistance;
+    }
 
-	public Integer getCheckinHoursId(){
-		return _checkinHoursId;
-	}
+    public Double getCheckOutDistance() {
+        return _checkOutDistance;
+    }
+
+    public Integer getCheckinHoursId() {
+        return _checkinHoursId;
+    }
 
     public Double getCheckinLat() {
         return _checkinLat;
@@ -85,13 +84,13 @@ public class LoggedWork implements Parcelable {
         return _checkoutLng;
     }
 
-	public String getDate2(){
-		return _date2;
-	}
+    public String getDate2() {
+        return _date2;
+    }
 
-	public String getDate2Formatted(){
-		return _date2Formatted;
-	}
+    public String getDate2Formatted() {
+        return _date2Formatted;
+    }
 
     public String getEndDate() {
         return _endDate;
@@ -101,9 +100,9 @@ public class LoggedWork implements Parcelable {
         return _endTime;
     }
 
-	public String getEndTimeEdit(){
-		return _endTimeEdit;
-	}
+    public String getEndTimeEdit() {
+        return _endTimeEdit;
+    }
 
     public Double getHours() {
         return _hours;
@@ -121,29 +120,29 @@ public class LoggedWork implements Parcelable {
         return _noOfDevices;
     }
 
-	public Integer getNoOfDevicesEdit(){
-		return _noOfDevicesEdit;
-	}
+    public Integer getNoOfDevicesEdit() {
+        return _noOfDevicesEdit;
+    }
 
     public String getStartDate() {
         return _startDate;
     }
 
-	public String getStartDateEdit(){
-		return _startDateEdit;
-	}
+    public String getStartDateEdit() {
+        return _startDateEdit;
+    }
 
-	public String getStartDateFormatted(){
-		return _startDateFormatted;
-	}
+    public String getStartDateFormatted() {
+        return _startDateFormatted;
+    }
 
     public String getStartTime() {
         return _startTime;
     }
 
-	public String getStartTimeEdit(){
-		return _startTimeEdit;
-	}
+    public String getStartTimeEdit() {
+        return _startTimeEdit;
+    }
 
     public JsonObject toJson() {
         return toJson(this);
@@ -175,8 +174,8 @@ public class LoggedWork implements Parcelable {
         @Override
         public LoggedWork createFromParcel(Parcel source) {
             try {
-                return LoggedWork.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return LoggedWork.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -195,6 +194,6 @@ public class LoggedWork implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }

@@ -7,10 +7,10 @@ import android.widget.BaseAdapter;
 import java.util.List;
 
 public class AppPickerAdapter extends BaseAdapter {
-    private static String TAG = "com.fieldnation.ui.AppPickerAdapter";
+    private static String TAG = "AppPickerAdapter";
 
-    private List<AppPickerPackage> _appList;
-    private AppPickerRowView.OnClickListener _listener;
+    private final List<AppPickerPackage> _appList;
+    private final AppPickerRowView.OnClickListener _listener;
 
     public AppPickerAdapter(List<AppPickerPackage> list, AppPickerRowView.OnClickListener listener) {
         super();

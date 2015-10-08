@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +25,8 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -35,7 +34,7 @@ import java.util.List;
  * Created by michael.carver on 11/5/2014.
  */
 public class CounterOfferDialog extends DialogFragmentBase {
-    private static final String TAG = "ui.dialog.CounterOfferDialog";
+    private static final String TAG = "CounterOfferDialog";
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
@@ -64,9 +63,10 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private TermsDialog _termsDialog;
 
     // Data State
+    private final List<Expense> _expenses = new LinkedList<>();
+
     private Workorder _workorder;
     private Pay _counterPay;
-    private List<Expense> _expenses = new LinkedList<Expense>();
     private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
@@ -97,8 +97,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_EXPENSES)) {
                 Parcelable[] parc = savedInstanceState.getParcelableArray(STATE_EXPENSES);
                 _expenses.clear();
-                for (int i = 0; i < parc.length; i++) {
-                    _expenses.add((Expense) parc[i]);
+                for (Parcelable aParc : parc) {
+                    _expenses.add((Expense) aParc);
                 }
             }
 
@@ -363,7 +363,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private final ReasonCoView.Listener _reason_listener = new ReasonCoView.Listener() {
         @Override
         public void onTacClick() {
-            _termsDialog.show();
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
         @Override
@@ -396,11 +396,14 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _expenses.clear();
             if (info != null && info.getExpense() != null && info.getExpense().length > 0) {
                 Expense[] exp = info.getExpense();
-                for (int i = 0; i < exp.length; i++) {
-                    _expenses.add(exp[i]);
-                }
+                Collections.addAll(_expenses, exp);
             }
             populateUi();
+        }
+
+        @Override
+        public void editExpense(Expense expense) {
+            // TODO editExpense
         }
     };
 
@@ -456,7 +459,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
     private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
         @Override
-        public void onComplete(Pay pay) {
+        public void onComplete(Pay pay, String explanation) {
             _counterPay = pay;
             populateUi();
         }
@@ -495,8 +498,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 }
 
                 _counterReason = _reasonView.getReason();
-//                if (misc.isEmptyOrNull(_counterReason)){
-//                    Toast.makeText(getActivity(), "Must enter a reason to continue", Toast.LENGTH_LONG).show();
+
+//                if (misc.isEmptyOrNull(_counterReason)) {
+//                    Toast.makeText(getActivity(), "Counter offer reason cannot be null. Please enter a reason.", Toast.LENGTH_LONG).show();
 //                    return;
 //                }
 
@@ -506,17 +510,19 @@ public class CounterOfferDialog extends DialogFragmentBase {
                     for (int i = 0; i < _expenses.size(); i++) {
                         exp[i] = _expenses.get(i);
                     }
-                    int seconds = 0;
 
-
-                    try {
-                        seconds = (int) (ISO8601.toUtc(_expirationDate)
-                                - System.currentTimeMillis()) / 1000;
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    int seconds = -1;
+                    if (_expires) {
+                        try {
+                            seconds = (int) (ISO8601.toUtc(_expirationDate)
+                                    - System.currentTimeMillis()) / 1000;
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
                     }
 
                     _listener.onOk(_workorder, _counterReason, _expires, seconds, _counterPay, _counterSchedule, exp);
+                    _tacAccpet = false;
                     dismiss();
                 }
             }
@@ -531,7 +537,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        public void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
+        void onOk(Workorder workorder, String reason, boolean expires, int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses);
     }
 
 }

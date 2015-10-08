@@ -1,11 +1,9 @@
-<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/container"
-    android:background="@color/activity_bg"
+<com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/actionbardrawerview"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <!-- The main content view -->
-
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
@@ -14,34 +12,19 @@
             android:id="@+id/items_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentTop="true"
+            android:layout_below="@+id/toolbar"
             android:animateLayoutChanges="true"
             android:divider="@null"
             android:dividerHeight="0dp"
-            android:smoothScrollbar="false" />
-
-        <com.fieldnation.ui.ReconnectWarningView
-            android:id="@+id/reconnect_view"
-            android:visibility="gone"
-            android:layout_alignParentBottom="true"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:smoothScrollbar="true" />
 
         <com.fieldnation.ui.RefreshView
             android:id="@+id/refresh_view"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
+            android:layout_below="@+id/toolbar"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-50dp" />
-
     </RelativeLayout>
 
-    <!-- The navigation drawer -->
-
-    <com.fieldnation.ui.DrawerView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="start" />
-
-</android.support.v4.widget.DrawerLayout>
+</com.fieldnation.ui.ActionBarDrawerView>

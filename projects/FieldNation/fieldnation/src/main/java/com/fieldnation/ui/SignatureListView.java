@@ -16,11 +16,13 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 12/5/2014.
  */
 public class SignatureListView extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "ui.SummaryListView";
+    private static final String TAG = "SummaryListView";
 
     // Ui
     private LinearLayout _listView;
@@ -49,7 +51,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         init();
     }
 
-    public void init() {
+    private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_signature_list, this);
 
         if (isInEditMode())
@@ -66,7 +68,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
         populateUI();
@@ -77,18 +79,16 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
     }
 
     private void populateUI() {
+        setVisibility(View.GONE);
         if (_addButton == null) {
-            setVisibility(View.GONE);
             return;
         }
 
         if (_workorder == null) {
-            setVisibility(View.GONE);
             return;
         }
 
         if (!_workorder.canAcceptSignature()) {
-            setVisibility(View.GONE);
             return;
         }
 
@@ -98,43 +98,43 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
         if (list == null || list.length == 0) {
             _noDataTextView.setVisibility(View.VISIBLE);
+            _listView.setVisibility(GONE);
             return;
         }
 
         _noDataTextView.setVisibility(View.GONE);
+        _listView.setVisibility(VISIBLE);
+
+        if (_listView.getChildCount() > list.length) {
+            _listView.removeViews(list.length - 1, _listView.getChildCount() - list.length);
+        }
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
             private Signature[] _list = list;
 
             @Override
             public void next(int i) throws Exception {
-                SignatureTileView v = null;
+                SignatureCardView v = null;
                 if (i < _listView.getChildCount()) {
-                    v = (SignatureTileView) _listView.getChildAt(i);
+                    v = (SignatureCardView) _listView.getChildAt(i);
                 } else {
-                    v = new SignatureTileView(getContext());
+                    v = new SignatureCardView(getContext());
                     _listView.addView(v);
                 }
                 Signature sig = _list[i];
                 v.setSignature(sig);
                 v.setOnClickListener(_signature_onClick);
-            }
-
-            @Override
-            public void finish(int count) throws Exception {
-                if (_listView.getChildCount() > count) {
-                    _listView.removeViews(count - 1, _listView.getChildCount() - count);
-                }
+                v.setOnLongClickListener(_signature_onLongClick);
             }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private OnClickListener _add_onClick = new OnClickListener() {
+    private final View.OnClickListener _add_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -142,21 +142,31 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
     };
 
-    private OnClickListener _signature_onClick = new OnClickListener() {
+    private final View.OnClickListener _signature_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            SignatureTileView view = (SignatureTileView) v;
+            SignatureCardView view = (SignatureCardView) v;
             if (_listener != null)
                 _listener.signatureOnClick(view, view.getSignature());
+        }
+    };
 
+    private final View.OnLongClickListener _signature_onLongClick = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            SignatureCardView view = (SignatureCardView) v;
+            if (_listener != null)
+                return _listener.signatureOnLongClick(view, view.getSignature());
+            return false;
         }
     };
 
     public interface Listener {
-        public void addSignature();
+        void addSignature();
 
-        public void signatureOnClick(SignatureTileView view, Signature signature);
+        void signatureOnClick(SignatureCardView view, Signature signature);
 
+        boolean signatureOnLongClick(SignatureCardView view, Signature signature);
     }
 
 }

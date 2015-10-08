@@ -4,22 +4,22 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.topics.GaTopic;
 import com.fieldnation.utils.misc;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.text.ParseException;
 
@@ -30,7 +30,7 @@ import java.text.ParseException;
  * @author michael.carver
  */
 public class WorkorderCardView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.WorkorderCardView";
+    private static final String TAG = "WorkorderCardView";
 
     public static final int MODE_NORMAL = 1;
     public static final int MODE_UNDO_NOT_INTERESTED = 2;
@@ -44,23 +44,20 @@ public class WorkorderCardView extends RelativeLayout {
     /*-private LinearLayout _notInterestedButtonLayout;-*/
 
     // background
-    private ViewGroup _backgroundLayout;
+//    private ViewGroup _backgroundLayout;
     private View _statusView;
-    private View _backgroundView;
+//    private View _backgroundView;
 
     // main content
-    private RelativeLayout _contentLayout;
+//    private RelativeLayout _contentLayout;
     // status
     private TextView _statusTextView;
     // bundle
-    private RelativeLayout _bundleLayout;
-    private TextView _bundleTitleTextView;
-    /*-private ImageView _bundleImageView;-*/
-    private TextView _bundleTextView;
+    private TextView _bundleIconFont;
 
     // center panel
     // title
-    private ImageView _messageAlertImageView;
+    private TextView _messageAlertIconFont;
     private ImageView _notificationAlertImageView;
     private TextView _titleTextView;
     // items
@@ -71,14 +68,18 @@ public class WorkorderCardView extends RelativeLayout {
     private TextView _workorderIdTextView;
 
     // right panel
-    private LinearLayout _rightLayout;
-    private TextView _moneySymbolTextView;
+//    private LinearLayout _rightLayout;
+//    private TextView _moneySymbolTextView;
+    private LinearLayout _paymentLayout;
     private TextView _paymentTextView;
     private TextView _basisTextView;
     private Button _actionButton;
+    private Button _actionButtonGreen;
+    private Button _actionButtonWhite;
+    private Button _actionButtonOrange;
 
     // loading layout
-    private View _loadingLayout;
+    private RelativeLayout _loadingLayout;
 
     // undo layout
     private RelativeLayout _undoLayout;
@@ -95,6 +96,7 @@ public class WorkorderCardView extends RelativeLayout {
     private boolean _isBundle;
     private String[] _statusStrings;
     private String[] _substatusStrings;
+    private android.location.Location _gpsLocation;
 
     public WorkorderCardView(Context context) {
         super(context);
@@ -133,25 +135,22 @@ public class WorkorderCardView extends RelativeLayout {
 		 */
         /* _notInterestedButtonLayout.setClickable(false); */
 
-        _backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
-        _backgroundView = findViewById(R.id.background_view);
+//        _backgroundLayout = (ViewGroup) findViewById(R.id.background_layout);
+//        _backgroundView = findViewById(R.id.background_view);
         _statusView = findViewById(R.id.status_view);
 
         // main content
-        _contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
+//        _contentLayout = (RelativeLayout) findViewById(R.id.content_layout);
 
         // status
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle bar
-        _bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
-        /*-_bundleImageView = (ImageView) findViewById(R.id.bundle_imageview);-*/
-        _bundleTextView = (TextView) findViewById(R.id.bundle_textview);
-        _bundleTitleTextView = (TextView) findViewById(R.id.bundle_title);
+        _bundleIconFont = (TextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
-        _messageAlertImageView = (ImageView) findViewById(R.id.message_alert_imageview);
+        _messageAlertIconFont = (TextView) findViewById(R.id.message_alert_imageview);
         _notificationAlertImageView = (ImageView) findViewById(R.id.notification_alert_imageview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         // items
@@ -162,19 +161,28 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
 
         // right panel
-        _rightLayout = (LinearLayout) findViewById(R.id.right_layout);
-        // _paymentLayout = (LinearLayout) findViewById(R.id.payment_layout);
+//        _rightLayout = (LinearLayout) findViewById(R.id.right_layout);
+        _paymentLayout = (LinearLayout) findViewById(R.id.payment_layout);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
-        _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
+//        _moneySymbolTextView = (TextView) findViewById(R.id.moneysymbol_textview);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_actionButton_onClick);
+        _actionButtonWhite = (Button) findViewById(R.id.action_button_white);
+        _actionButtonWhite.setOnClickListener(_actionButton_onClick);
+        //_actionButtonWhite.setEnabled(false);
+
+        _actionButtonGreen = (Button) findViewById(R.id.action_button_green);
+        _actionButtonGreen.setOnClickListener(_actionButton_onClick);
+        //_actionButtonGreen.setEnabled(false);
+
+        _actionButtonOrange = (Button) findViewById(R.id.action_button_orange);
+        _actionButtonOrange.setOnClickListener(_actionButton_onClick);
+        //_actionButtonOrange.setEnabled(false);
         //_actionButton.setEnabled(false);
         //_actionButton.setMinTextSize(1F);
 
         // loading layout
-        _loadingLayout = (View) findViewById(R.id.loading_layout);
+        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
 
         // undo layout
         _undoLayout = (RelativeLayout) findViewById(R.id.undo_layout);
@@ -188,7 +196,6 @@ public class WorkorderCardView extends RelativeLayout {
         // _cashLinearLayout.setVisibility(GONE);
 
         // attach my listeners
-        setOnLongClickListener(_this_onLongClickListener);
         setOnClickListener(_this_onClick);
 
         // hook up animations
@@ -211,15 +218,21 @@ public class WorkorderCardView extends RelativeLayout {
         refresh();
     }
 
+    public void setWorkorder(Workorder workorder, android.location.Location location) {
+        _workorder = workorder;
+        _gpsLocation = location;
+        refresh();
+    }
+
     public Workorder getWorkorder() {
         return _workorder;
     }
 
     public void showMessageAlertIcon(boolean enabled) {
         if (enabled) {
-            _messageAlertImageView.setVisibility(VISIBLE);
+            _messageAlertIconFont.setVisibility(VISIBLE);
         } else {
-            _messageAlertImageView.setVisibility(GONE);
+            _messageAlertIconFont.setVisibility(GONE);
         }
     }
 
@@ -243,23 +256,9 @@ public class WorkorderCardView extends RelativeLayout {
 
     public void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleLayout.setVisibility(VISIBLE);
-            _titleTextView.setVisibility(GONE);
-            _basisTextView.setVisibility(GONE);
-            _paymentTextView.setVisibility(GONE);
-            _rightLayout.setVisibility(GONE);
-            _moneySymbolTextView.setVisibility(GONE);
-            showAlertIcon(false);
-            showMessageAlertIcon(false);
+            _bundleIconFont.setVisibility(VISIBLE);
         } else {
-            _bundleLayout.setVisibility(GONE);
-            _titleTextView.setVisibility(VISIBLE);
-            _basisTextView.setVisibility(VISIBLE);
-            _paymentTextView.setVisibility(VISIBLE);
-            _moneySymbolTextView.setVisibility(VISIBLE);
-            _rightLayout.setVisibility(VISIBLE);
-            showAlertIcon(true);
-            showMessageAlertIcon(true);
+            _bundleIconFont.setVisibility(GONE);
         }
         _isBundle = isBundle;
     }
@@ -289,25 +288,10 @@ public class WorkorderCardView extends RelativeLayout {
         }
     };
 
-    private View.OnLongClickListener _this_onLongClickListener = new View.OnLongClickListener() {
-        @Override
-        public boolean onLongClick(View v) {
-            if (_listener != null) {
-                _listener.onLongClick(WorkorderCardView.this, _workorder);
-            }
-
-            // _backImageView.setClickable(true);
-            // _notInterestedButtonLayout.setClickable(true);
-            // _contentLayout.startAnimation(_slideAnimation);
-            // _backgroundLayout.startAnimation(_slideAnimation);
-            return true;
-        }
-    };
-
     private View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            GaTopic.dispatchEvent(getContext(), "WorkorderCardView", "ActionClick", _actionButton.getText().toString(), 1);
+            GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView", GoogleAnalyticsTopicClient.EventAction.CLICK, _actionButton.getText().toString(), 1);
 
             switch (_workorder.getButtonAction()) {
                 case Workorder.BUTTON_ACTION_CHECKIN:
@@ -350,6 +334,11 @@ public class WorkorderCardView extends RelativeLayout {
                         _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
                     }
                     break;
+                case Workorder.BUTTON_ACTION_READY_TO_GO:
+                    if (_listener != null) {
+                        _listener.actionReadyToGo(WorkorderCardView.this, _workorder);
+                    }
+                    break;
             }
         }
     };
@@ -360,8 +349,23 @@ public class WorkorderCardView extends RelativeLayout {
     private void updateStatusUiColors() {
         _statusView.setBackgroundResource(_workorder.getStatusBG());
         _statusTextView.setTextColor(getContext().getResources().getColor(_workorder.getStatusTextColor()));
-        _actionButton.setBackgroundResource(_workorder.getStatusButtonBG());
-        _actionButton.setTextColor(getContext().getResources().getColor(_workorder.getStatusButtonFG()));
+        switch (_workorder.getStatus().getStatusIntent()) {
+            case NORMAL:
+                _actionButton = _actionButtonWhite;
+                break;
+            case SUCCESS:
+                _actionButton = _actionButtonGreen;
+                break;
+            case WAITING:
+                _actionButton = _actionButtonWhite;
+                break;
+            case WARNING:
+                _actionButton = _actionButtonOrange;
+                break;
+        }
+
+        if (_workorder.getNeedsReadyToGo())
+            _actionButton = _actionButtonOrange;
     }
 
     private void refresh() {
@@ -399,7 +403,7 @@ public class WorkorderCardView extends RelativeLayout {
     private void refreshSelected() {
         refreshNormal();
 
-        int color = getContext().getResources().getColor(R.color.woCardSelectedTextColor);
+        int color = getContext().getResources().getColor(R.color.fn_white_text);
         _basisTextView.setTextColor(color);
         _titleTextView.setTextColor(color);
         _clientNameTextView.setTextColor(color);
@@ -409,18 +413,16 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView.setTextColor(color);
         _paymentTextView.setTextColor(color);
         _statusTextView.setTextColor(color);
-        _moneySymbolTextView.setTextColor(color);
-        _bundleTextView.setTextColor(color);
-        _bundleTitleTextView.setTextColor(color);
+//        _moneySymbolTextView.setTextColor(color);
 
-        _backgroundView.setBackgroundResource(R.drawable.card_right_selected);
+//        _backgroundView.setBackgroundResource(R.drawable.card_right_selected);
         _statusView.setBackgroundResource(R.drawable.card_status_black);
         _statusTextView.setText(getResources().getString(R.string.workorder_card_status_selected));
-        _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg_select);
+//        _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg_select);
     }
 
     private void refreshNormal() {
-        int color = getContext().getResources().getColor(R.color.woCardTextColor);
+        int color = getContext().getResources().getColor(R.color.fn_dark_text);
         _basisTextView.setTextColor(color);
         _titleTextView.setTextColor(color);
         _clientNameTextView.setTextColor(color);
@@ -430,13 +432,13 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView.setTextColor(color);
         _paymentTextView.setTextColor(color);
         _statusTextView.setTextColor(color);
-        _moneySymbolTextView.setTextColor(color);
-        _bundleTextView.setTextColor(color);
-        _bundleTitleTextView.setTextColor(color);
+//        _moneySymbolTextView.setTextColor(color);
+//        _bundleTextView.setTextColor(color);
+//        _bundleTitleTextView.setTextColor(color);
 
-        _backgroundView.setBackgroundResource(R.drawable.card_right);
+//        _backgroundView.setBackgroundResource(R.drawable.card_right);
         _statusView.setBackgroundResource(R.drawable.card_status_black);
-        _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg);
+//        _bundleLayout.setBackgroundResource(R.drawable.wo_bundle_bg);
 
         try {
             buildStatus();
@@ -445,16 +447,18 @@ public class WorkorderCardView extends RelativeLayout {
         }
 
 //        if (Debug.isDebuggerConnected()) {
-        _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId() + "");
+        _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
         _workorderIdTextView.setVisibility(VISIBLE);
 //        } else {
 //            _workorderIdTextView.setVisibility(GONE);
 //        }
 
         // bundle
+/*
         if (_workorder.getBundleCount() != null) {
             _bundleTextView.setText(_workorder.getBundleCount() + " Work Orders");
         }
+*/
 
         // title
         String title = _workorder.getTitle();
@@ -512,15 +516,21 @@ public class WorkorderCardView extends RelativeLayout {
                 }
             }
 
+            // TODO hook up to geocoding
             // distance
             if (_workorder.getIsRemoteWork()) {
-                _distanceTextView.setText("Done Remotely");
-            } else if (location.getCity() != null && location.getState() != null) {
-                _distanceTextView.setText(location.getCity() + ", " + location.getState());
-            } else if (location.getDistance() != null) {
-                _distanceTextView.setText(location.getDistance() + " mi");
-            } else if (_workorder.getDistance() != null) {
-                _distanceTextView.setText(_workorder.getDistance() + " mi");
+                _distanceTextView.setText("Remote");
+            } else if (location.getGeo() != null && _gpsLocation != null) {
+                _distanceTextView.setVisibility(VISIBLE);
+                try {
+                    LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                    LatLng myLoc = new LatLng(_gpsLocation);
+
+                    _distanceTextView.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    _distanceTextView.setText("Unknown mi");
+                }
             } else {
                 _distanceTextView.setVisibility(GONE);
             }
@@ -528,7 +538,7 @@ public class WorkorderCardView extends RelativeLayout {
             // distance
             if (_workorder.getIsRemoteWork()) {
                 _distanceTextView.setVisibility(VISIBLE);
-                _distanceTextView.setText("Done Remotely");
+                _distanceTextView.setText("Remote");
                 _clientNameTextView.setVisibility(GONE);
             } else {
                 _distanceTextView.setVisibility(GONE);
@@ -537,7 +547,7 @@ public class WorkorderCardView extends RelativeLayout {
         }
         // when scheduledTimeStart/scheduledTimeEnd
         if (_workorder.getEstimatedSchedule() != null) {
-            String when = _workorder.getEstimatedSchedule().getFormatedTime();
+            String when = _workorder.getEstimatedSchedule().getFormatedStartTime();
 
             if (when == null) {
                 _whenTextView.setVisibility(GONE);
@@ -545,7 +555,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _whenTextView.setText(when);
             }
         } else if (_workorder.getSchedule() != null) {
-            String when = _workorder.getSchedule().getFormatedTime();
+            String when = _workorder.getSchedule().getFormatedStartTime();
 
             if (when == null) {
                 _whenTextView.setVisibility(GONE);
@@ -564,18 +574,17 @@ public class WorkorderCardView extends RelativeLayout {
             String desc = pay.toDisplayStringShort();
             _basisTextView.setText(pay.getPayRateBasis());
             if (desc != null) {
-                _paymentTextView.setText(desc.substring(1));
+                _paymentTextView.setText(desc);
             } else {
-                _rightLayout.setVisibility(GONE);
+                _paymentLayout.setVisibility(GONE);
             }
         } else {
-            _rightLayout.setVisibility(GONE);
+            _paymentLayout.setVisibility(GONE);
         }
 
-        _contentLayout.clearAnimation();
+//        _contentLayout.clearAnimation();
         /*-_backImageView.setClickable(false);
         _notInterestedButtonLayout.setClickable(false);-*/
-
     }
 
     private void buildStatus() throws ParseException {
@@ -586,13 +595,17 @@ public class WorkorderCardView extends RelativeLayout {
         }
         setIsBundle(_workorder.isBundle());
 
+        updateStatusUiColors();
+
         //setNotInterestedEnabled(false);
-        _titleTextView.setVisibility(GONE);
+//        _titleTextView.setVisibility(GONE);
         _whenTextView.setVisibility(GONE);
         _clientNameTextView.setVisibility(GONE);
         _distanceTextView.setVisibility(GONE);
-        _rightLayout.setVisibility(GONE);
-        _actionButton.setVisibility(GONE);
+        _paymentLayout.setVisibility(GONE);
+        _actionButtonWhite.setVisibility(GONE);
+        _actionButtonGreen.setVisibility(GONE);
+        _actionButtonOrange.setVisibility(GONE);
         _locationTextView.setVisibility(GONE);
 
         switch (_workorder.getStatus().getWorkorderStatus()) {
@@ -621,11 +634,10 @@ public class WorkorderCardView extends RelativeLayout {
         if (_workorder.getStatus().getStatusIntent() == null) {
             Log.v(TAG, "BP");
         }
-        updateStatusUiColors();
     }
 
     private void buildStatusDefault() {
-        _titleTextView.setVisibility(VISIBLE);
+//        _titleTextView.setVisibility(VISIBLE);
         _whenTextView.setVisibility(VISIBLE);
         _clientNameTextView.setVisibility(VISIBLE);
         _locationTextView.setVisibility(VISIBLE);
@@ -634,55 +646,62 @@ public class WorkorderCardView extends RelativeLayout {
     private void buildStatusAssigned() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case CONFIRMED:
-                _actionButton.setText("Check In");
-                _titleTextView.setVisibility(VISIBLE);
+                if (_workorder.getNeedsReadyToGo()) {
+                    _actionButton.setText("READY-TO-GO");
+                } else {
+                    _actionButton.setText(R.string.btn_check_in);
+                }
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
-
                 break;
             case ONHOLD_UNACKNOWLEDGED:
-                _actionButton.setText("Acknowledge");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_acknowledge);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case UNCONFIRMED:
-                _actionButton.setText("Confirm");
+                if (_workorder.getNeedsReadyToGo()) {
+                    _actionButton.setText("READY-TO-GO");
+                } else {
+                    _actionButton.setText(R.string.btn_confirm);
+                }
                 //setNotInterestedEnabled(true);
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case ONHOLD_ACKNOWLEDGED:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 break;
             case CHECKEDIN:
-                _actionButton.setText("Check Out");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_check_out);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case CHECKEDOUT:
-                _actionButton.setText("Check In");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_check_in);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             default:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -696,49 +715,49 @@ public class WorkorderCardView extends RelativeLayout {
         //setNotInterestedEnabled(true);
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case AVAILABLE:
-                _actionButton.setText("Request");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_request);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case ROUTED:
-                _actionButton.setText("Accept");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_accept);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 break;
             case REQUESTED:
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_withdraw_request);
+                _actionButton.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
-                _actionButton.setVisibility(VISIBLE);
-                _actionButton.setText("Withdraw");
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case COUNTEROFFERED:
                 if (_workorder.canCounterOffer()) {
                     _actionButton.setVisibility(VISIBLE);
                     // _actionButton.setTextSize(10F);
-                    _actionButton.setText("View Counter");
+                    _actionButton.setText(R.string.btn_view_counter);
                 }
 
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             default:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
 
                 Log.v(TAG,
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
@@ -749,37 +768,37 @@ public class WorkorderCardView extends RelativeLayout {
     public void buildStatusInProgress() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
             case CHECKEDOUT:
-                _actionButton.setText("Check In");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_check_in);
+//                _titleTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 // TODO show 'task' ui?
                 break;
             case ONHOLD_UNACKNOWLEDGED:
-                _actionButton.setText("Acknowledge");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_acknowledge);
+//                _titleTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 // TODO show 'task' ui?
                 break;
             case CHECKEDIN:
-                _actionButton.setText("Check Out");
-                _titleTextView.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.btn_check_out);
+//                _titleTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
                 // TODO show 'task' ui?
                 break;
             case ONHOLD_ACKNOWLEDGED:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 // TODO show 'task' ui?
                 break;
             default:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 Log.v(TAG,
@@ -790,41 +809,41 @@ public class WorkorderCardView extends RelativeLayout {
 
     public void buildStatusCompleted() {
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
-            case PENDINGREVIEWED:
-                _titleTextView.setVisibility(VISIBLE);
+            case PENDINGREVIEW:
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case INREVIEW:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case APPROVED_PROCESSINGPAYMENT:
-                Profile profile = GlobalState.getContext().getProfile();
+                Profile profile = App.get().getProfile();
                 if (profile != null && profile.getCanViewPayments()) {
                     _actionButton.setVisibility(VISIBLE);
-                    _actionButton.setText("Payments");
+                    _actionButton.setText(R.string.btn_payments);
                 }
 
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             case PAID:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 break;
             default:
-                _titleTextView.setVisibility(VISIBLE);
+//                _titleTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
-                _rightLayout.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
 
                 Log.v(TAG,
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
@@ -833,10 +852,10 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     private void buildStatusCanceled() {
-        _titleTextView.setVisibility(VISIBLE);
+//        _titleTextView.setVisibility(VISIBLE);
         _clientNameTextView.setVisibility(VISIBLE);
         _whenTextView.setVisibility(VISIBLE);
-        _rightLayout.setVisibility(GONE);
+        _paymentLayout.setVisibility(GONE);
         _actionButton.setVisibility(GONE);
 
         switch (_workorder.getStatus().getWorkorderSubstatus()) {
@@ -845,10 +864,10 @@ public class WorkorderCardView extends RelativeLayout {
             case CANCELED_LATEFEEPAID:
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                Profile profile = GlobalState.getContext().getProfile();
+                Profile profile = App.get().getProfile();
                 if (profile != null && profile.getCanViewPayments()) {
                     _actionButton.setVisibility(VISIBLE);
-                    _actionButton.setText("Payments");
+                    _actionButton.setText(R.string.btn_payments);
                 }
                 break;
             default:
@@ -856,29 +875,28 @@ public class WorkorderCardView extends RelativeLayout {
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());
                 break;
         }
-
     }
 
     public interface Listener {
 
-        public void actionRequest(WorkorderCardView view, Workorder workorder);
+        void actionRequest(WorkorderCardView view, Workorder workorder);
 
-        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
+        void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
 
-        public void actionAssignment(WorkorderCardView view, Workorder workorder);
+        void actionAssignment(WorkorderCardView view, Workorder workorder);
 
-        public void actionCheckin(WorkorderCardView view, Workorder workorder);
+        void actionCheckin(WorkorderCardView view, Workorder workorder);
 
-        public void actionCheckout(WorkorderCardView view, Workorder workorder);
+        void actionCheckout(WorkorderCardView view, Workorder workorder);
 
-        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder);
+        void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder);
 
-        public void viewCounter(WorkorderCardView view, Workorder workorder);
+        void viewCounter(WorkorderCardView view, Workorder workorder);
 
-        public void onLongClick(WorkorderCardView view, Workorder workorder);
+        void onClick(WorkorderCardView view, Workorder workorder);
 
-        public void onClick(WorkorderCardView view, Workorder workorder);
+        void onViewPayments(WorkorderCardView view, Workorder workorder);
 
-        public void onViewPayments(WorkorderCardView view, Workorder workorder);
+        void actionReadyToGo(WorkorderCardView view, Workorder workorder);
     }
 }

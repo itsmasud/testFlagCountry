@@ -91,7 +91,7 @@ public class JsonTokenizer {
         if (isNextTokenNull()) {
             _index += 4;
             //_temp = _temp.substring(4).trim();
-            return JsonObject.JsonNULL;
+            return null;
         } else if (isNextTokenString()) {
             return parseString();
         } else if (isNextTokenStartObject()) {

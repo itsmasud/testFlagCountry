@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+
+    <com.fieldnation.ui.ProfilePicView
+        android:id="@+id/pic_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="16dp" />
+
+    <LinearLayout
+        android:id="@+id/container"
+        style="?attr/tileContainerStyle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/pic_view"
+        android:orientation="vertical"
+        android:padding="0dp">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/Text_Subhead"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="@string/placeholder_phrase" />
+
+        <TextView
+            android:id="@+id/messagebody_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/placeholder_paragraph" />
+
+    </LinearLayout>
+
+    <View
+        style="?attr/tileDividerStyle"
+        android:layout_alignBottom="@+id/container"
+        android:layout_marginLeft="16dp"
+        android:layout_toRightOf="@+id/pic_view" />
+
+</RelativeLayout>

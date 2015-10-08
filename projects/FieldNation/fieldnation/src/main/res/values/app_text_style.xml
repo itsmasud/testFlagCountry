@@ -4,25 +4,25 @@
     <style name="Text_Display_4">
         <item name="android:textSize">112sp</item>
         <item name="android:alpha">0.54</item>
-        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLines">1</item>-->
     </style>
 
     <style name="Text_Display_3">
         <item name="android:textSize">56sp</item>
         <item name="android:alpha">0.54</item>
-        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLines">1</item>-->
     </style>
 
     <style name="Text_Display_2">
         <item name="android:textSize">45sp</item>
         <item name="android:alpha">0.54</item>
-        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLines">1</item>-->
     </style>
 
     <style name="Text_Display_1">
         <item name="android:textSize">34sp</item>
         <item name="android:alpha">0.54</item>
-        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLines">1</item>-->
     </style>
 
     <style name="Text_Headline">
@@ -33,7 +33,7 @@
     <style name="Text_Title">
         <item name="android:textSize">20sp</item>
         <item name="android:alpha">0.87</item>
-        <item name="android:maxLines">1</item>
+        <!--<item name="android:maxLines">1</item>-->
     </style>
 
     <style name="Text_Subhead">
@@ -51,6 +51,11 @@
         <item name="android:alpha">0.87</item>
     </style>
 
+    <style name="Text_Body_1_Caption">
+        <item name="android:textSize">14sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
     <style name="Text_Caption">
         <item name="android:textSize">12sp</item>
         <item name="android:alpha">0.54</item>
@@ -61,7 +66,7 @@
         <item name="android:alpha">0.87</item>
     </style>
 
-    <style name="Text_Button">
+    <style name="Text_Button" parent="@android:style/Widget.Button">
         <item name="android:textSize">14sp</item>
         <item name="android:maxLines">1</item>
     </style>

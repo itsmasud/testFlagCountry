@@ -1,81 +1,116 @@
 package com.fieldnation.data.workorder;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Document {
-	@Json(name = "documentId")
-	private Integer _documentId;
-	@Json(name = "fileName")
-	private String _fileName;
-	@Json(name = "filePath")
-	private String _filePath;
-	@Json(name = "fileSize")
-	private Integer _fileSize;
-	@Json(name = "fileType")
-	private String _fileType;
-	@Json(name = "lastUpdated")
-	private String _lastUpdated;
-	@Json(name = "thumbNail")
-	private String _thumbNail;
-	@Json(name = "updatedBy")
-	private User _updatedBy;
+public class Document implements Parcelable {
+    @Json(name = "documentId")
+    private Integer _documentId;
+    @Json(name = "fileName")
+    private String _fileName;
+    @Json(name = "filePath")
+    private String _filePath;
+    @Json(name = "fileSize")
+    private Integer _fileSize;
+    @Json(name = "fileType")
+    private String _fileType;
+    @Json(name = "lastUpdated")
+    private String _lastUpdated;
+    @Json(name = "thumbNail")
+    private String _thumbNail;
+    @Json(name = "updatedBy")
+    private User _updatedBy;
 
-	public Document() {
-	}
-	public Integer getDocumentId() {
-		return _documentId;
-	}
+    public Document() {
+    }
 
-	public String getFileName() {
-		return _fileName;
-	}
+    public Integer getDocumentId() {
+        return _documentId;
+    }
 
-	public String getFilePath() {
-		return _filePath;
-	}
+    public String getFileName() {
+        return _fileName;
+    }
 
-	public Integer getFileSize() {
-		return _fileSize;
-	}
+    public String getFilePath() {
+        return _filePath;
+    }
 
-	public String getFileType() {
-		return _fileType;
-	}
+    public Integer getFileSize() {
+        return _fileSize;
+    }
 
-	public String getLastUpdated() {
-		return _lastUpdated;
-	}
+    public String getFileType() {
+        return _fileType;
+    }
 
-	public String getThumbNail() {
-		return _thumbNail;
-	}
+    public String getLastUpdated() {
+        return _lastUpdated;
+    }
 
-	public User getUpdatedBy() {
-		return _updatedBy;
-	}
+    public String getThumbNail() {
+        return _thumbNail;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public User getUpdatedBy() {
+        return _updatedBy;
+    }
 
-	public static JsonObject toJson(Document document) {
-		try {
-			return Serializer.serializeObject(document);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Document fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Document.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Document document) {
+        try {
+            return Serializer.serializeObject(document);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
+    public static Document fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Document.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
+
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<Document> CREATOR = new Parcelable.Creator<Document>() {
+
+        @Override
+        public Document createFromParcel(Parcel source) {
+            try {
+                return Document.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }
+
+        @Override
+        public Document[] newArray(int size) {
+            return new Document[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
 }

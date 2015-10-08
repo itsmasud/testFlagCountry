@@ -1,135 +1,116 @@
 package com.fieldnation.data.workorder;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class UploadedDocument {
-	@Json(name="downloadLink")
-	private String _downloadLink;
-	@Json(name = "fileName")
-	private String _fileName;
-	@Json(name="fileSize")
-	private Integer _fileSize;
-	@Json(name="fileType")
-	private String _fileType;
-	@Json(name = "reviewComment")
-	private String _reviewComment;
-	@Json(name = "reviewUserId")
-	private Integer _reviewUserId;
-	@Json(name = "reviewUserName")
-	private String _reviewUserName;
-	@Json(name="status")
-	private Integer _status;
-	@Json(name = "storageSrc")
-	private String _storageSrc;
-	@Json(name="storageType")
-	private String _storageType;
-	@Json(name="thumbnailFilename")
-	private String _thumbnailFilename;
-	@Json(name="uploadedTime")
-	private String _uploadedTime;
-	@Json(name = "uploaderUserId")
-	private Integer _uploaderUserId;
-	@Json(name="uploaderUserName")
-	private String _uploaderUserName;
-	@Json(name="workorderId")
-	private Integer _workorderId;
-	@Json(name="workorderUploadId")
-	private Integer _workorderUploadId;
-	@Json(name = "workorderUploadSlotId")
-	private Integer _workorderUploadSlotId;
+public class UploadedDocument implements Parcelable {
+    @Json(name = "downloadLink")
+    private String _downloadLink;
+    @Json(name = "fileName")
+    private String _fileName;
+    @Json(name = "fileSize")
+    private Integer _fileSize;
+    @Json(name = "fileType")
+    private String _fileType;
+    @Json(name = "uploadedTime")
+    private String _uploadedTime;
+    @Json(name = "uploaderUserId")
+    private Integer _uploaderUserId;
+    @Json(name = "uploaderUserName")
+    private String _uploaderUserName;
+    @Json(name = "workorderUploadId")
+    private Integer _id;
 
-	public UploadedDocument() {
-	}
-	public String getDownloadLink(){
-		return _downloadLink;
-	}
+    public UploadedDocument() {
+    }
 
-	public String getFileName(){
-		return _fileName;
-	}
+    public String getDownloadLink() {
+        return _downloadLink;
+    }
 
-	public Integer getFileSize() {
-		return _fileSize;
-	}
+    public String getFileName() {
+        return _fileName;
+    }
 
-	public String getFileType(){
-		return _fileType;
-	}
+    public Integer getFileSize() {
+        return _fileSize;
+    }
 
-	public String getReviewComment(){
-		return _reviewComment;
-	}
+    public String getFileType() {
+        return _fileType;
+    }
 
-	public Integer getReviewUserId(){
-		return _reviewUserId;
-	}
+    public String getUploadedTime() {
+        return _uploadedTime;
+    }
 
-	public String getReviewUserName(){
-		return _reviewUserName;
-	}
+    public Integer getUploaderUserId() {
+        return _uploaderUserId;
+    }
 
-	public Integer getStatus() {
-		return _status;
-	}
+    public String getUploaderUserName() {
+        return _uploaderUserName;
+    }
 
-	public String getStorageSrc(){
-		return _storageSrc;
-	}
+    public Integer getId() {
+        return _id;
+    }
 
-	public String getStorageType() {
-		return _storageType;
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public String getThumbnailFilename() {
-		return _thumbnailFilename;
-	}
+    public static JsonObject toJson(UploadedDocument uploadedDocument) {
+        try {
+            return Serializer.serializeObject(uploadedDocument);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
-	public String getUploadedTime(){
-		return _uploadedTime;
-	}
+    public static UploadedDocument fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(UploadedDocument.class, json);
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return null;
+        }
+    }
 
-	public Integer getUploaderUserId(){
-		return _uploaderUserId;
-	}
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UploadedDocument> CREATOR = new Parcelable.Creator<UploadedDocument>() {
 
-	public String getUploaderUserName(){
-		return _uploaderUserName;
-	}
+        @Override
+        public UploadedDocument createFromParcel(Parcel source) {
+            try {
+                return UploadedDocument.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                return null;
+            }
+        }
 
-	public Integer getWorkorderId(){
-		return _workorderId;
-	}
+        @Override
+        public UploadedDocument[] newArray(int size) {
+            return new UploadedDocument[size];
+        }
+    };
 
-	public Integer getWorkorderUploadId(){
-		return _workorderUploadId;
-	}
+    @Override
+    public int describeContents() {
+        return 0;
+    }
 
-	public Integer getWorkorderUploadSlotId(){
-		return _workorderUploadSlotId;
-	}
-
-	public JsonObject toJson() {
-		return toJson(this);
-	}
-
-	public static JsonObject toJson(UploadedDocument uploadedDocument) {
-		try {
-			return Serializer.serializeObject(uploadedDocument);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	public static UploadedDocument fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(UploadedDocument.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
 
 }

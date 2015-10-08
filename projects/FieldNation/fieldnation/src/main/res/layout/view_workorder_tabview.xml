@@ -99,6 +99,6 @@
         </RelativeLayout>
     </LinearLayout>
 
-    <View style="@style/WorkorderTabView_Sep_Horz" />
+    <View style="@style/DividerFull" />
 
 </LinearLayout>

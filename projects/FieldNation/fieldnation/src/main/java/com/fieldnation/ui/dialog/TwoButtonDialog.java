@@ -22,7 +22,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael on 2/6/2015.
  */
 public class TwoButtonDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("ui.dialog.OneButtonDialog");
+    private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
     //Ui
     private TextView _titleTextView;
@@ -42,6 +42,15 @@ public class TwoButtonDialog extends DialogFragmentBase {
     /*-*************************************-*/
     public static TwoButtonDialog getInstance(FragmentManager fm, String tag) {
         return getInstance(fm, tag, TwoButtonDialog.class);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString("title", _title);
+        outState.putString("body", _body);
+        outState.putString("positiveText", _positiveText);
+        outState.putString("negativeText", _negativeText);
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -66,6 +75,22 @@ public class TwoButtonDialog extends DialogFragmentBase {
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey("title"))
+                _title = savedInstanceState.getString("title");
+
+            if (savedInstanceState.containsKey("body"))
+                _body = savedInstanceState.getString("body");
+
+            if (savedInstanceState.containsKey("positiveText"))
+                _positiveText = savedInstanceState.getString("positiveText");
+
+            if (savedInstanceState.containsKey("negativeText"))
+                _negativeText = savedInstanceState.getString("negativeText");
+
+            reset();
+        }
 
         return v;
     }
@@ -138,10 +163,10 @@ public class TwoButtonDialog extends DialogFragmentBase {
     }
 
     public interface Listener {
-        public void onPositive();
+        void onPositive();
 
-        public void onNegative();
+        void onNegative();
 
-        public void onCancel();
+        void onCancel();
     }
 }

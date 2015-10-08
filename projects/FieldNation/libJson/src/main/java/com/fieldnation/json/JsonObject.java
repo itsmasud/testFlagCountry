@@ -1,14 +1,20 @@
 package com.fieldnation.json;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+import android.util.Log;
+
+import java.io.Serializable;
 import java.text.ParseException;
-import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.Iterator;
 import java.util.List;
 
-public class JsonObject {
+public class JsonObject implements Parcelable {
 
     private boolean _isNullObject;
-    private Hashtable<String, Object> _fields = new Hashtable<String, Object>();
+
+    private Bundle _fieldsB = new Bundle();
 
     public static JsonObject JsonNULL = new JsonObject(true);
 
@@ -20,11 +26,18 @@ public class JsonObject {
         _isNullObject = isNullObject;
     }
 
+    JsonObject(Bundle bundle) {
+        _fieldsB = bundle;
+    }
+
+    public JsonObject(byte[] data) throws ParseException {
+        this(new String(data));
+    }
+
     public JsonObject(String string) throws ParseException {
         _isNullObject = false;
         JsonTokenizer tokenizer = new JsonTokenizer(string);
         fromTokenizer(tokenizer);
-
     }
 
     public JsonObject(String key, Object value) throws ParseException {
@@ -60,7 +73,7 @@ public class JsonObject {
                         "token must be ':' (bleh)", 1);
             }
 
-            _fields.put(key, tokenizer.parseValue());
+            putThis(key, tokenizer.parseValue());
 
             if (!tokenizer.nextToken().equals(",")) {
                 break;
@@ -69,7 +82,37 @@ public class JsonObject {
     }
 
     public int size() {
-        return _fields.size();
+        return _fieldsB.size();
+    }
+
+    private void putThis(String key, Object value) {
+        if (value == null) {
+            _fieldsB.putParcelable(key, null);
+        } else if (value instanceof Parcelable) {
+            _fieldsB.putParcelable(key, (Parcelable) value);
+        } else if (value instanceof String) {
+            _fieldsB.putString(key, (String) value);
+        } else if (value instanceof Short) {
+            _fieldsB.putShort(key, (Short) value);
+        } else if (value instanceof Integer) {
+            _fieldsB.putInt(key, (Integer) value);
+        } else if (value instanceof Long) {
+            _fieldsB.putLong(key, (Long) value);
+        } else if (value instanceof Byte) {
+            _fieldsB.putByte(key, (Byte) value);
+        } else if (value instanceof Boolean) {
+            _fieldsB.putBoolean(key, (Boolean) value);
+        } else if (value instanceof Character) {
+            _fieldsB.putChar(key, (Character) value);
+        } else if (value instanceof Double) {
+            _fieldsB.putDouble(key, (Double) value);
+        } else if (value instanceof Float) {
+            _fieldsB.putFloat(key, (Float) value);
+        } else if (value instanceof Serializable) {
+            _fieldsB.putSerializable(key, (Serializable) value);
+        } else {
+            Log.v("JsonObject", "can't put object of type: " + value.getClass().getName());
+        }
     }
 
     /**
@@ -79,7 +122,8 @@ public class JsonObject {
      * @param value
      * @throws ParseException
      */
-    public void put(String key, Object value) throws ParseException {
+
+    public JsonObject put(String key, Object value) throws ParseException {
         if (_isNullObject) {
             throw new ParseException("JsonNULL cannot contain keys!", -1);
         }
@@ -87,40 +131,42 @@ public class JsonObject {
         List<String> directions = JsonTokenizer.parsePath(key);
 
         put(directions, value);
+
+        return this;
     }
 
-    protected void put(List<String> directions, Object value) throws ParseException {
-        if (directions.size() == 0)
+    protected JsonObject put(List<String> directions, Object value) throws ParseException {
+        if (directions.size() == 0) {
             throw new ParseException("Invalid path", 0);
+        }
 
         String item = directions.remove(0);
 
         if (directions.size() == 0) {
             // goes in this object
-            if (value == null)
-                _fields.put(item, JsonNULL);
-            else
-                _fields.put(item, value);
+            if (value == null) {
+                _fieldsB.putParcelable(item, null);
+            } else {
+                putThis(item, value);
+            }
         } else {
             // goes into a child
-            if (_fields.containsKey(item)) {
-                Object obj = _fields.get(item);
+            if (_fieldsB.containsKey(item)) {
+                Object obj = _fieldsB.get(item);
 
                 if (obj instanceof JsonObject) {
                     JsonObject jo = (JsonObject) obj;
 
                     jo.put(directions, value);
-                    return;
                 } else if (obj instanceof JsonArray) {
                     JsonArray ja = (JsonArray) obj;
 
                     String child = directions.get(0);
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-
-                    return;
+                    }
                 }
             } else {
                 // need to create object
@@ -129,26 +175,23 @@ public class JsonObject {
                 if (child.startsWith("[") && child.endsWith("]")) {
                     JsonArray ja = new JsonArray();
 
-                    _fields.put(item, ja);
+                    _fieldsB.putParcelable(item, ja);
 
-                    if (child.equals("[]"))
+                    if (child.equals("[]")) {
                         ja.add(directions, value);
-                    else
+                    } else {
                         ja.set(directions, value);
-
-                    return;
+                    }
                 } else {
                     JsonObject jo = new JsonObject();
 
-                    _fields.put(item, jo);
+                    _fieldsB.putParcelable(item, jo);
 
                     jo.put(directions, value);
-                    return;
                 }
-
             }
         }
-
+        return this;
     }
 
     public Object get(String path) throws ParseException {
@@ -171,9 +214,11 @@ public class JsonObject {
 
         String item = directions.remove(0);
 
-        Object obj = _fields.get(item);
+        Object obj = _fieldsB.get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null && directions.size() == 0) {
+            return null;
+        } else if (obj instanceof JsonObject) {
             return ((JsonObject) obj).get(directions);
         } else if (obj instanceof JsonArray) {
             return ((JsonArray) obj).get(directions);
@@ -184,7 +229,7 @@ public class JsonObject {
     }
 
     public String getString(String path) throws ParseException {
-        return get(path).toString();
+        return get(path) + "";
     }
 
     public int getInt(String path) throws ParseException {
@@ -215,11 +260,11 @@ public class JsonObject {
         return (JsonArray) get(path);
     }
 
-    public Enumeration<String> keys() throws ParseException {
+    public Iterator<String> keys() throws ParseException {
         if (_isNullObject) {
             throw new ParseException("JsonNULL cannot contain keys!", -1);
         }
-        return _fields.keys();
+        return _fieldsB.keySet().iterator();
     }
 
     public boolean has(String path) throws ParseException {
@@ -239,20 +284,21 @@ public class JsonObject {
 
         String item = directions.remove(0);
 
-        if (!_fields.containsKey(item))
+        if (!_fieldsB.containsKey(item))
             return false;
+            // we have item and no more
         else if (directions.size() == 0)
             return true;
 
         Object obj = get(item);
 
-        if (obj instanceof JsonObject) {
+        if (obj == null) {
+            return false;
+        } else if (obj instanceof JsonObject) {
             JsonObject jo = (JsonObject) obj;
-
             return jo.has(directions);
         } else if (obj instanceof JsonArray) {
             JsonArray ja = (JsonArray) obj;
-
             return ja.has(directions);
         }
 
@@ -280,7 +326,9 @@ public class JsonObject {
         String item = directions.remove(0);
 
         if (directions.size() == 0) {
-            return _fields.remove(item);
+            Object val = get(item);
+            _fieldsB.remove(item);
+            return val;
         } else {
             Object obj = get(item);
 
@@ -299,9 +347,9 @@ public class JsonObject {
     }
 
     public void mixin(JsonObject jsonObject) throws ParseException {
-        Enumeration<String> keys = jsonObject.keys();
-        while (keys.hasMoreElements()) {
-            String key = keys.nextElement();
+        Iterator<String> keys = jsonObject.keys();
+        while (keys.hasNext()) {
+            String key = keys.next();
 
             put(key, jsonObject.get(key));
         }
@@ -321,20 +369,20 @@ public class JsonObject {
 
         sb.append("{\n");
 
-        int size = _fields.size() - 1;
+        int size = _fieldsB.size() - 1;
         int i = 0;
 
-        Enumeration<String> keys = _fields.keys();
+        Iterator<String> keys = _fieldsB.keySet().iterator();
 
-        while (keys.hasMoreElements()) {
+        while (keys.hasNext()) {
 
-            String key = keys.nextElement();
+            String key = keys.next();
 
             sb.append(JsonTokenizer.repeat("  ", depth + 1));
             sb.append(JsonTokenizer.escapeString(key));
             sb.append(":");
 
-            Object obj = _fields.get(key);
+            Object obj = _fieldsB.get(key);
 
             if (obj == null) {
                 sb.append("null");
@@ -364,33 +412,39 @@ public class JsonObject {
     public StringBuilder toStringBuilder() {
         StringBuilder sb = new StringBuilder();
 
+        addToStringBuilder(sb);
+
+        return sb;
+    }
+
+    public void addToStringBuilder(StringBuilder sb) {
         if (_isNullObject) {
             sb.append("null");
-            return sb;
+            return;
         }
 
         sb.append("{");
 
-        int size = _fields.size() - 1;
+        int size = _fieldsB.size() - 1;
         int i = 0;
 
-        Enumeration<String> keys = _fields.keys();
+        Iterator<String> keys = _fieldsB.keySet().iterator();
 
-        while (keys.hasMoreElements()) {
+        while (keys.hasNext()) {
 
-            String key = keys.nextElement();
+            String key = keys.next();
 
             sb.append(JsonTokenizer.escapeString(key));
             sb.append(":");
 
-            Object obj = _fields.get(key);
+            Object obj = _fieldsB.get(key);
 
             if (obj == null) {
                 sb.append("null");
             } else if (obj instanceof JsonObject) {
-                sb.append(((JsonObject) obj).toStringBuilder());
+                ((JsonObject) obj).addToStringBuilder(sb);
             } else if (obj instanceof JsonArray) {
-                sb.append(((JsonArray) obj).toStringBuilder());
+                ((JsonArray) obj).addToStringBuilder(sb);
             } else if (obj instanceof String) {
                 sb.append(JsonTokenizer.escapeString((String) obj));
             } else {
@@ -405,8 +459,6 @@ public class JsonObject {
         }
 
         sb.append("}");
-
-        return sb;
     }
 
     /**
@@ -421,10 +473,10 @@ public class JsonObject {
      * @throws CloneNotSupportedException
      */
     public void merge(JsonObject src, boolean overwrite, boolean copy) throws ParseException {
-        Enumeration<String> e = src.keys();
+        Iterator<String> e = src.keys();
 
-        while (e.hasMoreElements()) {
-            String key = e.nextElement();
+        while (e.hasNext()) {
+            String key = e.next();
             Object value = src.get(key);
 
             if (has(key) && overwrite || !has(key)) {
@@ -448,10 +500,10 @@ public class JsonObject {
     }
 
     public void deepmerge(JsonObject src) throws ParseException {
-        Enumeration<String> e = src.keys();
+        Iterator<String> e = src.keys();
 
-        while (e.hasMoreElements()) {
-            String key = e.nextElement();
+        while (e.hasNext()) {
+            String key = e.next();
             Object value = src.get(key);
 
             if (has(key)) {
@@ -478,6 +530,10 @@ public class JsonObject {
         return toStringBuilder().toString();
     }
 
+    public byte[] toByteArray() {
+        return toString().getBytes();
+    }
+
     @Override
     protected Object clone() throws CloneNotSupportedException {
         try {
@@ -496,4 +552,26 @@ public class JsonObject {
         return null;
     }
 
+
+    public static final Creator<JsonObject> CREATOR = new Creator<JsonObject>() {
+        @Override
+        public JsonObject createFromParcel(Parcel parcel) {
+            return new JsonObject(parcel.readBundle(JsonObject.class.getClassLoader()));
+        }
+
+        @Override
+        public JsonObject[] newArray(int i) {
+            return new JsonObject[i];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeBundle(_fieldsB);
+    }
 }

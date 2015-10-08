@@ -3,13 +3,10 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
-
-import java.text.ParseException;
 
 public class CustomField implements Parcelable {
     @Json(name = "customFieldFormat")
@@ -33,7 +30,7 @@ public class CustomField implements Parcelable {
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
-	private Integer _required;
+    private Integer _required;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -41,6 +38,7 @@ public class CustomField implements Parcelable {
 
     public CustomField() {
     }
+
     public String getCustomFieldFormat() {
         return _customFieldFormat;
     }
@@ -129,9 +127,9 @@ public class CustomField implements Parcelable {
         NUMBER("numeric"),
         PHONE("phone");
 
-        private String _value;
+        private final String _value;
 
-        private FieldType(String value) {
+        FieldType(String value) {
             _value = value;
         }
 
@@ -142,9 +140,9 @@ public class CustomField implements Parcelable {
                 return TEXT;
             }
 
-            for (int i = 0; i < vs.length; i++) {
-                if (type.equals(vs[i]._value))
-                    return vs[i];
+            for (FieldType v : vs) {
+                if (type.equals(v._value))
+                    return v;
             }
 
             Log.w(TAG, "invalid FieldType of " + type + " found!!!");
@@ -165,8 +163,8 @@ public class CustomField implements Parcelable {
         @Override
         public CustomField createFromParcel(Parcel source) {
             try {
-                return CustomField.fromJson(new JsonObject(source.readString()));
-            } catch (ParseException e) {
+                return CustomField.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return null;
@@ -185,7 +183,7 @@ public class CustomField implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 
 

@@ -1,45 +1,224 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <!-- new colors -->
 
-    <color name="fn_gray">#FFf3f3eb</color>
-    <color name="fn_white">#FFeeeeee</color>
-    <color name="fn_orange">#FFFC6102</color>
+    <color name="fn_brandcolor">#FFFF5F00</color>
+    <color name="fn_brandcolor_80">#CCFF5F00</color>
+    <color name="fn_brandcolor_50">#80FF5F00</color>
+    <color name="fn_brandcolor_40">#66FF5F00</color>
+    <color name="fn_brandcolor_30">#4CFF5F00</color>
+    <color name="fn_brandcolor_0">#00FF5F00</color>
+    <color name="fn_brandcolor_medium">#FFe65600</color>
+    <color name="fn_brandcolor_dark">#FFbd4600</color>
 
-    <color name="activity_bg">#FFeeeeee</color>
-    <color name="transparent">#00000000</color>
-    <color name="loading_bar_color_1">#FF47D3AF</color>
-    <color name="loading_bar_color_2">#FF42CFB2</color>
-    <color name="loading_bar_color_3">#FF54C5C8</color>
-    <color name="loading_bar_color_4">#FF68B8E1</color>
-    <color name="loading_bar_color_5">#FF7EAFF5</color>
-    <color name="black">#FF000000</color>
-    <color name="text_link_color">#FF7cb0f4</color>
+    <color name="fn_yellow">#FFFF983D</color>
 
-    <integer-array name="loading_bar_colors">
-        <item>@color/loading_bar_color_1</item>
-        <item>@color/loading_bar_color_5</item>
-    </integer-array>
-
-    <color name="text_normal">#FF000000</color>
-    <color name="text_success">#FF48CEAD</color>
-    <color name="text_waiting">#FF6D6D62</color>
-    <color name="text_warning">#FFFC6102</color>
-
-    <integer-array name="status_text_colors">
-        <item>@color/text_normal</item>
-        <item>@color/text_success</item>
-        <item>@color/text_waiting</item>
-        <item>@color/text_warning</item>
-    </integer-array>
-
-    <!-- payments -->
-    <color name="payment_header_background">#FF3fcca9</color>
-    <color name="payment_header_bg_paid">#FF393f49</color>
-
-    <color name="actionBarTextColor">@color/white</color>
+    <!--<color name="fn_brandcolor">#FFFF0000</color>-->
+    <!--<color name="fn_brandcolor_medium">#FF770000</color>-->
+    <!--<color name="fn_brandcolor_80">#CCFF0000</color>-->
+    <!--<color name="fn_brandcolor_0">#00FF0000</color>-->
+    <!--<color name="fn_brandcolor_dark">#FF550000</color>-->
 
 
-    <!-- tiles -->
+    <color name="fn_primary_bg">#FFF3F3EB</color>
+    <color name="fn_primary_bg_medium">#FFd9d9d2</color>
+    <color name="fn_primary_bg_80">#CCF3F3EB</color>
+    <color name="fn_primary_bg_0">#00F3F3EB</color>
+    <color name="fn_primary_bg_dark">#FFb8b9b6</color>
 
+    <color name="fn_clickable_bg">#FFFFFFFF</color>
+    <color name="fn_clickable_bg_80">#CCFFFFFF</color>
+    <color name="fn_clickable_bg_50">#80FFFFFF</color>
+    <color name="fn_clickable_bg_0">#00FFFFFF</color>
+
+    <color name="fn_menu_bg">#FFf9f9f9</color>
+    <color name="fn_menu_bg_80">#CCf9f9f9</color>
+    <color name="fn_menu_bg_50">#80f9f9f9</color>
+
+
+    <!--<color name="fn_primary_bg">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_medium">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_0">#FF4444FF</color>-->
+    <!--<color name="fn_primary_bg_dark">#FF4444FF</color>-->
+
+    <!--<color name="fn_clickable_bg">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_50">#FF4444FF</color>-->
+    <!--<color name="fn_clickable_bg_0">#FF4444FF</color>-->
+
+    <!--<color name="fn_menu_bg">#FF4444FF</color>-->
+    <!--<color name="fn_menu_bg_80">#FF4444FF</color>-->
+    <!--<color name="fn_menu_bg_50">#FF4444FF</color>-->
+
+    <color name="fn_accent_color">#FF3FD4AD</color>
+    <color name="fn_accent_color_medium">#FF37ba98</color>
+    <color name="fn_accent_color_80">#CC3FD4AD</color>
+    <color name="fn_accent_color_50">#803FD4AD</color>
+    <color name="fn_accent_color_40">#663FD4AD</color>
+    <color name="fn_accent_color_25">#3F3FD4AD</color>
+    <color name="fn_accent_color_10">#193FD4AD</color>
+    <color name="fn_accent_color_0">#003FD4AD</color>
+    <color name="fn_accent_color_dark">#FF1e988a</color>
+
+    <!--<color name="fn_accent_color_light">#FF40deb7</color>-->
+    <!--<color name="fn_accent_color_light_50">#8040deb7</color>-->
+    <!--<color name="fn_accent_color_light_40">#6640deb7</color>-->
+
+    <!--<color name="fn_accent_color">#FFFFFF00</color>-->
+    <!--<color name="fn_accent_color_medium">#FF777700</color>-->
+    <!--<color name="fn_accent_color_80">#CCFFFF00</color>-->
+    <!--<color name="fn_accent_color_50">#80FFFF00</color>-->
+    <!--<color name="fn_accent_color_25">#3FFFFF00</color>-->
+    <!--<color name="fn_accent_color_10">#19FFFF00</color>-->
+    <!--<color name="fn_accent_color_0">#00FFFF00</color>-->
+    <!--<color name="fn_accent_color_dark">#FF555500</color>-->
+
+    <color name="fn_grad_start">#FF8EADDB</color>
+    <color name="fn_grad_end">#FF61C4B2</color>
+
+    <!--<color name="fn_grad_start">#FFFF0000</color>-->
+    <!--<color name="fn_grad_end">#FFFFFF00</color>-->
+
+
+    <color name="fn_divider">#3F989898</color>
+
+    <color name="fn_white_text">#FFFFFFFF</color>
+    <color name="fn_white_text_80">#CCFFFFFF</color>
+    <color name="fn_white_text_50">#80FFFFFF</color>
+    <color name="fn_white_text_30">#4CFFFFFF</color>
+
+    <color name="fn_light_text">#FF989898</color>
+    <color name="fn_light_text_80">#CC989898</color>
+    <color name="fn_light_text_50">#80989898</color>
+    <color name="fn_light_text_25">#3F989898</color>
+    <color name="fn_light_text_10">#19989898</color>
+    <color name="fn_light_text_0">#00989898</color>
+
+    <color name="fn_dark_text">#FF1e1e1e</color>
+    <color name="fn_dark_text_80">#CC1e1e1e</color>
+    <color name="fn_dark_text_50">#801e1e1e</color>
+    <color name="fn_dark_text_25">#3F1e1e1e</color>
+    <color name="fn_dark_text_0">#001e1e1e</color>
+
+    <color name="fn_clickable_text">#FF2196F3</color>
+    <color name="fn_clickable_text_50">#802196F3</color>
+    <color name="fn_dark_button_text">#FF444444</color>
+    <color name="fn_dark_button_text_50">#80444444</color>
+
+    <color name="fn_drawer_shadow">#FF1e1e1e</color>
+    <color name="fn_shadow">#55000000</color>
+    <color name="fn_black_25">#40000000</color>
+    <color name="fn_transparent">#00000000</color>
+
+    <!-- old colors -->
+    <!--
+        <color name="fn_gray">#FFf3f3eb</color>
+        <color name="fn_white">#FFeeeeee</color>
+        <color name="fn_orange">#FFFC6102</color>
+
+        <color name="activity_bg">#FFf3f3eb</color>
+        &lt;!&ndash;
+            <color name="loading_bar_color_1">#FF47D3AF</color>
+            <color name="loading_bar_color_2">#FF42CFB2</color>
+            <color name="loading_bar_color_3">#FF54C5C8</color>
+            <color name="loading_bar_color_4">#FF68B8E1</color>
+            <color name="loading_bar_color_5">#FF7EAFF5</color>
+        &ndash;&gt;
+        <color name="black">#FF000000</color>
+        <color name="text_link_color">#FF7cb0f4</color>
+
+        <color name="actionbar_stacked_background_start">#FF5181d2</color>
+        <color name="actionbar_stacked_background_end">#FF30A793</color>
+
+        <color name="actionbar_tab_selected_bg">#FF648fc1</color>
+        <color name="actionbar_tab_selected_fg">#FF6aa0e2</color>
+
+        <color name="toolbar_gradient_start">#FF82B0F4</color>
+        <color name="toolbar_gradient_end">#FF4CD2AF</color>
+
+        <color name="drawer_shadow">#FF111111</color>
+
+        &lt;!&ndash;
+            <integer-array name="loading_bar_colors">
+                <item>@color/loading_bar_color_1</item>
+                <item>@color/loading_bar_color_5</item>
+            </integer-array>
+        &ndash;&gt;
+
+        <color name="text_normal">#FF000000</color>
+        <color name="text_success">#FF48CEAD</color>
+        <color name="text_waiting">#FF6D6D62</color>
+        <color name="text_warning">#FFFC6102</color>
+
+        <integer-array name="status_text_colors">
+            <item>@color/text_normal</item>
+            <item>@color/text_success</item>
+            <item>@color/text_waiting</item>
+            <item>@color/text_warning</item>
+        </integer-array>
+
+        &lt;!&ndash; payments &ndash;&gt;
+        <color name="payment_header_background">#FF3fcca9</color>
+        <color name="payment_header_bg_paid">#FF393f49</color>
+
+        <color name="actionBarTextColor">@color/white</color>
+
+        <color name="document_filename">#FF393a07</color>
+        <color name="document_detail">#FF8d8d6e</color>
+
+        <color name="edittext_color">#FF000000</color>
+        <color name="edittext_color_hint">#FFcececa</color>
+
+        <color name="btn_white_fg">#FF000000</color>
+        <color name="btn_orange_fg">#FFFFFFFF</color>
+        <color name="btn_green_fg">#FFFFFFFF</color>
+        <color name="btn_gray_fg">#FF000000</color>
+
+        <color name="card_inside_bg">#FFFCFCFC</color>
+        <color name="card_bevel">#FFe0e0e0</color>
+        <color name="dialogBg">#FFf3f3eb</color>
+
+        <color name="drawerBackground">#FFf8f9f4</color>
+        <color name="drawerHighlightBackground">#FFc0e4bc</color>
+        <color name="drawerHighlightBorder">#FF5cc087</color>
+        <color name="drawerForeground">#FFcecfc0</color>
+        <color name="drawerPaymentEstimatedAmountBackground">#FF3bc89e</color>
+        <color name="drawerPaymentPaidAmountBackground">#FF69695d</color>
+        <color name="drawerPaymentAmountForeground">#FFFFFFFF</color>
+
+        <color name="cardLabelText">#FF929367</color>
+
+        <color name="notificationBackground">#FFfe6200</color>
+        <color name="notificationForeground">#FFFFFFFF</color>
+
+        <color name="SignatureCardGrey">#FFc0bfbf</color>
+
+        <color name="colorPrimary">#FF63c4b0</color>
+        <color name="colorPrimaryDark">#FF63c4b0</color>
+        <color name="colorAccent">#FFf16421</color>
+
+        <color name="woCardOptionsBackground">#FF383f49</color>
+        <color name="woCardStatusLabel1">#FF000000</color>
+        <color name="woCardStatusLabel2">#FFFFFFFF</color>
+        <color name="woCardStatusLabel3">#FFFFFFFF</color>
+        <color name="woCardStatusLabel4">#FFFFFFFF</color>
+        <color name="woCardSelectedTextColor">#FFFFFFFF</color>
+        <color name="woCardTextColor">#FF000000</color>
+
+        <color name="button_raised_shadow">#1E000000</color>
+
+        <color name="workorder_detail_bg">@color/fn_gray</color>
+        <color name="workorder_detail_separator_color">#FFe6e6e6</color>
+
+        <color name="workorderDetailFieldBoldTextColor">#FF2d2e00</color>
+        <color name="workorderDetailFieldTitleTextColor">#FF97976e</color>
+        <color name="workorderDetailFieldGray">#FFc8c7c2</color>
+
+        <color name="workorder_tab_separator_color">#FFe9e9e7</color>
+        <color name="workorder_tab_text_selected">#FF424314</color>
+        <color name="workorder_tab_text">#FFbcbdb7</color>
+        <color name="workorder_tab_bg">@color/fn_gray</color>
+    -->
 
 </resources>

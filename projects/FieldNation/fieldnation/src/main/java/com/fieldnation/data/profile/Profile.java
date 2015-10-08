@@ -29,6 +29,8 @@ public class Profile implements Parcelable {
     private Boolean _isProvider;
     @Json(name = "lastname")
     private String _lastname;
+    @Json(name = "managedProviders")
+    private Profile[] _managedProviders;
     @Json(name = "marketplaceStatusOn")
     private Boolean _marketplaceStatusOn;
     @Json(name = "newNotificationCount")
@@ -50,7 +52,7 @@ public class Profile implements Parcelable {
     @Json(name = "unreadMessageCount")
     private Integer _unreadMessageCount;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "workordersTotal")
     private Integer _workordersTotal;
 
@@ -66,7 +68,6 @@ public class Profile implements Parcelable {
             return true;
 
         return _canViewPayments;
-//        return false;
     }
 
     public String getCity() {
@@ -105,6 +106,10 @@ public class Profile implements Parcelable {
 
     public String getLastname() {
         return _lastname;
+    }
+
+    public Profile[] getManagedProviders() {
+        return _managedProviders;
     }
 
     public Boolean getMarketplaceStatusOn() {
@@ -147,7 +152,7 @@ public class Profile implements Parcelable {
         return _unreadMessageCount;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return _userId;
     }
 
@@ -227,7 +232,7 @@ public class Profile implements Parcelable {
         @Override
         public Profile createFromParcel(Parcel source) {
             try {
-                return Profile.fromJson(new JsonObject(source.readString()));
+                return Profile.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
@@ -247,7 +252,7 @@ public class Profile implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(toJson().toString());
+        dest.writeParcelable(toJson(), flags);
     }
 }
 

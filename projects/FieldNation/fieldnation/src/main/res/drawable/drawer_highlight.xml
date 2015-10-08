@@ -1,26 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
-    <item>
-        <shape android:shape="rectangle" >
-            <corners
-                android:bottomRightRadius="5px"
-                android:topRightRadius="5px" />
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-            <solid android:color="@color/drawerHighlightBorder" >
-            </solid>
-        </shape>
-    </item>
+    <!--<item>-->
+    <!--<shape android:shape="rectangle">-->
+    <!--<corners-->
+    <!--android:bottomRightRadius="5px"-->
+    <!--android:topRightRadius="5px" />-->
+
+    <!--<solid android:color="@color/fn_accent_color" />-->
+    <!--</shape>-->
+    <!--</item>-->
     <item
         android:bottom="2px"
         android:left="2px"
         android:right="2px"
         android:top="2px">
-        <shape android:shape="rectangle" >
-            <corners
-                android:bottomRightRadius="5px"
-                android:topRightRadius="5px" />
+        <shape android:shape="rectangle">
+            <corners android:radius="5px" />
 
-            <solid android:color="@color/drawerHighlightBackground" />
+            <solid android:color="@color/fn_accent_color_25" />
         </shape>
     </item>
 

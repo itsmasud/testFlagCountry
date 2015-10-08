@@ -53,7 +53,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
     }
 
     @Override
-    public void setWorkorder(Workorder workorder, boolean isCached) {
+    public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
     }
@@ -64,11 +64,11 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         _workLogLinearLayout.removeAllViews();
 
         if (loggedWork != null) {
-            for (int i = 0; i < loggedWork.length; i++) {
-                ScheduleDetailView v = new ScheduleDetailView(getContext());
+            for (LoggedWork aLoggedWork : loggedWork) {
+                TimeLogRowView v = new TimeLogRowView(getContext());
                 _workLogLinearLayout.addView(v);
                 v.setListener(_scheduleDetailView_listener);
-                v.setData(_workorder, loggedWork[i]);
+                v.setData(_workorder, aLoggedWork);
             }
         }
     }
@@ -76,7 +76,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private ScheduleDetailView.Listener _scheduleDetailView_listener = new ScheduleDetailView.Listener() {
+    private TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             if (_listener != null)
@@ -84,7 +84,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void deleteWorklog(ScheduleDetailView view, Workorder workorder, LoggedWork loggedWork) {
+        public void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork) {
             if (_listener != null)
                 _listener.deleteWorklog(workorder, loggedWork);
         }
@@ -119,11 +119,11 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 //    };
 
     public interface Listener {
-        public void onAddWorklog(Workorder workorder, boolean showDeviceCount);
+        void onAddWorklog(Workorder workorder, boolean showDeviceCount);
 
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
+        void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
     }
 
 //    private AuthenticationClient _authClient = new AuthenticationClient() {

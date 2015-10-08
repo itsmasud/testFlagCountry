@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/DrawerItem"
+    android:orientation="horizontal">
+
+    <com.fieldnation.ui.ProfilePicView
+        android:id="@+id/pic_view"
+        style="@style/DrawerItemIcon"
+        android:layout_height="@dimen/drawer_icon_width" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@id/profile_name_textview"
+            style="@style/DrawerProfileName"
+            android:text="@string/placeholder_phrase" />
+
+        <TextView
+            android:id="@+id/profile_company_textview"
+            style="@style/DrawerProfileDetails"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_phrase" />
+    </LinearLayout>
+</LinearLayout>

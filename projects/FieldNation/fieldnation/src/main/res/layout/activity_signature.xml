@@ -25,12 +25,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/arrival_date_and_time_colon"
-                android:textColor="@color/SignatureCardGrey" />
+                android:textColor="@color/fn_light_text" />
 
             <TextView
                 android:id="@+id/arrival_textview"
-                android:layout_width="wrap_content"
                 style="@style/TextViewLink"
+                android:layout_width="wrap_content"
                 android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
@@ -48,28 +48,28 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/departure_date_and_time_colon"
-                android:textColor="@color/SignatureCardGrey" />
+                android:textColor="@color/fn_light_text" />
 
             <TextView
                 android:id="@+id/departure_textview"
-                android:layout_width="wrap_content"
                 style="@style/TextViewLink"
+                android:layout_width="wrap_content"
                 android:layout_gravity="right"
                 android:text="@string/tap_to_set_a_time" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_alignParentBottom="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:orientation="vertical">
 
             <LinearLayout
                 style="@style/SignatureLine"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="40dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
                 android:orientation="horizontal">
 
                 <ImageView
@@ -82,7 +82,7 @@
                     android:layout_width="fill_parent"
                     android:layout_height="1dp"
                     android:layout_gravity="bottom"
-                    android:background="@color/SignatureCardGrey" />
+                    android:background="@color/fn_light_text" />
             </LinearLayout>
 
 
@@ -101,13 +101,13 @@
 
                 <Button
                     android:id="@+id/clear_button"
-                    style="@style/Button.Material.Flat"
-                    android:text="CLEAR" />
+                    style="@style/Material.Button.Flat"
+                    android:text="@string/btn_clear" />
 
                 <Button
                     android:id="@+id/done_button"
-                    style="@style/Button.Material.Flat"
-                    android:text="DONE" />
+                    style="@style/Material.Button.Flat"
+                    android:text="@string/btn_done" />
             </LinearLayout>
         </LinearLayout>
     </RelativeLayout>

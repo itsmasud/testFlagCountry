@@ -5,156 +5,63 @@
     android:orientation="vertical">
 
     <TextView
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/payment" />
+        android:layout_marginBottom="16dp"
+        android:gravity="center"
+        android:text="PAYMENT" />
 
-    <TextView
-        android:id="@+id/pay1_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$5,000 Fixed for 4 hours" />
+    <com.fieldnation.ui.TileView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/pay2_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$75.00 per extra hour up to 5 hours"
-        android:visibility="gone" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.fieldnation.ui.IconFontTextView
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/icfont_dollar"
+                android:textColor="@color/fn_light_text"
+                android:textSize="32sp" />
+
+            <TextView
+                android:id="@+id/pay_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginLeft="8dp"
+                android:text="@string/placeholder_date_long" />
+
+        </LinearLayout>
+    </com.fieldnation.ui.TileView>
 
     <TextView
         android:id="@+id/terms_textview"
         style="@style/TextViewLink"
         android:layout_width="match_parent"
-        android:text="@string/view_field_nation_terms" />
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="@string/view_field_nation_terms"
+        android:textSize="14sp" />
 
-    <TextView
-        android:id="@+id/counteroffer_textview"
-        style="@style/WorkorderDetail_FieldTitle"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/counter_offer"
-        android:visibility="gone" />
+    <Button
+        android:id="@+id/action_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_gravity="right"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:text="COUNTER OFFER" />
 
-    <TextView
-        android:id="@+id/co1_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$5,000 Fixed for 4 hours"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/co2_textview"
-        style="@style/WorkorderDetail_Field"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$75.00 per extra hour up to 5 hours"
-        android:visibility="gone" />
-
-
-    <LinearLayout
-        android:id="@+id/counteroffer_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
-            android:background="@drawable/ic_wo_detail_counter_offer" />
-
-        <TextView
-            android:id="@+id/counterofferlabel_textview"
-            style="@style/TextViewLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:text="@string/counter_offer" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/detail_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <LinearLayout
-                android:id="@+id/addexpense_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/ic_wo_detail_expense" />
-
-                <TextView
-                    style="@style/TextViewLink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/add_expense" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/adddiscount_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="5dp"
-                    android:background="@drawable/ic_wo_detail_discount" />
-
-                <TextView
-                    style="@style/TextViewLink"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/add_discount" />
-            </LinearLayout>
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/expenseslabel_textview"
-            style="@style/WorkorderDetail_FieldTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/expenses_colon" />
-
-        <LinearLayout
-            android:id="@+id/expenses_linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
-
-        <TextView
-            android:id="@+id/discountslabel_textview"
-            style="@style/WorkorderDetail_FieldTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/discounts_colon" />
-
-        <LinearLayout
-            android:id="@+id/discounts_linearlayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"></LinearLayout>
-    </LinearLayout>
+    <View
+        style="@style/DividerFull"
+        android:layout_marginBottom="16dp"
+        android:layout_marginTop="16dp" />
 
 </LinearLayout>

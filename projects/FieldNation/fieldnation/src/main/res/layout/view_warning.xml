@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/tileStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/fn_dark_text_80"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Menu"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toLeftOf="@+id/retry_button"
+        android:text="@string/placeholder_phrase"
+        android:textColor="@color/fn_white_text" />
+
+    <Button
+        android:id="@+id/retry_button"
+        style="?attr/buttonFlatStyle"
+        android:layout_width="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:text="RETRY"
+        android:textColor="@color/fn_accent_color" />
+</RelativeLayout>

@@ -7,8 +7,8 @@ import java.util.Hashtable;
  * Warning! Be careful using this with views that use their tags to index themselves in services, and dialogs.
  */
 public class UniqueTag {
-
     private static final Object LOCK = new Object();
+
     private static Hashtable<String, Integer> _tags = new Hashtable<>();
 
     public static String makeTag(String root) {

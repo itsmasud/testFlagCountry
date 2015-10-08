@@ -5,27 +5,23 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
-import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
+import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.auth.client.AuthTopicService;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.rpc.client.WorkorderService;
-import com.fieldnation.rpc.common.WebResultReceiver;
-import com.fieldnation.topics.GaTopic;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.Stopwatch;
 
 /**
  * Created by michael.carver on 12/2/2014.
  */
 public class SignOffActivity extends AuthFragmentActivity {
-    private static final String TAG = "ui.SignOffActivity";
+    private static final String TAG = "SignOffActivity";
 
     // State
     private static final String STATE_DISPLAY_MODE = "STATE_DISPLAY_MODE";
@@ -47,11 +43,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     public static final String INTENT_PARAM_TASK_ID = "SignOffActivity.INTENT_PARAM_TASK_ID";
     public static final String INTENT_COMPLETE_WORKORDER = "SignOffActivity.INTENT_COMPLETE_WORKORDER";
 
-    // Web
-    private static final int WEB_COMPLETE_TASK = 1;
-    private static final int WEB_UPLOAD_SIGNATURE = 2;
-    private static final int WEB_COMPLETE_WORKORDER = 3;
-
     // Ui
     private SignOffFragment _signOffFrag;
     private SignatureFragment _sigFrag;
@@ -59,11 +50,11 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private WorkorderService _service;
+    private WorkorderClient _workorderClient;
 
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
-    private String _signatureJson;
+    private String _signatureSvg;
     private Workorder _workorder;
     private long _taskId = -1;
     private boolean _completeWorkorder = false;
@@ -121,7 +112,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                GaTopic.dispatchScreenView(this, "SignOffFragment");
+                GoogleAnalyticsTopicClient.dispatchScreenView(this, "SignOffFragment");
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -130,7 +121,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     Bundle savedInstanceState = params[0];
                     int displayMode = _displayMode;
                     String name = _name;
-                    String signatureJson = _signatureJson;
+                    String signatureSvg = _signatureSvg;
                     Workorder workorder = _workorder;
                     Long taskId = _taskId;
                     Boolean completeWorkorder = _completeWorkorder;
@@ -142,7 +133,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                         name = savedInstanceState.getString(STATE_NAME);
 
                     if (savedInstanceState.containsKey(STATE_SIGNATURE))
-                        signatureJson = savedInstanceState.getString(STATE_SIGNATURE);
+                        signatureSvg = savedInstanceState.getString(STATE_SIGNATURE);
 
                     if (savedInstanceState.containsKey(STATE_WORKORDER))
                         workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -152,7 +143,7 @@ public class SignOffActivity extends AuthFragmentActivity {
 
                     if (savedInstanceState.containsKey(STATE_COMPLETE_WORKORDER))
                         completeWorkorder = savedInstanceState.getBoolean(STATE_COMPLETE_WORKORDER);
-                    return new Object[]{displayMode, name, signatureJson, workorder, taskId, completeWorkorder};
+                    return new Object[]{displayMode, name, signatureSvg, workorder, taskId, completeWorkorder};
                 }
 
                 @Override
@@ -160,7 +151,7 @@ public class SignOffActivity extends AuthFragmentActivity {
                     super.onPostExecute(objects);
                     _displayMode = (Integer) objects[0];
                     _name = (String) objects[1];
-                    _signatureJson = (String) objects[2];
+                    _signatureSvg = (String) objects[2];
                     _workorder = (Workorder) objects[3];
                     _taskId = (Long) objects[4];
                     _completeWorkorder = (Boolean) objects[5];
@@ -172,25 +163,16 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
-    public void onAuthentication(String username, String authToken, boolean isNew) {
-        if (_service == null || isNew) {
-            try {
-                _service = new WorkorderService(SignOffActivity.this, username, authToken, _resultReceiver);
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(this);
     }
 
     @Override
-    public void onRefresh() {
-        // TODO STUB com.fieldnation.ui.SignOffActivity.onRefresh()
-        Log.v(TAG, "STUB com.fieldnation.ui.SignOffActivity.onRefresh()");
+    protected void onPause() {
+        _workorderClient.disconnect(this);
+        super.onPause();
     }
 
     @Override
@@ -203,8 +185,8 @@ public class SignOffActivity extends AuthFragmentActivity {
         if (_name != null)
             outState.putString(STATE_NAME, _name);
 
-        if (_signatureJson != null)
-            outState.putString(STATE_SIGNATURE, _signatureJson);
+        if (_signatureSvg != null)
+            outState.putString(STATE_SIGNATURE, _signatureSvg);
 
         if (_workorder != null)
             outState.putParcelable(STATE_WORKORDER, _workorder);
@@ -214,38 +196,43 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     private void sendSignature() {
-        if (_service == null || _workorder == null) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    sendSignature();
-                }
-            }, 100);
+        // not a task
+        if (_taskId == -1) {
+            WorkorderClient.addSignatureSvg(this, _workorder.getWorkorderId(), _name, _signatureSvg);
         } else {
-            // not a task
-            if (_taskId == -1) {
-                startService(
-                        _service.addSignatureJson(WEB_UPLOAD_SIGNATURE,
-                                _workorder.getWorkorderId(),
-                                _name,
-                                _signatureJson));
-            } else {
-                // is a task
-                startService(
-                        _service.completeSignatureTaskJson(WEB_COMPLETE_TASK, _workorder.getWorkorderId(),
-                                _taskId, _name, _signatureJson));
-            }
+            // is a task
+            WorkorderClient.addSignatureSvgTask(this, _workorder.getWorkorderId(), _taskId, _name, _signatureSvg);
         }
+
+        if (_completeWorkorder) {
+            WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
+            App.get().setCompletedWorkorder();
+            GoogleAnalyticsTopicClient.dispatchEvent(
+                    SignOffActivity.this,
+                    "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
+                    "SignOffActivity", 1);
+            WorkorderClient.get(this, _workorder.getWorkorderId(), false);
+        }
+
+        _thankYouFrag.setUploadComplete();
     }
 
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+
+        }
+    };
+
+    private final SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
-            GaTopic.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -256,8 +243,8 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
-            GaTopic.dispatchScreenView(SignOffActivity.this, "SorryFragment");
-            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SorryFragment");
+            setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
             trans.addToBackStack(null);
@@ -265,18 +252,18 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
+    private final SignatureFragment.Listener _signature_listener = new SignatureFragment.Listener() {
         @Override
         public void onBack() {
             onBackPressed();
         }
 
         @Override
-        public void onSubmit(String name, String signatureJson) {
+        public void onSubmit(String name, String signatureSvg) {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
-            _signatureJson = signatureJson;
-            GaTopic.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
+            _signatureSvg = signatureSvg;
+            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);
@@ -287,7 +274,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
+    private final ThankYouFragment.Listener _thankyou_listener = new ThankYouFragment.Listener() {
         @Override
         public void onDoneClick() {
             setResult(RESULT_OK);
@@ -295,7 +282,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
     };
 
-    private SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
+    private final SorryFragment.Listener _sorry_listener = new SorryFragment.Listener() {
         @Override
         public void onDoneClick() {
             setResult(RESULT_CANCELED);
@@ -320,53 +307,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-******************************-*/
     /*-             Web              -*/
     /*-******************************-*/
-    private WebResultReceiver _resultReceiver = new WebResultReceiver(new Handler()) {
-        @Override
-        public void onSuccess(int resultCode, Bundle resultData) {
-
-            if (resultCode == WEB_COMPLETE_WORKORDER) {
-                // we completed the workorder... done
-                _thankYouFrag.setUploadComplete();
-
-                ((GlobalState) getApplication()).setCompletedWorkorder();
-
-            } else if (resultCode == WEB_COMPLETE_TASK || resultCode == WEB_UPLOAD_SIGNATURE) {
-                // we finished uploading the signature
-                if (_completeWorkorder) {
-                    // if we need to complete, then start that process
-                    GaTopic.dispatchEvent(SignOffActivity.this, "WorkorderActivity", GaTopic.ACTION_COMPLETE_WORK, "SignOffActivity", 1);
-                    startService(
-                            _service.complete(WEB_COMPLETE_WORKORDER, _workorder.getWorkorderId()));
-
-                } else {
-                    // otherwise we're done
-                    _thankYouFrag.setUploadComplete();
-                }
-            }
-        }
-
-        @Override
-        public Context getContext() {
-            return SignOffActivity.this;
-        }
-
-        @Override
-        public void onError(int resultCode, Bundle resultData, String errorType) {
-            super.onError(resultCode, resultData, errorType);
-            if (resultData.containsKey(KEY_RESPONSE_ERROR) && resultData.getString(KEY_RESPONSE_ERROR) != null) {
-                String response = resultData.getString(KEY_RESPONSE_ERROR);
-                if (response.contains("The authtoken is invalid or has expired.")) {
-                    AuthTopicService.requestAuthInvalid(getContext(), true);
-                    return;
-                }
-            }
-            AuthTopicService.requestAuthInvalid(getContext(), false);
-            Toast.makeText(SignOffActivity.this, "Could not complete request", Toast.LENGTH_LONG).show();
-            _thankYouFrag.setUploadComplete();
-        }
-    };
-
-
     public static void startSignOff(Context context, Workorder workorder) {
         startSignOff(context, workorder, false);
     }

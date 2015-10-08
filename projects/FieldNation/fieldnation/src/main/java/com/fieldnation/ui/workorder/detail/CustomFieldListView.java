@@ -13,12 +13,14 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
 
+import java.util.Random;
+
 /**
  * Created by michael.carver on 10/30/2014.
  */
 
 public class CustomFieldListView extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.CustomFieldListView";
+    private static final String TAG = "CustomFieldListView";
 
     // Ui
     private LinearLayout _fieldsList;
@@ -62,6 +64,10 @@ public class CustomFieldListView extends RelativeLayout {
 
         setVisibility(View.VISIBLE);
 
+        if (_fieldsList.getChildCount() > _fields.length) {
+            _fieldsList.removeViews(_fields.length - 1, _fieldsList.getChildCount() - _fields.length);
+        }
+
         ForLoopRunnable r = new ForLoopRunnable(_fields.length, new Handler()) {
             @Override
             public void next(int i) throws Exception {
@@ -75,15 +81,8 @@ public class CustomFieldListView extends RelativeLayout {
                 CustomField field = _fields[i];
                 v.setData(_workorder, field, _listener);
             }
-
-            @Override
-            public void finish(int count) throws Exception {
-                if (_fieldsList.getChildCount() > count) {
-                    _fieldsList.removeViews(count - 1, _fieldsList.getChildCount() - count);
-                }
-            }
         };
-        post(r);
+        postDelayed(r, new Random().nextInt(1000));
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {
@@ -91,7 +90,7 @@ public class CustomFieldListView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(Workorder workorder, CustomField[] fieldList, boolean isCached) {
+    public void setData(Workorder workorder, CustomField[] fieldList) {
         _fields = fieldList;
         _workorder = workorder;
         populateUi();

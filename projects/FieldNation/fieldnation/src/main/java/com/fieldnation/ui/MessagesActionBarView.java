@@ -2,28 +2,25 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.topics.TopicReceiver;
-import com.fieldnation.topics.TopicService;
-import com.fieldnation.topics.Topics;
 
 public class MessagesActionBarView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ui.MessagesActionBarView");
+    private final String TAG = UniqueTag.makeTag("MessagesActionBarView");
     // UI
     private TextView _countTextView;
 
     // Data
     private Profile _profile = null;
+    private GlobalTopicClient _client;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -52,19 +49,19 @@ public class MessagesActionBarView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        setOnClickListener(_this_onClickListener);
+//        setOnClickListener(_this_onClickListener);
 
-        Topics.subscrubeProfileUpdated(getContext(), TAG + ":TopicService", _topicReceiver);
+        _client = new GlobalTopicClient(_client_listener);
+        _client.connect(getContext());
     }
 
     @Override
-    protected void finalize() throws Throwable {
-        TopicService.delete(getContext(), TAG + ":AuthTopicService");
-        TopicService.delete(getContext(), TAG + ":TopicService");
-        super.finalize();
+    protected void onDetachedFromWindow() {
+        _client.disconnect(getContext());
+        super.onDetachedFromWindow();
     }
 
-    private View.OnClickListener _this_onClickListener = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClickListener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MessageListActivity.class);
@@ -72,13 +69,15 @@ public class MessagesActionBarView extends RelativeLayout {
         }
     };
 
-    private TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
+    private final GlobalTopicClient.Listener _client_listener = new GlobalTopicClient.Listener() {
         @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            if (Topics.TOPIC_PROFILE_UPDATE.equals(topicId)) {
-                parcel.setClassLoader(getContext().getClassLoader());
-                _profile = parcel.getParcelable(Topics.TOPIC_PROFILE_PARAM_PROFILE);
-            }
+        public void onConnected() {
+            _client.subGotProfile();
+        }
+
+        @Override
+        public void onGotProfile(Profile profile) {
+            _profile = profile;
             refresh();
         }
     };
@@ -99,7 +98,7 @@ public class MessagesActionBarView extends RelativeLayout {
                 _countTextView.setText(count + "");
             }
         }
-
-        // TODO consier requesting updated information if this is cached
+        // TODO consider requesting updated information if this is cached
     }
+
 }

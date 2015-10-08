@@ -11,7 +11,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 
 public class WoProgressBar extends RelativeLayout {
-    private static final String TAG = "ui.workorder.detail.WoProgressBar";
+    private static final String TAG = "WoProgressBar";
 
     private static final int PROGRESSBAR_STEP_COMPLETED = 1;
     private static final int PROGRESSBAR_STEP_ACTIVE = 2;
@@ -186,7 +186,7 @@ public class WoProgressBar extends RelativeLayout {
                 _nodes[2].setLabel(getResources().getString(R.string.in_progress)); //In Progress
                 _nodes[3].setLabel(getResources().getString(R.string.completed)); //Completed
                 break;
-            case PENDINGREVIEWED:
+            case PENDINGREVIEW:
                 _nodes[0].setActive(PROGRESSBAR_STEP_COMPLETED);
                 _nodes[1].setActive(PROGRESSBAR_STEP_INACTIVE);
                 _nodes[2].setActive(PROGRESSBAR_STEP_INACTIVE);

@@ -1,78 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
-    android:layout_height="wrap_content"
-    android:layout_width="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <LinearLayout
-        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <LinearLayout
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                style="?attr/dialogTitleStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Expense" />
-
-            <TextView
-                style="?attr/dialogLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Expense Description" />
-
-            <EditText
-                android:id="@+id/description_edittext"
-                style="?attr/dialogEditTextStyle"
-                android:layout_width="fill_parent"
-                android:layout_marginBottom="@dimen/dialogContentPadding"
-                android:imeOptions="actionNext"
-                android:inputType="text" />
-
-            <TextView
-                style="?attr/dialogLabelStyle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Price" />
-
-            <EditText
-                android:id="@+id/amount_edittext"
-                style="?attr/dialogEditTextStyle"
-                android:layout_width="fill_parent"
-                android:layout_marginBottom="@dimen/dialogContentPadding"
-                android:imeOptions="actionNext"
-                android:inputType="numberDecimal" />
-
             <LinearLayout
-                android:id="@+id/category_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
                 <TextView
-                    style="?attr/dialogLabelStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Category" />
-
-                <Spinner
-                    android:id="@+id/category_spinner"
+                    style="?attr/dialogTitleStyle"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/expense" />
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <EditText
+                        android:id="@+id/description_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/description"
+                        android:imeOptions="actionNext"
+                        android:inputType="text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <android.support.design.widget.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp">
+
+                    <EditText
+                        android:id="@+id/amount_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/price"
+                        android:imeOptions="actionNext"
+                        android:inputType="numberDecimal" />
+                </android.support.design.widget.TextInputLayout>
+
+                <LinearLayout
+                    android:id="@+id/category_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/Text_Caption"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="4dp"
+                            android:text="@string/category" />
+
+                        <Spinner
+                            android:id="@+id/category_spinner"
+                            style="@style/Spinner"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+
+                        <View
+                            style="@style/DividerFull"
+                            android:layout_marginBottom="8dp"
+                            android:layout_marginLeft="4dp"
+                            android:layout_marginRight="4dp"
+                            android:background="@color/fn_dark_text_80" />
+                    </LinearLayout>
+
+                </LinearLayout>
             </LinearLayout>
         </LinearLayout>
 
         <LinearLayout
             android:id="@+id/actionbar_view"
             style="?attr/dialogActionBarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
             android:orientation="horizontal">
 
             <Button

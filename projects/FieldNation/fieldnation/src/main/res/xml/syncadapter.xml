@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <sync-adapter xmlns:android="http://schemas.android.com/apk/res/android"
-    android:accountType="com.fieldnation"
+    android:accountType="@string/auth_account_type"
     android:allowParallelSyncs="true"
-    android:contentAuthority="com.fieldnation.service"
+    android:contentAuthority="@string/auth_authority"
     android:supportsUploading="false"
     android:userVisible="false" />

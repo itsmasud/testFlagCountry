@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -19,13 +20,13 @@ import com.fieldnation.utils.misc;
 import java.util.Calendar;
 
 public class PaymentWorkorderView extends RelativeLayout {
-    private static final String TAG = "ui.payment.PaymentWorkorderView";
+    private static final String TAG = "PaymentWorkorderView";
     // UI
     // status
     private View _statusView;
     private TextView _statusTextView;
     // bundle
-    private RelativeLayout _bundleLayout;
+    private IconFontTextView _bundleIconFont;
 
     // center panel
     // title
@@ -39,7 +40,9 @@ public class PaymentWorkorderView extends RelativeLayout {
     // right panel
     private TextView _paymentTextView;
     private TextView _basisTextView;
-    private Button _actionButton;
+    private Button _actionGreenButton;
+    private Button _actionGrayButton;
+    private Button _actionOrangeButton;
 
     // Data
     private Workorder _workorder;
@@ -66,7 +69,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle
-        _bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
+        _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
@@ -77,8 +80,15 @@ public class PaymentWorkorderView extends RelativeLayout {
         _distanceTextView.setVisibility(GONE);
         _whenTextView = (TextView) findViewById(R.id.when_textview);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
-        _actionButton.setVisibility(GONE);
+        // todo need to pick a button, and hide the others
+        _actionGreenButton = (Button) findViewById(R.id.action_button_green);
+        _actionGreenButton.setVisibility(GONE);
+
+        _actionGrayButton = (Button) findViewById(R.id.action_button_white);
+        _actionGrayButton.setVisibility(GONE);
+
+        _actionOrangeButton = (Button) findViewById(R.id.action_button_orange);
+        _actionOrangeButton.setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
@@ -89,21 +99,15 @@ public class PaymentWorkorderView extends RelativeLayout {
         setIsBundle(false);
 
         _statusView.setBackgroundResource(R.drawable.card_status_green);
-        _statusTextView.setTextColor(getContext().getResources().getColor(R.color.woCardStatusLabel3));
+        _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
         setOnClickListener(_this_onClick);
     }
 
     private void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleLayout.setVisibility(VISIBLE);
-            _titleTextView.setVisibility(GONE);
-            _basisTextView.setVisibility(GONE);
-            _paymentTextView.setVisibility(GONE);
+            _bundleIconFont.setVisibility(VISIBLE);
         } else {
-            _bundleLayout.setVisibility(GONE);
-            _titleTextView.setVisibility(VISIBLE);
-            _basisTextView.setVisibility(VISIBLE);
-            _paymentTextView.setVisibility(VISIBLE);
+            _bundleIconFont.setVisibility(GONE);
         }
     }
 
@@ -136,9 +140,9 @@ public class PaymentWorkorderView extends RelativeLayout {
 
         String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
         _basisTextView.setText(paymethod);
-        _paymentTextView.setText(misc.toCurrency(wo.getAmount()).substring(1));
+        _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
         _statusTextView.setText(misc.capitalize(payment.getStatus()));
-        _workorderIdTextView.setText("ID: " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {

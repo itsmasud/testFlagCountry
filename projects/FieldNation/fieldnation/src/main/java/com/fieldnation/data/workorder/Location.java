@@ -28,8 +28,8 @@ public class Location {
     private Double _distance;
     @Json(name = "distanceMapUrl")
     private String _distanceMapUrl;
-	@Json(name="geo")
-	private Geo _geo;
+    @Json(name = "geo")
+    private Geo _geo;
     @Json(name = "mapUrl")
     private String _mapUrl;
     @Json(name = "name")
@@ -90,9 +90,9 @@ public class Location {
         return _distanceMapUrl;
     }
 
-	public Geo getGeo(){
-		return _geo;
-	}
+    public Geo getGeo() {
+        return _geo;
+    }
 
     public String getMapUrl() {
         return _mapUrl;
@@ -206,6 +206,24 @@ public class Location {
         if (!misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state) && !misc.isEmptyOrNull(_zip) && !misc.isEmptyOrNull(_country)) {
             address += _city + ", " + _state + " " + _zip + "\n";
             address += _country;
+        }
+
+        return address.trim();
+    }
+
+    public String getFullAddressOneLine() {
+        String address = "";
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + ", ";
+        }
+
+        if (!misc.isEmptyOrNull(_city)
+                && !misc.isEmptyOrNull(_state)
+                && !misc.isEmptyOrNull(_zip)
+                && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state;
         }
 
         return address.trim();

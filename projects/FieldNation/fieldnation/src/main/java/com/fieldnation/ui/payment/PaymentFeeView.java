@@ -4,13 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.misc;
 
 public class PaymentFeeView extends RelativeLayout {
@@ -20,7 +20,7 @@ public class PaymentFeeView extends RelativeLayout {
     private View _statusView;
     private TextView _statusTextView;
     // bundle
-    private RelativeLayout _bundleLayout;
+    private IconFontTextView _bundleImageView;
 
     // center panel
     // title
@@ -33,10 +33,8 @@ public class PaymentFeeView extends RelativeLayout {
     // right panel
     private TextView _paymentTextView;
     private TextView _basisTextView;
-    private Button _actionButton;
 
     // Data
-
     public PaymentFeeView(Context context) {
         this(context, null, -1);
     }
@@ -59,7 +57,7 @@ public class PaymentFeeView extends RelativeLayout {
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
         // bundle
-        _bundleLayout = (RelativeLayout) findViewById(R.id.bundle_layout);
+        _bundleImageView = (IconFontTextView) findViewById(R.id.bundle_imageview);
 
         // center panel
         // title box
@@ -70,8 +68,10 @@ public class PaymentFeeView extends RelativeLayout {
         _distanceTextView.setVisibility(GONE);
         _whenTextView = (TextView) findViewById(R.id.when_textview);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
-        _actionButton.setVisibility(GONE);
+        // todo need to pick a button, and hide the others
+        findViewById(R.id.action_button_green).setVisibility(GONE);
+        findViewById(R.id.action_button_white).setVisibility(GONE);
+        findViewById(R.id.action_button_orange).setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _basisTextView = (TextView) findViewById(R.id.basis_textview);
@@ -82,21 +82,15 @@ public class PaymentFeeView extends RelativeLayout {
         setIsBundle(false);
 
         _statusView.setBackgroundResource(R.drawable.card_status_green);
-        _statusTextView.setTextColor(getContext().getResources().getColor(R.color.woCardStatusLabel3));
+        _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
 
     }
 
     private void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleLayout.setVisibility(VISIBLE);
-            _titleTextView.setVisibility(GONE);
-            _basisTextView.setVisibility(GONE);
-            _paymentTextView.setVisibility(GONE);
+            _bundleImageView.setVisibility(VISIBLE);
         } else {
-            _bundleLayout.setVisibility(GONE);
-            _titleTextView.setVisibility(VISIBLE);
-            _basisTextView.setVisibility(VISIBLE);
-            _paymentTextView.setVisibility(VISIBLE);
+            _bundleImageView.setVisibility(GONE);
         }
     }
 
