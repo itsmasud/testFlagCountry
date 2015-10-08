@@ -240,30 +240,30 @@ public class TaskListView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void onCheckin(Task task);
+        void onCheckin(Task task);
 
-        public void onCheckout(Task task);
+        void onCheckout(Task task);
 
-        public void onCloseOutNotes(Task task);
+        void onCloseOutNotes(Task task);
 
-        public void onConfirmAssignment(Task task);
+        void onConfirmAssignment(Task task);
 
-        public void onCustomField(Task task);
+        void onCustomField(Task task);
 
-        public void onDownload(Task task);
+        void onDownload(Task task);
 
-        public void onEmail(Task task);
+        void onEmail(Task task);
 
-        public void onPhone(Task task);
+        void onPhone(Task task);
 
-        public void onShipment(Task task);
+        void onShipment(Task task);
 
-        public void onSignature(Task task);
+        void onSignature(Task task);
 
-        public void onUploadFile(Task task);
+        void onUploadFile(Task task);
 
-        public void onUploadPicture(Task task);
+        void onUploadPicture(Task task);
 
-        public void onUniqueTask(Task task);
+        void onUniqueTask(Task task);
     }
 }

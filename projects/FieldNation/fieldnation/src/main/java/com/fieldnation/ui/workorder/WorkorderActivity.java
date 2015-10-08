@@ -10,10 +10,8 @@ import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
 import com.fieldnation.Debug;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
@@ -273,8 +271,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         // WorkorderStatus.INPROGRESS) {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
-
-        setLoading(false);
+        // setLoading(false);
     }
 
     private void setLoading(boolean loading) {

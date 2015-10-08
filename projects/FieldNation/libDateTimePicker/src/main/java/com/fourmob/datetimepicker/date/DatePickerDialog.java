@@ -417,11 +417,11 @@ public class DatePickerDialog extends DialogFragment implements View.OnClickList
         mCloseOnSingleTapDay = closeOnSingleTapDay;
     }
 
-    static abstract interface OnDateChangedListener {
-		public abstract void onDateChanged();
+    interface OnDateChangedListener {
+		void onDateChanged();
 	}
 
-	public static abstract interface OnDateSetListener {
-		public abstract void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day);
+	public interface OnDateSetListener {
+		void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day);
 	}
 }

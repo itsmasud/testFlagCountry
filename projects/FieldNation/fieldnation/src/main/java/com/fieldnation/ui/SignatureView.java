@@ -277,6 +277,15 @@ public class SignatureView extends View {
     }
 
     private class SignatureParseAsyncTask extends AsyncTaskEx<String, Object, List<Shape>> {
+        private int mw;
+        private int mh;
+
+        @Override
+        protected void onPreExecute() {
+            mw = getMeasuredWidth();
+            mh = getMeasuredHeight();
+        }
+
         @Override
         protected List<Shape> doInBackground(String... params) {
             try {
@@ -320,15 +329,15 @@ public class SignatureView extends View {
                 _xOff = minX;
                 _yOff = minY;
 
-                _scale = getMeasuredWidth() / (maxX - minX);
-                if (getMeasuredHeight() / (maxY - minY) < _scale)
-                    _scale = getMeasuredHeight() / (maxY - minY);
+                _scale = mw / (maxX - minX);
+                if (mh / (maxY - minY) < _scale)
+                    _scale = mh / (maxY - minY);
 
                 float height = _scale * (maxY - minY);
                 float width = _scale * (maxX - minX);
 
-                _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
-                _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
+                _yOff -= ((mh - height) / 2) / _scale;
+                _xOff -= ((mw - width) / 2) / _scale;
 
 
             } catch (Exception ex) {

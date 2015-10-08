@@ -1,7 +1,5 @@
 package com.fieldnation.ui.workorder.detail;
 
-import com.fieldnation.R;
-
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -9,6 +7,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+
+import com.fieldnation.R;
 
 public class MessageInputView extends RelativeLayout {
 	// UI

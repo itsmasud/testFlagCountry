@@ -20,7 +20,6 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -36,7 +35,6 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.util.Calendar;
 
@@ -111,11 +109,11 @@ public class App extends Application {
         // start up the debugging tools
         Debug.init();
 
-        Debug.setBool("isUserAMonkey", ActivityManager.isUserAMonkey());
+        Debug.setBool("is_User_A_Monkey", ActivityManager.isUserAMonkey());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
-            Debug.setBool("isUserAGoat", um.isUserAGoat());
+            Debug.setBool("is_User_A_Goat", um.isUserAGoat());
         }
 
         Log.v(TAG, "debug init time: " + watch.finishAndRestart());
@@ -134,6 +132,7 @@ public class App extends Application {
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);
         Log.v(TAG, "memoryClass time: " + watch.finishAndRestart());
+        Debug.setInt("memory_class", _memoryClass);
 
         // trigger authentication and web crawler
         new AsyncTaskEx<Context, Object, Object>() {
@@ -208,7 +207,7 @@ public class App extends Application {
         // set the app's install date
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
-//            new Thread(_anrReport).start();
+        // new Thread(_anrReport).start();
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
@@ -217,7 +216,7 @@ public class App extends Application {
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

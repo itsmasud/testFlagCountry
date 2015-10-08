@@ -119,11 +119,11 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
 //    };
 
     public interface Listener {
-        public void onAddWorklog(Workorder workorder, boolean showDeviceCount);
+        void onAddWorklog(Workorder workorder, boolean showDeviceCount);
 
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
+        void deleteWorklog(Workorder workorder, LoggedWork loggedWork);
     }
 
 //    private AuthenticationClient _authClient = new AuthenticationClient() {

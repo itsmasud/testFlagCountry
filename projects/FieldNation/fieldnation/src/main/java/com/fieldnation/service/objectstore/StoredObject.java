@@ -1,7 +1,6 @@
 package com.fieldnation.service.objectstore;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -9,6 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.misc;
@@ -201,38 +201,43 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
      * @return the object, null if there was an error.
      */
     public static StoredObject get(long profileId, String objectTypeName, String objectKey) {
-        Log.v(TAG, "get(" + profileId + ", " + objectTypeName + ", " + objectKey + ")");
-        // Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
-        StoredObject obj = null;
-        synchronized (TAG) {
-            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
-            try {
-                SQLiteDatabase db = helper.getReadableDatabase();
+        try {
+            Log.v(TAG, "get(" + profileId + ", " + objectTypeName + ", " + objectKey + ")");
+            // Log.v(TAG, "get(" + objectTypeName + "/" + objectKey + ")");
+            StoredObject obj = null;
+            synchronized (TAG) {
+                ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
                 try {
-                    Cursor cursor = db.query(
-                            ObjectStoreSqlHelper.TABLE_NAME,
-                            ObjectStoreSqlHelper.getColumnNames(),
-                            Column.PROFILE_ID + "=? AND "
-                                    + Column.OBJ_NAME + "=? AND "
-                                    + Column.OBJ_KEY + "=?",
-                            new String[]{profileId + "", objectTypeName, objectKey},
-                            null, null, null, "1");
-
+                    SQLiteDatabase db = helper.getReadableDatabase();
                     try {
-                        if (cursor.moveToFirst()) {
-                            obj = new StoredObject(cursor);
+                        Cursor cursor = db.query(
+                                ObjectStoreSqlHelper.TABLE_NAME,
+                                ObjectStoreSqlHelper.getColumnNames(),
+                                Column.PROFILE_ID + "=? AND "
+                                        + Column.OBJ_NAME + "=? AND "
+                                        + Column.OBJ_KEY + "=?",
+                                new String[]{profileId + "", objectTypeName, objectKey},
+                                null, null, null, "1");
+
+                        try {
+                            if (cursor.moveToFirst()) {
+                                obj = new StoredObject(cursor);
+                            }
+                        } finally {
+                            cursor.close();
                         }
                     } finally {
-                        cursor.close();
+                        db.close();
                     }
                 } finally {
-                    db.close();
+                    helper.close();
                 }
-            } finally {
-                helper.close();
             }
+            return obj;
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            return null;
         }
-        return obj;
     }
 
     /**
@@ -297,7 +302,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
         if (result != null) {
-            result.delete(result);
+            delete(result);
         }
 
         ContentValues v = new ContentValues();
@@ -372,7 +377,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
         StoredObject result = get(profileId, objectTypeName, objectKey);
         if (result != null) {
-            result.delete(result);
+            delete(result);
         }
 
         ContentValues v = new ContentValues();
@@ -594,10 +599,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
 
-        for (int i = 0; i < list.size(); i++) {
-            StoredObject obj = list.get(i);
-            delete(obj);
-        }
+        delete(list);
     }
 
     public static boolean delete(long profileId, String objectTypeName, long objkey) {
@@ -676,6 +678,41 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             ObjectStoreSqlHelper.TABLE_NAME,
                             Column.ID + "=?",
                             new String[]{obj.getId() + ""}) > 0;
+                } finally {
+                    db.close();
+                }
+            } finally {
+                helper.close();
+            }
+        }
+        return success;
+    }
+
+    public static boolean delete(List<StoredObject> list) {
+        if (list.size() == 0)
+            return true;
+
+        for (StoredObject obj : list) {
+            if (obj != null && obj._isFile) {
+                obj._file.delete();
+            }
+        }
+
+        boolean success = false;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = new ObjectStoreSqlHelper(App.get());
+            try {
+                SQLiteDatabase db = helper.getWritableDatabase();
+                try {
+                    String[] params = new String[list.size()];
+                    for (int i = 0; i < list.size(); i++) {
+                        params[i] = list.get(i).getId() + "";
+                    }
+
+                    success = db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + " IN (" + makePlaceholders(params.length) + ")",
+                            params) > 0;
                 } finally {
                     db.close();
                 }

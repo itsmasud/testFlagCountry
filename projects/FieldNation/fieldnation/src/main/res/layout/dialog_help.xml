@@ -20,7 +20,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:gravity="center"
-                android:text="Need some help?" />
+                android:text="@string/need_some_help" />
 
             <TextView
                 android:layout_width="match_parent"

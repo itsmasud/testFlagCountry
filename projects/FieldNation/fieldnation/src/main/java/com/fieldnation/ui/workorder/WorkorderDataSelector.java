@@ -20,11 +20,11 @@ public enum WorkorderDataSelector {
     private String _call;
     private boolean _allowCache = false;
 
-    private WorkorderDataSelector(String call) {
+    WorkorderDataSelector(String call) {
         _call = call;
     }
 
-    private WorkorderDataSelector(String call, boolean allowCache) {
+    WorkorderDataSelector(String call, boolean allowCache) {
         _call = call;
         _allowCache = allowCache;
     }

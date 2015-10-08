@@ -31,11 +31,11 @@ public class User {
     @Json(name = "state")
     private String _state;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "userType")
     private String _userType;
     @Json(name = "user_id")
-    private Integer _user_Id;
+    private Long _user_Id;
 
     public User() {
     }
@@ -99,7 +99,7 @@ public class User {
         return _state;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         if (_user_Id != null)
             return _user_Id;
         return _userId;

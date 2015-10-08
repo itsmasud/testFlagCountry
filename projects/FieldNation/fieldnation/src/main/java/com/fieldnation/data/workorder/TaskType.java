@@ -21,7 +21,7 @@ public enum TaskType {
 
     private int _id;
 
-    private TaskType(int id) {
+    TaskType(int id) {
         _id = id;
     }
 

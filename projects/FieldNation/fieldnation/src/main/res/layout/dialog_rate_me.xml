@@ -17,19 +17,18 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Rate this work order" />
+                android:text="@string/rate_this_work_order" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Overall rating: " />
+                android:text="@string/overall_rating__" />
 
 
             <com.fieldnation.ui.StarView
                 android:id="@+id/stars"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                />
+                android:layout_height="wrap_content" />
 
 
             <CheckBox
@@ -37,14 +36,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Were there clear exception?" />
+                android:text="@string/were_there_clear_expectations" />
 
             <CheckBox
                 android:id="@+id/chk_is_professional"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="Were they professional?" />
+                android:text="@string/were_they_professional" />
 
 
         </LinearLayout>

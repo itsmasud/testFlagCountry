@@ -158,7 +158,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _authTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
+                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
                 "OK", _notProvider_listener);
     }
 

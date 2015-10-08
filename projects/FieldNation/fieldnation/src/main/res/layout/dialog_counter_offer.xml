@@ -91,12 +91,12 @@
         <Button
             android:id="@+id/back_button"
             style="?attr/dialogCancelButtonStyle"
-            android:text="BACK" />
+            android:text="@string/btn_back" />
 
         <Button
             android:id="@+id/ok_button"
             style="?attr/dialogOkButtonStyle"
-            android:text="NEXT" />
+            android:text="@string/btn_next" />
     </LinearLayout>
 
 

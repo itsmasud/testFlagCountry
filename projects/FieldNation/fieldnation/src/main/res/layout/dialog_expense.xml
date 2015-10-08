@@ -24,7 +24,7 @@
                     style="?attr/dialogTitleStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Expense" />
+                    android:text="@string/expense" />
 
                 <android.support.design.widget.TextInputLayout
                     android:layout_width="match_parent"
@@ -34,7 +34,7 @@
                     <EditText
                         android:id="@+id/description_edittext"
                         style="@style/EditText"
-                        android:hint="Description"
+                        android:hint="@string/description"
                         android:imeOptions="actionNext"
                         android:inputType="text" />
                 </android.support.design.widget.TextInputLayout>
@@ -47,7 +47,7 @@
                     <EditText
                         android:id="@+id/amount_edittext"
                         style="@style/EditText"
-                        android:hint="Price"
+                        android:hint="@string/price"
                         android:imeOptions="actionNext"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
@@ -69,7 +69,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="8dp"
                             android:layout_marginLeft="4dp"
-                            android:text="Category" />
+                            android:text="@string/category" />
 
                         <Spinner
                             android:id="@+id/category_spinner"
