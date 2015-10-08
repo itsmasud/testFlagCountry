@@ -271,8 +271,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         // WorkorderStatus.INPROGRESS) {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
-
-        setLoading(false);
+        // setLoading(false);
     }
 
     private void setLoading(boolean loading) {
