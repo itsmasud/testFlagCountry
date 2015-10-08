@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class MSService extends Service {
     private static final String TAG = "MSService";
-    private static final long IDLE_TIMEOUT = 10000;
+    private static final long IDLE_TIMEOUT = 300000;
 
     private final Object LOCK = new Object();
 
@@ -86,9 +86,11 @@ public abstract class MSService extends Service {
         @Override
         public void run() {
             // check timer
-            if (System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT
+            if (isStillWorking()) {
+                startActivityMonitor();
+            } else if ((System.currentTimeMillis() - _lastRequestTime > IDLE_TIMEOUT
                     && _workersWorking == 0
-                    && _intents.size() == 0) {
+                    && _intents.size() == 0)) {
                 // shutdown
                 stopSelf();
             } else {
@@ -96,6 +98,10 @@ public abstract class MSService extends Service {
             }
         }
     };
+
+    public boolean isStillWorking() {
+        return false;
+    }
 
     @Override
     public void onDestroy() {

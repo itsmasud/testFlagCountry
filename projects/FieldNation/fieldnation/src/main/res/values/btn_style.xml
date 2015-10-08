@@ -11,9 +11,9 @@
 
     <dimen name="btn_gradient_padding">1dp</dimen>
 
-    <dimen name="btn_status_left">2dp</dimen>
-    <dimen name="btn_status_bottom">2dp</dimen>
-    <dimen name="btn_status_top">2dp</dimen>
+    <!--<dimen name="btn_status_left">2dp</dimen>-->
+    <!--<dimen name="btn_status_bottom">2dp</dimen>-->
+    <!--<dimen name="btn_status_top">2dp</dimen>-->
 
     <color name="btn_status_orange_fill">@color/fn_brandcolor</color>
     <color name="btn_status_orange_top">@color/fn_brandcolor_80</color>

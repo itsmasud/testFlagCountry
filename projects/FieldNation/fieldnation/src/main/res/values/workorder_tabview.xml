@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
-    <dimen name="workorder_tab_button_padding">15dp</dimen>
-    <dimen name="workorder_tab_bottom_separator_margin">15dp</dimen>
+    <!--<dimen name="workorder_tab_bottom_separator_margin">15dp</dimen>-->
     <dimen name="workorder_tab_top_margin">15dp</dimen>
     <dimen name="workorder_tab_separator_thickness">2px</dimen>
-    <dimen name="workorder_tab_separator_height">24dp</dimen>
+    <!--<dimen name="workorder_tab_separator_height">24dp</dimen>-->
     <dimen name="workorder_tab_image_width">32dp</dimen>
     <dimen name="workorder_tab_image_height">32dp</dimen>
     <dimen name="workorder_tab_separator_bottom_margin">20dp</dimen>

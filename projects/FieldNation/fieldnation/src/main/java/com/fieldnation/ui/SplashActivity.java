@@ -65,6 +65,7 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        _calledMyWork = false;
         startService(new Intent(this, AuthTopicService.class));
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
         _globalClient.connect(this);
@@ -129,11 +130,11 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
-        if (!_calledMyWork) {
-            _calledMyWork = true;
-            MyWorkActivity.startNew(this);
-            finish();
-        }
+            if (!_calledMyWork) {
+                _calledMyWork = true;
+                MyWorkActivity.startNew(this);
+                finish();
+            }
         }
     }
 

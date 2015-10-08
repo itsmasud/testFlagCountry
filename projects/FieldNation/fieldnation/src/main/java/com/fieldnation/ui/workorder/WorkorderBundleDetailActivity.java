@@ -6,11 +6,13 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -100,6 +102,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
 
         @Override
         public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {
+            if (bundle == null) {
+                ToastClient.toast(WorkorderBundleDetailActivity.this, "Sorry, could not get bundle details.", Toast.LENGTH_LONG);
+                finish();
+                return;
+            }
             _woBundle = bundle;
             NumberFormat form = NumberFormat.getNumberInstance();
             form.setMinimumFractionDigits(1);

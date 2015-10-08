@@ -254,7 +254,7 @@ public class TopicService extends MSService implements TopicConstants {
 
     // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
-        Log.v(TAG, "dispatchEvent(" + topicId + ")");
+        //Log.v(TAG, "dispatchEvent(" + topicId + ")");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
@@ -270,7 +270,7 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     public static void dispatchEvent(Context context, Bundle event) {
-        Log.v(TAG, "dispatchEvent(" + event + ")");
+        //Log.v(TAG, "dispatchEvent(" + event + ")");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtras(event);
         context.startService(intent);

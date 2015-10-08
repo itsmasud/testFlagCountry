@@ -6,8 +6,8 @@
     <!-- managed provider without payment privledges  -->
     <!--<string name="auth_default_username">travis.emslander+evan@fieldnation.com</string>-->
     <!-- normal user -->
-    <string name="auth_default_username">hexixtech</string>
-    <!--<string name="auth_default_username">travisfakeco</string>-->
+    <!--<string name="auth_default_username">hexixtech</string>-->
+    <string name="auth_default_username">travisfakeco</string>
     <string name="auth_default_password">red17</string>
     <string name="auth_fn_grant_type">password</string>
     <string name="auth_fn_client_id">demoapp</string>

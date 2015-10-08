@@ -101,7 +101,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <TextView
@@ -109,7 +108,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <TextView
@@ -117,7 +115,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <View
@@ -132,7 +129,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <TextView
@@ -140,7 +136,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <TextView
@@ -148,7 +143,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <View
@@ -163,7 +157,6 @@
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="$0.00" />
 
                 <TextView
@@ -171,7 +164,6 @@
                     style="@style/Text_Caption"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
                     android:text="Processing" />
 
             </LinearLayout>

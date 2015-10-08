@@ -162,7 +162,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.NOT_AUTHENTICATED);
             _accountManager.invalidateAuthToken(getAccountType(), token);
-            _authToken.delete(this);
+            _authToken.delete();
             _authToken = null;
         }
     }
@@ -295,7 +295,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
 
                 if (!match) {
                     // what now?
-                    auth.delete(AuthTopicService.this);
+                    auth.delete();
                     _authToken = null;
                     _account = null;
                     setState(AuthState.NOT_AUTHENTICATED);

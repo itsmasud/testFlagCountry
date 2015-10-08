@@ -90,8 +90,7 @@ public class CompanySummaryView extends RelativeLayout {
         }
 
         if (misc.isEmptyOrNull(_workorder.getCompanyName())) {
-            setVisibility(GONE);
-            return;
+            _nameTextView.setText("Company Name Hidden");
         } else {
             _nameTextView.setText(_workorder.getCompanyName());
         }
@@ -100,22 +99,20 @@ public class CompanySummaryView extends RelativeLayout {
 
         if (rating == null || rating.getTotalRating() == null) {
             _newBuyerTextView.setVisibility(VISIBLE);
-            _starRating.setVisibility(GONE);
+            _starRating.setStars(0);
             _detailsLayout.setVisibility(GONE);
-            _locationTextView.setVisibility(GONE);
+            _locationTextView.setText("Location not available");
             _reviewsTextView.setVisibility(GONE);
         } else {
             _newBuyerTextView.setVisibility(GONE);
-            _starRating.setVisibility(VISIBLE);
             _detailsLayout.setVisibility(VISIBLE);
 
             _daysTextView.setText(rating.getTimeToApproval() + " Days");
 
             if (rating.getAvgRating() != null) {
                 _starRating.setStars((int) (double) rating.getAvgRating());
-                _starRating.setVisibility(VISIBLE);
             } else {
-                _starRating.setVisibility(GONE);
+                _starRating.setStars(0);
             }
 
             if (rating.getClearExpectationRatingPercent() != null) {
@@ -129,14 +126,21 @@ public class CompanySummaryView extends RelativeLayout {
             }
 
             if (rating.getTotalRating() != null) {
-                _locationTextView.setVisibility(VISIBLE);
-                _locationTextView.setText(rating.getCity() + ", " + rating.getState());
+                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
+                    _locationTextView.setText("Location not available");
+                } else {
+                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
+                }
                 _reviewsTextView.setVisibility(VISIBLE);
                 _reviewsTextView.setText(rating.getTotalRating() + " Reviews");
                 _newBuyerTextView.setVisibility(GONE);
             } else {
                 _newBuyerTextView.setVisibility(VISIBLE);
-                _locationTextView.setVisibility(GONE);
+                if (misc.isEmptyOrNull(rating.getCity()) || misc.isEmptyOrNull(rating.getState())) {
+                    _locationTextView.setText("Location not available");
+                } else {
+                    _locationTextView.setText(rating.getCity() + ", " + rating.getState());
+                }
                 _reviewsTextView.setVisibility(GONE);
             }
         }

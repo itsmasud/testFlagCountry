@@ -78,6 +78,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
     @Override
+    public boolean isStillWorking() {
+        return WebTransaction.count(this) > 0;
+    }
+
+    @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         _authTopicClient.disconnect(this);
@@ -219,8 +224,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         public boolean doWork() {
             // try to get a transaction
 
-//            Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
-
+            //Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
             WebTransaction trans = WebTransaction.getNext(context, _syncThread && allowSync(), _isAuthenticated);
 
             // if failed, then exit

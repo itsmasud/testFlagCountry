@@ -138,6 +138,6 @@ public class ExpenseCategories {
 //    };
 
     public interface Listener {
-        public void onHaveCategories(ExpenseCategory[] categories);
+        void onHaveCategories(ExpenseCategory[] categories);
     }
 }

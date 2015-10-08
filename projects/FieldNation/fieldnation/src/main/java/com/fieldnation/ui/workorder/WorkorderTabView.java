@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -181,6 +180,6 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Private				-*/
     /*-*********************************-*/
     public interface Listener {
-        public void onChange(int index);
+        void onChange(int index);
     }
 }

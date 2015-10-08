@@ -17,7 +17,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:text="By signing this work order you acknowledge that the work has been satisfactorily completed" />
+            android:text="@string/by_signing_this_work_order_notice" />
 
         <EditText
             android:id="@+id/name_edittext"
@@ -25,7 +25,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="@dimen/tileContentPadding"
-            android:hint="Enter your name" />
+            android:hint="@string/enter_your_name" />
     </LinearLayout>
 
     <RelativeLayout
@@ -89,7 +89,7 @@
             style="?attr/buttonWhiteStyle"
             android:layout_width="150dp"
             android:layout_centerVertical="true"
-            android:text="BACK TO REVIEW" />
+            android:text="@string/btn_back_to_review" />
 
         <Button
             android:id="@+id/submit_button"

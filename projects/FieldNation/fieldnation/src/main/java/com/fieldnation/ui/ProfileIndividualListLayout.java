@@ -3,31 +3,18 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
-import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.workorder.detail.DiscountView;
-import com.fieldnation.ui.workorder.detail.WorkorderRenderer;
 import com.fieldnation.utils.misc;
 
 import java.lang.ref.WeakReference;
-import java.util.Random;
 
 /**
  * Created by Shoyeb Ahmed on 08/07/2015.

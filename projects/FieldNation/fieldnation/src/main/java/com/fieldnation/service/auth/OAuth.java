@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Michael Carver on 3/12/2015.
  */
 public class OAuth implements Parcelable {
-    private static final String TAG = "rpc.server.auth.OAuth";
+    private static final String TAG = "OAuth";
 
 //    public static final String KEY_OAUTH = TAG;
 
@@ -130,7 +130,7 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     /*-             Human Code          -*/
     /*-*********************************-*/
-    public void delete(Context context) {
+    public void delete() {
         if (_id != -1)
             StoredObject.delete(_id);
     }

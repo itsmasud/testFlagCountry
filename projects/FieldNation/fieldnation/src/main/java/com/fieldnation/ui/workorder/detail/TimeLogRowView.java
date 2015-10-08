@@ -158,8 +158,8 @@ public class TimeLogRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
+        void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
     }
 }

@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,7 +75,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-    private IconFontButton _navigateButton;
+    private Button _navigateButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
 
@@ -138,7 +139,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
 
-        _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
+        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigationButton_onClick);
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
@@ -198,18 +199,19 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
-        _globalClient.disconnect(getActivity());
-        _workorderClient.disconnect(getActivity());
-        _docClient.disconnect(getActivity());
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(getActivity());
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(getActivity());
+
+        if (_docClient != null && _docClient.isConnected())
+            _docClient.disconnect(getActivity());
         super.onDetach();
     }
 
     private boolean checkMedia() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return true;
-        } else {
-            return false;
-        }
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     @Override

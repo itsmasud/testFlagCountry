@@ -12,7 +12,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:gravity="center"
-        android:text="CONTACTS" />
+        android:text="@string/contacts" />
 
     <LinearLayout
         android:id="@+id/contactList_layout"

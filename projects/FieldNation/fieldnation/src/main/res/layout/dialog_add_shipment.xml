@@ -19,7 +19,7 @@
             <TextView
                 android:id="@+id/title_textview"
                 style="?attr/dialogTitleStyle"
-                android:text="Add Shipment" />
+                android:text="@string/dialog_shipment_title" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"
@@ -45,7 +45,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="Carrier" />
+                    android:text="@string/carrier" />
 
                 <Spinner
                     android:id="@+id/carrier_spinner"
@@ -99,7 +99,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="Direction" />
+                    android:text="@string/direction" />
 
                 <Spinner
                     android:id="@+id/direction_spinner"

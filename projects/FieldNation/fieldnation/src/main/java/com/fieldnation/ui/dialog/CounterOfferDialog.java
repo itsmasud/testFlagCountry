@@ -499,6 +499,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
                 _counterReason = _reasonView.getReason();
 
+//                if (misc.isEmptyOrNull(_counterReason)) {
+//                    Toast.makeText(getActivity(), "Counter offer reason cannot be null. Please enter a reason.", Toast.LENGTH_LONG).show();
+//                    return;
+//                }
+
                 // Todo need to do some data validation
                 if (_listener != null) {
                     Expense[] exp = new Expense[_expenses.size()];
