@@ -12,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.services.common.Crash;
 
 /**
  * Created by Michael Carver on 8/31/2015.

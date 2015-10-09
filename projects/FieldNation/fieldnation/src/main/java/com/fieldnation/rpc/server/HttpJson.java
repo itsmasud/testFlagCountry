@@ -117,8 +117,7 @@ public class HttpJson {
                         String contentType = fo.getString("contentType");
                         StoredObject so = StoredObject.get(soId);
 
-                        // File sourceFile = so.getFile();
-                        File sourceFile = new File(so.getFile().getAbsolutePath() + "bad");
+                        File sourceFile = so.getFile();
                         Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
                         if (so.isFile()) {
                             util.addFilePart(key, filename, new FileInputStream(sourceFile), (int) sourceFile.length());

@@ -62,7 +62,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO, need to handle these
         return null;
     }
