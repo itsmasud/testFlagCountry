@@ -72,12 +72,12 @@ public class MultipartUtility {
 
     public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
         Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + length + ","
-                + URLConnection.guessContentTypeFromName(filename) + ")");
+                + App.guessContentTypeFromName(filename) + ")");
 
         writer.append("--").append(boundary).append(LINE_FEED);
         writer.append("Content-Disposition: form-data; name=\"").append(fieldName)
                 .append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
-        writer.append("Content-Type: ").append(URLConnection.guessContentTypeFromName(filename)).append(LINE_FEED);
+        writer.append("Content-Type: ").append(App.guessContentTypeFromName(filename)).append(LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 
         if (length > 0) {

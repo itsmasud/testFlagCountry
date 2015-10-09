@@ -36,6 +36,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.util.Calendar;
 
 /**
@@ -702,5 +703,13 @@ public class App extends Application {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
+    }
+
+    public static String guessContentTypeFromName(String url) {
+        try {
+            return URLConnection.guessContentTypeFromName(url);
+        } catch (Exception ex) {
+        }
+        return "application/octet-stream";
     }
 }
