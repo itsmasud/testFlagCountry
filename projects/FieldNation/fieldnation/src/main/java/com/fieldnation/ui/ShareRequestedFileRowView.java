@@ -36,7 +36,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     private Set<String> _uploadingFiles = new HashSet<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
-    boolean _checked;
+    private boolean _checked;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -104,6 +104,10 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
 //        subscribe();
         populateUi();
+    }
+
+    public boolean isChecked(){
+        return _checked;
     }
 
     private void populateUi() {

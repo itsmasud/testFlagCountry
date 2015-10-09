@@ -34,6 +34,10 @@
     <string name="activity_market_tab1">Available</string>
     <string name="activity_market_tab2">Requested</string>
 
+    <string name="activity_share_request_title_workorder">Select a workorder</string>
+    <string name="activity_share_request_title_task">Select a task</string>
+    <string name="activity_share_request_title_files">Select files</string>
+
     <string name="activity_sign_off_title">Sign Off</string>
 
     <string name="activity_signature_info_title">Signature Info</string>

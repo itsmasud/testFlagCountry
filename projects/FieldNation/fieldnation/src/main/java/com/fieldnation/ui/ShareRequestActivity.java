@@ -3,12 +3,16 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.v7.internal.view.menu.ActionMenuItemView;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -62,6 +66,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private RefreshView _refreshView;
     private EmptyWoListView _emptyView;
 
+    private ActionBarDrawerView _actionBarView;
+    private Toolbar _toolbar;
+
 
     // Data
     private WorkorderClient _workorderClient;
@@ -70,10 +77,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private List<UploadSlot> _uploadSlotList = null;
     private Task _currentTask;
     private UploadSlot _currentUploadSlot;
-    private UploadingDocument[] _uploadingDocuments;
-    LayoutType layoutType;
-    ShareUploadSlotView[] shareUploadSlotViewList;
-
+    private UploadingDocument[] _uploadingDocumentList;
+    private LayoutType layoutType;
+    private ShareUploadSlotView[] shareUploadSlotViewList;
+    private ShareRequestedFileRowView[] shareRequestedFileRowViewList;
+    private ActionMenuItemView _sendMenuItem;
 
     // state data
     private WorkorderDataSelector _displayView = WorkorderDataSelector.ASSIGNED;
@@ -91,6 +99,17 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_request);
+
+        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
+
+        _toolbar = _actionBarView.getToolbar();
+        _toolbar.setTitleTextColor(Color.WHITE);
+        _toolbar.setTitle(R.string.activity_share_request_title_workorder);
+        _toolbar.setNavigationIcon(android.R.drawable.ic_media_previous);
+
+
+        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        _toolbar.setOnMenuItemClickListener(_sendMenuItem_listener);
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
@@ -119,8 +138,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(this);
 
-//        _currentLayoutType = "workorder";
-
         layoutType = LayoutType.WORKORDER_LAYOUT;
         Log.v(TAG, "onCreate");
     }
@@ -134,21 +151,21 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         super.onSaveInstanceState(outState);
     }
 
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
             case KeyEvent.KEYCODE_BACK:
                 Log.v(TAG, "onKeyDown");
-
                 switch (LayoutType.fromString(layoutType.getCurrentLayoutValue())) {
                     case WORKORDER_LAYOUT:
-                        Log.v(TAG, "onKeyDown WORKORDER_LAYOUT");
                         finish();
                         break;
 
                     case UPLOAD_SLOT_LAYOUT:
                         layoutType = LayoutType.WORKORDER_LAYOUT;
-                        Log.v(TAG, "onKeyDown UPLOAD_SLOT_LAYOUT");
+                        _toolbar.setTitle(R.string.activity_share_request_title_workorder);
+                        _toolbar.getMenu().clear();
                         _workorderListView.setVisibility(View.VISIBLE);
                         _uploadSlotScrollView.setVisibility(View.GONE);
                         _sharedFilesScrollView.setVisibility(View.GONE);
@@ -156,10 +173,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
                     case SHARED_FILES_LAYOUT:
                         layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
-                        Log.v(TAG, "onKeyDown SHARED_FILES_LAYOUT");
+                        _toolbar.setTitle(R.string.activity_share_request_title_task);
+                        _toolbar.getMenu().clear();
                         _workorderListView.setVisibility(View.GONE);
                         _uploadSlotScrollView.setVisibility(View.VISIBLE);
                         _sharedFilesScrollView.setVisibility(View.GONE);
+//                        populateUploadSlotLayout();
                         break;
 
                 }
@@ -181,7 +200,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
             Log.e(TAG, "onResume ACTION_SEND_MULTIPLE");
-            handleSendMultipleImages(intent);
+            handleSendMultipleFiles(intent);
         } else if (action.equals(Intent.ACTION_SEND)) {
             Log.e(TAG, "onResume ACTION_SEND");
             handleSendSingleFile(intent);
@@ -194,47 +213,78 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     private void handleSendSingleFile(Intent intent) {
         Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        _uploadingDocuments = new UploadingDocument[1];
+        _uploadingDocumentList = new UploadingDocument[1];
         if (fileUri != null) {
             // Update UI to reflect image being shared
-            String fileName = getFileNameByUri(this, fileUri);
-            _uploadingDocuments[0] = new UploadingDocument(fileName);
+            final String fileName = getFileNameFromUri(fileUri);
+            final String filePath = getFileNameFromUri(fileUri);
+            _uploadingDocumentList[0] = new UploadingDocument(fileName, filePath);
 
-            Log.v(TAG, "handleSendImage: fileName" + fileName);
+            Log.v(TAG, "handleSendSingleFile: fileName" + fileName);
+            Log.v(TAG, "handleSendSingleFile: fileName" + filePath);
 
         }
     }
 
-    private void handleSendMultipleImages(Intent intent) {
+    private void handleSendMultipleFiles(Intent intent) {
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        _uploadingDocuments = new UploadingDocument[fileUris.size()];
+        _uploadingDocumentList = new UploadingDocument[fileUris.size()];
 
         if (fileUris != null) {
             for (int i = 0; i < fileUris.size(); i++) {
-                String fileName = getFileNameByUri(this, fileUris.get(i));
-                _uploadingDocuments[i] = new UploadingDocument(fileName);
-                Log.v(TAG, "handleSendMultipleImages: fileName" + fileName);
+                final String fileName = getFileNameFromUri(fileUris.get(i));
+                final String filePath = getFilePathFromIntent(fileUris.get(i));
+                _uploadingDocumentList[i] = new UploadingDocument(fileName, filePath);
+                Log.e(TAG, "handleSendMultipleFiles: fileName: " + fileName);
+                Log.e(TAG, "handleSendMultipleFiles: filePath: " + filePath);
             }
         }
     }
 
 
-    public static String getFileNameByUri(Context context, Uri uri) {
-        String fileName = "unknown";
-        Uri filePathUri = uri;
+    private String getFileNameFromUri(Uri uri) {
+
+        String fileName = "";
+//        String file_path= "";
+
         if (uri.getScheme().toString().compareTo("content") == 0) {
-            Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                filePathUri = Uri.parse(cursor.getString(column_index));
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);//Instead of "MediaStore.Images.Media.DATA" can be used "_data"
+                Uri filePathUri = Uri.parse(cursor.getString(column_index));
                 fileName = filePathUri.getLastPathSegment().toString();
+//                 file_path = filePathUri.getPath();
+//                        Toast.makeText(this,"File Name & PATH are:"+file_name+"\n"+file_path, Toast.LENGTH_LONG).show();
+                Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
+//                Log.e(TAG, "getFilePathFromIntent: filePath: " + file_path);
+
             }
-        } else if (uri.getScheme().compareTo("file") == 0) {
-            fileName = filePathUri.getLastPathSegment().toString();
-        } else {
-            fileName = fileName + "_" + filePathUri.getLastPathSegment();
         }
+
         return fileName;
+
+    }
+
+
+    private String getFilePathFromIntent(Uri uri) {
+//        String file_name = "";
+        String filePath = "";
+
+        if (uri.getScheme().toString().compareTo("content") == 0) {
+            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            if (cursor.moveToFirst()) {
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);//Instead of "MediaStore.Images.Media.DATA" can be used "_data"
+                Uri filePathUri = Uri.parse(cursor.getString(column_index));
+//                file_name = filePathUri.getLastPathSegment().toString();
+                filePath = filePathUri.getPath();
+//                Log.e(TAG, "getFilePathFromIntent: fileName: " + file_name);
+                Log.e(TAG, "getFilePathFromIntent: filePath: " + filePath);
+
+            }
+        }
+
+        return filePath;
+
     }
 
 
@@ -286,12 +336,16 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
 
     private void populateUploadSlotLayout() {
+        final UploadSlot[] slots = _workorder.getUploadSlots();
+
+        if (slots == null) return;
+
         layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
+        _toolbar.setTitle(R.string.activity_share_request_title_task);
         _workorderListView.setVisibility(View.GONE);
         _uploadSlotScrollView.setVisibility(View.VISIBLE);
 
         _titleWorkorderTextView.setText(_workorder.getTitle());
-        final UploadSlot[] slots = _workorder.getUploadSlots();
         shareUploadSlotViewList = new ShareUploadSlotView[slots.length];
 
         if (slots != null && slots.length > 0) {
@@ -314,8 +368,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                         v = new ShareUploadSlotView(ShareRequestActivity.this);
 //                        _uploadSlotLayout.addView(v);
                     }
+                    UploadSlot slot = _slots[i];
 //                    v.setData(_workorder, _profile.getUserId(), _slots[i]);
-                    v.setData(_workorder, _slots[i]);
+                    v.setData(_workorder, slot);
                     v.setListener(_shareUploadSlotView_listener);
                     shareUploadSlotViewList[i] = v;
                     _uploadSlotLayout.addView(v);
@@ -333,24 +388,33 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     private void populateSharedFilesLayout() {
         layoutType = LayoutType.SHARED_FILES_LAYOUT;
+        _toolbar.setTitle(R.string.activity_share_request_title_files);
+
         _uploadSlotScrollView.setVisibility(View.GONE);
         _sharedFilesScrollView.setVisibility(View.VISIBLE);
-
         _titleTaskTextView.setText(_currentUploadSlot.getSlotName());
-        _maxFilesNumberTextView.setText("Select upto " + _currentUploadSlot.getMaxFiles() + " file(s)");
 
-        if (_uploadingDocuments != null && _uploadingDocuments.length > 0) {
-            Log.v(TAG, "UD count: " + _uploadingDocuments.length);
-            if (_sharedFilesLayout.getChildCount() > _uploadingDocuments.length) {
-                _sharedFilesLayout.removeViews(_uploadingDocuments.length - 1, _sharedFilesLayout.getChildCount() - _uploadingDocuments.length);
+        if (_currentUploadSlot.getMaxFiles() < 1) {
+            _maxFilesNumberTextView.setVisibility(View.GONE);
+        } else {
+            _maxFilesNumberTextView.setText("Select upto " + _currentUploadSlot.getMaxFiles() + " file(s)");
+            _maxFilesNumberTextView.setVisibility(View.VISIBLE);
+        }
+
+        if (_uploadingDocumentList != null && _uploadingDocumentList.length > 0) {
+            Log.e(TAG, "UD count: " + _uploadingDocumentList.length);
+            shareRequestedFileRowViewList = new ShareRequestedFileRowView[_uploadingDocumentList.length];
+
+            if (_sharedFilesLayout.getChildCount() > _uploadingDocumentList.length) {
+                _sharedFilesLayout.removeViews(_uploadingDocumentList.length - 1, _sharedFilesLayout.getChildCount() - _uploadingDocumentList.length);
             }
 
-            ForLoopRunnable r = new ForLoopRunnable(_uploadingDocuments.length, new Handler()) {
-                private final UploadingDocument[] uploadingDocument = _uploadingDocuments;
+            ForLoopRunnable r = new ForLoopRunnable(_uploadingDocumentList.length, new Handler()) {
+                private final UploadingDocument[] uploadingDocumentList = _uploadingDocumentList;
 
                 @Override
                 public void next(int i) throws Exception {
-                    Log.v(TAG, "next" + uploadingDocument.length);
+                    Log.v(TAG, "next" + uploadingDocumentList.length);
 
                     ShareRequestedFileRowView v = null;
                     if (i < _sharedFilesLayout.getChildCount()) {
@@ -360,7 +424,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 //                        _uploadSlotLayout.addView(v);
                     }
 //                    v.setData(_workorder, _profile.getUserId(), _slots[i]);
-                    v.setData(_workorder, uploadingDocument[i]);
+                    shareRequestedFileRowViewList[i] = v;
+                    v.setData(_workorder, uploadingDocumentList[i]);
                     v.setListener(_shareRequestedFileRowView_listener);
                     _sharedFilesLayout.addView(v);
 
@@ -569,10 +634,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     private ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
         public void onClick(ShareUploadSlotView view, UploadSlot slot) {
-            Log.v(TAG, "_shareUploadSlotView_listener.onClick");
-            Log.v(TAG, "_shareUploadSlotView_listener.onClick" + slot.getSlotName());
+            Log.e(TAG, "_shareUploadSlotView_listener.onClick" + slot.getSlotName());
             for (ShareUploadSlotView shareUploadSlotView : shareUploadSlotViewList) {
-                shareUploadSlotView.changeToDefaultColor();
+                if (shareUploadSlotView != null)
+                    shareUploadSlotView.changeToDefaultColor();
             }
             view.changeCheckStatus();
             _currentUploadSlot = slot;
@@ -586,6 +651,58 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         public void onClick(ShareRequestedFileRowView view, UploadingDocument uploadingDocument) {
             Log.v(TAG, "_shareRequestedFileRowView_listener.onClick");
             view.changeCheckStatus();
+            int selectedFileNumber = 0;
+            Log.e(TAG, "shareRequestedFileRowViewList.length: " + shareRequestedFileRowViewList.length);
+            if (shareRequestedFileRowViewList[1] == null) {
+                Log.e(TAG, "shareRequestedFileRowViewList[1]: null");
+            } else {
+                Log.e(TAG, "shareRequestedFileRowViewList[1]: isnt null");
+            }
+
+            for (ShareRequestedFileRowView shareRequestedFileRowView : shareRequestedFileRowViewList) {
+                if (shareRequestedFileRowView.isChecked()) {
+                    ++selectedFileNumber;
+                }
+            }
+
+            if (selectedFileNumber > 0) {
+                _toolbar.getMenu().clear();
+                _toolbar.inflateMenu(R.menu.share_menu);
+                _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
+                _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");
+            } else {
+                _toolbar.getMenu().clear();
+            }
+
+        }
+    };
+
+    private Toolbar.OnMenuItemClickListener _sendMenuItem_listener = new Toolbar.OnMenuItemClickListener() {
+        @Override
+        public boolean onMenuItemClick(MenuItem menuItem) {
+            if (menuItem.getItemId() == R.id.send_menuitem) {
+                Log.d(TAG, "onMenuItemClick");
+                //            if (data == null) {
+                WorkorderClient.uploadDeliverable(ShareRequestActivity.this, _workorder.getWorkorderId(),
+                        _currentUploadSlot.getSlotId(), _uploadingDocumentList[0].getFileName(), _uploadingDocumentList[0].getFilePath());
+
+//            } else {
+//                Log.v(TAG, "from intent");
+//                WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+//                        _uploadingSlotId, data);
+//            }
+
+
+            }
+            return false;
+        }
+    };
+    private View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Log.e(TAG, "_toolbarNavication_listener.onClick");
+//            onBackPressed();
+
         }
     };
 
@@ -608,14 +725,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             Log.v(TAG, "_workorderData_listener.onList");
             if (!selector.equals(_displayView))
                 return;
-            if (list != null)
+            if (list != null) {
                 addPage(page, list);
+            }
         }
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             Log.v(TAG, "_workorderData_listener.onAction " + workorderId + "/" + action);
-//            getData(false);
             _adapter.refreshPages();
         }
 
@@ -651,7 +768,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         @Override
         public void onGet(Workorder workorder, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onDetails");
+            Log.v(TAG, "_workorderClient_listener.onGet");
             if (workorder == null || failed) {
                 try {
                     Toast.makeText(ShareRequestActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();

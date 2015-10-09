@@ -26,6 +26,11 @@ public class UploadingDocument {
         _fileName = fileName;
     }
 
+    public UploadingDocument(String fileName, String filePath) {
+        _fileName = fileName;
+        _filePath = filePath;
+    }
+
     public Integer getDocumentId() {
         return _documentId;
     }

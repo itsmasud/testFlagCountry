@@ -33,8 +33,8 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/Text_Subhead"
                     android:id="@+id/titleWorkorder_textview"
+                    style="@style/Text_Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -65,8 +65,8 @@
                 android:orientation="vertical">
 
                 <TextView
-                    style="@style/Text_Subhead"
                     android:id="@+id/titleTask_textview"
+                    style="@style/Text_Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -76,8 +76,8 @@
                     android:text="Task Title" />
 
                 <TextView
-                    style="@style/Text_Body_2"
                     android:id="@+id/maxFilesNumber_textview"
+                    style="@style/Text_Body_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="16dp"
@@ -94,7 +94,6 @@
                     android:orientation="vertical" />
             </LinearLayout>
         </com.fieldnation.ui.OverScrollView>
-
 
 
         <com.fieldnation.ui.EmptyWoListView
