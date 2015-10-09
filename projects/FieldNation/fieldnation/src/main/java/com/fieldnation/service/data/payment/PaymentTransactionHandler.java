@@ -59,7 +59,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             String action = obj.getString("action");

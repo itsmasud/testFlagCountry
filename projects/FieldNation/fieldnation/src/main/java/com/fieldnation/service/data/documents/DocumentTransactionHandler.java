@@ -67,7 +67,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
