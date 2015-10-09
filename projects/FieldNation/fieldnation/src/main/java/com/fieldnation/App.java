@@ -674,10 +674,14 @@ public class App extends Application {
     }
 
     public boolean isCharging() {
-        Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
-                || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        try {
+            Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+            return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
+                    || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public boolean isLocationEnabled() {

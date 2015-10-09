@@ -489,19 +489,15 @@ public class WorkorderCardView extends RelativeLayout {
                 _locationTextView.setVisibility(View.GONE);
                 // distance/address? location.state, location.zip, location.city,
                 // location.country,
-            } else if (location.getAddress1() != null || location.getAddress2() != null) {
+            } else if (!misc.isEmptyOrNull(location.getAddress1())
+                    || !misc.isEmptyOrNull(location.getAddress2())) {
                 String address1 = null;
                 String address2 = null;
 
-                if (location.getAddress1() != null)
+                if (!misc.isEmptyOrNull(location.getAddress1()))
                     address1 = location.getAddress1();
-                if (location.getAddress2() != null)
+                if (!misc.isEmptyOrNull(location.getAddress2()))
                     address2 = location.getAddress2();
-
-                if (misc.isEmptyOrNull(address1))
-                    address1 = null;
-                if (misc.isEmptyOrNull(address2))
-                    address2 = null;
 
                 if (address1 == null) {
                     address1 = address2;
@@ -514,6 +510,12 @@ public class WorkorderCardView extends RelativeLayout {
                 } else {
                     _locationTextView.setVisibility(GONE);
                 }
+            } else if (!misc.isEmptyOrNull(location.getCity()) && !misc.isEmptyOrNull(location.getState())) {
+                _locationTextView.setText(location.getCity() + ", " + location.getState());
+            } else if (!misc.isEmptyOrNull(location.getCity())) {
+                _locationTextView.setText(location.getCity());
+            } else {
+                _locationTextView.setVisibility(GONE);
             }
 
             // TODO hook up to geocoding
@@ -722,10 +724,12 @@ public class WorkorderCardView extends RelativeLayout {
                 _whenTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
                 break;
             case ROUTED:
                 _actionButton.setText(R.string.btn_accept);
 //                _titleTextView.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
@@ -738,6 +742,7 @@ public class WorkorderCardView extends RelativeLayout {
 //                _titleTextView.setVisibility(VISIBLE);
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
                 break;
             case COUNTEROFFERED:
@@ -751,6 +756,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
                 break;
             default:
 //                _titleTextView.setVisibility(VISIBLE);
@@ -758,6 +764,7 @@ public class WorkorderCardView extends RelativeLayout {
                 _distanceTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _paymentLayout.setVisibility(VISIBLE);
+                _locationTextView.setVisibility(VISIBLE);
 
                 Log.v(TAG,
                         "Unknown state: " + _workorder.getWorkorderId() + " - " + _workorder.getStatus().toJson().toString());

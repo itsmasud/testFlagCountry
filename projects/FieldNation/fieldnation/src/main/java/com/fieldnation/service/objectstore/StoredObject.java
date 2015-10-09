@@ -638,7 +638,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public static boolean delete(long id) {
         Log.v(TAG, "delete(" + id + ")");
         StoredObject obj = get(id);
-        if (obj != null && obj._isFile) {
+        if (obj != null && obj._isFile && obj._file != null) {
             obj._file.delete();
         }
 
