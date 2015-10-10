@@ -73,7 +73,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO implement fail
         return Result.FINISH;
     }

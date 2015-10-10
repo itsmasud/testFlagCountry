@@ -36,6 +36,7 @@ import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
+import java.net.URLConnection;
 import java.util.Calendar;
 
 /**
@@ -674,10 +675,14 @@ public class App extends Application {
     }
 
     public boolean isCharging() {
-        Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
-                || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        try {
+            Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+            return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
+                    || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public boolean isLocationEnabled() {
@@ -698,5 +703,13 @@ public class App extends Application {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
+    }
+
+    public static String guessContentTypeFromName(String url) {
+        try {
+            return URLConnection.guessContentTypeFromName(url);
+        } catch (Exception ex) {
+        }
+        return "application/octet-stream";
     }
 }

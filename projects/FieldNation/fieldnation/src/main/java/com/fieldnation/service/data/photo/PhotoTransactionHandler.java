@@ -87,7 +87,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject json = new JsonObject(transaction.getHandlerParams());
             boolean getCircle = json.getBoolean("circle");

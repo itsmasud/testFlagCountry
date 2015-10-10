@@ -223,8 +223,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     }
 
 
-    public static byte[] pRating( int satisfactionRating, int scopeRating,
-                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+    public static byte[] pRating(int satisfactionRating, int scopeRating,
+                                 int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pRating");
             obj.put("satisfactionRating", satisfactionRating);
@@ -524,7 +524,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-             Fail               -*/
     /*-********************************-*/
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
@@ -554,6 +554,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
                     break;
                 case "pUploadDeliverable":
+                    ToastClient.toast(context, "Failed to upload file. " + params.getString("filename") + " Please try again", Toast.LENGTH_LONG);
                     WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderId"), params.getLong("slotId"), params.getString("filename"), false, true);
                     break;
                 case "pActionRequest":
@@ -617,7 +618,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         try {
             Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(context,
                     params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
-                    params.getInt("respectComment"), params.getBoolean("recommendBuyer"),params.getString("otherComments") ,params.getLong("workorderId"));
+                    params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"), params.getLong("workorderId"));
 
             PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 

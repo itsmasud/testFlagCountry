@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -25,6 +26,7 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -289,7 +291,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    Log.v(TAG, result.getString());
+                    if (!result.isFile())
+                        Log.v(TAG, result.getString());
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -309,7 +312,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // need to re-auth?
 
                     if (result.getString().equals("You don't have permission to see this workorder")) {
-                        WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                        WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else {
                         Thread.sleep(5000);
@@ -326,7 +329,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                     WebTransaction.delete(context, trans.getId());
                     return true;
                     // usually means code is being updated on the server
@@ -336,7 +339,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                     WebTransaction.delete(context, trans.getId());
                     return true;
                 }
@@ -349,7 +352,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                     switch (wresult) {
                         case ERROR:
-                            WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                            WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case FINISH:
@@ -362,7 +365,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
             } catch (MalformedURLException ex) {
                 if (handlerName != null && result != null)
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 // probably offline
@@ -377,13 +380,20 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 ex.printStackTrace();
                 if (ex.getMessage().contains("Broken pipe")) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                     WebTransaction.delete(context, trans.getId());
                 }
+            } catch (FileNotFoundException ex) {
+                ex.printStackTrace();
+                Debug.logException(ex);
+                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransaction.delete(context, trans.getId());
             } catch (Exception ex) {
                 // no freaking clue
+                Debug.logException(ex);
                 ex.printStackTrace();
-                trans.requeue(context);
+                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransaction.delete(context, trans.getId());
             }
             return true;
         }
