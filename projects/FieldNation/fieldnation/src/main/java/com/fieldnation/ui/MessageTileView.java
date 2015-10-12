@@ -21,7 +21,6 @@ public class MessageTileView extends RelativeLayout {
     private Message _message;
     private String[] _substatus;
     private Listener _listener;
-    private int _memoryClass;
     private boolean _imageRetried = false;
 
     /*-*****************************-*/
@@ -47,8 +46,6 @@ public class MessageTileView extends RelativeLayout {
 
         if (isInEditMode())
             return;
-
-        _memoryClass = App.get().getMemoryClass();
 
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
@@ -99,7 +96,7 @@ public class MessageTileView extends RelativeLayout {
             e.printStackTrace();
         }
 
-        if (_memoryClass <= 64) {
+        if (App.get().isLowMemDevice()) {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoThumbUrl())) {
                 Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoThumbUrl(), true);
                 if (result == null) {

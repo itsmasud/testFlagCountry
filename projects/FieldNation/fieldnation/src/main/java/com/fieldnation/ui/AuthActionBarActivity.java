@@ -18,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -55,7 +56,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
     private HelpDialog _helpDialog;
-    
+
     // Services
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;
@@ -215,7 +216,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
-            _acceptTermsDialog.show();
+            try {
+                _acceptTermsDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
@@ -224,8 +229,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
-
-            _coiWarningDialog.show();
+            try {
+                _coiWarningDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else {
             Log.v(TAG, "tos/coi check done");
             onProfile(profile);
@@ -362,7 +370,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            _updateDialog.show();
+            try {
+                _updateDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
 
         @Override
@@ -372,12 +384,20 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onShowFeedbackDialog() {
-            _feedbackDialog.show();
+            try {
+                _feedbackDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
 
         @Override
         public void onShowHelpDialog() {
-            _helpDialog.show();
+            try {
+                _helpDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
     };
 
