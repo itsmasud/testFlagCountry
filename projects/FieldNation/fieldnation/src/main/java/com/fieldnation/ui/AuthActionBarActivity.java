@@ -176,7 +176,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-        _toastClient.disconnect(this);
+        if (_toastClient != null && _toastClient.isConnected())
+            _toastClient.disconnect(this);
         super.onStop();
     }
 
