@@ -66,14 +66,15 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     }
 
     public static void listNotifications(Context context, int page) {
-        listNotifications(context, page, false);
+        listNotifications(context, page, false, true);
     }
 
-    public static void listNotifications(Context context, int page, boolean isSync) {
+    public static void listNotifications(Context context, int page, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -91,14 +92,15 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
     }
 
     public static void listMessages(Context context, int page) {
-        listMessages(context, page, false);
+        listMessages(context, page, false, true);
     }
 
-    public static void listMessages(Context context, int page, boolean isSync) {
+    public static void listMessages(Context context, int page, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, ProfileService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
