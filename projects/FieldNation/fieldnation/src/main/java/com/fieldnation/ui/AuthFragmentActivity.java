@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -148,7 +149,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
-            _acceptTermsDialog.show();
+            try {
+                _acceptTermsDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
@@ -157,8 +162,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
-
-            _coiWarningDialog.show();
+            try {
+                _coiWarningDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else {
             Log.v(TAG, "tos/coi check done");
             onProfile(profile);

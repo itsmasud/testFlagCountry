@@ -251,8 +251,13 @@ public class Serializer {
     public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationClass) {
         for (int i = 0; i < 2; i++) {
             try {
-                return field.getAnnotation(annotationClass);
-            } catch (Exception ex) {
+                Annotation[] annoations = field.getAnnotations();
+                for (int j = 0; j < annoations.length; j++) {
+                    if (annotationClass.getCanonicalName().equals(annoations[j].annotationType().getCanonicalName())) {
+                        return (T) annoations[j];
+                    }
+                }
+            } catch (Throwable ex) {
                 ex.printStackTrace();
             }
         }

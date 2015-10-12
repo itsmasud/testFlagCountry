@@ -55,6 +55,7 @@ public class MessageFragment extends WorkorderFragment {
         _listview = (ListView) view.findViewById(R.id.messages_listview);
         _inputView = (MessageInputView) view.findViewById(R.id.input_view);
         _inputView.setOnSendButtonClick(_send_onClick);
+        _inputView.setButtonEnabled(false);
         _emptyMessageLayout = (CardView) view.findViewById(R.id.container_empty_message);
     }
 
@@ -78,6 +79,8 @@ public class MessageFragment extends WorkorderFragment {
     public void onResume() {
         super.onResume();
         _markReadRunnable.run();
+
+        populateUi();
     }
 
     // todo remove
@@ -112,6 +115,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
+        populateUi();
         subscribeData();
         getMessages();
     }
@@ -126,6 +130,17 @@ public class MessageFragment extends WorkorderFragment {
         Log.v(TAG, "getMessages");
 
         WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false, false);
+    }
+
+    private void populateUi() {
+        if (_inputView == null)
+            return;
+
+        if (_workorder != null) {
+            _inputView.setButtonEnabled(true);
+        } else {
+            _inputView.setButtonEnabled(false);
+        }
     }
 
     @Override

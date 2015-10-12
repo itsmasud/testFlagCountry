@@ -26,7 +26,9 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
+import java.io.EOFException;
 import java.io.FileNotFoundException;
+import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.UnknownHostException;
 import java.util.List;
@@ -56,7 +58,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "onCreate");
 
         int threadCount = 4;
-        if (App.get().getMemoryClass() <= 64) {
+        if (App.get().isLowMemDevice()) {
             threadCount = 4;
         } else {
             threadCount = 8;
@@ -385,9 +387,20 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
             } catch (FileNotFoundException ex) {
                 ex.printStackTrace();
-                Debug.logException(ex);
+                //Debug.logException(ex);
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
+            } catch (ConnectException ex) {
+                ex.printStackTrace();
+                GlobalTopicClient.networkDisconnected(context);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                }
+                trans.requeue(context);
+            } catch (EOFException ex) {
+                ex.printStackTrace();
+                trans.requeue(context);
             } catch (Exception ex) {
                 // no freaking clue
                 Debug.logException(ex);
