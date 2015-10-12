@@ -136,8 +136,12 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         _listView.setAdapter(_adapter);
         _idTextView.setText("Payment ID: " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
-        String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
-        _paymentTypeTextView.setText(paymethod);
+        try {
+            String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
+            _paymentTypeTextView.setText(paymethod);
+        } catch (Exception ex){
+            _paymentTypeTextView.setText("No Pay Method");
+        }
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
 
         _listView.setVisibility(View.VISIBLE);

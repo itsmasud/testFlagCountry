@@ -144,6 +144,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     public void show(Schedule schedule) {
         _sched = schedule;
         super.show();
+        populateUi();
     }
 
     private Schedule makeSchedule() {
@@ -168,10 +169,12 @@ public class ScheduleDialog extends DialogFragmentBase {
             e.printStackTrace();
         }
 
-        if (_sched.isExact()) {
-            setMode(MODE_EXACT);
-        } else {
-            setMode(MODE_RANGE);
+        if (_sched != null) {
+            if (_sched.isExact()) {
+                setMode(MODE_EXACT);
+            } else {
+                setMode(MODE_RANGE);
+            }
         }
     }
 

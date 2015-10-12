@@ -120,13 +120,7 @@ public class App extends Application {
         Log.v(TAG, "debug init time: " + watch.finishAndRestart());
 
         // configure preferences
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
-                return null;
-            }
-        }.executeEx();
+        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "preferenceManager time: " + watch.finishAndRestart());
 
         // discover the memory class of the device
@@ -239,8 +233,8 @@ public class App extends Application {
         Log.v(STAG, trace.toString());
     }
 
-    public int getMemoryClass() {
-        return _memoryClass;
+    public boolean isLowMemDevice() {
+        return _memoryClass <= 70;
     }
 
     @Override
