@@ -66,7 +66,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         }
 
         if (isSync
-                || allowCache
+                || !allowCache
                 || obj == null
                 || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
