@@ -86,6 +86,10 @@ public class ShareUploadSlotView extends RelativeLayout {
         _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
     }
 
+    public  boolean isChecked(){
+        return _checked;
+    }
+
     public void changeCheckStatus() {
 
         if (!_checked) {

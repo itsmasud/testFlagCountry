@@ -63,7 +63,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
             return;
 
         _Layout = (CardView) findViewById(R.id.layoutCardView);
-        _Layout. setOnClickListener(_shareUploadSlot_onClick);
+        _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = (TextView) findViewById(R.id.name_textview);
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
@@ -82,12 +82,15 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         _listener = listener;
     }
 
+    public UploadingDocument getUploadingDocument(){
+        return _uploadingDocument;
+    }
+
     public void changeCheckStatus() {
-        if(!_checked) {
+        if (!_checked) {
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
             _checked = true;
-        }
-        else{
+        } else {
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _checked = false;
         }
@@ -96,17 +99,12 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
     public void setData(Workorder workorder, UploadingDocument uploadingDocument) {
         Log.v(TAG, "setData");
-
         _workorder = workorder;
         _uploadingDocument = uploadingDocument;
-//        _docListener = listener;
-//        _profileId = profileId;
-
-//        subscribe();
         populateUi();
     }
 
-    public boolean isChecked(){
+    public boolean isChecked() {
         return _checked;
     }
 
@@ -132,15 +130,6 @@ public class ShareRequestedFileRowView extends RelativeLayout {
                 _listener.onClick(ShareRequestedFileRowView.this, _uploadingDocument);
         }
     };
-
-    private void subscribe() {
-        if (_workorder == null)
-            return;
-
-        if (_uploadingDocument == null)
-            return;
-        Log.v(TAG, "subscribe, " + _workorder.getWorkorderId() + ", " + _uploadingDocument.getFileName());
-    }
 
 
     public interface Listener {

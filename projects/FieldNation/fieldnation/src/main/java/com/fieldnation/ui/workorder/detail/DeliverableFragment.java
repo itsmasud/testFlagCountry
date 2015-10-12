@@ -492,6 +492,8 @@ public class DeliverableFragment extends WorkorderFragment {
                 File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
+                Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
+
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }

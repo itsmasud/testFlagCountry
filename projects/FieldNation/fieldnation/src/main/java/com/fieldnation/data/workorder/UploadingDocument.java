@@ -8,15 +8,10 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadingDocument {
-    @Json(name = "documentId")
     private Integer _documentId;
-    @Json(name = "fileName")
     private String _fileName;
-    @Json(name = "filePath")
     private String _filePath;
-    @Json(name = "fileSize")
     private Integer _fileSize;
-    @Json(name = "fileType")
     private String _fileType;
 
     public UploadingDocument() {
