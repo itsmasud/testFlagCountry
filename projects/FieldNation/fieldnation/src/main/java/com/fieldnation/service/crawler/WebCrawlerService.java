@@ -355,8 +355,8 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed) {
-            Log.v(TAG, "onWorkorderList");
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "onWorkorderList, " + selector + ", " + page + ", " + failed + ", " + isCached);
 
             incrementPendingRequestCounter(-1);
 

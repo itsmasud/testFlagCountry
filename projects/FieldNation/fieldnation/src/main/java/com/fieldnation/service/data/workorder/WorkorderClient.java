@@ -811,11 +811,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         protected void preList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onList(null, WorkorderDataSelector.fromCall(payload.getString(PARAM_LIST_SELECTOR)),
-                        payload.getInt(PARAM_PAGE), true);
+                        payload.getInt(PARAM_PAGE), true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
                     private WorkorderDataSelector selector;
                     private int page;
+                    private boolean isCached;
 
                     @Override
                     protected List<Workorder> doInBackground(Bundle... params) {
@@ -824,6 +825,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
                             Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
                             page = bundle.getInt(PARAM_PAGE);
+                            isCached = bundle.getBoolean(PARAM_IS_CACHED);
                             List<Workorder> list = new LinkedList<>();
                             JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
                             for (int i = 0; i < ja.size(); i++) {
@@ -839,13 +841,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                     @Override
                     protected void onPostExecute(List<Workorder> workorders) {
-                        onList(workorders, selector, page, false);
+                        onList(workorders, selector, page, false, isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
         }
 
         // details
