@@ -336,8 +336,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
-                    Thread.sleep(5000);
                     trans.requeue(context);
+                    Thread.sleep(5000);
                     AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {
