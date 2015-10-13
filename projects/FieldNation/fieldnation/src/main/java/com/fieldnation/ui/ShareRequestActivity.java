@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Color;
@@ -10,19 +9,16 @@ import android.os.Handler;
 import android.provider.MediaStore;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -31,8 +27,6 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.auth.AuthTopicClient;
-import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
@@ -103,12 +97,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
 
-        _toolbar = _actionBarView.getToolbar();
+//        _toolbar = _actionBarView.getToolbar();
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setTitleTextColor(Color.WHITE);
+        _toolbar.setSubtitleTextColor(Color.WHITE);
         _toolbar.setTitle(R.string.activity_share_request_title_workorder);
-        _toolbar.setNavigationIcon(R.drawable.nav_icon);
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
         _toolbar.setOnMenuItemClickListener(_sendMenuItem_listener);
+
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
@@ -152,69 +149,47 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
 
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_BACK:
-                Log.v(TAG, "onKeyDown");
-                switch (LayoutType.fromString(layoutType.getCurrentLayoutValue())) {
-                    case WORKORDER_LAYOUT:
-                        finish();
-                        break;
+    public void onBackPressed() {
+        Log.v(TAG, "onBackPressed");
+        switch (LayoutType.fromString(layoutType.getCurrentLayoutValue())) {
+            case WORKORDER_LAYOUT:
+                finish();
+                break;
 
-                    case UPLOAD_SLOT_LAYOUT:
-                        layoutType = LayoutType.WORKORDER_LAYOUT;
-                        _toolbar.setTitle(R.string.activity_share_request_title_workorder);
-                        _toolbar.getMenu().clear();
-                        _workorderListView.setVisibility(View.VISIBLE);
-                        _uploadSlotScrollView.setVisibility(View.GONE);
-                        _sharedFilesScrollView.setVisibility(View.GONE);
-                        break;
+            case UPLOAD_SLOT_LAYOUT:
+                layoutType = LayoutType.WORKORDER_LAYOUT;
+                _toolbar.setTitle(R.string.activity_share_request_title_workorder);
+                _toolbar.getMenu().clear();
+                _workorderListView.setVisibility(View.VISIBLE);
+                _uploadSlotScrollView.setVisibility(View.GONE);
+                _sharedFilesScrollView.setVisibility(View.GONE);
+                break;
 
-                    case SHARED_FILES_LAYOUT:
-                        layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
-                        _toolbar.setTitle(R.string.activity_share_request_title_task);
-                        _toolbar.getMenu().clear();
-                        _workorderListView.setVisibility(View.GONE);
-                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
-                        _sharedFilesScrollView.setVisibility(View.GONE);
-                        break;
+            case SHARED_FILES_LAYOUT:
+                layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
+                _toolbar.setTitle(R.string.activity_share_request_title_task);
+                _toolbar.getMenu().clear();
+                _workorderListView.setVisibility(View.GONE);
+                _uploadSlotScrollView.setVisibility(View.VISIBLE);
+                _sharedFilesScrollView.setVisibility(View.GONE);
+                break;
 
-                }
-
-
-                return true;
         }
-        return super.onKeyDown(keyCode, event);
-    }
 
+    }
 
     @Override
     protected void onResume() {
-        Log.v(TAG, "onResume");
         super.onResume();
+        Log.v(TAG, "onResume");
         Intent intent = getIntent();
         String action = intent.getAction();
         String type = intent.getType();
 
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
-            Log.e(TAG, "onResume ACTION_SEND_MULTIPLE");
-            handleSendMultipleFiles(intent);
+            handleRequestMultipleFiles(intent);
         } else if (action.equals(Intent.ACTION_SEND)) {
-            Log.e(TAG, "onResume ACTION_SEND");
-//            Log.e(TAG, "onResume intent:" + intent);
-//            Log.e(TAG, "onResume extra:" + intent.getExtras());
-//            Log.e(TAG, "onResume extra content:" + intent.getExtras().getString("content"));
-//            Log.e(TAG, "onResume action:" + action.toString());
-//            Log.e(TAG, "onResume type:" + type.toString());
-
-
-//            Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
-//            Log.e(TAG, "onResume uri:" + fileUri.getPath());
-//            Log.e(TAG, "onResume uri filename:" + new File(fileUri.getPath()).getName());
-//            Log.e(TAG, "onResume uri getScheme:" + fileUri.getScheme());
-
-            handleSendSingleFile(intent);
-
+            handleRequestSingleFile(intent);
         }
 
         setLoading(true);
@@ -223,7 +198,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
 
-    private void handleSendSingleFile(Intent intent) {
+    private void handleRequestSingleFile(Intent intent) {
         Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         _uploadingDocumentList = new UploadingDocument[1];
         if (fileUri != null) {
@@ -232,13 +207,13 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             final String filePath = getFileNameFromUri(fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, filePath);
 
-            Log.v(TAG, "handleSendSingleFile: fileName" + fileName);
-            Log.v(TAG, "handleSendSingleFile: fileName" + filePath);
+            Log.v(TAG, "handleRequestSingleFile: fileName" + fileName);
+            Log.v(TAG, "handleRequestSingleFile: fileName" + filePath);
 
         }
     }
 
-    private void handleSendMultipleFiles(Intent intent) {
+    private void handleRequestMultipleFiles(Intent intent) {
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         _uploadingDocumentList = new UploadingDocument[fileUris.size()];
 
@@ -247,8 +222,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 final String fileName = getFileNameFromUri(fileUris.get(i));
                 final String filePath = getFilePathFromIntent(fileUris.get(i));
                 _uploadingDocumentList[i] = new UploadingDocument(fileName, filePath);
-                Log.e(TAG, "handleSendMultipleFiles: fileName: " + fileName);
-                Log.e(TAG, "handleSendMultipleFiles: filePath: " + filePath);
+                Log.e(TAG, "handleRequestMultipleFiles: fileName: " + fileName);
+                Log.e(TAG, "handleRequestMultipleFiles: filePath: " + filePath);
             }
         }
     }
@@ -257,19 +232,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private String getFileNameFromUri(Uri uri) {
 
         String fileName = "";
-//        String file_path= "";
 
         if (uri.getScheme().toString().compareTo("content") == 0) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);//Instead of "MediaStore.Images.Media.DATA" can be used "_data"
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 Uri filePathUri = Uri.parse(cursor.getString(column_index));
                 fileName = filePathUri.getLastPathSegment().toString();
-//                 file_path = filePathUri.getPath();
-//                        Toast.makeText(this,"File Name & PATH are:"+file_name+"\n"+file_path, Toast.LENGTH_LONG).show();
                 Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
-//                Log.e(TAG, "getFilePathFromIntent: filePath: " + file_path);
-
             }
         } else if (uri.getScheme().toString().compareTo("file") == 0) {
             fileName = new File(uri.getPath()).getName();
@@ -281,19 +251,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
 
     private String getFilePathFromIntent(Uri uri) {
-//        String file_name = "";
         String filePath = "";
 
         if (uri.getScheme().toString().compareTo("content") == 0) {
             Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);//Instead of "MediaStore.Images.Media.DATA" can be used "_data"
+                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 Uri filePathUri = Uri.parse(cursor.getString(column_index));
-//                file_name = filePathUri.getLastPathSegment().toString();
                 filePath = filePathUri.getPath();
-//                Log.e(TAG, "getFilePathFromIntent: fileName: " + file_name);
                 Log.e(TAG, "getFilePathFromIntent: filePath: " + filePath);
-
             }
         } else if (uri.getScheme().toString().compareTo("file") == 0) {
             filePath = uri.getPath();
@@ -302,7 +268,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         return filePath;
 
     }
-
 
     @Override
     protected void onPause() {
@@ -340,7 +305,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         WorkorderClient.get(this, _workorder.getWorkorderId(), allowCache);
     }
 
-
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
@@ -352,6 +316,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
 
     private void populateUploadSlotLayout() {
+        Log.e(TAG, "populateUploadSlotLayout");
         final UploadSlot[] slots = _workorder.getUploadSlots();
 
         if (slots == null) return;
@@ -359,22 +324,25 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
         _toolbar.setTitle(R.string.activity_share_request_title_task);
         _workorderListView.setVisibility(View.GONE);
-        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+        _sharedFilesLayout.setVisibility(View.GONE);
 
         _titleWorkorderTextView.setText(_workorder.getTitle());
 
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
-            if (_uploadSlotLayout.getChildCount() > slots.length) {
-                _uploadSlotLayout.removeViews(slots.length - 1, _uploadSlotLayout.getChildCount() - slots.length);
-            }
 
             ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
-                    Log.v(TAG, "next" + slots.length);
+                    Log.v(TAG, "US loop: " + i);
+
+                    if (i == 0) {
+                        _uploadSlotLayout.removeAllViews();
+                    } else {
+                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+                    }
 
                     ShareUploadSlotView v = null;
                     if (i < _uploadSlotLayout.getChildCount()) {
@@ -389,8 +357,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 }
             };
             _uploadSlotLayout.postDelayed(r, new Random().nextInt(1000));
-        } else {
-            _uploadSlotLayout.removeAllViews();
         }
 
         setLoading(false);
@@ -468,18 +434,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _adapter.setPage(page, list);
     }
-
-
-    private final AdapterView.OnItemSelectedListener _workorder_selected = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            //Todo: Populate _tasksSpinner when the
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
 
 
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
@@ -631,7 +585,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 _toolbar.getMenu().clear();
                 _toolbar.inflateMenu(R.menu.share_menu);
                 _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
+                _sendMenuItem.setTextColor(Color.WHITE);
                 _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");
+
             } else {
                 _toolbar.getMenu().clear();
             }
@@ -660,6 +616,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 startActivity(intent);
                 _currentWorkorderCardView.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
                 setLoading(false);
+
             }
             return false;
         }
@@ -667,9 +624,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.e(TAG, "_toolbarNavication_listener.onClick");
-//            onBackPressed();
-
+            onBackPressed();
         }
     };
 
