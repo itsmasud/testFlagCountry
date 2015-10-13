@@ -20,6 +20,7 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -34,6 +35,8 @@ import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
+
+import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
 import java.net.URLConnection;
