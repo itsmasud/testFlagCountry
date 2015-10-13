@@ -768,7 +768,8 @@ public class WorkFragment extends WorkorderFragment {
                 startCheckOut();
             }
         } catch (Exception ex) {
-            Debug.logException(ex);
+            //Debug.logException(ex);
+            ex.printStackTrace();
             // Todo this could cause an infinite loop, revisit later
             new Handler().postDelayed(new Runnable() {
                 @Override
