@@ -66,7 +66,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         }
 
         if (isSync
-                || allowCache
+                || !allowCache
                 || obj == null
                 || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
@@ -77,10 +77,11 @@ public class ProfileService extends MSService implements ProfileConstants {
     private void listNotifications(Intent intent) {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
         Log.v(TAG, "listNotifications(" + page + ", " + isSync + ")");
 
         StoredObject obj = null;
-        if (!isSync) {
+        if (!isSync && allowCache) {
             obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
@@ -91,7 +92,10 @@ public class ProfileService extends MSService implements ProfileConstants {
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (!allowCache
+                || isSync
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             ProfileTransactionBuilder.listNotifications(this, page, isSync);
         }
     }
@@ -100,10 +104,11 @@ public class ProfileService extends MSService implements ProfileConstants {
         Log.v(TAG, "listMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
         StoredObject obj = null;
 
-        if (!isSync) {
+        if (!isSync && allowCache) {
             obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
@@ -114,7 +119,10 @@ public class ProfileService extends MSService implements ProfileConstants {
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (!allowCache
+                || isSync
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             ProfileTransactionBuilder.listMessages(this, page, isSync);
         }
     }

@@ -71,6 +71,7 @@ public class RightDrawerNotificationsView extends FrameLayout {
     }
 
     public void animateShow() {
+        ProfileClient.listNotifications(getContext(), 0);
         _rightDrawer.animateShow();
     }
 

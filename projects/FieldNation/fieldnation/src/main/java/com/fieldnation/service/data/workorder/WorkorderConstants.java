@@ -45,6 +45,7 @@ public interface WorkorderConstants {
     String PARAM_URI = "PARAM_URI";
     String PARAM_FILE_NAME = "PARAM_FILE_NAME";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
+    String PARAM_IS_CACHED = "PARAM_IS_CACHED";
     String PARAM_FILE = "PARAM_FILE";
     String PARAM_URL = "PARAM_URL";
     String PARAM_IS_COMPLETE = "PARAM_IS_COMPLETE";

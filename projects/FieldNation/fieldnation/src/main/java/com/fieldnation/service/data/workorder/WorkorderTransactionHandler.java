@@ -414,7 +414,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
 
-            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync());
+            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
 
             return Result.FINISH;
         } catch (Exception ex) {
@@ -533,7 +533,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
                     break;
                 case "pList":
-                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync());
+                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync(), false);
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());

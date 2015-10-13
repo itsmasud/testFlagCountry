@@ -8,7 +8,9 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 
@@ -106,7 +108,14 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             obj = StoredObject.put(App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
         }
 
-        DocumentDispatch.download(context, documentId, obj.getFile(), PARAM_STATE_FINISH, transaction.isSync());
+        String name = obj.getFile().getName();
+        name = name.substring(name.indexOf("_") + 1);
+        File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
+        if (!dlFolder.exists())
+            misc.copyFile(obj.getFile(), dlFolder);
+
+        DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH,
+                transaction.isSync());
 
         return Result.FINISH;
     }
