@@ -110,7 +110,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                         Transform.applyTransform(this, json, PSO_WORKORDER, json.getLong("workorderId"));
                     }
 
-                    WorkorderDispatch.list(this, ja, page, selector, false, isSync);
+                    WorkorderDispatch.list(this, ja, page, selector, false, isSync, true);
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }

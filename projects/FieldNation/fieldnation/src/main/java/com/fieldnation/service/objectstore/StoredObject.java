@@ -143,7 +143,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
     @Override
     public String toString() {
-        return "[StoredObject id:" + _id + ", profileId:" + _profileId + ",  name:" + _objName + ", key:" + _objKey + "]";
+        return "[StoredObject id:" + _id + ", profileId:" + _profileId + ", name:" + _objName + ", key:" + _objKey + "]";
     }
 
     /*-*****************************************-*/

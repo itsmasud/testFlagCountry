@@ -46,9 +46,10 @@ public class StarView extends FrameLayout {
         _star = getContext().getResources().getString(R.string.icfont_star);
         _leftStars = (TextView) findViewById(R.id.left_stars);
         _leftStars.setOnClickListener(_leftStar_onClick);
+        _leftStars.setClickable(false);
         _rightStars = (TextView) findViewById(R.id.right_stars);
         _rightStars.setOnClickListener(_rightStar_onClick);
-
+        _rightStars.setClickable(false);
 
         setStars(_goldStars, _totalStars);
     }
@@ -77,6 +78,10 @@ public class StarView extends FrameLayout {
         _rightStars.setText(misc.repeat(_star, totalStars - goldStars));
     }
 
+    private void setChangeEnabled(boolean enabled) {
+        _leftStars.setClickable(enabled);
+        _rightStars.setClickable(enabled);
+    }
 
     private final TextView.OnClickListener _leftStar_onClick = new View.OnClickListener() {
         @Override

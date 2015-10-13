@@ -87,6 +87,7 @@ public class RightDrawerMessagesView extends FrameLayout {
     }
 
     public void animateShow() {
+        ProfileClient.listMessages(getContext(), 0);
         _rightDrawer.animateShow();
     }
 

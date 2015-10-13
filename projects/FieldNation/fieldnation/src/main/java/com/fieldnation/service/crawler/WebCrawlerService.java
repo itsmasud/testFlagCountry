@@ -276,8 +276,8 @@ public class WebCrawlerService extends Service {
             incRequestCounter(3);
             _haveProfile = false;
             ProfileClient.get(WebCrawlerService.this, 0, true, false);
-            ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
-            ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
+            ProfileClient.listMessages(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
+            ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
         }
 
         @Override
@@ -311,7 +311,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true, false);
 
             for (int i = 0; i < list.size(); i++) {
                 Message message = list.get(i);
@@ -335,7 +335,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true, false);
         }
     };
 
@@ -355,8 +355,8 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed) {
-            Log.v(TAG, "onWorkorderList");
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "onWorkorderList, " + selector + ", " + page + ", " + failed + ", " + isCached);
 
             incrementPendingRequestCounter(-1);
 

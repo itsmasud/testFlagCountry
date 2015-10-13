@@ -158,6 +158,9 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     private void populateUi() {
+        if (_typeSpinner == null)
+            return;
+
         try {
             _startCal = ISO8601.toCalendar(_sched.getStartTime());
         } catch (Exception e) {

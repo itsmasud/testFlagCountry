@@ -293,8 +293,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    if (!result.isFile())
+                    if (!result.isFile()) {
                         Log.v(TAG, result.getString());
+                    }
                 } catch (Exception ex) {
                     ex.printStackTrace();
                 }
@@ -317,8 +318,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else {
-                        Thread.sleep(5000);
+                        AuthTopicClient.invalidateCommand(context);
                         trans.requeue(context);
+                        Thread.sleep(5000);
                         AuthTopicClient.requestCommand(context);
                     }
                 } else if (result.getResponseCode() == 401) {
@@ -336,8 +338,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
-                    Thread.sleep(5000);
                     trans.requeue(context);
+                    Thread.sleep(5000);
                     AuthTopicClient.requestCommand(context);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {

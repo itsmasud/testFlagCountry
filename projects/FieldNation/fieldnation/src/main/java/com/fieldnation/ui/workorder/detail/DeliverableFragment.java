@@ -529,46 +529,34 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, final File file, int state) {
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
                 return;
             }
 
-            // todo, maybe this should be put somewhere else
-            new AsyncTaskEx<File, Object, Object>() {
-                @Override
-                protected Object doInBackground(File... params) {
-                    try {
-                        File f = params[0];
-                        String name = f.getName();
-                        name = name.substring(name.indexOf("_") + 1);
-                        misc.copyFile(f, new File(App.get().getDownloadsFolder() + "/" + name));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    return null;
-                }
-            }.executeEx(file);
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
-
-            if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                String name = file.getName();
-                name = name.substring(name.indexOf("_") + 1);
-
-                Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
-                if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                    PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
-                    ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                    startActivity(intent);
                 } else {
-                    ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    String name = file.getName();
+                    name = name.substring(name.indexOf("_") + 1);
+
+                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                    } else {
+                        ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    }
                 }
+            } catch (Exception ex) {
+                ex.printStackTrace();
             }
         }
     };

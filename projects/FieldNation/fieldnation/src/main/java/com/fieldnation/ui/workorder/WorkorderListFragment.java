@@ -829,8 +829,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
-            Log.v(TAG, "_workorderData_listener.onList");
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "_workorderData_listener.onList, " + selector + ", " + page + ", " + failed + ", " + isCached);
             if (!selector.equals(_displayView))
                 return;
             if (list != null)
