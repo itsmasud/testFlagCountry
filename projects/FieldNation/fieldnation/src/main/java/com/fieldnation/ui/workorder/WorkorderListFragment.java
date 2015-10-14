@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -475,14 +476,32 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+            try {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+            } catch (Exception ex) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onOk();
+                    }
+                }, 500);
+            }
         }
 
         @Override
         public void onNotNow() {
-            doCheckin();
-            setLoading(false);
+            try {
+                doCheckin();
+                setLoading(false);
+            } catch (Exception ex) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onNotNow();
+                    }
+                }, 500);
+            }
         }
 
         @Override

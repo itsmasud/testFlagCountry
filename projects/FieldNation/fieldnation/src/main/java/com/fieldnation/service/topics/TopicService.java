@@ -293,7 +293,7 @@ public class TopicService extends MSService implements TopicConstants {
             if (svc == null) {
                 return;
             }
-            Log.v(TAG, "handleMessage");
+            //Log.v(TAG, "handleMessage");
             switch (msg.what) {
                 case WHAT_REGISTER_LISTENER:
                     svc.register(msg.getData(), msg.replyTo);

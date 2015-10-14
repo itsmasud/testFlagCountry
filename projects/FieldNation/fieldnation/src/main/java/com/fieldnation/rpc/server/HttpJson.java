@@ -76,6 +76,7 @@ public class HttpJson {
         Log.v(TAG, url);
 
         conn.setRequestMethod(method);
+        conn.setUseCaches(false);
 
         if (headers != null) {
             Iterator<String> e = headers.keys();
