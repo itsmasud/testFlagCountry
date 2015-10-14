@@ -43,15 +43,15 @@
     <color name="card_status_black_bottom">@color/card_gradient_bottom</color>
 
     <style name="Card">
-        <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginRight">8dp</item>
-        <item name="android:layout_marginBottom">4dp</item>
-        <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
     </style>
 
     <style name="CardContainer">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">4dp</item>
         <item name="android:background">@drawable/card_bg</item>
         <item name="android:padding">16dp</item>
         <item name="android:layout_width">match_parent</item>
@@ -83,6 +83,10 @@
     <style name="CardStatusBar"></style>
 
     <style name="CardOverlay">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:layout_marginBottom">4dp</item>
+        <item name="android:layout_marginTop">4dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">match_parent</item>
         <item name="android:background">@drawable/card_loading</item>
