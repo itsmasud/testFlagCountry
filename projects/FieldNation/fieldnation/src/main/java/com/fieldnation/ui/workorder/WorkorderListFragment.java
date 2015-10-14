@@ -582,6 +582,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
+            setLoading(true);
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 //            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
@@ -773,7 +774,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-//            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
+            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
             _adapter.refreshPages();
         }
     };
