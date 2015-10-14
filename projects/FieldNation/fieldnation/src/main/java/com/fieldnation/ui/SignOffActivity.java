@@ -171,7 +171,8 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     @Override
     protected void onPause() {
-        _workorderClient.disconnect(this);
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(this);
         super.onPause();
     }
 

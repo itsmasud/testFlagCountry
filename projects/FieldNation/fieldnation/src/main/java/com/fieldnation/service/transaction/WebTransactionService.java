@@ -30,6 +30,7 @@ import java.io.EOFException;
 import java.io.FileNotFoundException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.List;
 
@@ -394,6 +395,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
             } catch (ConnectException ex) {
                 ex.printStackTrace();
+                GlobalTopicClient.networkDisconnected(context);
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                }
+                trans.requeue(context);
+            } catch (SocketTimeoutException ex) {
                 GlobalTopicClient.networkDisconnected(context);
                 try {
                     Thread.sleep(5000);

@@ -55,7 +55,7 @@ public class TaskRowView extends RelativeLayout {
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(getContext());
+        _workorderClient.connect(App.get());
 
         setOnClickListener(_checkbox_onClick);
 
