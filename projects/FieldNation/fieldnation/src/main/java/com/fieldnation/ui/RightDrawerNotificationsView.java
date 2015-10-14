@@ -9,6 +9,7 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -61,12 +62,13 @@ public class RightDrawerNotificationsView extends FrameLayout {
         _listView.setAdapter(_adapter);
 
         _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(getContext());
+        _profileClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _profileClient.disconnect(getContext());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

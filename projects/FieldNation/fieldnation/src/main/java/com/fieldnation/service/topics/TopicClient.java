@@ -12,6 +12,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -39,7 +40,7 @@ public class TopicClient implements TopicConstants {
 
     public void connect(Context context) {
 //        Log.v(TAG, "connect");
-        context.bindService(
+        _isConnected = context.bindService(
                 new Intent(context, TopicService.class),
                 _serviceConnection,
                 Context.BIND_AUTO_CREATE);
@@ -48,7 +49,11 @@ public class TopicClient implements TopicConstants {
     public void disconnect(Context context, String userTag) {
         _listener = null;
         delete(userTag);
-        context.unbindService(_serviceConnection);
+        try {
+            context.unbindService(_serviceConnection);
+        } catch (Exception ex) {
+            Debug.logException(ex);
+        }
         _subscribed.clear();
         _isConnected = false;
     }

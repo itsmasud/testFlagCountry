@@ -97,9 +97,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _doneButton = (Button) findViewById(R.id.done_button);
         _doneButton.setOnClickListener(_done_onClick);
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(this);
-
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -193,12 +190,17 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(this);
+
         populateUi();
     }
 
     @Override
     protected void onPause() {
-        _workorderClient.disconnect(this);
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(this);
         super.onPause();
     }
 

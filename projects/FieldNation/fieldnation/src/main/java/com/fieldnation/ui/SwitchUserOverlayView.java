@@ -8,6 +8,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
@@ -69,13 +70,13 @@ public class SwitchUserOverlayView extends RelativeLayout {
         _growAnimation.setAnimationListener(_growListener);
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(getContext());
+        _globalTopicClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(getContext());
+            _globalTopicClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

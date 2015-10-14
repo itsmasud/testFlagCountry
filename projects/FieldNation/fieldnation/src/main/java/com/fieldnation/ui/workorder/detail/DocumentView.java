@@ -9,6 +9,7 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Workorder;
@@ -87,15 +88,15 @@ public class DocumentView extends RelativeLayout {
         _usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
 
         _docClient = new DocumentClient(_docClient_listener);
-        _docClient.connect(getContext());
+        _docClient.connect(App.get());
 
         setOnClickListener(_this_onClick);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null) {
-            _docClient.disconnect(getContext());
+        if (_docClient != null && _docClient.isConnected()) {
+            _docClient.disconnect(App.get());
             _docClient = null;
         }
         super.onDetachedFromWindow();

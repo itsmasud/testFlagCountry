@@ -14,6 +14,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -73,15 +74,17 @@ public class RightDrawerMessagesView extends FrameLayout {
         _messageListView.setOnItemClickListener(_message_onClick);
 
         _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(getContext());
+        _profileClient.connect(App.get());
         _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(getContext());
+        _photoClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _profileClient.disconnect(getContext());
-        _photoClient.disconnect(getContext());
+        if (_profileClient != null && _photoClient.isConnected())
+            _profileClient.disconnect(App.get());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
         _picCache.clear();
         super.onDetachedFromWindow();
     }
