@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Task;
@@ -63,7 +64,8 @@ public class TaskRowView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        _workorderClient.disconnect(getContext());
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
         _workorderClient = null;
         super.onDetachedFromWindow();
     }
