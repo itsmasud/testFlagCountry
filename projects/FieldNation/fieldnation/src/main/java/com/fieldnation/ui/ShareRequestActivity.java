@@ -97,8 +97,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
 
-//        _toolbar = _actionBarView.getToolbar();
-        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar = _actionBarView.getToolbar();
         _toolbar.setTitleTextColor(Color.WHITE);
         _toolbar.setSubtitleTextColor(Color.WHITE);
         _toolbar.setTitle(R.string.activity_share_request_title_workorder);
@@ -324,7 +323,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
         _toolbar.setTitle(R.string.activity_share_request_title_task);
         _workorderListView.setVisibility(View.GONE);
-        _sharedFilesLayout.setVisibility(View.GONE);
+        _sharedFilesScrollView.setVisibility(View.GONE);
 
         _titleWorkorderTextView.setText(_workorder.getTitle());
 
@@ -340,9 +339,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
                     if (i == 0) {
                         _uploadSlotLayout.removeAllViews();
-                    } else {
-                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
                     }
+
+//                    else {
+//                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+//                    }
 
                     ShareUploadSlotView v = null;
                     if (i < _uploadSlotLayout.getChildCount()) {
@@ -356,6 +357,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     _uploadSlotLayout.addView(v);
                 }
             };
+            _uploadSlotScrollView.setVisibility(View.VISIBLE);
+
             _uploadSlotLayout.postDelayed(r, new Random().nextInt(1000));
         }
 
@@ -613,9 +616,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 Intent intent = new Intent(ShareRequestActivity.this, WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
                 _currentWorkorderCardView.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
                 setLoading(false);
+                finish();
 
             }
             return false;

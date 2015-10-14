@@ -3,6 +3,7 @@
 
     <style name="FieldNation.Material.ToolBar" parent="Theme.AppCompat.NoActionBar">
         <item name="android:textColorPrimary">@color/fn_white_text</item>
+        <item name="android:actionMenuTextColor">@color/fn_white_text</item>
         <!--<item name="toolbarNavigationButtonStyle">@style/Material.Button.Raised.Orange</item>-->
     </style>
 
