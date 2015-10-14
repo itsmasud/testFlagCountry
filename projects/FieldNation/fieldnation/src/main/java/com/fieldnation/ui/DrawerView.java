@@ -181,10 +181,10 @@ public class DrawerView extends RelativeLayout {
         }
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(getContext());
+        _globalTopicClient.connect(App.get());
 
         _photoClient = new PhotoClient(_photo_listener);
-        _photoClient.connect(getContext());
+        _photoClient.connect(App.get());
     }
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
@@ -198,9 +198,9 @@ public class DrawerView extends RelativeLayout {
     @Override
     protected void onDetachedFromWindow() {
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(getContext());
+            _globalTopicClient.disconnect(App.get());
         if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(getContext());
+            _photoClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }
