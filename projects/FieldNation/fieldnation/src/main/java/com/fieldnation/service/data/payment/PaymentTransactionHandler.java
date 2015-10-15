@@ -66,7 +66,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
             switch (action) {
                 case "pList":
-                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync());
+                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync(), true);
                     break;
                 case "pGet":
                     PaymentDispatch.get(context, obj.getLong("paymentId"), null, true, transaction.isSync());
@@ -86,7 +86,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
-        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync());
+        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
         return Result.FINISH;
     }
 

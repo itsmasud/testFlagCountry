@@ -67,8 +67,10 @@ public class SplashActivity extends AuthFragmentActivity {
         super.onResume();
         _calledMyWork = false;
         startService(new Intent(this, AuthTopicService.class));
+
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
         _globalClient.connect(this);
+
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
 

@@ -75,10 +75,10 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             // TODO failed condition
             Log.v(TAG, "onAllNotificationPage " + page);
-            addPage(page, list);
+            addPage(page, list, isCached);
         }
     };
 }

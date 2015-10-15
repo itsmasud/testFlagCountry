@@ -323,7 +323,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         WorkorderClient.list(App.get(), _displayView, page, false, allowCache);
     }
 
-    private void addPage(int page, List<Workorder> list) {
+    private void addPage(int page, List<Workorder> list, boolean isCached) {
         Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " view:" + _displayView.getCall());
         if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
             _emptyView.setVisibility(View.VISIBLE);
@@ -335,7 +335,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //            _adapter.setNoMorePages();
 //        }
 
-        _adapter.setPage(page, list);
+        _adapter.setPage(page, list, isCached);
     }
 
     private void startCheckin() {
@@ -853,7 +853,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (!selector.equals(_displayView))
                 return;
             if (list != null)
-                addPage(page, list);
+                addPage(page, list, isCached);
         }
 
         @Override

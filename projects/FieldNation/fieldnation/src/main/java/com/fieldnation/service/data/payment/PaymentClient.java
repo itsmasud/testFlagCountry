@@ -136,7 +136,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
 
         private void preOnList(Bundle bundle) {
             if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
-                onList(bundle.getInt(PARAM_PAGE), null, true);
+                onList(bundle.getInt(PARAM_PAGE), null, true, true);
             } else {
                 int page = bundle.getInt(PARAM_PAGE);
                 List<Payment> list = new LinkedList<>();
@@ -147,15 +147,15 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
                         list.add(Payment.fromJson(ja.getJsonObject(i)));
                     }
 
-                    onList(page, list, false);
+                    onList(page, list, false, bundle.getBoolean(PARAM_IS_CACHED));
                 } catch (Exception ex) {
                     ex.printStackTrace();
-                    onList(page, null, false);
+                    onList(page, null, false, bundle.getBoolean(PARAM_IS_CACHED));
                 }
             }
         }
 
-        public void onList(int page, List<Payment> list, boolean failed) {
+        public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
         }
     }
 

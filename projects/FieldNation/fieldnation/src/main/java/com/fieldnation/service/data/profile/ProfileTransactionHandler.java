@@ -112,10 +112,10 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     ProfileDispatch.get(context, params.getLong("profileId"), null, true, transaction.isSync());
                     break;
                 case "pListNotifications":
-                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pListMessages":
-                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pAction":
                     ProfileDispatch.action(context, params.getLong("profileId"), params.getString("param"), true);
@@ -148,7 +148,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
         StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
@@ -161,7 +161,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 

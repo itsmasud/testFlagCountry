@@ -59,8 +59,8 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
         }
 
         @Override
-        public void onList(int page, List<Payment> list, boolean failed) {
-            addPage(page, list);
+        public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
+            addPage(page, list, isCached);
         }
     };
 }

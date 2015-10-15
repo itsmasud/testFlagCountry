@@ -123,10 +123,10 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             // TODO handle the failed condition
             Log.v(TAG, "onAllMessagesPage");
-            addPage(page, list);
+            addPage(page, list, isCached);
         }
     };
 }

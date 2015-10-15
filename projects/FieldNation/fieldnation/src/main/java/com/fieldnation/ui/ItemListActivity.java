@@ -59,12 +59,12 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
     public abstract void requestData(int page);
 
 
-    public void addPage(int page, List<O> list) {
+    public void addPage(int page, List<O> list, boolean isCached) {
         if (list == null || list.size() == 0) {
             _adapter.setNoMorePages();
         }
 
-        _adapter.setPage(page, list);
+        _adapter.setPage(page, list, isCached);
     }
 
     private final PagingAdapter<O> _adapter = new PagingAdapter<O>() {

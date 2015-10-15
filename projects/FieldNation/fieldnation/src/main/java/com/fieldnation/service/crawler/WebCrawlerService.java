@@ -299,7 +299,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
@@ -322,7 +322,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "onNotificationList");
 
             incrementPendingRequestCounter(-1);

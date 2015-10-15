@@ -224,10 +224,11 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
         private void preNotificationList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onNotificationList(null, payload.getInt(PARAM_PAGE), true);
+                onNotificationList(null, payload.getInt(PARAM_PAGE), true, true);
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Notification>>() {
                     private int page;
+                    private boolean isCached;
 
                     @Override
                     protected List<Notification> doInBackground(Bundle... params) {
@@ -236,6 +237,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                             List<Notification> list = new LinkedList<>();
                             page = payload.getInt(PARAM_PAGE);
                             JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                            isCached = payload.getBoolean(PARAM_IS_CACHED);
                             for (int i = 0; i < jalerts.size(); i++) {
                                 list.add(Notification.fromJson(jalerts.getJsonObject(i)));
                             }
@@ -250,23 +252,24 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                     @Override
                     protected void onPostExecute(List<Notification> notifications) {
                         if (notifications == null)
-                            onNotificationList(null, page, true);
+                            onNotificationList(null, page, true, isCached);
                         else
-                            onNotificationList(notifications, page, false);
+                            onNotificationList(notifications, page, false, isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
         }
 
         private void preMessageList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onMessageList(null, payload.getInt(PARAM_PAGE), true);
+                onMessageList(null, payload.getInt(PARAM_PAGE), true, true);
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Message>>() {
                     private int page;
+                    private boolean isCached;
 
                     @Override
                     protected List<Message> doInBackground(Bundle... params) {
@@ -275,6 +278,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                             List<Message> list = new LinkedList<>();
                             page = payload.getInt(PARAM_PAGE);
                             JsonArray jalerts = payload.getParcelable(PARAM_DATA_PARCELABLE);
+                            isCached = payload.getBoolean(PARAM_IS_CACHED);
                             for (int i = 0; i < jalerts.size(); i++) {
                                 list.add(Message.fromJson(jalerts.getJsonObject(i)));
                             }
@@ -289,16 +293,16 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                     @Override
                     protected void onPostExecute(List<Message> messages) {
                         if (messages == null) {
-                            onMessageList(null, page, true);
+                            onMessageList(null, page, true, isCached);
                         } else {
-                            onMessageList(messages, page, false);
+                            onMessageList(messages, page, false, isCached);
                         }
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
         }
     }
 }
