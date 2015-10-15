@@ -27,6 +27,8 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
@@ -71,7 +73,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private GpsLocationService _gpsLocationService;
     private Workorder _workorder;
     private List<UploadSlot> _uploadSlotList = null;
-    private Task _currentTask;
     private UploadSlot _currentUploadSlot;
     private UploadingDocument[] _uploadingDocumentList;
     private LayoutType layoutType;
@@ -424,18 +425,38 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     private void addPage(int page, List<Workorder> list) {
-        if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
+
+        List<Workorder> workorderListWithoutOnHoldWorkorder = new ArrayList<>();
+
+
+        WorkorderStatus status;
+        WorkorderSubstatus substatus;
+
+        for (Workorder workorder : list) {
+            status = workorder.getWorkorderStatus();
+            substatus = workorder.getWorkorderSubstatus();
+
+            if (status == WorkorderStatus.ASSIGNED) {
+                if (!(substatus == WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
+                        || substatus == WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED)) {
+                    workorderListWithoutOnHoldWorkorder.add(workorder);
+
+                }
+            }
+        }
+
+        if (page == 0 && workorderListWithoutOnHoldWorkorder.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
             _emptyView.setVisibility(View.VISIBLE);
-        } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
+        } else if (page == 0 && workorderListWithoutOnHoldWorkorder.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
             _emptyView.setVisibility(View.GONE);
 
         }
 
-        if (list.size() == 0) {
+        if (workorderListWithoutOnHoldWorkorder.size() == 0) {
             _adapter.setNoMorePages();
         }
 
-        _adapter.setPage(page, list);
+        _adapter.setPage(page, workorderListWithoutOnHoldWorkorder);
     }
 
 
