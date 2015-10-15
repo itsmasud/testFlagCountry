@@ -184,7 +184,7 @@ public class RightDrawerMessagesView extends FrameLayout {
         @Override
         public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             // TODO need to handle failed condition
-            _adapter.setPage(page, list, isCached);
+            _adapter.setPage(page, list); // done
         }
     };
 }

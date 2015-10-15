@@ -93,7 +93,7 @@ public class Expense implements Parcelable {
     }
 
 	/*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
+    /*-			Parcelable Implementation			-*/
 	/*-*********************************************-*/
 
     public static final Parcelable.Creator<Expense> CREATOR = new Parcelable.Creator<Expense>() {

@@ -3,6 +3,7 @@ package com.fieldnation.ui.payment;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.ItemListActivity;
@@ -60,7 +61,7 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
 
         @Override
         public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
-            addPage(page, list, isCached);
+            addPage(page, list); // done
         }
     };
 }

@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -294,7 +295,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    if (!result.isFile()) {
+                    if (!result.isFile() && BuildConfig.DEBUG) {
                         Log.v(TAG, result.getString());
                     }
                 } catch (Exception ex) {

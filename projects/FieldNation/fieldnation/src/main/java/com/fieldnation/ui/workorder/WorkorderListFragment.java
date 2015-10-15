@@ -323,19 +323,19 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         WorkorderClient.list(App.get(), _displayView, page, false, allowCache);
     }
 
-    private void addPage(int page, List<Workorder> list, boolean isCached) {
+    private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " view:" + _displayView.getCall());
-        if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
-            _emptyView.setVisibility(View.VISIBLE);
-        } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
+        if (page == 0 && list != null) {
+            if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
+                _emptyView.setVisibility(View.VISIBLE);
+            } else {
+                _emptyView.setVisibility(View.GONE);
+            }
+        } else {
             _emptyView.setVisibility(View.GONE);
         }
 
-//        if (list.size() == 0 ) {
-//            _adapter.setNoMorePages();
-//        }
-
-        _adapter.setPage(page, list, isCached);
+        _adapter.setPage(page, list);
     }
 
     private void startCheckin() {
@@ -852,8 +852,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_workorderData_listener.onList, " + selector + ", " + page + ", " + failed + ", " + isCached);
             if (!selector.equals(_displayView))
                 return;
-            if (list != null)
-                addPage(page, list, isCached);
+
+            addPage(page, list); // done
         }
 
         @Override

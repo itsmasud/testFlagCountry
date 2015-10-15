@@ -8,6 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
@@ -126,7 +127,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
         public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             // TODO handle the failed condition
             Log.v(TAG, "onAllMessagesPage");
-            addPage(page, list, isCached);
+            addPage(page, list); // done
         }
     };
 }

@@ -35,7 +35,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
         _showRateMe = App.get().showRateMe();
     }
 
-    public void setPage(int page, List<T> items, boolean isCached) {
+    public void setPage(int page, List<T> items) {
         Log.v(TAG, "setPage()");
 
         if (_loadingPages.contains(page)) {

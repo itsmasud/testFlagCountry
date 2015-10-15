@@ -530,7 +530,7 @@ public class WorkorderCardView extends RelativeLayout {
 
                     _distanceTextView.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    //ex.printStackTrace();
                     _distanceTextView.setText("Unknown mi");
                 }
             } else {
