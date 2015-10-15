@@ -160,7 +160,7 @@ public class NotificationFragment extends WorkorderFragment {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
 

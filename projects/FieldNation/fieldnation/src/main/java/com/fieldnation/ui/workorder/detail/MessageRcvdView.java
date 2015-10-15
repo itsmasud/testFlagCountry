@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -91,7 +92,7 @@ public class MessageRcvdView extends RelativeLayout {
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         _picView.setAlertOn(!_message.isRead());

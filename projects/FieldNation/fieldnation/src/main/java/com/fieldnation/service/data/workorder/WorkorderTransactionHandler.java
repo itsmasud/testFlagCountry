@@ -36,7 +36,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -49,7 +49,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("selector", selector);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -79,7 +79,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("expireInSeconds", expireInSeconds);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -117,7 +117,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("endTimeIso8601", endTimeIso8601);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -147,7 +147,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             }
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("signatureId", signatureId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -170,7 +170,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -181,7 +181,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -192,7 +192,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -204,7 +204,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("bundleId", bundleId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -217,7 +217,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("filename", filename);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -236,7 +236,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -256,7 +256,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -312,7 +312,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleRating(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -418,7 +418,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             return Result.FINISH;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         Log.v(TAG, "handleResult time: " + watch.finish());
         return Result.REQUEUE;
@@ -571,7 +571,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleRatingFail(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -627,7 +627,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             ToastClient.snackbar(context, "Failed. Your rating could not be sent.", Toast.LENGTH_LONG);
         }
         return Result.FINISH;

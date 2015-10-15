@@ -1,11 +1,14 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.ISO8601;
 
 public class Message {
+    private static final String TAG = "Message";
+
     @Json(name = "fromUser")
     private User _fromUser;
     @Json(name = "message")
@@ -95,7 +98,7 @@ public class Message {
         try {
             return Serializer.serializeObject(message);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -104,9 +107,8 @@ public class Message {
         try {
             return Serializer.unserializeObject(Message.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

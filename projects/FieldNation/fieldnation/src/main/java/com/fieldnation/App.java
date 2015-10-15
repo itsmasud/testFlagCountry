@@ -216,7 +216,7 @@ public class App extends Application {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
 
                 anrReport();
@@ -353,7 +353,7 @@ public class App extends Application {
                     Intent intent = new Intent(App.this, clazz);
                     startService(intent);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             } else {
                 // TODO should do something... like retry or logout
@@ -691,7 +691,7 @@ public class App extends Application {
                 locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
 
             } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;

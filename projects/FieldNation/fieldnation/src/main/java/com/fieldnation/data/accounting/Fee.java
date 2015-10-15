@@ -1,10 +1,13 @@
 package com.fieldnation.data.accounting;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Fee {
+    private static final String TAG = "Fee";
+
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "clientName")
@@ -59,7 +62,7 @@ public class Fee {
         try {
             return Serializer.serializeObject(fee);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -68,7 +71,7 @@ public class Fee {
         try {
             return Serializer.unserializeObject(Fee.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

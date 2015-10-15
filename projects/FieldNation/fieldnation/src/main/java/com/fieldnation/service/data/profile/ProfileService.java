@@ -60,7 +60,7 @@ public class ProfileService extends MSService implements ProfileConstants {
                 try {
                     ProfileDispatch.get(this, profileId, new JsonObject(obj.getData()), false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -87,7 +87,7 @@ public class ProfileService extends MSService implements ProfileConstants {
                 try {
                     ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -114,7 +114,7 @@ public class ProfileService extends MSService implements ProfileConstants {
                 try {
                     ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }

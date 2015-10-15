@@ -33,7 +33,7 @@ public class ThreadManager {
             try {
                 thread.join(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
 
             if (thread.isAlive())
@@ -71,7 +71,7 @@ public class ThreadManager {
                 try {
                     THREAD_PAUSE.wait(1000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }

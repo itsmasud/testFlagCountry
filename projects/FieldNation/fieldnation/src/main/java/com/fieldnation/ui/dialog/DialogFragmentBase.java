@@ -68,7 +68,7 @@ public class DialogFragmentBase extends DialogFragment {
                 d._fm = fm;
                 return d;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }

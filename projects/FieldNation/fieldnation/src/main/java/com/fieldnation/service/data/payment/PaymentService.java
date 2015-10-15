@@ -50,7 +50,7 @@ public class PaymentService extends MSService implements PaymentConstants {
                 try {
                     PaymentDispatch.list(this, page, new JsonArray(obj.getData()), false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -69,7 +69,7 @@ public class PaymentService extends MSService implements PaymentConstants {
             try {
                 PaymentDispatch.get(this, paymentId, new JsonObject(obj.getData()), false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 

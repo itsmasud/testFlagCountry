@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Geo {
+    private static final String TAG = "Geo";
+
     @Json(name = "latitude")
     private Double _latitude;
     @Json(name = "longitude")
@@ -41,7 +44,7 @@ public class Geo {
         try {
             return Serializer.serializeObject(geo);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -50,7 +53,7 @@ public class Geo {
         try {
             return Serializer.unserializeObject(Geo.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -834,7 +834,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             return list;
                         } catch (Exception ex) {
 //                        Log.v(STAG, selector.name());
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -862,7 +862,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -890,7 +890,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -917,7 +917,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }

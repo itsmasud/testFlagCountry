@@ -176,7 +176,7 @@ public class MessageFragment extends WorkorderFragment {
             }
             return _adapter;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -341,7 +341,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 copySuccess = misc.copyFile(file, dest);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             if (!copySuccess) {
@@ -419,7 +419,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 fout.close();
                 copySuccess = true;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             if (!copySuccess) {

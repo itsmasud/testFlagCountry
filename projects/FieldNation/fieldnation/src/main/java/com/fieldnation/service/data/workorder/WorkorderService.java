@@ -85,7 +85,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
                     WorkorderDispatch.get(this, workorder, workorderId, false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -112,7 +112,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
                     WorkorderDispatch.list(this, ja, page, selector, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -131,7 +131,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             try {
                 WorkorderDispatch.signature(this, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 
@@ -151,7 +151,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listMessages(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -168,7 +168,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listAlerts(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -186,7 +186,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listTasks(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -205,7 +205,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.bundle(this, new JsonObject(obj.getData()), bundleId, false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -237,7 +237,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             try {
                 WorkorderDispatch.getDeliverable(this, new JsonObject(obj.getData()), workorderId, deliverableId, false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
         if (obj == null || isSync) {
@@ -256,7 +256,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 //            try {
 //                WorkorderDispatch.downloadDeliverable(this, workorderId, deliverableId, obj.getFile(), isSync);
 //            } catch (Exception ex) {
-//                ex.printStackTrace();
+//                Log.v(TAG, ex);
 //            }
 //        }
 //

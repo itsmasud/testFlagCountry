@@ -668,7 +668,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 try {
                     time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
             // request the workorder
@@ -691,7 +691,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
                 _adapter.refreshPages();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 

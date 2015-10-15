@@ -207,7 +207,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save(this);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
         _manager.wakeUp();
@@ -299,7 +299,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         Log.v(TAG, result.getString());
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
 
                 // check for invalid auth
@@ -380,22 +380,22 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
                 }
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 trans.requeue(context);
             } catch (SSLException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 if (ex.getMessage().contains("Broken pipe")) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                     WebTransaction.delete(context, trans.getId());
                 }
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 //Debug.logException(ex);
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
             } catch (ConnectException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 GlobalTopicClient.networkDisconnected(context);
                 try {
                     Thread.sleep(5000);
@@ -410,12 +410,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
                 trans.requeue(context);
             } catch (EOFException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 trans.requeue(context);
             } catch (Exception ex) {
                 // no freaking clue
                 Debug.logException(ex);
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
             }

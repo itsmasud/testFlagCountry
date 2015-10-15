@@ -29,7 +29,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             json.put("circle", getCircle);
             return json.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         return null;
@@ -79,7 +79,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             Log.v(TAG, "handleResult");
             return Result.FINISH;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             Log.v(TAG, "handleResult");
             return Result.ERROR;
         }
@@ -95,7 +95,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }

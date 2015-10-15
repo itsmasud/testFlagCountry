@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Provider {
+    private static final String TAG = "Provider";
+
     @Json(name = "cell")
     private Double _cell;
     @Json(name = "city")
@@ -131,7 +134,7 @@ public class Provider {
         try {
             return Serializer.serializeObject(provider);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -140,9 +143,8 @@ public class Provider {
         try {
             return Serializer.unserializeObject(Provider.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

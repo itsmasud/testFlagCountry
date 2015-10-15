@@ -120,7 +120,7 @@ public class SignatureView extends View {
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             _shape = new Shape();
@@ -341,7 +341,7 @@ public class SignatureView extends View {
 
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }
@@ -367,7 +367,7 @@ public class SignatureView extends View {
                 _redraw = true;
                 invalidate();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     }

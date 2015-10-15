@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpectedPayment {
+    private static final String TAG = "ExpectedPayment";
+
     //	@Json(name = "bonuses")
 //	private Bonuses[] _bonuses;
     @Json(name = "discounts")
@@ -101,7 +104,7 @@ public class ExpectedPayment {
         try {
             return Serializer.serializeObject(expectedPayment);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -110,9 +113,8 @@ public class ExpectedPayment {
         try {
             return Serializer.unserializeObject(ExpectedPayment.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

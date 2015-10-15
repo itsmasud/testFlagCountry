@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
@@ -57,7 +58,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             _paymentId = intent.getLongExtra(INTENT_KEY_PAYMENT_ID, -1);
         } catch (Exception e) {
             // TODO, not a good way to handle this
-            e.printStackTrace();
+            Log.v(TAG, e);
             finish();
         }
 

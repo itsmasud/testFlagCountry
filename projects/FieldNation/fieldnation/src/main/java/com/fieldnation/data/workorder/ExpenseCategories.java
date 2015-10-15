@@ -2,6 +2,7 @@ package com.fieldnation.data.workorder;
 
 import android.content.Context;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
@@ -11,7 +12,7 @@ import com.fieldnation.utils.misc;
 import java.io.InputStream;
 
 public class ExpenseCategories {
-    private final String TAG = UniqueTag.makeTag("data.workorder.ExpenseCategories");
+    private final String TAG = UniqueTag.makeTag("ExpenseCategories");
 
     private static ExpenseCategory[] _categories = null;
 
@@ -55,7 +56,7 @@ public class ExpenseCategories {
 
                 _categories = cats;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             _listener.onHaveCategories(_categories);
         }
@@ -110,7 +111,7 @@ public class ExpenseCategories {
 //                            list[i] = cat;
 //                        }
 //                    } catch (Exception e) {
-//                        e.printStackTrace();
+//                        Log.v(TAG, e);
 //                    }
 //                    return list;
 //                }

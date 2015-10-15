@@ -25,7 +25,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("profileId", profileId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -47,7 +47,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("userId", userId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -70,7 +70,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -95,7 +95,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     return handleAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.REQUEUE;
         }
         return Result.FINISH;
@@ -122,7 +122,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     break;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.FINISH;
         }
         return Result.FINISH;

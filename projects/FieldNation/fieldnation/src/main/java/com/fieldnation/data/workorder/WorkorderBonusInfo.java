@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class WorkorderBonusInfo {
+    private static final String TAG = "WorkorderBonusInfo";
+
     @Json(name = "amount")
     private Integer _amount;
     @Json(name = "charge_type")
@@ -77,7 +80,7 @@ public class WorkorderBonusInfo {
         try {
             return Serializer.serializeObject(workorderBonusInfo);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -86,9 +89,8 @@ public class WorkorderBonusInfo {
         try {
             return Serializer.unserializeObject(WorkorderBonusInfo.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

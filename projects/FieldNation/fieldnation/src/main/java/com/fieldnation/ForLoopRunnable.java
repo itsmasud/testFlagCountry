@@ -9,6 +9,8 @@ import android.os.Handler;
  * stepping. Useful for building large lists in the UI
  */
 public abstract class ForLoopRunnable implements Runnable {
+    private static final String TAG = "ForLoopRunnable";
+
     private int i;
     private final int count;
     private final long delay;
@@ -37,7 +39,7 @@ public abstract class ForLoopRunnable implements Runnable {
             i++;
             handler.postDelayed(this, delay);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 

@@ -14,6 +14,7 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -87,7 +88,7 @@ public class NotificationView extends RelativeLayout {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             if (misc.isEmptyOrNull(_notification.getMessage())) {
                 _messageTextView.setVisibility(View.GONE);
             } else {

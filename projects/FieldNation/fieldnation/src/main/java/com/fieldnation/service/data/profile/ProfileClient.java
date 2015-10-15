@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
@@ -21,7 +22,8 @@ import java.util.List;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileClient extends TopicClient implements ProfileConstants {
-    private String TAG = UniqueTag.makeTag("ProfileDataClient");
+    private static final String STAG = "ProfileDataClient";
+    private String TAG = UniqueTag.makeTag(STAG);
 
     public ProfileClient(Listener listener) {
         super(listener);
@@ -203,7 +205,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                         try {
                             return Profile.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -244,7 +246,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                             return list;
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -285,7 +287,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
                             return list;
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
