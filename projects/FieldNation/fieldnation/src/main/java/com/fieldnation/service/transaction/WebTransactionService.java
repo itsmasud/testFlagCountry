@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.system.ErrnoException;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -29,6 +30,7 @@ import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -373,53 +375,52 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (handlerName != null && result != null)
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
-            } catch (UnknownHostException ex) {
-                // probably offline
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                Log.v(TAG, ex);
-                trans.requeue(context);
             } catch (SSLException ex) {
                 Log.v(TAG, ex);
                 if (ex.getMessage().contains("Broken pipe")) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                     WebTransaction.delete(context, trans.getId());
+                } else {
+                    transFailNetworkDown(trans);
                 }
             } catch (FileNotFoundException ex) {
                 Log.v(TAG, ex);
-                //Debug.logException(ex);
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
+            } catch (UnknownHostException ex) {
+                transFailNetworkDown(trans);
             } catch (ConnectException ex) {
-                Log.v(TAG, ex);
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                trans.requeue(context);
+                transFailNetworkDown(trans);
             } catch (SocketTimeoutException ex) {
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                trans.requeue(context);
+                transFailNetworkDown(trans);
             } catch (EOFException ex) {
                 Log.v(TAG, ex);
                 trans.requeue(context);
-            } catch (Exception ex) {
-                // no freaking clue
-                Debug.logException(ex);
+            } catch (IOException ex) {
                 Log.v(TAG, ex);
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                WebTransaction.delete(context, trans.getId());
+                transFailNetworkDown(trans);
+            } catch (Exception ex) {
+                if (ex.getMessage().contains("ETIMEDOUT")) {
+                    transFailNetworkDown(trans);
+                } else {
+                    // no freaking clue
+                    Debug.logException(ex);
+                    Log.v(TAG, ex);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                    WebTransaction.delete(context, trans.getId());
+                }
             }
             return true;
+        }
+
+        private void transFailNetworkDown(WebTransaction trans) {
+            GlobalTopicClient.networkDisconnected(context);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
+            trans.requeue(context);
         }
     }
 }
