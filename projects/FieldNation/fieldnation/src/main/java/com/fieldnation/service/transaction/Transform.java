@@ -117,28 +117,24 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "get(" + id + ")");
         Transform obj = null;
         synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                SQLiteDatabase db = helper.getReadableDatabase();
+                Cursor cursor = db.query(
+                        TransformSqlHelper.TABLE_NAME,
+                        TransformSqlHelper.getColumnNames(),
+                        Column.ID + "=?",
+                        new String[]{id + ""},
+                        null, null, null, "1");
                 try {
-                    Cursor cursor = db.query(
-                            TransformSqlHelper.TABLE_NAME,
-                            TransformSqlHelper.getColumnNames(),
-                            Column.ID + "=?",
-                            new String[]{id + ""},
-                            null, null, null, "1");
-                    try {
-                        if (cursor.moveToFirst()) {
-                            obj = new Transform(cursor);
-                        }
-                    } finally {
-                        cursor.close();
+                    if (cursor.moveToFirst()) {
+                        obj = new Transform(cursor);
                     }
                 } finally {
-                    db.close();
+                    cursor.close();
                 }
             } finally {
-                helper.close();
+                db.close();
             }
         }
         return obj;
@@ -169,31 +165,27 @@ public class Transform implements Parcelable, TransformConstants {
         final String objectNameKey = objectName + "/" + objectKey;
         List<Transform> list = new LinkedList<>();
         synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getReadableDatabase();
             try {
-                SQLiteDatabase db = helper.getReadableDatabase();
+                Cursor cursor = db.query(
+                        TransformSqlHelper.TABLE_NAME,
+                        TransformSqlHelper.getColumnNames(),
+                        Column.OBJECT_NAME_KEY + "=?",
+                        new String[]{objectNameKey},
+                        null, null,
+                        Column.ID + " ASC");
+
                 try {
-                    Cursor cursor = db.query(
-                            TransformSqlHelper.TABLE_NAME,
-                            TransformSqlHelper.getColumnNames(),
-                            Column.OBJECT_NAME_KEY + "=?",
-                            new String[]{objectNameKey},
-                            null, null,
-                            Column.ID + " ASC");
-
-                    try {
-                        while (cursor.moveToNext()) {
-                            list.add(new Transform(cursor));
-                        }
-                    } finally {
-                        cursor.close();
+                    while (cursor.moveToNext()) {
+                        list.add(new Transform(cursor));
                     }
-
                 } finally {
-                    db.close();
+                    cursor.close();
                 }
+
             } finally {
-                helper.close();
+                db.close();
             }
         }
         return list;
@@ -222,16 +214,12 @@ public class Transform implements Parcelable, TransformConstants {
 
         long id = -1;
         synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getWritableDatabase();
             try {
-                SQLiteDatabase db = helper.getWritableDatabase();
-                try {
-                    id = db.insert(TransformSqlHelper.TABLE_NAME, null, v);
-                } finally {
-                    db.close();
-                }
+                id = db.insert(TransformSqlHelper.TABLE_NAME, null, v);
             } finally {
-                helper.close();
+                db.close();
             }
         }
         if (id != -1)
@@ -244,19 +232,15 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getWritableDatabase();
             try {
-                SQLiteDatabase db = helper.getWritableDatabase();
-                try {
-                    success = db.delete(
-                            TransformSqlHelper.TABLE_NAME,
-                            Column.TRANSACTION_ID + "=?",
-                            new String[]{transactionId + ""}) > 0;
-                } finally {
-                    db.close();
-                }
+                success = db.delete(
+                        TransformSqlHelper.TABLE_NAME,
+                        Column.TRANSACTION_ID + "=?",
+                        new String[]{transactionId + ""}) > 0;
             } finally {
-                helper.close();
+                db.close();
             }
         }
         return success;
@@ -266,19 +250,15 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "delete(" + id + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = new TransformSqlHelper(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getWritableDatabase();
             try {
-                SQLiteDatabase db = helper.getWritableDatabase();
-                try {
-                    success = db.delete(
-                            TransformSqlHelper.TABLE_NAME,
-                            Column.ID + "=?",
-                            new String[]{id + ""}) > 0;
-                } finally {
-                    db.close();
-                }
+                success = db.delete(
+                        TransformSqlHelper.TABLE_NAME,
+                        Column.ID + "=?",
+                        new String[]{id + ""}) > 0;
             } finally {
-                helper.close();
+                db.close();
             }
         }
         return success;
