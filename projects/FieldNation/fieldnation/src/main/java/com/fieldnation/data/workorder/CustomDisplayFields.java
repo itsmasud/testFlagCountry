@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CustomDisplayFields {
+    private static final String TAG = "CustomDisplayFields";
+
     @Json(name = "label")
     private String _label;
     @Json(name = "value")
@@ -29,7 +32,7 @@ public class CustomDisplayFields {
         try {
             return Serializer.serializeObject(customDisplayFields);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -38,7 +41,7 @@ public class CustomDisplayFields {
         try {
             return Serializer.unserializeObject(CustomDisplayFields.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpenseCategory {
+    private static final String TAG = "ExpenseCategory";
+
     @Json(name = "id")
     private Integer _id;
     @Json(name = "name")
@@ -29,7 +32,7 @@ public class ExpenseCategory {
         try {
             return Serializer.serializeObject(expenseCategory);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -38,14 +41,14 @@ public class ExpenseCategory {
         try {
             return Serializer.unserializeObject(ExpenseCategory.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
 
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
     @Override
     public String toString() {
         return getName();

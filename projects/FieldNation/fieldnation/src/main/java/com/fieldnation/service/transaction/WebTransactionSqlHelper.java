@@ -4,8 +4,11 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.fieldnation.App;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -15,6 +18,8 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
     // changed.
     private static final int TABLE_VER = 1;
     public static final String TABLE_NAME = "transactions";
+
+    private static WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -79,8 +84,17 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public WebTransactionSqlHelper(Context context) {
+    private WebTransactionSqlHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
+    }
+
+    public static WebTransactionSqlHelper getInstance(Context context) {
+        Context app = context.getApplicationContext();
+        if (!_instances.containsKey(app)) {
+            _instances.put(app, new WebTransactionSqlHelper(app));
+        }
+
+        return _instances.get(app);
     }
 
     @Override

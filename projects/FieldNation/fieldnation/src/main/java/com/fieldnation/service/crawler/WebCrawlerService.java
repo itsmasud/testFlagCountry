@@ -299,7 +299,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
@@ -322,7 +322,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "onNotificationList");
 
             incrementPendingRequestCounter(-1);
@@ -441,7 +441,7 @@ public class WebCrawlerService extends Service {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
                 return true;
             }
@@ -473,7 +473,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         //Thread.sleep(1000);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                 }
             }
@@ -490,7 +490,7 @@ public class WebCrawlerService extends Service {
                                 incRequestCounter(1);
                                 //Thread.sleep(1000);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                Log.v(TAG, ex);
                             }
                         }
                     }
@@ -506,7 +506,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         //Thread.sleep(1000);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                 }
             }

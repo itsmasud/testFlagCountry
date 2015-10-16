@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.utils.ISO8601;
@@ -164,12 +165,12 @@ public class ScheduleDialog extends DialogFragmentBase {
         try {
             _startCal = ISO8601.toCalendar(_sched.getStartTime());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         try {
             _endCal = ISO8601.toCalendar(_sched.getEndTime());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         if (_sched != null) {

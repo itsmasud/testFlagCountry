@@ -33,7 +33,7 @@ public class ThreadManager {
             try {
                 thread.join(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
 
             if (thread.isAlive())
@@ -53,13 +53,9 @@ public class ThreadManager {
         private final Object THREAD_PAUSE;
 
         public ManagedThread(ThreadManager manager) {
-            super("ManagedThread");
+            super();
             THREAD_PAUSE = manager.THREAD_PAUSE;
-        }
-
-        public ManagedThread(ThreadManager manager, String name) {
-            super(name);
-            THREAD_PAUSE = manager.THREAD_PAUSE;
+            setName("ManagedThread/" + getClass().getSimpleName());
         }
 
         void finish() {
@@ -69,11 +65,13 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    THREAD_PAUSE.wait(1000);
+                    //Log.v(getName(), "sleeping");
+                    THREAD_PAUSE.wait(10000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
+            //Log.v(getName(), "woke up");
         }
 
         @Override

@@ -2,6 +2,7 @@ package com.fieldnation.service.data.documents;
 
 import android.content.Context;
 
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -10,6 +11,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  * Created by Michael Carver on 5/28/2015.
  */
 public class DocumentTransactionBuilder {
+    private static final String TAG = "DocumentTransactionBuilder";
 
     public static void download(Context context, long documentId, String link, String filename, boolean isSync) {
         try {
@@ -24,7 +26,7 @@ public class DocumentTransactionBuilder {
                             .path(link))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 }

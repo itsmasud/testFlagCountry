@@ -323,7 +323,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 try {
                     _expirationDate = info.getExpiresAfter();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -517,7 +517,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
                             seconds = (int) (ISO8601.toUtc(_expirationDate)
                                     - System.currentTimeMillis()) / 1000;
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(TAG, ex);
                         }
                     }
 

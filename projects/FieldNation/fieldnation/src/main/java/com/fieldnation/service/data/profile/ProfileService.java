@@ -60,7 +60,7 @@ public class ProfileService extends MSService implements ProfileConstants {
                 try {
                     ProfileDispatch.get(this, profileId, new JsonObject(obj.getData()), false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -85,9 +85,9 @@ public class ProfileService extends MSService implements ProfileConstants {
             obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
-                    ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync);
+                    ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -112,9 +112,9 @@ public class ProfileService extends MSService implements ProfileConstants {
             obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
-                    ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync);
+                    ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }

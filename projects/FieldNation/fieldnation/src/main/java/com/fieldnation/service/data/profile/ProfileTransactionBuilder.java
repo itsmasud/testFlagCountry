@@ -3,6 +3,7 @@ package com.fieldnation.service.data.profile;
 import android.content.Context;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
@@ -13,6 +14,7 @@ import com.fieldnation.utils.misc;
  * Created by Michael Carver on 4/22/2015.
  */
 public class ProfileTransactionBuilder implements ProfileConstants {
+    private static final String TAG = "ProfileTransactionBuilder";
 
     public static void get(Context context, long profileId, boolean isSync) {
         try {
@@ -36,7 +38,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -57,7 +59,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .urlParams("?page=" + page)
                     ).send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -78,7 +80,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .urlParams("?page=" + page)
                     ).send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -97,7 +99,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                                     .path("/api/rest/v1/profile/" + userId + "/switch")
                     ).send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -130,7 +132,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -173,7 +175,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .request(http)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 }

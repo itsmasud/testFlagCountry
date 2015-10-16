@@ -54,6 +54,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             list            -*/
     /*-*****************************-*/
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
+        Log.v(STAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
@@ -834,7 +836,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             return list;
                         } catch (Exception ex) {
 //                        Log.v(STAG, selector.name());
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -862,7 +864,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -890,7 +892,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -917,7 +919,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }

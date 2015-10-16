@@ -325,15 +325,15 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " view:" + _displayView.getCall());
-        if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
-            _emptyView.setVisibility(View.VISIBLE);
-        } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
+        if (page == 0 && list != null) {
+            if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
+                _emptyView.setVisibility(View.VISIBLE);
+            } else {
+                _emptyView.setVisibility(View.GONE);
+            }
+        } else {
             _emptyView.setVisibility(View.GONE);
         }
-
-//        if (list.size() == 0 ) {
-//            _adapter.setNoMorePages();
-//        }
 
         _adapter.setPage(page, list);
     }
@@ -668,7 +668,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 try {
                     time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
             // request the workorder
@@ -691,7 +691,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
                 _adapter.refreshPages();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 
@@ -852,8 +852,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             Log.v(TAG, "_workorderData_listener.onList, " + selector + ", " + page + ", " + failed + ", " + isCached);
             if (!selector.equals(_displayView))
                 return;
-            if (list != null)
-                addPage(page, list);
+
+            addPage(page, list); // done
         }
 
         @Override

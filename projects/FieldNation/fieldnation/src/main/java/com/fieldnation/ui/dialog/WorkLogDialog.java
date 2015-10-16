@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.utils.ISO8601;
@@ -156,20 +157,20 @@ public class WorkLogDialog extends DialogFragmentBase {
             String startDate = _loggedWork.getStartDate();
             _startButton.setText(misc.formatDateTime(ISO8601.toCalendar(startDate), false));
         } catch (ParseException ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         try {
             String endDate = _loggedWork.getEndDate();
             _endButton.setText(misc.formatDateTime(ISO8601.toCalendar(endDate), false));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         try {
             _devicesEditText.setText(_loggedWork.getNoOfDevices().toString());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 

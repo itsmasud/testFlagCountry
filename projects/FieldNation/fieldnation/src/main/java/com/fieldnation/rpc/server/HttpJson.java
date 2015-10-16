@@ -77,6 +77,8 @@ public class HttpJson {
 
         conn.setRequestMethod(method);
         conn.setUseCaches(false);
+        conn.setRequestProperty("Pragma", "no-cache");
+        conn.setRequestProperty("Cache-Control", "no-cache");
 
         if (headers != null) {
             Iterator<String> e = headers.keys();

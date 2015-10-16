@@ -769,7 +769,7 @@ public class WorkFragment extends WorkorderFragment {
             }
         } catch (Exception ex) {
             //Debug.logException(ex);
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             // Todo this could cause an infinite loop, revisit later
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -850,7 +850,7 @@ public class WorkFragment extends WorkorderFragment {
                 setLoading(true);
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 
@@ -951,7 +951,7 @@ public class WorkFragment extends WorkorderFragment {
                 try {
                     seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
 
@@ -991,7 +991,7 @@ public class WorkFragment extends WorkorderFragment {
                         (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
             } catch (Exception ex) {
                 // I don't expect this to ever fail, but it could. just a safe guard.
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), "WorkorderActivity",
@@ -999,7 +999,7 @@ public class WorkFragment extends WorkorderFragment {
                         (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
             } catch (Exception ex) {
                 // I don't expect this to ever fail, but it could. just a safe guard.
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             WorkorderClient.actionComplete(getActivity(), _workorder.getWorkorderId());
@@ -1582,7 +1582,7 @@ public class WorkFragment extends WorkorderFragment {
                     builder.show();
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 

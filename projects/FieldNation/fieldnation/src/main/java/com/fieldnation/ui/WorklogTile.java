@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.utils.ISO8601;
@@ -77,7 +78,7 @@ public class WorklogTile extends RelativeLayout {
             _dateTextView.setText(misc.formatDate(ISO8601.toCalendar(_log.getStartDate())));
         } catch (Exception ex) {
             _dateTextView.setText("NA");
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         if (_showDevices) {

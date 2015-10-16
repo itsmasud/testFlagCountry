@@ -227,7 +227,7 @@ public class DrawerView extends RelativeLayout {
                     Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
                     _paidDateTextView.setText("Paid " + misc.formatDate(cal));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                     _paidDateTextView.setText("");
                 }
             } else {

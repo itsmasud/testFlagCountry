@@ -25,7 +25,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("profileId", profileId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -47,7 +47,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("userId", userId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -70,7 +70,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -95,7 +95,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     return handleAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.REQUEUE;
         }
         return Result.FINISH;
@@ -112,17 +112,17 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     ProfileDispatch.get(context, params.getLong("profileId"), null, true, transaction.isSync());
                     break;
                 case "pListNotifications":
-                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pListMessages":
-                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pAction":
                     ProfileDispatch.action(context, params.getLong("profileId"), params.getString("param"), true);
                     break;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.FINISH;
         }
         return Result.FINISH;
@@ -148,7 +148,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
         StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
@@ -161,7 +161,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 

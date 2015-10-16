@@ -3,6 +3,7 @@ package com.fieldnation.service.data.help;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -11,7 +12,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  * Created by Shoaib on 7/4/2015.
  */
 public class HelpTransactionBuilder {
-
+    private static final String TAG = "HelpTransactionBuilder";
 
     public static Intent actionPostFeedbackIntent(Context context, String message, String uri,
                                                   String extraData, String extraType) {
@@ -45,7 +46,7 @@ public class HelpTransactionBuilder {
                     .request(http)
                     .makeIntent();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }

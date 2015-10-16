@@ -3,11 +3,13 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Task implements Parcelable {
+    private static final String TAG = "Task";
 
     @Json(name = "alertOnCompletion")
     private String[] _alertOnCompletion;
@@ -195,7 +197,7 @@ public class Task implements Parcelable {
         try {
             return Serializer.serializeObject(task);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -204,7 +206,7 @@ public class Task implements Parcelable {
         try {
             return Serializer.unserializeObject(Task.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -229,7 +231,7 @@ public class Task implements Parcelable {
             try {
                 return Task.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

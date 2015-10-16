@@ -126,9 +126,9 @@ public class RightDrawerNotificationsView extends FrameLayout {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             // TODO hanlde failed condition
-            _adapter.setPage(page, list);
+            _adapter.setPage(page, list); // done
         }
     };
 }

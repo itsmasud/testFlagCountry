@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class Schedule implements Parcelable {
+    private static final String TAG = "Schedule";
 
     @Json(name = "duration")
     private Double _duration;
@@ -65,7 +67,7 @@ public class Schedule implements Parcelable {
         try {
             return Serializer.serializeObject(schedule);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -74,7 +76,7 @@ public class Schedule implements Parcelable {
         try {
             return Serializer.unserializeObject(Schedule.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -114,7 +116,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -139,7 +141,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -178,7 +180,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -197,7 +199,7 @@ public class Schedule implements Parcelable {
                 return "Exactly on " + dayDate + " @ " + time;
 
             } catch (ParseException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
         } else {
             if (asStartAndDuration) {
@@ -218,7 +220,7 @@ public class Schedule implements Parcelable {
                     return msg;
 
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             } else {
                 try {
@@ -247,7 +249,7 @@ public class Schedule implements Parcelable {
                     return msg;
 
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -268,7 +270,7 @@ public class Schedule implements Parcelable {
             try {
                 return Schedule.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }

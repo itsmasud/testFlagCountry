@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.utils.misc;
@@ -86,14 +87,14 @@ public class MessageTileView extends RelativeLayout {
         try {
             _titleTextView.setText(_message.getWorkorderTitle() + "");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         try {
             _messageBodyTextView.setText(
                     misc.htmlify(
                             "<b>" + _message.getFromUser().getFullName() + "</b> - " + _message.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         if (App.get().isLowMemDevice()) {
