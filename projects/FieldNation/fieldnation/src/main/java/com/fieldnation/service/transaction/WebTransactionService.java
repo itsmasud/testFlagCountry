@@ -49,6 +49,9 @@ import javax.net.ssl.SSLException;
 public class WebTransactionService extends MSService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
 
+    private final Object AUTH_LOCK = new Object();
+    private final Object SYNC_LOCK = new Object();
+
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
     private boolean _isAuthenticated = false;
@@ -100,14 +103,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     private void setAuth(OAuth auth) {
         Log.v(TAG, "setAuth");
-        synchronized (TAG) {
+        synchronized (AUTH_LOCK) {
             _auth = auth;
         }
     }
 
     private OAuth getAuth() {
         Log.v(TAG, "getAuth");
-        synchronized (TAG) {
+        synchronized (AUTH_LOCK) {
             return _auth;
         }
     }
@@ -117,34 +120,36 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         return 1;
     }
 
-    private synchronized boolean allowSync() {
-        // TODO calculate by collecting config information and compare to phone state
-        if (_syncCheckCoolDown < System.currentTimeMillis()) {
-            Stopwatch watch = new Stopwatch(true);
-            _allowSync = true;
+    private boolean allowSync() {
+        synchronized (SYNC_LOCK) {
+            // TODO calculate by collecting config information and compare to phone state
+            if (_syncCheckCoolDown < System.currentTimeMillis()) {
+                Stopwatch watch = new Stopwatch(true);
+                _allowSync = true;
 
-            SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
-                    Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+                SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+                        Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-            boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
-            boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-            boolean haveWifi = App.get().haveWifi();
+                boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
+                boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
+                boolean haveWifi = App.get().haveWifi();
 
-            // Log.v(TAG, "HaveWifi " + haveWifi);
+                // Log.v(TAG, "HaveWifi " + haveWifi);
 
-            if (requireWifi && !haveWifi) {
-                _allowSync = false;
-            } else {
-                boolean pluggedIn = App.get().isCharging();
-                // Log.v(TAG, "HavePower " + pluggedIn);
-                if (requirePower && !pluggedIn) {
+                if (requireWifi && !haveWifi) {
                     _allowSync = false;
+                } else {
+                    boolean pluggedIn = App.get().isCharging();
+                    // Log.v(TAG, "HavePower " + pluggedIn);
+                    if (requirePower && !pluggedIn) {
+                        _allowSync = false;
+                    }
                 }
+                _syncCheckCoolDown = System.currentTimeMillis() + 1000;
+                // Log.v(TAG, "allowSync time: " + watch.finish());
             }
-            _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-            // Log.v(TAG, "allowSync time: " + watch.finish());
+            return _allowSync;
         }
-        return _allowSync;
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {

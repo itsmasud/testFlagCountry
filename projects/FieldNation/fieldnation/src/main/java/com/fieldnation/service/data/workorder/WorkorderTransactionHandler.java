@@ -393,7 +393,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
     private Result handleList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
         Stopwatch watch = new Stopwatch(true);
-        Log.v(TAG, "handleResult");
+        Log.v(TAG, "handleList");
         // get the basics, send out the event
         int page = 0;
         String selector = "";
@@ -402,7 +402,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             page = params.getInt("page");
             selector = params.getString("selector");
             byte[] bdata = resultData.getByteArray();
-            Log.v(TAG, "page: " + page + " selector:" + selector);
+            Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
             StoredObject.put(App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
@@ -420,7 +420,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        Log.v(TAG, "handleResult time: " + watch.finish());
+        Log.v(TAG, "handleList time: " + watch.finish());
         return Result.REQUEUE;
 
     }

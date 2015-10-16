@@ -79,11 +79,25 @@ public class SplashActivity extends AuthFragmentActivity {
 
     @Override
     protected void onPause() {
-        _globalClient.disconnect(this);
-        _authClient.disconnect(this);
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(this);
+        if (_authClient != null && _authClient.isConnected())
+            _authClient.disconnect(this);
         super.onPause();
     }
 
+    @Override
+    protected void onStop() {
+        try {
+            if (_globalClient != null && _globalClient.isConnected())
+                _globalClient.disconnect(this);
+            if (_authClient != null && _authClient.isConnected())
+                _authClient.disconnect(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        super.onStop();
+    }
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override

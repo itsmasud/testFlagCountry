@@ -54,6 +54,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             list            -*/
     /*-*****************************-*/
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
+        Log.v(STAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());

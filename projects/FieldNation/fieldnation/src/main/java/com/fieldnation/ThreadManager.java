@@ -53,13 +53,9 @@ public class ThreadManager {
         private final Object THREAD_PAUSE;
 
         public ManagedThread(ThreadManager manager) {
-            super("ManagedThread");
+            super();
             THREAD_PAUSE = manager.THREAD_PAUSE;
-        }
-
-        public ManagedThread(ThreadManager manager, String name) {
-            super(name);
-            THREAD_PAUSE = manager.THREAD_PAUSE;
+            setName("ManagedThread/" + getClass().getSimpleName());
         }
 
         void finish() {
@@ -69,7 +65,7 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    THREAD_PAUSE.wait(1000);
+                    THREAD_PAUSE.wait(10000);
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
