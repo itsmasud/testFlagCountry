@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.toast.ToastClient;
@@ -16,6 +17,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
  * Created by Michael Carver on 7/20/2015.
  */
 public class HelpTransactionHandler extends WebTransactionHandler {
+    private static final String TAG = "HelpTransactionHandler";
 
     public static byte[] pFeedback(String message, String uri, String extraData, String extraType) {
         try {
@@ -26,7 +28,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             obj.put("extraType", extraType);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -46,7 +48,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             }
             return super.handleResult(context, transaction, resultData);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
@@ -73,7 +75,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             }
             return super.handleResult(context, transaction, resultData);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -91,7 +93,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             ToastClient.snackbar(context, "Failed. Your feedback could not be sent.", Toast.LENGTH_LONG);
         }
         return Result.FINISH;

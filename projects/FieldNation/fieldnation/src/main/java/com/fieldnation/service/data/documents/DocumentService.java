@@ -61,7 +61,7 @@ public class DocumentService extends MSService implements DocumentConstants {
 
                 DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         } else {
             DocumentTransactionBuilder.download(context, documentId, url, filename, isSync);

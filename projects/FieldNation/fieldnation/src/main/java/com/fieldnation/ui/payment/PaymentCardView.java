@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.utils.ISO8601;
@@ -89,7 +90,7 @@ public class PaymentCardView extends RelativeLayout {
         try {
             _amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _amountTextView.setText("NA");
         }
         try {
@@ -107,7 +108,7 @@ public class PaymentCardView extends RelativeLayout {
                         + " " + getContext().getString(R.string.work_orders) + " / 0 Fees");
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _descriptionTextView.setText("");
         }
         // pay_method
@@ -116,14 +117,14 @@ public class PaymentCardView extends RelativeLayout {
             method = misc.capitalize(method);
             _paymentTypeTextView.setText(method);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _paymentTypeTextView.setText("");
         }
         // payment_id
         try {
             _idTextView.setText("Payment ID: " + _paymentInfo.getPaymentId());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _idTextView.setText("Payment ID: ???");
         }
         // status
@@ -137,7 +138,7 @@ public class PaymentCardView extends RelativeLayout {
             }
             _titleTextView.setText(status);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         // date_paid
         try {
@@ -146,7 +147,7 @@ public class PaymentCardView extends RelativeLayout {
 
             _dateTextView.setText(getContext().getString(R.string.estimated) + " " + misc.formatDate(cal));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _dateTextView.setText("");
         }
     }

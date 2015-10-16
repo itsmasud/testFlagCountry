@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -160,7 +161,7 @@ public class UploadedDocumentView extends RelativeLayout {
         try {
             _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_doc.getUploadedTime())));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         _usernameTextView.setText(_doc.getUploaderUserName());
 
@@ -173,7 +174,7 @@ public class UploadedDocumentView extends RelativeLayout {
                 _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
         }
 

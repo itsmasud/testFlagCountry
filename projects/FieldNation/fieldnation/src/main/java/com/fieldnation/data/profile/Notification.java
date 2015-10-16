@@ -1,11 +1,13 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Notification {
+    private static final String TAG = "Notification";
     @Json(name = "date")
     private String _date;
     @Json(name = "fromUser")
@@ -66,7 +68,7 @@ public class Notification {
         try {
             return Serializer.serializeObject(notification);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -75,7 +77,7 @@ public class Notification {
         try {
             return Serializer.unserializeObject(Notification.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

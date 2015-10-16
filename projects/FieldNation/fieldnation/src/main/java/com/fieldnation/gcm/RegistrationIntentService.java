@@ -43,7 +43,7 @@ public class RegistrationIntentService extends IntentService {
                 ProfileClient.actionRegisterDevice(this, token);
             }
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            Log.d(TAG, e);
         }
     }
 

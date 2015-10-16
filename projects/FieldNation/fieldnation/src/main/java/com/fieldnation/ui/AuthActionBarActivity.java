@@ -429,7 +429,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                             try {
                                 buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
                             } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
+                                Log.v(TAG, e);
                             }
                         }
                     }

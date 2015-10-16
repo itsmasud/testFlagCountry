@@ -3,6 +3,7 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -27,7 +28,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             obj.put("filename", filename);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -45,7 +46,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.ERROR;
         }
         return Result.FINISH;
@@ -62,7 +63,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.ERROR;
         }
         return Result.FINISH;
@@ -79,7 +80,7 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.ERROR;
         }
         return Result.FINISH;

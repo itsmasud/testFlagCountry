@@ -25,7 +25,7 @@ public abstract class WebTransactionHandler {
             return handler.handleStart(context, transaction);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
@@ -40,7 +40,7 @@ public abstract class WebTransactionHandler {
             return handler.handleResult(context, transaction, resultData);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
@@ -57,7 +57,7 @@ public abstract class WebTransactionHandler {
             return handler.handleFail(context, transaction, resultData, throwable);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }

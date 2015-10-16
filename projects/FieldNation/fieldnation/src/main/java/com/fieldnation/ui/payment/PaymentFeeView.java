@@ -114,7 +114,7 @@ public class PaymentFeeView extends RelativeLayout {
             // _whenTextView.setVisibility(GONE);
             // }
         } catch (Exception ex) {
-            // ex.printStackTrace();
+            // Log.v(TAG, ex);
             _whenTextView.setVisibility(GONE);
         }
         _whenTextView.setVisibility(GONE);

@@ -25,6 +25,7 @@ public interface ProfileConstants {
     String PARAM_ERROR = "PARAM_ERROR";
     String PARAM_USER_ID = "PARAM_USER_ID";
     String PARAM_ALLOW_CACHE = "PARAM_ALLOW_CACHE";
+    String PARAM_IS_CACHED = "PARAM_IS_CACHED";
 
     String PSO_MESSAGE_PAGE = "MessagePage";
     String PSO_NOTIFICATION_PAGE = "NotificationPage";

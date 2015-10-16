@@ -6,9 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.system.ErrnoException;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -28,6 +30,7 @@ import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
@@ -45,6 +48,9 @@ import javax.net.ssl.SSLException;
  */
 public class WebTransactionService extends MSService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
+
+    private final Object AUTH_LOCK = new Object();
+    private final Object SYNC_LOCK = new Object();
 
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
@@ -97,14 +103,15 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     private void setAuth(OAuth auth) {
         Log.v(TAG, "setAuth");
-        synchronized (TAG) {
+        synchronized (AUTH_LOCK) {
             _auth = auth;
         }
+        _manager.wakeUp();
     }
 
     private OAuth getAuth() {
         Log.v(TAG, "getAuth");
-        synchronized (TAG) {
+        synchronized (AUTH_LOCK) {
             return _auth;
         }
     }
@@ -114,34 +121,36 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         return 1;
     }
 
-    private synchronized boolean allowSync() {
-        // TODO calculate by collecting config information and compare to phone state
-        if (_syncCheckCoolDown < System.currentTimeMillis()) {
-            Stopwatch watch = new Stopwatch(true);
-            _allowSync = true;
+    private boolean allowSync() {
+        synchronized (SYNC_LOCK) {
+            // TODO calculate by collecting config information and compare to phone state
+            if (_syncCheckCoolDown < System.currentTimeMillis()) {
+                Stopwatch watch = new Stopwatch(true);
+                _allowSync = true;
 
-            SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
-                    Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+                SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
+                        Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-            boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
-            boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
-            boolean haveWifi = App.get().haveWifi();
+                boolean requireWifi = settings.getBoolean(getString(R.string.pref_key_sync_require_wifi), true);
+                boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
+                boolean haveWifi = App.get().haveWifi();
 
-            // Log.v(TAG, "HaveWifi " + haveWifi);
+                // Log.v(TAG, "HaveWifi " + haveWifi);
 
-            if (requireWifi && !haveWifi) {
-                _allowSync = false;
-            } else {
-                boolean pluggedIn = App.get().isCharging();
-                // Log.v(TAG, "HavePower " + pluggedIn);
-                if (requirePower && !pluggedIn) {
+                if (requireWifi && !haveWifi) {
                     _allowSync = false;
+                } else {
+                    boolean pluggedIn = App.get().isCharging();
+                    // Log.v(TAG, "HavePower " + pluggedIn);
+                    if (requirePower && !pluggedIn) {
+                        _allowSync = false;
+                    }
                 }
+                _syncCheckCoolDown = System.currentTimeMillis() + 1000;
+                // Log.v(TAG, "allowSync time: " + watch.finish());
             }
-            _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-            // Log.v(TAG, "allowSync time: " + watch.finish());
+            return _allowSync;
         }
-        return _allowSync;
     }
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
@@ -206,7 +215,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save(this);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
         _manager.wakeUp();
@@ -294,11 +303,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, result.getResponseCode() + "");
                     Log.v(TAG, result.getResponseMessage());
-                    if (!result.isFile()) {
+                    if (!result.isFile() && BuildConfig.DEBUG) {
                         Log.v(TAG, result.getString());
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
 
                 // check for invalid auth
@@ -372,53 +381,52 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (handlerName != null && result != null)
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
-            } catch (UnknownHostException ex) {
-                // probably offline
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                ex.printStackTrace();
-                trans.requeue(context);
             } catch (SSLException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 if (ex.getMessage().contains("Broken pipe")) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                     WebTransaction.delete(context, trans.getId());
+                } else {
+                    transFailNetworkDown(trans);
                 }
             } catch (FileNotFoundException ex) {
-                ex.printStackTrace();
-                //Debug.logException(ex);
+                Log.v(TAG, ex);
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
+            } catch (UnknownHostException ex) {
+                transFailNetworkDown(trans);
             } catch (ConnectException ex) {
-                ex.printStackTrace();
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                trans.requeue(context);
+                transFailNetworkDown(trans);
             } catch (SocketTimeoutException ex) {
-                GlobalTopicClient.networkDisconnected(context);
-                try {
-                    Thread.sleep(5000);
-                } catch (InterruptedException e) {
-                }
-                trans.requeue(context);
+                transFailNetworkDown(trans);
             } catch (EOFException ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 trans.requeue(context);
+            } catch (IOException ex) {
+                Log.v(TAG, ex);
+                transFailNetworkDown(trans);
             } catch (Exception ex) {
-                // no freaking clue
-                Debug.logException(ex);
-                ex.printStackTrace();
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                WebTransaction.delete(context, trans.getId());
+                if (ex.getMessage().contains("ETIMEDOUT")) {
+                    transFailNetworkDown(trans);
+                } else {
+                    // no freaking clue
+                    Debug.logException(ex);
+                    Log.v(TAG, ex);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                    WebTransaction.delete(context, trans.getId());
+                }
             }
             return true;
+        }
+
+        private void transFailNetworkDown(WebTransaction trans) {
+            GlobalTopicClient.networkDisconnected(context);
+            try {
+                Thread.sleep(5000);
+            } catch (InterruptedException e) {
+            }
+            trans.requeue(context);
         }
     }
 }

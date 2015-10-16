@@ -1,17 +1,20 @@
 package com.fieldnation.shortstraw;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 
 /**
  * Created by michael.carver on 12/3/2014.
  */
 public class Point {
+    private static final String TAG = "Point";
+
     public float x;
     public float y;
     public long t;
     public Float stroke = null;
 
-    public Point(){
+    public Point() {
 
     }
 
@@ -30,7 +33,7 @@ public class Point {
             o.put("t", t);
             o.put("stroke", stroke);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return o;
     }
@@ -45,7 +48,7 @@ public class Point {
                 p.stroke = o.getFloat("stroke");
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         return p;

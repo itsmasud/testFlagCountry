@@ -3,11 +3,14 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadedDocument implements Parcelable {
+    private static final String TAG = "UploadedDocument";
+
     @Json(name = "downloadLink")
     private String _downloadLink;
     @Json(name = "fileName")
@@ -68,7 +71,7 @@ public class UploadedDocument implements Parcelable {
         try {
             return Serializer.serializeObject(uploadedDocument);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -77,7 +80,7 @@ public class UploadedDocument implements Parcelable {
         try {
             return Serializer.unserializeObject(UploadedDocument.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -92,7 +95,7 @@ public class UploadedDocument implements Parcelable {
             try {
                 return UploadedDocument.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }

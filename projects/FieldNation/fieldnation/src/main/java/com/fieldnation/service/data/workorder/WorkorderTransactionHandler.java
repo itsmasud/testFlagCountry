@@ -36,7 +36,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -49,7 +49,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("selector", selector);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -61,7 +61,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -79,7 +79,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -104,7 +104,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("expireInSeconds", expireInSeconds);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -117,7 +117,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("endTimeIso8601", endTimeIso8601);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -147,7 +147,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             }
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -159,7 +159,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("signatureId", signatureId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -170,7 +170,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -181,7 +181,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -192,7 +192,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -204,7 +204,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("bundleId", bundleId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -217,7 +217,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("filename", filename);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -236,7 +236,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -256,7 +256,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -312,7 +312,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleRating(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -393,7 +393,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
     private Result handleList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
         Stopwatch watch = new Stopwatch(true);
-        Log.v(TAG, "handleResult");
+        Log.v(TAG, "handleList");
         // get the basics, send out the event
         int page = 0;
         String selector = "";
@@ -402,27 +402,30 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             page = params.getInt("page");
             selector = params.getString("selector");
             byte[] bdata = resultData.getByteArray();
-            Log.v(TAG, "page: " + page + " selector:" + selector);
+            Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
             StoredObject.put(App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
+            Log.v(TAG, "handleList 1");
             JsonArray ja = new JsonArray(bdata);
-
+            Log.v(TAG, "handleList 2");
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
 
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
+            Log.v(TAG, "handleList 3");
 
             WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
 
+            Log.v(TAG, "handleList 4");
+
             return Result.FINISH;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
-        Log.v(TAG, "handleResult time: " + watch.finish());
+        Log.v(TAG, "handleList time: " + watch.finish());
         return Result.REQUEUE;
-
     }
 
     private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -571,7 +574,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleRatingFail(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -627,7 +630,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             ToastClient.snackbar(context, "Failed. Your rating could not be sent.", Toast.LENGTH_LONG);
         }
         return Result.FINISH;

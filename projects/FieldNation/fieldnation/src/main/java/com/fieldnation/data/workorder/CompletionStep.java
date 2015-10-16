@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CompletionStep {
+    private static final String TAG = "CompletionStep";
+
     @Json(name = "incompletedFields")
     private String[] _incompletedFields;
     @Json(name = "isCompleted")
@@ -47,7 +50,7 @@ public class CompletionStep {
         try {
             return Serializer.serializeObject(completionSteps);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -56,7 +59,7 @@ public class CompletionStep {
         try {
             return Serializer.unserializeObject(CompletionStep.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

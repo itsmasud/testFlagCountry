@@ -56,7 +56,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
                 auth = OAuth.authenticate(_context, hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         Bundle result = new Bundle();

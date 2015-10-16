@@ -82,7 +82,6 @@ public class TaskRowView extends RelativeLayout {
             subscribeUpload();
         }
 
-
         populateUi();
     }
 

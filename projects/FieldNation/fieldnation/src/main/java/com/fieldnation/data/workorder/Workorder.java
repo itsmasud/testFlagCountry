@@ -567,7 +567,7 @@ public class Workorder implements Parcelable {
         try {
             return Serializer.serializeObject(workorder);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -578,7 +578,7 @@ public class Workorder implements Parcelable {
             wo.buildStatus();
             return wo;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -1030,7 +1030,7 @@ public class Workorder implements Parcelable {
             try {
                 return Workorder.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }

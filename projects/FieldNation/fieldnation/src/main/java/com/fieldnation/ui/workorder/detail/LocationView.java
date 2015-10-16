@@ -95,7 +95,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _isDrawn = false;
         } catch (Exception ex) {
             _isDrawn = false;
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         _workorder = workorder;
@@ -159,7 +159,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     Log.v(TAG, "inBackground time: " + stopwatch.finish());
                     return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
                 return null;
             }
@@ -199,7 +199,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         _mapLayout.setVisibility(GONE);
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                     _noMapLayout.setVisibility(VISIBLE);
                     _mapView.setVisibility(GONE);
                 }

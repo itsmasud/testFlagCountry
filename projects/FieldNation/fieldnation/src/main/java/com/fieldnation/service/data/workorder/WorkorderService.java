@@ -16,7 +16,7 @@ import com.fieldnation.service.transaction.Transform;
  * Created by Michael Carver on 3/24/2015.
  */
 public class WorkorderService extends MSService implements WorkorderConstants {
-    private static final String TAG = "WorkorderDataService";
+    private static final String TAG = "WorkorderService";
 
     @Override
     public void onDestroy() {
@@ -33,8 +33,8 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     @Override
     public void processIntent(Intent intent) {
         if (intent.hasExtra(PARAM_ACTION)) {
-            Log.v(TAG, "MyWorkerThread, processIntent");
             String action = intent.getStringExtra(PARAM_ACTION);
+            Log.v(TAG, "MyWorkerThread, processIntent:{action:" + action + "}");
             switch (action) {
                 case PARAM_ACTION_GET:
                     get(intent);
@@ -85,7 +85,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
                     WorkorderDispatch.get(this, workorder, workorderId, false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -94,13 +94,14 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     }
 
     private void list(Intent intent) {
-        Log.v(TAG, "list");
         String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
+        Log.v(TAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
 
         if (allowCache && !isSync) {
+            Log.v(TAG, "list: checking cache");
             StoredObject obj = StoredObject.get(App.getProfileId(), PSO_WORKORDER_LIST + selector, page);
             if (obj != null) {
                 try {
@@ -111,12 +112,15 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     }
 
                     WorkorderDispatch.list(this, ja, page, selector, false, isSync, true);
+                    Log.v(TAG, "list: dispatched cached result");
+
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
 
+        Log.v(TAG, "list: query server");
         WorkorderTransactionBuilder.list(this, selector, page, isSync);
     }
 
@@ -131,7 +135,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             try {
                 WorkorderDispatch.signature(this, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 
@@ -151,7 +155,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listMessages(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -168,7 +172,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listAlerts(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -186,7 +190,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.listTasks(this, workorderId, new JsonArray(obj.getData()), false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -205,7 +209,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     WorkorderDispatch.bundle(this, new JsonObject(obj.getData()), bundleId, false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -237,7 +241,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             try {
                 WorkorderDispatch.getDeliverable(this, new JsonObject(obj.getData()), workorderId, deliverableId, false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
         if (obj == null || isSync) {
@@ -256,7 +260,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 //            try {
 //                WorkorderDispatch.downloadDeliverable(this, workorderId, deliverableId, obj.getFile(), isSync);
 //            } catch (Exception ex) {
-//                ex.printStackTrace();
+//                Log.v(TAG, ex);
 //            }
 //        }
 //

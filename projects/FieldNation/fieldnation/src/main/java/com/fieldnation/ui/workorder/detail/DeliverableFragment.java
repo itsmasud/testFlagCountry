@@ -556,7 +556,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };

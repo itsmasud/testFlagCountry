@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -119,7 +120,7 @@ public class ExpenseDialog extends DialogFragmentBase {
             _categorySpinner.setAdapter(_adapter);
             _categorySpinner.setSelection(0);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 

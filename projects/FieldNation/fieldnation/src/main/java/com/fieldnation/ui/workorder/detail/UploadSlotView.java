@@ -131,7 +131,7 @@ public class UploadSlotView extends RelativeLayout {
                         else
                             return 0;
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Log.v(TAG, e);
                     }
                     return 0;
                 }

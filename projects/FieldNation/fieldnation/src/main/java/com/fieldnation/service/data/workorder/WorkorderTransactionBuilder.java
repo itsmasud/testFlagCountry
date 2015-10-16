@@ -6,6 +6,7 @@ import android.location.Location;
 import android.net.Uri;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -26,6 +27,7 @@ import java.io.File;
  * Created by Michael Carver on 4/22/2015.
  */
 public class WorkorderTransactionBuilder implements WorkorderConstants {
+    private static final String TAG = "WorkorderTransactionBuilder";
 
     public static void get(Context context, long workorderId, boolean isSync) {
         try {
@@ -42,7 +44,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -62,7 +64,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .urlParams("?page=" + page))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -81,7 +83,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/notifications"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -100,7 +102,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -119,7 +121,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/bundle/" + bundleId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -173,7 +175,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             _action.toByteArray()))
                     .makeIntent();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -387,7 +389,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -427,7 +429,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(http)
                     .makeIntent();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -451,7 +453,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -468,7 +470,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -521,7 +523,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -538,7 +540,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //                            .path(url))
 //                    .send();
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //        }
 //    }
 
@@ -565,7 +567,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -591,7 +593,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -610,7 +612,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -638,7 +640,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -661,7 +663,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     + "&amount=" + misc.escapeForURL(price + "")))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -679,7 +681,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -704,7 +706,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     + "&category_id=" + category.getId()).trim()))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -722,7 +724,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -768,7 +770,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -845,7 +847,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
 //                    .send();
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //        }
 //    }
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {
@@ -861,7 +863,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
