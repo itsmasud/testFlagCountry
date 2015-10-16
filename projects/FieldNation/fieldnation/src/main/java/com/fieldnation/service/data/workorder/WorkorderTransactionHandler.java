@@ -406,15 +406,19 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             StoredObject.put(App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
+            Log.v(TAG, "handleList 1");
             JsonArray ja = new JsonArray(bdata);
-
+            Log.v(TAG, "handleList 2");
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
 
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
+            Log.v(TAG, "handleList 3");
 
             WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
+
+            Log.v(TAG, "handleList 4");
 
             return Result.FINISH;
         } catch (Exception ex) {
@@ -422,7 +426,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
         Log.v(TAG, "handleList time: " + watch.finish());
         return Result.REQUEUE;
-
     }
 
     private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {

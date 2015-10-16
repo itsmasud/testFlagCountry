@@ -15,7 +15,8 @@ public class Log {
         if (BuildConfig.DEBUG)
             android.util.Log.v(tag, th.getClass().getCanonicalName(), th);
         Debug.log(android.util.Log.VERBOSE, tag,
-                th.getClass().getCanonicalName() + "\n" + android.util.Log.getStackTraceString(th));
+                th.getMessage() + "\n" +
+                        android.util.Log.getStackTraceString(th));
     }
 
     public static void w(String tag, String msg) {
@@ -32,9 +33,10 @@ public class Log {
 
     public static void d(String tag, Throwable th) {
         if (BuildConfig.DEBUG)
-            android.util.Log.d(tag, th.getClass().getCanonicalName(), th);
+            android.util.Log.d(tag, "", th);
         Debug.log(android.util.Log.DEBUG, tag,
-                th.getClass().getCanonicalName() + "\n" + android.util.Log.getStackTraceString(th));
+                th.getMessage() + "\n" +
+                        android.util.Log.getStackTraceString(th));
     }
 
     public static void e(String tag, String msg) {

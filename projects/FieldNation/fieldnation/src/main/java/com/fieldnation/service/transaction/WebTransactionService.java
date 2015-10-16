@@ -106,6 +106,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         synchronized (AUTH_LOCK) {
             _auth = auth;
         }
+        _manager.wakeUp();
     }
 
     private OAuth getAuth() {
