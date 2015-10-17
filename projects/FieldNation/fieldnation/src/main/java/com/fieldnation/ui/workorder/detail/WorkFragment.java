@@ -719,7 +719,11 @@ public class WorkFragment extends WorkorderFragment {
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkOutListener.onLocation");
             startCheckOut();
-            _locationLoadingDialog.dismiss();
+            try {
+                _locationLoadingDialog.dismiss();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 

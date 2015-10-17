@@ -52,7 +52,7 @@ public class TopicService extends MSService implements TopicConstants {
 
     @Override
     public void processIntent(Intent intent) {
-        Log.v(TAG, "processIntent start");
+        //Log.v(TAG, "processIntent start");
 
         if (intent != null && intent.getExtras() != null) {
             dispatchEvent(intent.getExtras());
