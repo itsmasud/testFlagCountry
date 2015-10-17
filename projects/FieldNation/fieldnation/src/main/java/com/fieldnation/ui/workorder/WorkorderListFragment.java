@@ -324,7 +324,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     private void addPage(int page, List<Workorder> list) {
-        Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " view:" + _displayView.getCall());
+        Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
         if (page == 0 && list != null) {
             if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
                 _emptyView.setVisibility(View.VISIBLE);
