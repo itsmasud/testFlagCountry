@@ -19,7 +19,7 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is
     // changed.
-    private static final int TABLE_VER = 1;
+    private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "transactions";
 
     private static WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();

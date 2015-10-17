@@ -180,7 +180,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         new String[]{key},
                         null, null, null, "1");
                 try {
-                    logCursor(cursor);
+                    //logCursor(cursor);
                     return cursor.getCount() > 0;
                 } finally {
                     cursor.close();
@@ -279,6 +279,23 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             }
         }
         return obj;
+    }
+
+    public static void saveOrphans(Context context) {
+        ContentValues v = new ContentValues();
+        v.put(Column.STATE.getName(), State.IDLE.ordinal());
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                int rowcount = db.update(
+                        WebTransactionSqlHelper.TABLE_NAME,
+                        v, Column.STATE + "=" + State.WORKING.ordinal(), null);
+                Log.v(TAG, "Orphans saved: " + rowcount);
+            } finally {
+                db.close();
+            }
+        }
     }
 
     public static WebTransaction put(Context context, WebTransaction obj) {

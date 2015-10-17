@@ -64,6 +64,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         super.onCreate();
         Log.v(TAG, "onCreate");
 
+        WebTransaction.saveOrphans(this);
+
         int threadCount = 4;
         if (App.get().isLowMemDevice()) {
             threadCount = 4;
