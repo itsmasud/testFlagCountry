@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
@@ -167,7 +168,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-             Database interface          -*/
     /*-*****************************************-*/
     public static boolean keyExists(Context context, String key) {
-//        Log.v(TAG, "keyExists(" + key + ")");
+        Log.v(TAG, "keyExists(" + key + ")");
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
@@ -179,6 +180,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         new String[]{key},
                         null, null, null, "1");
                 try {
+                    logCursor(cursor);
                     return cursor.getCount() > 0;
                 } finally {
                     cursor.close();
@@ -187,6 +189,31 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 db.close();
             }
         }
+    }
+
+    private static void logCursor(Cursor cursor) {
+        Log.v(TAG, "****Dumping cursor to log****");
+        if (cursor.moveToFirst()) {
+            String[] columnNames = cursor.getColumnNames();
+            String names = "";
+            for (String name : columnNames) {
+                names += name + " ";
+            }
+            Log.v(TAG, names);
+            do {
+                String row = "";
+                for (String name : columnNames) {
+                    try {
+                        row += cursor.getString(cursor.getColumnIndex(name));
+                    } catch (Exception ex) {
+                        row += new String(cursor.getBlob(cursor.getColumnIndex(name))) + ", ";
+                    }
+                }
+                Log.v(TAG, row);
+
+            } while (cursor.moveToNext());
+        }
+
     }
 
     public static WebTransaction get(Context context, long id) {
@@ -358,6 +385,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
         return 0;
     }
+
 
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/

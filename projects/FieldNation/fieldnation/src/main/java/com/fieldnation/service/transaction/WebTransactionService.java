@@ -102,11 +102,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
     private void setAuth(OAuth auth) {
-        Log.v(TAG, "setAuth");
+        Log.v(TAG, "setAuth start");
         synchronized (AUTH_LOCK) {
             _auth = auth;
         }
         _manager.wakeUp();
+        Log.v(TAG, "setAuth end");
     }
 
     private OAuth getAuth() {
@@ -122,7 +123,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
     private boolean allowSync() {
-        Log.v(TAG, "allowSync start");
+        // Log.v(TAG, "allowSync start");
         synchronized (SYNC_LOCK) {
             // TODO calculate by collecting config information and compare to phone state
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
@@ -150,7 +151,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 _syncCheckCoolDown = System.currentTimeMillis() + 1000;
                 // Log.v(TAG, "allowSync time: " + watch.finish());
             }
-            Log.v(TAG, "allowSync end");
+            // Log.v(TAG, "allowSync end");
             return _allowSync;
         }
     }
@@ -195,6 +196,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this,
                         extras.getString(PARAM_KEY))) {
+                    Log.v(TAG, "processIntent end duplicate " + extras.getString(PARAM_KEY));
                     return;
                 }
 
@@ -225,6 +227,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
         }
         _manager.wakeUp();
+
         Log.v(TAG, "processIntent end");
     }
 
