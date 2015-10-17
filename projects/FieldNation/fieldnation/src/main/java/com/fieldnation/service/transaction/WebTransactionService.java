@@ -122,6 +122,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
     private boolean allowSync() {
+        Log.v(TAG, "allowSync start");
         synchronized (SYNC_LOCK) {
             // TODO calculate by collecting config information and compare to phone state
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
@@ -149,6 +150,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 _syncCheckCoolDown = System.currentTimeMillis() + 1000;
                 // Log.v(TAG, "allowSync time: " + watch.finish());
             }
+            Log.v(TAG, "allowSync end");
             return _allowSync;
         }
     }
@@ -186,6 +188,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     @Override
     public void processIntent(Intent intent) {
+        Log.v(TAG, "processIntent start");
         if (intent != null && intent.getExtras() != null) {
             try {
                 Bundle extras = intent.getExtras();
@@ -195,6 +198,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     return;
                 }
 
+                Log.v(TAG, "processIntent building transaction");
                 WebTransaction transaction = WebTransaction.put(this,
                         (Priority) extras.getSerializable(PARAM_PRIORITY),
                         extras.getString(PARAM_KEY),
@@ -204,6 +208,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
 
+                Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
@@ -212,6 +217,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     }
                 }
 
+                Log.v(TAG, "processIntent saving transaction");
                 transaction.setState(WebTransaction.State.IDLE);
                 transaction.save(this);
             } catch (Exception ex) {
@@ -219,6 +225,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
         }
         _manager.wakeUp();
+        Log.v(TAG, "processIntent end");
     }
 
     class TransactionThread extends ThreadManager.ManagedThread {
@@ -301,10 +308,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 // debug output
                 try {
-                    Log.v(TAG, result.getResponseCode() + "");
-                    Log.v(TAG, result.getResponseMessage());
+                    Log.v(TAG, "ResponseCode: " + result.getResponseCode());
+                    Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
                     if (!result.isFile() && BuildConfig.DEBUG) {
-                        Log.v(TAG, result.getString());
+                        Log.v(TAG, "Result: " + result.getString());
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
@@ -323,8 +330,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // Bad request
                     // need to report this
                     // need to re-auth?
-
                     if (result.getString().equals("You don't have permission to see this workorder")) {
+                        WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                        WebTransaction.delete(context, trans.getId());
+                    } else if (result.getResponseMessage().contains("Bad Request")) {
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else {

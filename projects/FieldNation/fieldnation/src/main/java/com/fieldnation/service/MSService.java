@@ -40,6 +40,7 @@ public abstract class MSService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
 
         int maxWorkerCount = getMaxWorkerCount();
 
@@ -59,7 +60,7 @@ public abstract class MSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
+        Log.v(TAG, "onStartCommand start");
         if (intent != null) {
             _lastRequestTime = System.currentTimeMillis();
             synchronized (LOCK) {
@@ -70,6 +71,7 @@ public abstract class MSService extends Service {
         }
 
         _manager.wakeUp();
+        Log.v(TAG, "onStartCommand end");
         return START_STICKY;
     }
 
@@ -141,7 +143,6 @@ public abstract class MSService extends Service {
                 if (_intents.size() > 0) {
                     intent = _intents.remove(0);
                 }
-
                 //Log.v(TAG, "intents " + _intents.size());
             }
 
