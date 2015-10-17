@@ -157,7 +157,5 @@ public abstract class MSService extends Service {
             }
             return false;
         }
-
-
     }
 }
