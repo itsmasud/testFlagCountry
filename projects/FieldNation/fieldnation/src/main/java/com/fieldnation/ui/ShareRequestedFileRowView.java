@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.UploadedDocumentView;

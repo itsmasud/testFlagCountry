@@ -23,7 +23,6 @@ import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -72,7 +71,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
     private Workorder _workorder;
-    private List<UploadSlot> _uploadSlotList = null;
     private UploadSlot _currentUploadSlot;
     private UploadingDocument[] _uploadingDocumentList;
     private LayoutType layoutType;
@@ -184,7 +182,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Log.v(TAG, "onResume");
         Intent intent = getIntent();
         String action = intent.getAction();
-        String type = intent.getType();
+//        String type = intent.getType();
 
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
             handleRequestMultipleFiles(intent);
@@ -202,7 +200,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Uri fileUri = (Uri) intent.getParcelableExtra(Intent.EXTRA_STREAM);
         _uploadingDocumentList = new UploadingDocument[1];
         if (fileUri != null) {
-            // Update UI to reflect image being shared
             final String fileName = getFileNameFromUri(fileUri);
             final String filePath = getFileNameFromUri(fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, filePath);
@@ -229,15 +226,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
 
-    private String getFileNameFromUri(Uri uri) {
+    private String getFileNameFromUri(final Uri uri) {
 
         String fileName = "";
 
         if (uri.getScheme().toString().compareTo("content") == 0) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                Uri filePathUri = Uri.parse(cursor.getString(column_index));
+                final Uri filePathUri = Uri.parse(cursor.getString(column_index));
                 fileName = filePathUri.getLastPathSegment().toString();
                 Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
             }
@@ -250,14 +247,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
 
-    private String getFilePathFromIntent(Uri uri) {
+    private String getFilePathFromIntent(final Uri uri) {
         String filePath = "";
 
         if (uri.getScheme().toString().compareTo("content") == 0) {
-            Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+            final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
                 int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                Uri filePathUri = Uri.parse(cursor.getString(column_index));
+                final Uri filePathUri = Uri.parse(cursor.getString(column_index));
                 filePath = filePathUri.getPath();
                 Log.e(TAG, "getFilePathFromIntent: filePath: " + filePath);
             }
@@ -341,10 +338,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     if (i == 0) {
                         _uploadSlotLayout.removeAllViews();
                     }
-
-//                    else {
-//                        _uploadSlotScrollView.setVisibility(View.VISIBLE);
-//                    }
 
                     ShareUploadSlotView v = null;
                     if (i < _uploadSlotLayout.getChildCount()) {
