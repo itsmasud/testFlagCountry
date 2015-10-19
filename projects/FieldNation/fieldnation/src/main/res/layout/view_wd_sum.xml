@@ -108,6 +108,20 @@
                 android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
                 android:visibility="gone" />
 
+            <EditText
+                android:id="@+id/description_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@android:color/transparent"
+                android:cursorVisible="false"
+                android:paddingBottom="4dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp"
+                android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
+                android:textSize="14sp"
+                android:visibility="gone" />
+
             <Button
                 android:id="@+id/readMore_button"
                 style="?attr/buttonFlatStyle"
