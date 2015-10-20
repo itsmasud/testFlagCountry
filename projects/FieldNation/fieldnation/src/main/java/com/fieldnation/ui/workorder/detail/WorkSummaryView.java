@@ -224,12 +224,8 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             }
 
             _descriptionEditText.setVisibility(VISIBLE);
-            _descriptionEditText.setEnabled(true);
-            _descriptionEditText.setCursorVisible(true);
-            _descriptionEditText.setFocusable(true);
-            _descriptionEditText.setFocusableInTouchMode(true);
-            _descriptionEditText.requestFocus();
-            _descriptionEditText.setSelection(0);
+            _descriptionEditText.setKeyListener(null);
+            _descriptionEditText.setTextIsSelectable(true);
 
             return true;
         }
