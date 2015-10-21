@@ -176,6 +176,19 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         return register(TOPIC_ID_USER_SWITCHED, TAG);
     }
 
+    public boolean subLoading(){
+        return register(TOPIC_ID_SHOW_LOADING, TAG);
+    }
+
+    public static void setLoading(Context context, boolean isLoading){
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(TOPIC_ID_SHOW_LOADING, isLoading);
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_LOADING, bundle, Sticky.NONE);    }
+
     // events
     public static abstract class Listener extends TopicClient.Listener {
         @Override
@@ -198,6 +211,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                     break;
                 case TOPIC_ID_SHOW_HELP_DIALOG:
                     onShowHelpDialog();
+                    break;
+                case TOPIC_ID_SHOW_LOADING:
+                    setLoading();
                     break;
                 case TOPIC_ID_NETWORK_STATE: {
                     switch (((Bundle) payload).getInt(PARAM_NETWORK_STATE)) {
@@ -254,6 +270,16 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
 
         public void onNetworkConnecting() {
         }
+
+        public void setLoading() {
+            setLoading(false);
+        }
+
+
+        public void setLoading(boolean isLoading) {
+        }
+
+
     }
 
 
