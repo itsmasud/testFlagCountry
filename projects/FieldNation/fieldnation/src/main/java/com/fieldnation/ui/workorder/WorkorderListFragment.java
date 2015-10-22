@@ -330,9 +330,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _emptyView.setVisibility(View.GONE);
         }
 
-//        if (list.size() == 0 ) {
-//            _adapter.setNoMorePages();
-//        }
+        if (list.size() == 0 ) {
+            _adapter.setNoMorePages();
+        }
 
         _adapter.setPage(page, list);
     }
@@ -774,7 +774,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onStartRefresh() {
 //            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
-            _adapter.refreshPages();
+            _workorderClient = new WorkorderClient(_workorderData_listener);
+            _workorderClient.connect(getActivity());
         }
     };
 
@@ -809,7 +810,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
         @Override
         public void onLoadingComplete() {
-//            Log.v(TAG, "_adapterListener.onLoadingComplete");
+            Log.v(TAG, "_adapterListener.onLoadingComplete");
             setLoading(false);
         }
     };
