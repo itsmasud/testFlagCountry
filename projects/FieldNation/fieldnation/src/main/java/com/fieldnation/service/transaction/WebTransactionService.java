@@ -261,7 +261,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // debug if have key, output
             if (!misc.isEmptyOrNull(trans.getKey())) {
-                Log.v(TAG, "Key: " + trans.getKey());
+//                Log.v(TAG, "Key: " + trans.getKey());
             }
 
             // at some point call the web service
@@ -312,15 +312,15 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 result = HttpJson.run(context, request);
 
                 // debug output
-                try {
-                    Log.v(TAG, "ResponseCode: " + result.getResponseCode());
-                    Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
-                    if (!result.isFile() && result.getString() != null) {
-                        Log.v(TAG, "Result: " + result.getString());
-                    }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
+//                try {
+//                    Log.v(TAG, "ResponseCode: " + result.getResponseCode());
+//                    Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
+//                    if (!result.isFile() && result.getString() != null) {
+//                        Log.v(TAG, "Result: " + result.getString());
+//                    }
+//                } catch (Exception ex) {
+//                    Log.v(TAG, ex);
+//                }
 
                 // check for invalid auth
                 if (!result.isFile()
