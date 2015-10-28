@@ -201,7 +201,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 //            return;
         }
         App gs = App.get();
-        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
+        if ((profile != null) && !profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
                 Log.v(TAG, "Asking Tos, hard");
