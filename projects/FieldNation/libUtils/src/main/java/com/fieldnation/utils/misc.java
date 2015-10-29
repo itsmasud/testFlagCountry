@@ -1,8 +1,10 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -59,6 +61,8 @@ public class misc {
         m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
     }
+
+
 
     public static void printStackTrace(String message) {
         try {
