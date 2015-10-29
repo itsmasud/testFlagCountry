@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -13,6 +14,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.utils.MemUtils;
 
 /**
  * Created by michael.carver on 12/18/2014.
@@ -48,6 +50,9 @@ public class SplashActivity extends AuthFragmentActivity {
                 _profile = savedInstanceState.getParcelable(STATE_PROFILE);
             }
         }
+
+        ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
+        fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(getResources(), R.drawable.fn_logo));
 
         Log.v(TAG, "onCreate");
     }
