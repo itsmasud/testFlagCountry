@@ -65,8 +65,8 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    //Log.v(getName(), "sleeping");
-                    THREAD_PAUSE.wait(10000);
+//                    Log.v(getName(), "sleeping");
+                    THREAD_PAUSE.wait(100);
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
