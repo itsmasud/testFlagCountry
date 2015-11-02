@@ -421,7 +421,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 Log.v(TAG, ex);
                 transFailNetworkDown(trans);
             } catch (Exception ex) {
-                if (ex.getMessage().contains("ETIMEDOUT")) {
+                if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                     transFailNetworkDown(trans);
                 } else {
                     // no freaking clue
