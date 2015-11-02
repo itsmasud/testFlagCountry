@@ -255,7 +255,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // if failed, then exit
             if (trans == null) {
-                Log.v(TAG, "skip no transaction");
+                // Log.v(TAG, "skip no transaction");
                 return false;
             }
 
