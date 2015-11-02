@@ -711,7 +711,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkInListener.onLocation");
             startCheckin();
-            _locationLoadingDialog.dismiss();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
     private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
@@ -719,10 +721,8 @@ public class WorkFragment extends WorkorderFragment {
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkOutListener.onLocation");
             startCheckOut();
-            try {
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
                 _locationLoadingDialog.dismiss();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
             }
         }
     };
