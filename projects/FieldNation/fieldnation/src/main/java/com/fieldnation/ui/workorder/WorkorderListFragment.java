@@ -460,7 +460,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkInListener.onLocation");
             startCheckin();
-            _locationLoadingDialog.dismiss();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
 
@@ -469,7 +471,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkOutListener.onLocation");
             startCheckOut();
-            _locationLoadingDialog.dismiss();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
 
