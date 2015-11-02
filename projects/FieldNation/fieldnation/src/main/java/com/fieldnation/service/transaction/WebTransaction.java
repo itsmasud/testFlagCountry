@@ -74,7 +74,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putString(PARAM_HANDLER_NAME, _handlerName);
         bundle.putByteArray(PARAM_HANDLER_PARAMS, _handlerParams);
         bundle.putSerializable(PARAM_STATE, _state);
-        bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
+        if (_request != null)
+            bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
         bundle.putSerializable(PARAM_PRIORITY, _priority);
         bundle.putString(PARAM_KEY, _key);
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
@@ -290,7 +291,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 int rowcount = db.update(
                         WebTransactionSqlHelper.TABLE_NAME,
-                        v, Column.STATE + "=" + State.WORKING.ordinal(), null);
+                        v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
                 Log.v(TAG, "Orphans saved: " + rowcount);
             } finally {
                 db.close();
@@ -304,7 +305,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.HANDLER.getName(), obj._handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
         v.put(Column.STATE.getName(), obj._state.ordinal());
-        v.put(Column.REQUEST.getName(), obj._request.toByteArray());
+        if (obj._request != null) {
+            v.put(Column.REQUEST.getName(), obj._request.toByteArray());
+        }
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);

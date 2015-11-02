@@ -11,6 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -641,31 +642,31 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (list.size() == 0)
             return true;
 
+        Log.v(TAG, "delete(" + list.size() + ")");
+
         for (StoredObject obj : list) {
             if (obj != null && obj._isFile && obj._file != null) {
                 obj._file.delete();
             }
         }
-
-        boolean success = false;
+        Stopwatch stopwatch = new Stopwatch(true);
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
+            db.beginTransaction();
             try {
-                String[] params = new String[list.size()];
                 for (int i = 0; i < list.size(); i++) {
-                    params[i] = list.get(i).getId() + "";
+                    db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + " = " + list.get(i).getId(), null);
                 }
-
-                success = db.delete(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        Column.ID + " IN (" + makePlaceholders(params.length) + ")",
-                        params) > 0;
+                db.setTransactionSuccessful();
             } finally {
-                db.close();
+                db.endTransaction();
             }
         }
-        return success;
+        Log.v(TAG, "Delete time: " + stopwatch.finish());
+        return true;
     }
 
     private static String makePlaceholders(int count) {
