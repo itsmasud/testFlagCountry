@@ -291,7 +291,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             try {
                 int rowcount = db.update(
                         WebTransactionSqlHelper.TABLE_NAME,
-                        v, Column.STATE + "=" + State.WORKING.ordinal(), null);
+                        v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
                 Log.v(TAG, "Orphans saved: " + rowcount);
             } finally {
                 db.close();

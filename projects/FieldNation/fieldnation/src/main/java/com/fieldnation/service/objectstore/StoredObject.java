@@ -647,25 +647,22 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
 
-        boolean success = false;
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
+            db.beginTransaction();
             try {
-                String[] params = new String[list.size()];
                 for (int i = 0; i < list.size(); i++) {
-                    params[i] = list.get(i).getId() + "";
+                    db.delete(
+                            ObjectStoreSqlHelper.TABLE_NAME,
+                            Column.ID + " = " + list.get(i).getId(), null);
                 }
-
-                success = db.delete(
-                        ObjectStoreSqlHelper.TABLE_NAME,
-                        Column.ID + " IN (" + makePlaceholders(params.length) + ")",
-                        params) > 0;
+                db.setTransactionSuccessful();
             } finally {
-                db.close();
+                db.endTransaction();
             }
         }
-        return success;
+        return true;
     }
 
     private static String makePlaceholders(int count) {
