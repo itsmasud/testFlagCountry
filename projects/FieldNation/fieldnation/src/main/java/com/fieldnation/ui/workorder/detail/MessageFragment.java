@@ -161,7 +161,8 @@ public class MessageFragment extends WorkorderFragment {
             Log.v(TAG, "rebuildList: inside ELSE getAdapter() == null");
 
             getAdapter().setMessages(_messages);
-            _listview.setSelection(_messages.size() - 1);
+            if (_messages != null && _messages.size() > 0)
+                _listview.setSelection(_messages.size() - 1);
         }
     }
 
