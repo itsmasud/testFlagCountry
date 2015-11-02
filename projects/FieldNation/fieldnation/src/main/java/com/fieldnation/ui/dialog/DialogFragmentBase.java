@@ -169,7 +169,8 @@ public class DialogFragmentBase extends DialogFragment {
         _reset = true;
         _isShowing = true;
 
-        super.show(_fm, _tag);
+        if (!_fm.isDestroyed())
+            super.show(_fm, _tag);
         _isDismissed = false;
     }
 

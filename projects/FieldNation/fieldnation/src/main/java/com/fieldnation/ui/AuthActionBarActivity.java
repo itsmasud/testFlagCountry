@@ -444,4 +444,3 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 }
-

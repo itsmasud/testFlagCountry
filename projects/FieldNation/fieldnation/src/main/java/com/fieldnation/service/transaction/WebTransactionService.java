@@ -273,7 +273,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (trans.useAuth()) {
                     OAuth auth = getAuth();
                     if (!_isAuthenticated) {
-                        // Log.v(TAG, "skip no auth");
+                        Log.v(TAG, "skip no auth");
                         trans.requeue(context);
                         return false;
                     }
@@ -315,9 +315,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 try {
                     Log.v(TAG, "ResponseCode: " + result.getResponseCode());
                     Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
-                    if (!result.isFile() && result.getString() != null) {
-                        Log.v(TAG, "Result: " + result.getString());
-                    }
+                    //if (!result.isFile() && result.getString() != null) {
+                    //Log.v(TAG, "Result: " + result.getString());
+                    //}
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -421,7 +421,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 Log.v(TAG, ex);
                 transFailNetworkDown(trans);
             } catch (Exception ex) {
-                if (ex.getMessage().contains("ETIMEDOUT")) {
+                if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                     transFailNetworkDown(trans);
                 } else {
                     // no freaking clue

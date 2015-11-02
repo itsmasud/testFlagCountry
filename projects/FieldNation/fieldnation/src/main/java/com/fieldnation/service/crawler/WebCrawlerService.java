@@ -127,6 +127,7 @@ public class WebCrawlerService extends Service {
                 misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
                 StoredObject.flush(604800000); // 1 week
+                //StoredObject.flush(1000); // 1 week
 
                 Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
                 // only flush if we have wifi, so that the app can get new ones without
