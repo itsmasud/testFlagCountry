@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
@@ -137,7 +138,8 @@ public class FeedbackDialog extends DialogFragmentBase {
                 _listener.onOk(_messageEditText.getText().toString());
             }
 
-            HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, null, null);
+            HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, "Version " +
+                    (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim(), null);
 
         }
     };
