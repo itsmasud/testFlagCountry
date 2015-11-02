@@ -11,6 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -641,12 +642,14 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         if (list.size() == 0)
             return true;
 
+        Log.v(TAG, "delete(" + list.size() + ")");
+
         for (StoredObject obj : list) {
             if (obj != null && obj._isFile && obj._file != null) {
                 obj._file.delete();
             }
         }
-
+        Stopwatch stopwatch = new Stopwatch(true);
         synchronized (TAG) {
             ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
@@ -662,6 +665,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 db.endTransaction();
             }
         }
+        Log.v(TAG, "Delete time: " + stopwatch.finish());
         return true;
     }
 
