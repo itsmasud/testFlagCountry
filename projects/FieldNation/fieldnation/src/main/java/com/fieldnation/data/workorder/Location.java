@@ -30,6 +30,8 @@ public class Location {
     private String _distanceMapUrl;
     @Json(name = "geo")
     private Geo _geo;
+    @Json(name = "groupName")
+    private String _groupName;
     @Json(name = "mapUrl")
     private String _mapUrl;
     @Json(name = "name")
@@ -92,6 +94,10 @@ public class Location {
 
     public Geo getGeo() {
         return _geo;
+    }
+
+    public String getGroupName() {
+        return _groupName;
     }
 
     public String getMapUrl() {
@@ -224,6 +230,10 @@ public class Location {
                 && !misc.isEmptyOrNull(_zip)
                 && !misc.isEmptyOrNull(_country)) {
             address += _city + ", " + _state;
+        }
+
+        if (!misc.isEmptyOrNull(_zip)) {
+            address += " " + _zip;
         }
 
         return address.trim();
