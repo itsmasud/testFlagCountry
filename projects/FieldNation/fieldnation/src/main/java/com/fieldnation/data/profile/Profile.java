@@ -3,13 +3,15 @@ package com.fieldnation.data.profile;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.workorder.User;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.ISO8601;
 
 public class Profile implements Parcelable {
+    private static final String TAG = "Profile";
+
     @Json(name = "acceptedTos")
     private Boolean _acceptedTos;
     @Json(name = "canViewPayments")
@@ -61,6 +63,8 @@ public class Profile implements Parcelable {
     }
 
     public Boolean getAcceptedTos() {
+        if (_acceptedTos == null)
+            return true;
         return _acceptedTos;
     }
 
@@ -169,7 +173,7 @@ public class Profile implements Parcelable {
         try {
             return Serializer.serializeObject(profile);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -178,7 +182,7 @@ public class Profile implements Parcelable {
         try {
             return Serializer.unserializeObject(Profile.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -201,7 +205,7 @@ public class Profile implements Parcelable {
         try {
             return System.currentTimeMillis() >= ISO8601.toUtc(_tosRequiredBy);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }
@@ -218,7 +222,7 @@ public class Profile implements Parcelable {
         try {
             return (int) ((ISO8601.toUtc(_tosRequiredBy) - System.currentTimeMillis()) / 86400000);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         return 0;
@@ -235,7 +239,7 @@ public class Profile implements Parcelable {
             try {
                 return Profile.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }

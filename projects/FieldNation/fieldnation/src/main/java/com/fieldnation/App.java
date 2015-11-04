@@ -20,6 +20,7 @@ import android.provider.Settings;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -35,7 +36,10 @@ import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
+import io.fabric.sdk.android.Fabric;
+
 import java.io.File;
+import java.net.URLConnection;
 import java.util.Calendar;
 
 /**
@@ -109,29 +113,24 @@ public class App extends Application {
         // start up the debugging tools
         Debug.init();
 
-        Debug.setBool("isUserAMonkey", ActivityManager.isUserAMonkey());
+        Debug.setBool("is_User_A_Monkey", ActivityManager.isUserAMonkey());
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             UserManager um = (UserManager) getSystemService(Context.USER_SERVICE);
-            Debug.setBool("isUserAGoat", um.isUserAGoat());
+            Debug.setBool("is_User_A_Goat", um.isUserAGoat());
         }
 
         Log.v(TAG, "debug init time: " + watch.finishAndRestart());
 
         // configure preferences
-        new AsyncTaskEx<Object, Object, Object>() {
-            @Override
-            protected Object doInBackground(Object... params) {
-                PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
-                return null;
-            }
-        }.executeEx();
+        PreferenceManager.setDefaultValues(getBaseContext(), R.xml.pref_general, false);
         Log.v(TAG, "preferenceManager time: " + watch.finishAndRestart());
 
         // discover the memory class of the device
         _memoryClass = ((ActivityManager) getSystemService(ACTIVITY_SERVICE)).getMemoryClass();
         Log.v(TAG, "memoryClass " + _memoryClass);
         Log.v(TAG, "memoryClass time: " + watch.finishAndRestart());
+        Debug.setInt("memory_class", _memoryClass);
 
         // trigger authentication and web crawler
         new AsyncTaskEx<Context, Object, Object>() {
@@ -206,7 +205,7 @@ public class App extends Application {
         // set the app's install date
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
-//            new Thread(_anrReport).start();
+        // new Thread(_anrReport).start();
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
@@ -215,9 +214,9 @@ public class App extends Application {
         public void run() {
             while (true) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(5000);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
 
                 anrReport();
@@ -237,8 +236,8 @@ public class App extends Application {
         Log.v(STAG, trace.toString());
     }
 
-    public int getMemoryClass() {
-        return _memoryClass;
+    public boolean isLowMemDevice() {
+        return _memoryClass <= 70;
     }
 
     @Override
@@ -354,7 +353,7 @@ public class App extends Application {
                     Intent intent = new Intent(App.this, clazz);
                     startService(intent);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             } else {
                 // TODO should do something... like retry or logout
@@ -673,10 +672,14 @@ public class App extends Application {
     }
 
     public boolean isCharging() {
-        Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
-        return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
-                || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        try {
+            Intent intent = registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
+            int plugged = intent.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1);
+            return (plugged == BatteryManager.BATTERY_PLUGGED_AC)
+                    || (plugged == BatteryManager.BATTERY_PLUGGED_USB);
+        } catch (Exception ex) {
+            return false;
+        }
     }
 
     public boolean isLocationEnabled() {
@@ -688,7 +691,7 @@ public class App extends Application {
                 locationMode = Settings.Secure.getInt(getContentResolver(), Settings.Secure.LOCATION_MODE);
 
             } catch (Settings.SettingNotFoundException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
 
             return locationMode != Settings.Secure.LOCATION_MODE_OFF;
@@ -697,5 +700,13 @@ public class App extends Application {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
+    }
+
+    public static String guessContentTypeFromName(String url) {
+        try {
+            return URLConnection.guessContentTypeFromName(url);
+        } catch (Exception ex) {
+        }
+        return "application/octet-stream";
     }
 }

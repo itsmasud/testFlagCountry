@@ -10,6 +10,7 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -117,7 +118,7 @@ public class ReasonCoView extends RelativeLayout {
             if (expirationDate != null)
                 _expirationDate = ISO8601.toCalendar(expirationDate);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         populateUi();

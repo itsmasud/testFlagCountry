@@ -92,8 +92,8 @@ public class Workorder implements Parcelable {
     private Boolean _hasMarketplaceAccess;
     @Json(name = "identifier")
     private String _identifier;
-    @Json(name = "increaseRequestInfo")
-    private IncreaseRequestInfo _increaseRequestInfo;
+    // @Json(name = "increaseRequestInfo")
+    // private IncreaseRequestInfo _increaseRequestInfo;
     @Json(name = "industry")
     private String _industry;
     @Json(name = "isAssignedToWorkorder")
@@ -350,9 +350,9 @@ public class Workorder implements Parcelable {
         return _identifier;
     }
 
-    public IncreaseRequestInfo getIncreaseRequestInfo() {
-        return _increaseRequestInfo;
-    }
+//    public IncreaseRequestInfo getIncreaseRequestInfo() {
+//        return _increaseRequestInfo;
+//    }
 
     public String getIndustry() {
         return _industry;
@@ -567,7 +567,7 @@ public class Workorder implements Parcelable {
         try {
             return Serializer.serializeObject(workorder);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -578,7 +578,7 @@ public class Workorder implements Parcelable {
             wo.buildStatus();
             return wo;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -694,20 +694,14 @@ public class Workorder implements Parcelable {
                 return false;
             }
 
-            if (!areCustomFieldsDone()) {
-                return false;
-            }
+            return areCustomFieldsDone();
 
-            return true;
         }
         return false;
     }
 
     public boolean canIncomplete() {
-        if (getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED) {
-            return true;
-        }
-        return false;
+        return getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED;
     }
 
     public boolean canChangeExpenses() {
@@ -1036,7 +1030,7 @@ public class Workorder implements Parcelable {
             try {
                 return Workorder.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }

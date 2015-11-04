@@ -1,8 +1,10 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -59,6 +61,8 @@ public class misc {
         m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
     }
+
+
 
     public static void printStackTrace(String message) {
         try {
@@ -325,10 +329,8 @@ public class misc {
         if (str == null)
             return true;
 
-        if (str.trim().equals(""))
-            return true;
+        return str.trim().equals("");
 
-        return false;
     }
 
     public static String capitalize(String src) {
@@ -1018,7 +1020,7 @@ public class misc {
     }
 
     public interface PacketListener {
-        public void onPacket(byte[] packet, int length);
+        void onPacket(byte[] packet, int length);
     }
 
     public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,

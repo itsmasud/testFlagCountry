@@ -1,11 +1,14 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Replies {
+    private static final String TAG = "Replies";
+
     @Json(name = "date")
     private String _date;
     @Json(name = "file_url")
@@ -66,7 +69,7 @@ public class Replies {
         try {
             return Serializer.serializeObject(replies);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -75,7 +78,7 @@ public class Replies {
         try {
             return Serializer.unserializeObject(Replies.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

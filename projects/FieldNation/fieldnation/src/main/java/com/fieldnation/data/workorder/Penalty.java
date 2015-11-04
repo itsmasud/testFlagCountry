@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Penalty {
+    private static final String TAG = "Penalty";
+
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "name")
@@ -29,7 +32,7 @@ public class Penalty {
         try {
             return Serializer.serializeObject(penalty);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -38,9 +41,8 @@ public class Penalty {
         try {
             return Serializer.unserializeObject(Penalty.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

@@ -18,7 +18,7 @@
             <TextView
                 style="?attr/dialogTitleStyle"
                 android:layout_marginBottom="@dimen/dialogContentPadding"
-                android:text="Accept Bundle" />
+                android:text="@string/accept_bundle" />
 
 
             <TextView
@@ -39,7 +39,7 @@
                 style="@style/Material.Button.Flat"
                 android:layout_alignParentLeft="true"
                 android:layout_marginRight="8dp"
-                android:text="VIEW ALL" />
+                android:text="@string/btn_view_all" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -50,15 +50,12 @@
                 <Button
                     android:id="@+id/cancel_button"
                     style="@style/DialogCancelButton.Material"
-                    android:layout_toLeftOf="@+id/ok_button"
-                    android:layout_toRightOf="@+id/bundle_button"
                     android:text="@string/btn_cancel" />
 
                 <Button
                     android:id="@+id/ok_button"
                     style="@style/DialogOkButton.Material"
-                    android:layout_alignParentRight="true"
-                    android:text="ACCEPT" />
+                    android:text="@string/btn_accept" />
             </LinearLayout>
         </RelativeLayout>
     </LinearLayout>

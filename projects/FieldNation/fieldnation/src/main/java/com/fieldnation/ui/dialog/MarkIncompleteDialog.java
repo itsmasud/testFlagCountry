@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.LinearLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;

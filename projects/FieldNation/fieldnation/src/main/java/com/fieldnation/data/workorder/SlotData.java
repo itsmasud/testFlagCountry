@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class SlotData {
+    private static final String TAG = "SlotData";
+
     @Json(name = "maxFileSize")
     private Long _maxFileSize;
     @Json(name = "maxFiles")
@@ -53,7 +56,7 @@ public class SlotData {
         try {
             return Serializer.serializeObject(slotData);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -62,7 +65,7 @@ public class SlotData {
         try {
             return Serializer.unserializeObject(SlotData.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

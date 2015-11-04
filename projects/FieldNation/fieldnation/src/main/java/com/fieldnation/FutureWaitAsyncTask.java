@@ -35,7 +35,7 @@ public class FutureWaitAsyncTask extends AsyncTask<Object, Void, Object> {
         try {
             return future.getResult();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return ex;
         }
     }

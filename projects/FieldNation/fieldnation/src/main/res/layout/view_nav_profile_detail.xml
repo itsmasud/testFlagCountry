@@ -8,6 +8,21 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/providers_under_your_company" />
+
+        <TextView
+            style="@style/Text_Caption"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="16dp"
+            android:text="@string/select_who_you_would_like_to_act_as" />
+
         <LinearLayout
             android:id="@+id/profile_list"
             android:layout_width="match_parent"
@@ -33,7 +48,7 @@
 
                 <TextView
                     style="@style/DrawerProfileName"
-                    android:text="Add Profile" />
+                    android:text="@string/add_profile" />
 
             </LinearLayout>
         </LinearLayout>
@@ -56,7 +71,7 @@
 
                 <TextView
                     style="@style/DrawerProfileName"
-                    android:text="Manage Profiles" />
+                    android:text="@string/manage_profiles" />
 
             </LinearLayout>
         </LinearLayout>

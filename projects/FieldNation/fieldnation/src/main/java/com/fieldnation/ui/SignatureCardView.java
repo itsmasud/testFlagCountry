@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.utils.ISO8601;
@@ -74,7 +75,7 @@ public class SignatureCardView extends RelativeLayout {
                     + " on " + misc.formatDateLong(ISO8601.toCalendar(_sig.getDateSaved())));
             _dateTextView.setVisibility(VISIBLE);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _dateTextView.setVisibility(GONE);
         }
     }

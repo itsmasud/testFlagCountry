@@ -68,7 +68,7 @@ public class DialogFragmentBase extends DialogFragment {
                 d._fm = fm;
                 return d;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }
@@ -169,7 +169,8 @@ public class DialogFragmentBase extends DialogFragment {
         _reset = true;
         _isShowing = true;
 
-        super.show(_fm, _tag);
+        if (!_fm.isDestroyed())
+            super.show(_fm, _tag);
         _isDismissed = false;
     }
 

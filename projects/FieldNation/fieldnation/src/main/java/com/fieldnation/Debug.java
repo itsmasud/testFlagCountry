@@ -3,6 +3,8 @@ package com.fieldnation;
 import android.os.Build;
 
 import com.crashlytics.android.Crashlytics;
+import com.crashlytics.android.answers.Answers;
+import com.crashlytics.android.answers.CustomEvent;
 import com.github.anrwatchdog.ANRError;
 import com.github.anrwatchdog.ANRWatchDog;
 
@@ -10,6 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.services.common.Crash;
 
 /**
  * Created by Michael Carver on 8/31/2015.
@@ -258,5 +261,12 @@ public class Debug {
             return;
         }
         Crashlytics.setInt(key, value);
+    }
+
+    public static void logCustom(CustomEvent event) {
+        if (!isCrashlyticsRunning())
+            return;
+
+        Answers.getInstance().logCustom(event);
     }
 }

@@ -3,6 +3,7 @@ package com.fieldnation.json;
 import com.fieldnation.json.annotations.CollectionParameterType;
 import com.fieldnation.json.annotations.Json;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -71,7 +72,7 @@ public class Serializer {
             field.setAccessible(true);
 
             // check that it's annotated for us
-            Json anno = field.getAnnotation(Json.class);
+            Json anno = getAnnotation(field, Json.class);
             if (anno == null)
                 continue;
 
@@ -175,14 +176,14 @@ public class Serializer {
             Field field = fields[i];
             field.setAccessible(true);
 
-            Json anno = field.getAnnotation(Json.class);
+            Json anno = getAnnotation(field, Json.class);
             if (anno == null)
                 continue;
 
             String jname = getFieldName(field, anno.name());
             Class<?> fieldclass = field.getType();
 
-            CollectionParameterType collectionParameterType = field.getAnnotation(CollectionParameterType.class);
+            CollectionParameterType collectionParameterType = getAnnotation(field, CollectionParameterType.class);
             try {
                 if (source.has(jname) && source.get(jname) != null) {
                     // System.out.println("Parsing " + clazz.getName() + ":" + jname);
@@ -245,6 +246,22 @@ public class Serializer {
         ParameterizedType superclass = (ParameterizedType) clazz.getGenericSuperclass();
         return superclass.getActualTypeArguments()[0];
 
+    }
+
+    public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationClass) {
+        try {
+            Annotation[] annotations = field.getAnnotations();
+            if (annotations != null) {
+                for (int j = 0; j < annotations.length; j++) {
+                    if (annotationClass.getCanonicalName().equals(annotations[j].annotationType().getCanonicalName())) {
+                        return (T) annotations[j];
+                    }
+                }
+            }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
+        }
+        return null;
     }
 
     private static final Set<Class<?>> _PRIMITIVES = getPrimitives();

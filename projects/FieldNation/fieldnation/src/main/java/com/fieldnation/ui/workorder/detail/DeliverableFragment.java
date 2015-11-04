@@ -15,6 +15,7 @@ import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -74,7 +75,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-    private IconFontButton _navigateButton;
+    private Button _navigateButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
 
@@ -138,7 +139,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
 
-        _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
+        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigationButton_onClick);
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
@@ -195,18 +196,19 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
-        _globalClient.disconnect(getActivity());
-        _workorderClient.disconnect(getActivity());
-        _docClient.disconnect(getActivity());
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(getActivity());
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(getActivity());
+
+        if (_docClient != null && _docClient.isConnected())
+            _docClient.disconnect(getActivity());
         super.onDetach();
     }
 
     private boolean checkMedia() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return true;
-        } else {
-            return false;
-        }
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     @Override
@@ -527,46 +529,34 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDownload(long documentId, File file, int state) {
+        public void onDownload(long documentId, final File file, int state) {
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
                     ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
                 return;
             }
 
-            // todo, maybe this should be put somewhere else
-            new AsyncTaskEx<File, Object, Object>() {
-                @Override
-                protected Object doInBackground(File... params) {
-                    try {
-                        File f = params[0];
-                        String name = f.getName();
-                        name = name.substring(name.indexOf("_") + 1);
-                        misc.copyFile(f, new File(App.get().getDownloadsFolder() + "/" + name));
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    return null;
-                }
-            }.executeEx(file);
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
 
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
-
-            if (intent.resolveActivity(App.get().getPackageManager()) != null) {
-                startActivity(intent);
-            } else {
-                String name = file.getName();
-                name = name.substring(name.indexOf("_") + 1);
-
-                Intent folderIntent = new Intent(Intent.ACTION_VIEW);
-                folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
-                if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                    PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
-                    ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                    startActivity(intent);
                 } else {
-                    ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    String name = file.getName();
+                    name = name.substring(name.indexOf("_") + 1);
+
+                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                    } else {
+                        ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    }
                 }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     };

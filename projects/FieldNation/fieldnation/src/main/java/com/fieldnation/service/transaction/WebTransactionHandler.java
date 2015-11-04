@@ -25,7 +25,7 @@ public abstract class WebTransactionHandler {
             return handler.handleStart(context, transaction);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
@@ -40,12 +40,12 @@ public abstract class WebTransactionHandler {
             return handler.handleResult(context, transaction, resultData);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
 
-    public static Result failTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData) {
+    public static Result failTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         Log.v(TAG, "failTransaction: " + handlerName + "/" + transaction.getRequest().display());
 
         try {
@@ -54,10 +54,10 @@ public abstract class WebTransactionHandler {
             WebTransactionHandler handler = (WebTransactionHandler) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            return handler.handleFail(context, transaction, resultData);
+            return handler.handleFail(context, transaction, resultData, throwable);
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.ERROR;
     }
@@ -70,5 +70,5 @@ public abstract class WebTransactionHandler {
         return Result.FINISH;
     }
 
-    public abstract Result handleFail(Context context, WebTransaction transaction, HttpResult resultData);
+    public abstract Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable);
 }

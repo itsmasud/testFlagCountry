@@ -38,7 +38,6 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/header_one"
                 android:layout_gravity="center_horizontal"
                 android:text="@string/activity_message_list_empty_message_sub_headline" />
 

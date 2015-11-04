@@ -2,6 +2,7 @@ package com.fieldnation.service.data.restv2;
 
 import android.content.Context;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.topics.Sticky;
@@ -13,6 +14,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  * Created by Michael Carver on 4/30/2015.
  */
 public class RestTransactionBuilder {
+    private static final String TAG = "RestTransactionBuilder";
     private static final String REST_PATH = "/api/rest/v2/";
 
     public static void list(Context context, String resultTag, String objectType, String params, Sticky sticky, boolean isSync) {
@@ -32,7 +34,7 @@ public class RestTransactionBuilder {
 
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -76,7 +78,7 @@ public class RestTransactionBuilder {
                             _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -95,7 +97,7 @@ public class RestTransactionBuilder {
                             .body(body))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 

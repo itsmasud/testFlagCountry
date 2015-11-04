@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ProposedSchedule {
+    private static final String TAG = "ProposedSchedule";
+
     @Json(name = "endTime")
     private String _endTime;
     @Json(name = "endTimeStamp")
@@ -41,7 +44,7 @@ public class ProposedSchedule {
         try {
             return Serializer.serializeObject(proposedSchedule);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -50,9 +53,8 @@ public class ProposedSchedule {
         try {
             return Serializer.unserializeObject(ProposedSchedule.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

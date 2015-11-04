@@ -8,7 +8,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.Answers;
 import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Debug;
@@ -55,6 +54,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             list            -*/
     /*-*****************************-*/
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
+        Log.v(STAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
@@ -427,8 +428,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("MarkComplete"));
+
+        Debug.logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
@@ -450,16 +451,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
+
+        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
+
+        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
@@ -479,14 +480,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
+        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckIn"));
+        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -494,26 +493,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        if (Debug.isCrashlyticsRunning())
-            Answers.getInstance().logCustom(new CustomEvent("CheckOut"));
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 
@@ -818,11 +813,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         protected void preList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onList(null, WorkorderDataSelector.fromCall(payload.getString(PARAM_LIST_SELECTOR)),
-                        payload.getInt(PARAM_PAGE), true);
+                        payload.getInt(PARAM_PAGE), true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
                     private WorkorderDataSelector selector;
                     private int page;
+                    private boolean isCached;
 
                     @Override
                     protected List<Workorder> doInBackground(Bundle... params) {
@@ -831,6 +827,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
                             Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
                             page = bundle.getInt(PARAM_PAGE);
+                            isCached = bundle.getBoolean(PARAM_IS_CACHED);
                             List<Workorder> list = new LinkedList<>();
                             JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
                             for (int i = 0; i < ja.size(); i++) {
@@ -839,20 +836,20 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             return list;
                         } catch (Exception ex) {
 //                        Log.v(STAG, selector.name());
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
 
                     @Override
                     protected void onPostExecute(List<Workorder> workorders) {
-                        onList(workorders, selector, page, false);
+                        onList(workorders, selector, page, false, isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
         }
 
         // details
@@ -867,7 +864,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -895,7 +892,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -922,7 +919,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         try {
                             return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }

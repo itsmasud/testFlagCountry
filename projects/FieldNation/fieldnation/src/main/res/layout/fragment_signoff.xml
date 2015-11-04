@@ -21,7 +21,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:alpha="1"
-                android:text="Review &amp; Sign"
+                android:text="@string/review_and_sign"
                 android:textColor="@color/fn_white_text" />
 
             <RelativeLayout
@@ -64,7 +64,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:alpha="1"
-                            android:text="Review"
+                            android:text="@string/review"
                             android:textColor="@color/fn_white_text"
                             android:textSize="10dp" />
                     </LinearLayout>
@@ -87,7 +87,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:alpha="1"
-                            android:text="Sign"
+                            android:text="@string/sign"
                             android:textColor="@color/fn_white_text"
                             android:textSize="10dp" />
                     </LinearLayout>
@@ -109,7 +109,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:alpha="1"
-                            android:text="Done"
+                            android:text="@string/done"
                             android:textColor="@color/fn_white_text"
                             android:textSize="10dp" />
                     </LinearLayout>

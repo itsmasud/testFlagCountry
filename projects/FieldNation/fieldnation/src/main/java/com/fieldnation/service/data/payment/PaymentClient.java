@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
@@ -19,7 +20,8 @@ import java.util.List;
  * Created by Michael Carver on 3/27/2015.
  */
 public class PaymentClient extends TopicClient implements PaymentConstants {
-    private final String TAG = UniqueTag.makeTag("PaymentDataClient");
+    private static final String STAG = "PaymentClient";
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public PaymentClient(Listener listener) {
         super(listener);
@@ -118,7 +120,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
                             paymentId = bundle.getLong(PARAM_PAYMENT_ID);
                             return Payment.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
@@ -136,7 +138,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
 
         private void preOnList(Bundle bundle) {
             if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
-                onList(bundle.getInt(PARAM_PAGE), null, true);
+                onList(bundle.getInt(PARAM_PAGE), null, true, true);
             } else {
                 int page = bundle.getInt(PARAM_PAGE);
                 List<Payment> list = new LinkedList<>();
@@ -147,16 +149,15 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
                         list.add(Payment.fromJson(ja.getJsonObject(i)));
                     }
 
-                    onList(page, list, false);
+                    onList(page, list, false, bundle.getBoolean(PARAM_IS_CACHED));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
-                    onList(page, null, false);
+                    Log.v(STAG, ex);
+                    onList(page, null, false, bundle.getBoolean(PARAM_IS_CACHED));
                 }
             }
         }
 
-        public void onList(int page, List<Payment> list, boolean failed) {
+        public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
         }
     }
-
 }

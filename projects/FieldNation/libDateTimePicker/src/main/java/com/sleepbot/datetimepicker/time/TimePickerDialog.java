@@ -17,13 +17,12 @@ package com.sleepbot.datetimepicker.time;
  */
 
 import android.app.ActionBar.LayoutParams;
+import android.content.res.Resources;
 import android.graphics.Rect;
 import android.os.Build;
-import android.support.v4.app.DialogFragment;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.method.TransformationMethod;
-
 import android.util.Log;
 import android.view.KeyCharacterMap;
 import android.view.KeyEvent;

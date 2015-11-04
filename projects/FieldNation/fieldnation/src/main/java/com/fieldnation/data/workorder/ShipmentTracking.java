@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ShipmentTracking {
+    private static final String TAG = "ShipmentTracking";
+
     @Json(name = "carrier")
     private String _carrier;
     @Json(name = "carrierOther")
@@ -101,7 +104,7 @@ public class ShipmentTracking {
         try {
             return Serializer.serializeObject(shipmentTracking);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -110,7 +113,7 @@ public class ShipmentTracking {
         try {
             return Serializer.unserializeObject(ShipmentTracking.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

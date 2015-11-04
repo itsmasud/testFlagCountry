@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="UTF-8"?><!-- RelativeLayout -->
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/cardStyle">
 
     <!-- not interested layout -->
@@ -42,192 +42,188 @@
 
     <RelativeLayout
         android:id="@+id/content_layout"
-        style="@style/CardContainer">
+        style="@style/CardContainer"
+        android:layout_marginBottom="4dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp">
 
         <!-- stilt to set minimum height -->
 
         <View style="@style/CardStilt" />
 
         <!-- bundle bar -->
-
-        <RelativeLayout
+        <!-- title + pay -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp">
+            android:layout_marginLeft="32dp"
+            android:orientation="vertical">
 
-            <!-- title + pay -->
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
-                <RelativeLayout
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_toLeftOf="@+id/payment_layout"
+                    android:orientation="vertical">
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginBottom="4dp"
-                        android:layout_toLeftOf="@+id/payment_layout"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <com.fieldnation.ui.IconFontTextView
+                            android:id="@+id/bundle_imageview"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:layout_marginRight="5dp"
+                            android:text="@string/icfont_bundle"
+                            android:textColor="@color/fn_accent_color"
+                            android:textSize="24sp"
+                            android:visibility="gone" />
 
-                            <com.fieldnation.ui.IconFontTextView
-                                android:id="@+id/bundle_imageview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:layout_centerInParent="true"
-                                android:layout_marginRight="5dp"
-                                android:text="@string/icfont_bundle"
-                                android:textColor="@color/fn_accent_color"
-                                android:textSize="24sp"
-                                android:visibility="gone" />
-
-                            <com.fieldnation.ui.IconFontTextView
-                                android:id="@+id/message_alert_imageview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="@string/icfont_message_alert"
-                                android:textColor="@color/fn_brandcolor"
-                                android:textSize="16dp"
-                                android:visibility="gone" />
-
-                            <ImageView
-                                android:id="@+id/notification_alert_imageview"
-                                android:layout_width="16dp"
-                                android:layout_height="16dp"
-                                android:src="@drawable/ic_alert_thumb"
-                                android:visibility="gone" />
-
-                            <TextView
-                                android:id="@+id/title_textview"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:ellipsize="end"
-                                android:maxLines="1"
-                                android:singleLine="true"
-                                android:text="Workorder Name"
-                                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
+                        <com.fieldnation.ui.IconFontTextView
+                            android:id="@+id/message_alert_imageview"
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:orientation="horizontal">
+                            android:text="@string/icfont_message_alert"
+                            android:textColor="@color/fn_brandcolor"
+                            android:textSize="16dp"
+                            android:visibility="gone" />
 
-                            <TextView
-                                style="?attr/tileTextStatusStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="Work Order ID: " />
+                        <ImageView
+                            android:id="@+id/notification_alert_imageview"
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:src="@drawable/ic_alert_thumb"
+                            android:visibility="gone" />
 
-                            <TextView
-                                android:id="@+id/workorderid_textview"
-                                style="?attr/tileTextStatusStyle"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="6546513516516" />
-                        </LinearLayout>
+                        <TextView
+                            android:id="@+id/title_textview"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:text="Workorder Name"
+                            android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     </LinearLayout>
 
                     <LinearLayout
-                        android:id="@+id/payment_layout"
-                        android:layout_width="wrap_content"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:layout_marginRight="2dp"
-                        android:gravity="right"
-                        android:orientation="vertical">
+                        android:orientation="horizontal">
 
                         <TextView
-                            android:id="@+id/payment_textview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="$1000.00" />
-
-                        <TextView
-                            android:id="@+id/basis_textview"
                             style="?attr/tileTextStatusStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:gravity="right"
-                            android:text="Hourly" />
+                            android:text="Work Order ID: " />
 
+                        <TextView
+                            android:id="@+id/workorderid_textview"
+                            style="?attr/tileTextStatusStyle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="6546513516516" />
                     </LinearLayout>
-                </RelativeLayout>
-                <!-- body -->
-                <TextView
-                    android:id="@+id/clientname_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder_phrase" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
+                </LinearLayout>
 
-                    <TextView
-                        android:id="@+id/location_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_toLeftOf="@id/distance_textview"
-                        android:text="@string/placeholder_phrase" />
-
-                    <TextView
-                        android:id="@+id/distance_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:gravity="right"
-                        android:text="@string/placeholder_phrase"
-                        android:visibility="visible" />
-                </RelativeLayout>
-
-                <TextView
-                    android:id="@+id/when_textview"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/placeholder_phrase" />
-
-                <FrameLayout
+                <LinearLayout
+                    android:id="@+id/payment_layout"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right">
+                    android:layout_alignParentRight="true"
+                    android:layout_marginRight="2dp"
+                    android:gravity="right"
+                    android:orientation="vertical">
 
-                    <Button
-                        android:id="@+id/action_button_green"
-                        style="?attr/buttonGreenStyle"
-                        android:minWidth="150dp"
-                        android:text="@string/placeholder_phrase"
-                        android:visibility="visible" />
+                    <TextView
+                        android:id="@+id/payment_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="$1000.00" />
 
-                    <Button
-                        android:id="@+id/action_button_white"
-                        style="?attr/buttonWhiteStyle"
-                        android:minWidth="150dp"
-                        android:text="@string/placeholder_phrase"
-                        android:visibility="visible" />
+                    <TextView
+                        android:id="@+id/basis_textview"
+                        style="?attr/tileTextStatusStyle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="right"
+                        android:text="Hourly" />
 
-                    <Button
-                        android:id="@+id/action_button_orange"
-                        style="?attr/buttonOrangeStyle"
-                        android:minWidth="150dp"
-                        android:text="@string/placeholder_phrase"
-                        android:visibility="visible" />
-                </FrameLayout>
-            </LinearLayout>
-        </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
+            <!-- body -->
+            <TextView
+                android:id="@+id/clientname_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_phrase" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/location_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentLeft="true"
+                    android:layout_toLeftOf="@id/distance_textview"
+                    android:text="@string/placeholder_phrase" />
+
+                <TextView
+                    android:id="@+id/distance_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:gravity="right"
+                    android:text="@string/placeholder_phrase"
+                    android:visibility="visible" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/when_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/placeholder_phrase" />
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right">
+
+                <Button
+                    android:id="@+id/action_button_green"
+                    style="?attr/buttonGreenStyle"
+                    android:minWidth="150dp"
+                    android:text="@string/placeholder_phrase"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/action_button_white"
+                    style="?attr/buttonWhiteStyle"
+                    android:minWidth="150dp"
+                    android:text="@string/placeholder_phrase"
+                    android:visibility="visible" />
+
+                <Button
+                    android:id="@+id/action_button_orange"
+                    style="?attr/buttonOrangeStyle"
+                    android:minWidth="150dp"
+                    android:text="@string/placeholder_phrase"
+                    android:visibility="visible" />
+            </FrameLayout>
+        </LinearLayout>
 
     </RelativeLayout>
 
@@ -238,6 +234,7 @@
         android:layout_height="16dp"
         android:layout_alignBottom="@+id/content_layout"
         android:layout_alignTop="@+id/content_layout"
+        android:layout_marginLeft="8dp"
         android:background="@drawable/card_status_orange" />
 
     <com.fieldnation.ui.VerticalTextView
@@ -246,7 +243,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="4dp"
+        android:layout_marginLeft="12dp"
         android:ellipsize="none"
         android:gravity="center"
         android:maxLines="1"
@@ -271,4 +268,4 @@
             android:text="Undo" />
     </RelativeLayout>
 
-</RelativeLayout>
+</merge>

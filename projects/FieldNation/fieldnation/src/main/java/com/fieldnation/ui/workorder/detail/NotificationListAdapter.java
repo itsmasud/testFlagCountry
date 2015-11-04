@@ -1,11 +1,13 @@
 package com.fieldnation.ui.workorder.detail;
 
-import java.util.LinkedList;
-import java.util.List;
-import com.fieldnation.data.profile.Notification;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+
+import com.fieldnation.data.profile.Notification;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * A list adapter that loads work order lists.

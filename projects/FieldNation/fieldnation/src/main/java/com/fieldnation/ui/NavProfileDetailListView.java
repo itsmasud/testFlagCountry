@@ -9,7 +9,6 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.User;
 
 /**
  * Created by Michael Carver on 2/23/2015.
@@ -82,8 +81,9 @@ public class NavProfileDetailListView extends RelativeLayout {
             v.setOnClickListener(new OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (_listener != null)
-                        _listener.onUserSwitch(((ProfileIndividualListLayout) v).getUserId());
+                    long userId = ((ProfileIndividualListLayout) v).getUserId();
+                    if (_listener != null && _profile.getUserId() != userId)
+                        _listener.onUserSwitch(userId);
                 }
             });
             _profileList.addView(v);

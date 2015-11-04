@@ -1,29 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/content_layout"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:id="@+id/content_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+    <ImageView
+        android:id="@+id/background_imageview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_circle_white" />
 
-        <ImageView
-            android:id="@+id/background_imageview"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_circle_white" />
+    <ImageView
+        android:id="@+id/gradient_imageview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_gradient_cirlce" />
 
-        <ImageView
-            android:id="@+id/gradient_imageview"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_gradient_cirlce" />
-
-        <ImageView
-            android:id="@+id/spinner_imageview"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_loader_arrow" />
-    </RelativeLayout>
+    <ImageView
+        android:id="@+id/spinner_imageview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:src="@drawable/ic_loader_arrow" />
 </RelativeLayout>

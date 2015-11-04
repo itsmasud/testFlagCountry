@@ -8,6 +8,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -75,6 +76,9 @@ public class HttpJson {
         Log.v(TAG, url);
 
         conn.setRequestMethod(method);
+        conn.setUseCaches(false);
+        conn.setRequestProperty("Pragma", "no-cache");
+        conn.setRequestProperty("Cache-Control", "no-cache");
 
         if (headers != null) {
             Iterator<String> e = headers.keys();
@@ -116,9 +120,10 @@ public class HttpJson {
                         String contentType = fo.getString("contentType");
                         StoredObject so = StoredObject.get(soId);
 
-                        Log.v(TAG, so.getFile().toString() + ":" + so.getFile().length());
+                        File sourceFile = so.getFile();
+                        Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
                         if (so.isFile()) {
-                            util.addFilePart(key, filename, new FileInputStream(so.getFile()), (int) so.getFile().length());
+                            util.addFilePart(key, filename, new FileInputStream(sourceFile), (int) sourceFile.length());
                         } else {
                             util.addFilePart(key, filename, so.getData(), contentType);
                         }

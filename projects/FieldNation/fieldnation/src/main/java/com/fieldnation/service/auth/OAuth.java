@@ -22,7 +22,7 @@ import java.util.List;
  * Created by Michael Carver on 3/12/2015.
  */
 public class OAuth implements Parcelable {
-    private static final String TAG = "rpc.server.auth.OAuth";
+    private static final String TAG = "OAuth";
 
 //    public static final String KEY_OAUTH = TAG;
 
@@ -82,7 +82,7 @@ public class OAuth implements Parcelable {
         try {
             return _error != null;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }
@@ -91,7 +91,7 @@ public class OAuth implements Parcelable {
         try {
             return _error;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -100,7 +100,7 @@ public class OAuth implements Parcelable {
         try {
             return _errorDescription;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -113,7 +113,7 @@ public class OAuth implements Parcelable {
         try {
             return Serializer.serializeObject(oauth);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -122,7 +122,7 @@ public class OAuth implements Parcelable {
         try {
             return Serializer.unserializeObject(OAuth.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -130,7 +130,7 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     /*-             Human Code          -*/
     /*-*********************************-*/
-    public void delete(Context context) {
+    public void delete() {
         if (_id != -1)
             StoredObject.delete(_id);
     }
@@ -166,7 +166,7 @@ public class OAuth implements Parcelable {
 
             return fromJson(new JsonObject(obj.getData()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -179,12 +179,12 @@ public class OAuth implements Parcelable {
                 try {
                     list.add(fromJson(new JsonObject(objs.get(i).getData())));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
             return list;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -228,7 +228,7 @@ public class OAuth implements Parcelable {
             try {
                 return OAuth.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

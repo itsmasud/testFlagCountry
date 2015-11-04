@@ -10,8 +10,11 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
 
 public class DurationDialog extends DialogFragmentBase {
@@ -163,13 +166,17 @@ public class DurationDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
-                seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
-                seconds += Long.parseLong(_minTextView.getText() + "") * 60;
-                _listener.onOk(seconds * 1000);
+            try {
+                if (_listener != null) {
+                    long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
+                    seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
+                    seconds += Long.parseLong(_minTextView.getText() + "") * 60;
+                    _listener.onOk(seconds * 1000);
+                }
+                dismiss();
+            } catch (Exception ex) {
+                ToastClient.toast(App.get(), "Invalid number, please try again.", Toast.LENGTH_LONG);
             }
-            dismiss();
         }
     };
 

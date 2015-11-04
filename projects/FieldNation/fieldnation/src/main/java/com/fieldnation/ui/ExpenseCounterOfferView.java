@@ -86,7 +86,7 @@ public class ExpenseCounterOfferView extends RelativeLayout {
         _categoryTextView.setVisibility(GONE);
         if (_expense.getCategoryId() != null) {
             for (ExpenseCategory category : _categories) {
-                if (category.getId() == _expense.getCategoryId()) {
+                if (category.getId().equals(_expense.getCategoryId())) {
                     _categoryTextView.setText(category.getName());
                     _categoryTextView.setVisibility(VISIBLE);
                 }

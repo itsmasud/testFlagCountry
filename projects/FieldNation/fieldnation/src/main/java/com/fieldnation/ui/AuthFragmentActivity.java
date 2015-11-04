@@ -11,6 +11,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -94,7 +95,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _globalTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
+                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
                 "OK", _notProvider_listener);
     }
 
@@ -128,8 +129,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
-//            _notProviderDialog.show();
-//            return;
+            _notProviderDialog.show();
+            return;
         }
         App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
@@ -148,7 +149,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
-            _acceptTermsDialog.show();
+            try {
+                _acceptTermsDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
@@ -157,8 +162,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
-
-            _coiWarningDialog.show();
+            try {
+                _coiWarningDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else {
             Log.v(TAG, "tos/coi check done");
             onProfile(profile);

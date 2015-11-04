@@ -17,7 +17,7 @@
 
             <TextView
                 style="?attr/dialogTitleStyle"
-                android:text="Installed Devices" />
+                android:text="@string/installed_devices" />
 
             <NumberPicker
                 android:id="@+id/devices_picker"

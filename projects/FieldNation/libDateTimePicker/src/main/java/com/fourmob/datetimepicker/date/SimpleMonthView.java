@@ -1,16 +1,17 @@
 package com.fourmob.datetimepicker.date;
 
-import android.graphics.Paint.Align;
-import android.graphics.Paint.Style;
 import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.Paint.Align;
+import android.graphics.Paint.Style;
 import android.graphics.Typeface;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.view.MotionEvent;
 import android.view.View;
+
 import com.fourmob.datetimepicker.R;
 import com.fourmob.datetimepicker.Utils;
 
@@ -324,7 +325,7 @@ public class SimpleMonthView extends View {
 		mOnDayClickListener = onDayClickListener;
 	}
 
-	public static abstract interface OnDayClickListener {
-		public abstract void onDayClick(SimpleMonthView simpleMonthView, SimpleMonthAdapter.CalendarDay calendarDay);
+	public interface OnDayClickListener {
+		void onDayClick(SimpleMonthView simpleMonthView, SimpleMonthAdapter.CalendarDay calendarDay);
 	}
 }

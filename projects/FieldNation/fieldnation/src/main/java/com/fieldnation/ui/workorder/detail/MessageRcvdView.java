@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -58,12 +60,13 @@ public class MessageRcvdView extends RelativeLayout {
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
         _photos = new PhotoClient(_photo_listener);
-        _photos.connect(getContext());
+        _photos.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _photos.disconnect(getContext());
+        if (_photos != null && _photos.isConnected())
+            _photos.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -89,7 +92,7 @@ public class MessageRcvdView extends RelativeLayout {
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         _picView.setAlertOn(!_message.isRead());

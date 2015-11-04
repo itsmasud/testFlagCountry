@@ -19,7 +19,7 @@
                 style="?attr/dialogTitleStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Confirm schedule" />
+                android:text="@string/confirm_schedule" />
 
             <LinearLayout
                 android:id="@+id/startDate_layout"
@@ -34,7 +34,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="Arrival Time" />
+                    android:text="@string/arrival_time" />
 
                 <Button
                     android:id="@+id/startDate_button"
@@ -69,7 +69,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
-                    android:text="Job Durration" />
+                    android:text="@string/job_duration" />
 
                 <Button
                     android:id="@+id/duration_button"
@@ -94,7 +94,7 @@
                     android:id="@+id/tac_checkbox"
                     style="?attr/tileCheckBoxStyle"
                     android:layout_width="wrap_content"
-                    android:text="I accept" />
+                    android:text="@string/i_accept" />
 
                 <Button
                     android:id="@+id/tac_button"

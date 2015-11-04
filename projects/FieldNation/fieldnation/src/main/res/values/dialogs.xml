@@ -7,7 +7,7 @@
     <dimen name="dialogContentPadding">16dp</dimen>
     <dimen name="dialogActionBarBottomMargin">8dp</dimen>
     <dimen name="dialogButtonTouchTarget">@dimen/Button_Touch_Target</dimen>
-    <dimen name="dialogButtonHeight">36dp</dimen>
+    <!--<dimen name="dialogButtonHeight">36dp</dimen>-->
 
 
     <style name="DurationNumberPad" parent="Material.Button.Raised.White">

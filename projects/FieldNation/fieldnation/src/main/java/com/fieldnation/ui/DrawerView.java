@@ -24,7 +24,6 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
@@ -84,7 +83,6 @@ public class DrawerView extends RelativeLayout {
 
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
-    private AuthTopicClient _authTopicClient;
 
     private Listener _listener;
 
@@ -183,13 +181,10 @@ public class DrawerView extends RelativeLayout {
         }
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(getContext());
+        _globalTopicClient.connect(App.get());
 
         _photoClient = new PhotoClient(_photo_listener);
-        _photoClient.connect(getContext());
-
-        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(getContext());
+        _photoClient.connect(App.get());
     }
 
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
@@ -202,12 +197,10 @@ public class DrawerView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _authTopicClient.isConnected())
-            _globalTopicClient.disconnect(getContext());
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
+            _globalTopicClient.disconnect(App.get());
         if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(getContext());
-        if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(getContext());
+            _photoClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }
@@ -234,7 +227,7 @@ public class DrawerView extends RelativeLayout {
                     Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
                     _paidDateTextView.setText("Paid " + misc.formatDate(cal));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                     _paidDateTextView.setText("");
                 }
             } else {
@@ -408,7 +401,7 @@ public class DrawerView extends RelativeLayout {
             getContext().startActivity(intent);
 */
 
-//            getContext().startService(new Intent(getContext(), WebCrawlerService.class));
+            // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
             GlobalTopicClient.showFeedbackDialog(getContext());
@@ -441,18 +434,6 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************************-*/
     /*-				System/web Events				-*/
     /*-*********************************************-*/
-    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _authTopicClient.subAuthStateChange();
-        }
-
-        @Override
-        public void onNotAuthenticated() {
-            SplashActivity.startNew(getContext());
-            attachAnimations();
-        }
-    };
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -13,6 +14,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.utils.MemUtils;
 
 /**
  * Created by michael.carver on 12/18/2014.
@@ -49,6 +51,10 @@ public class SplashActivity extends AuthFragmentActivity {
             }
         }
 
+        ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
+        int reqHeight =(int) (((float) getResources().getDimension(R.dimen.imageview_height_fnlogo)) / getResources().getDisplayMetrics().density);
+        fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
+
         Log.v(TAG, "onCreate");
     }
 
@@ -65,9 +71,12 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        _calledMyWork = false;
         startService(new Intent(this, AuthTopicService.class));
+
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
         _globalClient.connect(this);
+
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
 
@@ -76,11 +85,25 @@ public class SplashActivity extends AuthFragmentActivity {
 
     @Override
     protected void onPause() {
-        _globalClient.disconnect(this);
-        _authClient.disconnect(this);
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(this);
+        if (_authClient != null && _authClient.isConnected())
+            _authClient.disconnect(this);
         super.onPause();
     }
 
+    @Override
+    protected void onStop() {
+        try {
+            if (_globalClient != null && _globalClient.isConnected())
+                _globalClient.disconnect(this);
+            if (_authClient != null && _authClient.isConnected())
+                _authClient.disconnect(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        super.onStop();
+    }
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
@@ -129,11 +152,11 @@ public class SplashActivity extends AuthFragmentActivity {
         Log.v(TAG, "doNextStep");
 
         if (_profile.isProvider()) {
-        if (!_calledMyWork) {
-            _calledMyWork = true;
-            MyWorkActivity.startNew(this);
-            finish();
-        }
+            if (!_calledMyWork) {
+                _calledMyWork = true;
+                MyWorkActivity.startNew(this);
+                finish();
+            }
         }
     }
 

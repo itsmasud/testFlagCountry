@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Label {
+    private static final String TAG = "Label";
+
     @Json(name = "action")
     private String _action;
     @Json(name = "description")
@@ -47,7 +50,7 @@ public class Label {
         try {
             return Serializer.serializeObject(label);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -56,7 +59,7 @@ public class Label {
         try {
             return Serializer.unserializeObject(Label.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

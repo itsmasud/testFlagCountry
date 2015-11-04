@@ -1,20 +1,28 @@
 package com.fieldnation.service.transaction;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
+
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Created by Michael Carver on 2/27/2015.
  */
 class WebTransactionSqlHelper extends SQLiteOpenHelper {
+    private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is
     // changed.
-    private static final int TABLE_VER = 1;
+    private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "transactions";
+
+    private static WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -79,8 +87,17 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public WebTransactionSqlHelper(Context context) {
+    private WebTransactionSqlHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
+    }
+
+    public static WebTransactionSqlHelper getInstance(Context context) {
+        Context app = context.getApplicationContext();
+        if (!_instances.containsKey(app)) {
+            _instances.put(app, new WebTransactionSqlHelper(app));
+        }
+
+        return _instances.get(app);
     }
 
     @Override
@@ -117,5 +134,25 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
 
     public static String[] getColumnNames() {
         return Column.getColumnNames();
+    }
+
+    public String getTableAsString() {
+        Log.d(TAG, "getTableAsString called");
+        String tableString = String.format("Table %s:\n", TABLE_NAME);
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor allRows = db.rawQuery("SELECT * FROM " + TABLE_NAME, null);
+        if (allRows.moveToFirst()) {
+            String[] columnNames = allRows.getColumnNames();
+            do {
+                for (String name : columnNames) {
+                    tableString += String.format("%s: %s\n", name,
+                            allRows.getString(allRows.getColumnIndex(name)));
+                }
+                tableString += "\n";
+
+            } while (allRows.moveToNext());
+        }
+
+        return tableString;
     }
 }

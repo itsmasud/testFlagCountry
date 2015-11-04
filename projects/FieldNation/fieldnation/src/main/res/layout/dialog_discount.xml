@@ -18,7 +18,7 @@
             <TextView
                 android:id="@+id/title_textview"
                 style="?attr/dialogTitleStyle"
-                android:text="Add Discount" />
+                android:text="@string/add_discount" />
 
             <android.support.design.widget.TextInputLayout
                 android:layout_width="match_parent"

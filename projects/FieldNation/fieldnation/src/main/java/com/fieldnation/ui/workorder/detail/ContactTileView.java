@@ -8,8 +8,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.service.toast.ToastClient;
 
 /**
  * Created by Michael Carver on 5/26/2015.
@@ -94,11 +97,18 @@ public class ContactTileView extends RelativeLayout {
         public void onClick(View v) {
             if (_phone != null) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                String phNum = "tel:" + _phone;
-                callIntent.setData(Uri.parse(phNum));
-                getContext().startActivity(callIntent);
-            }
+                callIntent.setData(Uri.parse("tel:" + _phone));
+                try {
+                    if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
+                        getContext().startActivity(callIntent);
+                    } else {
+                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone, Toast.LENGTH_LONG);
+                    }
+                } catch (Exception ex) {
+                    Debug.logException(ex);
+                }
 
+            }
         }
     };
 }

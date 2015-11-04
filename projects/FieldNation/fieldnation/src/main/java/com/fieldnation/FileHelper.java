@@ -83,7 +83,7 @@ public class FileHelper {
 //                    tempfile, getNotificationIntent()));
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             listener.fail("Exception: " + ex.getMessage());
         }
     }
@@ -114,7 +114,7 @@ public class FileHelper {
                         doDownload = false;
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
 
                 if (doDownload) {
@@ -129,7 +129,7 @@ public class FileHelper {
                     try {
                         Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                 }
 

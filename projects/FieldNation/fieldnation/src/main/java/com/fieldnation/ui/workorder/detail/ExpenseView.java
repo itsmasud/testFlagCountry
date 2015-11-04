@@ -91,7 +91,7 @@ public class ExpenseView extends LinearLayout {
         _categoryTextView.setVisibility(View.GONE);
         if (_categories != null && _expense.getCategoryId() != null) {
             for (ExpenseCategory _category : _categories) {
-                if (_category.getId() == _expense.getCategoryId()) {
+                if (_category.getId().equals(_expense.getCategoryId())) {
                     _categoryTextView.setText(_category.getName());
                     _categoryTextView.setVisibility(View.VISIBLE);
                     break;

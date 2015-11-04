@@ -1,11 +1,14 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Location {
+    private static final String TAG = "Location";
+
     @Json(name = "address1")
     private String _address1;
     @Json(name = "address2")
@@ -126,7 +129,7 @@ public class Location {
         try {
             return Serializer.serializeObject(location);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -135,7 +138,7 @@ public class Location {
         try {
             return Serializer.unserializeObject(Location.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

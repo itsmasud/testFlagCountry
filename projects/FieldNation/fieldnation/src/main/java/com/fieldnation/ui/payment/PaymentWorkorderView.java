@@ -129,7 +129,7 @@ public class PaymentWorkorderView extends RelativeLayout {
                 _whenTextView.setVisibility(GONE);
             }
         } catch (Exception ex) {
-            // ex.printStackTrace();
+            // Log.v(TAG, ex);
             _whenTextView.setVisibility(GONE);
         }
         if (payment.getStatus().equals("paid")) {
@@ -138,8 +138,12 @@ public class PaymentWorkorderView extends RelativeLayout {
             _statusView.setBackgroundResource(R.drawable.card_status_green);
         }
 
-        String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
-        _basisTextView.setText(paymethod);
+        if (payment.getPayMethod() != null) {
+            String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
+            _basisTextView.setText(paymethod);
+        } else {
+            _basisTextView.setVisibility(View.GONE);
+        }
         _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
         _statusTextView.setText(misc.capitalize(payment.getStatus()));
         _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
