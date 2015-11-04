@@ -11,6 +11,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -71,10 +72,17 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         _rotateRevAnim = AnimationUtils.loadAnimation(getContext(), R.anim.anim_spingear_ccw);
 
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(getContext());
-
+        _globalClient.connect(App.get());
 
         _state = STATE_IDLE;
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
+        
+        super.onDetachedFromWindow();
     }
 
     public void setListener(Listener listener) {
