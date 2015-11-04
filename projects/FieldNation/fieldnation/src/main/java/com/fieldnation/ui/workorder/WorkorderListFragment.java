@@ -334,6 +334,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _emptyView.setVisibility(View.GONE);
         }
 
+        if (list.size() == 0 ) {
+            _adapter.setNoMorePages();
+        }
         _adapter.setPage(page, list);
     }
 
@@ -865,3 +868,4 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 }
+
