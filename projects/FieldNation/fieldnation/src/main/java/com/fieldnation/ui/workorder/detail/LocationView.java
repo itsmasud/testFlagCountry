@@ -155,29 +155,34 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             }
             _addressTextView.setText(location.getFullAddressOneLine());
 
-            _locationTypeTextView.setVisibility(VISIBLE);
-            _locationIconTextView.setVisibility(VISIBLE);
-            switch (location.getType()) {
-                case "Commercial":
-                    _locationIconTextView.setText(R.string.icfont_commercial);
-                    _locationTypeTextView.setText("Commercial");
-                    break;
-                case "Government":
-                    _locationIconTextView.setText(R.string.icfont_government);
-                    _locationTypeTextView.setText("Government");
-                    break;
-                case "Residential":
-                    _locationIconTextView.setText(R.string.icfont_residential);
-                    _locationTypeTextView.setText("Residential");
-                    break;
-                case "Educational":
-                    _locationIconTextView.setText(R.string.icfont_educational);
-                    _locationTypeTextView.setText("Educational");
-                    break;
-                default:
-                    _locationTypeTextView.setVisibility(GONE);
-                    _locationIconTextView.setVisibility(GONE);
-                    break;
+            if (location.getType() != null) {
+                _locationTypeTextView.setVisibility(VISIBLE);
+                _locationIconTextView.setVisibility(VISIBLE);
+                switch (location.getType()) {
+                    case "Commercial":
+                        _locationIconTextView.setText(R.string.icfont_commercial);
+                        _locationTypeTextView.setText("Commercial");
+                        break;
+                    case "Government":
+                        _locationIconTextView.setText(R.string.icfont_government);
+                        _locationTypeTextView.setText("Government");
+                        break;
+                    case "Residential":
+                        _locationIconTextView.setText(R.string.icfont_residential);
+                        _locationTypeTextView.setText("Residential");
+                        break;
+                    case "Educational":
+                        _locationIconTextView.setText(R.string.icfont_educational);
+                        _locationTypeTextView.setText("Educational");
+                        break;
+                    default:
+                        _locationTypeTextView.setVisibility(GONE);
+                        _locationIconTextView.setVisibility(GONE);
+                        break;
+                }
+            } else {
+                _locationTypeTextView.setVisibility(GONE);
+                _locationIconTextView.setVisibility(GONE);
             }
 
             if (misc.isEmptyOrNull(location.getNotes())) {
