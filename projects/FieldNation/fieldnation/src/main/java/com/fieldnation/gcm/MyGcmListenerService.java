@@ -23,6 +23,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
@@ -51,7 +52,8 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
-        GlobalTopicClient.gcm(this, message);
+//        GlobalTopicClient.gcm(this, message);
+        sendNotification(message);
     }
     // [END receive_message]
 
@@ -107,7 +109,7 @@ public class MyGcmListenerService extends GcmListenerService {
                         Log.v(TAG, "positiveButton1");
                         PendingIntent readyToGoPi = PendingIntent.getActivity(this, 0,
                                 WorkorderActivity.makeIntentConfirm(this, obj.getLong("workorder_id")), 0);
-                        
+
                         builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"), readyToGoPi);
                     } else {
                         Log.v(TAG, "positiveButton2");
