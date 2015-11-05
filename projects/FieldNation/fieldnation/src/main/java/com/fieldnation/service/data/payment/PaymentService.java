@@ -2,6 +2,7 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -40,13 +41,17 @@ public class PaymentService extends MSService implements PaymentConstants {
     private void list(Intent intent) {
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        StoredObject obj = StoredObject.get(this, PSO_PAYMENT_LIST, page + "");
-        if (obj != null) {
-            try {
-                PaymentDispatch.list(this, page, new JsonArray(obj.getData()), false, isSync);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        StoredObject obj = null;
+        if (allowCache) {
+            obj = StoredObject.get(App.getProfileId(), PSO_PAYMENT_LIST, page + "");
+            if (obj != null) {
+                try {
+                    PaymentDispatch.list(this, page, new JsonArray(obj.getData()), false, isSync, true);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
 
@@ -59,12 +64,12 @@ public class PaymentService extends MSService implements PaymentConstants {
         long paymentId = intent.getLongExtra(PARAM_PAYMENT_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(this, PSO_PAYMENT, paymentId);
+        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_PAYMENT, paymentId);
         if (obj != null) {
             try {
                 PaymentDispatch.get(this, paymentId, new JsonObject(obj.getData()), false, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 

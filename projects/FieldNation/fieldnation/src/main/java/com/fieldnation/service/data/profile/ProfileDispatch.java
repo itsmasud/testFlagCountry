@@ -31,12 +31,13 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.FOREVER);
     }
 
-    public static void listNotifications(Context context, JsonArray data, int page, boolean failed, boolean isSync) {
+    public static void listNotifications(Context context, JsonArray data, int page, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_NOTIFICATIONS);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putBoolean(PARAM_ERROR, failed);
+        bundle.putBoolean(PARAM_IS_CACHED, isCached);
 
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
@@ -50,12 +51,13 @@ public class ProfileDispatch implements ProfileConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void listMessages(Context context, JsonArray data, int page, boolean failed, boolean isSync) {
+    public static void listMessages(Context context, JsonArray data, int page, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putBoolean(PARAM_ERROR, failed);
+        bundle.putBoolean(PARAM_IS_CACHED, isCached);
 
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
@@ -67,6 +69,17 @@ public class ProfileDispatch implements ProfileConstants {
         }
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+    }
+
+    public static void switchUser(Context context, long userId, boolean failed) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_SWITCH_USER);
+        bundle.putLong(PARAM_USER_ID, userId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        String topicId = TOPIC_ID_SWITCH_USER;
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 
     public static void action(Context context, long profileId, String action, boolean failed) {

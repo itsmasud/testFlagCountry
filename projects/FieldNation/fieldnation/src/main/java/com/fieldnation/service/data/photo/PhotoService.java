@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.MSService;
@@ -28,7 +28,7 @@ public class PhotoService extends MSService implements PhotoConstants {
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_profile_photo_ttl), "-1"));
+        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
         _requireWifi = settings.getBoolean(getString(R.string.pref_key_profile_photo_wifi_only), false);
 
         Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " _requireWifi: " + _requireWifi);
@@ -65,12 +65,12 @@ public class PhotoService extends MSService implements PhotoConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         // check cache
-        StoredObject obj = StoredObject.get(this, objectName, url);
+        StoredObject obj = StoredObject.get(App.getProfileId(), objectName, url);
 
         if (obj != null) {
             PhotoDispatch.get(this, obj.getFile(), url, getCircle, false, isSync);
 
-            if ((_requireWifi && GlobalState.getContext().haveWifi()) || !_requireWifi) {
+            if ((_requireWifi && App.get().haveWifi()) || !_requireWifi) {
                 if (_imageDaysToLive > -1) {
                     if (obj.getLastUpdated() + _imageDaysToLive * DAY < System.currentTimeMillis()) {
                         Log.v(TAG, "updating photo");
@@ -78,7 +78,7 @@ public class PhotoService extends MSService implements PhotoConstants {
                     }
                 }
             }
-        } else if (obj == null && ((_requireWifi && GlobalState.getContext().haveWifi()) || !_requireWifi)) {
+        } else if (obj == null && ((_requireWifi && App.get().haveWifi()) || !_requireWifi)) {
             // doesn't exist, try to grab it.
             PhotoTransactionBuilder.get(this, objectName, url, getCircle, isSync);
         }

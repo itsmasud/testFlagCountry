@@ -1,147 +1,96 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class WorkorderBonusInfo{
-	@Json(name="0")
-	private Integer _0;
-	@Json(name="1")
-	private Integer _1;
-	@Json(name="2")
-	private String _2;
-	@Json(name="3")
-	private Integer _3;
-	@Json(name="4")
-	private Integer _4;
-	@Json(name="5")
-	private String _5;
-	@Json(name="6")
-	private Integer _6;
-	@Json(name="7")
-	private Integer _7;
-	@Json(name="8")
-	private Integer _8;
-	@Json(name="amount")
-	private Integer _amount;
-	@Json(name="charge_type")
-	private Integer _chargeType;
-	@Json(name="charged")
-	private Integer _charged;
-	@Json(name="company_id")
-	private Integer _companyId;
-	@Json(name="currencyString")
-	private String _currencyString;
-	@Json(name="id")
-	private Integer _id;
-	@Json(name="name")
-	private String _name;
-	@Json(name="rule_explanation")
-	private String _ruleExplanation;
-	@Json(name="status")
-	private Integer _status;
-	@Json(name="wocpf_id")
-	private Integer _wocpfId;
+public class WorkorderBonusInfo {
+    private static final String TAG = "WorkorderBonusInfo";
 
-	public WorkorderBonusInfo(){
-	}
-	public Integer get0(){
-		return _0;
-	}
+    @Json(name = "amount")
+    private Integer _amount;
+    @Json(name = "charge_type")
+    private Integer _chargeType;
+    @Json(name = "charged")
+    private Integer _charged;
+    @Json(name = "company_id")
+    private Integer _companyId;
+    @Json(name = "currencyString")
+    private String _currencyString;
+    @Json(name = "id")
+    private Integer _id;
+    @Json(name = "name")
+    private String _name;
+    @Json(name = "rule_explanation")
+    private String _ruleExplanation;
+    @Json(name = "status")
+    private Integer _status;
+    @Json(name = "wocpf_id")
+    private Integer _wocpfId;
 
-	public Integer get1(){
-		return _1;
-	}
+    public WorkorderBonusInfo() {
+    }
 
-	public String get2(){
-		return _2;
-	}
+    public Integer getAmount() {
+        return _amount;
+    }
 
-	public Integer get3(){
-		return _3;
-	}
+    public Integer getChargeType() {
+        return _chargeType;
+    }
 
-	public Integer get4(){
-		return _4;
-	}
+    public Integer getCharged() {
+        return _charged;
+    }
 
-	public String get5(){
-		return _5;
-	}
+    public Integer getCompanyId() {
+        return _companyId;
+    }
 
-	public Integer get6(){
-		return _6;
-	}
+    public String getCurrencyString() {
+        return _currencyString;
+    }
 
-	public Integer get7(){
-		return _7;
-	}
+    public Integer getId() {
+        return _id;
+    }
 
-	public Integer get8(){
-		return _8;
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public Integer getAmount(){
-		return _amount;
-	}
+    public String getRuleExplanation() {
+        return _ruleExplanation;
+    }
 
-	public Integer getChargeType(){
-		return _chargeType;
-	}
+    public Integer getStatus() {
+        return _status;
+    }
 
-	public Integer getCharged(){
-		return _charged;
-	}
+    public Integer getWocpfId() {
+        return _wocpfId;
+    }
 
-	public Integer getCompanyId(){
-		return _companyId;
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public String getCurrencyString(){
-		return _currencyString;
-	}
+    public static JsonObject toJson(WorkorderBonusInfo workorderBonusInfo) {
+        try {
+            return Serializer.serializeObject(workorderBonusInfo);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
-	public Integer getId(){
-		return _id;
-	}
-
-	public String getName(){
-		return _name;
-	}
-
-	public String getRuleExplanation(){
-		return _ruleExplanation;
-	}
-
-	public Integer getStatus(){
-		return _status;
-	}
-
-	public Integer getWocpfId(){
-		return _wocpfId;
-	}
-
-	public JsonObject toJson(){
-		return toJson(this);
-	}
-
-	public static JsonObject toJson(WorkorderBonusInfo workorderBonusInfo) {
-		try {
-			return Serializer.serializeObject(workorderBonusInfo);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
-	public static WorkorderBonusInfo fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(WorkorderBonusInfo.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
-
+    public static WorkorderBonusInfo fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(WorkorderBonusInfo.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 }

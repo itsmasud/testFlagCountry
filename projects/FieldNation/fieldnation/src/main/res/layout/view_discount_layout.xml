@@ -10,7 +10,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="DISCOUNTS" />
+        android:text="@string/discounts_caps" />
 
     <TextView
         android:id="@+id/nodata_textview"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:gravity="center"
-        android:text="You currently have no discounts." />
+        android:text="@string/you_currently_have_no_discounts" />
 
     <LinearLayout
         android:id="@+id/listview"
@@ -31,7 +31,7 @@
 
     <Button
         android:id="@+id/add_button"
-        style="?attr/buttonGrayStyle"
+        style="?attr/buttonWhiteStyle"
         android:layout_gravity="right"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"

@@ -1,15 +1,18 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadSlot {
-	@Json(name="maxFileSize")
-	private String _maxFileSize;
+    private static final String TAG = "UploadSlot";
+
+    @Json(name = "maxFileSize")
+    private String _maxFileSize;
     @Json(name = "maxFiles")
     private Integer _maxFiles;
-//	@Json(name="minFileSize")
+    //	@Json(name="minFileSize")
 //	private Object _minFileSize;
     @Json(name = "minFiles")
     private Integer _minFiles;
@@ -24,9 +27,10 @@ public class UploadSlot {
 
     public UploadSlot() {
     }
-	public String getMaxFileSize(){
-		return _maxFileSize;
-	}
+
+    public String getMaxFileSize() {
+        return _maxFileSize;
+    }
 
     public Integer getMaxFiles() {
         return _maxFiles;
@@ -64,7 +68,7 @@ public class UploadSlot {
         try {
             return Serializer.serializeObject(uploadSlot);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -73,7 +77,7 @@ public class UploadSlot {
         try {
             return Serializer.unserializeObject(UploadSlot.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

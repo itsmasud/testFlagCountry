@@ -16,7 +16,6 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.StarView;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 6/12/2015.

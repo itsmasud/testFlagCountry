@@ -3,9 +3,13 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.utils.misc;
+
+import java.io.File;
 
 /**
  * Created by Michael Carver on 5/28/2015.
@@ -45,12 +49,19 @@ public class DocumentService extends MSService implements DocumentConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        StoredObject obj = StoredObject.get(context, PSO_DOCUMENT, documentId);
+        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
-                DocumentDispatch.download(context, documentId, obj.getFile(), false, isSync);
+
+                String name = obj.getFile().getName();
+                name = name.substring(name.indexOf("_") + 1);
+                File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
+                if (!dlFolder.exists())
+                    misc.copyFile(obj.getFile(), dlFolder);
+
+                DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, isSync);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         } else {
             DocumentTransactionBuilder.download(context, documentId, url, filename, isSync);

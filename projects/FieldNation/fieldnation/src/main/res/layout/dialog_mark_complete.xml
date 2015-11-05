@@ -14,19 +14,19 @@
             style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Mark as complete" />
+            android:text="@string/mark_as_complete" />
 
         <TextView
             style="?attr/dialogBodyStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="You are about to mark this work order as complete. You will no longer be able to edit this work order." />
+            android:text="@string/mark_complete_warning" />
 
         <TextView
             style="?attr/dialogBodyStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Would you like to continue?" />
+            android:text="@string/would_you_like_to_continue" />
 
         <LinearLayout
             android:id="@+id/signature_layout"
@@ -46,14 +46,14 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentLeft="true"
                     android:layout_marginBottom="0dp"
-                    android:text="Collect a sign off signature" />
+                    android:text="@string/collect_a_sign_off_signature" />
 
                 <TextView
                     style="?attr/dialogCaptionStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentRight="true"
-                    android:text="OPTIONAL" />
+                    android:text="@string/optional_caps" />
             </RelativeLayout>
 
             <TextView
@@ -61,7 +61,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="left"
-                android:text="Add a signature" />
+                android:text="@string/add_a_signature" />
         </LinearLayout>
 
     </LinearLayout>
@@ -78,7 +78,7 @@
         <Button
             android:id="@+id/continue_button"
             style="?attr/dialogOkButtonStyle"
-            android:text="CONTINUE" />
+            android:text="@string/btn_continue" />
 
     </LinearLayout>
 

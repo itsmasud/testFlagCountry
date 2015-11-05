@@ -2,6 +2,8 @@ package com.fieldnation.service.data.restv2;
 
 import android.content.Context;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -15,6 +17,7 @@ import java.text.ParseException;
  * Created by Michael Carver on 4/30/2015.
  */
 public class RestTransactionHandler extends WebTransactionHandler {
+    private static final String TAG = "RestTransactionHandler";
 
     public static byte[] pList(String resultTag, String objectType, Sticky sticky) {
         try {
@@ -24,7 +27,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
             obj.put("sticky", sticky.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -36,7 +39,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
             obj.put("sticky", sticky.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -54,14 +57,14 @@ public class RestTransactionHandler extends WebTransactionHandler {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.REQUEUE;
         }
         return Result.FINISH;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO, need to handle these
         return null;
     }
@@ -78,7 +81,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
         RestDispatch.object(context, resultTag, objectType, id, json, sticky, transaction.isSync());
 
         // slow
-        StoredObject.put(context, objectType, id, resultData.getByteArray());
+        StoredObject.put(App.getProfileId(), objectType, id, resultData.getByteArray());
 
         return Result.FINISH;
 
@@ -113,7 +116,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
 
         RestDispatch.list(context, resultTag, objectType, envelope, sticky, transaction.isSync());
 
-        StoredObject.put(context, objectType + "List", envelope.getLong("page"), envelope.toByteArray());
+        StoredObject.put(App.getProfileId(), objectType + "List", envelope.getLong("page"), envelope.toByteArray());
 
         return Result.FINISH;
     }

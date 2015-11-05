@@ -8,7 +8,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
@@ -16,7 +16,6 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.List;
@@ -32,8 +31,6 @@ public class MessageListActivity extends ItemListActivity<Message> {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-
-
     protected void onResume() {
         super.onResume();
         _profiles = new ProfileClient(_profile_listener);
@@ -102,11 +99,11 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            if (file == null || url == null || failed)
+        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
+            if (drawable == null || url == null || failed)
                 return;
 
-            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+            Drawable pic = drawable;
             _picCache.put(url, new WeakReference<>(pic));
         }
     };
@@ -127,10 +124,10 @@ public class MessageListActivity extends ItemListActivity<Message> {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             // TODO handle the failed condition
             Log.v(TAG, "onAllMessagesPage");
-            addPage(page, list);
+            addPage(page, list); // done
         }
     };
 }

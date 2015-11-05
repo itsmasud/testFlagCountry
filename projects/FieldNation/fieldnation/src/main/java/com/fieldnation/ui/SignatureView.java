@@ -120,7 +120,7 @@ public class SignatureView extends View {
                 }
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             _shape = new Shape();
@@ -166,7 +166,7 @@ public class SignatureView extends View {
 
         sb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         sb.append("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">");
-        sb.append("<!-- Generator: Field Nation Android ").append(BuildConfig.VERSION_NAME).append(" -->");
+        sb.append("<!-- Generator: Field Nation Android ").append((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim()).append(" -->");
         sb.append("<svg version=\"1.1\" id=\"Layer_1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" x=\"" + minX + "px\" y=\"" + minY + "px\" width=\"" + width + "px\" height=\"" + height + "px\" viewBox=\"" + minX + " " + minY + " " + width + " " + height + "\" enable-background=\"new " + minX + " " + minY + " " + width + " " + height + "\" xml:space=\"preserve\">");
         sb.append("<path fill=\"none\" stroke=\"#000000\" stroke-width=\"5\" stroke-miterlimit=\"10\" ");
         sb.append("d=\"");
@@ -277,6 +277,15 @@ public class SignatureView extends View {
     }
 
     private class SignatureParseAsyncTask extends AsyncTaskEx<String, Object, List<Shape>> {
+        private int mw;
+        private int mh;
+
+        @Override
+        protected void onPreExecute() {
+            mw = getMeasuredWidth();
+            mh = getMeasuredHeight();
+        }
+
         @Override
         protected List<Shape> doInBackground(String... params) {
             try {
@@ -320,19 +329,19 @@ public class SignatureView extends View {
                 _xOff = minX;
                 _yOff = minY;
 
-                _scale = getMeasuredWidth() / (maxX - minX);
-                if (getMeasuredHeight() / (maxY - minY) < _scale)
-                    _scale = getMeasuredHeight() / (maxY - minY);
+                _scale = mw / (maxX - minX);
+                if (mh / (maxY - minY) < _scale)
+                    _scale = mh / (maxY - minY);
 
                 float height = _scale * (maxY - minY);
                 float width = _scale * (maxX - minX);
 
-                _yOff -= ((getMeasuredHeight() - height) / 2) / _scale;
-                _xOff -= ((getMeasuredWidth() - width) / 2) / _scale;
+                _yOff -= ((mh - height) / 2) / _scale;
+                _xOff -= ((mw - width) / 2) / _scale;
 
 
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }
@@ -358,7 +367,7 @@ public class SignatureView extends View {
                 _redraw = true;
                 invalidate();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     }

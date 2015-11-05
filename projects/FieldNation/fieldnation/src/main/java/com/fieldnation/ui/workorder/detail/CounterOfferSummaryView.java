@@ -3,6 +3,8 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -12,6 +14,7 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.ExpenseCounterOfferView;
 import com.fieldnation.utils.misc;
 
 /**
@@ -26,10 +29,11 @@ public class CounterOfferSummaryView extends LinearLayout {
     private LinearLayout _scheduleLayout;
     private TextView _scheduleTextView;
     private LinearLayout _expenseLayout;
-    private TextView _expenseTextView;
+    private Button _counterOfferButton;
 
     // Data
     private Workorder _workorder;
+    private Listener _listener;
 
     public CounterOfferSummaryView(Context context) {
         super(context);
@@ -57,12 +61,18 @@ public class CounterOfferSummaryView extends LinearLayout {
         _scheduleLayout = (LinearLayout) findViewById(R.id.schedule_layout);
         _scheduleTextView = (TextView) findViewById(R.id.schedule_textview);
         _expenseLayout = (LinearLayout) findViewById(R.id.expense_layout);
-        _expenseTextView = (TextView) findViewById(R.id.expense_description);
+
+        _counterOfferButton = (Button) findViewById(R.id.counterOffer_button);
+        _counterOfferButton.setOnClickListener(_counterOffer_onClick);
     }
 
     public void setData(Workorder workorder) {
         _workorder = workorder;
         populateUi();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void populateUi() {
@@ -108,14 +118,7 @@ public class CounterOfferSummaryView extends LinearLayout {
             _scheduleLayout.setVisibility(GONE);
         } else {
             Schedule schedule = co.getSchedule();
-
-            String data = schedule.getFormatedDate() + "\n" + schedule.getFormatedTime();
-
-            if (schedule.getDuration() != null) {
-                data += "\n" + schedule.getDuration() + " hours";
-            }
-
-            _scheduleTextView.setText(data);
+            _scheduleTextView.setText(schedule.getDisplayString(false));
             _scheduleLayout.setVisibility(VISIBLE);
             setVisibility(VISIBLE);
         }
@@ -125,17 +128,26 @@ public class CounterOfferSummaryView extends LinearLayout {
         if (expenses == null || expenses.length == 0) {
             _expenseLayout.setVisibility(GONE);
         } else {
-            String data = "";
+            _expenseLayout.setVisibility(VISIBLE);
+            _expenseLayout.removeAllViews();
             for (Expense expense : expenses) {
-                data += expense.getDescription() + "        " + misc.toCurrency(expense.getPrice()) + "\n";
-            }
-
-            if (misc.isEmptyOrNull(data)) {
-                _expenseLayout.setVisibility(GONE);
-            } else {
-                _expenseLayout.setVisibility(VISIBLE);
-                _expenseTextView.setText(data);
+                ExpenseCounterOfferView v = new ExpenseCounterOfferView(getContext());
+                v.setExpense(expense);
+                _expenseLayout.addView(v);
             }
         }
     }
+
+    private final View.OnClickListener _counterOffer_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onCounterOffer();
+        }
+    };
+
+    public interface Listener {
+        void onCounterOffer();
+    }
+
 }

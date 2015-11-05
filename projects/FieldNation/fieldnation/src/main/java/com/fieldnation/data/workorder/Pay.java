@@ -3,12 +3,14 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Pay implements Parcelable {
+    private static final String TAG = "Pay";
 
     @Json(name = "blendedAdditionalHours")
     private Double _blendedAdditionalHours;
@@ -29,7 +31,7 @@ public class Pay implements Parcelable {
     @Json(name = "hidePay")
     private Boolean _hidePay;
     @Json(name = "maxDevice")
-    private Integer _maxDevice;
+    private Double _maxDevice;
     @Json(name = "maxHour")
     private Double _maxHour;
     @Json(name = "maximumAmount")
@@ -86,7 +88,7 @@ public class Pay implements Parcelable {
     }
 
     public Integer getMaxDevice() {
-        return _maxDevice;
+        return (int) (double) _maxDevice;
     }
 
     public Double getMaxHour() {
@@ -121,7 +123,7 @@ public class Pay implements Parcelable {
         try {
             return Serializer.serializeObject(pay);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -130,14 +132,14 @@ public class Pay implements Parcelable {
         try {
             return Serializer.unserializeObject(Pay.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
 
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
     public Pay(double hourlyRate, double maxHours) {
         _payRateBasis = "Hourly";
         _perHour = hourlyRate;
@@ -152,7 +154,7 @@ public class Pay implements Parcelable {
     public Pay(double deviceRate, int maxDevices) {
         _payRateBasis = "Per Device";
         _perDevice = deviceRate;
-        _maxDevice = maxDevices;
+        _maxDevice = (double) maxDevices;
     }
 
     public Pay(double hourlyRate, double maxHours, double extraRate, double extraMax) {
@@ -171,7 +173,7 @@ public class Pay implements Parcelable {
 
         // Todo, need to localize this
         if ("Fixed".equals(basis)) {
-            line1 = "Fixed " + misc.toCurrency(getFixedAmount());
+            line1 = misc.toCurrency(getFixedAmount()) + " Fixed";
         } else if ("Hourly".equals(basis)) {
             line1 = misc.toCurrency(getPerHour()) + " per hr up to " + getMaxHour() + " hours.";
         } else if ("Blended".equals(basis)) {
@@ -188,20 +190,20 @@ public class Pay implements Parcelable {
         String basis = getPayRateBasis();
 
         try {
-        // Todo, localize this
-        if ("Fixed".equals(basis)) {
-            return misc.toCurrency(getFixedAmount());
-        } else if ("Hourly".equals(basis)) {
-            return misc.toCurrency(getPerHour());
-        } else if ("Blended".equals(basis)) {
-            return misc.toCurrency(getBlendedStartRate());
-            // + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
-            // getBlendedAdditionalHours();
-        } else if ("Per Device".equals(basis)) {
-            return misc.toCurrency(getPerDevice());
-        }
+            // Todo, localize this
+            if ("Fixed".equals(basis)) {
+                return misc.toCurrency(getFixedAmount());
+            } else if ("Hourly".equals(basis)) {
+                return misc.toCurrency(getPerHour());
+            } else if ("Blended".equals(basis)) {
+                return misc.toCurrency(getBlendedStartRate());
+                // + "\n + " + misc.toCurrency(getBlendedAdditionalRate()) + " X " +
+                // getBlendedAdditionalHours();
+            } else if ("Per Device".equals(basis)) {
+                return misc.toCurrency(getPerDevice());
+            }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -223,8 +225,8 @@ public class Pay implements Parcelable {
     }
 
     /*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
     public static final Parcelable.Creator<Pay> CREATOR = new Creator<Pay>() {
 
         @Override
@@ -237,7 +239,7 @@ public class Pay implements Parcelable {
             try {
                 return Pay.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

@@ -1,52 +1,55 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Status;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
-	@Json(name = "status")
-	private Status _status;
-	@Json(name = "title")
-	private String _title;
-	@Json(name="workorderId")
-	private Long _workorderId;
+    private static final String TAG = "Workorder";
 
-	public Workorder() {
-	}
+    @Json(name = "status")
+    private Status _status;
+    @Json(name = "title")
+    private String _title;
+    @Json(name = "workorderId")
+    private Long _workorderId;
 
-	public Status getStatus() {
-		return _status;
-	}
+    public Workorder() {
+    }
 
-	public String getTitle() {
-		return _title;
-	}
+    public Status getStatus() {
+        return _status;
+    }
 
-	public Long getWorkorderId(){
-		return _workorderId;
-	}
+    public String getTitle() {
+        return _title;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public Long getWorkorderId() {
+        return _workorderId;
+    }
 
-	public static JsonObject toJson(Workorder workorder) {
-		try {
-			return Serializer.serializeObject(workorder);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static Workorder fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Workorder.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(Workorder workorder) {
+        try {
+            return Serializer.serializeObject(workorder);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Workorder fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Workorder.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 }

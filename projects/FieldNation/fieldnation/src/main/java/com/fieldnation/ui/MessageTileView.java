@@ -7,7 +7,8 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.utils.misc;
@@ -21,7 +22,7 @@ public class MessageTileView extends RelativeLayout {
     private Message _message;
     private String[] _substatus;
     private Listener _listener;
-    private int _memoryClass;
+    private boolean _imageRetried = false;
 
     /*-*****************************-*/
     /*-			LifeCycle			-*/
@@ -47,8 +48,6 @@ public class MessageTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _memoryClass = GlobalState.getContext().getMemoryClass();
-
         _substatus = getResources().getStringArray(R.array.workorder_substatus);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
@@ -62,6 +61,7 @@ public class MessageTileView extends RelativeLayout {
         _message = message;
         _listener = listener;
         _picView.setProfilePic(R.drawable.missing_circle);
+        _imageRetried = false;
 
         populateUi();
     }
@@ -87,17 +87,17 @@ public class MessageTileView extends RelativeLayout {
         try {
             _titleTextView.setText(_message.getWorkorderTitle() + "");
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         try {
             _messageBodyTextView.setText(
                     misc.htmlify(
                             "<b>" + _message.getFromUser().getFullName() + "</b> - " + _message.getMessage()));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
-        if (_memoryClass <= 64) {
+        if (App.get().isLowMemDevice()) {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoThumbUrl())) {
                 Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoThumbUrl(), true);
                 if (result == null) {
@@ -116,7 +116,8 @@ public class MessageTileView extends RelativeLayout {
         } else {
             if (_listener != null && _message.getFromUser() != null && !misc.isEmptyOrNull(_message.getFromUser().getPhotoUrl())) {
                 Drawable result = _listener.getPhoto(this, _message.getFromUser().getPhotoUrl(), true);
-                if (result == null) {
+                if (result == null && !_imageRetried) {
+                    _imageRetried = true;
                     postDelayed(new Runnable() {
                         @Override
                         public void run() {

@@ -1,45 +1,49 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class CustomDisplayFields{
-	@Json(name="label")
-	private String _label;
-	@Json(name="value")
-	private String _value;
+public class CustomDisplayFields {
+    private static final String TAG = "CustomDisplayFields";
 
-	public CustomDisplayFields(){
-	}
-	public String getLabel(){
-		return _label;
-	}
+    @Json(name = "label")
+    private String _label;
+    @Json(name = "value")
+    private String _value;
 
-	public String getValue(){
-		return _value;
-	}
+    public CustomDisplayFields() {
+    }
 
-	public JsonObject toJson(){
-		return toJson(this);
-	}
+    public String getLabel() {
+        return _label;
+    }
 
-	public static JsonObject toJson(CustomDisplayFields customDisplayFields) {
-		try {
-			return Serializer.serializeObject(customDisplayFields);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public String getValue() {
+        return _value;
+    }
 
-	public static CustomDisplayFields fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(CustomDisplayFields.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(CustomDisplayFields customDisplayFields) {
+        try {
+            return Serializer.serializeObject(customDisplayFields);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static CustomDisplayFields fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(CustomDisplayFields.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
 }

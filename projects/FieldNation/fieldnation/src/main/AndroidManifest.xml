@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.fieldnation">
-    <!-- note! don't change versions here, change them in build.gradle! -->
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -25,10 +24,12 @@
         android:required="false" />
 
     <application
-        android:name=".GlobalState"
+        android:name=".App"
         android:allowBackup="true"
+        android:hardwareAccelerated="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
         android:logo="@drawable/ic_launcher"
         android:theme="@style/AppTheme">
 
@@ -185,7 +186,7 @@
             android:name=".rpc.server.SyncService"
             android:exported="true"
             android:process=":frontside">
-            <intent-filter>com.fieldnation.service
+            <intent-filter>${applicationId}.service
                 <action android:name="android.content.SyncAdapter" />
             </intent-filter>
 
@@ -258,7 +259,7 @@
 
         <provider
             android:name=".rpc.server.StubProvider"
-            android:authorities="com.fieldnation.service"
+            android:authorities="${applicationId}.provider"
             android:exported="false"
             android:process=":frontside"
             android:syncable="true" />

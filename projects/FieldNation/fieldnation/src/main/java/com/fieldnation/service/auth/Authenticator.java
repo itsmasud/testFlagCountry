@@ -49,14 +49,14 @@ public class Authenticator extends AbstractAccountAuthenticator {
         String clientId = _context.getString(R.string.auth_fn_client_id);
         String clientSecret = _context.getString(R.string.auth_fn_client_secret);
 
-        OAuth auth = OAuth.lookup(_context, account.name);
+        OAuth auth = OAuth.lookup(account.name);
 
         try {
             if (auth == null) {
                 auth = OAuth.authenticate(_context, hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         Bundle result = new Bundle();

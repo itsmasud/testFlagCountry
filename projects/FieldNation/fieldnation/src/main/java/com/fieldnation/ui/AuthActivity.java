@@ -9,10 +9,12 @@ import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -30,6 +32,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.utils.misc;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -83,7 +86,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _contentLayout.setVisibility(View.GONE);
 
         _usernameEditText = (EditText) findViewById(R.id.username_edittext);
+        _usernameEditText.setOnEditorActionListener(_onEditorUserName);
+
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
+        _passwordEditText.setOnEditorActionListener(_onEditorPassword);
+
 
         _loginButton = (Button) findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
@@ -102,7 +109,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
 
-        _versionTextView.setText("Version " + BuildConfig.VERSION_NAME);
+        _versionTextView.setText("Version " +
+                (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
@@ -146,7 +154,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
-        GlobalTopicClient.dispatchAppShutdown(this);
+        GlobalTopicClient.appShutdown(this);
         super.onBackPressed();
     }
 
@@ -156,8 +164,8 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerUpdateApp();
-            _globalClient.registerGotProfile();
+            _globalClient.subUpdateApp();
+            _globalClient.subGotProfile();
         }
 
         @Override
@@ -193,6 +201,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            misc.hideKeyboard(v);
             startService(new Intent(AuthActivity.this, ProfileService.class));
             startService(new Intent(AuthActivity.this, WebTransactionService.class));
 
@@ -218,7 +227,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                     return null;
                 }
@@ -227,7 +236,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                 protected void onPostExecute(OAuth auth) {
                     if (auth == null) {
                         Toast.makeText(AuthActivity.this, R.string.toast_could_not_connect, Toast.LENGTH_LONG).show();
-                        GlobalTopicClient.dispatchNetworkDisconnected(AuthActivity.this);
+                        GlobalTopicClient.networkDisconnected(AuthActivity.this);
                         _contentLayout.setVisibility(View.VISIBLE);
                         _signupButton.setVisibility(View.VISIBLE);
                         _stiltView.setVisibility(View.VISIBLE);
@@ -237,7 +246,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                     String error = auth.getErrorType();
 
                     if ("invalid_client".equals(error)) {
-                        GlobalTopicClient.dispatchUpdateApp(AuthActivity.this);
+                        GlobalTopicClient.updateApp(AuthActivity.this);
                     } else if (authToken != null) {
                         Log.v(TAG, "have authtoken");
                         Account account = new Account(_username, getString(R.string.auth_account_type));
@@ -256,7 +265,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         AuthActivity.this.setResult(RESULT_OK, intent);
                         AuthActivity.this.finish();
 
-                        AuthTopicClient.dispatchAddedAccountCommand(AuthActivity.this);
+                        AuthTopicClient.addedAccountCommand(AuthActivity.this);
 
                         SplashActivity.startNew(AuthActivity.this);
                     } else {
@@ -265,7 +274,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         _stiltView.setVisibility(View.VISIBLE);
                     }
                     if (error != null && !getString(R.string.login_error_no_error).equals(error)) {
-                        Toast.makeText(AuthActivity.this, error, Toast.LENGTH_LONG).show();
+                        Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
                     }
                 }
             }.executeEx(AuthActivity.this, _username, _password);
@@ -279,7 +288,34 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _forgot_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("https://app.fieldnation.com/forgot_password.php"));
+            startActivity(intent);
+        }
+    };
 
+    private final TextView.OnEditorActionListener _onEditorUserName = new TextView.OnEditorActionListener() {
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                _passwordEditText.requestFocus();
+                handled = true;
+            }
+            return handled;
+        }
+    };
+
+    private final TextView.OnEditorActionListener _onEditorPassword = new TextView.OnEditorActionListener() {
+
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+            boolean handled = false;
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                _loginButton_onClick.onClick(null);
+                handled = true;
+            }
+            return handled;
         }
     };
 }

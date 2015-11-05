@@ -1,75 +1,79 @@
 package com.fieldnation.data.accounting;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
-	@Json(name = "amount")
-	private Double _amount;
-	@Json(name="clientName")
-	private String _clientName;
-	@Json(name="endTime")
-	private String _endTime;
-	@Json(name="fullWorkDescription")
-	private String _fullWorkDescription;
-	@Json(name="startTime")
-	private String _startTime;
-	@Json(name="title")
-	private String _title;
-	@Json(name="workorderId")
-	private long _workorderId;
+    private static final String TAG = "Workorder";
 
-	public Workorder() {
-	}
-	public Double getAmount(){
-		return _amount;
-	}
+    @Json(name = "amount")
+    private Double _amount;
+    @Json(name = "clientName")
+    private String _clientName;
+    @Json(name = "endTime")
+    private String _endTime;
+    @Json(name = "fullWorkDescription")
+    private String _fullWorkDescription;
+    @Json(name = "startTime")
+    private String _startTime;
+    @Json(name = "title")
+    private String _title;
+    @Json(name = "workorderId")
+    private long _workorderId;
 
-	public String getClientName(){
-		return _clientName;
-	}
+    public Workorder() {
+    }
 
-	public String getEndTime(){
-		return _endTime;
-	}
+    public Double getAmount() {
+        return _amount;
+    }
 
-	public String getFullWorkDescription(){
-		return _fullWorkDescription;
-	}
+    public String getClientName() {
+        return _clientName;
+    }
 
-	public String getStartTime(){
-		return _startTime;
-	}
+    public String getEndTime() {
+        return _endTime;
+    }
 
-	public String getTitle(){
-		return _title;
-	}
+    public String getFullWorkDescription() {
+        return _fullWorkDescription;
+    }
 
-	public long getWorkorderId(){
-		return _workorderId;
-	}
+    public String getStartTime() {
+        return _startTime;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public String getTitle() {
+        return _title;
+    }
 
-	public static JsonObject toJson(Workorder workorder) {
-		try {
-			return Serializer.serializeObject(workorder);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public long getWorkorderId() {
+        return _workorderId;
+    }
 
-	public static Workorder fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Workorder.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(Workorder workorder) {
+        try {
+            return Serializer.serializeObject(workorder);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Workorder fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Workorder.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
 }

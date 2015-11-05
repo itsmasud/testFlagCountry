@@ -83,7 +83,10 @@
                     android:layout_height="wrap_content"
                     android:ellipsize="end"
                     android:maxLines="5"
-                    android:padding="16dp"
+                    android:paddingBottom="4dp"
+                    android:paddingLeft="16dp"
+                    android:paddingRight="16dp"
+                    android:paddingTop="16dp"
                     android:text="@string/placeholder_phrase" />
 
                 <!--<View-->
@@ -98,9 +101,18 @@
                 android:id="@+id/description_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="16dp"
+                android:paddingBottom="4dp"
+                android:paddingLeft="16dp"
+                android:paddingRight="16dp"
+                android:paddingTop="16dp"
                 android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
                 android:visibility="gone" />
+
+            <Button
+                android:id="@+id/readMore_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="match_parent"
+                android:text="@string/btn_read_more" />
 
         </LinearLayout>
 

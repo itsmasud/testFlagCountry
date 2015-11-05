@@ -15,6 +15,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -121,6 +122,9 @@ public class NotificationFragment extends WorkorderFragment {
     }
 
     public void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_notes == null)
             return;
 
@@ -156,7 +160,7 @@ public class NotificationFragment extends WorkorderFragment {
             }
 
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
 

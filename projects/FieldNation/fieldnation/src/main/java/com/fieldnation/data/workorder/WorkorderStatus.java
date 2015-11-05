@@ -12,7 +12,7 @@ public enum WorkorderStatus {
 
     private String _value;
 
-    private WorkorderStatus(String value) {
+    WorkorderStatus(String value) {
         _value = value;
     }
 

@@ -11,14 +11,18 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore;
+import android.support.design.widget.Snackbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.ActivityResult;
+import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -30,7 +34,9 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
@@ -41,10 +47,13 @@ import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.net.URLConnection;
 import java.security.SecureRandom;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
@@ -66,7 +75,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-    private IconFontButton _navigateButton;
+    private Button _navigateButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
 
@@ -86,7 +95,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
 
     // Temporary storage
-    private ActivityResult _activityResult = null;
+    private List<Runnable> _untilAdded = new LinkedList<>();
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -130,7 +139,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
 
-        _navigateButton = (IconFontButton) view.findViewById(R.id.navigate_button);
+        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigationButton_onClick);
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
@@ -179,22 +188,27 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(activity);
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
     public void onDetach() {
-        _globalClient.disconnect(getActivity());
-        _workorderClient.disconnect(getActivity());
-        _docClient.disconnect(getActivity());
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(getActivity());
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(getActivity());
+
+        if (_docClient != null && _docClient.isConnected())
+            _docClient.disconnect(getActivity());
         super.onDetach();
     }
 
     private boolean checkMedia() {
-        if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
-            return true;
-        } else {
-            return false;
-        }
+        return Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState());
     }
 
     @Override
@@ -230,15 +244,10 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     }
 
-    private void tryActivityResult() {
-        if (_activityResult != null) {
-            Log.v(TAG, "recovering");
-            if (performActivityResult(_activityResult.requestCode, _activityResult.resultCode, _activityResult.data))
-                _activityResult = null;
-        }
-    }
-
     private void populateUi() {
+
+        misc.hideKeyboard(getView());
+
         if (_workorder == null)
             return;
 
@@ -247,8 +256,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
-
-        tryActivityResult();
 
         if (_workorder.canChangeDeliverables()) {
             _navigateButton.setVisibility(View.VISIBLE);
@@ -322,48 +329,47 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-
-    private boolean performActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
-
-        if (_workorder == null)
-            return false;
-
-        if (_uploadingSlotId < 0)
-            return false;
-
-        if (getActivity() == null)
-            return false;
-
-        if ((requestCode == RESULT_CODE_GET_ATTACHMENT || requestCode == RESULT_CODE_GET_CAMERA_PIC)
-                && resultCode == Activity.RESULT_OK) {
-
-            setLoading(true);
-
-            if (data == null) {
-                if (_tempFile == null)
-                    return false;
-
-                Log.v(TAG, "local path");
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(), _uploadingSlotId, _tempFile.getName(),
-                        _tempFile.getAbsolutePath());
-                return true;
-            } else {
-                Log.v(TAG, "from intent");
-                WorkorderClient.uploadDeliverable(getActivity(),
-                        _workorder.getWorkorderId(),
-                        _uploadingSlotId, data);
-                return true;
-            }
-        }
-        return true;
-    }
-
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        _activityResult = new ActivityResult(requestCode, resultCode, data);
-        tryActivityResult();
+    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        if (!isAdded()) {
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
+
+        try {
+            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+
+            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+                    && resultCode == Activity.RESULT_OK) {
+
+                setLoading(true);
+
+                if (data == null) {
+                    Log.v(TAG, "local path");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, _tempFile.getName(), _tempFile.getAbsolutePath());
+
+                } else {
+                    Log.v(TAG, "from intent");
+                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            _uploadingSlotId, data);
+                }
+            }
+        } catch (Exception ex) {
+            Debug.logException(ex);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            }, 100);
+        }
     }
 
     /*-*********************************-*/
@@ -475,12 +481,11 @@ public class DeliverableFragment extends WorkorderFragment {
                     info.activityInfo.name));
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                String packageName = getActivity().getPackageName();
-                File externalPath = Environment.getExternalStorageDirectory();
-                new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp").mkdirs();
-                File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp/IMAGE-" + System.currentTimeMillis() + ".png");
+                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
@@ -495,7 +500,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerGotProfile();
+            _globalClient.subGotProfile();
         }
 
         @Override
@@ -508,7 +513,12 @@ public class DeliverableFragment extends WorkorderFragment {
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
+            _workorderClient.subDeliverableUpload();
+        }
 
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            WorkorderClient.get(App.get(), workorderId, false);
         }
     };
 
@@ -519,10 +529,35 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDownload(long documentId, File file, boolean failed) {
-            Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setDataAndType(Uri.fromFile(file), URLConnection.guessContentTypeFromName(file.getName()));
-            startActivity(intent);
+        public void onDownload(long documentId, final File file, int state) {
+            if (file == null || state == DocumentConstants.PARAM_STATE_START) {
+                if (state == DocumentConstants.PARAM_STATE_FINISH)
+                    ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
+                return;
+            }
+
+            try {
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
+
+                if (intent.resolveActivity(App.get().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    String name = file.getName();
+                    name = name.substring(name.indexOf("_") + 1);
+
+                    Intent folderIntent = new Intent(Intent.ACTION_VIEW);
+                    folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
+                    if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
+                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                        ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
+                    } else {
+                        ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
+                    }
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 }

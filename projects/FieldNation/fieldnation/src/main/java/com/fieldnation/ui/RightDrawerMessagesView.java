@@ -14,14 +14,13 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.List;
@@ -75,20 +74,23 @@ public class RightDrawerMessagesView extends FrameLayout {
         _messageListView.setOnItemClickListener(_message_onClick);
 
         _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(getContext());
+        _profileClient.connect(App.get());
         _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(getContext());
+        _photoClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _profileClient.disconnect(getContext());
-        _photoClient.disconnect(getContext());
+        if (_profileClient != null && _photoClient.isConnected())
+            _profileClient.disconnect(App.get());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
         _picCache.clear();
         super.onDetachedFromWindow();
     }
 
     public void animateShow() {
+        ProfileClient.listMessages(getContext(), 0);
         _rightDrawer.animateShow();
     }
 
@@ -109,7 +111,7 @@ public class RightDrawerMessagesView extends FrameLayout {
 
     private final PagingAdapter<Message> _adapter = new PagingAdapter<Message>() {
         @Override
-        public View getView(int page, int position, Message object, View convertView, ViewGroup parent) {
+        public View getView(Message object, View convertView, ViewGroup parent) {
             MessageTileView v = null;
             if (convertView == null) {
                 v = new MessageTileView(parent.getContext());
@@ -164,11 +166,11 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            if (file == null || url == null)
+        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            if (bitmapDrawable == null || url == null)
                 return;
 
-            Drawable pic = new BitmapDrawable(GlobalState.getContext().getResources(), file.getAbsolutePath());
+            Drawable pic = bitmapDrawable;
             _picCache.put(url, new WeakReference<>(pic));
         }
     };
@@ -180,9 +182,9 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             // TODO need to handle failed condition
-            _adapter.setPage(page, list);
+            _adapter.setPage(page, list); // done
         }
     };
 }

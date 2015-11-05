@@ -2,6 +2,8 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Context;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -15,6 +17,7 @@ import java.text.ParseException;
  * Created by Michael Carver on 3/27/2015.
  */
 public class PaymentTransactionHandler extends WebTransactionHandler implements PaymentConstants {
+    private static final String TAG = "PaymentTransactionHandler";
 
     public static byte[] pList(int page) {
         try {
@@ -22,7 +25,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -33,7 +36,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
             obj.put("paymentId", paymentId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -51,28 +54,28 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
                     return handleGet(context, transaction, resultData, obj);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.ERROR;
         }
         return Result.REQUEUE;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject obj = new JsonObject(transaction.getHandlerParams());
             String action = obj.getString("action");
 
             switch (action) {
                 case "pList":
-                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync());
+                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync(), true);
                     break;
                 case "pGet":
                     PaymentDispatch.get(context, obj.getLong("paymentId"), null, true, transaction.isSync());
                     break;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -83,9 +86,9 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         int page = params.getInt("page");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT_LIST, page, data);
+        StoredObject.put(App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
-        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync());
+        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
         return Result.FINISH;
     }
 
@@ -95,7 +98,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
 
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_PAYMENT, paymentId, data);
+        StoredObject.put(App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
         PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
         return Result.FINISH;

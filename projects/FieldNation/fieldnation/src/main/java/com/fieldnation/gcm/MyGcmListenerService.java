@@ -48,13 +48,19 @@ public class MyGcmListenerService extends GcmListenerService {
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
-        Log.v(TAG, data.toString());
-        Log.v(TAG, "From: " + from);
-        Log.v(TAG, "Message: " + message);
+        Log.d(TAG, "From: " + from);
+        Log.d(TAG, "Message: " + message);
 
-        sendNotification(message);
+        GlobalTopicClient.gcm(this, message);
     }
     // [END receive_message]
+
+    @Override
+    public void onDestroy() {
+        Log.v(TAG, "onDestroy");
+        super.onDestroy();
+    }
+
 
     /**
      * Create and show a simple notification containing the received GCM message.

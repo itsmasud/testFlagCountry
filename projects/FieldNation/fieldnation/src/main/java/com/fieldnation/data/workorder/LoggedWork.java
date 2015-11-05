@@ -3,11 +3,14 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class LoggedWork implements Parcelable {
+    private static final String TAG = "LoggedWork";
+
     @Json(name = "checkInDistance")
     private Double _checkInDistance;
     @Json(name = "checkOutDistance")
@@ -152,7 +155,7 @@ public class LoggedWork implements Parcelable {
         try {
             return Serializer.serializeObject(loggedWork);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -161,7 +164,7 @@ public class LoggedWork implements Parcelable {
         try {
             return Serializer.unserializeObject(LoggedWork.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -176,7 +179,7 @@ public class LoggedWork implements Parcelable {
             try {
                 return LoggedWork.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

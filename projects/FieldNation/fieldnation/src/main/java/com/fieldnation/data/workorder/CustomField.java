@@ -99,7 +99,7 @@ public class CustomField implements Parcelable {
         try {
             return Serializer.serializeObject(customField);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -108,7 +108,7 @@ public class CustomField implements Parcelable {
         try {
             return Serializer.unserializeObject(CustomField.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -165,7 +165,7 @@ public class CustomField implements Parcelable {
             try {
                 return CustomField.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

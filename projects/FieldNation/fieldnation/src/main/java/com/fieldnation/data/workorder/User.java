@@ -1,11 +1,14 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class User {
+    private static final String TAG = "User";
+
     @Json(name = "city")
     private String _city;
     @Json(name = "companyId")
@@ -31,11 +34,11 @@ public class User {
     @Json(name = "state")
     private String _state;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "userType")
     private String _userType;
     @Json(name = "user_id")
-    private Integer _user_Id;
+    private Long _user_Id;
 
     public User() {
     }
@@ -76,10 +79,22 @@ public class User {
     }
 
     public String getPhotoThumbUrl() {
+        if ("/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoThumbUrl))
+            return null;
+
         return _photoThumbUrl;
     }
 
     public String getPhotoUrl() {
+        if ("/images/missing.png".equals(_photoUrl))
+            return null;
+
+        if ("https://app.fieldnation.com/images/missing.png".equals(_photoUrl))
+            return null;
+
         return _photoUrl;
     }
 
@@ -87,7 +102,7 @@ public class User {
         return _state;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         if (_user_Id != null)
             return _user_Id;
         return _userId;
@@ -105,7 +120,7 @@ public class User {
         try {
             return Serializer.serializeObject(user);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -114,7 +129,7 @@ public class User {
         try {
             return Serializer.unserializeObject(User.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

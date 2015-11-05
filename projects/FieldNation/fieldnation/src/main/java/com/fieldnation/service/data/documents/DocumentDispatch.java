@@ -13,16 +13,15 @@ import java.io.File;
  */
 public class DocumentDispatch implements DocumentConstants {
 
-    public static void download(Context context, long documentId, File file, boolean failed, boolean isSync) {
+    public static void download(Context context, long documentId, File file, int state, boolean isSync) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DOCUMENT);
         bundle.putLong(PARAM_DOCUMENT_ID, documentId);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
 
-        bundle.putBoolean(PARAM_ERROR, failed);
-        if (!failed) {
+        bundle.putInt(PARAM_STATE, state);
+        if (file != null)
             bundle.putSerializable(PARAM_FILE, file);
-        }
 
         String topicId = TOPIC_ID_DOWNLOAD_DOCUMENT;
 

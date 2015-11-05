@@ -3,10 +3,14 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.widget.Toast;
 
+import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
@@ -22,6 +26,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
@@ -49,6 +54,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             list            -*/
     /*-*****************************-*/
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync, boolean allowCache) {
+        Log.v(STAG, "list:{selector:" + selector + ", page:" + page + ", isSync:" + isSync + ", allowCache:" + allowCache + "}");
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
         intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
@@ -193,11 +200,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
-    public static void listMessages(Context context, long workorderId, boolean isSync) {
+    public static void listMessages(Context context, long workorderId, boolean isSync, boolean allowCache) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST_MESSAGES);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 
@@ -294,6 +302,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 isToSite, carrier, carrierName, trackingNumber, taskId);
     }
 
+    /*-*************************************-*/
+    /*-             Ratings               -*/
+    /*-*************************************-*/
+    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+    }
+
+
     /*-**********************************-*/
     /*-             signature            -*/
     /*-**********************************-*/
@@ -366,6 +385,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder actions            -*/
     /*-******************************************-*/
+    public static void actionReadyToGo(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionReady(context, workorderId);
+    }
+
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
 
         String payload = "";
@@ -405,7 +428,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
+
+        Debug.logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
+    }
+
+    // incomplete workorder
+    public static void actionIncomplete(Context context, long workorderId) {
+        WorkorderTransactionBuilder.actionIncomplete(context, workorderId);
     }
 
     public static void actionSetClosingNotes(Context context, long workorderId, String closingNotes) {
@@ -421,12 +451,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
+
+        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+
+        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 
@@ -450,10 +484,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
+        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
+        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -461,18 +497,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 
@@ -510,6 +550,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
+
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
         intent.putExtra(PARAM_WORKORDER_ID, workorderId);
@@ -519,12 +562,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
-    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
-        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
+        Log.v(STAG, "requestUploadDeliverable");
 
-        topicId += "/" + workorderId + "/" + uploadSlotId;
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
 
-        return register(topicId, TAG);
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_URI, uri);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        context.startService(intent);
     }
 
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
@@ -535,10 +584,28 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
 
             @Override
+            public void fromUri(String filename, Uri uri) {
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, uri);
+            }
+
+            @Override
             public void fail(String reason) {
                 Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
+                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
             }
         });
+    }
+
+    public boolean subDeliverableUpload() {
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
+    }
+
+    public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId, TAG);
     }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
@@ -623,12 +690,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                         payload.getString(PARAM_FILE_NAME),
                         payload.getBoolean(PARAM_IS_COMPLETE), true);
 
+            } else {
+                onUploadDeliverable(
+                        payload.getLong(PARAM_WORKORDER_ID),
+                        payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                        payload.getString(PARAM_FILE_NAME),
+                        payload.getBoolean(PARAM_IS_COMPLETE), false);
             }
-            onUploadDeliverable(
-                    payload.getLong(PARAM_WORKORDER_ID),
-                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
-                    payload.getString(PARAM_FILE_NAME),
-                    payload.getBoolean(PARAM_IS_COMPLETE), false);
         }
 
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
@@ -749,11 +817,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         protected void preList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onList(null, WorkorderDataSelector.fromCall(payload.getString(PARAM_LIST_SELECTOR)),
-                        payload.getInt(PARAM_PAGE), true);
+                        payload.getInt(PARAM_PAGE), true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
                     private WorkorderDataSelector selector;
                     private int page;
+                    private boolean isCached;
 
                     @Override
                     protected List<Workorder> doInBackground(Bundle... params) {
@@ -762,6 +831,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
                             Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
                             page = bundle.getInt(PARAM_PAGE);
+                            isCached = bundle.getBoolean(PARAM_IS_CACHED);
                             List<Workorder> list = new LinkedList<>();
                             JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
                             for (int i = 0; i < ja.size(); i++) {
@@ -770,20 +840,20 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                             return list;
                         } catch (Exception ex) {
 //                        Log.v(STAG, selector.name());
-                            ex.printStackTrace();
+                            Log.v(STAG, ex);
                         }
                         return null;
                     }
 
                     @Override
                     protected void onPostExecute(List<Workorder> workorders) {
-                        onList(workorders, selector, page, false);
+                        onList(workorders, selector, page, false, isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
         }
 
         // details
@@ -791,25 +861,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGet(null, true);
             } else {
-                onGet(Workorder.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, Workorder>() {
+                    @Override
+                    protected Workorder doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            Log.v(STAG, ex);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Workorder workorder) {
+                        onGet(workorder, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, Workorder>() {
-//                @Override
-//                protected Workorder doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Workorder workorder) {
-//                    onGet(workorder);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGet(Workorder workorder, boolean failed) {
@@ -820,25 +889,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGetSignature(null, true);
             } else {
-                onGetSignature(Signature.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, Signature>() {
+                    @Override
+                    protected Signature doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            Log.v(STAG, ex);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(Signature signature) {
+                        onGetSignature(signature, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, Signature>() {
-//                @Override
-//                protected Signature doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return Signature.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(Signature signature) {
-//                    onGetSignature(signature);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGetSignature(Signature signature, boolean failed) {
@@ -848,25 +916,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             if (payload.getBoolean(PARAM_ERROR)) {
                 onGetBundle(null, true);
             } else {
-                onGetBundle(com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) payload.getParcelable(PARAM_DATA_PARCELABLE)), false);
+                new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
+                    @Override
+                    protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        try {
+                            return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
+                        } catch (Exception ex) {
+                            Log.v(STAG, ex);
+                        }
+                        return null;
+                    }
+
+                    @Override
+                    protected void onPostExecute(com.fieldnation.data.workorder.Bundle bundle) {
+                        onGetBundle(bundle, false);
+                    }
+                }.executeEx(payload);
             }
-//            new AsyncTaskEx<Bundle, Object, com.fieldnation.data.workorder.Bundle>() {
-//                @Override
-//                protected com.fieldnation.data.workorder.Bundle doInBackground(Bundle... params) {
-//                    Bundle bundle = params[0];
-//                    try {
-//                        return com.fieldnation.data.workorder.Bundle.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
-//                    } catch (Exception ex) {
-//                        ex.printStackTrace();
-//                    }
-//                    return null;
-//                }
-//
-//                @Override
-//                protected void onPostExecute(com.fieldnation.data.workorder.Bundle bundle) {
-//                    onGetBundle(bundle);
-//                }
-//            }.executeEx(payload);
         }
 
         public void onGetBundle(com.fieldnation.data.workorder.Bundle bundle, boolean failed) {

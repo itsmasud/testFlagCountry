@@ -118,16 +118,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:gravity="center"
-                android:text="View Bundle Details"
+                android:text="@string/view_bundle_details"
                 android:visibility="gone" />
-
-            <com.fieldnation.ui.workorder.detail.ActionView
-                android:id="@+id/action_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
         </LinearLayout>
-
-
     </com.fieldnation.ui.OverScrollView>
 
     <com.fieldnation.ui.RefreshView

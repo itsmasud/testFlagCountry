@@ -70,7 +70,7 @@ public class PaymentFeeView extends RelativeLayout {
 
         // todo need to pick a button, and hide the others
         findViewById(R.id.action_button_green).setVisibility(GONE);
-        findViewById(R.id.action_button_gray).setVisibility(GONE);
+        findViewById(R.id.action_button_white).setVisibility(GONE);
         findViewById(R.id.action_button_orange).setVisibility(GONE);
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
@@ -114,7 +114,7 @@ public class PaymentFeeView extends RelativeLayout {
             // _whenTextView.setVisibility(GONE);
             // }
         } catch (Exception ex) {
-            // ex.printStackTrace();
+            // Log.v(TAG, ex);
             _whenTextView.setVisibility(GONE);
         }
         _whenTextView.setVisibility(GONE);

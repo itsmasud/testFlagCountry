@@ -3,7 +3,10 @@ package com.fieldnation.service.data.workorder;
 import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -24,6 +27,7 @@ import java.io.File;
  * Created by Michael Carver on 4/22/2015.
  */
 public class WorkorderTransactionBuilder implements WorkorderConstants {
+    private static final String TAG = "WorkorderTransactionBuilder";
 
     public static void get(Context context, long workorderId, boolean isSync) {
         try {
@@ -40,7 +44,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -60,7 +64,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .urlParams("?page=" + page))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -79,7 +83,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/notifications"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -98,7 +102,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -117,7 +121,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/bundle/" + bundleId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -171,7 +175,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             _action.toByteArray()))
                     .makeIntent();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -183,6 +187,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void actionComplete(Context context, long workorderId) {
         action(context, workorderId, "complete", null, null, null);
+    }
+
+    public static void actionIncomplete(Context context, long workorderId) {
+        action(context, workorderId, "incomplete", null, null, null);
     }
 
     public static void actionCheckin(Context context, long workorderId) {
@@ -389,9 +397,51 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             _action.toByteArray()))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
+
+
+    public static Intent actionPostRatingIntent(Context context, int satisfactionRating, int scopeRating,
+                                                int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        try {
+            String body = "";
+
+            // parameterized body
+            body += "topic=android";
+            body += "&satisfaction_rating=" + satisfactionRating;
+            body += "&scope_rating=" + scopeRating;
+            body += "&respect_rating=" + respectRating;
+            body += "&respect_comment=" + respectComment;
+            body += "&recommend_buyer=" + recommendBuyer;
+            body += "&other_comments=" + otherComments;
+
+
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/rate");
+
+            if (body != null) {
+                http.body(body);
+
+                http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
+            }
+
+            return WebTransactionBuilder.builder(context)
+                    .priority(Priority.LOW)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pRating(satisfactionRating, scopeRating, respectRating,
+                            respectComment, recommendBuyer, otherComments, workorderId))
+                    .useAuth(true)
+                    .request(http)
+                    .makeIntent();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
 
     /*-************************************-*/
     /*-             Signatures             -*/
@@ -411,7 +461,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -428,7 +478,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -481,7 +531,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -498,12 +548,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //                            .path(url))
 //                    .send();
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //        }
 //    }
 
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
-        StoredObject upFile = StoredObject.put(context, "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
 
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -525,7 +575,33 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
+        }
+    }
+
+
+    public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
+        try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
+                    .multipartFile("file", filename, uri)
+                    .doNotRead();
+
+            if (uploadSlotId != 0) {
+                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
+            }
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
+                    .useAuth(true)
+                    .request(builder)
+                    .send();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
     }
 
@@ -544,7 +620,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -572,7 +648,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(builder)
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -595,7 +671,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     + "&amount=" + misc.escapeForURL(price + "")))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -613,7 +689,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -638,7 +714,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                     + "&category_id=" + category.getId()).trim()))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -656,7 +732,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -702,7 +778,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -779,7 +855,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
 //                    .send();
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //        }
 //    }
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {
@@ -795,7 +871,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId))
                     .send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 

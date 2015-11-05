@@ -1,9 +1,11 @@
 package com.fieldnation.ui;
 
+import android.accounts.AccountManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
@@ -15,7 +17,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -57,6 +60,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     // Services
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;
+    private AuthTopicClient _authTopicClient;
 
     // Data
     private Profile _profile;
@@ -151,21 +155,29 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(this);
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
+                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
                 "OK", _notProvider_listener);
     }
 
     @Override
     protected void onPause() {
-        _globalClient.disconnect(this);
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(this);
+
+        if (_authTopicClient != null && _authTopicClient.isConnected()) {
+            _authTopicClient.disconnect(this);
+        }
         super.onPause();
     }
 
     @Override
     protected void onStop() {
-        _toastClient.disconnect(this);
+        if (_toastClient != null && _toastClient.isConnected())
+            _toastClient.disconnect(this);
         super.onStop();
     }
 
@@ -185,10 +197,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _profileBounceProtect = true;
 
         if (!_profile.isProvider()) {
-            _notProviderDialog.show();
-            return;
+//            _notProviderDialog.show();
+//            return;
         }
-        GlobalState gs = GlobalState.getContext();
+        App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
@@ -205,7 +217,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
-            _acceptTermsDialog.show();
+            try {
+                _acceptTermsDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
@@ -214,8 +230,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
-
-            _coiWarningDialog.show();
+            try {
+                _coiWarningDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else {
             Log.v(TAG, "tos/coi check done");
             onProfile(profile);
@@ -250,12 +269,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
+            AuthTopicClient.removeCommand(AuthActionBarActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveCommand(AuthActionBarActivity.this);
+            AuthTopicClient.removeCommand(AuthActionBarActivity.this);
         }
     };
 
@@ -271,7 +290,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         public void onNegative() {
             // hide, continue
             _profileBounceProtect = false;
-            GlobalState.getContext().setTosReminded();
+            App.get().setTosReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -289,7 +308,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setCoiReminded();
+            App.get().setCoiReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -301,7 +320,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         @Override
         public void onNegative() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setNeverRemindCoi();
+            App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -315,14 +334,33 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subNeedUsernameAndPassword();
+        }
+
+        @Override
+        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Intent intent = new Intent(AuthActionBarActivity.this, AuthActivity.class);
+
+            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    };
+
     private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.registerGotProfile();
-            _globalClient.registerUpdateApp();
-            _globalClient.registerAppShutdown();
-            _globalClient.registerShowFeedbackDialog();
-            _globalClient.registerShowHelpDialog();
+            _globalClient.subGotProfile();
+            _globalClient.subUpdateApp();
+            _globalClient.subAppShutdown();
+            _globalClient.subShowFeedbackDialog();
+            _globalClient.subShowHelpDialog();
         }
 
         @Override
@@ -333,7 +371,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            _updateDialog.show();
+            try {
+                _updateDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
 
         @Override
@@ -343,12 +385,20 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onShowFeedbackDialog() {
-            _feedbackDialog.show();
+            try {
+                _feedbackDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
 
         @Override
         public void onShowHelpDialog() {
-            _helpDialog.show();
+            try {
+                _helpDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         }
     };
 
@@ -379,7 +429,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                             try {
                                 buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
                             } catch (PendingIntent.CanceledException e) {
-                                e.printStackTrace();
+                                Log.v(TAG, e);
                             }
                         }
                     }
@@ -394,4 +444,3 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 }
-

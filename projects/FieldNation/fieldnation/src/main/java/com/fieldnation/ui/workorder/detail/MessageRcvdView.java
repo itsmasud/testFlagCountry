@@ -10,6 +10,8 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -17,7 +19,6 @@ import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.ParseException;
 
@@ -59,18 +60,18 @@ public class MessageRcvdView extends RelativeLayout {
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
         _photos = new PhotoClient(_photo_listener);
-        _photos.connect(getContext());
+        _photos.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _photos.disconnect(getContext());
+        if (_photos != null && _photos.isConnected())
+            _photos.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
     public void setMessage(Message message) {
         _message = message;
-
         populateUi();
     }
 
@@ -91,7 +92,7 @@ public class MessageRcvdView extends RelativeLayout {
         try {
             _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         _picView.setAlertOn(!_message.isRead());
@@ -117,8 +118,13 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         @Override
-        public void onGet(String url, File file, boolean isCircle, boolean failed) {
-            Drawable pic = new BitmapDrawable(getContext().getResources(), file.getAbsolutePath());
+        public void onGet(String url, BitmapDrawable bitmapDrawable, boolean isCircle, boolean failed) {
+            if (bitmapDrawable == null) {
+                _picView.setProfilePic(R.drawable.missing_circle);
+                return;
+            }
+
+            Drawable pic = bitmapDrawable;
             _profilePic = new WeakReference<>(pic);
             _picView.setProfilePic(pic);
         }

@@ -2,11 +2,11 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -25,7 +25,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("profileId", profileId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -36,7 +36,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -47,7 +47,18 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("page", page);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static byte[] pSwitchUser(long userId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pSwitchUser");
+            obj.put("userId", userId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -59,7 +70,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -78,18 +89,20 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     return handleListNotifications(context, transaction, resultData, params);
                 case "pListMessages":
                     return handleListMessages(context, transaction, resultData, params);
+                case "pSwitchUser":
+                    return handleSwitchUser(context, transaction, resultData, params);
                 case "pAction":
                     return handleAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.REQUEUE;
         }
         return Result.FINISH;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
@@ -99,17 +112,17 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
                     ProfileDispatch.get(context, params.getLong("profileId"), null, true, transaction.isSync());
                     break;
                 case "pListNotifications":
-                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pListMessages":
-                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync());
+                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync(), true);
                     break;
                 case "pAction":
                     ProfileDispatch.action(context, params.getLong("profileId"), params.getString("param"), true);
                     break;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.FINISH;
         }
         return Result.FINISH;
@@ -124,7 +137,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // todo parse json and put Profile/id ?
         ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
 
-        StoredObject.put(context, PSO_PROFILE, profileId, data);
+        StoredObject.put((int) profileId, PSO_PROFILE, profileId, data);
 
         return Result.FINISH;
     }
@@ -135,9 +148,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
-        StoredObject.put(context, PSO_NOTIFICATION_PAGE, page, pagedata);
+        StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
         return Result.FINISH;
     }
@@ -148,9 +161,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         // store object
         byte[] pagedata = resultData.getByteArray();
 
-        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync());
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
 
-        StoredObject.put(context, PSO_MESSAGE_PAGE, page, pagedata);
+        StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
         return Result.FINISH;
     }
@@ -162,6 +175,16 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
         String action = params.getString("param");
 
         ProfileDispatch.action(context, profileId, action, false);
+
+        return Result.FINISH;
+    }
+
+    private Result handleSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "handleSwitchUser");
+
+        long userId = params.getLong("userId");
+
+        ProfileDispatch.switchUser(context, userId, false);
 
         return Result.FINISH;
     }

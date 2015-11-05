@@ -14,7 +14,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -23,7 +22,7 @@ import java.util.List;
  * Created by Michael Carver on 3/12/2015.
  */
 public class OAuth implements Parcelable {
-    private static final String TAG = "rpc.server.auth.OAuth";
+    private static final String TAG = "OAuth";
 
 //    public static final String KEY_OAUTH = TAG;
 
@@ -83,7 +82,7 @@ public class OAuth implements Parcelable {
         try {
             return _error != null;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }
@@ -92,7 +91,7 @@ public class OAuth implements Parcelable {
         try {
             return _error;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -101,7 +100,7 @@ public class OAuth implements Parcelable {
         try {
             return _errorDescription;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -114,7 +113,7 @@ public class OAuth implements Parcelable {
         try {
             return Serializer.serializeObject(oauth);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -123,7 +122,7 @@ public class OAuth implements Parcelable {
         try {
             return Serializer.unserializeObject(OAuth.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -131,16 +130,16 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     /*-             Human Code          -*/
     /*-*********************************-*/
-    public void delete(Context context) {
+    public void delete() {
         if (_id != -1)
-            StoredObject.delete(context, _id);
+            StoredObject.delete(_id);
     }
 
-    public void save(Context context) {
-        StoredObject obj = StoredObject.put(context, "OAuthToken", _username, (byte[]) null);
+    public void save() {
+        StoredObject obj = StoredObject.put(0, "OAuthToken", _username, (byte[]) null);
         _id = obj.getId();
         obj.setData(toJson().toByteArray());
-        obj.save(context);
+        obj.save();
     }
 
     public void applyToRequest(JsonObject request) throws ParseException {
@@ -158,41 +157,41 @@ public class OAuth implements Parcelable {
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
     }
 
-    public static OAuth lookup(Context context, String username) {
+    public static OAuth lookup(String username) {
         try {
-            StoredObject obj = StoredObject.get(context, "OAuthToken", username);
+            StoredObject obj = StoredObject.get(0, "OAuthToken", username);
 
             if (obj == null)
                 return null;
 
             return fromJson(new JsonObject(obj.getData()));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
 
-    public static List<OAuth> list(Context context) {
+    public static List<OAuth> list() {
         try {
-            List<StoredObject> objs = StoredObject.list(context, "OAuthToken");
+            List<StoredObject> objs = StoredObject.list(0, "OAuthToken");
             List<OAuth> list = new LinkedList<>();
             for (int i = 0; i < objs.size(); i++) {
                 try {
                     list.add(fromJson(new JsonObject(objs.get(i).getData())));
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
             return list;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
 
     public static OAuth authenticate(Context context, String host, String path, String grantType,
                                      String clientId, String clientSecret, String username,
-                                     String password) throws ParseException, IOException {
+                                     String password) throws Exception {
 
         HttpJsonBuilder builder = new HttpJsonBuilder()
                 .method("POST")
@@ -215,7 +214,7 @@ public class OAuth implements Parcelable {
         token.put("username", username);
         token.put("host", host);
         OAuth auth = OAuth.fromJson(token);
-        auth.save(context);
+        auth.save();
         return auth;
     }
 
@@ -229,7 +228,7 @@ public class OAuth implements Parcelable {
             try {
                 return OAuth.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

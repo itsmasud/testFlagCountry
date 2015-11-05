@@ -31,7 +31,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:text="Buyer's Offer" />
+                android:text="@string/buyers_offer" />
 
         </LinearLayout>
 
@@ -59,12 +59,12 @@
         <Button
             android:id="@+id/clear_button"
             style="?attr/tileButtonStyle"
-            android:text="CLEAR" />
+            android:text="@string/btn_clear" />
 
         <Button
             android:id="@+id/change_button"
             style="?attr/tileButtonStyle"
-            android:text="CHANGE PAY" />
+            android:text="@string/btn_change_pay" />
 
     </LinearLayout>
 

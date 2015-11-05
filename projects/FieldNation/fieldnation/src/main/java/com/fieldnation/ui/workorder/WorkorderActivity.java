@@ -10,6 +10,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
@@ -106,7 +107,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -236,7 +237,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     @Override
     protected void onPause() {
-        _workorderClient.disconnect(this);
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(this);
+
         super.onPause();
     }
 
@@ -261,9 +264,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             _tabview.setMessagesCount(0);
         }
 
-        for (int i = 0; i < _fragments.length; i++) {
-            _fragments[i].setWorkorder(_workorder);
-        }
+//        for (int i = 0; i < _fragments.length; i++) {
+//            _fragments[i].setWorkorder(_workorder);
+//        }
+
+        _fragments[_currentFragment].setWorkorder(_workorder);
+
 
 //        if ((_workorder.getTasks() == null || _workorder.getTasks().length == 0) && !_workorder.canModify()) {
 //            //_tabview.hideTab(TAB_TASKS);
@@ -277,8 +283,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         // WorkorderStatus.INPROGRESS) {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
-
-        setLoading(false);
+        // setLoading(false);
     }
 
     private void setLoading(boolean loading) {
@@ -337,8 +342,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
+                populateUi();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };
@@ -350,6 +356,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _currentFragment = index;
                 _fragments[index].update();
                 _viewPager.setCurrentItem(_currentFragment, true);
+                populateUi();
             }
         }
     };
@@ -383,7 +390,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
             _workorderClient.subActions(_workorderId);
+            _workorderClient.subDeliverableUpload();
             getData(true);
+        }
+
+        @Override
+        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
+            getData(false);
         }
 
         @Override
@@ -395,15 +408,17 @@ public class WorkorderActivity extends AuthActionBarActivity {
         @Override
         public void onGet(Workorder workorder, boolean failed) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
-            if (workorder == null) {
+            if (workorder == null || failed) {
                 try {
                     Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
                     finish();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
                 return;
             }
+
+            Debug.setLong("last_workorder", workorder.getWorkorderId());
 
             workorder.addListener(_workorder_listener);
             _workorder = workorder;

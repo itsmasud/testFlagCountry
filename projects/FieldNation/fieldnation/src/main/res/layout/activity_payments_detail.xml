@@ -47,7 +47,7 @@
                         style="@style/Text_Menu"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Processing "
+                        android:text="@string/processing_"
                         android:textColor="@color/fn_white_text" />
 
                     <TextView

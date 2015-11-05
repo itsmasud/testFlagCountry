@@ -5,6 +5,7 @@ import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
@@ -75,10 +76,10 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             // TODO failed condition
             Log.v(TAG, "onAllNotificationPage " + page);
-            addPage(page, list);
+            addPage(page, list); // done
         }
     };
 }

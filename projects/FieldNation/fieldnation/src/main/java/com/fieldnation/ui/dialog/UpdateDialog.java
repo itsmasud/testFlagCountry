@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentManager;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 
@@ -22,9 +23,9 @@ public class UpdateDialog extends OneButtonDialog {
 
     @Override
     public void show() {
-        setData(getString(R.string.dialog_update_title),
-                getString(R.string.dialog_update_message),
-                getString(R.string.btn_update_now),
+        setData(App.get().getString(R.string.dialog_update_title),
+                App.get().getString(R.string.dialog_update_message),
+                App.get().getString(R.string.btn_update_now),
                 _super_listener);
 
         super.show();
@@ -40,7 +41,7 @@ public class UpdateDialog extends OneButtonDialog {
 
         @Override
         public void onCancel() {
-            GlobalTopicClient.dispatchAppShutdown(getActivity());
+            GlobalTopicClient.appShutdown(getActivity());
         }
     };
 

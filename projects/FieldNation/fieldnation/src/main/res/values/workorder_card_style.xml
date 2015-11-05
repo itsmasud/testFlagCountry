@@ -199,7 +199,7 @@
         </style>
 
         <style name="WorkorderCard_Button" parent="android:attr/buttonStyleSmall">
-            <item name="android:background">@drawable/btn_white</item>
+            <item name="android:background">@drawable/btn_bg_white</item>
             <item name="android:textColor">@color/fn_white_text</item>
             <item name="android:maxLines">1</item>
             <item name="android:ellipsize">none</item>

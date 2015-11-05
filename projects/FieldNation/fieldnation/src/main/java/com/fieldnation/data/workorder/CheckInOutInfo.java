@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CheckInOutInfo {
+    private static final String TAG = "CheckInOutInfo";
+
     @Json(name = "checkInDate")
     private String _checkInDate;
     //	@Json(name="checkInDistance")
@@ -71,7 +74,7 @@ public class CheckInOutInfo {
         try {
             return Serializer.serializeObject(checkInOutInfo);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -80,7 +83,7 @@ public class CheckInOutInfo {
         try {
             return Serializer.unserializeObject(CheckInOutInfo.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

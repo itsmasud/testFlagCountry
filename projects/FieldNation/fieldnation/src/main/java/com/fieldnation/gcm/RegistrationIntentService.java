@@ -18,8 +18,8 @@ package com.fieldnation.gcm;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.util.Log;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -51,7 +51,7 @@ public class RegistrationIntentService extends IntentService {
                 stopSelf();
             }
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
+            Log.d(TAG, e);
         }
     }
 }

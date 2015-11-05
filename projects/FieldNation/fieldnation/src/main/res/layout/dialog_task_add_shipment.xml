@@ -18,7 +18,7 @@
             <TextView
                 android:id="@+id/title_textview"
                 style="?attr/dialogTitleStyle"
-                android:text="Assign/Add New" />
+                android:text="@string/assign_add_new" />
 
             <LinearLayout
                 android:id="@+id/shipments_linearlayout"

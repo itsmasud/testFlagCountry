@@ -431,10 +431,8 @@ public class JsonArray implements Parcelable {
     }
 
     public boolean has(int index) {
-        if (index < _objs.size())
-            return true;
+        return index < _objs.size();
 
-        return false;
     }
 
     protected boolean has(List<String> directions) throws ParseException {

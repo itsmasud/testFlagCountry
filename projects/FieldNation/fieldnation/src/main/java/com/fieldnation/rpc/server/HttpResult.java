@@ -1,6 +1,6 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -20,6 +20,8 @@ import java.text.ParseException;
  * @author michael.carver
  */
 public class HttpResult {
+    private static final String TAG = "HttpResult";
+    
     private byte[] _baResults = null;
     private String _sResults = null;
     private JsonObject _jsonResults = null;
@@ -47,7 +49,7 @@ public class HttpResult {
         _baResults = misc.readAllFromStreamUntil(in, 1024, -1, 102400, 1000);
         if (_baResults != null && _baResults.length >= 102400) {
             // temp file
-            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+            File tempFolder = new File(App.get().getStoragePath() + "/temp");
             tempFolder.mkdirs();
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
@@ -76,7 +78,7 @@ public class HttpResult {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _baResults = null;
             try {
                 InputStream in = conn.getErrorStream();
@@ -86,7 +88,7 @@ public class HttpResult {
                     in.close();
                 }
             } catch (Exception ex1) {
-                ex1.printStackTrace();
+                Log.v(TAG, ex1);
             }
         }
     }
@@ -102,7 +104,15 @@ public class HttpResult {
     public byte[] getByteArray() {
         if (_file != null && _baResults == null) {
             try {
-                _baResults = misc.readAllFromStream(new FileInputStream(_file), 1024, -1, 1000);
+                FileInputStream fin = null;
+                try {
+                    fin = new FileInputStream(_file);
+                    _baResults = misc.readAllFromStream(fin, 1024, -1, 1000);
+                } finally {
+                    if (fin != null) {
+                        fin.close();
+                    }
+                }
             } catch (IOException e) {
             }
         }

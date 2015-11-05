@@ -4,7 +4,9 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
@@ -34,7 +36,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -47,7 +49,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("selector", selector);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -59,7 +61,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -77,7 +79,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -90,7 +92,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("taskId", taskId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -102,7 +104,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("expireInSeconds", expireInSeconds);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -115,7 +117,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("endTimeIso8601", endTimeIso8601);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -145,7 +147,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             }
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -157,7 +159,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("signatureId", signatureId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -168,7 +170,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -179,7 +181,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -190,7 +192,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -202,7 +204,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("bundleId", bundleId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -215,7 +217,26 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             obj.put("filename", filename);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
+
+    public static byte[] pRating(int satisfactionRating, int scopeRating,
+                                 int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pRating");
+            obj.put("satisfactionRating", satisfactionRating);
+            obj.put("scopeRating", scopeRating);
+            obj.put("respectRating", respectRating);
+            obj.put("respectComment", respectComment);
+            obj.put("recommendBuyer", recommendBuyer);
+            obj.put("otherComments", otherComments);
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -235,7 +256,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -287,9 +308,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleCompleteShipmentTask(context, transaction, params, resultData);
                 case "pCounterOffer":
                     return handleCounterOffer(context, transaction, params, resultData);
+                case "pRating":
+                    return handleRating(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -301,6 +324,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "counter_offer", false);
 
         ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        return Result.FINISH;
+    }
+
+    private Result handleRating(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+        ToastClient.snackbar(context, "Success! Your rating has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
         return Result.FINISH;
     }
@@ -364,7 +393,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
     private Result handleList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
         Stopwatch watch = new Stopwatch(true);
-        Log.v(TAG, "handleResult");
+        Log.v(TAG, "handleList");
         // get the basics, send out the event
         int page = 0;
         String selector = "";
@@ -373,27 +402,30 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             page = params.getInt("page");
             selector = params.getString("selector");
             byte[] bdata = resultData.getByteArray();
-            Log.v(TAG, "page: " + page + " selector:" + selector);
+            Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
-            StoredObject.put(context, PSO_WORKORDER_LIST + selector, page, bdata);
+            StoredObject.put(App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
+            Log.v(TAG, "handleList 1");
             JsonArray ja = new JsonArray(bdata);
-
+            Log.v(TAG, "handleList 2");
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
 
                 Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
             }
+            Log.v(TAG, "handleList 3");
 
-            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync());
+            WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
+
+            Log.v(TAG, "handleList 4");
 
             return Result.FINISH;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
-        Log.v(TAG, "handleResult time: " + watch.finish());
+        Log.v(TAG, "handleList time: " + watch.finish());
         return Result.REQUEUE;
-
     }
 
     private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -404,7 +436,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
-        StoredObject.put(context, PSO_MESSAGE_LIST, workorderId, data);
+        StoredObject.put(App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
 
         return Result.FINISH;
     }
@@ -417,7 +449,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
-        StoredObject.put(context, PSO_ALERT_LIST, workorderId, data);
+        StoredObject.put(App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
 
         return Result.FINISH;
     }
@@ -429,7 +461,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
-        StoredObject.put(context, PSO_TASK_LIST, workorderId, data);
+        StoredObject.put(App.getProfileId(), PSO_TASK_LIST, workorderId, data);
 
         return Result.FINISH;
     }
@@ -451,7 +483,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync());
 
         // store it in the store
-        StoredObject.put(context, PSO_WORKORDER, workorderId, workorderData);
+        StoredObject.put(App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
 
         return Result.FINISH;
     }
@@ -465,7 +497,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
 
         //store the signature data
-        StoredObject.put(context, PSO_SIGNATURE, signatureId, data);
+        StoredObject.put(App.getProfileId(), PSO_SIGNATURE, signatureId, data);
 
         return Result.FINISH;
     }
@@ -474,7 +506,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long bundleId = params.getLong("bundleId");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_BUNDLE, bundleId, data);
+        StoredObject.put(App.getProfileId(), PSO_BUNDLE, bundleId, data);
 
         WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
 
@@ -495,7 +527,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-             Fail               -*/
     /*-********************************-*/
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
@@ -504,7 +536,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
                     break;
                 case "pList":
-                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync());
+                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync(), false);
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
@@ -525,7 +557,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
                     break;
                 case "pUploadDeliverable":
-                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderid"), params.getLong("slotId"), params.getString("filename"), false, true);
+                    ToastClient.toast(context, "Failed to upload file. " + params.getString("filename") + " Please try again", Toast.LENGTH_LONG);
+                    WorkorderDispatch.uploadDeliverable(context, params.getLong("workorderId"), params.getLong("slotId"), params.getString("filename"), false, true);
                     break;
                 case "pActionRequest":
                     return handleActionRequestFail(context, transaction, params, resultData);
@@ -537,9 +570,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleCompleteShipmentTaskFail(context, transaction, params, resultData);
                 case "pCounterOffer":
                     return handleCounterOfferFail(context, transaction, params, resultData);
+                case "pRating":
+                    return handleRatingFail(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }
@@ -581,6 +616,26 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         return Result.FINISH;
     }
+
+    private Result handleRatingFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+        try {
+            Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(context,
+                    params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
+                    params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"), params.getLong("workorderId"));
+
+            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+
+            ToastClient.snackbar(context, "Could not send your rating. Please check your connection.",
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            ToastClient.snackbar(context, "Failed. Your rating could not be sent.", Toast.LENGTH_LONG);
+        }
+        return Result.FINISH;
+    }
+
 
     private Result handleCompleteShipmentTaskFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCompleteShipmentTask");

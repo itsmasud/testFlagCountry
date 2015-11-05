@@ -1,63 +1,67 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Label {
-	@Json(name = "action")
-	private String _action;
-	@Json(name="description")
-	private String _description;
-	@Json(name="labelId")
-	private Integer _labelId;
-	@Json(name="name")
-	private String _name;
-	@Json(name="type")
-	private String _type;
+    private static final String TAG = "Label";
 
-	public Label() {
-	}
-	public String getAction(){
-		return _action;
-	}
+    @Json(name = "action")
+    private String _action;
+    @Json(name = "description")
+    private String _description;
+    @Json(name = "labelId")
+    private Integer _labelId;
+    @Json(name = "name")
+    private String _name;
+    @Json(name = "type")
+    private String _type;
 
-	public String getDescription() {
-		return _description;
-	}
+    public Label() {
+    }
 
-	public Integer getLabelId(){
-		return _labelId;
-	}
+    public String getAction() {
+        return _action;
+    }
 
-	public String getName(){
-		return _name;
-	}
+    public String getDescription() {
+        return _description;
+    }
 
-	public String getType(){
-		return _type;
-	}
+    public Integer getLabelId() {
+        return _labelId;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public static JsonObject toJson(Label label) {
-		try {
-			return Serializer.serializeObject(label);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public String getType() {
+        return _type;
+    }
 
-	public static Label fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Label.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(Label label) {
+        try {
+            return Serializer.serializeObject(label);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Label fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Label.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
 }

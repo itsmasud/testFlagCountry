@@ -2,6 +2,8 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
@@ -14,6 +16,7 @@ import java.text.ParseException;
  * Created by Michael on 4/9/2015.
  */
 public class DeliverableTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
+    private static final String TAG = "DeliverableTransactionHandler";
 
     public static byte[] pChange(long workorderId) {
         try {
@@ -21,7 +24,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
             obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -33,7 +36,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
             obj.put("deliverableId", deliverableId);
             return obj.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -46,7 +49,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 //            obj.put("url", url);
 //            return obj.toByteArray();
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //            return null;
 //        }
 //    }
@@ -65,14 +68,14 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 //                    return handleDownload(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return Result.REQUEUE;
         }
         return Result.FINISH;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO implement fail
         return Result.FINISH;
     }
@@ -90,7 +93,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
         long deliverableId = params.getLong("deliverableId");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(context, PSO_DELIVERABLE, deliverableId, data);
+        StoredObject.put(App.getProfileId(), PSO_DELIVERABLE, deliverableId, data);
 
         WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.isSync());
 

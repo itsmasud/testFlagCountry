@@ -1,51 +1,55 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Fee{
-	@Json(name="amount")
-	private Double _amount;
-	@Json(name="chargeType")
-	private String _chargeType;
-	@Json(name="name")
-	private String _name;
+public class Fee {
+    private static final String TAG = "Fee";
 
-	public Fee(){
-	}
-	public Double getAmount(){
-		return _amount;
-	}
+    @Json(name = "amount")
+    private Double _amount;
+    @Json(name = "chargeType")
+    private String _chargeType;
+    @Json(name = "name")
+    private String _name;
 
-	public String getChargeType(){
-		return _chargeType;
-	}
+    public Fee() {
+    }
 
-	public String getName(){
-		return _name;
-	}
+    public Double getAmount() {
+        return _amount;
+    }
 
-	public JsonObject toJson(){
-		return toJson(this);
-	}
+    public String getChargeType() {
+        return _chargeType;
+    }
 
-	public static JsonObject toJson(Fee fee) {
-		try {
-			return Serializer.serializeObject(fee);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public static Fee fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Fee.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(Fee fee) {
+        try {
+            return Serializer.serializeObject(fee);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Fee fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Fee.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
 }

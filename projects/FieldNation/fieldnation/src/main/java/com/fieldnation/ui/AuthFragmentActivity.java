@@ -1,13 +1,17 @@
 package com.fieldnation.ui;
 
+import android.accounts.AccountManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -39,6 +43,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
     // Services
     private GlobalTopicClient _globalTopicClient;
+    private AuthTopicClient _authTopicClient;
 
     // Data
     private Profile _profile;
@@ -84,19 +89,24 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
+        _authTopicClient.connect(this);
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(this);
 
         _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer and Service Company accounts are not supported. Please log in with a provider account.",
+                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
                 "OK", _notProvider_listener);
-
-
     }
 
     @Override
     protected void onPause() {
-        _globalTopicClient.disconnect(this);
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
+            _globalTopicClient.disconnect(this);
+
+        if (_authTopicClient != null && _authTopicClient.isConnected())
+            _authTopicClient.disconnect(this);
+
         super.onPause();
     }
 
@@ -122,7 +132,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _notProviderDialog.show();
             return;
         }
-        GlobalState gs = GlobalState.getContext();
+        App gs = App.get();
         if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
             Log.v(TAG, "Asking Tos");
             if (profile.isTosRequired()) {
@@ -139,7 +149,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                         getString(R.string.btn_accept),
                         getString(R.string.btn_later), _acceptTerms_listener);
             }
-            _acceptTermsDialog.show();
+            try {
+                _acceptTermsDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
@@ -148,8 +162,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                     getString(R.string.btn_later),
                     getString(R.string.btn_no_later),
                     _coi_listener);
-
-            _coiWarningDialog.show();
+            try {
+                _coiWarningDialog.show();
+            } catch (Exception ex) {
+                Debug.logException(ex);
+            }
         } else {
             Log.v(TAG, "tos/coi check done");
             onProfile(profile);
@@ -167,12 +184,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
-            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
+            AuthTopicClient.removeCommand(AuthFragmentActivity.this);
         }
 
         @Override
         public void onCancel() {
-            AuthTopicClient.dispatchRemoveCommand(AuthFragmentActivity.this);
+            AuthTopicClient.removeCommand(AuthFragmentActivity.this);
         }
     };
 
@@ -188,7 +205,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         public void onNegative() {
             // hide, continue
             _profileBounceProtect = false;
-            GlobalState.getContext().setTosReminded();
+            App.get().setTosReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -206,7 +223,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onPositive() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setCoiReminded();
+            App.get().setCoiReminded();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -218,7 +235,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         @Override
         public void onNegative() {
             _profileBounceProtect = false;
-            GlobalState.getContext().setNeverRemindCoi();
+            App.get().setNeverRemindCoi();
             new Handler().post(new Runnable() {
                 @Override
                 public void run() {
@@ -232,20 +249,38 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
     };
 
+    private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _authTopicClient.subNeedUsernameAndPassword();
+        }
+
+        @Override
+        public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
+            Intent intent = new Intent(AuthFragmentActivity.this, AuthActivity.class);
+
+            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    };
+
     private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.registerGotProfile();
-            _globalTopicClient.registerUpdateApp();
-            _globalTopicClient.registerAppShutdown();
-            _globalTopicClient.registerNetworkState();
+            _globalTopicClient.subGotProfile();
+            _globalTopicClient.subUpdateApp();
+            _globalTopicClient.subAppShutdown();
+            _globalTopicClient.subNetworkState();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             _profile = profile;
             gotProfile(profile);
-
         }
 
         @Override

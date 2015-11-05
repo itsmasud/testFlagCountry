@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
@@ -86,7 +87,7 @@ public class TimeLogRowView extends RelativeLayout {
             Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
             _dateTextView.setText(misc.formatDate(cal));
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
         try {
@@ -111,7 +112,7 @@ public class TimeLogRowView extends RelativeLayout {
                 _hoursTextView.setVisibility(GONE);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
@@ -158,8 +159,8 @@ public class TimeLogRowView extends RelativeLayout {
     };
 
     public interface Listener {
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
+        void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount);
 
-        public void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
+        void deleteWorklog(TimeLogRowView view, Workorder workorder, LoggedWork loggedWork);
     }
 }

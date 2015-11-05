@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
 
@@ -53,20 +54,23 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_DOWNLOAD_DOCUMENT)) {
+                Log.v(STAG, "preOnDownload: " + topicId);
                 preOnDownload((Bundle) payload);
             }
         }
 
         private void preOnDownload(Bundle bundle) {
-            if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
-                onDownload(bundle.getLong(PARAM_DOCUMENT_ID), null, true);
-            } else {
-                onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
-                        (File) bundle.getSerializable(PARAM_FILE), false);
-            }
+            File file = null;
+            int state = bundle.getInt(PARAM_STATE);
+
+            if (bundle.containsKey(PARAM_FILE))
+                file = (File) bundle.getSerializable(PARAM_FILE);
+
+            onDownload(bundle.getLong(PARAM_DOCUMENT_ID),
+                    file, state);
         }
 
-        public void onDownload(long documentId, File file, boolean failed) {
+        public void onDownload(long documentId, File file, int state) {
         }
 
 

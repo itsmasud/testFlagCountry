@@ -19,7 +19,7 @@
                 style="?attr/dialogTitleStyle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Change Pay" />
+                android:text="@string/change_pay" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -185,7 +185,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:text="for the first" />
+                        android:text="@string/for_the_first" />
 
                     <EditText
                         android:id="@+id/blendedmaxhours_edittext"
@@ -227,7 +227,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginLeft="5dp"
                         android:layout_marginRight="5dp"
-                        android:text="for up to" />
+                        android:text="@string/for_up_to" />
 
                     <EditText
                         android:id="@+id/extramaxhours_edittext"

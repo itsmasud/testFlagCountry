@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 
 /**
@@ -52,7 +53,7 @@ public class BottomSheetView extends FrameLayout {
                 try {
                     setTop(_recyclerView.getChildAt(4).getBottom());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }, 1000);

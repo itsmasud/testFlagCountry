@@ -3,13 +3,13 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 public class Expense implements Parcelable {
+    private static final String TAG = "Expense";
 
     @Json(name = "approved")
     private Boolean _approved;
@@ -65,7 +65,7 @@ public class Expense implements Parcelable {
         try {
             return Serializer.serializeObject(additionalExpense);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -74,14 +74,14 @@ public class Expense implements Parcelable {
         try {
             return Serializer.unserializeObject(Expense.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
 
     /*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
     public Expense(String description, double amount, ExpenseCategory category) {
         if (category != null) {
             _categoryId = category.getId();
@@ -95,8 +95,8 @@ public class Expense implements Parcelable {
     }
 
 	/*-*********************************************-*/
-	/*-			Parcelable Implementation			-*/
-	/*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
 
     public static final Parcelable.Creator<Expense> CREATOR = new Parcelable.Creator<Expense>() {
 
@@ -105,7 +105,7 @@ public class Expense implements Parcelable {
             try {
                 return Expense.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

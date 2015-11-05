@@ -34,6 +34,7 @@ public class TimePreference extends DialogPreference {
     @Override
     protected View onCreateDialogView() {
         picker = new TimePicker(getContext());
+        DateFormat.is24HourFormat(getContext());
         return (picker);
     }
 
@@ -95,7 +96,6 @@ public class TimePreference extends DialogPreference {
         if (calendar == null) {
             return null;
         }
-
         return DateFormat.getTimeFormat(getContext()).format(new Date(calendar.getTimeInMillis()));
     }
 }

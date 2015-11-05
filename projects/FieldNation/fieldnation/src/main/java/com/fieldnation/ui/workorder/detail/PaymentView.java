@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.utils.misc;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
@@ -104,16 +104,12 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
             _actionButton.setText("COUNTER OFFER");
         } else if (_workorder.canRequestPayIncrease()) {
             _actionButton.setText("REQUEST NEW PAY");
-        } else if (!_workorder.canCounterOffer()) {
+        } else if (!_workorder.canCounterOffer() &&
+                (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
+                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED)) {
             _actionButton.setText("COUNTER DISABLED");
         } else {
             _actionButton.setVisibility(GONE);
-        }
-
-        if (_workorder.getStatus().getWorkorderStatus() == WorkorderStatus.CANCELED || _workorder.getStatus().getWorkorderStatus() == WorkorderStatus.COMPLETED) {
-            _actionButton.setVisibility(GONE);
-        } else {
-            _actionButton.setVisibility(VISIBLE);
         }
     }
 

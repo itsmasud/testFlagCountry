@@ -1,58 +1,60 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ProposedSchedule {
-	@Json(name = "endTime")
-	private String _endTime;
-	@Json(name="endTimeStamp")
-	private Integer _endTimeStamp;
-	@Json(name = "startTime")
-	private String _startTime;
-	@Json(name = "startTimeStamp")
-	private Integer _startTimeStamp;
+    private static final String TAG = "ProposedSchedule";
 
-	public ProposedSchedule() {
-	}
+    @Json(name = "endTime")
+    private String _endTime;
+    @Json(name = "endTimeStamp")
+    private Integer _endTimeStamp;
+    @Json(name = "startTime")
+    private String _startTime;
+    @Json(name = "startTimeStamp")
+    private Integer _startTimeStamp;
 
-	public String getEndTime() {
-		return _endTime;
-	}
+    public ProposedSchedule() {
+    }
 
-	public Integer getEndTimeStamp(){
-		return _endTimeStamp;
-	}
+    public String getEndTime() {
+        return _endTime;
+    }
 
-	public String getStartTime() {
-		return _startTime;
-	}
+    public Integer getEndTimeStamp() {
+        return _endTimeStamp;
+    }
 
-	public Integer getStartTimeStamp() {
-		return _startTimeStamp;
-	}
+    public String getStartTime() {
+        return _startTime;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public Integer getStartTimeStamp() {
+        return _startTimeStamp;
+    }
 
-	public static JsonObject toJson(ProposedSchedule proposedSchedule) {
-		try {
-			return Serializer.serializeObject(proposedSchedule);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
-	public static ProposedSchedule fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(ProposedSchedule.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public static JsonObject toJson(ProposedSchedule proposedSchedule) {
+        try {
+            return Serializer.serializeObject(proposedSchedule);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
+    public static ProposedSchedule fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(ProposedSchedule.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 }

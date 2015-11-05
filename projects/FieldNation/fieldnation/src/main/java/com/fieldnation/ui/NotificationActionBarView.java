@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -53,12 +54,13 @@ public class NotificationActionBarView extends RelativeLayout {
 //        setOnClickListener(_this_onClick);
 
         _client = new GlobalTopicClient(_topicClient_listener);
-        _client.connect(getContext());
+        _client.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _client.disconnect(getContext());
+        if (_client != null && _client.isConnected())
+            _client.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -74,7 +76,7 @@ public class NotificationActionBarView extends RelativeLayout {
     private final GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _client.registerGotProfile();
+            _client.subGotProfile();
         }
 
         @Override

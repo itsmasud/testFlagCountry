@@ -1,11 +1,16 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.location.Location;
+import android.os.Build;
 import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
@@ -16,6 +21,7 @@ import android.text.util.Linkify;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
 
 import org.w3c.dom.Element;
@@ -35,7 +41,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -47,6 +55,14 @@ public class misc {
 
     // private static NumberFormat _normalNumber =
     // NumberFormat.getIntegerInstance();
+
+    public static Bitmap resizeBitmap(Bitmap source, int width, int height) {
+        Matrix m = new Matrix();
+        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
+        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
+    }
+
+
 
     public static void printStackTrace(String message) {
         try {
@@ -73,7 +89,7 @@ public class misc {
         return px;
     }
 
-    public static File dumpLogcat(Context context) {
+    public static File dumpLogcat(Context context, String version) {
         File externalPath = Environment.getExternalStorageDirectory();
         String packageName = context.getPackageName();
         File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
@@ -81,6 +97,13 @@ public class misc {
         File tempfile = new File(temppath + "/logcat-" + (System.currentTimeMillis() / 1000) + ".log");
         try {
             OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(tempfile));
+
+            fout.write("APP VERSION: " + version + "\n");
+            fout.write("MANUFACTURER: " + Build.MANUFACTURER + "\n");
+            fout.write("MODEL: " + Build.MODEL + "\n");
+            fout.write("RELEASE: " + Build.VERSION.RELEASE + "\n");
+            fout.write("SDK: " + Build.VERSION.SDK_INT + "\n");
+
             try {
                 Process process = Runtime.getRuntime().exec("logcat -d");
                 BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
@@ -283,17 +306,19 @@ public class misc {
                 } else if (dist <= l2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
                 } else if (dist <= l3) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
                 } else if (dist <= dist2) {
                     int c = pixels[x + y * source.getWidth()];
                     int i = (x - xoff) + (y - yoff) * size;
-                    destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
+                    if (i < destpix.length)
+                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
                 }
-
             }
         }
 
@@ -304,10 +329,8 @@ public class misc {
         if (str == null)
             return true;
 
-        if (str.trim().equals(""))
-            return true;
+        return str.trim().equals("");
 
-        return false;
     }
 
     public static String capitalize(String src) {
@@ -756,6 +779,17 @@ public class misc {
         return sb.toString();
     }
 
+    public static String longToHex(long value, int length) {
+        StringBuilder sb = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            sb.append(HEXES.charAt((int) (0x0F & (value >> (i * 4)))));
+        }
+        sb = sb.reverse();
+
+        return sb.toString();
+    }
+
     public static String parseXML(String Value) {
         StringBuilder result = new StringBuilder();
         int tabs = 0;
@@ -986,7 +1020,7 @@ public class misc {
     }
 
     public interface PacketListener {
-        public void onPacket(byte[] packet, int length);
+        void onPacket(byte[] packet, int length);
     }
 
     public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,
@@ -1267,6 +1301,28 @@ public class misc {
         }
 
         return result;
+    }
+
+    public static void hideKeyboard(View v) {
+        if (v != null) {
+            InputMethodManager inputManager = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+    }
+
+    public static String formatDateForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public static String formatTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("h:mm a").format(date);
+    }
+
+    public static String formatDateTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
     }
 
 }

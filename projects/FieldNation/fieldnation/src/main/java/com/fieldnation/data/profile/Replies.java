@@ -1,82 +1,86 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Replies {
-	@Json(name = "date")
-	private String _date;
-	@Json(name="file_url")
-	private String _fileUrl;
-	@Json(name="fromUser")
-	private User _fromUser;
-	@Json(name="fromUserId")
-	private Integer _fromUserId;
-	@Json(name = "message")
-	private String _message;
-	@Json(name = "messageFrom")
-	private String _messageFrom;
-	@Json(name="messageId")
-	private Integer _messageId;
-	@Json(name="workorderId")
-	private Integer _workorderId;
+    private static final String TAG = "Replies";
 
-	public Replies() {
-	}
-	public String getDate(){
-		return _date;
-	}
+    @Json(name = "date")
+    private String _date;
+    @Json(name = "file_url")
+    private String _fileUrl;
+    @Json(name = "fromUser")
+    private User _fromUser;
+    @Json(name = "fromUserId")
+    private Integer _fromUserId;
+    @Json(name = "message")
+    private String _message;
+    @Json(name = "messageFrom")
+    private String _messageFrom;
+    @Json(name = "messageId")
+    private Integer _messageId;
+    @Json(name = "workorderId")
+    private Integer _workorderId;
 
-	public String getFileUrl(){
-		return _fileUrl;
-	}
+    public Replies() {
+    }
 
-	public User getFromUser(){
-		return _fromUser;
-	}
+    public String getDate() {
+        return _date;
+    }
 
-	public Integer getFromUserId(){
-		return _fromUserId;
-	}
+    public String getFileUrl() {
+        return _fileUrl;
+    }
 
-	public String getMessage() {
-		return _message;
-	}
+    public User getFromUser() {
+        return _fromUser;
+    }
 
-	public String getMessageFrom() {
-		return _messageFrom;
-	}
+    public Integer getFromUserId() {
+        return _fromUserId;
+    }
 
-	public Integer getMessageId(){
-		return _messageId;
-	}
+    public String getMessage() {
+        return _message;
+    }
 
-	public Integer getWorkorderId(){
-		return _workorderId;
-	}
+    public String getMessageFrom() {
+        return _messageFrom;
+    }
 
-	public JsonObject toJson() {
-		return toJson(this);
-	}
+    public Integer getMessageId() {
+        return _messageId;
+    }
 
-	public static JsonObject toJson(Replies replies) {
-		try {
-			return Serializer.serializeObject(replies);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public Integer getWorkorderId() {
+        return _workorderId;
+    }
 
-	public static Replies fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Replies.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(Replies replies) {
+        try {
+            return Serializer.serializeObject(replies);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Replies fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Replies.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 
 }

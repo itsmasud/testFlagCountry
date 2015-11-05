@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpectedPayment;
@@ -113,7 +113,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _expensesTextView.setText(misc.toCurrency(pay.getExpensesApproved()));
         _discountsTextView.setText(misc.toCurrency(pay.getDiscounts()));
         _expectedTotalTextView.setText(misc.toCurrency(pay.getExpectedTotal()));
-        _feeTextView.setText(misc.toCurrency(pay.getExpectedFee()));
+        _feeTextView.setText(misc.toCurrency(pay.getExpectedServiceFee()));
         _totalTextView.setText(misc.toCurrency(pay.getExpectedAmount()));
         _payStatusTextView.setText(misc.capitalize(pay.getPaymentStatus()));
         if (pay.getFnFeePercentage() != null) {
@@ -122,15 +122,19 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
             _feePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), 10.0));
         }
 
-        if ((int) (double) pay.getExpectedInsuranceFee() == 0) {
+        if ((int) (double) (pay.getExpectedInsuranceFee() * 100) == 0) {
             _insuraceFeeTextView.setVisibility(GONE);
             _insurancePercentTextView.setVisibility(GONE);
         } else {
-            Profile profile = GlobalState.getContext().getProfile();
+            Profile profile = App.get().getProfile();
             _insuraceFeeTextView.setVisibility(VISIBLE);
             _insurancePercentTextView.setVisibility(VISIBLE);
             _insuraceFeeTextView.setText(misc.toCurrency(pay.getExpectedInsuranceFee()));
-            _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            try {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), profile.insurancePercent()));
+            } catch (Exception ex) {
+                _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), 1.3F));
+            }
         }
     }
 }

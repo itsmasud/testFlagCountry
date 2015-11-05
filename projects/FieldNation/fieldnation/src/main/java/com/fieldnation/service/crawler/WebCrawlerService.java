@@ -7,8 +7,9 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GlobalState;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
@@ -33,6 +34,7 @@ import com.fieldnation.utils.misc;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Created by Michael Carver on 4/21/2015.
@@ -51,10 +53,10 @@ public class WebCrawlerService extends Service {
     private boolean _haveProfile = false;
     private long _lastRequestTime;
     private long _requestCounter = 0;
-    private boolean _skipProfileImages = true;
     private boolean _isRunning = false;
     private long _imageDaysToLive = -1;
     private boolean _runningPurge = false;
+    private boolean _monitorRunning = false;
 
     public WebCrawlerService() {
         super();
@@ -79,13 +81,14 @@ public class WebCrawlerService extends Service {
         SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
                 Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
 
-        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_profile_photo_ttl), "-1"));
+        _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
 
         purgeOldData();
 
         // we're not allowed to run, stop
         if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false)) {
             Log.v(TAG, "sync disabled, quiting");
+            startActivityMonitor();
             return START_NOT_STICKY;
         }
 
@@ -101,16 +104,14 @@ public class WebCrawlerService extends Service {
         if (intent != null && intent.hasExtra("IS_ALARM")) {
             Log.v(TAG, "alarm triggered");
 
-            _skipProfileImages = settings.getBoolean(getString(R.string.pref_key_sync_skip_profile_images), true);
-
             runCrawler();
 
             return START_STICKY;
         }
 
         Log.v(TAG, "Do nothing");
-
-        return START_NOT_STICKY;
+        startActivityMonitor();
+        return START_STICKY;
     }
 
     private void purgeOldData() {
@@ -125,30 +126,31 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "Flushing logs");
                 misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
-                StoredObject.flush(WebCrawlerService.this, 604800000); // 1 week
+                StoredObject.flush(604800000); // 1 week
+                //StoredObject.flush(1000); // 1 week
 
-                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + GlobalState.getContext().haveWifi());
+                Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
                 // only flush if we have wifi, so that the app can get new ones without
                 // worrying about cell traffic
-                if (_imageDaysToLive > -1 && GlobalState.getContext().haveWifi()) {
+                if (_imageDaysToLive > -1 && App.get().haveWifi()) {
                     long days = _imageDaysToLive * 86400000;
                     long cutoff = System.currentTimeMillis();
-                    List<StoredObject> list = StoredObject.list(WebCrawlerService.this, "PhotoCache");
+                    List<StoredObject> list = StoredObject.list(App.getProfileId(), "PhotoCache");
 
                     Log.v(TAG, "Flushing photos");
                     int count = 0;
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(WebCrawlerService.this, obj);
+                            StoredObject.delete(obj);
                             count++;
                         }
                     }
 
-                    list = StoredObject.list(WebCrawlerService.this, "PhotoCacheCircle");
+                    list = StoredObject.list(App.getProfileId(), "PhotoCacheCircle");
 
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(WebCrawlerService.this, obj);
+                            StoredObject.delete(obj);
                             count++;
                         }
                     }
@@ -180,15 +182,20 @@ public class WebCrawlerService extends Service {
     private void startActivityMonitor() {
         if (_activityHandler == null)
             _activityHandler = new Handler();
-        _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+
+        if (!_monitorRunning) {
+            _monitorRunning = true;
+            _activityHandler.postDelayed(_activityMonitor_runnable, 60000);
+        }
     }
 
     private final Runnable _activityMonitor_runnable = new Runnable() {
         @Override
         public void run() {
-            // check timer
+            _monitorRunning = false;// check timer
             if (System.currentTimeMillis() - _lastRequestTime > 60000
                     && !_runningPurge) {
+
                 // shutdown
                 stopSelf();
             } else {
@@ -200,9 +207,12 @@ public class WebCrawlerService extends Service {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _workorderClient.disconnect(this);
-        _profileClient.disconnect(this);
-        _workorderThreadManager.shutdown();
+        if (_workorderClient != null)
+            _workorderClient.disconnect(this);
+        if (_profileClient != null)
+            _profileClient.disconnect(this);
+        if (_workorderThreadManager != null)
+            _workorderThreadManager.shutdown();
         _isRunning = false;
         super.onDestroy();
     }
@@ -215,8 +225,14 @@ public class WebCrawlerService extends Service {
         long runTime = settings.getLong(getString(R.string.pref_key_sync_start_time), 180);
 
         Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
-        cal.set(Calendar.MINUTE, (int) (runTime % 60));
+        if (BuildConfig.DEBUG) {
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60));
+            cal.set(Calendar.MINUTE, (int) (runTime % 60));
+        } else {
+            Random random = new Random();
+            cal.set(Calendar.HOUR_OF_DAY, (int) (runTime / 60) + random.nextInt(1));
+            cal.set(Calendar.MINUTE, (int) (runTime % 60) + random.nextInt(60));
+        }
 
         long nextTime = cal.getTimeInMillis();
         if (nextTime < System.currentTimeMillis()) {
@@ -260,9 +276,9 @@ public class WebCrawlerService extends Service {
             incrementPendingRequestCounter(3);
             incRequestCounter(3);
             _haveProfile = false;
-            ProfileClient.get(WebCrawlerService.this, 0, true);
-            ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
-            ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
+            ProfileClient.get(WebCrawlerService.this, 0, true, false);
+            ProfileClient.listMessages(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
+            ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
         }
 
         @Override
@@ -276,17 +292,15 @@ public class WebCrawlerService extends Service {
                     return;
 
                 Log.v(TAG, "ProfileClient.onGet");
-                if (!_skipProfileImages) {
-                    incRequestCounter(2);
-                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
-                }
+                incRequestCounter(2);
+                PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getLarge(), true, true);
+                PhotoClient.get(WebCrawlerService.this, profile.getPhoto().getThumb(), true, true);
                 _haveProfile = true;
             }
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
@@ -298,20 +312,18 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true, false);
 
-            if (!_skipProfileImages) {
-                for (int i = 0; i < list.size(); i++) {
-                    Message message = list.get(i);
-                    incRequestCounter(2);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
-                }
+            for (int i = 0; i < list.size(); i++) {
+                Message message = list.get(i);
+                incRequestCounter(2);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
             }
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "onNotificationList");
 
             incrementPendingRequestCounter(-1);
@@ -324,7 +336,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true, false);
         }
     };
 
@@ -337,16 +349,15 @@ public class WebCrawlerService extends Service {
             _workorderClient.subGet(true);
             _workorderClient.subListMessages(true);
 
-            incrementPendingRequestCounter(3);
-            incRequestCounter(3);
+            incrementPendingRequestCounter(2);
+            incRequestCounter(2);
             WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.ASSIGNED, 0, true, false);
-            WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.CANCELED, 0, true, false);
             WorkorderClient.list(WebCrawlerService.this, WorkorderDataSelector.COMPLETED, 0, true, false);
         }
 
         @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed) {
-            Log.v(TAG, "onWorkorderList");
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "onWorkorderList, " + selector + ", " + page + ", " + failed + ", " + isCached);
 
             incrementPendingRequestCounter(-1);
 
@@ -401,13 +412,11 @@ public class WebCrawlerService extends Service {
             if (failed)
                 return;
 
-            if (!_skipProfileImages) {
-                for (int i = 0; i < messages.size(); i++) {
-                    incRequestCounter(2);
-                    com.fieldnation.data.workorder.Message message = messages.get(i);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
-                }
+            for (int i = 0; i < messages.size(); i++) {
+                incRequestCounter(2);
+                com.fieldnation.data.workorder.Message message = messages.get(i);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
             }
             _workorderThreadManager.wakeUp();
         }
@@ -429,13 +438,11 @@ public class WebCrawlerService extends Service {
 
         @Override
         public boolean doWork() {
-            Log.v(TAG, "doWork");
-
             if (System.currentTimeMillis() - _lastRequestTime > 5000) {
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
                 return true;
             }
@@ -453,7 +460,7 @@ public class WebCrawlerService extends Service {
             Log.v(TAG, "WorkorderDetailWorker running" + workorder.getWorkorderId());
             incRequestCounter(3);
             incrementPendingRequestCounter(1);
-            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true);
+            WorkorderClient.listMessages(WebCrawlerService.this, workorder.getWorkorderId(), true, false);
             WorkorderClient.listAlerts(WebCrawlerService.this, workorder.getWorkorderId(), true);
             WorkorderClient.listTasks(WebCrawlerService.this, workorder.getWorkorderId(), true);
 
@@ -461,9 +468,14 @@ public class WebCrawlerService extends Service {
             Signature[] sigs = workorder.getSignatureList();
             if (sigs != null && sigs.length > 0) {
                 for (Signature sig : sigs) {
-//                    Log.v(TAG, "getSignature");
-                    incRequestCounter(1);
-                    WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                    try {
+                        // Log.v(TAG, "getSignature");
+                        WorkorderClient.getSignature(_context, workorder.getWorkorderId(), sig.getSignatureId(), true);
+                        incRequestCounter(1);
+                        //Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
             }
 
@@ -473,9 +485,14 @@ public class WebCrawlerService extends Service {
                     UploadedDocument[] docs = slot.getUploadedDocuments();
                     if (docs != null && docs.length > 0) {
                         for (UploadedDocument doc : docs) {
-                            incRequestCounter(1);
-                            DocumentClient.downloadDocument(_context, doc.getId(),
-                                    doc.getDownloadLink(), doc.getFileName(), true);
+                            try {
+                                DocumentClient.downloadDocument(_context, doc.getId(),
+                                        doc.getDownloadLink(), doc.getFileName(), true);
+                                incRequestCounter(1);
+                                //Thread.sleep(1000);
+                            } catch (Exception ex) {
+                                Log.v(TAG, ex);
+                            }
                         }
                     }
                 }
@@ -484,9 +501,14 @@ public class WebCrawlerService extends Service {
             Document[] documents = workorder.getDocuments();
             if (documents != null && documents.length > 0) {
                 for (Document doc : documents) {
-                    incRequestCounter(1);
-                    DocumentClient.downloadDocument(_context, doc.getDocumentId(),
-                            doc.getFilePath(), doc.getFileName(), true);
+                    try {
+                        DocumentClient.downloadDocument(_context, doc.getDocumentId(),
+                                doc.getFilePath(), doc.getFileName(), true);
+                        incRequestCounter(1);
+                        //Thread.sleep(1000);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
             }
 

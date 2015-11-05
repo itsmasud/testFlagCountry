@@ -163,6 +163,7 @@ public class WorkorderTabView extends RelativeLayout {
         }
     }
 
+
 //    public void hideTab(int index) {
 //        _layouts[index].setVisibility(View.GONE);
 //    }
@@ -179,6 +180,6 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Private				-*/
     /*-*********************************-*/
     public interface Listener {
-        public void onChange(int index);
+        void onChange(int index);
     }
 }

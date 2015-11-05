@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -11,7 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
@@ -125,7 +126,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _loadingView = (RefreshView) view.findViewById(R.id.loading_view);
         _loadingView.setListener(_refreshViewListener);
 
-        _adapter.setListener(_adapterListener);
+        _adapter.setOnLoadingCompleteListener(_adapterListener);
 
         _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
         _listView.setDivider(null);
@@ -236,7 +237,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         setLoading(true);
 
-        GoogleAnalyticsTopicClient.dispatchScreenView(getActivity(), getGaLabel());
+        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
 
         _gpsLocationService = new GpsLocationService(getActivity());
 
@@ -279,14 +280,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
-        _workorderClient.connect(getActivity());
+        _workorderClient.connect(App.get());
     }
 
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach()");
 
-        _workorderClient.disconnect(getActivity());
+        _workorderClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -294,8 +295,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        if (getActivity() != null)
-            GoogleAnalyticsTopicClient.dispatchScreenView(getActivity(), getGaLabel());
+        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
     }
 
     private void setLoading(boolean loading) {
@@ -319,21 +319,24 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "requestList " + page);
         if (page == 0)
             setLoading(true);
-        WorkorderClient.list(GlobalState.getContext(), _displayView, page, false, allowCache);
+        WorkorderClient.list(App.get(), _displayView, page, false, allowCache);
     }
 
     private void addPage(int page, List<Workorder> list) {
-        Log.v(TAG, "addPage: page:" + page + " list:" + list.size() + " view:" + _displayView.getCall());
-        if (page == 0 && list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
-            _emptyView.setVisibility(View.VISIBLE);
-        } else if (page == 0 && list.size() > 0 || !_displayView.shouldShowGoToMarketplace()) {
+        Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
+        if (page == 0 && list != null) {
+            if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
+                _emptyView.setVisibility(View.VISIBLE);
+            } else {
+                _emptyView.setVisibility(View.GONE);
+            }
+        } else {
             _emptyView.setVisibility(View.GONE);
         }
 
-//        if (list.size() == 0 ) {
-//            _adapter.setNoMorePages();
-//        }
-
+        if (list.size() == 0 ) {
+            _adapter.setNoMorePages();
+        }
         _adapter.setPage(page, list);
     }
 
@@ -383,11 +386,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _gpsLocationService.setListener(null);
         setLoading(true);
         _adapter.notifyDataSetChanged();
-        GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
+        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
         if (_gpsLocationService.hasLocation()) {
-            WorkorderClient.actionCheckin(getActivity(), _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
         } else {
-            WorkorderClient.actionCheckin(getActivity(), _currentWorkorder.getWorkorderId());
+            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
         }
 //        _adapter.refreshPages();
     }
@@ -398,28 +401,28 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _gpsLocationService.setListener(null);
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(
-                getActivity(),
+                App.get(),
                 getGaLabel(),
                 GoogleAnalyticsTopicClient.EventAction.CHECKOUT,
                 "WorkorderCardView", 1);
 
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(getActivity(),
+                WorkorderClient.actionCheckout(App.get(),
                         _currentWorkorder.getWorkorderId(),
                         _deviceCount,
                         _gpsLocationService.getLocation());
             } else {
-                WorkorderClient.actionCheckout(getActivity(),
+                WorkorderClient.actionCheckout(App.get(),
                         _currentWorkorder.getWorkorderId(),
                         _gpsLocationService.getLocation());
             }
 
         } else {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(getActivity(), _currentWorkorder.getWorkorderId(), _deviceCount);
+                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount);
             } else {
-                WorkorderClient.actionCheckout(getActivity(), _currentWorkorder.getWorkorderId());
+                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId());
             }
 //            _adapter.refreshPages();
         }
@@ -459,7 +462,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkInListener.onLocation");
             startCheckin();
-            _locationLoadingDialog.dismiss();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
 
@@ -468,21 +473,41 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onLocation(Location location) {
             Log.v(TAG, "_gps_checkOutListener.onLocation");
             startCheckOut();
-            _locationLoadingDialog.dismiss();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
         }
     };
 
     private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+            try {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+            } catch (Exception ex) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onOk();
+                    }
+                }, 500);
+            }
         }
 
         @Override
         public void onNotNow() {
-            doCheckin();
-            setLoading(false);
+            try {
+                doCheckin();
+                setLoading(false);
+            } catch (Exception ex) {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        onNotNow();
+                    }
+                }, 500);
+            }
         }
 
         @Override
@@ -527,10 +552,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     getString(R.string.btn_no), new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+                            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                                     GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST,
                                     "WorkorderCardView", 1);
-                            WorkorderClient.actionWithdrawRequest(GlobalState.getContext(), workorder.getWorkorderId());
+                            WorkorderClient.actionWithdrawRequest(App.get(), workorder.getWorkorderId());
                         }
 
                         @Override
@@ -569,9 +594,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkorderCardView", 1);
-            WorkorderClient.actionAcknowledgeHold(getActivity(), workorder.getWorkorderId());
+            WorkorderClient.actionAcknowledgeHold(App.get(), workorder.getWorkorderId());
             _adapter.refreshPages();
         }
 
@@ -582,6 +607,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
+            setLoading(true);
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 //            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
@@ -592,7 +618,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(GlobalState.getContext(), getGaLabel(),
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkorderCardView", 1);
 
             if (workorder.getPaymentId() != null) {
@@ -603,6 +629,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 Intent intent = new Intent(getActivity(), PaymentListActivity.class);
                 startActivity(intent);
             }
+        }
+
+        @Override
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
+
+            WorkorderClient.actionReadyToGo(App.get(), workorder.getWorkorderId());
         }
     };
 
@@ -641,13 +675,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 try {
                     time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
             // request the workorder
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(),
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
-            WorkorderClient.actionRequest(getActivity(), workorder.getWorkorderId(), time);
+            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), time);
 
             // notify the UI
             _adapter.refreshPages();
@@ -658,13 +692,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {
-                GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
+                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionConfirmAssignment(getActivity(),
+                WorkorderClient.actionConfirmAssignment(App.get(),
                         workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
                 _adapter.refreshPages();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
 
@@ -684,10 +718,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
 
-            GoogleAnalyticsTopicClient.dispatchEvent(getActivity(), getGaLabel(),
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkorderCardView", 1);
 
-            WorkorderClient.actionCounterOffer(getActivity(), workorder.getWorkorderId(),
+            WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(),
                     expires, reason, expirationInSeconds, pay, schedule, expenses);
 
             setLoading(true);
@@ -765,14 +799,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-//            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
+            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
             _adapter.refreshPages();
         }
     };
 
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
         @Override
-        public View getView(int page, int position, Workorder object, View convertView, ViewGroup parent) {
+        public View getView(Workorder object, View convertView, ViewGroup parent) {
             WorkorderCardView v = null;
             if (convertView == null) {
                 v = new WorkorderCardView(parent.getContext());
@@ -782,7 +816,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            v.setWorkorder(object, _gpsLocationService.getLocation());
+            if (_gpsLocationService != null && _gpsLocationService.getLocation() != null)
+                v.setWorkorder(object, _gpsLocationService.getLocation());
+            else
+                v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
             v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 
@@ -795,7 +832,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final PagingAdapter.Listener _adapterListener = new PagingAdapter.Listener() {
+    private final PagingAdapter.OnLoadingCompleteListener _adapterListener = new PagingAdapter.OnLoadingCompleteListener() {
         @Override
         public void onLoadingComplete() {
 //            Log.v(TAG, "_adapterListener.onLoadingComplete");
@@ -818,12 +855,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
 
         @Override
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
-            Log.v(TAG, "_workorderData_listener.onList");
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "_workorderData_listener.onList, " + selector + ", " + page + ", " + failed + ", " + isCached);
             if (!selector.equals(_displayView))
                 return;
-            if (list != null)
-                addPage(page, list);
+
+            addPage(page, list); // done
         }
 
         @Override
@@ -832,3 +869,4 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 }
+

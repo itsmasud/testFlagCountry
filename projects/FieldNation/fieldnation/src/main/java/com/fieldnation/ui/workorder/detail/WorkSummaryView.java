@@ -7,6 +7,7 @@ import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,7 +19,7 @@ import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.utils.misc;
 
 public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
-    private static final String TAG = "SummaryView";
+    private static final String TAG = "WorkSummaryView";
 
     // UI
     private TextView _projectNameTextView;
@@ -35,6 +36,8 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
+
+    private Button _readMoreButton;
 
     // Data
     private Listener _listener;
@@ -69,11 +72,9 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         _descriptionContainer = (LinearLayout) findViewById(R.id.description_container);
 
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _descriptionTextView.setOnClickListener(_description_onClick);
 
         _descriptionShortLayout = (RelativeLayout) findViewById(R.id.descriptionShort_layout);
         _descriptionShortTextView = (TextView) findViewById(R.id.descriptionShort_textview);
-        _descriptionShortTextView.setOnClickListener(_descriptionShort_onClick);
 
         _confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
@@ -83,6 +84,9 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
+
+        _readMoreButton = (Button) findViewById(R.id.readMore_button);
+        _readMoreButton.setOnClickListener(_readMore_onClick);
 
         setVisibility(View.GONE);
     }
@@ -154,19 +158,18 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _description_onClick = new OnClickListener() {
+    private final View.OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _descriptionTextView.setVisibility(View.GONE);
-            _descriptionShortLayout.setVisibility(View.VISIBLE);
-        }
-    };
-
-    private final View.OnClickListener _descriptionShort_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            _descriptionTextView.setVisibility(View.VISIBLE);
-            _descriptionShortLayout.setVisibility(View.GONE);
+            if (_descriptionShortLayout.getVisibility() == VISIBLE) {
+                _descriptionTextView.setVisibility(View.VISIBLE);
+                _descriptionShortLayout.setVisibility(View.GONE);
+                _readMoreButton.setText(R.string.btn_read_less);
+            } else {
+                _descriptionTextView.setVisibility(View.GONE);
+                _descriptionShortLayout.setVisibility(View.VISIBLE);
+                _readMoreButton.setText(R.string.btn_read_more);
+            }
         }
     };
 

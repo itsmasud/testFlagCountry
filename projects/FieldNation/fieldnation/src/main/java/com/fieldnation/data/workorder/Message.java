@@ -1,10 +1,14 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
 
 public class Message {
+    private static final String TAG = "Message";
+
     @Json(name = "fromUser")
     private User _fromUser;
     @Json(name = "message")
@@ -26,9 +30,17 @@ public class Message {
     @Json(name = "toUser")
     private User _toUser;
     @Json(name = "workorderId")
-    private Integer _workorderId;
+    private Long _workorderId;
 
     public Message() {
+    }
+
+    public Message(long workorderId, User fromUser, String message) {
+        _workorderId = workorderId;
+        _fromUser = fromUser;
+        _message = message;
+        _isRead = false;
+        _msgCreateDate = ISO8601.now();
     }
 
     public User getFromUser() {
@@ -74,7 +86,7 @@ public class Message {
         return _toUser;
     }
 
-    public Integer getWorkorderId() {
+    public Long getWorkorderId() {
         return _workorderId;
     }
 
@@ -86,7 +98,7 @@ public class Message {
         try {
             return Serializer.serializeObject(message);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -95,9 +107,8 @@ public class Message {
         try {
             return Serializer.unserializeObject(Message.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
-
 }

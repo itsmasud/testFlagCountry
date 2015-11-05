@@ -2,6 +2,7 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
@@ -12,7 +13,7 @@ import com.fieldnation.service.objectstore.StoredObject;
  * Created by Michael Carver on 3/13/2015.
  */
 public class ProfileService extends MSService implements ProfileConstants {
-    private static final String TAG = "ProfileDataService";
+    private static final String TAG = "ProfileService";
 
     @Override
     public void onDestroy() {
@@ -46,47 +47,55 @@ public class ProfileService extends MSService implements ProfileConstants {
     private void get(Intent intent) {
         Log.v(TAG, "get");
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
         long profileId = intent.getLongExtra(PARAM_PROFILE_ID, 0);
 
         StoredObject obj = null;
 
-        if (!isSync) {
-            obj = StoredObject.get(this, PSO_PROFILE, profileId);
+        if (!isSync && allowCache) {
+            obj = StoredObject.get((int) profileId, PSO_PROFILE, profileId);
             // get stored object
             // if exists, then pass it back
             if (obj != null) {
                 try {
                     ProfileDispatch.get(this, profileId, new JsonObject(obj.getData()), false, isSync);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (isSync
+                || !allowCache
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             // send request (we always ask for an update)
             ProfileTransactionBuilder.get(this, profileId, false);
         }
     }
 
     private void listNotifications(Intent intent) {
-        Log.v(TAG, "listNotifications");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
+        Log.v(TAG, "listNotifications(" + page + ", " + isSync + ")");
 
         StoredObject obj = null;
-        if (!isSync) {
-            obj = StoredObject.get(this, PSO_NOTIFICATION_PAGE, page + "");
+        if (!isSync && allowCache) {
+            obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
-                    ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync);
+                    ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (!allowCache
+                || isSync
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             ProfileTransactionBuilder.listNotifications(this, page, isSync);
         }
     }
@@ -95,21 +104,25 @@ public class ProfileService extends MSService implements ProfileConstants {
         Log.v(TAG, "listMessages");
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
         StoredObject obj = null;
 
-        if (!isSync) {
-            obj = StoredObject.get(this, PSO_MESSAGE_PAGE, page);
+        if (!isSync && allowCache) {
+            obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
-                    ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync);
+                    ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync, true);
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
 
-        if (isSync || obj == null || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
+        if (!allowCache
+                || isSync
+                || obj == null
+                || (obj.getLastUpdated() + CALL_BOUNCE_TIMER < System.currentTimeMillis())) {
             ProfileTransactionBuilder.listMessages(this, page, isSync);
         }
     }

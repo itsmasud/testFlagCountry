@@ -13,12 +13,13 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class PaymentDispatch implements PaymentConstants {
 
-    public static void list(Context context, int page, JsonArray data, boolean failed, boolean isSync) {
+    public static void list(Context context, int page, JsonArray data, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putBoolean(PARAM_ERROR, failed);
+        bundle.putBoolean(PARAM_IS_CACHED, isCached);
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, data);
 

@@ -1,45 +1,48 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Penalty{
-	@Json(name="amount")
-	private Double _amount;
-	@Json(name="name")
-	private String _name;
+public class Penalty {
+    private static final String TAG = "Penalty";
 
-	public Penalty(){
-	}
-	public Double getAmount(){
-		return _amount;
-	}
+    @Json(name = "amount")
+    private Double _amount;
+    @Json(name = "name")
+    private String _name;
 
-	public String getName(){
-		return _name;
-	}
+    public Penalty() {
+    }
 
-	public JsonObject toJson(){
-		return toJson(this);
-	}
+    public Double getAmount() {
+        return _amount;
+    }
 
-	public static JsonObject toJson(Penalty penalty) {
-		try {
-			return Serializer.serializeObject(penalty);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public String getName() {
+        return _name;
+    }
 
-	public static Penalty fromJson(JsonObject json) {
-		try {
-			return Serializer.unserializeObject(Penalty.class, json);
-		} catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
-	}
+    public JsonObject toJson() {
+        return toJson(this);
+    }
 
+    public static JsonObject toJson(Penalty penalty) {
+        try {
+            return Serializer.serializeObject(penalty);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Penalty fromJson(JsonObject json) {
+        try {
+            return Serializer.unserializeObject(Penalty.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
 }

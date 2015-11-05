@@ -16,56 +16,49 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical">
 
-            <LinearLayout
+            <TextView
+                style="?attr/dialogTitleStyle"
+                android:text="@string/dialog_decline_title" />
+
+            <TextView
+                style="?attr/dialogBodyStyle"
+                android:text="@string/dialog_decline_message" />
+
+            <CheckBox
+                android:id="@+id/block_checkbox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:orientation="vertical">
+                android:text="@string/dialog_block_message" />
 
-                <TextView
-                    style="?attr/dialogTitleStyle"
-                    android:text="@string/dialog_decline_title" />
-
-                <TextView
-                    style="?attr/dialogBodyStyle"
-                    android:text="@string/dialog_decline_message" />
-
-                <CheckBox
-                    android:id="@+id/block_checkbox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/dialog_block_message" />
+            <LinearLayout
+                android:id="@+id/block_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
 
                 <LinearLayout
-                    android:id="@+id/block_layout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:visibility="visible">
+                    android:orientation="vertical">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                    <Spinner
+                        android:id="@+id/block_spinner"
+                        style="@style/Spinner" />
 
-                        <Spinner
-                            android:id="@+id/block_spinner"
-                            style="@style/Spinner" />
-
-                        <View
-                            style="@style/DividerFull"
-                            android:layout_marginBottom="8dp"
-                            android:layout_marginLeft="4dp"
-                            android:layout_marginRight="4dp"
-                            android:background="@color/fn_dark_text_80" />
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/blockdetails_edittext"
-                        style="@style/EditText"
-                        android:layout_width="match_parent"
-                        android:hint="@string/dialog_block_details" />
+                    <View
+                        style="@style/DividerFull"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/fn_dark_text_80" />
                 </LinearLayout>
+
+                <EditText
+                    android:id="@+id/blockdetails_edittext"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:hint="@string/dialog_block_details" />
             </LinearLayout>
         </LinearLayout>
 

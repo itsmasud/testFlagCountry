@@ -21,6 +21,7 @@ public class ThreadManager {
     }
 
     public void shutdown() {
+        Log.v(TAG, "shutdown start");
         for (int i = 0; i < _threads.size(); i++) {
             _threads.get(i).finish();
         }
@@ -32,12 +33,13 @@ public class ThreadManager {
             try {
                 thread.join(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
 
             if (thread.isAlive())
                 thread.interrupt();
         }
+        Log.v(TAG, "shutdown end");
     }
 
     public void wakeUp() {
@@ -53,11 +55,7 @@ public class ThreadManager {
         public ManagedThread(ThreadManager manager) {
             super();
             THREAD_PAUSE = manager.THREAD_PAUSE;
-        }
-
-        public ManagedThread(ThreadManager manager, String name) {
-            super(name);
-            THREAD_PAUSE = manager.THREAD_PAUSE;
+            setName("ManagedThread/" + getClass().getSimpleName());
         }
 
         void finish() {
@@ -67,11 +65,13 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-                    THREAD_PAUSE.wait();
+//                    Log.v(getName(), "sleeping");
+                    THREAD_PAUSE.wait(100);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
+            //Log.v(getName(), "woke up");
         }
 
         @Override

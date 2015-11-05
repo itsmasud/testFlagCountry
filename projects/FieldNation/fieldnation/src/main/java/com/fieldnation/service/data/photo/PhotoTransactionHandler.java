@@ -4,7 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
-import com.fieldnation.GlobalState;
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -13,8 +13,8 @@ import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.misc;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
 
 /**
  * Created by Michael Carver on 3/12/2015.
@@ -29,7 +29,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             json.put("circle", getCircle);
             return json.toByteArray();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         return null;
@@ -49,33 +49,23 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             // generate the bitmaps
             byte[] imageData = resultData.getByteArray();
-            Bitmap imageBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+            Bitmap imageBitmap = misc.resizeBitmap(BitmapFactory.decodeByteArray(imageData, 0, imageData.length), 95, 95);
             Bitmap circleBitmap = misc.extractCircle(imageBitmap);
 
             // find the paths
-            String storagePath = GlobalState.getContext().getStoragePath() + "/temp";
+            String storagePath = App.get().getStoragePath() + "/temp";
             File tempFolder = new File(storagePath);
             tempFolder.mkdirs();
 
-            // generate the pngs
-            File imageFile = File.createTempFile("photo", "img", tempFolder);
-            FileOutputStream fout = new FileOutputStream(imageFile, false);
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            fout.close();
-
-            File circleFile = File.createTempFile("photo", "img", tempFolder);
-            fout = new FileOutputStream(circleFile, false);
-            circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            fout.close();
-
-            // push into data store
-            StoredObject imageObj = StoredObject.put(context, imageObjectName, url, imageFile, "PhotoCache.png", false);
-            StoredObject circleObj = StoredObject.put(context, circleObjectName, url, circleFile, "PhotoCacheCircle.png", false);
-
-            // delete temporary stuff
-            imageFile.delete();
-            circleFile.delete();
+            ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
+            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
+            StoredObject imageObj = StoredObject.put(App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
             imageBitmap.recycle();
+
+
+            ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
+            circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
+            StoredObject circleObj = StoredObject.put(App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
             circleBitmap.recycle();
 
             // build the response
@@ -89,7 +79,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             Log.v(TAG, "handleResult");
             return Result.FINISH;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             Log.v(TAG, "handleResult");
             return Result.ERROR;
         }
@@ -97,7 +87,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             JsonObject json = new JsonObject(transaction.getHandlerParams());
             boolean getCircle = json.getBoolean("circle");
@@ -105,7 +95,7 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return Result.FINISH;
     }

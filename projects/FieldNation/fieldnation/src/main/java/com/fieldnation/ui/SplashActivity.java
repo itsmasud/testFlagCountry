@@ -4,14 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
+import android.widget.ImageView;
 
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
+import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.utils.MemUtils;
 
 /**
  * Created by michael.carver on 12/18/2014.
@@ -48,6 +51,10 @@ public class SplashActivity extends AuthFragmentActivity {
             }
         }
 
+        ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
+        int reqHeight =(int) (((float) getResources().getDimension(R.dimen.imageview_height_fnlogo)) / getResources().getDisplayMetrics().density);
+        fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
+
         Log.v(TAG, "onCreate");
     }
 
@@ -64,30 +71,52 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
+        _calledMyWork = false;
+        startService(new Intent(this, AuthTopicService.class));
+
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
         _globalClient.connect(this);
+
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(this);
+
+        AuthTopicClient.requestCommand(this);
     }
 
     @Override
     protected void onPause() {
-        _globalClient.disconnect(this);
-        _authClient.disconnect(this);
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(this);
+        if (_authClient != null && _authClient.isConnected())
+            _authClient.disconnect(this);
         super.onPause();
     }
 
+    @Override
+    protected void onStop() {
+        try {
+            if (_globalClient != null && _globalClient.isConnected())
+                _globalClient.disconnect(this);
+            if (_authClient != null && _authClient.isConnected())
+                _authClient.disconnect(this);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        super.onStop();
+    }
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_globalTopic_listener.onConnected");
-            _globalClient.registerGotProfile();
+            _globalClient.subGotProfile();
         }
 
         @Override
         public void onGotProfile(Profile profile) {
             Log.v(TAG, "_globalTopic_listener.onGotProfile");
+            if (profile != null)
+                Log.v(TAG, profile.toJson().display());
             _profile = profile;
             doNextStep();
         }
@@ -96,18 +125,20 @@ public class SplashActivity extends AuthFragmentActivity {
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _authClient.registerAuthState();
+            _authClient.subAuthStateChange();
         }
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            Log.v(TAG, "onAuthenticated");
             _isAuth = true;
             doNextStep();
         }
 
         @Override
         public void onNotAuthenticated() {
-            AuthTopicClient.dispatchRequestCommand(SplashActivity.this);
+            Log.v(TAG, "onNotAuthenticated");
+            AuthTopicClient.requestCommand(SplashActivity.this);
         }
     };
 
@@ -127,33 +158,7 @@ public class SplashActivity extends AuthFragmentActivity {
                 finish();
             }
         }
-
     }
-
-/*// Todo remove
-    private final TopicReceiver _topicReceiver = new TopicReceiver(new Handler()) {
-        @Override
-        public void onTopic(int resultCode, String topicId, Bundle parcel) {
-            Log.v(TAG, "onTopic");
-
-            if (AuthTopicService.TOPIC_AUTH_STARTUP.equals(topicId)) {
-                if (parcel.getString(AuthTopicService.BUNDLE_PARAM_TYPE)
-                        .equals(AuthTopicService.BUNDLE_PARAM_TYPE_NEED_PASSWORD)
-                        && parcel.containsKey(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE)) {
-
-                    Intent intent = new Intent(SplashActivity.this, AuthActivity.class);
-
-                    intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
-                            parcel.getParcelable(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE));
-
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                            | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                }
-            }
-        }
-    };*/
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);

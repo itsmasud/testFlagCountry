@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -16,6 +17,7 @@ import java.util.Locale;
 import java.util.TimeZone;
 
 public class Schedule implements Parcelable {
+    private static final String TAG = "Schedule";
 
     @Json(name = "duration")
     private Double _duration;
@@ -65,7 +67,7 @@ public class Schedule implements Parcelable {
         try {
             return Serializer.serializeObject(schedule);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -74,7 +76,7 @@ public class Schedule implements Parcelable {
         try {
             return Serializer.unserializeObject(Schedule.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -114,7 +116,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -139,7 +141,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -178,7 +180,7 @@ public class Schedule implements Parcelable {
                 return null;
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -194,10 +196,10 @@ public class Schedule implements Parcelable {
                 dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                 time = misc.formatTime(cal, false) + " " + cal.getTimeZone().getDisplayName(false, TimeZone.SHORT);
 
-                return "You will need to arrive exactly on " + dayDate + " at " + time + ".";
+                return "Exactly on " + dayDate + " @ " + time;
 
             } catch (ParseException e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
         } else {
             if (asStartAndDuration) {
@@ -209,7 +211,7 @@ public class Schedule implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive at\n\t" + dayDate + " at " + time + ".\n\tAnd work for ";
+                    String msg = "Exactly on " + dayDate + " @ " + time + ".\n\t for ";
 
                     long length = ISO8601.toUtc(getEndTime()) - ISO8601.toUtc(getStartTime());
 
@@ -218,7 +220,7 @@ public class Schedule implements Parcelable {
                     return msg;
 
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             } else {
                 try {
@@ -229,25 +231,25 @@ public class Schedule implements Parcelable {
                     dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal.getTime()) + " " + misc.formatDateLong(cal);
                     time = misc.formatTime(cal, false);
 
-                    String msg = "You will need to arrive between \n\t" + dayDate + " at " + time + " and\n\t";
+                    String msg = "Between " + dayDate + " @ " + time + "\nand";
 
                     Calendar cal2 = ISO8601.toCalendar(getEndTime());
 
                     // same day
                     if (cal.get(Calendar.YEAR) == cal2.get(Calendar.YEAR) && cal.get(Calendar.DAY_OF_YEAR) == cal2.get(Calendar.DAY_OF_YEAR)) {
                         time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                        msg += time + ".";
+                        msg += time;
 
                     } else {
                         dayDate = new SimpleDateFormat("EEEE", Locale.getDefault()).format(cal2.getTime()) + " " + misc.formatDateLong(cal2);
                         time = misc.formatTime(cal2, false) + " " + cal2.getTimeZone().getDisplayName(false, TimeZone.SHORT);
-                        msg += dayDate + " at " + time + ".";
+                        msg += dayDate + " @ " + time;
                     }
 
                     return msg;
 
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
             }
         }
@@ -268,7 +270,7 @@ public class Schedule implements Parcelable {
             try {
                 return Schedule.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }
