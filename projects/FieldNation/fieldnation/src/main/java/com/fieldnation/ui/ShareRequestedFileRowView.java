@@ -35,7 +35,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     private Set<String> _uploadingFiles = new HashSet<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
-    private boolean _checked;
+    private boolean _checked = true;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -56,7 +56,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_share_upload_slot_row, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_share_requested_file_row, this);
 
         if (isInEditMode())
             return;
@@ -67,7 +67,6 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.name_textview);
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
 
         populateUi();
     }
@@ -87,9 +86,11 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
     public void changeCheckStatus() {
         if (!_checked) {
+            _iconView.setText(getResources().getString(R.string.icfont_circle_checked));
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
             _checked = true;
         } else {
+            _iconView.setText(getResources().getString(R.string.icfont_circle));
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _checked = false;
         }

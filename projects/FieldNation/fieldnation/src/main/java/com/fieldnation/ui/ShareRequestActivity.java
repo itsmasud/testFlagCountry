@@ -204,8 +204,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             final String filePath = getFileNameFromUri(fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, filePath);
 
-            Log.v(TAG, "handleRequestSingleFile: fileName" + fileName);
-            Log.v(TAG, "handleRequestSingleFile: fileName" + filePath);
+//            Log.v(TAG, "handleRequestSingleFile: fileName" + fileName);
+//            Log.v(TAG, "handleRequestSingleFile: fileName" + filePath);
 
         }
     }
@@ -219,8 +219,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 final String fileName = getFileNameFromUri(fileUris.get(i));
                 final String filePath = getFilePathFromIntent(fileUris.get(i));
                 _uploadingDocumentList[i] = new UploadingDocument(fileName, filePath);
-                Log.e(TAG, "handleRequestMultipleFiles: fileName: " + fileName);
-                Log.e(TAG, "handleRequestMultipleFiles: filePath: " + filePath);
+//                Log.e(TAG, "handleRequestMultipleFiles: fileName: " + fileName);
+//                Log.e(TAG, "handleRequestMultipleFiles: filePath: " + filePath);
             }
         }
     }
@@ -399,6 +399,8 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     v.setData(_workorder, uploadingDocument);
                     v.setListener(_shareRequestedFileRowView_listener);
                     _sharedFilesLayout.addView(v);
+                    recreteToolBar();
+
                 }
             };
             _sharedFilesLayout.postDelayed(r, new Random().nextInt(1000));
@@ -450,6 +452,28 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         _adapter.setPage(page, workorderListWithoutOnHoldWorkorder);
+    }
+
+    private void recreteToolBar() {
+        int selectedFileNumber = 0;
+        for (int i = 0; i < _sharedFilesLayout.getChildCount(); i++) {
+            final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
+            if (row.isChecked()) {
+                ++selectedFileNumber;
+            }
+        }
+
+        if (selectedFileNumber > 0) {
+            _toolbar.getMenu().clear();
+            _toolbar.inflateMenu(R.menu.share_menu);
+            _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
+            _sendMenuItem.setTextColor(Color.WHITE);
+            _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");
+
+        } else {
+            _toolbar.getMenu().clear();
+        }
+
     }
 
 
@@ -581,6 +605,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
             populateSharedFilesLayout();
 
+
         }
     };
 
@@ -590,24 +615,25 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             Log.v(TAG, "_shareRequestedFileRowView_listener.onClick");
             view.changeCheckStatus();
 
-            int selectedFileNumber = 0;
-            for (int i = 0; i < _sharedFilesLayout.getChildCount(); i++) {
-                final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
-                if (row.isChecked()) {
-                    ++selectedFileNumber;
-                }
-            }
-
-            if (selectedFileNumber > 0) {
-                _toolbar.getMenu().clear();
-                _toolbar.inflateMenu(R.menu.share_menu);
-                _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
-                _sendMenuItem.setTextColor(Color.WHITE);
-                _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");
-
-            } else {
-                _toolbar.getMenu().clear();
-            }
+            recreteToolBar();
+//            int selectedFileNumber = 0;
+//            for (int i = 0; i < _sharedFilesLayout.getChildCount(); i++) {
+//                final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
+//                if (row.isChecked()) {
+//                    ++selectedFileNumber;
+//                }
+//            }
+//
+//            if (selectedFileNumber > 0) {
+//                _toolbar.getMenu().clear();
+//                _toolbar.inflateMenu(R.menu.share_menu);
+//                _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
+//                _sendMenuItem.setTextColor(Color.WHITE);
+//                _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");
+//
+//            } else {
+//                _toolbar.getMenu().clear();
+//            }
 
         }
     };

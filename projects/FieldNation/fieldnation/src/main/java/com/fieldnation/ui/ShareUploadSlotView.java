@@ -12,7 +12,6 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
 
 import java.util.HashSet;
@@ -66,7 +65,6 @@ public class ShareUploadSlotView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.name_textview);
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
 
         populateUi();
     }
@@ -83,19 +81,22 @@ public class ShareUploadSlotView extends RelativeLayout {
 
     public void changeToDefaultColor() {
         _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+        _iconView.setText(getResources().getString(R.string.icfont_circle));
         _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
     }
 
-    public  boolean isChecked(){
+    public boolean isChecked() {
         return _checked;
     }
 
     public void changeCheckStatus() {
 
         if (!_checked) {
+            _iconView.setText(getResources().getString(R.string.icfont_circle_checked));
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
             _checked = true;
         } else {
+            _iconView.setText(getResources().getString(R.string.icfont_circle));
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _checked = false;
         }

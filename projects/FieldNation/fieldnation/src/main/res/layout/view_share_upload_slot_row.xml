@@ -15,6 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:text="@string/icfont_circle_checked"
+            android:textColor="@color/fn_light_text_50"
             android:textSize="32sp" />
 
         <LinearLayout
