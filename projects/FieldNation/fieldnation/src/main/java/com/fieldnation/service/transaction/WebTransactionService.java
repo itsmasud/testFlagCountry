@@ -129,7 +129,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         synchronized (SYNC_LOCK) {
             // TODO calculate by collecting config information and compare to phone state
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
-                Stopwatch watch = new Stopwatch(true);
+                //Stopwatch watch = new Stopwatch(true);
                 _allowSync = true;
 
                 SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",

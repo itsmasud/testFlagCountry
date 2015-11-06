@@ -691,7 +691,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed) {
+        public void onList(List<Workorder> list, WorkorderDataSelector selector, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderData_listener.onList");
             if (!selector.equals(_displayView))
                 return;
