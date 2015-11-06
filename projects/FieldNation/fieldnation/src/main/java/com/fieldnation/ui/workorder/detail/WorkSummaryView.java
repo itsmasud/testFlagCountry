@@ -1,10 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.text.Editable;
-import android.text.Selection;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -15,9 +12,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
@@ -217,6 +212,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private OnLongClickListener _editMode_listener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
+            _descriptionTextView.setVisibility(GONE);
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
                 _descriptionTextView.setVisibility(View.GONE);
                 _descriptionShortLayout.setVisibility(View.GONE);
