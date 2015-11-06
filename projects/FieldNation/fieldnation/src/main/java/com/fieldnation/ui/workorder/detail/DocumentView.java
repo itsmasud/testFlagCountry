@@ -9,6 +9,8 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.Workorder;
@@ -87,15 +89,15 @@ public class DocumentView extends RelativeLayout {
         _usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
 
         _docClient = new DocumentClient(_docClient_listener);
-        _docClient.connect(getContext());
+        _docClient.connect(App.get());
 
         setOnClickListener(_this_onClick);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_docClient != null) {
-            _docClient.disconnect(getContext());
+        if (_docClient != null && _docClient.isConnected()) {
+            _docClient.disconnect(App.get());
             _docClient = null;
         }
         super.onDetachedFromWindow();
@@ -145,14 +147,14 @@ public class DocumentView extends RelativeLayout {
                 _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
         }
 
         try {
             _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_document.getLastUpdated())));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
             _dateTextView.setVisibility(View.GONE);
         }
         try {
@@ -166,7 +168,7 @@ public class DocumentView extends RelativeLayout {
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
             _usernameTextView.setVisibility(View.GONE);
             _byTextView.setVisibility(View.GONE);
         }

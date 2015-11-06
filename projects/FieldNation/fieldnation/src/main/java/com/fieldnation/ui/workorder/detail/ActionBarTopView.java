@@ -5,6 +5,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
@@ -12,7 +13,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.utils.misc;
 
-public class ActionBarTopView extends RelativeLayout {
+public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";
 
     // Ui

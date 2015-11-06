@@ -52,7 +52,7 @@ public class MessagesAdapter extends BaseAdapter {
                 else
                     return 1;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
 
             return 0;

@@ -3,11 +3,14 @@ package com.fieldnation.data.accounting;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Payment implements Parcelable {
+    private static final String TAG = "Payment";
+
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "datePaid")
@@ -62,7 +65,7 @@ public class Payment implements Parcelable {
         try {
             return Serializer.serializeObject(payment);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -71,7 +74,7 @@ public class Payment implements Parcelable {
         try {
             return Serializer.unserializeObject(Payment.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -86,7 +89,7 @@ public class Payment implements Parcelable {
             try {
                 return Payment.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }

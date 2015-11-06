@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -11,6 +12,8 @@ import com.fieldnation.json.annotations.Json;
  * Created by michael.carver on 12/9/2014.
  */
 public class Signature implements Parcelable {
+    private static final String TAG = "Signature";
+
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "dateSaved")
@@ -84,7 +87,7 @@ public class Signature implements Parcelable {
         try {
             return Serializer.serializeObject(root);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -93,7 +96,7 @@ public class Signature implements Parcelable {
         try {
             return Serializer.unserializeObject(Signature.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -116,7 +119,7 @@ public class Signature implements Parcelable {
             try {
                 return Signature.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
             return null;
         }

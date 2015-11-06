@@ -4,12 +4,15 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
+import com.fieldnation.Log;
+
 import java.util.List;
 
 /**
  * Created by michael.carver on 12/2/2014.
  */
 public class FragmentBase extends Fragment {
+    private static final String TAG = "FragmentBase";
 
     // State
     private static final String STATE_TAG = "STATE_TAG";
@@ -60,7 +63,7 @@ public class FragmentBase extends Fragment {
                 d._fm = fm;
                 return d;
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
                 return null;
             }
         }

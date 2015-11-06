@@ -231,7 +231,7 @@ public class PayDialog extends DialogFragmentBase {
                     _blendedMaxHours = getAmount((_blendedMaxHoursEditText.getText().toString()));
                     _extraHourly = getAmount((_extraHourlyEditText.getText().toString()));
                     _extraMaxHours = getAmount((_extraMaxHoursEditText.getText().toString()));
-                    return (blendedHourlyAmount > MINIMUM_PAYABLE_AMOUNT && _extraHourly > MINIMUM_PAYABLE_AMOUNT)  ? true : false;
+                    return (blendedHourlyAmount > MINIMUM_PAYABLE_AMOUNT && _extraHourly > MINIMUM_PAYABLE_AMOUNT) ? true : false;
             }
         } catch (Exception ex) {
             return false;
@@ -374,11 +374,16 @@ public class PayDialog extends DialogFragmentBase {
                 return;
             }
 
-            dismiss();
             if (_listener == null)
                 return;
 
-            _listener.onComplete(makePay(), _explanationEditText.getText().toString());
+            try {
+                _listener.onComplete(makePay(), _explanationEditText.getText().toString());
+            } catch (Exception ex) {
+                ToastClient.toast(App.get(), "Please enter a value greater than $0.10.", Toast.LENGTH_SHORT);
+                return;
+            }
+            dismiss();
         }
     };
 

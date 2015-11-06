@@ -227,7 +227,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                     return null;
                 }

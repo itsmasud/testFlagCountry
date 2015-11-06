@@ -20,6 +20,8 @@ import java.text.ParseException;
  * @author michael.carver
  */
 public class HttpResult {
+    private static final String TAG = "HttpResult";
+    
     private byte[] _baResults = null;
     private String _sResults = null;
     private JsonObject _jsonResults = null;
@@ -76,7 +78,7 @@ public class HttpResult {
                 }
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             _baResults = null;
             try {
                 InputStream in = conn.getErrorStream();
@@ -86,7 +88,7 @@ public class HttpResult {
                     in.close();
                 }
             } catch (Exception ex1) {
-                ex1.printStackTrace();
+                Log.v(TAG, ex1);
             }
         }
     }

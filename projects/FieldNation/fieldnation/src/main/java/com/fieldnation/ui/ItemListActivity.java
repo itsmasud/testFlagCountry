@@ -64,7 +64,7 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
             _adapter.setNoMorePages();
         }
 
-        _adapter.setPage(page, list);
+        _adapter.setPage(page, list); // done
     }
 
     private final PagingAdapter<O> _adapter = new PagingAdapter<O>() {

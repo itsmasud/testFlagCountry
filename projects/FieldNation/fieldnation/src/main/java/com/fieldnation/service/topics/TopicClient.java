@@ -12,6 +12,8 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
+import com.fieldnation.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;
@@ -48,7 +50,11 @@ public class TopicClient implements TopicConstants {
     public void disconnect(Context context, String userTag) {
         _listener = null;
         delete(userTag);
-        context.unbindService(_serviceConnection);
+        try {
+            context.unbindService(_serviceConnection);
+        } catch (Exception ex) {
+            Debug.logException(ex);
+        }
         _subscribed.clear();
         _isConnected = false;
     }
@@ -82,7 +88,7 @@ public class TopicClient implements TopicConstants {
             _subscribed.add(topicId);
             return true;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }
@@ -102,7 +108,7 @@ public class TopicClient implements TopicConstants {
 
             _subscribed.remove(topicId);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }
@@ -121,7 +127,7 @@ public class TopicClient implements TopicConstants {
 
             _subscribed.clear();
         } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
         }
         return false;
     }
@@ -151,7 +157,7 @@ public class TopicClient implements TopicConstants {
             msg.replyTo = _rcvService;
             _sndService.send(msg);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return false;
     }

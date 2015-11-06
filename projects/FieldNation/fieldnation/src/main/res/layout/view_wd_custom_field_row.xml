@@ -1,52 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Card"
+    style="@style/CardContainer"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:padding="0dp">
 
-    <RelativeLayout
-        style="@style/CardContainer"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="0dp">
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/optional_textview"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="16dp">
 
-        <LinearLayout
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/Text_Body_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/optional_textview"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:padding="16dp">
-
-            <com.fieldnation.ui.IconFontTextView
-                android:id="@+id/icon_view"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/icfont_circle"
-                android:textSize="32sp" />
-
-            <TextView
-                android:id="@+id/description_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="@string/placeholder_phrase" />
-        </LinearLayout>
+            android:text="@string/icfont_circle"
+            android:textSize="32sp" />
 
         <TextView
-            android:id="@+id/optional_textview"
-            style="@style/Text_Caption"
-            android:layout_width="wrap_content"
+            android:id="@+id/description_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentTop="true"
-            android:layout_margin="8dp"
-            android:text="OPTIONAL"
-            android:textScaleX="0.75"
-            android:visibility="visible" />
-    </RelativeLayout>
+            android:layout_marginLeft="8dp"
+            android:text="@string/placeholder_phrase" />
+    </LinearLayout>
 
+    <TextView
+        android:id="@+id/optional_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        android:text="OPTIONAL"
+        android:textScaleX="0.75"
+        android:visibility="visible" />
 </RelativeLayout>

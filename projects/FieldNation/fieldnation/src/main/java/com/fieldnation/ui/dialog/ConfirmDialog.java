@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
@@ -172,7 +173,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 //
 //            _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
 //        } catch (Exception ex) {
-//            ex.printStackTrace();
+//            Log.v(TAG, ex);
 //        }
 //    }
 
@@ -203,7 +204,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _startDateLayout.setVisibility(View.GONE);
                 setDuration(3600000);
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         } else {
             try {
@@ -214,7 +215,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 _startDateLayout.setVisibility(View.VISIBLE);
                 setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     }
@@ -251,7 +252,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
                 _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };
@@ -287,7 +288,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                     }
                 }
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };

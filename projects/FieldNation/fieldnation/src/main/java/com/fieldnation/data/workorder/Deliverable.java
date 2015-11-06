@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Deliverable {
+    private static final String TAG = "Deliverable";
+
     @Json(name = "dateUploaded")
     private String _dateUploaded;
     @Json(name = "fileName")
@@ -149,7 +152,7 @@ public class Deliverable {
         try {
             return Serializer.serializeObject(deliverable);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -158,7 +161,7 @@ public class Deliverable {
         try {
             return Serializer.unserializeObject(Deliverable.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

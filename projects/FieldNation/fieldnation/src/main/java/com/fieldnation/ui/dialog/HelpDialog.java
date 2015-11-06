@@ -61,7 +61,7 @@ public class HelpDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
-            intent.setData(Uri.parse("tel:1877573435"));
+            intent.setData(Uri.parse("tel:18775734353"));
             startActivity(intent);
         }
     };

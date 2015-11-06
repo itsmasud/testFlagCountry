@@ -3,7 +3,6 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -26,7 +25,7 @@ public class CompanySummaryView extends RelativeLayout {
     private TextView _locationTextView;
     private TextView _reviewsTextView;
     private TextView _newBuyerTextView;
-    private LinearLayout _detailsLayout;
+    private RelativeLayout _detailsLayout;
     private ProgressBar _expectationsProgressBar;
     private ProgressBar _professionalismProgressBar;
     private TextView _expectationsTextView;
@@ -64,7 +63,7 @@ public class CompanySummaryView extends RelativeLayout {
         _locationTextView = (TextView) findViewById(R.id.location_textview);
         _reviewsTextView = (TextView) findViewById(R.id.reviews_textview);
         _newBuyerTextView = (TextView) findViewById(R.id.newBuyer_textview);
-        _detailsLayout = (LinearLayout) findViewById(R.id.details_layout);
+        _detailsLayout = (RelativeLayout) findViewById(R.id.details_layout);
         _expectationsProgressBar = (ProgressBar) findViewById(R.id.expectations_progressBar);
         _professionalismProgressBar = (ProgressBar) findViewById(R.id.professionalism_progressBar);
         _expectationsTextView = (TextView) findViewById(R.id.expectations_textView);

@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Bundle {
+    private static final String TAG = "Bundle";
+
     @Json(name = "averageDistance")
     private Double _averageDistance;
     @Json(name = "bundleId")
@@ -41,7 +44,7 @@ public class Bundle {
         try {
             return Serializer.serializeObject(bundle);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -50,7 +53,7 @@ public class Bundle {
         try {
             return Serializer.unserializeObject(Bundle.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

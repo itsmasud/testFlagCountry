@@ -97,7 +97,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                         }
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
             }
         }
@@ -271,8 +271,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         // WorkorderStatus.INPROGRESS) {
         // _viewPager.setCurrentItem(TAB_TASKS, false);
         // }
-
-        setLoading(false);
+        // setLoading(false);
     }
 
     private void setLoading(boolean loading) {
@@ -333,7 +332,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 _fragments[position].update();
                 populateUi();
             } catch (Exception ex) {
-                ex.printStackTrace();
+                Log.v(TAG, ex);
             }
         }
     };
@@ -402,7 +401,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
                     Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
                     finish();
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
                 return;
             }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -59,14 +60,15 @@ public class WarningView extends RelativeLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
 
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(getContext());
+        _globalClient.connect(App.get());
 
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _globalClient.disconnect(getContext());
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 

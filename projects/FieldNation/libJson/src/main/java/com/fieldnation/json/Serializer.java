@@ -249,12 +249,17 @@ public class Serializer {
     }
 
     public static <T extends Annotation> T getAnnotation(Field field, Class<T> annotationClass) {
-        for (int i = 0; i < 2; i++) {
-            try {
-                return field.getAnnotation(annotationClass);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        try {
+            Annotation[] annotations = field.getAnnotations();
+            if (annotations != null) {
+                for (int j = 0; j < annotations.length; j++) {
+                    if (annotationClass.getCanonicalName().equals(annotations[j].annotationType().getCanonicalName())) {
+                        return (T) annotations[j];
+                    }
+                }
             }
+        } catch (Throwable ex) {
+            ex.printStackTrace();
         }
         return null;
     }

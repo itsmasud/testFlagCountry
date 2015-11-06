@@ -3,12 +3,14 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Pay implements Parcelable {
+    private static final String TAG = "Pay";
 
     @Json(name = "blendedAdditionalHours")
     private Double _blendedAdditionalHours;
@@ -121,7 +123,7 @@ public class Pay implements Parcelable {
         try {
             return Serializer.serializeObject(pay);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -130,7 +132,7 @@ public class Pay implements Parcelable {
         try {
             return Serializer.unserializeObject(Pay.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -201,7 +203,7 @@ public class Pay implements Parcelable {
                 return misc.toCurrency(getPerDevice());
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
         return null;
     }
@@ -237,7 +239,7 @@ public class Pay implements Parcelable {
             try {
                 return Pay.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return null;
         }

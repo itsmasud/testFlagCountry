@@ -2,6 +2,7 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Context;
 
+import com.fieldnation.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -10,6 +11,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  * Created by Michael Carver on 4/22/2015.
  */
 public class PaymentTransactionBuilder implements PaymentConstants {
+    private static final String TAG = "PaymentTransactionBuilder";
 
     public static void list(Context context, int page, boolean isSync) {
         try {
@@ -30,7 +32,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                                     .urlParams("?page=" + page)
                     ).send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
     }
 
@@ -50,7 +52,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                                     .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
                     ).send();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
     }

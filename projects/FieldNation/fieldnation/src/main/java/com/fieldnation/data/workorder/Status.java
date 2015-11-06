@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Status {
+    private static final String TAG = "Status";
+
     @Json(name = "colorIntent")
     private String _colorIntent;
     @Json(name = "status")
@@ -35,7 +38,7 @@ public class Status {
         try {
             return Serializer.serializeObject(status);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -44,14 +47,14 @@ public class Status {
         try {
             return Serializer.unserializeObject(Status.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
 
 	/*-*************************************************-*/
     /*-				Human Generated Code				-*/
-	/*-*************************************************-*/
+    /*-*************************************************-*/
 
     public WorkorderSubstatus getWorkorderSubstatus() {
         return WorkorderSubstatus.fromValue(_subStatus);

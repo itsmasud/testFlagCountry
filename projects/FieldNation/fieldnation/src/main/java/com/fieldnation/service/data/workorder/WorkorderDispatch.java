@@ -38,13 +38,14 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void list(Context context, JsonArray workorders, int page, String selector, boolean failed, boolean isSync) {
+    public static void list(Context context, JsonArray workorders, int page, String selector, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
         bundle.putInt(PARAM_PAGE, page);
         bundle.putString(PARAM_LIST_SELECTOR, selector);
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putBoolean(PARAM_ERROR, failed);
+        bundle.putBoolean(PARAM_IS_CACHED, isCached);
 
         if (!failed)
             bundle.putParcelable(PARAM_DATA_PARCELABLE, workorders);

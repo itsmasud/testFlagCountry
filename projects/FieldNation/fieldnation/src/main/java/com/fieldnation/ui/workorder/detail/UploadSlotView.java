@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -74,14 +75,15 @@ public class UploadSlotView extends RelativeLayout {
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(getContext());
+        _workorderClient.connect(App.get());
 
         populateUi();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        _workorderClient.disconnect(getContext());
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -129,7 +131,7 @@ public class UploadSlotView extends RelativeLayout {
                         else
                             return 0;
                     } catch (ParseException e) {
-                        e.printStackTrace();
+                        Log.v(TAG, e);
                     }
                     return 0;
                 }

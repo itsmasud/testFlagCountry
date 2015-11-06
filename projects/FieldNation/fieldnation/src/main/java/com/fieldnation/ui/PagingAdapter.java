@@ -74,8 +74,12 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     public void refreshPages() {
         Log.v(TAG, "refreshPages");
-        for (int i = 0; i <= _pages.size(); i++) {
-            preRequestPage(i, false);
+        if (_pages.size() == 0) {
+            preRequestPage(0, false);
+        } else {
+            for (int i = 0; i <= _pages.size(); i++) {
+                preRequestPage(i, false);
+            }
         }
     }
 

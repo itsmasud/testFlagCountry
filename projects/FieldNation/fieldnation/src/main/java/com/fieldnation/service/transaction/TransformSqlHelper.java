@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.WeakHashMap;
 
 /**
  * Created by Michael Carver on 3/4/2015.
@@ -15,6 +16,8 @@ class TransformSqlHelper extends SQLiteOpenHelper {
     // changed.
     private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "transforms";
+
+    private static WeakHashMap<Context, TransformSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -76,9 +79,19 @@ class TransformSqlHelper extends SQLiteOpenHelper {
         }
     }
 
-    public TransformSqlHelper(Context context) {
+    private TransformSqlHelper(Context context) {
         super(context.getApplicationContext(), TABLE_NAME + ".db", null, TABLE_VER);
     }
+
+    public static TransformSqlHelper getInstance(Context context) {
+        Context app = context.getApplicationContext();
+        if (!_instances.containsKey(app)) {
+            _instances.put(app, new TransformSqlHelper(app));
+        }
+
+        return _instances.get(app);
+    }
+
 
     @Override
     public void onCreate(SQLiteDatabase db) {

@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class BuyerRating {
+    private static final String TAG = "BuyerRating";
+
     @Json(name = "avgRating")
     private Double _avgRating;
     @Json(name = "city")
@@ -95,7 +98,7 @@ public class BuyerRating {
         try {
             return Serializer.serializeObject(buyerRatingInfo);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -104,7 +107,7 @@ public class BuyerRating {
         try {
             return Serializer.unserializeObject(BuyerRating.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

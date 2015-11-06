@@ -1,11 +1,14 @@
 package com.fieldnation.data.profile;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Status;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
+    private static final String TAG = "Workorder";
+
     @Json(name = "status")
     private Status _status;
     @Json(name = "title")
@@ -36,7 +39,7 @@ public class Workorder {
         try {
             return Serializer.serializeObject(workorder);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -45,7 +48,7 @@ public class Workorder {
         try {
             return Serializer.unserializeObject(Workorder.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.utils.ISO8601;
@@ -144,6 +145,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     public void show(Schedule schedule) {
         _sched = schedule;
         super.show();
+        populateUi();
     }
 
     private Schedule makeSchedule() {
@@ -157,21 +159,26 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     private void populateUi() {
+        if (_typeSpinner == null)
+            return;
+
         try {
             _startCal = ISO8601.toCalendar(_sched.getStartTime());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         try {
             _endCal = ISO8601.toCalendar(_sched.getEndTime());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
 
-        if (_sched.isExact()) {
-            setMode(MODE_EXACT);
-        } else {
-            setMode(MODE_RANGE);
+        if (_sched != null) {
+            if (_sched.isExact()) {
+                setMode(MODE_EXACT);
+            } else {
+                setMode(MODE_RANGE);
+            }
         }
     }
 

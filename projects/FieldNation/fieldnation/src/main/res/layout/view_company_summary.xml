@@ -88,125 +88,111 @@
             </RelativeLayout>
 
 
-            <LinearLayout
+            <RelativeLayout
                 android:id="@+id/details_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
+                android:layout_marginBottom="8dp">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp">
-
-                    <LinearLayout
-                        android:id="@+id/labels_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:layout_marginRight="8dp"
-                        android:orientation="vertical">
-
-                        <TextView
-                            style="@style/Text_Body_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="16dp"
-                            android:layout_marginBottom="4dp"
-                            android:text="@string/clear_expectations" />
-
-                        <TextView
-                            style="@style/Text_Body_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="16dp"
-                            android:layout_marginBottom="4dp"
-                            android:text="@string/professionalism" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/progressBar_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="8dp"
-                        android:layout_toLeftOf="@+id/percent_layout"
-                        android:layout_toRightOf="@+id/labels_layout"
-                        android:orientation="vertical">
-
-                        <ProgressBar
-                            android:id="@+id/expectations_progressBar"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp"
-                            android:layout_marginBottom="6dp"
-                            android:layout_marginTop="6dp"
-                            android:max="100"
-                            android:progress="89"
-                            android:progressDrawable="@drawable/custom_progress" />
-
-                        <ProgressBar
-                            android:id="@+id/professionalism_progressBar"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="8dp"
-                            android:layout_marginBottom="6dp"
-                            android:layout_marginTop="6dp"
-                            android:max="100"
-                            android:progress="98"
-                            android:progressDrawable="@drawable/custom_progress" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/percent_layout"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@+id/expectations_textView"
-                            style="@style/Text_Body_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="16dp"
-                            android:layout_marginBottom="4dp"
-                            android:text="89%" />
-
-                        <TextView
-                            android:id="@+id/professionalism_textView"
-                            style="@style/Text_Body_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="16dp"
-                            android:layout_marginBottom="4dp"
-                            android:text="98%" />
-                    </LinearLayout>
-
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentLeft="true"
-                        android:text="@string/time_to_approval" />
-
-                    <TextView
-                        android:id="@+id/days_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentRight="true"
-                        android:text="14 Days" />
-
-                </RelativeLayout>
 
                 <TextView
-                    style="@style/Text_Caption"
+                    android:id="@+id/textview_1"
+                    style="@style/Text_Body_1"
+                    android:layout_width="120dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/clear_expectations" />
+
+                <TextView
+                    android:id="@+id/textview_2"
+                    style="@style/Text_Body_1"
+                    android:layout_width="120dp"
+                    android:layout_height="16dp"
+                    android:layout_alignParentLeft="true"
+                    android:layout_below="@+id/textview_1"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginRight="8dp"
+                    android:text="@string/professionalism" />
+
+
+                <ProgressBar
+                    android:id="@+id/expectations_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_toLeftOf="@+id/expectations_textView"
+                    android:layout_toRightOf="@+id/textview_1"
+                    android:max="100"
+                    android:progress="89"
+                    android:progressDrawable="@drawable/custom_progress" />
+
+                <ProgressBar
+                    android:id="@+id/professionalism_progressBar"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="8dp"
+                    android:layout_below="@id/expectations_progressBar"
+                    android:layout_marginBottom="6dp"
+                    android:layout_marginRight="8dp"
+                    android:layout_marginTop="6dp"
+                    android:layout_toLeftOf="@+id/professionalism_textView"
+                    android:layout_toRightOf="@+id/textview_2"
+                    android:max="100"
+                    android:progress="98"
+                    android:progressDrawable="@drawable/custom_progress" />
+
+
+                <TextView
+                    android:id="@+id/expectations_textView"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginBottom="4dp"
+                    android:text="89%" />
+
+                <TextView
+                    android:id="@+id/professionalism_textView"
+                    style="@style/Text_Body_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="16dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_below="@+id/expectations_textView"
+                    android:layout_marginBottom="4dp"
+                    android:text="98%" />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="90% of their work orders" />
-            </LinearLayout>
+                    android:layout_alignParentLeft="true"
+                    android:text="@string/time_to_approval" />
+
+                <TextView
+                    android:id="@+id/days_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:text="14 Days" />
+
+            </RelativeLayout>
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="90% of their work orders" />
 
         </LinearLayout>
     </LinearLayout>

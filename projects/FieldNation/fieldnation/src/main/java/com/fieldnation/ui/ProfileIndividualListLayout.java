@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -63,7 +64,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
         _providerIdTextView = (TextView) findViewById(R.id.providerid_textview);
 
         _photoClient = new PhotoClient(_photoClient_listener);
-        _photoClient.connect(getContext());
+        _photoClient.connect(App.get());
 
         populateUi();
     }
@@ -72,7 +73,7 @@ public class ProfileIndividualListLayout extends RelativeLayout {
     protected void onDetachedFromWindow() {
         // Log.v(TAG, "onDetachedFromWindow");
         if (_photoClient != null && _photoClient.isConnected())
-            _photoClient.disconnect(getContext());
+            _photoClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }

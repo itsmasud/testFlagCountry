@@ -19,12 +19,15 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.mapbox.mapboxsdk.geometry.BoundingBox;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.views.MapView;
+
+import org.w3c.dom.Text;
 
 import java.util.HashSet;
 import java.util.List;
@@ -37,8 +40,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     // UI
     private MapView _mapView;
     private View _clickOverlay;
+    private TextView _siteTitleTextView;
     private TextView _addressTextView;
+    private IconFontTextView _locationIconTextView;
+    private TextView _locationTypeTextView;
     private TextView _distanceTextView;
+    private TextView _noteShortTextView;
+    private TextView _noteLongTextView;
+    private Button _readMoreButton;
     private Button _navigateButton;
     private RelativeLayout _mapLayout;
     private TextView _noLocationTextView;
@@ -69,9 +78,22 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _clickOverlay = findViewById(R.id.click_overlay);
         _clickOverlay.setOnClickListener(_map_onClick);
 
+        _siteTitleTextView = (TextView) findViewById(R.id.siteTitle_textview);
+
         _addressTextView = (TextView) findViewById(R.id.address_textview);
 
+        _locationIconTextView = (IconFontTextView) findViewById(R.id.locationIcon_textview);
+
+        _locationTypeTextView = (TextView) findViewById(R.id.locationType_textview);
+
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
+
+        _noteShortTextView = (TextView) findViewById(R.id.noteShort_textview);
+
+        _noteLongTextView = (TextView) findViewById(R.id.noteLong_textview);
+
+        _readMoreButton = (Button) findViewById(R.id.readMore_button);
+        _readMoreButton.setOnClickListener(_readMore_onClick);
 
         _navigateButton = (Button) findViewById(R.id.navigate_button);
         _navigateButton.setOnClickListener(_navigate_onClick);
@@ -95,7 +117,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _isDrawn = false;
         } catch (Exception ex) {
             _isDrawn = false;
-            ex.printStackTrace();
+            Log.v(TAG, ex);
         }
 
         _workorder = workorder;
@@ -110,13 +132,71 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_mapView == null)
             return;
 
-        Location location = _workorder.getLocation();
         _addressLayout.setBackgroundColor(getResources().getColor(R.color.fn_clickable_bg));
-        _addressTextView.setText(location.getFullAddressOneLine());
         _distanceTextView.setText("Could not calculate distance.");
         _noMapLayout.setVisibility(GONE);
 
         setVisibility(VISIBLE);
+
+        Location location = _workorder.getLocation();
+        if (location != null) {
+            String title = "";
+            if (!misc.isEmptyOrNull(location.getGroupName())) {
+                title = location.getGroupName().trim() + "/";
+            }
+            if (!misc.isEmptyOrNull(location.getName())) {
+                title += location.getName();
+            }
+            if (!misc.isEmptyOrNull(title)) {
+                _siteTitleTextView.setText(title);
+                _siteTitleTextView.setVisibility(VISIBLE);
+            } else {
+                _siteTitleTextView.setVisibility(GONE);
+            }
+            _addressTextView.setText(location.getFullAddressOneLine());
+
+            if (location.getType() != null) {
+                _locationTypeTextView.setVisibility(VISIBLE);
+                _locationIconTextView.setVisibility(VISIBLE);
+                switch (location.getType()) {
+                    case "Commercial":
+                        _locationIconTextView.setText(R.string.icfont_commercial);
+                        _locationTypeTextView.setText("Commercial");
+                        break;
+                    case "Government":
+                        _locationIconTextView.setText(R.string.icfont_government);
+                        _locationTypeTextView.setText("Government");
+                        break;
+                    case "Residential":
+                        _locationIconTextView.setText(R.string.icfont_residential);
+                        _locationTypeTextView.setText("Residential");
+                        break;
+                    case "Educational":
+                        _locationIconTextView.setText(R.string.icfont_educational);
+                        _locationTypeTextView.setText("Educational");
+                        break;
+                    default:
+                        _locationTypeTextView.setVisibility(GONE);
+                        _locationIconTextView.setVisibility(GONE);
+                        break;
+                }
+            } else {
+                _locationTypeTextView.setVisibility(GONE);
+                _locationIconTextView.setVisibility(GONE);
+            }
+
+            if (misc.isEmptyOrNull(location.getNotes())) {
+                _noteShortTextView.setVisibility(GONE);
+                _noteLongTextView.setVisibility(GONE);
+                _readMoreButton.setVisibility(GONE);
+            } else {
+                _noteShortTextView.setVisibility(VISIBLE);
+                _readMoreButton.setVisibility(VISIBLE);
+                _readMoreButton.setText(R.string.btn_read_more);
+                _noteShortTextView.setText(location.getNotes());
+                _noteLongTextView.setText(location.getNotes());
+            }
+        }
 
         if (location == null || _workorder.getIsRemoteWork()) {
             _mapView.setVisibility(GONE);
@@ -159,7 +239,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     Log.v(TAG, "inBackground time: " + stopwatch.finish());
                     return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                 }
                 return null;
             }
@@ -199,7 +279,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         _mapLayout.setVisibility(GONE);
                     }
                 } catch (Exception ex) {
-                    ex.printStackTrace();
+                    Log.v(TAG, ex);
                     _noMapLayout.setVisibility(VISIBLE);
                     _mapView.setVisibility(GONE);
                 }
@@ -220,6 +300,22 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final View.OnClickListener _readMore_onClick = new View.OnClickListener() {
+
+        @Override
+        public void onClick(View v) {
+            if (_noteShortTextView.getVisibility() == VISIBLE) {
+                _noteLongTextView.setVisibility(View.VISIBLE);
+                _noteShortTextView.setVisibility(View.GONE);
+                _readMoreButton.setText(R.string.btn_read_less);
+            } else {
+                _noteLongTextView.setVisibility(View.GONE);
+                _noteShortTextView.setVisibility(View.VISIBLE);
+                _readMoreButton.setText(R.string.btn_read_more);
+            }
+        }
+    };
+
     private final View.OnClickListener _navigate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

@@ -1,10 +1,13 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Skillset {
+    private static final String TAG = "Skillset";
+
     @Json(name = "dynamicTermId")
     private Integer _dynamicTermId;
     @Json(name = "name")
@@ -29,7 +32,7 @@ public class Skillset {
         try {
             return Serializer.serializeObject(skillset);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -38,7 +41,7 @@ public class Skillset {
         try {
             return Serializer.unserializeObject(Skillset.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }

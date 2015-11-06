@@ -127,6 +127,7 @@ public class WebCrawlerService extends Service {
                 misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
                 StoredObject.flush(604800000); // 1 week
+                //StoredObject.flush(1000); // 1 week
 
                 Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
                 // only flush if we have wifi, so that the app can get new ones without
@@ -276,8 +277,8 @@ public class WebCrawlerService extends Service {
             incRequestCounter(3);
             _haveProfile = false;
             ProfileClient.get(WebCrawlerService.this, 0, true, false);
-            ProfileClient.listMessages(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
-            ProfileClient.listNotifications(WebCrawlerService.this, 0, true); // TODO this is not returning sometimes
+            ProfileClient.listMessages(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
+            ProfileClient.listNotifications(WebCrawlerService.this, 0, true, false); // TODO this is not returning sometimes
         }
 
         @Override
@@ -299,7 +300,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onMessageList(List<Message> list, int page, boolean failed) {
+        public void onMessageList(List<Message> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "ProfileClient.onMessageList");
 
             incrementPendingRequestCounter(-1);
@@ -311,7 +312,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listMessages(WebCrawlerService.this, page + 1, true, false);
 
             for (int i = 0; i < list.size(); i++) {
                 Message message = list.get(i);
@@ -322,7 +323,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onNotificationList(List<Notification> list, int page, boolean failed) {
+        public void onNotificationList(List<Notification> list, int page, boolean failed, boolean isCached) {
             Log.v(TAG, "onNotificationList");
 
             incrementPendingRequestCounter(-1);
@@ -335,7 +336,7 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true);
+            ProfileClient.listNotifications(WebCrawlerService.this, page + 1, true, false);
         }
     };
 
@@ -355,8 +356,8 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed) {
-            Log.v(TAG, "onWorkorderList");
+        public void onList(final List<Workorder> list, final WorkorderDataSelector selector, final int page, boolean failed, boolean isCached) {
+            Log.v(TAG, "onWorkorderList, " + selector + ", " + page + ", " + failed + ", " + isCached);
 
             incrementPendingRequestCounter(-1);
 
@@ -441,7 +442,7 @@ public class WebCrawlerService extends Service {
                 try {
                     Thread.sleep(50);
                 } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    Log.v(TAG, e);
                 }
                 return true;
             }
@@ -473,7 +474,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         //Thread.sleep(1000);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                 }
             }
@@ -490,7 +491,7 @@ public class WebCrawlerService extends Service {
                                 incRequestCounter(1);
                                 //Thread.sleep(1000);
                             } catch (Exception ex) {
-                                ex.printStackTrace();
+                                Log.v(TAG, ex);
                             }
                         }
                     }
@@ -506,7 +507,7 @@ public class WebCrawlerService extends Service {
                         incRequestCounter(1);
                         //Thread.sleep(1000);
                     } catch (Exception ex) {
-                        ex.printStackTrace();
+                        Log.v(TAG, ex);
                     }
                 }
             }

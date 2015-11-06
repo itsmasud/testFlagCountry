@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Task;
@@ -54,7 +55,7 @@ public class TaskRowView extends RelativeLayout {
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(getContext());
+        _workorderClient.connect(App.get());
 
         setOnClickListener(_checkbox_onClick);
 
@@ -63,7 +64,8 @@ public class TaskRowView extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        _workorderClient.disconnect(getContext());
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
         _workorderClient = null;
         super.onDetachedFromWindow();
     }
@@ -79,7 +81,6 @@ public class TaskRowView extends RelativeLayout {
         if (_task.getSlotId() != null) {
             subscribeUpload();
         }
-
 
         populateUi();
     }

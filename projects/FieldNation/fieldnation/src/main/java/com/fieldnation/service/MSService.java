@@ -19,8 +19,8 @@ import java.util.List;
  * Created by Michael Carver on 4/24/2015.
  */
 public abstract class MSService extends Service {
-    private static final String TAG = "MSService";
-    private static final long IDLE_TIMEOUT = 300000;
+    private final String TAG;
+    private static final long IDLE_TIMEOUT = 600000;
 
     private final Object LOCK = new Object();
 
@@ -32,9 +32,15 @@ public abstract class MSService extends Service {
 
     private Handler _shutdownChecker;
 
+    public MSService() {
+        super();
+        TAG = "MSService/" + this.getClass().getSimpleName();
+    }
+
     @Override
     public void onCreate() {
         super.onCreate();
+        Log.v(TAG, "onCreate");
 
         int maxWorkerCount = getMaxWorkerCount();
 
@@ -54,7 +60,7 @@ public abstract class MSService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.v(TAG, "onStartCommand");
+        Log.v(TAG, "onStartCommand start");
         if (intent != null) {
             _lastRequestTime = System.currentTimeMillis();
             synchronized (LOCK) {
@@ -65,6 +71,7 @@ public abstract class MSService extends Service {
         }
 
         _manager.wakeUp();
+        Log.v(TAG, "onStartCommand end");
         return START_STICKY;
     }
 
@@ -136,8 +143,7 @@ public abstract class MSService extends Service {
                 if (_intents.size() > 0) {
                     intent = _intents.remove(0);
                 }
-
-//                Log.v(TAG, "intents " + _intents.size());
+                //Log.v(TAG, "intents " + _intents.size());
             }
 
             if (intent != null) {
@@ -151,7 +157,5 @@ public abstract class MSService extends Service {
             }
             return false;
         }
-
-
     }
 }

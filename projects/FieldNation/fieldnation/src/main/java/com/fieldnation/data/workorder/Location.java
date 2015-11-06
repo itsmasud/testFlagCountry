@@ -1,11 +1,14 @@
 package com.fieldnation.data.workorder;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
 public class Location {
+    private static final String TAG = "Location";
+
     @Json(name = "address1")
     private String _address1;
     @Json(name = "address2")
@@ -30,6 +33,8 @@ public class Location {
     private String _distanceMapUrl;
     @Json(name = "geo")
     private Geo _geo;
+    @Json(name = "groupName")
+    private String _groupName;
     @Json(name = "mapUrl")
     private String _mapUrl;
     @Json(name = "name")
@@ -94,6 +99,10 @@ public class Location {
         return _geo;
     }
 
+    public String getGroupName() {
+        return _groupName;
+    }
+
     public String getMapUrl() {
         return _mapUrl;
     }
@@ -126,7 +135,7 @@ public class Location {
         try {
             return Serializer.serializeObject(location);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -135,7 +144,7 @@ public class Location {
         try {
             return Serializer.unserializeObject(Location.class, json);
         } catch (Exception ex) {
-            ex.printStackTrace();
+            Log.v(TAG, ex);
             return null;
         }
     }
@@ -224,6 +233,10 @@ public class Location {
                 && !misc.isEmptyOrNull(_zip)
                 && !misc.isEmptyOrNull(_country)) {
             address += _city + ", " + _state;
+        }
+
+        if (!misc.isEmptyOrNull(_zip)) {
+            address += " " + _zip;
         }
 
         return address.trim();
