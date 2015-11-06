@@ -29,6 +29,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -316,7 +317,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Log.e(TAG, "populateUploadSlotLayout");
         final UploadSlot[] slots = _workorder.getUploadSlots();
 
-        if (slots == null) return;
+        if (slots == null || slots.length == 0) {
+            Toast.makeText(this, "Can't upload to this work order", Toast.LENGTH_LONG).show();
+            setLoading(false);
+            return;
+        }
 
         layoutType = LayoutType.UPLOAD_SLOT_LAYOUT;
         _toolbar.setTitle(R.string.activity_share_request_title_task);
@@ -325,36 +330,34 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _titleWorkorderTextView.setText(_workorder.getTitle());
 
-        if (slots != null && slots.length > 0) {
-            Log.v(TAG, "US count: " + slots.length);
+        Log.v(TAG, "US count: " + slots.length);
 
-            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
-                private final UploadSlot[] _slots = slots;
+        ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
+            private final UploadSlot[] _slots = slots;
 
-                @Override
-                public void next(int i) throws Exception {
-                    Log.v(TAG, "US loop: " + i);
+            @Override
+            public void next(int i) throws Exception {
+                Log.v(TAG, "US loop: " + i);
 
-                    if (i == 0) {
-                        _uploadSlotLayout.removeAllViews();
-                    }
-
-                    ShareUploadSlotView v = null;
-                    if (i < _uploadSlotLayout.getChildCount()) {
-                        v = (ShareUploadSlotView) _uploadSlotLayout.getChildAt(i);
-                    } else {
-                        v = new ShareUploadSlotView(ShareRequestActivity.this);
-                    }
-                    final UploadSlot slot = _slots[i];
-                    v.setData(_workorder, slot);
-                    v.setListener(_shareUploadSlotView_listener);
-                    _uploadSlotLayout.addView(v);
+                if (i == 0) {
+                    _uploadSlotLayout.removeAllViews();
                 }
-            };
-            _uploadSlotScrollView.setVisibility(View.VISIBLE);
 
-            _uploadSlotLayout.postDelayed(r, new Random().nextInt(1000));
-        }
+                ShareUploadSlotView v = null;
+                if (i < _uploadSlotLayout.getChildCount()) {
+                    v = (ShareUploadSlotView) _uploadSlotLayout.getChildAt(i);
+                } else {
+                    v = new ShareUploadSlotView(ShareRequestActivity.this);
+                }
+                final UploadSlot slot = _slots[i];
+                v.setData(_workorder, slot);
+                v.setListener(_shareUploadSlotView_listener);
+                _uploadSlotLayout.addView(v);
+            }
+        };
+        _uploadSlotScrollView.setVisibility(View.VISIBLE);
+
+        _uploadSlotLayout.postDelayed(r, new Random().nextInt(1000));
 
         setLoading(false);
     }
@@ -431,9 +434,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             status = workorder.getWorkorderStatus();
             substatus = workorder.getWorkorderSubstatus();
 
-            if (status == WorkorderStatus.ASSIGNED) {
+            if (status == WorkorderStatus.ASSIGNED
+                    || status == WorkorderStatus.INPROGRESS) {
                 if (!(substatus == WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
-                        || substatus == WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED)) {
+                        || substatus == WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
+                        || substatus == WorkorderSubstatus.UNCONFIRMED)) {
                     workorderListWithoutOnHoldWorkorder.add(workorder);
 
                 }
@@ -604,8 +609,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             _currentUploadSlot = slot;
 
             populateSharedFilesLayout();
-
-
         }
     };
 
