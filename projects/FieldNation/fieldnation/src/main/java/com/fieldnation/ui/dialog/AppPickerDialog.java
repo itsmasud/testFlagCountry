@@ -12,8 +12,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerAdapter;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.AppPickerRowView;
@@ -94,8 +98,15 @@ public class AppPickerDialog extends DialogFragmentBase {
         @Override
         public void onClick(AppPickerRowView row, AppPickerPackage pack) {
             dismiss();
-            if (_listener != null)
-                _listener.onClick(pack);
+            try {
+
+                if (_listener != null)
+                    _listener.onClick(pack);
+
+            } catch (Exception ex) {
+                ToastClient.toast(App.get(), "Can not open. Please try again."  , Toast.LENGTH_LONG);
+                Log.v(TAG, ex);
+            }
         }
     };
 
