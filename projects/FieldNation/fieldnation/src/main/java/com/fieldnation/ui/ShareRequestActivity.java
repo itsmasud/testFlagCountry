@@ -183,6 +183,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Log.v(TAG, "onResume");
         Intent intent = getIntent();
         String action = intent.getAction();
+        Log.v(TAG, intent.toString());
 //        String type = intent.getType();
 
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
@@ -202,8 +203,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _uploadingDocumentList = new UploadingDocument[1];
         if (fileUri != null) {
             final String fileName = getFileNameFromUri(fileUri);
-            final String filePath = getFileNameFromUri(fileUri);
-            _uploadingDocumentList[0] = new UploadingDocument(fileName, filePath);
+            _uploadingDocumentList[0] = new UploadingDocument(fileName, fileUri);
 
 //            Log.v(TAG, "handleRequestSingleFile: fileName" + fileName);
 //            Log.v(TAG, "handleRequestSingleFile: fileName" + filePath);
@@ -212,14 +212,19 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     private void handleRequestMultipleFiles(Intent intent) {
+        Log.v(TAG, intent.getExtras() + "");
+
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
         _uploadingDocumentList = new UploadingDocument[fileUris.size()];
 
         if (fileUris != null) {
             for (int i = 0; i < fileUris.size(); i++) {
+                Log.v(TAG, "uris:" + fileUris.get(i));
+            }
+
+            for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = getFileNameFromUri(fileUris.get(i));
-                final String filePath = getFilePathFromIntent(fileUris.get(i));
-                _uploadingDocumentList[i] = new UploadingDocument(fileName, filePath);
+                _uploadingDocumentList[i] = new UploadingDocument(fileName, fileUris.get(i));
 //                Log.e(TAG, "handleRequestMultipleFiles: fileName: " + fileName);
 //                Log.e(TAG, "handleRequestMultipleFiles: filePath: " + filePath);
             }
@@ -234,7 +239,24 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         if (uri.getScheme().toString().compareTo("content") == 0) {
             final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+
+                Log.v(TAG, "Columns");
+                for (int i = 0; i < cursor.getColumnCount(); i++) {
+                    Log.v(TAG, i + "\\" + cursor.getColumnName(i) + "\\" + cursor.getString(i));
+                }
+
+                int column_index = -1;
+                try {
+                    column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+
+                } catch (Exception ex) {
+                    try {
+                        column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    } catch (Exception ex2) {
+                        ex2.printStackTrace();
+                    }
+                }
+
                 final Uri filePathUri = Uri.parse(cursor.getString(column_index));
                 fileName = filePathUri.getLastPathSegment().toString();
                 Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
@@ -248,24 +270,26 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
 
-    private String getFilePathFromIntent(final Uri uri) {
-        String filePath = "";
-
-        if (uri.getScheme().toString().compareTo("content") == 0) {
-            final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor.moveToFirst()) {
-                int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                final Uri filePathUri = Uri.parse(cursor.getString(column_index));
-                filePath = filePathUri.getPath();
-                Log.e(TAG, "getFilePathFromIntent: filePath: " + filePath);
-            }
-        } else if (uri.getScheme().toString().compareTo("file") == 0) {
-            filePath = uri.getPath();
-        }
-
-        return filePath;
-
-    }
+//    private String getFilePathFromIntent(final Uri uri) {
+//        String filePath = "";
+//
+//        if (uri.getScheme().toString().compareTo("content") == 0) {
+//            try {
+//                final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
+//                if (cursor.moveToFirst()) {
+//                    int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+//                    final Uri filePathUri = Uri.parse(cursor.getString(column_index));
+//                    filePath = filePathUri.getPath();
+//                    Log.e(TAG, "getFilePathFromIntent: filePath: " + filePath);
+//                }
+//            } catch (Exception ex) {
+//                filePath = uri.getPath();
+//            }
+//        } else if (uri.getScheme().toString().compareTo("file") == 0) {
+//            filePath = uri.getPath();
+//        }
+//        return filePath;
+//    }
 
     @Override
     protected void onPause() {
@@ -651,7 +675,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
                     if (row.isChecked()) {
                         WorkorderClient.uploadDeliverable(ShareRequestActivity.this, _workorder.getWorkorderId(),
-                                _currentUploadSlot.getSlotId(), row.getUploadingDocument().getFileName(), row.getUploadingDocument().getFilePath());
+                                _currentUploadSlot.getSlotId(), row.getUploadingDocument().getFileName(), row.getUploadingDocument().getUri());
                     }
                 }
 

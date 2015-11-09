@@ -1,5 +1,6 @@
 package com.fieldnation.data.workorder;
 
+import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -8,11 +9,8 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
 public class UploadingDocument {
-    private Integer _documentId;
     private String _fileName;
-    private String _filePath;
-    private Integer _fileSize;
-    private String _fileType;
+    private Uri _uri;
 
     public UploadingDocument() {
     }
@@ -21,30 +19,17 @@ public class UploadingDocument {
         _fileName = fileName;
     }
 
-    public UploadingDocument(String fileName, String filePath) {
+    public UploadingDocument(String fileName, Uri uri) {
         _fileName = fileName;
-        _filePath = filePath;
+        _uri = uri;
     }
 
-    public Integer getDocumentId() {
-        return _documentId;
-    }
 
     public String getFileName() {
         return _fileName;
     }
 
-    public String getFilePath() {
-        return _filePath;
+    public Uri getUri() {
+        return _uri;
     }
-
-    public Integer getFileSize() {
-        return _fileSize;
-    }
-
-    public String getFileType() {
-        return _fileType;
-    }
-
-
 }
