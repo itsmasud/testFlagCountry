@@ -39,6 +39,7 @@ public class ThreadManager {
             if (thread.isAlive())
                 thread.interrupt();
         }
+
         Log.v(TAG, "shutdown end");
     }
 
