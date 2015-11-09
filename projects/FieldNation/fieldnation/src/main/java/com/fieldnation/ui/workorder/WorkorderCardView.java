@@ -898,7 +898,6 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     public interface Listener {
-
         void actionRequest(WorkorderCardView view, Workorder workorder);
 
         void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
