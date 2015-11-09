@@ -2,6 +2,8 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -218,10 +220,16 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _descriptionShortLayout.setVisibility(View.GONE);
                 _readMoreButton.setText(R.string.btn_read_less);
             }
-
             _descriptionEditText.setVisibility(VISIBLE);
-            _descriptionEditText.setKeyListener(null);
-            _descriptionEditText.setTextIsSelectable(true);
+            if (Build.VERSION.SDK_INT >= 11) {
+                _descriptionEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                _descriptionEditText.setTextIsSelectable(true);
+            } else {
+                _descriptionEditText.setRawInputType(InputType.TYPE_NULL);
+                _descriptionEditText.setFocusable(true);
+            }
+
+
 
             return true;
         }
