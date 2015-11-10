@@ -34,7 +34,7 @@
     <string name="activity_market_tab1">Available</string>
     <string name="activity_market_tab2">Requested</string>
 
-    <string name="activity_share_request_title_workorder">Select a workorder</string>
+    <string name="activity_share_request_title_workorder">Select a Work Order</string>
     <string name="activity_share_request_title_task">Select a task</string>
     <string name="activity_share_request_title_files">Select files</string>
 
@@ -224,6 +224,7 @@
     <string name="by">by</string>
     <!--<string name="by_countering_warning">By countering this work order you will be assigned if your counter offer is accepted.</string>-->
     <string name="by_signing_this_work_order_notice">By signing this work order you acknowledge that the work has been satisfactorily completed</string>
+    <string name="cant_upload_to_work_order_no_slots">Can\'t upload to this work order (no available upload slots)</string>
     <string name="category">Category</string>
     <string name="carrier">Carrier</string>
     <string name="carrier_name">Carrier Name</string>

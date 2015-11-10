@@ -1,14 +1,15 @@
 package com.fieldnation.data.workorder;
 
 import android.net.Uri;
-import android.os.Parcel;
-import android.os.Parcelable;
+import android.os.*;
+import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.annotations.Json;
 
-public class UploadingDocument {
+public class UploadingDocument implements Parcelable {
+    private static final String TAG = "UploadingDocument";
+
     private String _fileName;
     private Uri _uri;
 
@@ -31,5 +32,41 @@ public class UploadingDocument {
 
     public Uri getUri() {
         return _uri;
+    }
+
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static final Parcelable.Creator<UploadingDocument> CREATOR = new Parcelable.Creator<UploadingDocument>() {
+
+        @Override
+        public UploadingDocument createFromParcel(Parcel source) {
+            try {
+                Bundle bundle = source.readBundle();
+                return new UploadingDocument(bundle.getString("fileName"), (Uri) bundle.getParcelable("uri"));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                return null;
+            }
+        }
+
+        @Override
+        public UploadingDocument[] newArray(int size) {
+            return new UploadingDocument[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        bundle.putString("fileName", _fileName);
+        bundle.putParcelable("uri", _uri);
+        dest.writeBundle(bundle);
     }
 }

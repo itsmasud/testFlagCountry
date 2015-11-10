@@ -29,12 +29,8 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
 
     // Data
-    private Workorder _workorder;
     private UploadingDocument _uploadingDocument;
     private Listener _listener;
-    private Set<String> _uploadingFiles = new HashSet<>();
-    private UploadedDocumentView.Listener _docListener;
-    private long _profileId;
     private boolean _checked = true;
 
     /*-*************************************-*/
@@ -65,7 +61,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = (TextView) findViewById(R.id.name_textview);
-        _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+        _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
 
         populateUi();
@@ -80,7 +76,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         _listener = listener;
     }
 
-    public UploadingDocument getUploadingDocument(){
+    public UploadingDocument getUploadingDocument() {
         return _uploadingDocument;
     }
 
@@ -88,18 +84,19 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         if (!_checked) {
             _iconView.setText(getResources().getString(R.string.icfont_circle_checked));
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+            _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _checked = true;
         } else {
             _iconView.setText(getResources().getString(R.string.icfont_circle));
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
             _checked = false;
         }
     }
 
 
-    public void setData(Workorder workorder, UploadingDocument uploadingDocument) {
+    public void setData(UploadingDocument uploadingDocument) {
         Log.v(TAG, "setData");
-        _workorder = workorder;
         _uploadingDocument = uploadingDocument;
         populateUi();
     }
@@ -112,12 +109,10 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         if (_titleTextView == null)
             return;
 
-        if (_workorder == null)
+        if (_uploadingDocument == null)
             return;
 
         _titleTextView.setText(_uploadingDocument.getFileName());
-
-
     }
 
     /*-*************************-*/
