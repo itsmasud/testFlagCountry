@@ -106,7 +106,7 @@ public class ShareUploadSlotView extends RelativeLayout {
         if (_slot == null)
             return;
 
-        _titleTextView.setText(_slot.getSlotName());
+        _titleTextView.setText(_slot.getSlotName().toUpperCase());
     }
 
     /*-*************************-*/

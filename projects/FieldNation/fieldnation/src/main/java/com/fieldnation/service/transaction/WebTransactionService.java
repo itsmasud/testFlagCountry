@@ -287,7 +287,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
 
                 // **** perform request ****
-                result = HttpJson.run(context, request);
+                result = HttpJson.run(request);
 
                 // debug output
                 try {

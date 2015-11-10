@@ -72,6 +72,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
     private ActionMenuItemView _sendMenuItem;
+    private WorkorderCardView _currentWorkOrderCardView = null;
 
     // Data that Needs to be saved
     private LayoutType layoutType;
@@ -137,7 +138,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
 
-        setLoading(true);
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(this);
 
@@ -194,7 +194,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 _workorderListView.setVisibility(View.VISIBLE);
                 _uploadSlotScrollView.setVisibility(View.GONE);
                 _sharedFilesScrollView.setVisibility(View.GONE);
-                setLoading(false);
                 break;
             case UPLOAD_SLOT_LAYOUT:
                 _toolbar.setTitle(R.string.activity_share_request_title_task);
@@ -221,13 +220,13 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         String action = intent.getAction();
         Log.v(TAG, intent.toString());
 
+        setLoading(true);
+
         if (action.equals(Intent.ACTION_SEND_MULTIPLE)) {
             handleRequestMultipleFiles(intent);
         } else if (action.equals(Intent.ACTION_SEND)) {
             handleRequestSingleFile(intent);
         }
-
-        setLoading(true);
         _gpsLocationService = new GpsLocationService(this);
     }
 
@@ -311,7 +310,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     private void setLoading(boolean loading) {
-        Log.v(TAG, "setLoading()");
+        Log.v(TAG, "setLoading(" + loading + ")");
         if (_refreshView != null) {
             if (loading) {
                 _refreshView.startRefreshing();
@@ -369,7 +368,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
-                setLoading(false);
                 finish();
             }
             return false;
@@ -495,62 +493,20 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     /*-*************************************-*/
     /*-         Work Order Select           -*/
     /*-*************************************-*/
-    private final WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.Listener() {
+    private final WorkorderCardView.Listener _wocv_listener = new WorkorderCardView.DefaultListener() {
         @Override
         public void onClick(final WorkorderCardView view, Workorder workorder) {
             Log.e(TAG, "onClick_WorkorderCardView");
             _workorder = workorder;
             setLoading(true);
-            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
-            view.makeButtonsGone();
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    view.setDisplayMode(WorkorderCardView.MODE_NORMAL);
-                    view.makeButtonsGone();
-                }
-            }, 500);
+            _currentWorkOrderCardView = view;
+            _currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+            _currentWorkOrderCardView.makeButtonsGone();
 
             if (_workorderClient != null && _workorderClient.isConnected())
                 _workorderClient.disconnect(ShareRequestActivity.this);
             _workorderClient = new WorkorderClient(_workorderClient_listener);
             _workorderClient.connect(ShareRequestActivity.this);
-        }
-
-        @Override
-        public void actionRequest(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void actionWithdrawRequest(WorkorderCardView view, final Workorder workorder) {
-        }
-
-        @Override
-        public void actionCheckout(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void viewCounter(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-        }
-
-        @Override
-        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
         }
     };
 
@@ -664,11 +620,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     v = (ShareUploadSlotView) _uploadSlotLayout.getChildAt(i);
                 } else {
                     v = new ShareUploadSlotView(ShareRequestActivity.this);
+                    _uploadSlotLayout.addView(v);
                 }
                 final UploadSlot slot = _slots[i];
                 v.setData(slot);
                 v.setListener(_shareUploadSlotView_listener);
-                _uploadSlotLayout.addView(v);
             }
 
             @Override
@@ -677,8 +633,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             }
         };
         _uploadSlotScrollView.setVisibility(View.VISIBLE);
-
         _uploadSlotLayout.postDelayed(r, new Random().nextInt(100));
+
+        if (_currentWorkOrderCardView != null) {
+            _currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            _currentWorkOrderCardView.makeButtonsGone();
+        }
     }
 
     private ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
@@ -705,12 +665,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         _uploadSlotScrollView.setVisibility(View.GONE);
         _sharedFilesScrollView.setVisibility(View.VISIBLE);
-        _titleTaskTextView.setText(_currentUploadSlot.getSlotName());
+        _titleTaskTextView.setText(_currentUploadSlot.getSlotName().toUpperCase());
 
         if (_currentUploadSlot.getMaxFiles() < 1) {
             _maxFilesNumberTextView.setVisibility(View.GONE);
         } else {
-            _maxFilesNumberTextView.setText("Select upto " + _currentUploadSlot.getMaxFiles() + " file(s)");
+            _maxFilesNumberTextView.setText("Select up to " + _currentUploadSlot.getMaxFiles() + " file(s)");
             _maxFilesNumberTextView.setVisibility(View.VISIBLE);
         }
 
@@ -733,11 +693,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                         v = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
                     } else {
                         v = new ShareRequestedFileRowView(ShareRequestActivity.this);
+                        _sharedFilesLayout.addView(v);
                     }
                     final UploadingDocument uploadingDocument = uploadingDocumentList[i];
                     v.setData(uploadingDocument);
                     v.setListener(_shareRequestedFileRowView_listener);
-                    _sharedFilesLayout.addView(v);
                     recreateToolBar();
                 }
 

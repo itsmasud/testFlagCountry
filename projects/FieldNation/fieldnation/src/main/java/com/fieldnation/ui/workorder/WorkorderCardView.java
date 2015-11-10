@@ -918,4 +918,46 @@ public class WorkorderCardView extends RelativeLayout {
 
         void actionReadyToGo(WorkorderCardView view, Workorder workorder);
     }
+
+    public static class DefaultListener implements Listener {
+        @Override
+        public void actionRequest(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionAssignment(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionCheckin(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionCheckout(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void viewCounter(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void onClick(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+        }
+    }
 }
