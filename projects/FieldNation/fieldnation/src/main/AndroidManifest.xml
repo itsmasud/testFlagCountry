@@ -47,7 +47,6 @@
             android:process=":frontside">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
@@ -124,7 +123,6 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
@@ -168,6 +166,21 @@
             android:exported="false"
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
+
+
+        <activity
+            android:name=".ui.ShareRequestActivity"
+            android:exported="true"
+            android:label="@string/activity_share_activity_title"
+            android:process=":frontside">
+            <intent-filter>
+                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND_MULTIPLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+
+        </activity>
 
 
         <service

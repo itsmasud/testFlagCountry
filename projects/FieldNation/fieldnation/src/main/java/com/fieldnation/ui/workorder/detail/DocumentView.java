@@ -158,7 +158,7 @@ public class DocumentView extends RelativeLayout {
             _dateTextView.setVisibility(View.GONE);
         }
         try {
-            if (!misc.isEmptyOrNull(_document.getUpdatedBy().getFullName())) {
+            if (_document.getUpdatedBy() != null && !misc.isEmptyOrNull(_document.getUpdatedBy().getFullName())) {
                 _usernameTextView.setText(_document.getUpdatedBy().getFullName());
                 _usernameTextView.setVisibility(View.VISIBLE);
                 _byTextView.setVisibility(View.VISIBLE);

@@ -189,7 +189,7 @@ public class OAuth implements Parcelable {
         return null;
     }
 
-    public static OAuth authenticate(Context context, String host, String path, String grantType,
+    public static OAuth authenticate(String host, String path, String grantType,
                                      String clientId, String clientSecret, String username,
                                      String password) throws Exception {
 
@@ -205,7 +205,7 @@ public class OAuth implements Parcelable {
                         "&username=" + misc.escapeForURL(username) +
                         "&password=" + misc.escapeForURL(password));
 
-        HttpResult result = HttpJson.run(context, builder.build());
+        HttpResult result = HttpJson.run(builder.build());
 
         Log.v(TAG, result.getResponseCode() + "");
         Log.v(TAG, result.getResponseMessage());

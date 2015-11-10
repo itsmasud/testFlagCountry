@@ -20,7 +20,7 @@ import java.util.List;
  */
 public abstract class MSService extends Service {
     private final String TAG;
-    private static final long IDLE_TIMEOUT = 600000;
+    private static final long IDLE_TIMEOUT = 150000;
 
     private final Object LOCK = new Object();
 

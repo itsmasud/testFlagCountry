@@ -1,0 +1,12 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.fieldnation.MainActivity" >
+
+    <item
+        android:id="@+id/send_menuitem"
+        android:enabled="true"
+        android:orderInCategory="300"
+        android:title="Send"
+        app:showAsAction="always"/>
+</menu>

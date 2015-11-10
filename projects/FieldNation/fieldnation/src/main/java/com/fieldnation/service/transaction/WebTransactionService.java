@@ -125,11 +125,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
     private boolean allowSync() {
-        // Log.v(TAG, "allowSync start");
         synchronized (SYNC_LOCK) {
             // TODO calculate by collecting config information and compare to phone state
             if (_syncCheckCoolDown < System.currentTimeMillis()) {
-                Stopwatch watch = new Stopwatch(true);
+                Log.v(TAG, "Running allowSync");
                 _allowSync = true;
 
                 SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
@@ -139,21 +138,16 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 boolean requirePower = settings.getBoolean(getString(R.string.pref_key_sync_require_power), true);
                 boolean haveWifi = App.get().haveWifi();
 
-                // Log.v(TAG, "HaveWifi " + haveWifi);
-
                 if (requireWifi && !haveWifi) {
                     _allowSync = false;
                 } else {
                     boolean pluggedIn = App.get().isCharging();
-                    // Log.v(TAG, "HavePower " + pluggedIn);
                     if (requirePower && !pluggedIn) {
                         _allowSync = false;
                     }
                 }
-                _syncCheckCoolDown = System.currentTimeMillis() + 1000;
-                // Log.v(TAG, "allowSync time: " + watch.finish());
+                _syncCheckCoolDown = System.currentTimeMillis() + 60000;
             }
-            // Log.v(TAG, "allowSync end");
             return _allowSync;
         }
     }
@@ -264,7 +258,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 Log.v(TAG, "Key: " + trans.getKey());
             }
 
-            // at some point call the web service
+            // Load the request, and apply authentication
             JsonObject request = trans.getRequest().copy();
             String handlerName = null;
             HttpResult result = null;
@@ -290,31 +284,16 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 if (!misc.isEmptyOrNull(handlerName)) {
                     WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
-                    // TODO handle result?
-/*
-                    switch (wresult) {
-                        case ERROR:
-                            WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
-                            break;
-                        case FINISH:
-                            WebTransaction.delete(context, trans.getId());
-                            Transform.deleteTransaction(context, trans.getId());
-                            break;
-                        case REQUEUE:
-                            trans.requeue(context);
-                            break;
-                    }
-*/
                 }
 
-                // perform request
-                result = HttpJson.run(context, request);
+                // **** perform request ****
+                result = HttpJson.run(request);
 
                 // debug output
                 try {
                     Log.v(TAG, "ResponseCode: " + result.getResponseCode());
                     Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
+                    // this can cause OOM errors, only uncomment when trying to debug something
                     //if (!result.isFile() && result.getString() != null) {
                     //Log.v(TAG, "Result: " + result.getString());
                     //}
@@ -322,6 +301,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Log.v(TAG, ex);
                 }
 
+                // **** Error handling ****
                 // check for invalid auth
                 if (!result.isFile()
                         && result.getString().equals("You must provide a valid OAuth token to make a request")) {
