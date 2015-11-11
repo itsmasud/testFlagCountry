@@ -3,9 +3,7 @@
 <resources>
     <string name="app_name">Field Nation Red</string>
     <string name="auth_account_name">Field Nation Red</string>
-    <!-- managed provider without payment privledges  -->
     <!--<string name="auth_default_username">travis.emslander+evan@fieldnation.com</string>-->
-    <!-- normal user -->
     <!--<string name="auth_default_username">iossc</string>-->
     <string name="auth_default_username">hexixtech</string>
     <string name="auth_default_password">red17</string>

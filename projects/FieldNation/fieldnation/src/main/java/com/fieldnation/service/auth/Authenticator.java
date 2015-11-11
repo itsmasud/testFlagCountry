@@ -53,7 +53,7 @@ public class Authenticator extends AbstractAccountAuthenticator {
 
         try {
             if (auth == null) {
-                auth = OAuth.authenticate(_context, hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
+                auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token", grantType, clientId, clientSecret, account.name, password);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);

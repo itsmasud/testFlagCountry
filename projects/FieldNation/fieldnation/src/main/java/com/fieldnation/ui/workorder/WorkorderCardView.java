@@ -275,6 +275,17 @@ public class WorkorderCardView extends RelativeLayout {
         _listener = listener;
     }
 
+
+    public void makeButtonsGone() {
+        _actionButtonGreen.setVisibility(View.GONE);
+        _actionButtonWhite.setVisibility(View.GONE);
+        _actionButtonOrange.setVisibility(View.GONE);
+//        _statusTextView.setVisibility(View.GONE);
+//        _statusView.setVisibility(View.GONE);
+    }
+
+
+
 	/*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -282,6 +293,8 @@ public class WorkorderCardView extends RelativeLayout {
     private View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.v(TAG, "_this_onClick.onClick");
+
             if (_listener != null) {
                 _listener.onClick(WorkorderCardView.this, _workorder);
             }
@@ -885,7 +898,6 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     public interface Listener {
-
         void actionRequest(WorkorderCardView view, Workorder workorder);
 
         void actionWithdrawRequest(WorkorderCardView view, Workorder workorder);
@@ -905,5 +917,47 @@ public class WorkorderCardView extends RelativeLayout {
         void onViewPayments(WorkorderCardView view, Workorder workorder);
 
         void actionReadyToGo(WorkorderCardView view, Workorder workorder);
+    }
+
+    public static class DefaultListener implements Listener {
+        @Override
+        public void actionRequest(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionAssignment(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionCheckin(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionCheckout(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void viewCounter(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void onClick(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void onViewPayments(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
+        }
     }
 }

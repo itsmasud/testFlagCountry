@@ -332,6 +332,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             }
         } else {
             _emptyView.setVisibility(View.GONE);
+            Log.v(TAG, "list size:" + list.size() );
+
         }
 
         if (list.size() == 0 ) {
@@ -342,7 +344,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
-        // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),

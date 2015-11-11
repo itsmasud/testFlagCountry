@@ -41,9 +41,7 @@
         <item name="fnToolbarStyle">@style/toolbarStyle</item>
         <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
         <item name="fnToolbarTabListContainerStyle">@style/toolbarTabListContainerStyle</item>
-        <item name="toolbarNavigationButtonStyle">
-            @style/FieldNation.Material.ToolBarNavigationButtonStyle
-        </item>
+
 
         <!-- activities -->
         <item name="activityMainStyle">@style/ActivityMain</item>

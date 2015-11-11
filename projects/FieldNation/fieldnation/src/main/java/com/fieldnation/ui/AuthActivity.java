@@ -211,18 +211,16 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             new AsyncTaskEx<Object, Object, OAuth>() {
                 @Override
                 protected OAuth doInBackground(Object... params) {
-                    Context context = (Context) params[0];
                     String hostname = AuthActivity.this.getString(R.string.web_fn_hostname);
                     String grantType = AuthActivity.this.getString(R.string.auth_fn_grant_type);
                     String clientId = AuthActivity.this.getString(R.string.auth_fn_client_id);
                     String clientSecret = AuthActivity.this.getString(R.string.auth_fn_client_secret);
-                    String username = (String) params[1];
-                    String password = (String) params[2];
+                    String username = (String) params[0];
+                    String password = (String) params[1];
 
                     try {
-                        OAuth auth = OAuth.authenticate(context, hostname,
-                                "/authentication/api/oauth/token", grantType, clientId, clientSecret,
-                                username, password);
+                        OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
+                                grantType, clientId, clientSecret, username, password);
 
                         return auth;
                     } catch (Exception ex) {
@@ -277,7 +275,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
                     }
                 }
-            }.executeEx(AuthActivity.this, _username, _password);
+            }.executeEx(_username, _password);
 
             _contentLayout.setVisibility(View.GONE);
             _signupButton.setVisibility(View.GONE);

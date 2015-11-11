@@ -176,7 +176,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return obj;
@@ -220,7 +220,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         cursor.close();
                     }
                 } finally {
-                    db.close();
+                    //db.close();
                 }
             }
             return obj;
@@ -260,7 +260,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 success = db.update(ObjectStoreSqlHelper.TABLE_NAME, v, Column.ID + "=" + obj._id, null) > 0;
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (success) {
@@ -306,7 +306,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (id != -1) {
@@ -377,7 +377,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (id != -1) {
@@ -455,7 +455,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (id != -1) {
@@ -489,7 +489,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return list;
@@ -529,7 +529,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return list;
@@ -557,7 +557,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
 
@@ -587,7 +587,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                                 + Column.OBJ_KEY + "=?",
                         new String[]{profileId + "", objectTypeName, objkey}) > 0;
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return success;
@@ -610,7 +610,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         Column.ID + "=?",
                         new String[]{id + ""}) > 0;
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return success;
@@ -632,7 +632,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         Column.ID + "=?",
                         new String[]{obj.getId() + ""}) > 0;
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return success;

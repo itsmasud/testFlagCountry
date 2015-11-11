@@ -22,7 +22,7 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public static HttpResult run(Context context, JsonObject request) throws Exception {
+    public static HttpResult run(JsonObject request) throws Exception {
         String protocol = "";
         String path = "";
         String params = "";
