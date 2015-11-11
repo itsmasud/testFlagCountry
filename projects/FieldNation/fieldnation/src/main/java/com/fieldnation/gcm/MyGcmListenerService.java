@@ -23,6 +23,8 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
+import com.crashlytics.android.answers.CustomEvent;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
@@ -51,6 +53,8 @@ public class MyGcmListenerService extends GcmListenerService {
         String message = data.getString("message");
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
+
+        Debug.logCustom(new CustomEvent("PushNotificationReceived"));
 
 //        GlobalTopicClient.gcm(this, message);
         sendNotification(message);
