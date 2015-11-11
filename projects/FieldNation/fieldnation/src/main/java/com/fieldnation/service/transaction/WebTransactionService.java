@@ -74,7 +74,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(this);
+        _authTopicClient.connect(App.get());
 
         _manager = new ThreadManager();
         _manager.addThread(new TransactionThread(_manager, this, false)); // 0
@@ -98,7 +98,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.disconnect(this);
+        _authTopicClient.disconnect(App.get());
         _manager.shutdown();
         super.onDestroy();
     }
