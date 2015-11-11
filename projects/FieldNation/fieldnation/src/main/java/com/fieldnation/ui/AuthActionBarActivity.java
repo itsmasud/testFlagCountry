@@ -147,16 +147,16 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         _toastClient = new ToastClient(_toastListener);
-        _toastClient.connect(this);
+        _toastClient.connect(App.get());
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
-        _globalClient.connect(this);
+        _globalClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(this);
+        _authTopicClient.connect(App.get());
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
@@ -166,10 +166,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     protected void onPause() {
         if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(this);
+            _globalClient.disconnect(App.get());
 
         if (_authTopicClient != null && _authTopicClient.isConnected()) {
-            _authTopicClient.disconnect(this);
+            _authTopicClient.disconnect(App.get());
         }
         super.onPause();
     }
@@ -177,7 +177,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     protected void onStop() {
         if (_toastClient != null && _toastClient.isConnected())
-            _toastClient.disconnect(this);
+            _toastClient.disconnect(App.get());
         super.onStop();
     }
 
@@ -258,7 +258,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!_actionBarView.onBackPressed() && !getSupportFragmentManager().isDestroyed())
+        if (_actionBarView == null
+                || !_actionBarView.onBackPressed()
+                || getSupportFragmentManager() == null
+                || !getSupportFragmentManager().isDestroyed())
             super.onBackPressed();
     }
 
