@@ -74,9 +74,6 @@ public class NavProfileDetailListView extends RelativeLayout {
 
         Profile[] users = _profile.getManagedProviders();
 
-        if (users == null)
-            return;
-
         _profileList.removeAllViews();
         for (int i = 0; i < users.length; i++) {
             ProfileIndividualListLayout v = new ProfileIndividualListLayout(getContext());
