@@ -384,6 +384,11 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void onDetach() {
         _workorderClient.disconnect(App.get());
         _workorderClient = null;
@@ -554,6 +559,17 @@ public class WorkFragment extends WorkorderFragment {
             }
             Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
         }
+
+        if (getArguments() != null) {
+            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
+                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
+                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
+
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+                getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
+            }
+        }
+
     }
 
     private void requestWorkorder() {
