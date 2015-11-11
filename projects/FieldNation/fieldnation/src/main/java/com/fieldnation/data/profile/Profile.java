@@ -63,8 +63,6 @@ public class Profile implements Parcelable {
     }
 
     public Boolean getAcceptedTos() {
-
-
         if (_acceptedTos == null)
             return true;
         
