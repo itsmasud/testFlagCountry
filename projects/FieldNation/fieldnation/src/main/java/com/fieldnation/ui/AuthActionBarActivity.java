@@ -258,7 +258,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (!_actionBarView.onBackPressed())
+        if (!_actionBarView.onBackPressed() && !getSupportFragmentManager().isDestroyed())
             super.onBackPressed();
     }
 
