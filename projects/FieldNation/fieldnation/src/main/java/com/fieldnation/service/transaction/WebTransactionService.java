@@ -304,7 +304,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 // **** Error handling ****
                 // check for invalid auth
                 if (!result.isFile()
-                        && result.getString().equals("You must provide a valid OAuth token to make a request")) {
+                        && "You must provide a valid OAuth token to make a request".equals(result.getString())) {
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
                     AuthTopicClient.invalidateCommand(context);
