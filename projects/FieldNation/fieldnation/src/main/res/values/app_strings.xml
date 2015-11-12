@@ -451,7 +451,7 @@
 
     <string name="pref_key_remove_rate">pref_key_remove_rate</string>
     <string name="pref_default_remove_rate">7</string>
-    <string name="pref_string_remove_rate">Remove unused data older then</string>
+    <string name="pref_string_remove_rate">Remove unused data older than</string>
 
     <string-array name="pref_remove_titles">
         <item>1 day</item>
