@@ -316,9 +316,15 @@ public class WebCrawlerService extends Service {
 
             for (int i = 0; i < list.size(); i++) {
                 Message message = list.get(i);
-                incRequestCounter(2);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                if (message.getFromUser() != null) {
+                    if (!misc.isEmptyOrNull(message.getFromUser().getPhotoUrl())) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    } else (!misc.isEmptyOrNull(message.getFromUser().getPhotoThumbUrl())) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                    }
+                }
             }
         }
 
