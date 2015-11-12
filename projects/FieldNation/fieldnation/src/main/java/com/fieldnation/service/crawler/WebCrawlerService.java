@@ -320,7 +320,7 @@ public class WebCrawlerService extends Service {
                     if (!misc.isEmptyOrNull(message.getFromUser().getPhotoUrl())) {
                         incRequestCounter(1);
                         PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                    } else (!misc.isEmptyOrNull(message.getFromUser().getPhotoThumbUrl())) {
+                    } else if (!misc.isEmptyOrNull(message.getFromUser().getPhotoThumbUrl())) {
                         incRequestCounter(1);
                         PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
                     }
