@@ -61,7 +61,6 @@ public class SignOffFragment extends FragmentBase {
     // Data
     private Workorder _workorder;
     private Listener _listener;
-    private Bitmap _image;
     private boolean _waitTasks = false;
     private boolean _waitLogs = false;
 

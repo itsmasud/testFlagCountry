@@ -48,8 +48,6 @@ public class ProfilePicView extends RelativeLayout {
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-
-
     }
 
     @Override
@@ -85,6 +83,7 @@ public class ProfilePicView extends RelativeLayout {
     }
 
     public void setProfilePic(int res) {
+        _profileImageView.setBackgroundDrawable(null);
         _profileImageView.setBackgroundResource(res);
     }
 
