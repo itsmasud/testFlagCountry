@@ -142,6 +142,8 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
             _descriptionEditText.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+            Linkify.addLinks(_descriptionEditText, Linkify.PHONE_NUMBERS);
+
 
             _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
