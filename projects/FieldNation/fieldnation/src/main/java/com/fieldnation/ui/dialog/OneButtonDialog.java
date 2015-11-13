@@ -121,9 +121,7 @@ public class OneButtonDialog extends DialogFragmentBase {
         } else {
             _prevButton.setVisibility(View.VISIBLE);
             _nextButton.setVisibility(View.VISIBLE);
-            _bodyTextView.setText(misc.linkifyHtml(
-                    _body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(),
-                    Linkify.ALL));
+            _bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(), Linkify.ALL));
             _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
         // _bodyTextView.setText(_body);
