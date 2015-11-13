@@ -99,7 +99,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     }
 
 
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -142,8 +141,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
             _descriptionEditText.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
-            Linkify.addLinks(_descriptionEditText, Linkify.PHONE_NUMBERS);
-
 
             _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -230,7 +227,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _descriptionEditText.setRawInputType(InputType.TYPE_NULL);
                 _descriptionEditText.setFocusable(true);
             }
-
 
 
             return true;
