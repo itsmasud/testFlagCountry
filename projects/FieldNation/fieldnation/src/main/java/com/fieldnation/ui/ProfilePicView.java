@@ -6,18 +6,23 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 
 /**
  * Created by Michael Carver on 5/12/2015.
  */
 public class ProfilePicView extends RelativeLayout {
+    private static final String TAG = "ProfilePicView";
 
     private ImageView _profileImageView;
-    private RelativeLayout _unreadView;
+    private ViewStub _alertStub;
+    private View _unreadView;
 
     private boolean _alertOn = false;
 
@@ -40,9 +45,7 @@ public class ProfilePicView extends RelativeLayout {
         LayoutInflater.from(getContext()).inflate(R.layout.view_profile_pic, this, true);
 
         _profileImageView = (ImageView) findViewById(R.id.profile_imageview);
-        _unreadView = (RelativeLayout) findViewById(R.id.unread_view);
-
-        setAlertOn(_alertOn);
+        _alertStub = (ViewStub) findViewById(R.id.alert_stub);
     }
 
     @Override
@@ -72,13 +75,18 @@ public class ProfilePicView extends RelativeLayout {
     public void setAlertOn(boolean alert) {
         _alertOn = alert;
 
-        if (_unreadView == null)
+        if (_alertStub == null)
             return;
 
         if (_alertOn) {
+            if (_unreadView == null) {
+                _unreadView = _alertStub.inflate().findViewById(R.id.unread_view);
+            }
+
             _unreadView.setVisibility(VISIBLE);
         } else {
-            _unreadView.setVisibility(GONE);
+            if (_unreadView != null)
+                _unreadView.setVisibility(GONE);
         }
     }
 
