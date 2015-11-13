@@ -18,20 +18,30 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.misc;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
     private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
+    private static final int TEXT_MAX_SIZE = 500;
+
     //Ui
     private TextView _titleTextView;
+
     private TextView _bodyTextView;
     private Button _button;
+
+    private Button _prevButton;
+    private Button _nextButton;
 
     // Data
     private String _title;
     private String _body;
+    private int _bodyPosition = 0;
     private String _buttonText;
     private Listener _listener;
 
@@ -67,6 +77,11 @@ public class OneButtonDialog extends DialogFragmentBase {
         _button = (Button) v.findViewById(R.id.button);
         _button.setOnClickListener(_button_onClick);
 
+        _prevButton = (Button) v.findViewById(R.id.prev_button);
+        _prevButton.setOnClickListener(_prev_onClick);
+        _nextButton = (Button) v.findViewById(R.id.next_button);
+        _nextButton.setOnClickListener(_next_onClick);
+
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
@@ -80,7 +95,6 @@ public class OneButtonDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey("buttonText"))
                 _buttonText = savedInstanceState.getString("buttonText");
         }
-//        reset();
 
         return v;
     }
@@ -88,20 +102,37 @@ public class OneButtonDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
+        populateUi();
+    }
+
+    private void populateUi() {
         _titleTextView.setText(_title);
-        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-//        _bodyTextView.setText(_body);
-        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+        if (_body.length() < TEXT_MAX_SIZE) {
+            _prevButton.setVisibility(View.GONE);
+            _nextButton.setVisibility(View.GONE);
+            _bodyTextView.setText(misc.linkifyHtml(_body.trim(), Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else if ((_bodyPosition + 1) * TEXT_MAX_SIZE > _body.length()) {
+            _prevButton.setVisibility(View.VISIBLE);
+            _nextButton.setVisibility(View.VISIBLE);
+            _bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE).trim(), Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } else {
+            _prevButton.setVisibility(View.VISIBLE);
+            _nextButton.setVisibility(View.VISIBLE);
+            _bodyTextView.setText(misc.linkifyHtml(
+                    _body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(),
+                    Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+        // _bodyTextView.setText(_body);
         _button.setText(_buttonText);
     }
 
     public void setData(String title, String body, String buttonText, Listener listener) {
         Log.v(TAG, "setData");
         _body = body;
-        Log.v(TAG, "body size: " + _body.length());
-        if (_body.length() > 3000) {
-            _body = _body.substring(3000);
-        }
         _title = title;
         _buttonText = buttonText;
         _listener = listener;
@@ -116,6 +147,26 @@ public class OneButtonDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null)
                 _listener.onButtonClick();
+        }
+    };
+
+    private final View.OnClickListener _prev_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_bodyPosition > 0) {
+                _bodyPosition--;
+            }
+            populateUi();
+        }
+    };
+
+    private final View.OnClickListener _next_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if ((_bodyPosition + 1) * TEXT_MAX_SIZE < _body.length()) {
+                _bodyPosition++;
+            }
+            populateUi();
         }
     };
 
