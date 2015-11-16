@@ -39,7 +39,6 @@ public class OneButtonDialog extends DialogFragmentBase {
     //Ui
     private TextView _titleTextView;
     private ListView _bodyListView;
-    // private TextView _bodyTextView;
     private Button _button;
 
     // Data
@@ -80,12 +79,9 @@ public class OneButtonDialog extends DialogFragmentBase {
         _button = (Button) v.findViewById(R.id.button);
         _button.setOnClickListener(_button_onClick);
 
-        new TextView(v.getContext(), null, R.attr.buttonFlatStyle);
-
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyListView = (ListView) v.findViewById(R.id.body_listview);
         _bodyListView.setAdapter(_adapter);
-        //_bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("title"))
@@ -122,24 +118,6 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     private void populateUi() {
         _titleTextView.setText(_title);
-
-//        if (_body.length() < TEXT_MAX_SIZE) {
-//            //_prevButton.setVisibility(View.GONE);
-//            //_nextButton.setVisibility(View.GONE);
-//            //_bodyTextView.setText(misc.linkifyHtml(_body.trim(), Linkify.ALL));
-//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-//        } else if ((_bodyPosition + 1) * TEXT_MAX_SIZE > _body.length()) {
-//            //_prevButton.setVisibility(View.VISIBLE);
-//            //_nextButton.setVisibility(View.VISIBLE);
-//            //_bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE).trim(), Linkify.ALL));
-//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-//        } else {
-//            //_prevButton.setVisibility(View.VISIBLE);
-//            //_nextButton.setVisibility(View.VISIBLE);
-//            //_bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(), Linkify.ALL));
-//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-//        }
-        // _bodyTextView.setText(_body);
         _button.setText(_buttonText);
     }
 
@@ -151,7 +129,6 @@ public class OneButtonDialog extends DialogFragmentBase {
         _listener = listener;
 
         _adapter.notifyDataSetChanged();
-
         if (_titleTextView != null)
             reset();
     }
