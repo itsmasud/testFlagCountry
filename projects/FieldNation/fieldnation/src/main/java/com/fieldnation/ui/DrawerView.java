@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -27,12 +28,10 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -44,25 +43,25 @@ public class DrawerView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag(STAG);
 
     // UI
-    private LinearLayout _profileContainerLayout;
     private ProfilePicView _picView;
     private TextView _profileNameTextView;
     private TextView _profileCompanyTextView;
     private ImageButton _profileExpandButton;
     private TextView _providerIdTextView;
-    private NavProfileDetailListView _profileListView;
+    private ViewStub _stubProfielListView;
+    private NavProfileDetailListView _profileListView = null;
     private LinearLayout _linkContainerView;
 
     // items
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
     private RelativeLayout _paymentView;
-    private TextView _paidAmountTextView;
-    private TextView _paidDateTextView;
-    private TextView _estimatedAmountTextView;
-    private TextView _estimatedDateTextView;
-    private RelativeLayout _estimatedLayout;
-    private RelativeLayout _paidLayout;
+    // private RelativeLayout _paidLayout;
+    // private TextView _paidAmountTextView;
+    // private TextView _paidDateTextView;
+    // private TextView _estimatedAmountTextView;
+    // private TextView _estimatedDateTextView;
+    // private RelativeLayout _estimatedLayout;
 
     // sub items
     private LinearLayout _settingsView;
@@ -75,9 +74,6 @@ public class DrawerView extends RelativeLayout {
     private TextView _versionTextView;
 
     // Data
-    private Payment _paidPayment = null;
-    private Payment _estPayment = null;
-
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
 
@@ -111,9 +107,6 @@ public class DrawerView extends RelativeLayout {
             return;
 
         // profile
-        _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
-        _profileContainerLayout.setOnClickListener(_profileContainerLayout_onClick);
-
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
         _profileNameTextView = (TextView) findViewById(R.id.profile_name_textview);
@@ -125,8 +118,7 @@ public class DrawerView extends RelativeLayout {
         _profileExpandButton = (ImageButton) findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
-        _profileListView = (NavProfileDetailListView) findViewById(R.id.profile_detail_list);
-        _profileListView.setListener(_navlistener);
+        _stubProfielListView = (ViewStub) findViewById(R.id.stub_profile_detail_list);
 
         // Items
         _linkContainerView = (LinearLayout) findViewById(R.id.link_container);
@@ -139,13 +131,13 @@ public class DrawerView extends RelativeLayout {
         _paymentView = (RelativeLayout) findViewById(R.id.payment_view);
         _paymentView.setOnClickListener(_paymentView_onClick);
 
-        _paidLayout = (RelativeLayout) findViewById(R.id.paid_layout);
-        _paidAmountTextView = (TextView) findViewById(R.id.paidamount_textview);
-        _paidDateTextView = (TextView) findViewById(R.id.paiddate_textview);
-
-        _estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
-        _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
-        _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
+//        _paidLayout = (RelativeLayout) findViewById(R.id.paid_layout);
+//        _paidAmountTextView = (TextView) findViewById(R.id.paidamount_textview);
+//        _paidDateTextView = (TextView) findViewById(R.id.paiddate_textview);
+//
+//        _estimatedLayout = (RelativeLayout) findViewById(R.id.estimated_layout);
+//        _estimatedAmountTextView = (TextView) findViewById(R.id.estimatedamount_textview);
+//        _estimatedDateTextView = (TextView) findViewById(R.id.estimateddate_textview);
 
         // Sub items
         _settingsView = (LinearLayout) findViewById(R.id.settings_view);
@@ -210,29 +202,29 @@ public class DrawerView extends RelativeLayout {
     }
 
     private void populateUi() {
-        if (_estPayment != null) {
-            _estimatedLayout.setVisibility(VISIBLE);
-            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
-            _estimatedDateTextView.setText("Pending");
-        } else {
-            _estimatedLayout.setVisibility(GONE);
-        }
+//        if (_estPayment != null) {
+//            _estimatedLayout.setVisibility(VISIBLE);
+//            _estimatedAmountTextView.setText(misc.toCurrency(_estPayment.getAmount()));
+//            _estimatedDateTextView.setText("Pending");
+//        } else {
+//            _estimatedLayout.setVisibility(GONE);
+//        }
 
         if (_profile != null && _profile.getCanViewPayments()) {
             _paymentView.setVisibility(VISIBLE);
-            if (_paidPayment != null) {
-                _paidLayout.setVisibility(VISIBLE);
-                _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
-                try {
-                    Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
-                    _paidDateTextView.setText("Paid " + misc.formatDate(cal));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    _paidDateTextView.setText("");
-                }
-            } else {
-                _paidLayout.setVisibility(GONE);
-            }
+//            if (_paidPayment != null) {
+//                _paidLayout.setVisibility(VISIBLE);
+//                _paidAmountTextView.setText(misc.toCurrency(_paidPayment.getAmount()));
+//                try {
+//                    Calendar cal = ISO8601.toCalendar(_paidPayment.getDatePaid());
+//                    _paidDateTextView.setText("Paid " + misc.formatDate(cal));
+//                } catch (Exception ex) {
+//                    Log.v(TAG, ex);
+//                    _paidDateTextView.setText("");
+//                }
+//            } else {
+//                _paidLayout.setVisibility(GONE);
+//            }
         } else {
             _paymentView.setVisibility(GONE);
         }
@@ -250,7 +242,8 @@ public class DrawerView extends RelativeLayout {
                 _profileExpandButton.setVisibility(GONE);
             }
 
-            _profileListView.setProfile(_profile);
+            if (_profileListView != null)
+                _profileListView.setProfile(_profile);
 
             subPhoto();
             addProfilePhoto();
@@ -294,24 +287,41 @@ public class DrawerView extends RelativeLayout {
         _photoClient.subGet(_profile.getPhoto().getLarge(), true, false);
     }
 
+    private void setProfileListViewVisibility(int visibility) {
+        if (_stubProfielListView == null)
+            return;
+
+        if (visibility == GONE) {
+            if (_profileListView != null) {
+                _profileListView.setVisibility(GONE);
+            }
+        } else if (visibility == VISIBLE) {
+            if (_profileListView == null) {
+                _profileListView = (NavProfileDetailListView) _stubProfielListView.inflate().findViewById(R.id.profile_detail_list);
+                _profileListView.setListener(_navlistener);
+
+                if (_profile != null)
+                    _profileListView.setProfile(_profile);
+            }
+
+            _profileListView.setVisibility(VISIBLE);
+        } else if (visibility == INVISIBLE) {
+            // Not used
+        }
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        }
-    };
-
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _profileExpandButton.setActivated(!_profileExpandButton.isActivated());
             if (_profileExpandButton.isActivated()) {
-                _profileListView.setVisibility(View.VISIBLE);
+                setProfileListViewVisibility(VISIBLE);
                 _linkContainerView.setVisibility(View.GONE);
             } else {
-                _profileListView.setVisibility(View.GONE);
+                setProfileListViewVisibility(GONE);
                 _linkContainerView.setVisibility(View.VISIBLE);
             }
         }

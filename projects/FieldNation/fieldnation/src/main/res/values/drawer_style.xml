@@ -18,13 +18,12 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
 
-        <item name="android:layout_marginBottom">16dp</item>
         <item name="android:paddingBottom">16dp</item>
-
         <item name="android:paddingLeft">8dp</item>
-        <item name="android:layout_marginLeft">8dp</item>
-
         <item name="android:paddingTop">16dp</item>
+
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_marginTop">16dp</item>
     </style>
 
@@ -54,8 +53,12 @@
 
     <style name="DrawerProfileButton" parent="Material.Button.Flat">
         <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_height">64dp</item>
         <item name="android:layout_marginRight">16dp</item>
+        <item name="android:layout_marginTop">0dp</item>
+        <item name="android:layout_marginBottom">0dp</item>
+        <item name="android:layout_alignParentRight">true</item>
+        <item name="android:layout_centerVertical">true</item>
         <item name="android:src">@drawable/ic_nav_arrow</item>
     </style>
 

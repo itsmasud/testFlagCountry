@@ -148,7 +148,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                         + "&explanation=" + misc.escapeForURL(explanation));
     }
 
-    public static void actionRegisterPhone(Context context, String deviceId) {
+    public static void actionRegisterPhone(Context context, String deviceId, long profileId) {
         try {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
@@ -160,7 +160,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             body.put("record", "register-mobile-device");
             body.put("data.item_type", "gcm");
             body.put("data.device_id", deviceId);
-            body.put("data.user_id", App.get().getProfile().getUserId());
+            body.put("data.user_id", profileId);
 
             http.body("[" + body.toString() + "]");
 

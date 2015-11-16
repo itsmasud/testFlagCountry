@@ -18,50 +18,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/fn_gradient_rev">
+                android:background="@drawable/fn_gradient_rev"
+                android:paddingBottom="32dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="32dp">
+
+                <com.fieldnation.ui.ProfilePicView
+                    android:id="@+id/pic_view"
+                    style="@style/DrawerProfileImage"
+                    android:layout_centerVertical="true" />
 
                 <LinearLayout
-                    android:id="@+id/profile_container"
-                    style="@style/DrawerProfileContainer"
+                    android:id="@+id/profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
                     android:layout_toLeftOf="@+id/profileexpand_button"
-                    android:orientation="horizontal">
+                    android:layout_toRightOf="@+id/pic_view"
+                    android:orientation="vertical">
 
-                    <com.fieldnation.ui.ProfilePicView
-                        android:id="@+id/pic_view"
-                        style="@style/DrawerProfileImage" />
+                    <TextView
+                        android:id="@+id/profile_name_textview"
+                        style="@style/DrawerProfileName"
+                        android:text="Firstname Lastname"
+                        android:textColor="@color/fn_white_text" />
 
-                    <LinearLayout
-                        android:id="@+id/profile_layout"
-                        style="@style/DrawerProfileDataContainer"
-                        android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/profile_company_textview"
+                        style="@style/DrawerProfileDetails"
+                        android:text="Company Name"
+                        android:textColor="@color/fn_white_text" />
 
-                        <TextView
-                            android:id="@+id/profile_name_textview"
-                            style="@style/DrawerProfileName"
-                            android:text="Firstname Lastname"
-                            android:textColor="@color/fn_white_text" />
+                    <TextView
+                        android:id="@+id/providerid_textview"
+                        style="@style/DrawerProfileDetails"
+                        android:text="Provider Id: 12354654"
+                        android:textColor="@color/fn_white_text" />
 
-                        <TextView
-                            android:id="@+id/profile_company_textview"
-                            style="@style/DrawerProfileDetails"
-                            android:text="Company Name"
-                            android:textColor="@color/fn_white_text" />
-
-                        <TextView
-                            android:id="@+id/providerid_textview"
-                            style="@style/DrawerProfileDetails"
-                            android:text="Provider Id: 12354654"
-                            android:textColor="@color/fn_white_text" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/profileexpand_button"
                     style="@style/DrawerProfileButton"
-                    android:layout_alignBottom="@+id/profile_container"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/profile_container"
                     android:visibility="gone" />
             </RelativeLayout>
 
@@ -70,10 +70,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2px" />
 
-            <com.fieldnation.ui.NavProfileDetailListView
-                android:id="@+id/profile_detail_list"
+            <ViewStub
+                android:id="@+id/stub_profile_detail_list"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout="@layout/stub_nav_profile_detail_list"
                 android:visibility="gone" />
 
             <LinearLayout
@@ -94,28 +95,23 @@
                     android:id="@+id/mywork_view"
                     style="@style/DrawerItem">
 
-
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/mywork_icon"
                         style="@style/DrawerItemTextFont"
                         android:text="@string/icfont_clipboard" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/mywork_title_textView"
+                        style="@style/DrawerItemTitle"
                         android:layout_toRightOf="@+id/mywork_icon"
-                        android:orientation="vertical">
+                        android:text="@string/mywork_title" />
 
-                        <TextView
-                            android:id="@+id/mywork_title_textView"
-                            style="@style/DrawerItemTitle"
-                            android:text="@string/mywork_title" />
-
-                        <TextView
-                            android:id="@+id/workorder_subtext_textview"
-                            style="@style/DrawerItemSubtitle"
-                            android:text="@string/mywork_subtitle" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/workorder_subtext_textview"
+                        style="@style/DrawerItemSubtitle"
+                        android:layout_below="@+id/mywork_title_textView"
+                        android:layout_toRightOf="@+id/mywork_icon"
+                        android:text="@string/mywork_subtitle" />
                 </RelativeLayout>
 
                 <!-- Market -->
@@ -129,22 +125,18 @@
                         style="@style/DrawerItemTextFont"
                         android:text="@string/icfont_hiring" />
 
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/market_title_textview"
+                        style="@style/DrawerItemTitle"
                         android:layout_toRightOf="@+id/market_icon"
-                        android:orientation="vertical">
+                        android:text="@string/market_title" />
 
-                        <TextView
-                            android:id="@+id/market_title_textview"
-                            style="@style/DrawerItemTitle"
-                            android:text="@string/market_title" />
-
-                        <TextView
-                            android:id="@+id/market_subtext_textview"
-                            style="@style/DrawerItemSubtitle"
-                            android:text="@string/market_subtitle" />
-                    </LinearLayout>
+                    <TextView
+                        android:id="@+id/market_subtext_textview"
+                        style="@style/DrawerItemSubtitle"
+                        android:layout_below="@+id/market_title_textview"
+                        android:layout_toRightOf="@+id/market_icon"
+                        android:text="@string/market_subtitle" />
                 </RelativeLayout>
 
                 <!-- Payment -->
@@ -159,73 +151,74 @@
                         style="@style/DrawerItemTextFont"
                         android:text="@string/icfont_circle_dollar" />
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                    <TextView
+                        android:id="@+id/payment_title_textview"
+                        style="@style/DrawerItemTitle"
                         android:layout_toRightOf="@+id/payment_imageview"
-                        android:orientation="vertical">
+                        android:text="@string/payment_title" />
 
-                        <TextView
-                            android:id="@+id/payment_title_textview"
-                            style="@style/DrawerItemTitle"
-                            android:text="@string/payment_title" />
+                    <TextView
+                        android:id="@+id/payment_subtext_textview"
+                        style="@style/DrawerItemSubtitle"
+                        android:layout_below="@id/payment_title_textview"
+                        android:layout_toRightOf="@+id/payment_imageview"
+                        android:text="@string/payment_subtitle" />
 
-                        <TextView
-                            android:id="@+id/payment_subtext_textview"
-                            style="@style/DrawerItemSubtitle"
-                            android:text="@string/payment_subtitle" />
+                    <!--
+                                        <RelativeLayout
+                                            android:id="@+id/estimated_layout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/payment_subtext_textview"
+                                            android:layout_toRightOf="@+id/payment_imageview"
+                                            android:paddingTop="8dp"
+                                            android:visibility="visible">
 
-                        <RelativeLayout
-                            android:id="@+id/estimated_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="8dp"
-                            android:visibility="visible">
+                                            <TextView
+                                                android:id="@+id/estimateddate_textview"
+                                                style="@style/Text_Body_1"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignParentLeft="true"
+                                                android:text="@string/pending" />
 
-                            <TextView
-                                android:id="@+id/estimateddate_textview"
-                                style="@style/Text_Body_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:text="@string/pending" />
+                                            <TextView
+                                                android:id="@+id/estimatedamount_textview"
+                                                style="@style/DrawerEsitmatedAmount"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignParentRight="true"
+                                                android:layout_gravity="right"
+                                                android:text="$2,500" />
+                                        </RelativeLayout>
 
-                            <TextView
-                                android:id="@+id/estimatedamount_textview"
-                                style="@style/DrawerEsitmatedAmount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_gravity="right"
-                                android:text="$2,500" />
-                        </RelativeLayout>
+                                        <RelativeLayout
+                                            android:id="@+id/paid_layout"
+                                            android:layout_width="match_parent"
+                                            android:layout_height="wrap_content"
+                                            android:layout_below="@id/estimated_layout"
+                                            android:paddingBottom="8dp"
+                                            android:paddingTop="8dp"
+                                            android:visibility="visible">
 
-                        <RelativeLayout
-                            android:id="@+id/paid_layout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingBottom="8dp"
-                            android:paddingTop="8dp"
-                            android:visibility="visible">
+                                            <TextView
+                                                android:id="@+id/paiddate_textview"
+                                                style="@style/Text_Body_1"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignParentLeft="true"
+                                                android:text="Paid 5/20/14" />
 
-                            <TextView
-                                android:id="@+id/paiddate_textview"
-                                style="@style/Text_Body_1"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentLeft="true"
-                                android:text="Paid 5/20/14" />
-
-                            <TextView
-                                android:id="@+id/paidamount_textview"
-                                style="@style/DrawerPaidAmount"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_alignParentRight="true"
-                                android:layout_gravity="right"
-                                android:text="$2,500" />
-                        </RelativeLayout>
-                    </LinearLayout>
+                                            <TextView
+                                                android:id="@+id/paidamount_textview"
+                                                style="@style/DrawerPaidAmount"
+                                                android:layout_width="wrap_content"
+                                                android:layout_height="wrap_content"
+                                                android:layout_alignParentRight="true"
+                                                android:layout_gravity="right"
+                                                android:text="$2,500" />
+                                        </RelativeLayout>
+                    -->
                 </RelativeLayout>
 
                 <View
@@ -323,7 +316,5 @@
                     android:text="garbage" />
             </LinearLayout>
         </LinearLayout>
-
     </ScrollView>
-
 </merge>

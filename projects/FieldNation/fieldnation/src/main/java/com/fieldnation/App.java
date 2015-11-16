@@ -75,6 +75,7 @@ public class App extends Application {
     private Typeface _iconFont;
     private Handler _handler = new Handler();
     private boolean _switchingUser = false;
+    public String deviceToken = null;
 
 
     @Override
@@ -339,6 +340,11 @@ public class App extends Application {
 
                 if (!misc.isEmptyOrNull(_profile.getFirstname()) && !misc.isEmptyOrNull(_profile.getLastname())) {
                     Debug.setUserName(_profile.getFirstname() + " " + _profile.getLastname());
+                }
+
+                if (deviceToken != null) {
+                    ProfileClient.actionRegisterDevice(App.this, deviceToken, _profile.getUserId());
+                    deviceToken = null;
                 }
 
                 GlobalTopicClient.gotProfile(App.this, profile);
