@@ -28,12 +28,10 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
-import java.util.Calendar;
 
 /**
  * This view defines what is in the pull out drawer, and what the buttons do.
@@ -59,12 +57,12 @@ public class DrawerView extends RelativeLayout {
     private RelativeLayout _myworkView;
     private RelativeLayout _marketView;
     private RelativeLayout _paymentView;
-    //    private RelativeLayout _paidLayout;
-    //    private TextView _paidAmountTextView;
-    //    private TextView _paidDateTextView;
-    //    private TextView _estimatedAmountTextView;
-    //    private TextView _estimatedDateTextView;
-    //    private RelativeLayout _estimatedLayout;
+    // private RelativeLayout _paidLayout;
+    // private TextView _paidAmountTextView;
+    // private TextView _paidDateTextView;
+    // private TextView _estimatedAmountTextView;
+    // private TextView _estimatedDateTextView;
+    // private RelativeLayout _estimatedLayout;
 
     // sub items
     private LinearLayout _settingsView;
@@ -77,9 +75,6 @@ public class DrawerView extends RelativeLayout {
     private TextView _versionTextView;
 
     // Data
-    private Payment _paidPayment = null;
-    private Payment _estPayment = null;
-
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
 
