@@ -90,6 +90,7 @@
         <item name="dialogOkButtonStyle">@style/DialogOkButton.Material</item>
         <item name="dialogOkButtonGreenStyle">@style/DialogOkButtonGreen.Material</item>
         <item name="dialogBodyStyle">@style/DialogBody</item>
+        <item name="dialogBodyNoPaddingStyle">@style/DialogBodyNoPadding</item>
         <item name="dialogDividerStyle">@style/DialogDivider</item>
 
     </style>

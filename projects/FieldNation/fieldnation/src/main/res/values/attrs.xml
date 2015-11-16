@@ -78,6 +78,7 @@
         <attr name="dialogOkButtonGreenStyle" format="reference" />
         <attr name="dialogSpinnerButtonStyle" format="reference" />
         <attr name="dialogBodyStyle" format="reference" />
+        <attr name="dialogBodyNoPaddingStyle" format="reference" />
         <attr name="dialogDividerStyle" format="reference" />
     </declare-styleable>
 

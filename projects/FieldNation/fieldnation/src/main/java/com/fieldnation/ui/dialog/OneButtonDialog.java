@@ -27,6 +27,7 @@ import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.StringTokenizer;
 
 /**
  * Created by Michael on 2/6/2015.
@@ -44,6 +45,7 @@ public class OneButtonDialog extends DialogFragmentBase {
     // Data
     private String _title;
     private String _body;
+    private List<String> _sections = null;
     private String _buttonText;
     private Listener _listener;
 
@@ -81,6 +83,8 @@ public class OneButtonDialog extends DialogFragmentBase {
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyListView = (ListView) v.findViewById(R.id.body_listview);
+        _bodyListView.setDivider(null);
+        _bodyListView.setDividerHeight(0);
         _bodyListView.setAdapter(_adapter);
 
         if (savedInstanceState != null) {
@@ -123,36 +127,56 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     public void setData(String title, String body, String buttonText, Listener listener) {
         Log.v(TAG, "setData");
-        _body = body;
         _title = title;
         _buttonText = buttonText;
         _listener = listener;
+        _body = body;
+
+        _sections = splitBody(_body);
 
         _adapter.notifyDataSetChanged();
         if (_titleTextView != null)
             reset();
     }
 
+    public List<String> splitBody(String body) {
+        List<String> list = new LinkedList<>();
+        StringTokenizer tok = new StringTokenizer(body, " ");
+        StringBuilder line = new StringBuilder(TEXT_MAX_SIZE);
+
+        int runningLength = 0;
+        while (tok.hasMoreTokens()) {
+            String word = tok.nextToken();
+
+            line.append(word);
+            line.append(" ");
+            runningLength += word.length();
+
+            if (runningLength >= TEXT_MAX_SIZE) {
+                list.add(line.toString());
+                line = new StringBuilder(TEXT_MAX_SIZE);
+                runningLength = 0;
+            }
+        }
+        if (runningLength > 0) {
+            list.add(line.toString());
+        }
+
+        return list;
+    }
+
     private BaseAdapter _adapter = new BaseAdapter() {
         @Override
         public int getCount() {
-            if (_body == null)
+            if (_sections == null)
                 return 0;
 
-            int count = _body.length() / TEXT_MAX_SIZE;
-
-            if (count * TEXT_MAX_SIZE < _body.length())
-                count++;
-
-            return count;
+            return _sections.size();
         }
 
         @Override
         public Object getItem(int position) {
-            if (position + 1 == getCount()) {
-                return _body.substring(position * TEXT_MAX_SIZE);
-            }
-            return _body.substring(position * TEXT_MAX_SIZE, (position + 1) * TEXT_MAX_SIZE);
+            return _sections.get(position);
         }
 
         @Override
@@ -165,11 +189,11 @@ public class OneButtonDialog extends DialogFragmentBase {
             TextView v = null;
 
             if (convertView == null) {
-                v = new TextView(parent.getContext(), null, R.attr.dialogBodyStyle);
+                v = new TextView(parent.getContext(), null, R.attr.dialogBodyNoPaddingStyle);
             } else if (convertView instanceof TextView) {
                 v = (TextView) convertView;
             } else {
-                v = new TextView(parent.getContext(), null, R.attr.dialogBodyStyle);
+                v = new TextView(parent.getContext(), null, R.attr.dialogBodyNoPaddingStyle);
             }
 
             v.setText(misc.linkifyHtml(((String) getItem(position)).trim(), Linkify.ALL));
