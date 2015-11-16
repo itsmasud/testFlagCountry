@@ -18,50 +18,50 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/fn_gradient_rev">
+                android:background="@drawable/fn_gradient_rev"
+                android:paddingBottom="32dp"
+                android:paddingLeft="16dp"
+                android:paddingTop="32dp">
+
+                <com.fieldnation.ui.ProfilePicView
+                    android:id="@+id/pic_view"
+                    style="@style/DrawerProfileImage"
+                    android:layout_centerVertical="true" />
 
                 <LinearLayout
-                    android:id="@+id/profile_container"
-                    style="@style/DrawerProfileContainer"
+                    android:id="@+id/profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
                     android:layout_toLeftOf="@+id/profileexpand_button"
-                    android:orientation="horizontal">
+                    android:layout_toRightOf="@+id/pic_view"
+                    android:orientation="vertical">
 
-                    <com.fieldnation.ui.ProfilePicView
-                        android:id="@+id/pic_view"
-                        style="@style/DrawerProfileImage" />
+                    <TextView
+                        android:id="@+id/profile_name_textview"
+                        style="@style/DrawerProfileName"
+                        android:text="Firstname Lastname"
+                        android:textColor="@color/fn_white_text" />
 
-                    <LinearLayout
-                        android:id="@+id/profile_layout"
-                        style="@style/DrawerProfileDataContainer"
-                        android:orientation="vertical">
+                    <TextView
+                        android:id="@+id/profile_company_textview"
+                        style="@style/DrawerProfileDetails"
+                        android:text="Company Name"
+                        android:textColor="@color/fn_white_text" />
 
-                        <TextView
-                            android:id="@+id/profile_name_textview"
-                            style="@style/DrawerProfileName"
-                            android:text="Firstname Lastname"
-                            android:textColor="@color/fn_white_text" />
+                    <TextView
+                        android:id="@+id/providerid_textview"
+                        style="@style/DrawerProfileDetails"
+                        android:text="Provider Id: 12354654"
+                        android:textColor="@color/fn_white_text" />
 
-                        <TextView
-                            android:id="@+id/profile_company_textview"
-                            style="@style/DrawerProfileDetails"
-                            android:text="Company Name"
-                            android:textColor="@color/fn_white_text" />
-
-                        <TextView
-                            android:id="@+id/providerid_textview"
-                            style="@style/DrawerProfileDetails"
-                            android:text="Provider Id: 12354654"
-                            android:textColor="@color/fn_white_text" />
-
-                    </LinearLayout>
                 </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/profileexpand_button"
                     style="@style/DrawerProfileButton"
-                    android:layout_alignBottom="@+id/profile_container"
-                    android:layout_alignParentRight="true"
-                    android:layout_alignTop="@+id/profile_container"
                     android:visibility="gone" />
             </RelativeLayout>
 

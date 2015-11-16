@@ -43,7 +43,6 @@ public class DrawerView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag(STAG);
 
     // UI
-    private LinearLayout _profileContainerLayout;
     private ProfilePicView _picView;
     private TextView _profileNameTextView;
     private TextView _profileCompanyTextView;
@@ -108,9 +107,6 @@ public class DrawerView extends RelativeLayout {
             return;
 
         // profile
-        _profileContainerLayout = (LinearLayout) findViewById(R.id.profile_container);
-        _profileContainerLayout.setOnClickListener(_profileContainerLayout_onClick);
-
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
         _profileNameTextView = (TextView) findViewById(R.id.profile_name_textview);
@@ -317,12 +313,6 @@ public class DrawerView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final OnClickListener _profileContainerLayout_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-        }
-    };
-
     private final OnClickListener _profileExpandButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
