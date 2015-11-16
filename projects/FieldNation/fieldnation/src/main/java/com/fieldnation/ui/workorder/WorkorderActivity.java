@@ -213,8 +213,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
                 _fragments[i].setLoadingListener(_workorderFrag_loadingListener);
-                if (getIntent() != null && getIntent().getExtras() != null)
-                    _fragments[i].setArguments(getIntent().getExtras());
+                if (getIntent() != null && getIntent().getExtras() != null) {
+                    try {
+                        _fragments[i].setArguments(getIntent().getExtras());
+                    } catch (Exception ex) {
+                    }
+                }
             }
         }
 

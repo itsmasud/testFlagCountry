@@ -236,6 +236,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         Window window = d.getWindow();
 
         Display display = window.getWindowManager().getDefaultDisplay();
+
         if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 7) / 10);
         } else {

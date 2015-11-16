@@ -1,16 +1,23 @@
 package com.fieldnation.ui.dialog;
 
+import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.res.Configuration;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fieldnation.Log;
@@ -31,17 +38,13 @@ public class OneButtonDialog extends DialogFragmentBase {
 
     //Ui
     private TextView _titleTextView;
-
-    private TextView _bodyTextView;
+    private ListView _bodyListView;
+    // private TextView _bodyTextView;
     private Button _button;
-
-    private Button _prevButton;
-    private Button _nextButton;
 
     // Data
     private String _title;
     private String _body;
-    private int _bodyPosition = 0;
     private String _buttonText;
     private Listener _listener;
 
@@ -77,13 +80,12 @@ public class OneButtonDialog extends DialogFragmentBase {
         _button = (Button) v.findViewById(R.id.button);
         _button.setOnClickListener(_button_onClick);
 
-        _prevButton = (Button) v.findViewById(R.id.prev_button);
-        _prevButton.setOnClickListener(_prev_onClick);
-        _nextButton = (Button) v.findViewById(R.id.next_button);
-        _nextButton.setOnClickListener(_next_onClick);
+        new TextView(v.getContext(), null, R.attr.buttonFlatStyle);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
+        _bodyListView = (ListView) v.findViewById(R.id.body_listview);
+        _bodyListView.setAdapter(_adapter);
+        //_bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("title"))
@@ -102,28 +104,41 @@ public class OneButtonDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
+        Dialog d = getDialog();
+        if (d == null)
+            return;
+
+        Window window = d.getWindow();
+
+        Display display = window.getWindowManager().getDefaultDisplay();
+
+        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 7) / 10);
+        } else {
+            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
+        }
         populateUi();
     }
 
     private void populateUi() {
         _titleTextView.setText(_title);
 
-        if (_body.length() < TEXT_MAX_SIZE) {
-            _prevButton.setVisibility(View.GONE);
-            _nextButton.setVisibility(View.GONE);
-            _bodyTextView.setText(misc.linkifyHtml(_body.trim(), Linkify.ALL));
-            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        } else if ((_bodyPosition + 1) * TEXT_MAX_SIZE > _body.length()) {
-            _prevButton.setVisibility(View.VISIBLE);
-            _nextButton.setVisibility(View.VISIBLE);
-            _bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE).trim(), Linkify.ALL));
-            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        } else {
-            _prevButton.setVisibility(View.VISIBLE);
-            _nextButton.setVisibility(View.VISIBLE);
-            _bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(), Linkify.ALL));
-            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
-        }
+//        if (_body.length() < TEXT_MAX_SIZE) {
+//            //_prevButton.setVisibility(View.GONE);
+//            //_nextButton.setVisibility(View.GONE);
+//            //_bodyTextView.setText(misc.linkifyHtml(_body.trim(), Linkify.ALL));
+//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//        } else if ((_bodyPosition + 1) * TEXT_MAX_SIZE > _body.length()) {
+//            //_prevButton.setVisibility(View.VISIBLE);
+//            //_nextButton.setVisibility(View.VISIBLE);
+//            //_bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE).trim(), Linkify.ALL));
+//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//        } else {
+//            //_prevButton.setVisibility(View.VISIBLE);
+//            //_nextButton.setVisibility(View.VISIBLE);
+//            //_bodyTextView.setText(misc.linkifyHtml(_body.substring(_bodyPosition * TEXT_MAX_SIZE, (_bodyPosition + 1) * TEXT_MAX_SIZE).trim(), Linkify.ALL));
+//            //_bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//        }
         // _bodyTextView.setText(_body);
         _button.setText(_buttonText);
     }
@@ -135,9 +150,56 @@ public class OneButtonDialog extends DialogFragmentBase {
         _buttonText = buttonText;
         _listener = listener;
 
+        _adapter.notifyDataSetChanged();
+
         if (_titleTextView != null)
             reset();
     }
+
+    private BaseAdapter _adapter = new BaseAdapter() {
+        @Override
+        public int getCount() {
+            if (_body == null)
+                return 0;
+
+            int count = _body.length() / TEXT_MAX_SIZE;
+
+            if (count * TEXT_MAX_SIZE < _body.length())
+                count++;
+
+            return count;
+        }
+
+        @Override
+        public Object getItem(int position) {
+            if (position + 1 == getCount()) {
+                return _body.substring(position * TEXT_MAX_SIZE);
+            }
+            return _body.substring(position * TEXT_MAX_SIZE, (position + 1) * TEXT_MAX_SIZE);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView v = null;
+
+            if (convertView == null) {
+                v = new TextView(parent.getContext(), null, R.attr.dialogBodyStyle);
+            } else if (convertView instanceof TextView) {
+                v = (TextView) convertView;
+            } else {
+                v = new TextView(parent.getContext(), null, R.attr.dialogBodyStyle);
+            }
+
+            v.setText(misc.linkifyHtml(((String) getItem(position)).trim(), Linkify.ALL));
+            v.setMovementMethod(LinkMovementMethod.getInstance());
+            return v;
+        }
+    };
 
     private final View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
@@ -145,26 +207,6 @@ public class OneButtonDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null)
                 _listener.onButtonClick();
-        }
-    };
-
-    private final View.OnClickListener _prev_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_bodyPosition > 0) {
-                _bodyPosition--;
-            }
-            populateUi();
-        }
-    };
-
-    private final View.OnClickListener _next_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if ((_bodyPosition + 1) * TEXT_MAX_SIZE < _body.length()) {
-                _bodyPosition++;
-            }
-            populateUi();
         }
     };
 
