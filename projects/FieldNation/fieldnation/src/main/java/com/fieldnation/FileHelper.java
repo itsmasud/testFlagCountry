@@ -53,6 +53,7 @@ public class FileHelper {
                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fout);
                     fout.close();
                     filename = "Image-" + ISO8601.now() + ".png";
+                    bitmap.recycle();
                 }
 
                 listener.fileReady(filename, tempfile);

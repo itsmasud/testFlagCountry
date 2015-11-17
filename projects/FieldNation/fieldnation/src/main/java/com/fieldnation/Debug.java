@@ -18,7 +18,6 @@ import io.fabric.sdk.android.services.common.Crash;
  * Created by Michael Carver on 8/31/2015.
  */
 public class Debug {
-
     private static final boolean USE_CRASHLYTICS = !BuildConfig.DEBUG;
     private static boolean _started = false;
     private static ANRWatchDog _anrWatchDog;

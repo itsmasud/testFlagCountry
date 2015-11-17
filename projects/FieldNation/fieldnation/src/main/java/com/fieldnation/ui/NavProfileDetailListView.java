@@ -17,8 +17,6 @@ public class NavProfileDetailListView extends RelativeLayout {
     private static final String TAG = "NavProfileDetailListView";
 
     private LinearLayout _profileList;
-    private LinearLayout _addLayout;
-    private LinearLayout _manageLayout;
 
     private Profile _profile;
     private Listener _listener;
@@ -46,12 +44,6 @@ public class NavProfileDetailListView extends RelativeLayout {
 
         _profileList = (LinearLayout) findViewById(R.id.profile_list);
 
-        _addLayout = (LinearLayout) findViewById(R.id.add_layout);
-        _addLayout.setOnClickListener(_add_onClick);
-
-        _manageLayout = (LinearLayout) findViewById(R.id.manage_layout);
-        _manageLayout.setOnClickListener(_manage_onClick);
-
         populateUi();
     }
 
@@ -73,6 +65,9 @@ public class NavProfileDetailListView extends RelativeLayout {
             return;
 
         Profile[] users = _profile.getManagedProviders();
+
+        if (users == null)
+            return;
 
         _profileList.removeAllViews();
         for (int i = 0; i < users.length; i++) {

@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -53,9 +54,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         Log.v(TAG, "onCreate");
         super.onCreate();
         _authTopicClient = new AuthTopicClient(_authClientListener);
-        _authTopicClient.connect(this);
+        _authTopicClient.connect(App.get());
         _globalTopicClient = new GlobalTopicClient(_globalTopicClientListener);
-        _globalTopicClient.connect(this);
+        _globalTopicClient.connect(App.get());
 
         _state = null;
         setState(AuthState.NOT_AUTHENTICATED);
@@ -76,8 +77,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.disconnect(this);
-        _globalTopicClient.disconnect(this);
+        _authTopicClient.disconnect(App.get());
+        _globalTopicClient.disconnect(App.get());
         setState(AuthState.NOT_AUTHENTICATED);
         if (_accountManager != null) {
             _accountManager.removeOnAccountsUpdatedListener(_accounts_updateListener);

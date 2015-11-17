@@ -30,51 +30,5 @@
             android:animateLayoutChanges="true"
             android:orientation="vertical" />
 
-        <LinearLayout
-            android:id="@+id/add_layout"
-            style="@style/DrawerItem"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <ImageView
-                style="@style/DrawerItemIcon"
-                android:src="@drawable/ic_drawer_plus" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/DrawerProfileName"
-                    android:text="@string/add_profile" />
-
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/manage_layout"
-            style="@style/DrawerItem"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/DrawerItemTextFont"
-                android:text="@string/icfont_people_2" />
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="vertical">
-
-                <TextView
-                    style="@style/DrawerProfileName"
-                    android:text="@string/manage_profiles" />
-
-            </LinearLayout>
-        </LinearLayout>
-
     </LinearLayout>
 </ScrollView>

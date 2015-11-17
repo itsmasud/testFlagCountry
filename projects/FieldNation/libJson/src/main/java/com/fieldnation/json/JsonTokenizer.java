@@ -1,5 +1,6 @@
 package com.fieldnation.json;
 
+import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
@@ -150,8 +151,9 @@ public class JsonTokenizer {
                             key.append("\t");
                             break;
                         case 'u':
-                            // TODO Parse unicode chars here
-                            key.append("u");
+                            i++;
+                            key.append((char) Integer.parseInt(_source.substring(_index + i, _index + i + 4), 16));
+                            i += 3;
                             break;
                         default:
                             key.append(c);

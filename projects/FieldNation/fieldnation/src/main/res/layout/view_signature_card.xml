@@ -13,7 +13,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="@string/icfont_circle_pen"
+            android:text="@string/icon_circle_signature"
             android:textColor="@color/fn_accent_color"
             android:textSize="32sp" />
 

@@ -26,7 +26,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:text="@string/icfont_dollar"
+                android:text="@string/icon_dollar"
                 android:textColor="@color/fn_light_text"
                 android:textSize="32sp" />
 

@@ -332,14 +332,18 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             }
         } else {
             _emptyView.setVisibility(View.GONE);
+            Log.v(TAG, "list size:" + list.size());
+
         }
 
+        if (list.size() == 0) {
+            _adapter.setNoMorePages();
+        }
         _adapter.setPage(page, list);
     }
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
-        // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
@@ -430,10 +434,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "onActivityResult()");
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
-            startCheckin();
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-            startCheckOut();
+        try {
+            if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+                startCheckin();
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
     }
 
@@ -604,6 +612,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
+            setLoading(true);
             Intent intent = new Intent(getActivity(), WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
 //            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
@@ -795,7 +804,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final RefreshView.Listener _refreshViewListener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-//            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
+            Log.v(TAG, "_refreshViewListener.onStartRefresh()");
             _adapter.refreshPages();
         }
     };
@@ -865,3 +874,4 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 }
+

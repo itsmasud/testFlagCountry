@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Window;
 import android.widget.ImageView;
 
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -52,7 +53,7 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
         ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
-        int reqHeight =(int) (((float) getResources().getDimension(R.dimen.imageview_height_fnlogo)) / getResources().getDisplayMetrics().density);
+        int reqHeight = (int) (((float) getResources().getDimension(R.dimen.imageview_height_fnlogo)) / getResources().getDisplayMetrics().density);
         fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
 
         Log.v(TAG, "onCreate");
@@ -75,30 +76,21 @@ public class SplashActivity extends AuthFragmentActivity {
         startService(new Intent(this, AuthTopicService.class));
 
         _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(this);
+        _globalClient.connect(App.get());
 
         _authClient = new AuthTopicClient(_authTopic_listener);
-        _authClient.connect(this);
+        _authClient.connect(App.get());
 
-        AuthTopicClient.requestCommand(this);
-    }
-
-    @Override
-    protected void onPause() {
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(this);
-        if (_authClient != null && _authClient.isConnected())
-            _authClient.disconnect(this);
-        super.onPause();
+        AuthTopicClient.requestCommand(App.get());
     }
 
     @Override
     protected void onStop() {
         try {
             if (_globalClient != null && _globalClient.isConnected())
-                _globalClient.disconnect(this);
+                _globalClient.disconnect(App.get());
             if (_authClient != null && _authClient.isConnected())
-                _authClient.disconnect(this);
+                _authClient.disconnect(App.get());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -46,13 +46,13 @@ public class UploadedDocumentView extends RelativeLayout {
     private DocumentClient _docClient;
 
     static {
-        _ICFN_FILES.put("png", R.string.icfont_file_png);
-        _ICFN_FILES.put("doc", R.string.icfont_file_doc);
-        _ICFN_FILES.put("docx", R.string.icfont_file_docx);
-        _ICFN_FILES.put("jpg", R.string.icfont_file_jpg);
-        _ICFN_FILES.put("jpeg", R.string.icfont_file_jpg);
-        _ICFN_FILES.put("pdf", R.string.icfont_file_pdf);
-        _ICFN_FILES.put("xls", R.string.icfont_file_xls);
+        _ICFN_FILES.put("png", R.string.icon_file_png);
+        _ICFN_FILES.put("doc", R.string.icon_file_doc);
+        _ICFN_FILES.put("docx", R.string.icon_file_docx);
+        _ICFN_FILES.put("jpg", R.string.icon_file_jpg);
+        _ICFN_FILES.put("jpeg", R.string.icon_file_jpg);
+        _ICFN_FILES.put("pdf", R.string.icon_file_pdf);
+        _ICFN_FILES.put("xls", R.string.icon_file_xls);
     }
 
     /*-*****************************-*/
@@ -171,11 +171,11 @@ public class UploadedDocumentView extends RelativeLayout {
             if (_ICFN_FILES.containsKey(ext)) {
                 _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
             } else {
-                _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
+                _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _fileTypeIconFont.setText(getContext().getString(R.string.icfont_file_none));
+            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         }
 
         setClickable(_workorder.canViewDeliverables());

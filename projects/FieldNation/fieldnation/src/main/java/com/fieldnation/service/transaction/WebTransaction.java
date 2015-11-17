@@ -187,7 +187,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
     }
@@ -239,11 +239,15 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return obj;
     }
+
+
+    private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
+    private static final String GET_NEXT_SORT = Column.QUEUE_TIME + " ASC, " + Column.PRIORITY + " DESC, " + Column.ID + " ASC";
 
     public static WebTransaction getNext(Context context, boolean allowSync, boolean allowAuth) {
 //        Log.v(TAG, "getNext()");
@@ -256,14 +260,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         WebTransactionSqlHelper.TABLE_NAME,
                         WebTransactionSqlHelper.getColumnNames(),
                         Column.STATE + "=?"
-                                + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0")
-                                + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0"),
-                        new String[]{State.IDLE.ordinal() + ""},
-                        null, null,
-                        Column.QUEUE_TIME + " ASC, "
-                                + Column.PRIORITY + " DESC, "
-                                + Column.ID + " ASC",
-                        "1");
+                                + (allowSync ? "" : " AND is_sync = 0")
+                                + (allowAuth ? "" : " AND use_auth = 0"),
+                        GET_NEXT_PARAMS,
+                        null, null, GET_NEXT_SORT, "1");
                 try {
                     if (cursor.moveToFirst()) {
                         obj = new WebTransaction(cursor);
@@ -272,7 +272,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
             if (obj != null) {
                 obj.setState(State.WORKING);
@@ -294,7 +294,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
                 Log.v(TAG, "Orphans saved: " + rowcount);
             } finally {
-                db.close();
+                //db.close();
             }
         }
     }
@@ -324,7 +324,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         v, Column.ID + "=" + obj._id, null) > 0;
 
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (success) {
@@ -356,7 +356,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 id = db.insert(WebTransactionSqlHelper.TABLE_NAME,
                         null, v);
             } finally {
-                db.close();
+                //db.close();
             }
         }
         if (id != -1) {
@@ -379,7 +379,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                         Column.ID + "=?",
                         new String[]{id + ""}) > 0;
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return success;
@@ -400,7 +400,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     cursor.close();
                 }
             } finally {
-                db.close();
+                //db.close();
             }
         }
         return 0;

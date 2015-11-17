@@ -50,7 +50,7 @@
                     android:layout_margin="0dp"
                     android:minWidth="0dp"
                     android:paddingRight="0dp"
-                    android:text="@string/icfont_calendar"
+                    android:text="@string/icon_calendar"
                     android:textSize="16sp"
                     android:visibility="gone" />
             </RelativeLayout>

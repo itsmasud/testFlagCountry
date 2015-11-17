@@ -1,18 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
         android:background="@drawable/circle_gray" />
 
-    <ImageView
+    <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
         android:layout_margin="0.5dp"
         android:background="@drawable/circle_white" />
 
@@ -20,57 +18,12 @@
         android:id="@+id/profile_imageview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_centerInParent="true"
         android:layout_margin="0.5dp"
         android:background="@drawable/circle_white" />
 
-
-    <LinearLayout
+    <ViewStub
+        android:id="@+id/alert_stub"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_alignBottom="@+id/profile_imageview"
-        android:layout_alignRight="@+id/profile_imageview"
-        android:orientation="horizontal">
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.40" />
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="0.50"
-            android:orientation="vertical">
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_weight="0.40" />
-
-            <RelativeLayout
-                android:id="@+id/unread_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginBottom="2dp"
-                android:layout_marginRight="2dp"
-                android:layout_weight="0.50">
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:src="@drawable/circle_white" />
-
-                <ImageView
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_centerInParent="true"
-                    android:layout_margin="4dp"
-                    android:src="@drawable/circle_orange" />
-            </RelativeLayout>
-
-        </LinearLayout>
-    </LinearLayout>
-
-</RelativeLayout>
+        android:layout="@layout/stub_profile_pic_alert" />
+</FrameLayout>

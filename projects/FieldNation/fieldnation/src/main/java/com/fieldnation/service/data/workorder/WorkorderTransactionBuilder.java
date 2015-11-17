@@ -364,9 +364,17 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionReady(Context context, long workorderId) {
-        action(context, workorderId, "ready", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
+        context.startService(actionReadyIntent(context, workorderId));
     }
+
+    public static Intent actionReadyIntent(Context context, long workorderId) {
+        return action(context, workorderId, "ready", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
+                WorkorderTransactionHandler.class,
+                WorkorderTransactionHandler.pAction(workorderId, "ready")
+        );
+    }
+
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
         try {

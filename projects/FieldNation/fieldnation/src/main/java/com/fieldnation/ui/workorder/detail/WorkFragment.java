@@ -75,6 +75,7 @@ import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
+import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
@@ -153,6 +154,7 @@ public class WorkFragment extends WorkorderFragment {
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsDialog _termsDialog;
+    private TermsScrollingDialog _termsScrollingDialog;
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
@@ -352,6 +354,7 @@ public class WorkFragment extends WorkorderFragment {
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
+        _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
@@ -381,6 +384,11 @@ public class WorkFragment extends WorkorderFragment {
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
     }
 
     @Override
@@ -554,6 +562,17 @@ public class WorkFragment extends WorkorderFragment {
             }
             Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
         }
+
+        if (getArguments() != null) {
+            if (getArguments().containsKey(WorkorderActivity.INTENT_FIELD_ACTION)
+                    && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
+                    .equals(WorkorderActivity.ACTION_CONFIRM)) {
+
+                _confirmDialog.show(_workorder, _workorder.getSchedule());
+                getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
+            }
+        }
+
     }
 
     private void requestWorkorder() {
@@ -1472,12 +1491,12 @@ public class WorkFragment extends WorkorderFragment {
     private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
-            _termsDialog.show("Confidential Information", body);
+            _termsScrollingDialog.show("Confidential Information", body);
         }
 
         @Override
         public void showCustomerPolicies(String body) {
-            _termsDialog.show("Policies And Procedures", body);
+            _termsScrollingDialog.show("Policies And Procedures", body);
         }
     };
 

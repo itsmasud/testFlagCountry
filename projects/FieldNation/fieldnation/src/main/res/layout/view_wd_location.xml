@@ -92,40 +92,78 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:clickable="true"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="16dp">
 
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/Text_Title"
-                android:layout_width="20dp"
+            <TextView
+                android:id="@+id/siteTitle_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:gravity="center"
-                android:text="@string/icfont_map_marker"
-                android:textColor="@color/fn_light_text" />
+                android:text="Field Nation" />
+
+            <TextView
+                android:id="@+id/address_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="740 Valencia St, San Francisco, CA" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp"
-                android:orientation="vertical">
+                android:orientation="horizontal">
 
-                <TextView
-                    android:id="@+id/address_textview"
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/locationIcon_textview"
                     style="@style/Text_Body_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="740 Valencia St, San Francisco, CA" />
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center"
+                    android:text="@string/icon_solid_pin"
+                    android:textColor="@color/fn_light_text" />
 
                 <TextView
-                    android:id="@+id/distance_textview"
-                    style="@style/Text_Caption"
+                    android:id="@+id/locationType_textview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="65.46 miles" />
+                    android:layout_marginLeft="4dp"
+                    android:text="Commerical" />
 
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/distance_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="65.46 miles" />
+
+            <TextView
+                android:id="@+id/noteShort_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:ellipsize="end"
+                android:maxLines="5" />
+
+            <TextView
+                android:id="@+id/noteLong_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
+                android:visibility="gone" />
+
+            <Button
+                android:id="@+id/readMore_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_width="match_parent"
+                android:layout_marginBottom="0px"
+                android:text="@string/btn_read_more" />
+
         </LinearLayout>
 
         <View
@@ -140,6 +178,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="140dp"
-        android:text="@string/icfont_car"
+        android:text="@string/icon_car"
         android:textSize="24sp" />
 </RelativeLayout>

@@ -140,8 +140,8 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         ProfileTransactionBuilder.actionBlockCompany(context, profileId, companyId, eventReasonId, explanation);
     }
 
-    public static void actionRegisterDevice(Context context, String deviceId) {
-        ProfileTransactionBuilder.actionRegisterPhone(context, deviceId);
+    public static void actionRegisterDevice(Context context, String deviceId, long profileId) {
+        ProfileTransactionBuilder.actionRegisterPhone(context, deviceId, profileId);
     }
 
     public boolean subActions() {
