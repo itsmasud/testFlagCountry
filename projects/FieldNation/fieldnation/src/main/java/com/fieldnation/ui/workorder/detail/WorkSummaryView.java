@@ -99,7 +99,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     }
 
 
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -228,7 +227,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _descriptionEditText.setRawInputType(InputType.TYPE_NULL);
                 _descriptionEditText.setFocusable(true);
             }
-
 
 
             return true;
