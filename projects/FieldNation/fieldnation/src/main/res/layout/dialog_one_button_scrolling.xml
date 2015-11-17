@@ -5,10 +5,10 @@
     android:layout_height="match_parent">
 
     <LinearLayout
-        android:id="@+id/container"
         style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_above="@+id/action_bar_container"
         android:layout_alignParentTop="true"
         android:orientation="vertical">
 
@@ -19,18 +19,17 @@
             android:layout_height="wrap_content"
             android:text="@string/terms_and_conditions" />
 
-        <TextView
-            android:id="@+id/body_textview"
-            style="?attr/dialogBodyStyle"
+        <ListView
+            android:id="@+id/body_listview"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="match_parent" />
 
     </LinearLayout>
 
     <LinearLayout
         android:id="@+id/action_bar_container"
         style="?attr/dialogActionBarStyle"
-        android:layout_below="@+id/container">
+        android:layout_alignParentBottom="true">
 
         <Button
             android:id="@+id/button"

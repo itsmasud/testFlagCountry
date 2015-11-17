@@ -1,23 +1,16 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Configuration;
-import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.ListAdapter;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fieldnation.Log;
@@ -25,27 +18,20 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.misc;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 /**
  * Created by Michael on 2/6/2015.
  */
 public class OneButtonDialog extends DialogFragmentBase {
     private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
 
-    private static final int TEXT_MAX_SIZE = 500;
-
     //Ui
     private TextView _titleTextView;
-    private ListView _bodyListView;
+    private TextView _bodyTextView;
     private Button _button;
 
     // Data
     private String _title;
     private String _body;
-    private List<String> _sections = null;
     private String _buttonText;
     private Listener _listener;
 
@@ -82,10 +68,7 @@ public class OneButtonDialog extends DialogFragmentBase {
         _button.setOnClickListener(_button_onClick);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-        _bodyListView = (ListView) v.findViewById(R.id.body_listview);
-        _bodyListView.setDivider(null);
-        _bodyListView.setDividerHeight(0);
-        _bodyListView.setAdapter(_adapter);
+        _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey("title"))
@@ -97,6 +80,7 @@ public class OneButtonDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey("buttonText"))
                 _buttonText = savedInstanceState.getString("buttonText");
         }
+//        reset();
 
         return v;
     }
@@ -104,103 +88,23 @@ public class OneButtonDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
-        Dialog d = getDialog();
-        if (d == null)
-            return;
-
-        Window window = d.getWindow();
-
-        Display display = window.getWindowManager().getDefaultDisplay();
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 7) / 10);
-        } else {
-            window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
-        }
-        populateUi();
-    }
-
-    private void populateUi() {
         _titleTextView.setText(_title);
+        // _bodyTextView.setText(_body);
+        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
+        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
         _button.setText(_buttonText);
     }
 
     public void setData(String title, String body, String buttonText, Listener listener) {
         Log.v(TAG, "setData");
+        _body = body;
         _title = title;
         _buttonText = buttonText;
         _listener = listener;
-        _body = body;
 
-        _sections = splitBody(_body);
-
-        _adapter.notifyDataSetChanged();
         if (_titleTextView != null)
             reset();
     }
-
-    public List<String> splitBody(String body) {
-        List<String> list = new LinkedList<>();
-        StringTokenizer tok = new StringTokenizer(body, " ");
-        StringBuilder line = new StringBuilder(TEXT_MAX_SIZE);
-
-        int runningLength = 0;
-        while (tok.hasMoreTokens()) {
-            String word = tok.nextToken();
-
-            line.append(word);
-            line.append(" ");
-            runningLength += word.length();
-
-            if (runningLength >= TEXT_MAX_SIZE) {
-                list.add(line.toString());
-                line = new StringBuilder(TEXT_MAX_SIZE);
-                runningLength = 0;
-            }
-        }
-        if (runningLength > 0) {
-            list.add(line.toString());
-        }
-
-        return list;
-    }
-
-    private BaseAdapter _adapter = new BaseAdapter() {
-        @Override
-        public int getCount() {
-            if (_sections == null)
-                return 0;
-
-            return _sections.size();
-        }
-
-        @Override
-        public Object getItem(int position) {
-            return _sections.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            TextView v = null;
-
-            if (convertView == null) {
-                v = new TextView(parent.getContext(), null, R.attr.dialogBodyNoPaddingStyle);
-            } else if (convertView instanceof TextView) {
-                v = (TextView) convertView;
-            } else {
-                v = new TextView(parent.getContext(), null, R.attr.dialogBodyNoPaddingStyle);
-            }
-
-            v.setText(misc.linkifyHtml(((String) getItem(position)).trim(), Linkify.ALL));
-            v.setMovementMethod(LinkMovementMethod.getInstance());
-            return v;
-        }
-    };
 
     private final View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
