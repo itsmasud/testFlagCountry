@@ -160,19 +160,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _locationIconTextView.setVisibility(VISIBLE);
                 switch (location.getType()) {
                     case "Commercial":
-                        _locationIconTextView.setText(R.string.icfont_commercial);
+                        _locationIconTextView.setText(R.string.icon_commercial);
                         _locationTypeTextView.setText("Commercial");
                         break;
                     case "Government":
-                        _locationIconTextView.setText(R.string.icfont_government);
+                        _locationIconTextView.setText(R.string.icon_government);
                         _locationTypeTextView.setText("Government");
                         break;
                     case "Residential":
-                        _locationIconTextView.setText(R.string.icfont_residential);
+                        _locationIconTextView.setText(R.string.icon_house);
                         _locationTypeTextView.setText("Residential");
                         break;
                     case "Educational":
-                        _locationIconTextView.setText(R.string.icfont_educational);
+                        _locationIconTextView.setText(R.string.icon_educational);
                         _locationTypeTextView.setText("Educational");
                         break;
                     default:

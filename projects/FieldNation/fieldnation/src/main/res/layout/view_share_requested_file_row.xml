@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="@string/icfont_circle_checked"
+            android:text="@string/icon_task_done"
             android:textColor="@color/fn_accent_color"
             android:textSize="32sp" />
 

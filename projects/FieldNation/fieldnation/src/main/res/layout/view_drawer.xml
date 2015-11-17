@@ -98,7 +98,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/mywork_icon"
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_clipboard" />
+                        android:text="@string/icon_my_wos" />
 
                     <TextView
                         android:id="@+id/mywork_title_textView"
@@ -123,7 +123,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/market_icon"
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_hiring" />
+                        android:text="@string/icon_hiring" />
 
                     <TextView
                         android:id="@+id/market_title_textview"
@@ -149,7 +149,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_imageview"
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_circle_dollar" />
+                        android:text="@string/icon_circle_dollar" />
 
                     <TextView
                         android:id="@+id/payment_title_textview"
@@ -234,7 +234,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_settings" />
+                        android:text="@string/icon_gear" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -250,7 +250,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_feedback" />
+                        android:text="@string/icon_speech_bubble" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -266,7 +266,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_debug" />
+                        android:text="@string/icon_bug" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -282,7 +282,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_help" />
+                        android:text="@string/icon_tooltip" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
@@ -298,7 +298,7 @@
 
                     <com.fieldnation.ui.IconFontTextView
                         style="@style/DrawerItemTextFont"
-                        android:text="@string/icfont_logout" />
+                        android:text="@string/icon_logout" />
 
                     <TextView
                         style="@style/DrawerSubitemTitle"

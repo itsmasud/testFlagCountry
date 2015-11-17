@@ -82,7 +82,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="5dp"
-                            android:text="@string/icfont_bundle"
+                            android:text="@string/icon_bundle"
                             android:textColor="@color/fn_accent_color"
                             android:textSize="24sp"
                             android:visibility="gone" />
@@ -91,7 +91,7 @@
                             android:id="@+id/message_alert_imageview"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/icfont_message_alert"
+                            android:text="@string/icon_messages_solid"
                             android:textColor="@color/fn_brandcolor"
                             android:textSize="16dp"
                             android:visibility="gone" />

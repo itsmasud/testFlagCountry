@@ -391,13 +391,21 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 dest.delete();
 
             boolean copySuccess = false;
+            FileOutputStream fout = null;
             try {
-                FileOutputStream fout = new FileOutputStream(dest);
+                fout = new FileOutputStream(dest);
                 fout.write(data);
-                fout.close();
                 copySuccess = true;
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            } finally {
+                if (fout != null) {
+                    try {
+                        fout.close();
+                    } catch (Exception ex) {
+                    }
+                    fout = null;
+                }
             }
 
             if (!copySuccess) {

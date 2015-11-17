@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:text="@string/icfont_circle_truck"
+        android:text="@string/icon_circle_shipment"
         android:textColor="@color/fn_accent_color"
         android:textSize="32sp" />
 

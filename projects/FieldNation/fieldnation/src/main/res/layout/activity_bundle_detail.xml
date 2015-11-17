@@ -36,7 +36,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="4dp"
-                        android:text="@string/icfont_bundle"
+                        android:text="@string/icon_bundle"
                         android:textColor="@color/fn_white_text"
                         android:textSize="24sp" />
 

@@ -43,7 +43,7 @@ public class StarView extends FrameLayout {
         if (isInEditMode())
             return;
 
-        _star = getContext().getResources().getString(R.string.icfont_star);
+        _star = getContext().getResources().getString(R.string.icon_star);
         _leftStars = (TextView) findViewById(R.id.left_stars);
         _leftStars.setOnClickListener(_leftStar_onClick);
         _leftStars.setClickable(false);

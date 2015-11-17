@@ -82,12 +82,12 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
     public void changeCheckStatus() {
         if (!_checked) {
-            _iconView.setText(getResources().getString(R.string.icfont_circle_checked));
+            _iconView.setText(getResources().getString(R.string.icon_task_done));
             _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
             _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _checked = true;
         } else {
-            _iconView.setText(getResources().getString(R.string.icfont_circle));
+            _iconView.setText(getResources().getString(R.string.icon_task));
             _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
             _checked = false;

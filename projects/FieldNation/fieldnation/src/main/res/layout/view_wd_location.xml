@@ -121,7 +121,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:gravity="center"
-                    android:text="@string/icfont_map_marker"
+                    android:text="@string/icon_solid_pin"
                     android:textColor="@color/fn_light_text" />
 
                 <TextView
@@ -178,6 +178,6 @@
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:layout_marginTop="140dp"
-        android:text="@string/icfont_car"
+        android:text="@string/icon_car"
         android:textSize="24sp" />
 </RelativeLayout>

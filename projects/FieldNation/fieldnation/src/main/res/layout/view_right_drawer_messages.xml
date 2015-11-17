@@ -29,7 +29,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:text="@string/icfont_back_arrow"
+                android:text="@string/icon_back_arrow"
                 android:textColor="@color/fn_light_text"
                 android:textSize="24sp" />
 
@@ -55,7 +55,7 @@
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:layout_centerVertical="true"
-                android:text="@string/icfont_x"
+                android:text="@string/icon_x"
                 android:textColor="@color/fn_light_text"
                 android:textSize="24sp" />
 
@@ -70,7 +70,7 @@
                     style="?attr/buttonFlatStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:text="@string/icfont_missing"
+                    android:text="@string/icon_missing"
                     android:textColor="@color/fn_light_text"
                     android:textSize="24sp" />
 
@@ -79,7 +79,7 @@
                     style="?attr/buttonFlatStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:text="@string/icfont_trash"
+                    android:text="@string/icon_trash"
                     android:textColor="@color/fn_light_text"
                     android:textSize="24sp" />
 
@@ -88,7 +88,7 @@
                     style="?attr/buttonFlatStyle"
                     android:layout_width="48dp"
                     android:layout_height="48dp"
-                    android:text="@string/icfont_menu"
+                    android:text="@string/icon_overflow"
                     android:textColor="@color/fn_light_text"
                     android:textSize="24sp" />
 
