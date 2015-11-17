@@ -332,11 +332,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             }
         } else {
             _emptyView.setVisibility(View.GONE);
-            Log.v(TAG, "list size:" + list.size() );
+            Log.v(TAG, "list size:" + list.size());
 
         }
 
-        if (list.size() == 0 ) {
+        if (list.size() == 0) {
             _adapter.setNoMorePages();
         }
         _adapter.setPage(page, list);
@@ -434,10 +434,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "onActivityResult()");
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
-            startCheckin();
-        } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-            startCheckOut();
+        try {
+            if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+                startCheckin();
+            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
         }
     }
 
