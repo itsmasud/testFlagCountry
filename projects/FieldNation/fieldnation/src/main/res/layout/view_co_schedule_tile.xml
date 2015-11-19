@@ -4,10 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-
     <TextView
-        style="?attr/tileTextTitleStyle"
         android:id="@+id/schedule_textview"
+        style="?attr/tileTextTitleStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
@@ -39,8 +38,8 @@
     <Button
         android:id="@+id/clear_button"
         style="?attr/tileButtonStyle"
-        android:text="@string/btn_clear"
-        android:layout_below="@+id/body_textview"/>
+        android:layout_below="@+id/body_textview"
+        android:text="@string/btn_clear" />
 
     <Button
         android:id="@+id/change_button"
