@@ -414,7 +414,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null || failed) {
                 try {
-                    Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
                     finish();
                 } catch (Exception ex) {
                     Log.v(TAG, ex);

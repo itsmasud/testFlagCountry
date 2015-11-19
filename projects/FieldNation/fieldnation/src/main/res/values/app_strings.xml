@@ -384,6 +384,7 @@
     <string name="work_performed_colon">Work Performed: </string>
     <string name="would_you_like_to_continue">Would you like to continue?</string>
     <string name="write_your_message">Write your message…</string>
+    <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
     <string name="you_currently_have_no_expenses">You currently have no expenses.</string>
     <!-- /general strings -->

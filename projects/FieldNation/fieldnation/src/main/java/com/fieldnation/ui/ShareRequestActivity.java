@@ -551,7 +551,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             Log.v(TAG, "_workorderClient_listener.onGet");
             if (workorder == null || failed) {
                 try {
-                    Toast.makeText(ShareRequestActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
                     finish();
                 } catch (Exception ex) {
                     ex.printStackTrace();
