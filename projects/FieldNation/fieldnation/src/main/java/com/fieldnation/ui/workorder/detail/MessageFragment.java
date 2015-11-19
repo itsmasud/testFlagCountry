@@ -243,6 +243,9 @@ public class MessageFragment extends WorkorderFragment {
 
         @Override
         public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
+            if (failed || messages == null)
+                return;
+            
             _messages = messages;
             rebuildList();
         }
