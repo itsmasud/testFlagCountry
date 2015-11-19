@@ -24,23 +24,17 @@
 
     <FrameLayout
         android:id="@+id/notesCard_layout"
-        style="@style/Card"
+        style="@style/CardContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
+        android:layout_marginBottom="16dp"
+        android:padding="16dp">
 
-        <FrameLayout
-            style="@style/CardContainer"
+        <TextView
+            android:id="@+id/notes_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/notes_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_paragraph" />
-        </FrameLayout>
+            android:text="@string/placeholder_paragraph" />
     </FrameLayout>
 
     <Button
