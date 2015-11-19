@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/MessageView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -7,56 +7,55 @@
     android:layout_marginRight="16dp"
     android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/message_layout"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content">
+    <com.fieldnation.ui.ProfilePicView
+        android:id="@+id/pic_view"
+        android:layout_width="48dp"
+        android:layout_height="48dp" />
 
-        <com.fieldnation.ui.ProfilePicView
-            android:id="@+id/pic_view"
-            android:layout_width="48dp"
-            android:layout_height="48dp" />
+    <TextView
+        android:id="@+id/message_textview"
+        style="@style/MessageView_MessageRcvd"
+        android:layout_toRightOf="@+id/pic_view"
+        android:text="@string/placeholder_paragraph" />
 
-        <TextView
-            android:id="@+id/message_textview"
-            style="@style/MessageView_MessageRcvd"
-            android:layout_toRightOf="@+id/pic_view"
-            android:text="@string/placeholder_paragraph" />
-    </RelativeLayout>
 
-    <LinearLayout
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/sent_textview"
+        style="@style/Text_Body_2"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/message_textview"
         android:layout_marginLeft="58dp"
-        android:orientation="horizontal">
+        android:text="Sent" />
 
-        <TextView
-            style="@style/Text_Body_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Sent" />
+    <TextView
+        android:id="@+id/time_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/message_textview"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/sent_textview"
 
-        <TextView
-            android:id="@+id/time_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="2:30pm" />
+        android:text="2:30pm" />
 
-        <TextView
-            style="@style/Text_Body_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text=", From" />
+    <TextView
+        android:id="@+id/from_textview"
+        style="@style/Text_Body_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/message_textview"
+        android:layout_toRightOf="@+id/time_textview"
+        android:text=", From" />
 
-        <TextView
-            android:id="@+id/username_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:text="Kevin Mccallister" />
+    <TextView
+        android:id="@+id/username_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/message_textview"
+        android:layout_marginLeft="2dp"
+        android:layout_toRightOf="@+id/from_textview"
+        android:text="Kevin Mccallister" />
 
-    </LinearLayout>
-</LinearLayout>
+</RelativeLayout>
