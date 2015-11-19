@@ -88,13 +88,6 @@
                     android:paddingRight="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/placeholder_phrase" />
-
-                <!--<View-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="28dp"-->
-                <!--android:layout_alignBottom="@+id/descriptionShort_textview"-->
-                <!--android:layout_margin="4dp"-->
-                <!--android:background="@drawable/fn_clickable_fade" />-->
             </RelativeLayout>
 
             <TextView
@@ -129,29 +122,26 @@
 
         </LinearLayout>
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/confidential_textview"
+            style="@style/TextViewLink"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_height="32dp"
             android:paddingLeft="16dp"
-            android:paddingRight="16dp">
+            android:paddingRight="16dp"
+            android:text="@string/view_confidential_information"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/confidential_textview"
-                style="@style/TextViewLink"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:text="@string/view_confidential_information"
-                android:textSize="14sp" />
+        <TextView
+            android:id="@+id/policies_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:text="@string/view_customer_policies_and_procedures"
+            android:textSize="14sp" />
 
-            <TextView
-                android:id="@+id/policies_textview"
-                style="@style/TextViewLink"
-                android:layout_width="match_parent"
-                android:layout_height="32dp"
-                android:text="@string/view_customer_policies_and_procedures"
-                android:textSize="14sp" />
-        </LinearLayout>
     </LinearLayout>
 
     <View
