@@ -10,11 +10,6 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadingDocument;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by shoaib.ahemd on Oct 07, 2015.
@@ -25,7 +20,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     // Ui
     private TextView _titleTextView;
     private IconFontTextView _iconView;
-    private CardView _Layout;
+    private RelativeLayout _Layout;
 
 
     // Data
@@ -57,7 +52,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _Layout = (CardView) findViewById(R.id.layoutCardView);
+        _Layout = (RelativeLayout) findViewById(R.id.layoutRoot);
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = (TextView) findViewById(R.id.name_textview);
