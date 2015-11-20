@@ -11,11 +11,6 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class ShareUploadSlotView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("ShareUploadSlotView");
@@ -23,7 +18,7 @@ public class ShareUploadSlotView extends RelativeLayout {
     // Ui
     private TextView _titleTextView;
     private IconFontTextView _iconView;
-    private CardView _Layout;
+    private RelativeLayout _Layout;
 
     // Data
     private UploadSlot _slot;
@@ -54,7 +49,7 @@ public class ShareUploadSlotView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _Layout = (CardView) findViewById(R.id.layoutCardView);
+        _Layout = (RelativeLayout) findViewById(R.id.layoutRoot);
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = (TextView) findViewById(R.id.name_textview);
