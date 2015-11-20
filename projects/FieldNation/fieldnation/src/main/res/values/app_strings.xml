@@ -367,6 +367,7 @@
     <!--<string name="view_all_tasks">View All Tasks</string>-->
     <string name="view_bundle_details">View Bundle Details</string>
     <string name="view_confidential_information">View Confidential Information</string>
+    <string name="view_standard_instructions">View Standard Instructions</string>
     <!--<string name="view_counter">View Counter</string>-->
     <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
     <string name="view_field_nation_terms">View Field Nation Terms</string>

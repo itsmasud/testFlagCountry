@@ -7,6 +7,7 @@ import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,6 +37,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
+    private TextView _standardInstructionTextView;
 
     private Button _readMoreButton;
 
@@ -81,6 +83,9 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         _policiesTextView = (TextView) findViewById(R.id.policies_textview);
         _policiesTextView.setOnClickListener(_policies_onClick);
+
+        _standardInstructionTextView = (TextView) findViewById(R.id.standardInstructions_textview);
+        _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -152,13 +157,19 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             } else {
                 _confidentialTextView.setVisibility(View.GONE);
             }
+
+            if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
+                _standardInstructionTextView.setVisibility(VISIBLE);
+            } else {
+                _standardInstructionTextView.setVisibility(GONE);
+            }
         }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _readMore_onClick = new OnClickListener() {
+    private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
@@ -173,7 +184,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+    private final OnClickListener _bundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
@@ -183,7 +194,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final View.OnClickListener _confidential_onClick = new View.OnClickListener() {
+    private final OnClickListener _confidential_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
@@ -191,11 +202,19 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final View.OnClickListener _policies_onClick = new View.OnClickListener() {
+    private final OnClickListener _policies_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_listener != null)
                 _listener.showCustomerPolicies(_workorder.getCustomerPoliciesProcedures());
+        }
+    };
+
+    private final OnClickListener _standardInstructions_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.showStandardInstructions(_workorder.getStandardInstruction());
         }
     };
 
@@ -204,5 +223,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         void showConfidentialInfo(String body);
 
         void showCustomerPolicies(String body);
+
+        void showStandardInstructions(String body);
     }
 }
