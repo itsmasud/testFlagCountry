@@ -56,18 +56,19 @@ public class SplashActivity extends AuthFragmentActivity {
 
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
         Resources res = App.get().getResources();
-        if(res==null)
-            SplashActivity.startNew(App.get());
-
-        final DisplayMetrics metrics = res.getDisplayMetrics();
-        final float density;
-        if(metrics!=null) {
-            density = metrics.density;
-        }else {
-            density = 1;
+        if (res != null) {
+            final DisplayMetrics metrics = res.getDisplayMetrics();
+            final float density;
+            if (metrics != null) {
+                density = metrics.density;
+            } else {
+                density = 1;
+            }
+            final int reqHeight = (int) (res.getDimension(R.dimen.imageview_height_fnlogo) / density);
+            fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
+        } else {
+            fnLogo.setImageResource(R.drawable.fn_logo);
         }
-        final int reqHeight = (int) (((float) res.getDimension(R.dimen.imageview_height_fnlogo)) / density);
-        fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
 
         Log.v(TAG, "onCreate");
     }
