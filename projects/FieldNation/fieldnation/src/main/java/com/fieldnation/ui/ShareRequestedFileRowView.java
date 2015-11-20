@@ -10,11 +10,6 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadingDocument;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.detail.UploadedDocumentView;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Created by shoaib.ahemd on Oct 07, 2015.
@@ -25,7 +20,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     // Ui
     private TextView _titleTextView;
     private IconFontTextView _iconView;
-    private CardView _Layout;
+    private RelativeLayout _Layout;
 
 
     // Data
@@ -57,7 +52,7 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _Layout = (CardView) findViewById(R.id.layoutCardView);
+        _Layout = (RelativeLayout) findViewById(R.id.layoutRoot);
         _Layout.setOnClickListener(_shareUploadSlot_onClick);
 
         _titleTextView = (TextView) findViewById(R.id.name_textview);
@@ -81,19 +76,9 @@ public class ShareRequestedFileRowView extends RelativeLayout {
     }
 
     public void changeCheckStatus() {
-        if (!_checked) {
-            _iconView.setText(getResources().getString(R.string.icon_task_done));
-            _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-            _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            _checked = true;
-        } else {
-            _iconView.setText(getResources().getString(R.string.icon_task));
-            _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-            _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
-            _checked = false;
-        }
+        _checked = !_checked;
+        populateUi();
     }
-
 
     public void setData(UploadingDocument uploadingDocument) {
         Log.v(TAG, "setData");
@@ -113,6 +98,16 @@ public class ShareRequestedFileRowView extends RelativeLayout {
             return;
 
         _titleTextView.setText(_uploadingDocument.getFileName());
+
+        if (_checked) {
+            _iconView.setText(getResources().getString(R.string.icon_task_done));
+            _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+            _titleTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+        } else {
+            _iconView.setText(getResources().getString(R.string.icon_task));
+            _iconView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            _titleTextView.setTextColor(getResources().getColor(R.color.fn_light_text));
+        }
     }
 
     /*-*************************-*/
