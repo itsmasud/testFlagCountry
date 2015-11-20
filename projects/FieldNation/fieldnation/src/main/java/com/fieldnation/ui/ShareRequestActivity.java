@@ -139,7 +139,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
-        _workorderClient.connect(this);
+        _workorderClient.connect(App.get());
 
         populateUi();
     }
@@ -298,7 +298,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             _gpsLocationService.stopLocationUpdates();
 
         if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(this);
+            _workorderClient.disconnect(App.get());
 
         super.onPause();
     }
@@ -504,9 +504,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             _currentWorkOrderCardView.makeButtonsGone();
 
             if (_workorderClient != null && _workorderClient.isConnected())
-                _workorderClient.disconnect(ShareRequestActivity.this);
+                _workorderClient.disconnect(App.get());
             _workorderClient = new WorkorderClient(_workorderClient_listener);
-            _workorderClient.connect(ShareRequestActivity.this);
+            _workorderClient.connect(App.get());
         }
     };
 

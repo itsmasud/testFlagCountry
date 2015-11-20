@@ -22,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
@@ -138,7 +139,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onResume");
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(this);
+        _globalClient.connect(App.get());
 //        _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
 //        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
 //        AuthTopicService.dispatchGettingUsernameAndPassword(this);
@@ -147,7 +148,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        _globalClient.disconnect(this);
+        _globalClient.disconnect(App.get());
         super.onPause();
     }
 

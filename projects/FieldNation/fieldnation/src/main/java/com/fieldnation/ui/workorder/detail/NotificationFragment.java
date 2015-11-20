@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
@@ -63,13 +64,15 @@ public class NotificationFragment extends WorkorderFragment {
         super.onAttach(activity);
         _isSubbed = false;
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(activity);
+        _workorderClient.connect(App.get());
     }
 
     @Override
     public void onDetach() {
-        _workorderClient.disconnect(getActivity());
-        _workorderClient = null;
+        if (_workorderClient != null && _workorderClient.isConnected()) {
+            _workorderClient.disconnect(App.get());
+            _workorderClient = null;
+        }
         _isSubbed = false;
         super.onDetach();
     }

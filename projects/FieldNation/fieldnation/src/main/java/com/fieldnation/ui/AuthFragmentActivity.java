@@ -90,9 +90,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     protected void onResume() {
         super.onResume();
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
-        _authTopicClient.connect(this);
+        _authTopicClient.connect(App.get());
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(this);
+        _globalTopicClient.connect(App.get());
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
@@ -102,10 +102,10 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onPause() {
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(this);
+            _globalTopicClient.disconnect(App.get());
 
         if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(this);
+            _authTopicClient.disconnect(App.get());
 
         super.onPause();
     }

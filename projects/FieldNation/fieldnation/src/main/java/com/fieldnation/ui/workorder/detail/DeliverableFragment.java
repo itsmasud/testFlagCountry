@@ -184,13 +184,13 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onAttach(Activity activity) {
         super.onAttach(activity);
         _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(activity);
+        _globalClient.connect(App.get());
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(activity);
+        _workorderClient.connect(App.get());
 
         _docClient = new DocumentClient(_documentClient_listener);
-        _docClient.connect(activity);
+        _docClient.connect(App.get());
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -200,13 +200,13 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(getActivity());
+            _globalClient.disconnect(App.get());
 
         if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(getActivity());
+            _workorderClient.disconnect(App.get());
 
         if (_docClient != null && _docClient.isConnected())
-            _docClient.disconnect(getActivity());
+            _docClient.disconnect(App.get());
         super.onDetach();
     }
 

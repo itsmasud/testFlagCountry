@@ -34,15 +34,17 @@ public class MessageListActivity extends ItemListActivity<Message> {
     protected void onResume() {
         super.onResume();
         _profiles = new ProfileClient(_profile_listener);
-        _profiles.connect(this);
+        _profiles.connect(App.get());
         _photos = new PhotoClient(_photoClient_listener);
-        _photos.connect(this);
+        _photos.connect(App.get());
     }
 
     @Override
     protected void onPause() {
-        _profiles.disconnect(this);
-        _photos.disconnect(this);
+        if (_profiles != null && _profiles.isConnected())
+            _profiles.disconnect(App.get());
+        if (_photos != null && _photos.isConnected())
+            _photos.disconnect(App.get());
         super.onPause();
     }
 

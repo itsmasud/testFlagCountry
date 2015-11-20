@@ -64,13 +64,15 @@ public class MessageFragment extends WorkorderFragment {
         super.onAttach(activity);
         _isSubbed = false;
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(activity);
+        _workorderClient.connect(App.get());
     }
 
     @Override
     public void onDetach() {
-        _workorderClient.disconnect(getActivity());
-        _workorderClient = null;
+        if (_workorderClient != null && _workorderClient.isConnected()) {
+            _workorderClient.disconnect(App.get());
+            _workorderClient = null;
+        }
         _isSubbed = false;
         super.onDetach();
     }

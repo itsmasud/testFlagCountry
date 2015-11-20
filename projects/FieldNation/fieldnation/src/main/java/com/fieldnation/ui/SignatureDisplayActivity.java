@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
@@ -192,7 +193,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         super.onResume();
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(this);
+        _workorderClient.connect(App.get());
 
         populateUi();
     }
@@ -200,7 +201,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     @Override
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(this);
+            _workorderClient.disconnect(App.get());
         super.onPause();
     }
 
