@@ -40,7 +40,8 @@ public class SlideTextView extends TextView {
 
         canvas.clipRect(getWidth() * _left, 0, getWidth() * _right, getHeight());
 
-        getLayout().draw(canvas);
+        if (getLayout() != null)
+            getLayout().draw(canvas);
         canvas.restore();
     }
 
