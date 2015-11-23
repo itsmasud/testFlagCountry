@@ -547,14 +547,18 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed) {
+        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderClient_listener.onGet");
             if (workorder == null || failed) {
-                try {
-                    Toast.makeText(ShareRequestActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
-                    finish();
-                } catch (Exception ex) {
-                    ex.printStackTrace();
+                if (isCached) {
+                    WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
+                } else {
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
                 return;
             }
