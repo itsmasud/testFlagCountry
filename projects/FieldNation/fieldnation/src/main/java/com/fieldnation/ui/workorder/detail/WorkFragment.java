@@ -1498,6 +1498,11 @@ public class WorkFragment extends WorkorderFragment {
         public void showCustomerPolicies(String body) {
             _termsScrollingDialog.show("Policies And Procedures", body);
         }
+
+        @Override
+        public void showStandardInstructions(String body) {
+            _termsDialog.show("Standard Instructions", body);
+        }
     };
 
     private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {

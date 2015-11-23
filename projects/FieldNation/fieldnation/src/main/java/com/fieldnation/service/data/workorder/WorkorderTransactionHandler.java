@@ -480,7 +480,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
-        WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync());
+        WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync(), false);
 
         // store it in the store
         StoredObject.put(App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
@@ -533,7 +533,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             String action = params.getString("action");
             switch (action) {
                 case "pDetails":
-                    WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync());
+                    WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync(), false);
                     break;
                 case "pList":
                     WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync(), false);

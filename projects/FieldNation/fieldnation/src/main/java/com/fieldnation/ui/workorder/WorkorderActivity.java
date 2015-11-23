@@ -10,6 +10,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -410,14 +411,18 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed) {
+        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null || failed) {
-                try {
-                    Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
-                    finish();
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                if (isCached) {
+                    WorkorderClient.get(App.get(), _workorderId, false);
+                } else {
+                    try {
+                        Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
                 return;
             }
