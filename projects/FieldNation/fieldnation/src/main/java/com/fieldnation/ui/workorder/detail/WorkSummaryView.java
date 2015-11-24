@@ -165,12 +165,12 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             } else {
                 _confidentialTextView.setVisibility(View.GONE);
             }
+        }
 
-            if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
-                _standardInstructionTextView.setVisibility(VISIBLE);
-            } else {
-                _standardInstructionTextView.setVisibility(GONE);
-            }
+        if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
+            _standardInstructionTextView.setVisibility(VISIBLE);
+        } else {
+            _standardInstructionTextView.setVisibility(GONE);
         }
     }
 

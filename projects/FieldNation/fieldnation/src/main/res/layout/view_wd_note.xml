@@ -26,6 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
+            android:layout_marginBottom="2dp"
             android:layout_marginLeft="8dp"
             android:text="1 day" />
 
@@ -34,7 +35,7 @@
             style="@style/Text_Body_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/alertthumb_imageview"
+            android:layout_below="@+id/date_textview"
             android:text="Message Content" />
     </RelativeLayout>
 
@@ -44,4 +45,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/notification_layout"
         android:layout_alignTop="@+id/notification_layout" />
+
+    <View
+        style="?attr/tileDividerStyle"
+        android:layout_below="@+id/notification_layout" />
 </RelativeLayout>

@@ -245,7 +245,7 @@ public class MessageFragment extends WorkorderFragment {
         public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
             if (failed || messages == null)
                 return;
-            
+
             _messages = messages;
             rebuildList();
         }
