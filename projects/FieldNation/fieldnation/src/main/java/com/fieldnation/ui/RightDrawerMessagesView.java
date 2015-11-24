@@ -109,7 +109,15 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
     };
 
-    private final PagingAdapter<Message> _adapter = new PagingAdapter<Message>() {
+    private static class MyPagingAdapter extends PagingAdapter<Message> {
+        private MessageTileView.Listener _listener;
+
+        public MyPagingAdapter(MessageTileView.Listener listener) {
+            super();
+            _listener = listener;
+
+        }
+
         @Override
         public View getView(Message object, View convertView, ViewGroup parent) {
             MessageTileView v = null;
@@ -121,16 +129,16 @@ public class RightDrawerMessagesView extends FrameLayout {
                 v = new MessageTileView(parent.getContext());
             }
 
-            v.setData(object, _messageCard_listener);
+            v.setData(object, _listener);
 
             return v;
         }
 
         @Override
         public void requestPage(int page, boolean allowCache) {
-            ProfileClient.listMessages(getContext(), page);
+            ProfileClient.listMessages(App.get(), page);
         }
-    };
+    }
 
     private final AdapterView.OnItemClickListener _message_onClick = new AdapterView.OnItemClickListener() {
         @Override
@@ -155,6 +163,8 @@ public class RightDrawerMessagesView extends FrameLayout {
             return null;
         }
     };
+
+    private MyPagingAdapter _adapter = new MyPagingAdapter(_messageCard_listener);
 
     /*-*****************************************-*/
     /*-                Data Events              -*/
