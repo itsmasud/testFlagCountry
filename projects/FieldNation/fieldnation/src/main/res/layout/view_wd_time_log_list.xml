@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
     <TextView
+        android:id="@+id/timeLogHeader_textview"
         style="@style/Text_Subhead"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -20,10 +21,12 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
+        android:layout_below="@+id/timeLogHeader_textview"
         android:text="No time logged" />
 
     <LinearLayout
         android:id="@+id/log_list"
+        android:layout_below="@+id/notime_textview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
@@ -32,15 +35,18 @@
     <Button
         android:id="@+id/logTime_button"
         style="?attr/buttonWhiteStyle"
+        android:layout_below="@+id/log_list"
         android:layout_gravity="right"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
+        android:layout_alignRight="@+id/log_list"
         android:text="LOG TIME" />
 
     <View
         style="@style/DividerFull"
         android:layout_width="match_parent"
+        android:layout_below="@+id/logTime_button"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
 
-</LinearLayout>
+</RelativeLayout>
