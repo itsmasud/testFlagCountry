@@ -4,7 +4,6 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,10 +31,10 @@ public class UploadedDocumentView extends RelativeLayout {
     private IconFontTextView _fileTypeIconFont;
     private TextView _filenameTextView;
     private TextView _dateTextView;
+    private TextView _byTextView;
     private TextView _usernameTextView;
     private ProgressBar _progressBar;
     private TextView _statusTextView;
-    private LinearLayout _usernameLayout;
 
     // Data
     private Workorder _workorder;
@@ -82,11 +81,11 @@ public class UploadedDocumentView extends RelativeLayout {
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _byTextView = (TextView) findViewById(R.id.by_textview);
         _usernameTextView = (TextView) findViewById(R.id.username_textview);
 
         _progressBar = (ProgressBar) findViewById(R.id.progressBar);
         _statusTextView = (TextView) findViewById(R.id.status_textview);
-        _usernameLayout = (LinearLayout) findViewById(R.id.username_layout);
 
         _docClient = new DocumentClient(_docClient_listener);
         _docClient.connect(App.get());
@@ -114,13 +113,17 @@ public class UploadedDocumentView extends RelativeLayout {
         if (isloading) {
             _progressBar.setVisibility(View.VISIBLE);
             _statusTextView.setVisibility(View.VISIBLE);
-            _usernameLayout.setVisibility(View.GONE);
+            _dateTextView.setVisibility(View.GONE);
+            _byTextView.setVisibility(GONE);
+            _usernameTextView.setVisibility(GONE);
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
-            _usernameLayout.setVisibility(View.VISIBLE);
+            _dateTextView.setVisibility(View.VISIBLE);
+            _byTextView.setVisibility(VISIBLE);
+            _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
         }
     }
