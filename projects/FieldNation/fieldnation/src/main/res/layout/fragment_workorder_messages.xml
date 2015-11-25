@@ -17,7 +17,7 @@
         android:id="@+id/emptyMessage_viewstub"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout="@layout/view_empty_message" />
+        android:layout="@layout/view_vs_empty_message" />
 
     <com.fieldnation.ui.workorder.detail.MessageInputView
         android:id="@+id/input_view"
