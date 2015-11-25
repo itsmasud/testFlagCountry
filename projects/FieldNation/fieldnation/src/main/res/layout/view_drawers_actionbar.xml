@@ -44,9 +44,10 @@
         android:layout_height="match_parent"
         android:layout_gravity="start" />
 
-    <com.fieldnation.ui.SwitchUserOverlayView
-        android:id="@+id/switchUserOverlayView"
+    <ViewStub
+        android:id="@+id/switchUserOverlay_viewstub"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/view_vs_switch_overlay"
         android:visibility="gone" />
 </android.support.v4.widget.DrawerLayout>
