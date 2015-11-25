@@ -72,6 +72,7 @@ import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -160,6 +161,7 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
+    private ReportProblemDialog _reportProblemDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -357,6 +359,7 @@ public class WorkFragment extends WorkorderFragment {
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -389,6 +392,8 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
+
+        _reportProblemDialog.show();
     }
 
     @Override

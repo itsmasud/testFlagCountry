@@ -199,6 +199,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionCompleteTask(context, workorderId, taskId);
     }
 
+    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
+        WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type);
+    }
+
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
