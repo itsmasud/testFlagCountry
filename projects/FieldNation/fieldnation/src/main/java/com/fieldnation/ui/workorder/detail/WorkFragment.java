@@ -24,11 +24,11 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
@@ -115,6 +115,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // UI
     private OverScrollView _scrollView;
+    private ViewStub _topBarViewStub;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
@@ -212,7 +213,9 @@ public class WorkFragment extends WorkorderFragment {
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
 
-        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBarViewStub = (ViewStub) view.findViewById(R.id.actionBarTopView_viewstub);
+
+        _topBar = (ActionBarTopView) _topBarViewStub.inflate();
         _topBar.setListener(_actionbartop_listener);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
