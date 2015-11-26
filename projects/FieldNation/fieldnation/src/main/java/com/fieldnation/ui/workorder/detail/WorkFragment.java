@@ -47,6 +47,7 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
@@ -214,9 +215,6 @@ public class WorkFragment extends WorkorderFragment {
         _discountListView.setListener(_discountListView_listener);
 
         _topBarViewStub = (ViewStub) view.findViewById(R.id.actionBarTopView_viewstub);
-
-        _topBar = (ActionBarTopView) _topBarViewStub.inflate();
-        _topBar.setListener(_actionbartop_listener);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
@@ -436,7 +434,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
-
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
             _sumView.setWorkorder(_workorder);
@@ -534,6 +531,29 @@ public class WorkFragment extends WorkorderFragment {
             Stopwatch watch = new Stopwatch(true);
             _closingNotes.setWorkorder(_workorder);
             Log.v(TAG, "_closingNotes time: " + watch.finish());
+        }
+
+
+        WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
+
+        switch (substatus) {
+            case AVAILABLE:
+            case ROUTED:
+            case COUNTEROFFERED:
+            case REQUESTED:
+            case CONFIRMED:
+            case UNCONFIRMED:
+            case CHECKEDOUT:
+            case CHECKEDIN:
+            case ONHOLD_UNACKNOWLEDGED:
+            case PENDINGREVIEW:
+            case PAID:
+            case CANCELED_LATEFEEPAID:
+                _topBarViewStub.setVisibility(View.VISIBLE);
+                _topBar = (ActionBarTopView) getView().findViewById(_topBarViewStub.getInflatedId());
+                _topBar.setListener(_actionbartop_listener);
+            default:
+                break;
         }
 
         if (_topBar != null) {
