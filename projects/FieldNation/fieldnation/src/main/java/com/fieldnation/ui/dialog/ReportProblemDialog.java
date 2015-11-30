@@ -238,109 +238,95 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 explanation = _explanationEditText.getText().toString();
             }
 
+            if (_listener == null) {
+                return;
+            }
+
             switch (_spinner1Position) {
                 case 0: { // I can\'t make my assignment
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.sorry_to_hear_that_you_have_been_removed, Toast.LENGTH_LONG);
-                        _listener.onReportAProblem(explanation, ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
-                    }
+                    ToastClient.toast(App.get(), R.string.sorry_to_hear_that_you_have_been_removed, Toast.LENGTH_LONG);
+                    _listener.onReportAProblem(explanation, ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
                     break;
                 }
                 case 1: { // I\'m going to be late
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
-                        _listener.onReportAProblem(explanation, ReportProblemType.WILL_BE_LATE);
-                    }
+                    ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
+                    _listener.onReportAProblem(explanation, ReportProblemType.WILL_BE_LATE);
                     break;
                 }
                 case 2: { // I don\'t have what I need
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                        switch (_spinner2Position) {
-                            case 0:
-                                _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_SHIPMENT);
-                                break;
-                            case 1:
-                                _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_INFO);
-                                break;
-                            case 2:
-                                _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_RESPONSE);
-                                break;
-                            case 3:
-                                _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_OTHER);
-                                break;
-                        }
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    switch (_spinner2Position) {
+                        case 0:
+                            _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_SHIPMENT);
+                            break;
+                        case 1:
+                            _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_INFO);
+                            break;
+                        case 2:
+                            _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_RESPONSE);
+                            break;
+                        case 3:
+                            _listener.onReportAProblem(explanation, ReportProblemType.DO_NOT_HAVE_OTHER);
+                            break;
                     }
                     break;
                 }
                 case 3: { // Approval
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                        switch (_spinner2Position) {
-                            case 0:
-                                _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_NOT_YET);
-                                break;
-                            case 1:
-                                _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_DISAGREEMENT);
-                                break;
-                        }
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    switch (_spinner2Position) {
+                        case 0:
+                            _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_NOT_YET);
+                            break;
+                        case 1:
+                            _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_DISAGREEMENT);
+                            break;
                     }
                     break;
                 }
                 case 4: { // Payment
-                    if (_listener != null) {
-                        switch (_spinner2Position) {
-                            case 0:
-                                ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
-                                _listener.onReportAProblem(explanation, ReportProblemType.PAYMENT_NOT_RECEIVED);
-                                break;
-                            case 1:
-                                ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                                _listener.onReportAProblem(explanation, ReportProblemType.PAYMENT_NOT_ACCURATE);
-                                break;
-                        }
+                    switch (_spinner2Position) {
+                        case 0:
+                            ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
+                            _listener.onReportAProblem(explanation, ReportProblemType.PAYMENT_NOT_RECEIVED);
+                            break;
+                        case 1:
+                            ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                            _listener.onReportAProblem(explanation, ReportProblemType.PAYMENT_NOT_ACCURATE);
+                            break;
                     }
                     break;
                 }
                 case 5: { // Buyer unresponsive
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
-                        _listener.onReportAProblem(explanation, ReportProblemType.BUYER_UNRESPONSIVE);
-                    }
+                    ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
+                    _listener.onReportAProblem(explanation, ReportProblemType.BUYER_UNRESPONSIVE);
                     break;
                 }
                 case 6: { // Scope of work
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                        _listener.onReportAProblem(explanation, ReportProblemType.SCOPE_OF_WORK);
-                    }
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    _listener.onReportAProblem(explanation, ReportProblemType.SCOPE_OF_WORK);
                     break;
                 }
                 case 7: { // Site is not ready
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                        switch (_spinner2Position) {
-                            case 0:
-                                _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_CONTACT);
-                                break;
-                            case 1:
-                                _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_PRIOR_WORK);
-                                break;
-                            case 2:
-                                _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_ACCESS);
-                                break;
-                            case 3:
-                                _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_OTHER);
-                                break;
-                        }
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    switch (_spinner2Position) {
+                        case 0:
+                            _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_CONTACT);
+                            break;
+                        case 1:
+                            _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_PRIOR_WORK);
+                            break;
+                        case 2:
+                            _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_ACCESS);
+                            break;
+                        case 3:
+                            _listener.onReportAProblem(explanation, ReportProblemType.SITE_NOT_READY_OTHER);
+                            break;
                     }
                     break;
                 }
                 case 8: { // Other
-                    if (_listener != null) {
-                        ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
-                        _listener.onReportAProblem(explanation, ReportProblemType.OTHER);
-                    }
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    _listener.onReportAProblem(explanation, ReportProblemType.OTHER);
                     break;
                 }
                 default: {
