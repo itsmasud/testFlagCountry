@@ -194,10 +194,16 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
-        action(context, workorderId, "report-problem", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "explanation=" + explanation
-                        + "&type=" + type.value);
+        if (misc.isEmptyOrNull(explanation)) {
+            action(context, workorderId, "report-problem", null,
+                    HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                    "type=" + type.value);
+        } else {
+            action(context, workorderId, "report-problem", null,
+                    HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                    "explanation=" + explanation
+                            + "&type=" + type.value);
+        }
     }
 
     public static void actionCheckin(Context context, long workorderId) {

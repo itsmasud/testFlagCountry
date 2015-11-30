@@ -48,6 +48,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -383,17 +384,11 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        _reportProblemDialog.show();
     }
 
     @Override
@@ -718,6 +713,13 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
+        @Override
+        public void onReportAProblem(String explanation, ReportProblemType type) {
+            WorkorderClient.actionReportProblem(App.get(), _workorder.getWorkorderId(), explanation, type);
+        }
+    };
+
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {

@@ -219,6 +219,8 @@
     <string name="between">Between</string>
     <!--<string name="blended">Blended</string>-->
     <string name="bundle">Bundle</string>
+    <string name="buyer_has_been_notified">Buyer has been notified. You may be contacted for follow up.</string>
+    <string name="buyer_and_support_have_been_notified">Buyer and support have been notified. You may be contacted for follow up.</string>
     <string name="buyers_offer">Buyer\'s Offer</string>
     <string name="buyers_suggestion">Buyer\'s Suggestion</string>
     <string name="by">by</string>
@@ -305,6 +307,7 @@
     <!--<string name="not_interested">Not Interested</string>-->
     <string name="number_of_devices">Number of Devices</string>
     <!--<string name="offer_expires_colon">Offer Expires:</string>-->
+    <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
     <string name="optional_caps">OPTIONAL</string>
@@ -318,6 +321,7 @@
     <!--<string name="per_hour_up_to">per hour up to</string>-->
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
+    <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
     <string name="post_visit">Post Visit</string>
     <string name="pre_visit">Pre Visit</string>
     <!--<string name="prerequisites">Prerequisites</string>-->
@@ -347,8 +351,10 @@
     <!--<string name="shipping_to_site">Shipping to site</string>-->
     <string name="sign">Sign</string>
     <string name="sorry_to_hear_that">Sorry to hear that</string>
+    <string name="sorry_to_hear_that_you_have_been_removed">Sorry to hear that. You have been removed from this work order.</string>
     <!--<string name="start_the_conversation">Start the conversation…</string>-->
     <string name="start_time">Start Time</string>
+    <string name="support_has_been_notified">Support has been notified. You may be contacted for follow up.</string>
     <!--<string name="status_colon">Status: </string>-->
     <!--<string name="success">Success!</string>-->
     <string name="tap_to_set_a_time">Tap to set a time</string>
@@ -357,6 +363,7 @@
     <!--<string name="tasks_are_associated_with_this_work_order"> tasks are associated with this work order</string>-->
     <string name="terms_and_conditions">Terms and Conditions</string>
     <string name="thank_you">Thank You!</string>
+    <string name="thanks_for_the_heads_up">Thanks for the heads up. Buyer has been notified.</string>
     <!--<string name="then">then</string>-->
     <string name="this_work_order_has_no_notification_at_this_time">No Notification History</string>
     <!--<string name="time_colon">Time:</string>-->
@@ -378,6 +385,7 @@
     <string name="view_field_nation_terms">View Field Nation Terms</string>
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
+    <string name="what_are_you_missing">What are you missing?</string>
     <string name="when_does_this_request_expire">When does this request expire?</string>
     <string name="workorder_card_status_selected">Selected</string>
     <string name="work_orders">Work Orders</string>

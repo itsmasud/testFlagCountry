@@ -47,7 +47,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/explanation_layout"
-        android:text="Once submitted you will be removed from this work order" />
+        android:text="@string/once_submitted_you_will_be_removed" />
 
     <Button
         android:id="@+id/cancel_button"
