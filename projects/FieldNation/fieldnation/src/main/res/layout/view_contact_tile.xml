@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileContainerStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/tileBackGroundColor">
 
     <TextView
         android:id="@+id/name_textview"
@@ -11,6 +11,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_toLeftOf="@+id/phone_textview"
+        android:paddingLeft="@dimen/tileContentPadding"
+        android:paddingTop="@dimen/tileContentPadding"
         android:text="Peter Clark" />
 
     <TextView
@@ -19,6 +21,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
+        android:paddingRight="@dimen/tileContentPadding"
+        android:paddingTop="@dimen/tileContentPadding"
         android:text="(555) 123-4567" />
 
     <TextView
@@ -27,5 +31,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/name_textview"
+        android:paddingBottom="@dimen/tileContentPadding"
+        android:paddingLeft="@dimen/tileContentPadding"
         android:text="Manager" />
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/title_textview" />
 </RelativeLayout>
