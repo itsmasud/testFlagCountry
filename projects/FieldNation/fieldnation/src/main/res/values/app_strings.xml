@@ -90,6 +90,7 @@
     <string name="btn_send">SEND</string>
     <string name="btn_send_counter">SEND COUNTER</string>
     <string name="btn_counter">COUNTER</string>
+    <string name="btn_report_a_problem">REPORT A PROBLEM</string>
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
@@ -386,6 +387,9 @@
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
     <string name="what_are_you_missing">What are you missing?</string>
+    <string name="what_about_approval">What about approval?</string>
+    <string name="what_about_payment">What about payment?</string>
+    <string name="what_about_site">What about the site?</string>
     <string name="when_does_this_request_expire">When does this request expire?</string>
     <string name="workorder_card_status_selected">Selected</string>
     <string name="work_orders">Work Orders</string>

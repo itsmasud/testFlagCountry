@@ -1220,6 +1220,11 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onReportProblem() {
+            _reportProblemDialog.show();
+        }
+
+        @Override
         public void onCheckIn() {
             Log.v(TAG, "onCheckIn");
             startCheckin();

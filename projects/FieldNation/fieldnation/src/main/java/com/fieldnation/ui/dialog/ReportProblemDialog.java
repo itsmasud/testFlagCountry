@@ -131,6 +131,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 setProblem2Visibility(View.VISIBLE);
                 _problem2Spinner.requestFocus();
                 _problem2Spinner.setHint(R.string.what_are_you_missing);
+                _problem2Spinner.setText("");
+                _problem2Spinner.dismissDropDown();
                 _okButton.setEnabled(false);
                 break;
             }
@@ -145,6 +147,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
                 _problem2Spinner.requestFocus();
+                _problem2Spinner.setHint(R.string.what_about_approval);
+                _problem2Spinner.setText("");
+                _problem2Spinner.dismissDropDown();
                 _okButton.setEnabled(false);
                 break;
             }
@@ -159,6 +164,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
                 _problem2Spinner.requestFocus();
+                _problem2Spinner.setHint(R.string.what_about_payment);
+                _problem2Spinner.setText("");
+                _problem2Spinner.dismissDropDown();
                 _okButton.setEnabled(false);
                 break;
             }
@@ -182,6 +190,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
                 _problem2Spinner.requestFocus();
+                _problem2Spinner.setHint(R.string.what_about_site);
+                _problem2Spinner.setText("");
+                _problem2Spinner.dismissDropDown();
                 _okButton.setEnabled(false);
                 break;
             }
