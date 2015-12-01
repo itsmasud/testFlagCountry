@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.utils.misc;
@@ -54,8 +55,12 @@ public class MessageSentView extends RelativeLayout {
         if (_message == null)
             return;
 
-        _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
-        _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        try {
+            _messageTextView.setText(misc.linkifyHtml(_message.getMessage(), Linkify.ALL));
+            _messageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
         if (_message.isRead()) {
             _statusTextView.setText("Delivered");
         } else {

@@ -90,8 +90,10 @@ public class OneButtonDialog extends DialogFragmentBase {
         super.onResume();
         _titleTextView.setText(_title);
         // _bodyTextView.setText(_body);
-        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        if (_body != null) {
+            _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
         _button.setText(_buttonText);
     }
 
