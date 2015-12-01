@@ -1,36 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fieldnation.ui.TileView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:background="@color/tileBackGroundColor">
 
-    <RelativeLayout
+    <TextView
+        android:id="@+id/name_textview"
+        style="@style/Text_Body_1"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_toLeftOf="@+id/phone_textview"
+        android:paddingLeft="@dimen/tileContentPadding"
+        android:paddingTop="@dimen/tileContentPadding"
+        android:text="Peter Clark" />
 
-        <TextView
-            android:id="@+id/name_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_toLeftOf="@+id/phone_textview"
-            android:text="Peter Clark" />
+    <TextView
+        android:id="@+id/phone_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:paddingRight="@dimen/tileContentPadding"
+        android:paddingTop="@dimen/tileContentPadding"
+        android:text="(555) 123-4567" />
 
-        <TextView
-            android:id="@+id/phone_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:text="(555) 123-4567" />
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/name_textview"
+        android:paddingBottom="@dimen/tileContentPadding"
+        android:paddingLeft="@dimen/tileContentPadding"
+        android:text="Manager" />
 
-        <TextView
-            android:id="@+id/title_textview"
-            style="@style/Text_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/name_textview"
-            android:text="Manager" />
-    </RelativeLayout>
-
-</com.fieldnation.ui.TileView>
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/title_textview" />
+</RelativeLayout>
