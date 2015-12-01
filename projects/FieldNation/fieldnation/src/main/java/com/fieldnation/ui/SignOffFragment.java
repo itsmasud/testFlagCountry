@@ -184,7 +184,8 @@ public class SignOffFragment extends FragmentBase {
         Stopwatch stopwatch = new Stopwatch(true);
 
         _titleTextView.setText(_workorder.getTitle());
-        _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+        if (_workorder.getFullWorkDescription() != null)
+            _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         //_descriptionTextView.setLinksClickable(false);
 
         final LoggedWork[] logs = _workorder.getLoggedWork();
