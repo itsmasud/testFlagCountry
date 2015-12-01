@@ -29,6 +29,7 @@ public class ActionBarTopView extends LinearLayout {
     // Data
     private Listener _listener;
     private Workorder _workorder;
+    private boolean _inflated = false;
 
     public ActionBarTopView(Context context) {
         super(context);
@@ -46,10 +47,17 @@ public class ActionBarTopView extends LinearLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
-
         if (isInEditMode())
             return;
+
+        setVisibility(View.GONE);
+    }
+
+    private void inflate() {
+        if (_inflated)
+            return;
+
+        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
         _leftWhiteButton = (Button) findViewById(R.id.leftWhite_button);
         _leftGreenButton = (Button) findViewById(R.id.leftGreen_button);
@@ -61,25 +69,29 @@ public class ActionBarTopView extends LinearLayout {
         _rightGrayButton = (Button) findViewById(R.id.rightGray_button);
 
         setVisibility(View.GONE);
+        _inflated = true;
     }
 
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        _leftWhiteButton.setVisibility(View.GONE);
-        _leftGreenButton.setVisibility(View.GONE);
-        _leftOrangeButton.setVisibility(View.GONE);
-        _leftGrayButton.setVisibility(View.GONE);
-        _rightWhiteButton.setVisibility(View.GONE);
-        _rightGreenButton.setVisibility(View.GONE);
-        _rightOrangeButton.setVisibility(View.GONE);
-        _rightGrayButton.setVisibility(View.GONE);
+        if (_inflated) {
+            _leftWhiteButton.setVisibility(View.GONE);
+            _leftGreenButton.setVisibility(View.GONE);
+            _leftOrangeButton.setVisibility(View.GONE);
+            _leftGrayButton.setVisibility(View.GONE);
+            _rightWhiteButton.setVisibility(View.GONE);
+            _rightGreenButton.setVisibility(View.GONE);
+            _rightOrangeButton.setVisibility(View.GONE);
+            _rightGrayButton.setVisibility(View.GONE);
+        }
         setVisibility(View.GONE);
 
         WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
         switch (substatus) {
             case AVAILABLE:
+                inflate();
                 // not interested
                 // request
                 _leftWhiteButton.setVisibility(VISIBLE);
@@ -91,6 +103,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case ROUTED:
+                inflate();
                 // not interested, accept work
                 _leftWhiteButton.setVisibility(VISIBLE);
                 _leftWhiteButton.setText(R.string.btn_not_interested);
@@ -102,6 +115,7 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case COUNTEROFFERED:
             case REQUESTED:
+                inflate();
                 // withdraw/withdraw request
                 _leftWhiteButton.setVisibility(VISIBLE);
                 _leftWhiteButton.setText(R.string.btn_withdraw_request);
@@ -116,6 +130,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case CONFIRMED:
+                inflate();
                 // Ready-To-Go if needed
                 if (_workorder.getNeedsReadyToGo()) {
                     _rightGreenButton.setVisibility(VISIBLE);
@@ -129,6 +144,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case UNCONFIRMED:
+                inflate();
                 // Confirm
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_confirm);
@@ -136,6 +152,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDOUT:
+                inflate();
                 // check in, or check in again
                 _leftWhiteButton.setVisibility(VISIBLE);
                 if (_workorder.getIsWorkPerformed()) {
@@ -163,6 +180,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDIN:
+                inflate();
                 // Check out
                 _rightGreenButton.setVisibility(VISIBLE);
                 _rightGreenButton.setText(R.string.btn_check_out);
@@ -173,6 +191,7 @@ public class ActionBarTopView extends LinearLayout {
                 // nothing
                 break;
             case ONHOLD_UNACKNOWLEDGED:
+                inflate();
                 // ack hold
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_acknowledge_hold);
@@ -180,6 +199,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case PENDINGREVIEW: // marked completed
+                inflate();
                 // mark incomplete
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_mark_incomplete);
@@ -191,6 +211,7 @@ public class ActionBarTopView extends LinearLayout {
                 // nothing
                 break;
             case PAID: // completed
+                inflate();
                 // view payment
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_payments);
@@ -202,6 +223,7 @@ public class ActionBarTopView extends LinearLayout {
                 // nothing
                 break;
             case CANCELED_LATEFEEPAID:
+                inflate();
                 // view fee
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_fees);
@@ -369,4 +391,3 @@ public class ActionBarTopView extends LinearLayout {
         void onViewPayment();
     }
 }
-

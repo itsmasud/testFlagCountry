@@ -14,11 +14,12 @@
             android:orientation="vertical">
 
             <!-- top action bar -->
-
-            <com.fieldnation.ui.workorder.detail.ActionBarTopView
-                android:id="@+id/actiontop_view"
+            <ViewStub
+                android:id="@+id/actionBarTopView_viewstub"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:inflatedId="@+id/actiontop_view"
+                android:layout="@layout/view_vs_actionbar_top_view" />
 
             <!-- Summary -->
             <com.fieldnation.ui.workorder.detail.WorkSummaryView
