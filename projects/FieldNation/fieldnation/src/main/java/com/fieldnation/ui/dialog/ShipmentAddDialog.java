@@ -99,8 +99,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.carrier_list,
                 R.layout.view_spinner_item);
+
         _carrierAdapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        
         _carrierSpinner.setAdapter(_carrierAdapter);
 
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
@@ -116,8 +118,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.direction_list,
                 R.layout.view_spinner_item);
+
         _directionAdapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
         _directionSpinner.setAdapter(_directionAdapter);
 
 
