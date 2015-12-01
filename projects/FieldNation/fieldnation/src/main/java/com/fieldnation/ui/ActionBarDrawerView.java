@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.FrameLayout;
 
 import com.fieldnation.R;
@@ -27,7 +28,8 @@ public class ActionBarDrawerView extends FrameLayout {
     private WarningView _warningView;
     private DrawerLayout _drawerLayout;
     private DrawerView _drawerView;
-    private SwitchUserOverlayView _switchUserOverlayView;
+    private ViewStub _switchUserOverlayViewStub;
+    SwitchUserOverlayView _switchUserOverlay = null;
 
     public ActionBarDrawerView(Context context) {
         super(context);
@@ -57,7 +59,7 @@ public class ActionBarDrawerView extends FrameLayout {
         _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_content);
         _drawerView = (DrawerView) findViewById(R.id.leftDrawerView);
         _drawerView.setListener(_drawerView_lsitener);
-        _switchUserOverlayView = (SwitchUserOverlayView) findViewById(R.id.switchUserOverlayView);
+        _switchUserOverlayViewStub = (ViewStub) findViewById(R.id.switchUserOverlay_viewstub);
 
     }
 
@@ -122,7 +124,10 @@ public class ActionBarDrawerView extends FrameLayout {
     private final DrawerView.Listener _drawerView_lsitener = new DrawerView.Listener() {
         @Override
         public void onSwitchUser(long userId) {
-            _switchUserOverlayView.startSwitch(userId);
+            if (_switchUserOverlay == null){
+                _switchUserOverlay = (SwitchUserOverlayView) _switchUserOverlayViewStub.inflate();
+            }
+            _switchUserOverlay.startSwitch(userId);
         }
     };
 }
