@@ -4,6 +4,7 @@
     style="?attr/cardContainerStyle"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
+    android:gravity="center_vertical"
     android:visibility="visible">
 
 
@@ -12,7 +13,8 @@
         style="@style/Text_Title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="8dp"
         android:text="@string/activity_message_list_empty_message_headline" />
 
     <TextView
@@ -22,7 +24,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/header_one"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="22dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/activity_message_list_empty_message_sub_headline" />
 
 </RelativeLayout>

@@ -37,7 +37,13 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/date_textview"
             android:text="Message Content" />
+
+
     </RelativeLayout>
+
+    <View
+        style="@style/DividerFull"
+        android:layout_below="@+id/notification_layout" />
 
     <View
         android:id="@+id/click_overlay"
