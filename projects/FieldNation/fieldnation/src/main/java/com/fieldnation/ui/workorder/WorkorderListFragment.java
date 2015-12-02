@@ -118,6 +118,14 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         return inflater.inflate(R.layout.fragment_workorder_list, container, false);
     }
 
+    private GpsLocationService getLocationService() {
+        if (_gpsLocationService == null) {
+            _gpsLocationService = new GpsLocationService(App.get());
+        }
+
+        return _gpsLocationService;
+    }
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -239,8 +247,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
 
-        _gpsLocationService = new GpsLocationService(getActivity());
-
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
                 getString(R.string.dialog_location_loading_button),
@@ -259,8 +265,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     public void onPause() {
         Log.v(TAG, "onPause()");
 
-        if (_gpsLocationService != null)
-            _gpsLocationService.stopLocationUpdates();
+        getLocationService().stopLocationUpdates();
 
         if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
             Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
@@ -343,19 +348,18 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
 
-        if (_gpsLocationService != null)
-        _gpsLocationService.setListener(_gps_checkInListener);
+        getLocationService().setListener(_gps_checkInListener);
 
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
+        if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkInListener);
-        } else if (_gpsLocationService.hasLocation()) {
+        } else if (getLocationService().hasLocation()) {
             doCheckin();
-        } else if (_gpsLocationService.isRunning()) {
+        } else if (getLocationService().isRunning()) {
             _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
+        } else if (getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
+            getLocationService().startLocation();
         } else {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
@@ -365,18 +369,18 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
-        if (_gpsLocationService != null)
-            _gpsLocationService.setListener(_gps_checkOutListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
+        getLocationService().setListener(_gps_checkOutListener);
+
+        if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkOutListener);
-        } else if (_gpsLocationService.hasLocation()) {
+        } else if (getLocationService().hasLocation()) {
             doCheckOut();
-        } else if (_gpsLocationService.isRunning()) {
+        } else if (getLocationService().isRunning()) {
             _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
+        } else if (getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
+            getLocationService().startLocation();
         } else {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
@@ -386,13 +390,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void doCheckin() {
         Log.v(TAG, "doCheckin()");
-        if (_gpsLocationService != null)
-        _gpsLocationService.setListener(null);
+        getLocationService().setListener(null);
         setLoading(true);
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
-        if (_gpsLocationService.hasLocation()) {
-            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), _gpsLocationService.getLocation());
+        if (getLocationService().hasLocation()) {
+            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation());
         } else {
             WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
         }
@@ -403,8 +406,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "doCheckOut()");
         setLoading(true);
 
-        if (_gpsLocationService != null)
-        _gpsLocationService.setListener(null);
+        getLocationService().setListener(null);
 
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(
@@ -413,16 +415,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 GoogleAnalyticsTopicClient.EventAction.CHECKOUT,
                 "WorkorderCardView", 1);
 
-        if (_gpsLocationService.hasLocation()) {
+        if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
                 WorkorderClient.actionCheckout(App.get(),
                         _currentWorkorder.getWorkorderId(),
                         _deviceCount,
-                        _gpsLocationService.getLocation());
+                        getLocationService().getLocation());
             } else {
                 WorkorderClient.actionCheckout(App.get(),
                         _currentWorkorder.getWorkorderId(),
-                        _gpsLocationService.getLocation());
+                        getLocationService().getLocation());
             }
 
         } else {
@@ -458,7 +460,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onButtonClick() {
             Log.v(TAG, "_locationLoadingDialog_listener.onButtonClick()");
-            _gpsLocationService.stopLocationUpdates();
+            getLocationService().stopLocationUpdates();
             setLoading(false);
         }
 
@@ -827,8 +829,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            if (_gpsLocationService != null && _gpsLocationService.getLocation() != null)
-                v.setWorkorder(object, _gpsLocationService.getLocation());
+            if (getLocationService().getLocation() != null)
+                v.setWorkorder(object, getLocationService().getLocation());
             else
                 v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
