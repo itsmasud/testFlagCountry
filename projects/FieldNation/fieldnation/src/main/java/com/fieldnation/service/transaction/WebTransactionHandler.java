@@ -46,7 +46,7 @@ public abstract class WebTransactionHandler {
     }
 
     public static Result failTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
-        Log.v(TAG, "failTransaction: " + handlerName + "/" + transaction.getRequest().display());
+        //Log.v(TAG, "failTransaction: " + handlerName + "/" + transaction.getRequest().display());
 
         try {
             Class<?> clazz = context.getClassLoader().loadClass(handlerName);

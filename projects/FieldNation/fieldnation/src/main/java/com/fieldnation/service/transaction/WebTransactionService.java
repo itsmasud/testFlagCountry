@@ -259,7 +259,17 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
 
             // Load the request, and apply authentication
-            JsonObject request = trans.getRequest().copy();
+            JsonObject request = null;
+            try {
+                request = new JsonObject(trans.getRequestString());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            if (request == null) {
+                // should never happen!
+                WebTransaction.delete(context, trans.getId());
+            }
+
             String handlerName = null;
             HttpResult result = null;
             try {
