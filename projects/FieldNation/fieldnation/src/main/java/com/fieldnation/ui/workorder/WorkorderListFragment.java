@@ -342,7 +342,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
+
+        if (_gpsLocationService != null)
         _gpsLocationService.setListener(_gps_checkInListener);
+
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkInListener);
@@ -362,7 +365,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
-        _gpsLocationService.setListener(_gps_checkOutListener);
+        if (_gpsLocationService != null)
+            _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkOutListener);
@@ -382,6 +386,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void doCheckin() {
         Log.v(TAG, "doCheckin()");
+        if (_gpsLocationService != null)
         _gpsLocationService.setListener(null);
         setLoading(true);
         _adapter.notifyDataSetChanged();
@@ -397,7 +402,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void doCheckOut() {
         Log.v(TAG, "doCheckOut()");
         setLoading(true);
+
+        if (_gpsLocationService != null)
         _gpsLocationService.setListener(null);
+
         _adapter.notifyDataSetChanged();
         GoogleAnalyticsTopicClient.dispatchEvent(
                 App.get(),
