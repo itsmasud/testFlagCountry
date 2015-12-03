@@ -20,6 +20,7 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.utils.misc;
 
@@ -107,6 +108,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     Long signatureId = _signatureId;
                     Workorder workorder = _workorder;
 
+                    extras.setClassLoader(JsonObject.class.getClassLoader());
+
                     if (extras.containsKey(INTENT_PARAM_SIGNATURE))
                         signatureId = extras.getLong(INTENT_PARAM_SIGNATURE);
 
@@ -135,6 +138,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     Workorder workorder = _workorder;
                     Long signatureId = _signatureId;
 
+                    savedInstanceState.setClassLoader(JsonObject.class.getClassLoader());
+
                     if (savedInstanceState.containsKey(STATE_SIGNATURE))
                         signature = savedInstanceState.getParcelable(STATE_SIGNATURE);
 
@@ -156,17 +161,18 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                     populateUi();
                 }
             }.executeEx(savedInstanceState);
+        } else {
+            finish();
         }
     }
-
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_signature != null)
-            outState.putParcelable(STATE_SIGNATURE, _signature);
+            outState.putParcelable(STATE_SIGNATURE, (Parcelable) _signature);
 
         if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, _workorder);
+            outState.putParcelable(STATE_WORKORDER, (Parcelable) _workorder);
 
         outState.putLong(STATE_SIGNATURE_ID, _signatureId);
 
@@ -189,20 +195,23 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-
+    protected void onStart() {
+        super.onStart();
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
         populateUi();
     }
 
     @Override
-    protected void onPause() {
+    protected void onStop() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
-        super.onPause();
+        super.onStop();
     }
 
     private void populateUi() {
@@ -320,24 +329,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     };
 
     public static void startIntent(Context context, long signatureId, Workorder workorder) {
-        new AsyncTaskEx<Object, Object, Object>() {
-
-            @Override
-            protected Object doInBackground(Object... params) {
-                Context context = (Context) params[0];
-                long signatureId = (Long) params[1];
-                Workorder workorder = (Workorder) params[2];
-
-                Intent intent = new Intent(context, SignatureDisplayActivity.class);
-                intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-                intent.putExtra(INTENT_PARAM_WORKORDER, (Parcelable) workorder);
-                if (!(context instanceof Activity)) {
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                }
-                context.startActivity(intent);
-                return null;
-            }
-        }.executeEx(context, signatureId, workorder);
+        Intent intent = new Intent(context, SignatureDisplayActivity.class);
+        intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
+        intent.putExtra(INTENT_PARAM_WORKORDER, (Parcelable) workorder);
+        intent.setExtrasClassLoader(Workorder.class.getClassLoader());
+        if (!(context instanceof Activity)) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        }
+        context.startActivity(intent);
     }
-
 }
