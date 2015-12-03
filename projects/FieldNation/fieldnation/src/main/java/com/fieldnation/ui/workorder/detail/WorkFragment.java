@@ -118,7 +118,6 @@ public class WorkFragment extends WorkorderFragment {
 
     // UI
     private OverScrollView _scrollView;
-    private ViewStub _topBarViewStub;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
     private CompanySummaryView _companySummaryView;
@@ -194,6 +193,9 @@ public class WorkFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBar.setListener(_actionbartop_listener);
+
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
 
@@ -216,8 +218,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
-
-        _topBarViewStub = (ViewStub) view.findViewById(R.id.actionBarTopView_viewstub);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
@@ -531,29 +531,6 @@ public class WorkFragment extends WorkorderFragment {
             Stopwatch watch = new Stopwatch(true);
             _closingNotes.setWorkorder(_workorder);
             Log.v(TAG, "_closingNotes time: " + watch.finish());
-        }
-
-
-        WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
-
-        switch (substatus) {
-            case AVAILABLE:
-            case ROUTED:
-            case COUNTEROFFERED:
-            case REQUESTED:
-            case CONFIRMED:
-            case UNCONFIRMED:
-            case CHECKEDOUT:
-            case CHECKEDIN:
-            case ONHOLD_UNACKNOWLEDGED:
-            case PENDINGREVIEW:
-            case PAID:
-            case CANCELED_LATEFEEPAID:
-                _topBarViewStub.setVisibility(View.VISIBLE);
-                _topBar = (ActionBarTopView) getView().findViewById(_topBarViewStub.getInflatedId());
-                _topBar.setListener(_actionbartop_listener);
-            default:
-                break;
         }
 
         if (_topBar != null) {

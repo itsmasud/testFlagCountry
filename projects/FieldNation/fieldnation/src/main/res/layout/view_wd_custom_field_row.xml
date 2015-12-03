@@ -11,10 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
         android:gravity="center"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
         android:text="@string/icon_task"
         android:textSize="32sp" />
 
@@ -24,11 +24,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
-        android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/icon_view"
+        android:paddingBottom="16dp"
+        android:paddingTop="16dp"
         android:text="@string/placeholder_phrase" />
 
     <TextView
