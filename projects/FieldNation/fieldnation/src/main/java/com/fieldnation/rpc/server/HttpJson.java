@@ -163,7 +163,6 @@ public class HttpJson {
         } finally {
             conn.disconnect();
         }
-
     }
 
     private static void checkUrlOptions(String options) throws ParseException {
@@ -174,6 +173,5 @@ public class HttpJson {
         }
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
     }
-
 }
 

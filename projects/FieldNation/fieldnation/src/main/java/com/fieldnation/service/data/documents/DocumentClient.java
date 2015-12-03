@@ -48,14 +48,15 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
                 clip.setPrimaryClip(ClipData.newRawUri("file download", Uri.parse(url)));
             }
             return;
+        } else {
+            Intent intent = new Intent(context, DocumentService.class);
+            intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DOCUMENT);
+            intent.putExtra(PARAM_DOCUMENT_ID, documentId);
+            intent.putExtra(PARAM_URL, url);
+            intent.putExtra(PARAM_IS_SYNC, isSync);
+            intent.putExtra(PARAM_FILE_NAME, filename);
+            context.startService(intent);
         }
-        Intent intent = new Intent(context, DocumentService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_DOWNLOAD_DOCUMENT);
-        intent.putExtra(PARAM_DOCUMENT_ID, documentId);
-        intent.putExtra(PARAM_URL, url);
-        intent.putExtra(PARAM_IS_SYNC, isSync);
-        intent.putExtra(PARAM_FILE_NAME, filename);
-        context.startService(intent);
     }
 
     public boolean subDocument() {
