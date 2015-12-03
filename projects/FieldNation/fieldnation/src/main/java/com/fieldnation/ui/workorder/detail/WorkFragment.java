@@ -139,7 +139,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private PayDialog _payDialog;
 
-
     // Dialogs
     private AcceptBundleDialog _acceptBundleWOConfirmDialog;
     private AcceptBundleDialog _acceptBundleWOExpiresDialog;
@@ -355,13 +354,13 @@ public class WorkFragment extends WorkorderFragment {
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
+        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
