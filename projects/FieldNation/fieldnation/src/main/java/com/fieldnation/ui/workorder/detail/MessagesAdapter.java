@@ -60,11 +60,11 @@ public class MessagesAdapter extends BaseAdapter {
     };
 
     public void setMessages(List<Message> messages) {
-        if (messages != null)
+        if (messages != null) {
             Collections.sort(messages, _messageComparator);
-        _messages = messages;
-
-        notifyDataSetChanged();
+            _messages = messages;
+            notifyDataSetChanged();
+        }
     }
 
     @Override

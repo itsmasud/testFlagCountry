@@ -411,14 +411,18 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed) {
+        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null || failed) {
-                try {
-                    Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-                    finish();
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                if (isCached) {
+                    WorkorderClient.get(App.get(), _workorderId, false);
+                } else {
+	                try {
+	                    Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+	                    finish();
+	                } catch (Exception ex) {
+	                    Log.v(TAG, ex);
+                    }
                 }
                 return;
             }

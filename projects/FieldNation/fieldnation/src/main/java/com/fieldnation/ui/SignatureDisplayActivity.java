@@ -234,9 +234,11 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         _nameTextView.setText(_signature.getPrintName());
 
         _titleTextView.setText(_workorder.getTitle());
-        _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
-        _descriptionTextView.setLinksClickable(false);
-        _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.fn_dark_text));
+        if (_workorder.getFullWorkDescription() != null) {
+            _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+            _descriptionTextView.setLinksClickable(false);
+            _descriptionTextView.setLinkTextColor(getResources().getColor(R.color.fn_dark_text));
+        }
 
         final LoggedWork[] logs = _signature.getWorklog();
         if (logs != null && logs.length > 0) {

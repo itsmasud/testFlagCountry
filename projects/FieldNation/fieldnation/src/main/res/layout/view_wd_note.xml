@@ -51,4 +51,8 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/notification_layout"
         android:layout_alignTop="@+id/notification_layout" />
+
+    <View
+        style="?attr/tileDividerStyle"
+        android:layout_below="@+id/notification_layout" />
 </RelativeLayout>

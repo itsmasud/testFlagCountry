@@ -311,7 +311,7 @@ public class TopicService extends MSService implements TopicConstants {
         }
     }
 
-    private class StickyContainer {
+    private static class StickyContainer {
         public Parcelable parcel;
         public long createdDate;
         public Sticky stickyType;

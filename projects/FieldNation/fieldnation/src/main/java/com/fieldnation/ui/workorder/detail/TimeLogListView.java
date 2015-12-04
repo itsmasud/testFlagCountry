@@ -120,7 +120,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
+    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             if (_workorder.canModifyTimeLog()) {
@@ -136,7 +136,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
         }
     };
 
-    private View.OnClickListener _addLog_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _addLog_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             boolean showdevices = false;

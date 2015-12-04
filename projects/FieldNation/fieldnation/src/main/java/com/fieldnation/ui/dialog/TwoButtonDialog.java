@@ -101,8 +101,10 @@ public class TwoButtonDialog extends DialogFragmentBase {
         super.reset();
 
         _titleTextView.setText(_title);
-        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        if (_body != null) {
+            _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
         _positiveButton.setText(_positiveText);
         if (_negativeText == null) {
             _negativeButton.setVisibility(View.GONE);

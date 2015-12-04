@@ -259,7 +259,17 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
 
             // Load the request, and apply authentication
-            JsonObject request = trans.getRequest().copy();
+            JsonObject request = null;
+            try {
+                request = new JsonObject(trans.getRequestString());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            if (request == null) {
+                // should never happen!
+                WebTransaction.delete(context, trans.getId());
+            }
+
             String handlerName = null;
             HttpResult result = null;
             try {
@@ -315,7 +325,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // Bad request
                     // need to report this
                     // need to re-auth?
-                    if (result.getString().equals("You don't have permission to see this workorder")) {
+                    if ("You don't have permission to see this workorder".equals(result.getString())) {
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else if (result.getResponseMessage().contains("Bad Request")) {

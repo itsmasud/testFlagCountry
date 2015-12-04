@@ -88,6 +88,13 @@
                     android:paddingRight="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/placeholder_phrase" />
+
+                <!--<View-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="28dp"-->
+                <!--android:layout_alignBottom="@+id/descriptionShort_textview"-->
+                <!--android:layout_margin="4dp"-->
+                <!--android:background="@drawable/fn_clickable_fade" />-->
             </RelativeLayout>
 
             <TextView
@@ -121,6 +128,14 @@
                 android:text="@string/btn_read_more" />
 
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/standardInstructions_textview"
+            style="@style/TextViewLink"
+            android:layout_width="match_parent"
+            android:layout_height="32dp"
+            android:text="@string/view_standard_instructions"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/confidential_textview"

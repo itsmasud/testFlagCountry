@@ -40,6 +40,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
+    private TextView _standardInstructionTextView;
 
     private Button _readMoreButton;
 
@@ -88,6 +89,9 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         _policiesTextView = (TextView) findViewById(R.id.policies_textview);
         _policiesTextView.setOnClickListener(_policies_onClick);
+
+        _standardInstructionTextView = (TextView) findViewById(R.id.standardInstructions_textview);
+        _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -162,12 +166,18 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _confidentialTextView.setVisibility(View.GONE);
             }
         }
+
+        if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
+            _standardInstructionTextView.setVisibility(VISIBLE);
+        } else {
+            _standardInstructionTextView.setVisibility(GONE);
+        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _readMore_onClick = new OnClickListener() {
+    private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             _descriptionEditText.setVisibility(GONE);
@@ -210,6 +220,14 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
+    private final OnClickListener _standardInstructions_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.showStandardInstructions(_workorder.getStandardInstruction());
+        }
+    };
+
     private OnLongClickListener _editMode_listener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
@@ -238,5 +256,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         void showCustomerPolicies(String body);
 
+        void showStandardInstructions(String body);
     }
 }

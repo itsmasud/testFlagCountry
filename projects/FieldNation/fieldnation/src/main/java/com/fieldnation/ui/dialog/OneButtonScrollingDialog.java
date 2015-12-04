@@ -199,8 +199,12 @@ public class OneButtonScrollingDialog extends DialogFragmentBase {
                 v = new TextView(parent.getContext(), null, R.attr.dialogBodyNoPaddingStyle);
             }
 
-            v.setText(misc.linkifyHtml(((String) getItem(position)).trim(), Linkify.ALL));
-            v.setMovementMethod(LinkMovementMethod.getInstance());
+            try {
+                v.setText(misc.linkifyHtml(((String) getItem(position)).trim(), Linkify.ALL));
+                v.setMovementMethod(LinkMovementMethod.getInstance());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
             return v;
         }
     };

@@ -488,10 +488,9 @@ public class Workorder implements Parcelable {
     }
 
     public String getStandardInstruction() {
-        return _standardInstruction;
-    }
+        if (_standardInstructions == null)
+            return _standardInstruction;
 
-    public String getStandardInstructions() {
         return _standardInstructions;
     }
 

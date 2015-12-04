@@ -865,12 +865,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         // details
         protected void preGet(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onGet(null, true);
+                onGet(null, true, true);
             } else {
                 new AsyncTaskEx<Bundle, Object, Workorder>() {
+                    private boolean _isCached = false;
+
                     @Override
                     protected Workorder doInBackground(Bundle... params) {
                         Bundle bundle = params[0];
+                        _isCached = bundle.getBoolean(PARAM_IS_CACHED);
                         try {
                             return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
@@ -881,13 +884,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                     @Override
                     protected void onPostExecute(Workorder workorder) {
-                        onGet(workorder, false);
+                        onGet(workorder, false, _isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onGet(Workorder workorder, boolean failed) {
+        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
         }
 
         // get signature
