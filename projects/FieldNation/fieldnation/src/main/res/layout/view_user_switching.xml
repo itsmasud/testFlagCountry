@@ -17,7 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
             android:gravity="center"
-            android:text="@string/icfont_clipboard"
+            android:text="@string/icon_my_wos"
             android:textColor="@color/fn_brandcolor"
             android:textSize="72sp" />
     </RelativeLayout>

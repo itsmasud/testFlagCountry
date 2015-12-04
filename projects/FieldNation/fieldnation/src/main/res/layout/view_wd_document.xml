@@ -14,7 +14,7 @@
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:text="@string/icfont_file_none"
+            android:text="@string/icon_file_generic"
             android:textColor="@color/fn_light_text"
             android:textSize="48sp" />
 

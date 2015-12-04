@@ -83,7 +83,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
                     Transform.applyTransform(this, workorder, PSO_WORKORDER, workorderId);
 
-                    WorkorderDispatch.get(this, workorder, workorderId, false, isSync);
+                    WorkorderDispatch.get(this, workorder, workorderId, false, isSync, true);
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

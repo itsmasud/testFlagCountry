@@ -62,8 +62,6 @@ public class misc {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
     }
 
-
-
     public static void printStackTrace(String message) {
         try {
             throw new Exception(message);

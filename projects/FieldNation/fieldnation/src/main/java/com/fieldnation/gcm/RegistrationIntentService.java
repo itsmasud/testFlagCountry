@@ -19,37 +19,44 @@ package com.fieldnation.gcm;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
+
 public class RegistrationIntentService extends IntentService {
-    private static final String TAG = "RegIntentService";
+    private static final String STAG = "RegIntentService";
+    private final String TAG = UniqueTag.makeTag(STAG);
+
 
     public RegistrationIntentService() {
-        super(TAG);
+        super(STAG);
     }
 
     @Override
     protected void onHandleIntent(Intent intent) {
         try {
             synchronized (TAG) {
-                InstanceID instanceID = InstanceID.getInstance(this);
-                String token = instanceID.getToken(getString(R.string.gcm_senderid), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
+                Log.v(TAG, "Sending GCM register");
+                InstanceID instanceID = InstanceID.getInstance(RegistrationIntentService.this);
+                String token = instanceID.getToken(getString(R.string.gcm_senderid),
+                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
                 Log.i(TAG, "GCM Registration Token: " + token);
 
-                ProfileClient.actionRegisterDevice(this, token);
+                if (App.get().getProfile() == null) {
+                    App.get().deviceToken = token;
+                } else {
+                    ProfileClient.actionRegisterDevice(this, token, App.get().getProfile().getUserId());
+                }
+
+                stopSelf();
             }
         } catch (Exception e) {
             Log.d(TAG, e);
         }
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.v(TAG, "onDestroy");
-        super.onDestroy();
     }
 }

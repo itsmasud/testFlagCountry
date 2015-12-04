@@ -61,7 +61,6 @@ public class SignOffFragment extends FragmentBase {
     // Data
     private Workorder _workorder;
     private Listener _listener;
-    private Bitmap _image;
     private boolean _waitTasks = false;
     private boolean _waitLogs = false;
 
@@ -185,7 +184,8 @@ public class SignOffFragment extends FragmentBase {
         Stopwatch stopwatch = new Stopwatch(true);
 
         _titleTextView.setText(_workorder.getTitle());
-        _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
+        if (_workorder.getFullWorkDescription() != null)
+            _descriptionTextView.setText(misc.htmlify(_workorder.getFullWorkDescription()));
         //_descriptionTextView.setLinksClickable(false);
 
         final LoggedWork[] logs = _workorder.getLoggedWork();

@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,6 +10,7 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -28,6 +30,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
     public static final String INTENT_FIELD_WORKORDER = "WorkorderActivity:workorder";
     public static final String INTENT_FIELD_CURRENT_TAB = "WorkorderActivity:current_tab";
+    public static final String INTENT_FIELD_ACTION = "WorkorderActivity:INTENT_FIELD_ACTION";
+    public static final String ACTION_CONFIRM = "ACTION_CONFIRM";
 
     public static final int TAB_DETAILS = 0;
     public static final int TAB_MESSAGE = 1;
@@ -81,6 +85,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             } else {
                 _currentTab = TAB_DETAILS;
             }
+
+            if (intent.hasExtra(INTENT_FIELD_ACTION)) {
+                if (intent.getStringExtra(INTENT_FIELD_ACTION).equals(ACTION_CONFIRM)) {
+                    Log.v(TAG, "INTENT_FIELD_ACTION/ACTION_CONFIRM");
+                }
+            }
+
             // taking a link from e-mail/browser
             if (Intent.ACTION_VIEW.equals(intent.getAction())) {
                 try {
@@ -203,6 +214,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             for (int i = 0; i < _fragments.length; i++) {
                 _fragments[i].setPageRequestListener(_pageRequestListener);
                 _fragments[i].setLoadingListener(_workorderFrag_loadingListener);
+                if (getIntent() != null && getIntent().getExtras() != null) {
+                    try {
+                        _fragments[i].setArguments(getIntent().getExtras());
+                    } catch (Exception ex) {
+                    }
+                }
             }
         }
 
@@ -394,14 +411,18 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed) {
+        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null || failed) {
-                try {
-                    Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
-                    finish();
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                if (isCached) {
+                    WorkorderClient.get(App.get(), _workorderId, false);
+                } else {
+                    try {
+                        Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
                 }
                 return;
             }
@@ -413,5 +434,17 @@ public class WorkorderActivity extends AuthActionBarActivity {
             populateUi();
         }
     };
+
+    public static Intent makeIntentConfirm(Context context, long workorderId) {
+        Log.v(TAG, "makeIntentConfirm");
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
+        return intent;
+    }
+
 }
 

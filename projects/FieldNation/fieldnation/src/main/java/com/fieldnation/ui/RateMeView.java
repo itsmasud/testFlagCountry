@@ -12,6 +12,8 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.crashlytics.android.answers.CustomEvent;
+import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 
@@ -108,17 +110,26 @@ public class RateMeView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             switch (_state) {
-                case 0:
+                case 0: // Love it
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Love"));
+
                     _state = 1;
                     populateUi();
                     break;
-                case 1:
+                case 1: // Rate me? You got it
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Love")
+                            .putCustomAttribute("Action", "Rate"));
                     Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
                     getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
                     if (_listener != null)
                         _listener.onHide();
                     break;
-                case 2:
+                case 2: // Feedback? You got it
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Hate")
+                            .putCustomAttribute("Action", "Feedback"));
                     if (_listener != null) {
                         GlobalTopicClient.showFeedbackDialog(getContext());
                         _listener.onHide();
@@ -132,15 +143,23 @@ public class RateMeView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             switch (_state) {
-                case 0:
+                case 0: // Like it? Not really
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Hate"));
                     _state = 2;
                     populateUi();
                     break;
-                case 1:
+                case 1: // Rate me? no thanks
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Love")
+                            .putCustomAttribute("Action", "No Rate"));
                     if (_listener != null)
                         _listener.onHide();
                     break;
-                case 2:
+                case 2: // Feedback? no thanks
+                    Debug.logCustom(new CustomEvent("RateMeCard")
+                            .putCustomAttribute("Attitude", "Hate")
+                            .putCustomAttribute("Action", "No Feedback"));
                     if (_listener != null)
                         _listener.onHide();
                     break;

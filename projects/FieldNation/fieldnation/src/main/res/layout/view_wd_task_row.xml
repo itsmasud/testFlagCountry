@@ -14,7 +14,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:text="@string/icfont_circle"
+            android:text="@string/icon_task"
             android:textSize="32sp" />
 
         <TextView

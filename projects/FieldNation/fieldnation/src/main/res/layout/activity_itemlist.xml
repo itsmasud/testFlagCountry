@@ -12,7 +12,6 @@
             android:id="@+id/items_listview"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_below="@+id/toolbar"
             android:animateLayoutChanges="true"
             android:divider="@null"
             android:dividerHeight="0dp"
@@ -22,7 +21,6 @@
             android:id="@+id/refresh_view"
             android:layout_width="wrap_content"
             android:layout_height="250dp"
-            android:layout_below="@+id/toolbar"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="-50dp" />
     </RelativeLayout>

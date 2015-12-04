@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
@@ -8,6 +9,7 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 
 import com.fieldnation.R;
+import com.fieldnation.service.crawler.WebCrawlerService;
 
 /**
  * Created by Michael Carver on 4/15/2015.
@@ -58,9 +60,14 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     private void updatePreference(Preference preference) {
+        if (String.valueOf(preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_sync_enabled)) && preference.isEnabled()) {
+            getActivity().startService(new Intent(getActivity(), WebCrawlerService.class));
+        }
+
         if (preference instanceof ListPreference) {
             ListPreference listPreference = (ListPreference) preference;
             listPreference.setSummary(listPreference.getEntry());
         }
+
     }
 }

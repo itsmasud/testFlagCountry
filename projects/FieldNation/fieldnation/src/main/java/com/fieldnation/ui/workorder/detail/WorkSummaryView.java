@@ -2,12 +2,15 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
+import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,11 +34,13 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     private LinearLayout _descriptionContainer;
     private TextView _descriptionTextView;
+    private EditText _descriptionEditText;
     private RelativeLayout _descriptionShortLayout;
     private TextView _descriptionShortTextView;
 
     private TextView _confidentialTextView;
     private TextView _policiesTextView;
+    private TextView _standardInstructionTextView;
 
     private Button _readMoreButton;
 
@@ -72,15 +77,21 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         _descriptionContainer = (LinearLayout) findViewById(R.id.description_container);
 
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
+        _descriptionTextView.setOnLongClickListener(_editMode_listener);
 
         _descriptionShortLayout = (RelativeLayout) findViewById(R.id.descriptionShort_layout);
         _descriptionShortTextView = (TextView) findViewById(R.id.descriptionShort_textview);
+        _descriptionShortTextView.setOnLongClickListener(_editMode_listener);
+        _descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 
         _confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
 
         _policiesTextView = (TextView) findViewById(R.id.policies_textview);
         _policiesTextView.setOnClickListener(_policies_onClick);
+
+        _standardInstructionTextView = (TextView) findViewById(R.id.standardInstructions_textview);
+        _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
         _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
         _bundleWarningTextView.setOnClickListener(_bundle_onClick);
@@ -90,6 +101,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         setVisibility(View.GONE);
     }
+
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -132,6 +144,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionContainer.setVisibility(VISIBLE);
             _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+            _descriptionEditText.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
 
             _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
@@ -153,14 +166,22 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _confidentialTextView.setVisibility(View.GONE);
             }
         }
+
+        if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
+            _standardInstructionTextView.setVisibility(VISIBLE);
+        } else {
+            _standardInstructionTextView.setVisibility(GONE);
+        }
     }
 
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _readMore_onClick = new OnClickListener() {
+    private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            _descriptionEditText.setVisibility(GONE);
+
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
                 _descriptionTextView.setVisibility(View.VISIBLE);
                 _descriptionShortLayout.setVisibility(View.GONE);
@@ -199,10 +220,42 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
+    private final OnClickListener _standardInstructions_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.showStandardInstructions(_workorder.getStandardInstruction());
+        }
+    };
+
+    private OnLongClickListener _editMode_listener = new OnLongClickListener() {
+        @Override
+        public boolean onLongClick(View v) {
+            _descriptionTextView.setVisibility(GONE);
+            if (_descriptionShortLayout.getVisibility() == VISIBLE) {
+                _descriptionTextView.setVisibility(View.GONE);
+                _descriptionShortLayout.setVisibility(View.GONE);
+                _readMoreButton.setText(R.string.btn_read_less);
+            }
+            _descriptionEditText.setVisibility(VISIBLE);
+            if (Build.VERSION.SDK_INT >= 11) {
+                _descriptionEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
+                _descriptionEditText.setTextIsSelectable(true);
+            } else {
+                _descriptionEditText.setRawInputType(InputType.TYPE_NULL);
+                _descriptionEditText.setFocusable(true);
+            }
+
+
+            return true;
+        }
+    };
 
     public interface Listener {
         void showConfidentialInfo(String body);
 
         void showCustomerPolicies(String body);
+
+        void showStandardInstructions(String body);
     }
 }

@@ -1,40 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/dialogStyle"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
     <LinearLayout
+        android:id="@+id/container"
+        style="?attr/dialogContainerStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:orientation="vertical">
 
-        <LinearLayout
-            style="?attr/dialogContainerStyle"
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:text="@string/terms_and_conditions" />
 
-            <TextView
-                android:id="@+id/title_textview"
-                style="?attr/dialogTitleStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/terms_and_conditions" />
+        <TextView
+            android:id="@+id/body_textview"
+            style="?attr/dialogBodyStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-            <TextView
-                android:id="@+id/body_textview"
-                style="?attr/dialogBodyStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </LinearLayout>
-
-        <LinearLayout style="?attr/dialogActionBarStyle">
-
-            <Button
-                android:id="@+id/button"
-                style="?attr/dialogOkButtonStyle"
-                android:text="@string/btn_ok" />
-        </LinearLayout>
     </LinearLayout>
-</ScrollView>
+
+    <LinearLayout
+        android:id="@+id/action_bar_container"
+        style="?attr/dialogActionBarStyle"
+        android:layout_below="@+id/container">
+
+        <Button
+            android:id="@+id/button"
+            style="?attr/dialogOkButtonStyle"
+            android:text="@string/btn_ok" />
+    </LinearLayout>
+</RelativeLayout>

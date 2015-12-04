@@ -69,7 +69,9 @@ public class MessagesAdapter extends BaseAdapter {
 
     @Override
     public int getCount() {
-        return _messages.size();
+        if (_messages != null)
+            return _messages.size();
+        return 0;
     }
 
     @Override

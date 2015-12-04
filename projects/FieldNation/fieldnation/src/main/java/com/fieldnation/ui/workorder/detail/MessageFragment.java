@@ -38,6 +38,7 @@ public class MessageFragment extends WorkorderFragment {
     private List<Message> _messages = new LinkedList<>();
     private MessagesAdapter _adapter;
     private boolean _isSubbed = false;
+    private boolean _isMarkedRead = false;
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -78,22 +79,8 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void onResume() {
         super.onResume();
-        _markReadRunnable.run();
-
         populateUi();
     }
-
-    // todo remove
-    private final Runnable _markReadRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (getActivity() != null && _workorder != null) {
-                WorkorderClient.actionMarkMessagesRead(getActivity(), _workorder.getWorkorderId());
-            } else {
-                new Handler().postDelayed(_markReadRunnable, 1000);
-            }
-        }
-    };
 
     @Override
     public void onPause() {
@@ -109,7 +96,7 @@ public class MessageFragment extends WorkorderFragment {
         Log.v(TAG, "update");
 
         if (getActivity() != null && _workorder != null)
-            WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false, false);
+            WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
     }
 
     @Override
@@ -138,9 +125,16 @@ public class MessageFragment extends WorkorderFragment {
 
         if (_workorder != null) {
             _inputView.setButtonEnabled(true);
+
+            if (!_isMarkedRead) {
+                _isMarkedRead = true;
+                WorkorderClient.actionMarkMessagesRead(getActivity(), _workorder.getWorkorderId());
+            }
+
         } else {
             _inputView.setButtonEnabled(false);
         }
+
     }
 
     @Override
@@ -245,7 +239,7 @@ public class MessageFragment extends WorkorderFragment {
         public void onMessageList(long workorderId, List<Message> messages, boolean failed) {
             if (failed || messages == null)
                 return;
-            
+
             _messages = messages;
             rebuildList();
         }

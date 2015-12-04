@@ -185,7 +185,7 @@ public class TopicService extends MSService implements TopicConstants {
             Log.v(TAG, "sticky " + topicId);
             bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, _stickies.get(topicId).parcel);
+            bundle.putParcelable(PARAM_TOPIC_PARCELABLE, sticky.parcel);
             sendEvent(replyTo, WHAT_DISPATCH_EVENT, bundle, c.userTag);
         }
     }
@@ -311,7 +311,7 @@ public class TopicService extends MSService implements TopicConstants {
         }
     }
 
-    private class StickyContainer {
+    private static class StickyContainer {
         public Parcelable parcel;
         public long createdDate;
         public Sticky stickyType;

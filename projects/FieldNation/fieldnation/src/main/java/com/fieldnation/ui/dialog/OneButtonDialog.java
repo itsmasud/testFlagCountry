@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
+import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -88,9 +89,11 @@ public class OneButtonDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
         _titleTextView.setText(_title);
-        _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
-//        _bodyTextView.setText(_body);
-//        _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        // _bodyTextView.setText(_body);
+        if (_body != null) {
+            _bodyTextView.setText(misc.linkifyHtml(_body, Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        }
         _button.setText(_buttonText);
     }
 

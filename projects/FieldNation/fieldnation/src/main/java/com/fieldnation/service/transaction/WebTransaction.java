@@ -12,6 +12,10 @@ import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 /**
  * Created by Michael Carver on 3/3/2015.
  */
@@ -25,7 +29,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private boolean _isSync;
     private State _state;
     private Priority _priority;
-    private JsonObject _request;
+    private String _requestString;
     private String _key;
     private long _queueTime;
 
@@ -45,7 +49,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
         _queueTime = cursor.getLong(Column.QUEUE_TIME.getIndex());
         try {
-            _request = new JsonObject(cursor.getBlob(Column.REQUEST.getIndex()));
+            _requestString = new String(cursor.getBlob(Column.REQUEST.getIndex()));
         } catch (Exception ex) {
         }
         _priority = Priority.values()[cursor.getInt(Column.PRIORITY.getIndex())];
@@ -61,7 +65,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _isSync = bundle.getBoolean(PARAM_IS_SYNC);
         _queueTime = bundle.getLong(PARAM_QUEUE_TIME);
         try {
-            _request = new JsonObject(bundle.getByteArray(PARAM_REQUEST));
+            _requestString = new String(bundle.getByteArray(PARAM_REQUEST));
         } catch (Exception ex) {
         }
         _priority = (Priority) bundle.getSerializable(PARAM_PRIORITY);
@@ -74,8 +78,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putString(PARAM_HANDLER_NAME, _handlerName);
         bundle.putByteArray(PARAM_HANDLER_PARAMS, _handlerParams);
         bundle.putSerializable(PARAM_STATE, _state);
-        if (_request != null)
-            bundle.putByteArray(PARAM_REQUEST, _request.toByteArray());
+        if (_requestString != null) {
+            bundle.putByteArray(PARAM_REQUEST, _requestString.getBytes());
+        }
         bundle.putSerializable(PARAM_PRIORITY, _priority);
         bundle.putString(PARAM_KEY, _key);
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
@@ -115,12 +120,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _state = state;
     }
 
-    public JsonObject getRequest() {
-        return _request;
+    public String getRequestString() {
+        return _requestString;
     }
 
-    public void setRequest(JsonObject request) {
-        _request = request;
+    public void setRequest(String request) {
+        _requestString = request;
     }
 
     public Priority getPriority() {
@@ -173,21 +178,17 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.query(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    WebTransactionSqlHelper.getColumnNames(),
+                    Column.KEY + " = ?",
+                    new String[]{key},
+                    null, null, null, "1");
             try {
-                Cursor cursor = db.query(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        WebTransactionSqlHelper.getColumnNames(),
-                        Column.KEY + " = ?",
-                        new String[]{key},
-                        null, null, null, "1");
-                try {
-                    //logCursor(cursor);
-                    return cursor.getCount() > 0;
-                } finally {
-                    cursor.close();
-                }
+                //logCursor(cursor);
+                return cursor.getCount() > 0;
             } finally {
-                db.close();
+                cursor.close();
             }
         }
     }
@@ -223,27 +224,27 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
-            try {
-                Cursor cursor = db.query(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        WebTransactionSqlHelper.getColumnNames(),
-                        Column.ID + "=?",
-                        new String[]{id + ""},
-                        null, null, null, "1");
+            Cursor cursor = db.query(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    WebTransactionSqlHelper.getColumnNames(),
+                    Column.ID + "=?",
+                    new String[]{id + ""},
+                    null, null, null, "1");
 
-                try {
-                    if (cursor.moveToFirst()) {
-                        obj = new WebTransaction(cursor);
-                    }
-                } finally {
-                    cursor.close();
+            try {
+                if (cursor.moveToFirst()) {
+                    obj = new WebTransaction(cursor);
                 }
             } finally {
-                db.close();
+                cursor.close();
             }
         }
         return obj;
     }
+
+
+    private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
+    private static final String GET_NEXT_SORT = Column.QUEUE_TIME + " ASC, " + Column.PRIORITY + " DESC, " + Column.ID + " ASC";
 
     public static WebTransaction getNext(Context context, boolean allowSync, boolean allowAuth) {
 //        Log.v(TAG, "getNext()");
@@ -251,29 +252,22 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.query(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    WebTransactionSqlHelper.getColumnNames(),
+                    Column.STATE + "=?"
+                            + (allowSync ? "" : " AND is_sync = 0")
+                            + (allowAuth ? "" : " AND use_auth = 0"),
+                    GET_NEXT_PARAMS,
+                    null, null, GET_NEXT_SORT, "1");
             try {
-                Cursor cursor = db.query(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        WebTransactionSqlHelper.getColumnNames(),
-                        Column.STATE + "=?"
-                                + (allowSync ? "" : " AND " + Column.IS_SYNC + " = 0")
-                                + (allowAuth ? "" : " AND " + Column.USE_AUTH + " = 0"),
-                        new String[]{State.IDLE.ordinal() + ""},
-                        null, null,
-                        Column.QUEUE_TIME + " ASC, "
-                                + Column.PRIORITY + " DESC, "
-                                + Column.ID + " ASC",
-                        "1");
-                try {
-                    if (cursor.moveToFirst()) {
-                        obj = new WebTransaction(cursor);
-                    }
-                } finally {
-                    cursor.close();
+                if (cursor.moveToFirst()) {
+                    obj = new WebTransaction(cursor);
                 }
             } finally {
-                db.close();
+                cursor.close();
             }
+
             if (obj != null) {
                 obj.setState(State.WORKING);
                 obj.save(context);
@@ -288,14 +282,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
-            try {
-                int rowcount = db.update(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
-                Log.v(TAG, "Orphans saved: " + rowcount);
-            } finally {
-                db.close();
-            }
+            int rowcount = db.update(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
+            Log.v(TAG, "Orphans saved: " + rowcount);
         }
     }
 
@@ -305,8 +295,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.HANDLER.getName(), obj._handlerName);
         v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
         v.put(Column.STATE.getName(), obj._state.ordinal());
-        if (obj._request != null) {
-            v.put(Column.REQUEST.getName(), obj._request.toByteArray());
+        if (obj._requestString != null) {
+            v.put(Column.REQUEST.getName(), obj._requestString.getBytes());
         }
         v.put(Column.KEY.getName(), obj._key);
         v.put(Column.PRIORITY.getName(), obj._priority.ordinal());
@@ -318,14 +308,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
-            try {
-                success = db.update(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        v, Column.ID + "=" + obj._id, null) > 0;
-
-            } finally {
-                db.close();
-            }
+            success = db.update(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    v, Column.ID + "=" + obj._id, null) > 0;
         }
         if (success) {
             return get(context, obj._id);
@@ -352,12 +337,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
-            try {
-                id = db.insert(WebTransactionSqlHelper.TABLE_NAME,
-                        null, v);
-            } finally {
-                db.close();
-            }
+            id = db.insert(WebTransactionSqlHelper.TABLE_NAME,
+                    null, v);
         }
         if (id != -1) {
             return get(context, id);
@@ -373,14 +354,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getWritableDatabase();
-            try {
-                success = db.delete(
-                        WebTransactionSqlHelper.TABLE_NAME,
-                        Column.ID + "=?",
-                        new String[]{id + ""}) > 0;
-            } finally {
-                db.close();
-            }
+            success = db.delete(
+                    WebTransactionSqlHelper.TABLE_NAME,
+                    Column.ID + "=?",
+                    new String[]{id + ""}) > 0;
         }
         return success;
     }
@@ -389,18 +366,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(context);
             SQLiteDatabase db = helper.getReadableDatabase();
-            try {
-                Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
 
-                try {
-                    if (cursor.moveToNext()) {
-                        return cursor.getInt(0);
-                    }
-                } finally {
-                    cursor.close();
+            try {
+                if (cursor.moveToNext()) {
+                    return cursor.getInt(0);
                 }
             } finally {
-                db.close();
+                cursor.close();
             }
         }
         return 0;

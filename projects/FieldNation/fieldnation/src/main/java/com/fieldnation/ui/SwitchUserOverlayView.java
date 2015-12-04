@@ -26,10 +26,10 @@ public class SwitchUserOverlayView extends RelativeLayout {
 
     // Data
     private long _userId;
-    private int[] _icons = new int[]{R.string.icfont_clipboard,
-            R.string.icfont_hiring,
-            R.string.icfont_circle_dollar,
-            R.string.icfont_workorder};
+    private int[] _icons = new int[]{R.string.icon_my_wos,
+            R.string.icon_hiring,
+            R.string.icon_circle_dollar,
+            R.string.icon_summary};
     private int _iconIndex = 0;
 
     // Serivces

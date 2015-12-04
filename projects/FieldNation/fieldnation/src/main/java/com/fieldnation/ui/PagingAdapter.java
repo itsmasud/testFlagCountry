@@ -5,7 +5,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 
 import java.util.HashSet;
@@ -165,6 +167,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView = new RateMeView(parent.getContext());
                 _rateMeView.setListener(_rateMe_listener);
             }
+            Debug.logCustom(new CustomEvent("RateMeCardShown"));
             App.get().setRateMeShown();
             return _rateMeView;
         }

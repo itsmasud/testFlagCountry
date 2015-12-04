@@ -125,10 +125,14 @@ public class PaymentFeeView extends RelativeLayout {
             _statusView.setBackgroundResource(R.drawable.card_status_green);
         }
 
-        String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
-        _basisTextView.setText(paymethod);
+        if (!misc.isEmptyOrNull(payment.getPayMethod())) {
+            String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
+            _basisTextView.setText(paymethod);
+            _basisTextView.setVisibility(VISIBLE);
+        } else {
+            _basisTextView.setVisibility(GONE);
+        }
         _paymentTextView.setText(misc.toCurrency(fee.getAmount()).substring(1));
         _statusTextView.setText(misc.capitalize(payment.getStatus()));
     }
-
 }
