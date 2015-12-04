@@ -139,6 +139,49 @@ public class FileHelper {
         }.executeEx(context, url, filename, mimetype);
     }
 
+    public static void viewOrDownloadFile(Context context, String url, String filename) {
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+                Context context = (Context) params[0];
+                String url = (String) params[1];
+                String filename = (String) params[2];
+                Intent intent = null;
+
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                boolean doDownload = true;
+                try {
+                    if (context.getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                        context.startActivity(intent);
+                        doDownload = false;
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                if (doDownload) {
+                    // http://stackoverflow.com/questions/525204/android-download-intent
+                    DownloadManager.Request r = new DownloadManager.Request(Uri.parse(url));
+                    r.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, filename);
+                    r.allowScanningByMediaScanner();
+                    r.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+
+                    DownloadManager dm = (DownloadManager) context.getSystemService(Context.DOWNLOAD_SERVICE);
+                    dm.enqueue(r);
+                    try {
+                        Toast.makeText(context, context.getString(R.string.toast_downloading) + " " + filename, Toast.LENGTH_LONG).show();
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                    }
+                }
+
+                return null;
+            }
+        }.executeEx(context, url, filename);
+    }
+
     public interface Listener {
         void fileReady(String filename, File file);
 

@@ -158,6 +158,9 @@ public class ReasonCoView extends RelativeLayout {
     private final View.OnClickListener _expires_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_datePicker.isAdded())
+                return;
+
             _expires = _expiresCheckBox.isChecked();
 
             if (_expires) {
@@ -181,6 +184,9 @@ public class ReasonCoView extends RelativeLayout {
     private final View.OnClickListener _expiresButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_datePicker.isAdded())
+                return;
+
             if (_listener != null)
                 _datePicker.show(_fm, TAG);
         }
@@ -198,7 +204,9 @@ public class ReasonCoView extends RelativeLayout {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _pickerCal.set(year, month, day);
-            _timePicker.show(_fm, datePickerDialog.getTag());
+
+            if (!_timePicker.isAdded())
+                _timePicker.show(_fm, datePickerDialog.getTag());
         }
     };
 

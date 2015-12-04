@@ -23,12 +23,13 @@ public class PaymentListActivity extends ItemListActivity<Payment> {
     protected void onResume() {
         super.onResume();
         _paymentClient = new PaymentClient(_payment_listener);
-        _paymentClient.connect(this);
+        _paymentClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
-        _paymentClient.disconnect(this);
+        if (_paymentClient != null && _paymentClient.isConnected())
+            _paymentClient.disconnect(App.get());
         super.onPause();
     }
 

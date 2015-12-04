@@ -166,13 +166,13 @@ public class SignOffActivity extends AuthFragmentActivity {
     protected void onResume() {
         super.onResume();
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(this);
+        _workorderClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(this);
+            _workorderClient.disconnect(App.get());
         super.onPause();
     }
 

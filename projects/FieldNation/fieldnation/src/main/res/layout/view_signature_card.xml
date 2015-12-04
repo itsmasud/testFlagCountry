@@ -1,45 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutCardView"
+    style="?attr/cardContainerStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/icon_view"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:text="@string/icon_circle_signature"
+        android:textColor="@color/fn_accent_color"
+        android:textSize="32sp" />
 
-        <com.fieldnation.ui.IconFontTextView
-            android:id="@+id/icon_view"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:text="@string/icon_circle_signature"
-            android:textColor="@color/fn_accent_color"
-            android:textSize="32sp" />
 
-        <LinearLayout
-            android:id="@+id/info_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="8dp"
-            android:layout_toRightOf="@+id/icon_view"
-            android:orientation="vertical">
+    <TextView
+        android:id="@+id/name_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/icon_view"
+        android:layout_above="@+id/date_textview"
+        android:layout_alignTop="@id/icon_view"
+        android:layout_marginLeft="8dp"
+        android:text="Signee Name" />
 
-            <TextView
-                android:id="@+id/name_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Signee Name" />
+    <TextView
+        android:id="@+id/date_textview"
+        style="@style/Text_Caption"
+        android:layout_alignBottom="@id/icon_view"
+        android:layout_toRightOf="@+id/icon_view"
+        android:layout_marginLeft="8dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="January 10, 2014" />
 
-            <TextView
-                android:id="@+id/date_textview"
-                style="@style/Text_Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="January 10, 2014" />
-
-        </LinearLayout>
-    </RelativeLayout>
-</com.fieldnation.ui.CardView>
+</RelativeLayout>

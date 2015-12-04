@@ -65,6 +65,15 @@ public class ToastClient extends TopicClient {
         dispatchEvent(context, TOPIC_ID_TOAST, bundle, Sticky.NONE);
     }
 
+    public static void toast(Context context, int resId, int duration) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_TOAST);
+        bundle.putString(PARAM_TITLE, context.getString(resId));
+        bundle.putInt(PARAM_DURATION, duration);
+
+        dispatchEvent(context, TOPIC_ID_TOAST, bundle, Sticky.NONE);
+    }
+
     public boolean subToast() {
         return register(TOPIC_ID_TOAST, TAG);
     }

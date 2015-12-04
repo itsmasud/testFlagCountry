@@ -1,64 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/tileStyle"
+    style="?attr/tileContainerStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <LinearLayout
-        android:id="@+id/container_view"
-        style="?attr/tileContainerStyle"
+    <TextView
+        android:id="@+id/schedule_textview"
+        style="?attr/tileTextTitleStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_gravity="center_vertical"
+        android:layout_marginBottom="@dimen/tileContentPadding"
+        android:text="@string/schedule" />
+
+    <TextView
+        android:id="@+id/status_textview"
+        style="?attr/tileTextStatusStyle"
+        android:layout_width="match_parent"
+        android:layout_height="25dp"
+        android:layout_gravity="right"
+        android:layout_marginBottom="@dimen/tileContentPadding"
+        android:layout_toRightOf="@+id/schedule_textview"
+        android:gravity="center_vertical|right"
+        android:text="@string/buyers_suggestion" />
+
+    <TextView
+        android:id="@+id/body_textview"
+        style="?attr/tileTextBodyStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_below="@+id/schedule_textview"
+        android:layout_marginBottom="16dp"
+        android:text="Between 3/5/2014 @ 1am and 3/6/2014 @ 4am" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="@dimen/tileContentPadding"
-            android:orientation="horizontal">
 
-            <TextView
-                style="?attr/tileTextTitleStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:text="@string/schedule" />
+    <Button
+        android:id="@+id/clear_button"
+        style="?attr/tileButtonStyle"
+        android:layout_below="@+id/body_textview"
+        android:text="@string/btn_clear" />
 
-            <TextView
-                android:id="@+id/status_textview"
-                style="?attr/tileTextStatusStyle"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_weight="1"
-                android:gravity="right"
-                android:text="@string/buyers_suggestion" />
-        </LinearLayout>
-
-        <TextView
-            android:id="@+id/body_textview"
-            style="?attr/tileTextBodyStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Between 3/5/2014 @ 1am and 3/6/2014 @ 4am" />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/actionbar_view"
-        style="?attr/tileActionBarStyle"
-        android:layout_below="@+id/container_view"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/clear_button"
-            style="?attr/tileButtonStyle"
-            android:text="@string/btn_clear" />
-
-        <Button
-            android:id="@+id/change_button"
-            style="?attr/tileButtonStyle"
-            android:text="@string/btn_change_schedule" />
-    </LinearLayout>
+    <Button
+        android:id="@+id/change_button"
+        style="?attr/tileButtonStyle"
+        android:layout_below="@+id/body_textview"
+        android:layout_toRightOf="@+id/clear_button"
+        android:text="@string/btn_change_schedule" />
 
 </RelativeLayout>

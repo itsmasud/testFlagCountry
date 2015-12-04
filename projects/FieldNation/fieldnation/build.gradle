@@ -106,4 +106,9 @@ dependencies {
         transitive = true;
     }
     compile 'com.github.anrwatchdog:anrwatchdog:1.1.1'
+    compile('com.weiwangcn.betterspinner:library-material:1.1.0') {
+        exclude group: 'com.android.support', module: 'appcompat-v7'
+        exclude group: 'com.rengwuxian.materialedittext', module: 'library'
+    }
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 }

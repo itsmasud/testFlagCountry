@@ -14,6 +14,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
@@ -21,7 +22,6 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -388,7 +388,11 @@ public class DrawerView extends RelativeLayout {
             intent.putExtra(Intent.EXTRA_SUBJECT, "Android Log " + (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             intent.putExtra(Intent.EXTRA_TEXT, "Tell me about the problem you are having.");
             intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempfile));
-            getContext().startActivity(intent);
+            if (intent.resolveActivity(getContext().getPackageManager()) != null) {
+                getContext().startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "No email app is available", Toast.LENGTH_LONG).show();
+            }
         }
     };
 

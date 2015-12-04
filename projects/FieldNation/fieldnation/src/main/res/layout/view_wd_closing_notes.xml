@@ -22,26 +22,15 @@
         android:text="You Currently have no closing notes entered."
         android:visibility="gone" />
 
-    <FrameLayout
-        android:id="@+id/notesCard_layout"
-        style="@style/Card"
+
+    <TextView
+        android:id="@+id/notes_textview"
+        style="@style/CardContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp">
-
-        <FrameLayout
-            style="@style/CardContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="16dp">
-
-            <TextView
-                android:id="@+id/notes_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_paragraph" />
-        </FrameLayout>
-    </FrameLayout>
+        android:layout_marginBottom="16dp"
+        android:padding="16dp"
+        android:text="@string/placeholder_paragraph" />
 
     <Button
         android:id="@+id/add_button"

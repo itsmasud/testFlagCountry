@@ -74,7 +74,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             } else {
                 _durationLayout.setVisibility(GONE);
             }
-        } else {
+            setVisibility(View.VISIBLE);
+        } else if (_workorder.getSchedule() != null) {
             _dateTextView.setText(_workorder.getSchedule().getFormatedDate());
             _timeTextView.setText(_workorder.getSchedule().getFormatedTime());
             if (_workorder.getSchedule().getDuration() != null) {
@@ -83,8 +84,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             } else {
                 _durationLayout.setVisibility(GONE);
             }
+            setVisibility(View.VISIBLE);
+        } else {
+            setVisibility(View.GONE);
         }
-
-        setVisibility(View.VISIBLE);
     }
 }
