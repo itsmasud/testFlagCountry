@@ -117,7 +117,7 @@ public class TimeLogRowView extends RelativeLayout {
 
         if (_workorder.getPay() != null && _workorder.getPay().isPerDeviceRate()) {
             _devicesTextView.setVisibility(VISIBLE);
-            _devicesTextView.setText(_loggedWork.getNoOfDevices() + "");
+            _devicesTextView.setText(_loggedWork.getNoOfDevices() + " devices");
         } else {
             _devicesTextView.setVisibility(GONE);
         }

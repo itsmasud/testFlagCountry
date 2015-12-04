@@ -22,6 +22,7 @@ import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.workorder.detail.TimeLogRowView;
 import com.fieldnation.utils.misc;
 
 import java.util.Random;
@@ -250,8 +251,8 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
                 @Override
                 public void next(int i) throws Exception {
                     LoggedWork work = _logs[i];
-                    WorklogTile v = new WorklogTile(SignatureDisplayActivity.this);
-                    v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
+                    TimeLogRowView v = new TimeLogRowView(SignatureDisplayActivity.this);
+                    v.setData(_workorder, work);
                     _timeLinearLayout.addView(v);
                 }
             };
@@ -309,6 +310,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
+            getData();
         }
 
         @Override

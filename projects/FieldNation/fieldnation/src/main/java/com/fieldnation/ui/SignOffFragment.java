@@ -21,6 +21,7 @@ import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.workorder.detail.TimeLogRowView;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
@@ -205,8 +206,8 @@ public class SignOffFragment extends FragmentBase {
                     }
 
                     LoggedWork work = _logs[i];
-                    WorklogTile v = new WorklogTile(getActivity());
-                    v.setWorklog(work, _workorder.getPay().isPerDeviceRate());
+                    TimeLogRowView v = new TimeLogRowView(getActivity());
+                    v.setData(_workorder, work);
                     _timeLinearLayout.addView(v);
                 }
 
