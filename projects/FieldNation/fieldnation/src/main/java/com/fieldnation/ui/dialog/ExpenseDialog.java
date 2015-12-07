@@ -216,7 +216,7 @@ public class ExpenseDialog extends DialogFragmentBase {
                 return;
 
             if (getAmount() < 0.1) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
             if (_listener != null)
