@@ -1,10 +1,15 @@
 package com.fieldnation;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
+import android.widget.Toast;
 
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;
@@ -120,6 +125,12 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_DISCONNECTED);
         TopicService.dispatchEvent(context, TOPIC_ID_NETWORK_STATE, bundle, Sticky.FOREVER);
+
+        Intent intent = networkConnectIntent(context);
+        if (intent != null) {
+            PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
+            ToastClient.snackbar(context, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+        }
     }
 
     public static void networkConnected(Context context) {
@@ -153,6 +164,14 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
             return;
 
         TopicService.dispatchEvent(context, TOPIC_ID_NETWORK_COMMAND_CONNECT, null, Sticky.NONE);
+    }
+
+    public static Intent networkConnectIntent(Context context) {
+        Log.v(STAG, "networkConnect");
+        if (context == null)
+            return null;
+
+        return TopicService.dispatchEventIntent(context, TOPIC_ID_NETWORK_COMMAND_CONNECT, null, Sticky.NONE);
     }
 
     public boolean subNetworkConnect() {
