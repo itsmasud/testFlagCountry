@@ -134,6 +134,8 @@
             style="@style/TextViewLink"
             android:layout_width="match_parent"
             android:layout_height="32dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
             android:text="@string/view_standard_instructions"
             android:textSize="14sp" />
 
