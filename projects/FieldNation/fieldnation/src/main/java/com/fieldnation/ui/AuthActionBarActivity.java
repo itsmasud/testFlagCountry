@@ -144,15 +144,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
         _toastClient = new ToastClient(_toastListener);
         _toastClient.connect(App.get());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         _globalClient = new GlobalTopicClient(_globalListener);
         _globalClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
@@ -165,20 +161,17 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
 
         if (_authTopicClient != null && _authTopicClient.isConnected()) {
             _authTopicClient.disconnect(App.get());
         }
-        super.onPause();
-    }
 
-    @Override
-    protected void onStop() {
         if (_toastClient != null && _toastClient.isConnected())
             _toastClient.disconnect(App.get());
-        super.onStop();
+        super.onPause();
     }
 
     @Override
