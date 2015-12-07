@@ -67,7 +67,7 @@ public class ThreadManager {
             synchronized (THREAD_PAUSE) {
                 try {
 //                    Log.v(getName(), "sleeping");
-                    THREAD_PAUSE.wait(1000);
+                    THREAD_PAUSE.wait();
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
@@ -79,7 +79,10 @@ public class ThreadManager {
         public void run() {
             while (_running) {
                 if (!doWork()) {
+                    Log.v(TAG, "doWork=False");
                     sleep();
+                } else {
+                    Log.v(TAG, "doWork=True");
                 }
             }
         }

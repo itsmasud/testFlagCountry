@@ -393,6 +393,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     WebTransaction.delete(context, trans.getId());
                 } else {
                     transFailNetworkDown(trans);
+                    return false;
                 }
             } catch (FileNotFoundException ex) {
                 Log.v(TAG, ex);
@@ -400,19 +401,24 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (ConnectException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (SocketTimeoutException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (EOFException ex) {
                 Log.v(TAG, ex);
                 trans.requeue(context);
             } catch (IOException ex) {
                 Log.v(TAG, ex);
                 transFailNetworkDown(trans);
+                return false;
             } catch (Exception ex) {
                 if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                     transFailNetworkDown(trans);
+                    return false;
                 } else {
                     // no freaking clue
                     Debug.logException(ex);
