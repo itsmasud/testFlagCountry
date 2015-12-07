@@ -69,7 +69,7 @@ public class PayDialog extends DialogFragmentBase {
 
 
     // Payable & Hours
-    private static double MINIMUM_PAYABLE_AMOUNT = .01;
+    private static double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
     private double _fixedAmount;
     private double _hourlyRateAmount;
     private double _maxHours;
@@ -217,21 +217,21 @@ public class PayDialog extends DialogFragmentBase {
             switch (_mode) {
                 case MODE_FIXED:
                     _fixedAmount = getAmount(_fixedEditText.getText().toString());
-                    return _fixedAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _fixedAmount >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_HOURLY:
                     _hourlyRateAmount = getAmount((_hourlyRateEditText.getText().toString()));
                     _maxHours = getAmount((_maxHoursEditText.getText().toString()));
-                    return _hourlyRateAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _hourlyRateAmount * _maxHours >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_PER_DEVICE:
                     _deviceRate = getAmount((_deviceRateEditText.getText().toString()));
                     _maxDevices = getNumberOfDevice((_maxDevicesEditText.getText().toString()));
-                    return _deviceRate > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _deviceRate * _maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_BLENDED:
                     blendedHourlyAmount = getAmount((_blendedHourlyEditText.getText().toString()));
                     _blendedMaxHours = getAmount((_blendedMaxHoursEditText.getText().toString()));
                     _extraHourly = getAmount((_extraHourlyEditText.getText().toString()));
                     _extraMaxHours = getAmount((_extraMaxHoursEditText.getText().toString()));
-                    return (blendedHourlyAmount > MINIMUM_PAYABLE_AMOUNT && _extraHourly > MINIMUM_PAYABLE_AMOUNT) ? true : false;
+                    return (blendedHourlyAmount * _blendedMaxHours) + (_extraHourly * _extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
             }
         } catch (Exception ex) {
             return false;
@@ -370,7 +370,7 @@ public class PayDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (!isValidAmount()) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
 
