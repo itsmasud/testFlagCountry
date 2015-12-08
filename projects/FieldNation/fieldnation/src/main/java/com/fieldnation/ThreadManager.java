@@ -66,24 +66,24 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-//                    Log.v(getName(), "sleeping");
+                    Log.v(getName(), "sleeping");
                     THREAD_PAUSE.wait();
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
             }
-            //Log.v(getName(), "woke up");
+            Log.v(getName(), "woke up");
         }
 
         @Override
         public void run() {
             while (_running) {
                 if (!doWork()) {
-                    Log.v(TAG, "doWork=False");
+                    //Log.v(TAG, "doWork=False");
                     sleep();
-                } else {
-                    Log.v(TAG, "doWork=True");
-                }
+                } //else {
+                //Log.v(TAG, "doWork=True");
+                //}
             }
         }
 

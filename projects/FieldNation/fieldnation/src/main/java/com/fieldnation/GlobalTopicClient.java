@@ -125,12 +125,6 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         Bundle bundle = new Bundle();
         bundle.putInt(PARAM_NETWORK_STATE, NETWORK_STATE_DISCONNECTED);
         TopicService.dispatchEvent(context, TOPIC_ID_NETWORK_STATE, bundle, Sticky.FOREVER);
-
-        Intent intent = networkConnectIntent(context);
-        if (intent != null) {
-            PendingIntent pi = PendingIntent.getService(context, 0, intent, 0);
-            ToastClient.snackbar(context, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-        }
     }
 
     public static void networkConnected(Context context) {

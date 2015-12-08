@@ -159,7 +159,7 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     private void register(Bundle bundle, Messenger replyTo) {
-        Log.v(TAG, "register");
+        //Log.v(TAG, "register");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
