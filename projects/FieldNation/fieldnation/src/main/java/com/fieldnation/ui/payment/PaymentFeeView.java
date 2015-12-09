@@ -53,6 +53,7 @@ public class PaymentFeeView extends RelativeLayout {
         // connect UI
         // main content
         // status
+/*
         _statusView = findViewById(R.id.status_view);
         _statusTextView = (TextView) findViewById(R.id.status_textview);
 
@@ -83,6 +84,7 @@ public class PaymentFeeView extends RelativeLayout {
 
         _statusView.setBackgroundResource(R.drawable.card_status_green);
         _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
+*/
 
     }
 

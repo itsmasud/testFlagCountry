@@ -8,11 +8,11 @@
     android:padding="0dp">
 
     <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/bundle_imageview"
+        android:id="@+id/bundle_iconFont"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
         android:gravity="center_vertical"
         android:text="@string/icon_bundle"
         android:textColor="@color/fn_accent_color"
@@ -23,9 +23,9 @@
         style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_toRightOf="@+id/bundle_imageview"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:layout_toRightOf="@+id/bundle_iconFont"
         android:ellipsize="end"
         android:gravity="center_vertical"
         android:maxLines="1"
@@ -48,8 +48,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/divider"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="8dp"
         android:text="Company Name" />
 
@@ -60,8 +60,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/divider"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="8dp"
         android:text="WO ID: 123456789" />
 
@@ -71,8 +71,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/companyName_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="8dp"
         android:text="In 45 mins" />
 
@@ -83,8 +83,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/workorderId_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="8dp"
         android:text="$104.00" />
 
@@ -94,8 +94,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/time_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:text="Marked Complete" />
 
     <TextView
@@ -105,8 +105,8 @@
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/price_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:text="In Review" />
 
 
@@ -124,15 +124,37 @@
             android:layout_width="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="THING 1" />
 
         <Button
-            android:id="@+id/right_button"
+            android:id="@+id/rightWhite_button"
             style="?attr/buttonWhiteStyle"
             android:layout_width="wrap_content"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:text="THING 2" />
+
+        <Button
+            android:id="@+id/rightOrange_button"
+            style="?attr/buttonOrangeStyle"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/rightGreen_button"
+            style="?attr/buttonGreenStyle"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
     </LinearLayout>
 
 </RelativeLayout>

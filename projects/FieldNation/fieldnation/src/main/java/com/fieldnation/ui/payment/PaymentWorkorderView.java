@@ -62,6 +62,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         if (isInEditMode())
             return;
 
+/*
         // connect UI
         // main content
         // status
@@ -101,6 +102,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _statusView.setBackgroundResource(R.drawable.card_status_green);
         _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
         setOnClickListener(_this_onClick);
+*/
     }
 
     private void setIsBundle(boolean isBundle) {

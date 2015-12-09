@@ -626,7 +626,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
             getActivity().startActivity(intent);
-            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+            //view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
         }
 
         @Override
@@ -650,6 +650,26 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
 
             WorkorderClient.actionReadyToGo(App.get(), workorder.getWorkorderId());
+        }
+
+        @Override
+        public void actionConfirm(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionMap(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
+            // TODO
         }
     };
 
@@ -834,7 +854,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             else
                 v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
-            v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            //v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 
             return v;
         }

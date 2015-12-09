@@ -438,7 +438,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             }
             v.setWorkorderSummaryListener(_wocv_listener);
 
-            v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            //v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
             v.makeButtonsGone();
 
             return v;
@@ -500,7 +500,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             _workorder = workorder;
             setLoading(true);
             _currentWorkOrderCardView = view;
-            _currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+            //_currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
             _currentWorkOrderCardView.makeButtonsGone();
 
             if (_workorderClient != null && _workorderClient.isConnected())
@@ -553,11 +553,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
                 } else {
-                	try {
-	                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-    	                finish();
-        	        } catch (Exception ex) {
-            	        ex.printStackTrace();
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return;
@@ -640,7 +640,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _uploadSlotLayout.postDelayed(r, new Random().nextInt(100));
 
         if (_currentWorkOrderCardView != null) {
-            _currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            //_currentWorkOrderCardView.setDisplayMode(WorkorderCardView.MODE_NORMAL);
             _currentWorkOrderCardView.makeButtonsGone();
         }
     }

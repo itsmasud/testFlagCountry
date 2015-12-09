@@ -163,6 +163,26 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
 
         @Override
+        public void actionConfirm(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionMap(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
+        public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
+            // TODO
+        }
+
+        @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
@@ -193,21 +213,18 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         public void actionCheckin(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionCheckin()
             Log.v(TAG, "Method Stub: actionCheckin()");
-
         }
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionAssignment()
             Log.v(TAG, "Method Stub: actionAssignment()");
-
         }
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
             // TODO Method Stub: actionAcknowledgeHold()
             Log.v(TAG, "Method Stub: actionAcknowledgeHold()");
-
         }
     };
 
