@@ -371,23 +371,23 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         Log.v(TAG, "startCheckOut");
         getLocationService().setListener(_gps_checkOutListener);
 
-        if (!getLocationService().isLocationServicesEnabled()) {
+        if (getActivity() != null && !getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkOutListener);
         } else if (getLocationService().hasLocation()) {
             doCheckOut();
-        } else if (getLocationService().isRunning()) {
+        } else if (getActivity() != null && getLocationService().isRunning() && _locationDialog.isAdded()) {
             _locationLoadingDialog.show();
-        } else if (getLocationService().isLocationServicesEnabled()) {
+        } else if (getActivity() != null && getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
             getLocationService().startLocation();
         } else {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
+            return;
         }
         setLoading(true);
     }
-
     private void doCheckin() {
         Log.v(TAG, "doCheckin()");
         getLocationService().setListener(null);
