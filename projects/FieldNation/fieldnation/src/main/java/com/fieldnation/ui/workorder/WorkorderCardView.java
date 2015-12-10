@@ -13,10 +13,16 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Displays the summary of a workorder to the user. Will also allow some simple
@@ -304,17 +310,53 @@ public class WorkorderCardView extends RelativeLayout {
         // if not range, then time/day, mo ## ... this is strange
         // if within 7 days, show week day/time
         // if > 7 days, show Feb 12 - Feb 22/time
-        if (_workorder.getEstimatedSchedule() != null) {
-            _timeTextView.setVisibility(VISIBLE);
-            _extraTextView.setVisibility(VISIBLE);
-            _timeTextView.setText(_workorder.getEstimatedSchedule().getFormatedTime());
-            _extraTextView.setText(_workorder.getEstimatedSchedule().getFormatedDate());
-        } else if (_workorder.getSchedule() != null) {
-            _timeTextView.setVisibility(VISIBLE);
-            _extraTextView.setVisibility(VISIBLE);
-            _timeTextView.setText(_workorder.getSchedule().getFormatedTime());
-            _extraTextView.setText(_workorder.getSchedule().getFormatedDate());
-        } else {
+        Schedule schedule = _workorder.getEstimatedSchedule();
+        if (schedule == null)
+            schedule = _workorder.getSchedule();
+
+        _extraTextView.setVisibility(INVISIBLE);
+        try {
+            if (schedule != null) {
+                long startTime = ISO8601.toUtc(schedule.getStartTime());
+                if (startTime - System.currentTimeMillis() <= 0
+                        && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
+                    _timeTextView.setVisibility(VISIBLE);
+                    _timeTextView.setText(misc.toRoundDuration(System.currentTimeMillis() - startTime) + " late");
+                } else if (System.currentTimeMillis() - startTime <= 3600000
+                        && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
+                    _timeTextView.setVisibility(VISIBLE);
+                    _timeTextView.setText(misc.toRoundDuration(startTime - System.currentTimeMillis()));
+                } else if (schedule.isExact()) {
+                    _timeTextView.setVisibility(VISIBLE);
+                    _extraTextView.setVisibility(VISIBLE);
+                    _timeTextView.setText(schedule.getFormatedTime());
+                    _extraTextView.setText(schedule.getFormatedDate());
+                } else {
+                    long endTime = ISO8601.toUtc(schedule.getEndTime());
+                    Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
+                    Calendar eCal = ISO8601.toCalendar(schedule.getEndTime());
+
+                    if ((endTime - System.currentTimeMillis()) / 604800000L <= 7) {
+                        _timeTextView.setVisibility(VISIBLE);
+                        _extraTextView.setVisibility(VISIBLE);
+                        _timeTextView.setText(new SimpleDateFormat("c").format(sCal.getTime())
+                                + " - " + new SimpleDateFormat("c").format(eCal.getTime()));
+                        _extraTextView.setText(schedule.getFormatedTime());
+                    } else {
+                        _timeTextView.setVisibility(VISIBLE);
+                        _extraTextView.setVisibility(VISIBLE);
+                        _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime())
+                                + " - " + new SimpleDateFormat("MMM d").format(eCal.getTime()));
+                        _extraTextView.setText(schedule.getFormatedTime());
+                    }
+                }
+            } else {
+                _timeTextView.setVisibility(INVISIBLE);
+                _extraTextView.setVisibility(INVISIBLE);
+            }
+        } catch (Exception ex) {
             _timeTextView.setVisibility(INVISIBLE);
             _extraTextView.setVisibility(INVISIBLE);
         }

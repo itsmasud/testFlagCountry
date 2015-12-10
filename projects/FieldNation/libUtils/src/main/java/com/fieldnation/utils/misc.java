@@ -220,18 +220,28 @@ public class misc {
     public static String toRoundDuration(long milliseconds) {
 
         if (milliseconds < 60000) {
-            return milliseconds / 1000 + "s";
+            return milliseconds / 1000 + " s";
         }
 
         if (milliseconds < 3600000) {
-            return milliseconds / 60000 + "m";
+            return milliseconds / 60000 + " m";
         }
 
         if (milliseconds < 86400000) {
-            return milliseconds / 3600000 + "hr";
+            return milliseconds / 3600000 + " hr";
         }
 
-        return milliseconds / 86400000 + "day";
+        if (milliseconds < 31536000000L) {
+            if (milliseconds / 86400000 > 1) {
+                return milliseconds / 86400000 + " days";
+            }
+            return milliseconds / 86400000 + " day";
+        }
+
+        if (milliseconds / 31536000000L > 1) {
+            return milliseconds / 31536000000L + " years";
+        }
+        return milliseconds / 31536000000L + " year";
     }
 
     public static Spannable linkifyHtml(String html, int linkifyMask) {
@@ -1322,5 +1332,4 @@ public class misc {
         Date date = calendar.getTime();
         return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
     }
-
 }
