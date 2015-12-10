@@ -288,7 +288,8 @@ public class WorkorderCardView extends RelativeLayout {
 
         if (!misc.isEmptyOrNull(_workorder.getCompanyName())) {
             _companyNameTextView.setText(_workorder.getCompanyName());
-        } else if (_workorder.getLocation() != null && !misc.isEmptyOrNull(_workorder.getLocation().getContactName())) {
+        } else if (_workorder.getLocation() != null
+                && !misc.isEmptyOrNull(_workorder.getLocation().getContactName())) {
             _companyNameTextView.setText(_workorder.getLocation().getContactName());
         } else {
             _companyNameTextView.setText("Company Name Hidden");
@@ -297,6 +298,12 @@ public class WorkorderCardView extends RelativeLayout {
         _workorderIdTextView.setText("WO ID: " + _workorder.getWorkorderId());
         _extraTextView.setVisibility(INVISIBLE);
 
+        // date/time rules.
+        // if date/time is <= now, then red text, display hour/min late #a21623
+        // if date/time is within 1 hr of now, show min counter fn_orange color
+        // if not range, then time/day, mo ## ... this is strange
+        // if within 7 days, show week day/time
+        // if > 7 days, show Feb 12 - Feb 22/time
         if (_workorder.getEstimatedSchedule() != null) {
             _timeTextView.setVisibility(VISIBLE);
             _extraTextView.setVisibility(VISIBLE);
@@ -312,6 +319,9 @@ public class WorkorderCardView extends RelativeLayout {
             _extraTextView.setVisibility(INVISIBLE);
         }
 
+        // formatting
+        // once paid, should be green (accent color)
+        // if > 1000, then $1.xxK
         if (_workorder.getPay() != null && !_workorder.getPay().hidePay()) {
             Pay pay = _workorder.getPay();
             if (pay.isBlendedRate()) {
