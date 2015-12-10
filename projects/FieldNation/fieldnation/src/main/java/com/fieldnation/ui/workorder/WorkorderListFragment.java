@@ -626,7 +626,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 //            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
             getActivity().startActivity(intent);
-            //view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
+            view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
         }
 
         @Override
@@ -854,7 +854,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             else
                 v.setWorkorder(object, null);
             v.setWorkorderSummaryListener(_wocv_listener);
-            //v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
+            v.setDisplayMode(WorkorderCardView.MODE_NORMAL);
 
             return v;
         }

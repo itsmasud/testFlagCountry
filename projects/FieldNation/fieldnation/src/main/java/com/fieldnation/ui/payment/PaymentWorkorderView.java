@@ -21,28 +21,20 @@ import java.util.Calendar;
 
 public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";
+
     // UI
-    // status
-    private View _statusView;
-    private TextView _statusTextView;
-    // bundle
-    private IconFontTextView _bundleIconFont;
-
-    // center panel
-    // title
+    private IconFontTextView _bundleIconFontView;
     private TextView _titleTextView;
-    // items
-    private TextView _clientNameTextView;
-    private TextView _distanceTextView;
-    private TextView _whenTextView;
+    private TextView _companyNameTextView;
     private TextView _workorderIdTextView;
-
-    // right panel
-    private TextView _paymentTextView;
-    private TextView _basisTextView;
-    private Button _actionGreenButton;
-    private Button _actionGrayButton;
-    private Button _actionOrangeButton;
+    private TextView _timeTextView;
+    private TextView _priceTextView;
+    private TextView _extraTextView;
+    private TextView _stateTextView;
+    private Button _leftButton;
+    private Button _rightWhiteButton;
+    private Button _rightOrangeButton;
+    private Button _rightGreenButton;
 
     // Data
     private Workorder _workorder;
@@ -62,61 +54,41 @@ public class PaymentWorkorderView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-/*
-        // connect UI
-        // main content
-        // status
-        _statusView = findViewById(R.id.status_view);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
-
-        // bundle
-        _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_imageview);
-
-        // center panel
-        // title box
+        _bundleIconFontView = (IconFontTextView) findViewById(R.id.bundle_iconFont);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        // items
-        _clientNameTextView = (TextView) findViewById(R.id.clientname_textview);
-        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
-        _distanceTextView.setVisibility(GONE);
-        _whenTextView = (TextView) findViewById(R.id.when_textview);
+        _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
+        _workorderIdTextView = (TextView) findViewById(R.id.workorderId_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _priceTextView = (TextView) findViewById(R.id.price_textview);
+        _extraTextView = (TextView) findViewById(R.id.extra_textview);
+        _stateTextView = (TextView) findViewById(R.id.status_textview);
 
-        // todo need to pick a button, and hide the others
-        _actionGreenButton = (Button) findViewById(R.id.action_button_green);
-        _actionGreenButton.setVisibility(GONE);
-
-        _actionGrayButton = (Button) findViewById(R.id.action_button_white);
-        _actionGrayButton.setVisibility(GONE);
-
-        _actionOrangeButton = (Button) findViewById(R.id.action_button_orange);
-        _actionOrangeButton.setVisibility(GONE);
-
-        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _basisTextView = (TextView) findViewById(R.id.basis_textview);
-
-        findViewById(R.id.location_textview).setVisibility(View.GONE);
-        _workorderIdTextView = (TextView) findViewById(R.id.workorderid_textview);
+        findViewById(R.id.left_button).setVisibility(GONE);
+        findViewById(R.id.rightWhite_button).setVisibility(GONE);
+        findViewById(R.id.rightGreen_button).setVisibility(GONE);
+        findViewById(R.id.rightOrange_button).setVisibility(GONE);
 
         setIsBundle(false);
-
+/*
+        findViewById(R.id.location_textview).setVisibility(View.GONE);
         _statusView.setBackgroundResource(R.drawable.card_status_green);
         _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
-        setOnClickListener(_this_onClick);
 */
+        setOnClickListener(_this_onClick);
     }
 
     private void setIsBundle(boolean isBundle) {
         if (isBundle) {
-            _bundleIconFont.setVisibility(VISIBLE);
+            _bundleIconFontView.setVisibility(VISIBLE);
         } else {
-            _bundleIconFont.setVisibility(GONE);
+            _bundleIconFontView.setVisibility(GONE);
         }
     }
 
     public void setWorkorder(Payment payment, Workorder wo) {
         _workorder = wo;
         _titleTextView.setText(wo.getTitle());
-        _clientNameTextView.setText(wo.getClientName());
+        _companyNameTextView.setText(wo.getClientName());
 
         try {
             if (wo.getEndTime() != null) {
@@ -125,30 +97,25 @@ public class PaymentWorkorderView extends RelativeLayout {
 
                 when = misc.formatDate(cal);
 
-                _whenTextView.setVisibility(VISIBLE);
-                _whenTextView.setText(when);
+                _timeTextView.setVisibility(VISIBLE);
+                _timeTextView.setText(when);
             } else {
-                _whenTextView.setVisibility(GONE);
+                _timeTextView.setVisibility(INVISIBLE);
             }
         } catch (Exception ex) {
             // Log.v(TAG, ex);
-            _whenTextView.setVisibility(GONE);
-        }
-        if (payment.getStatus().equals("paid")) {
-            _statusView.setBackgroundResource(R.drawable.card_status_black);
-        } else {
-            _statusView.setBackgroundResource(R.drawable.card_status_green);
+            _timeTextView.setVisibility(INVISIBLE);
         }
 
         if (payment.getPayMethod() != null) {
             String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
-            _basisTextView.setText(paymethod);
+            _stateTextView.setText(paymethod);
         } else {
-            _basisTextView.setVisibility(View.GONE);
+            _stateTextView.setVisibility(View.INVISIBLE);
         }
-        _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
-        _statusTextView.setText(misc.capitalize(payment.getStatus()));
-        _workorderIdTextView.setText(_workorder.getWorkorderId() + "");
+        _priceTextView.setText(misc.toCurrency(wo.getAmount()));
+        _stateTextView.setText(misc.capitalize(payment.getStatus()));
+        _workorderIdTextView.setText("WO ID: " + _workorder.getWorkorderId());
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {

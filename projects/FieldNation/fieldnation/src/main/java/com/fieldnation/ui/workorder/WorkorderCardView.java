@@ -125,6 +125,10 @@ public class WorkorderCardView extends RelativeLayout {
         return _workorder;
     }
 
+    public void setDisplayMode(int mode) {
+        // stub for now
+    }
+
     public void setIsBundle(boolean isBundle) {
         if (isBundle) {
             _bundleIconFontView.setVisibility(VISIBLE);
@@ -483,7 +487,7 @@ public class WorkorderCardView extends RelativeLayout {
 
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
-            
+
         }
 
         @Override
