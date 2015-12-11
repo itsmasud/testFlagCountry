@@ -56,10 +56,7 @@ public class WorkorderCardView extends RelativeLayout {
     // Data
     private Workorder _workorder;
     private Listener _listener = null;
-    //private int _displayMode = MODE_NORMAL;
     private boolean _isBundle;
-    //private String[] _statusStrings;
-    //private String[] _substatusStrings;
     private android.location.Location _gpsLocation;
 
     public WorkorderCardView(Context context) {
@@ -322,12 +319,14 @@ public class WorkorderCardView extends RelativeLayout {
             if (schedule != null) {
                 long startTime = ISO8601.toUtc(schedule.getStartTime());
                 _timeTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+
                 if (startTime - System.currentTimeMillis() <= 0
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText(misc.toRoundDuration(System.currentTimeMillis() - startTime) + " late");
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
+
                 } else if (startTime - System.currentTimeMillis() <= 3600000
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
@@ -335,11 +334,13 @@ public class WorkorderCardView extends RelativeLayout {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText("In " + misc.toRoundDuration(startTime - System.currentTimeMillis()));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
+
                 } else if (schedule.isExact()) {
                     _timeTextView.setVisibility(VISIBLE);
                     _extraTextView.setVisibility(VISIBLE);
                     _timeTextView.setText(schedule.getFormatedTime());
                     _extraTextView.setText(schedule.getFormatedDate());
+
                 } else {
                     long endTime = ISO8601.toUtc(schedule.getEndTime());
                     Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
@@ -350,17 +351,25 @@ public class WorkorderCardView extends RelativeLayout {
                         _extraTextView.setVisibility(VISIBLE);
                         _timeTextView.setText(schedule.getFormatedTime());
                         _extraTextView.setText(schedule.getFormatedDate());
+
                     } else if ((endTime - System.currentTimeMillis()) / 604800000L <= 7) {
                         _timeTextView.setVisibility(VISIBLE);
                         _extraTextView.setVisibility(VISIBLE);
                         _timeTextView.setText(new SimpleDateFormat("c").format(sCal.getTime())
                                 + " - " + new SimpleDateFormat("c").format(eCal.getTime()));
                         _extraTextView.setText(schedule.getFormatedTime());
+
                     } else {
                         _timeTextView.setVisibility(VISIBLE);
                         _extraTextView.setVisibility(VISIBLE);
-                        _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime())
-                                + " - " + new SimpleDateFormat("MMM d").format(eCal.getTime()));
+                        if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
+                                || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime())
+                                    + " - " + new SimpleDateFormat("MMM d").format(eCal.getTime()));
+                        } else {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime()));
+                        }
+
                         _extraTextView.setText(schedule.getFormatedTime());
                     }
                 }
@@ -558,22 +567,18 @@ public class WorkorderCardView extends RelativeLayout {
 
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
         public void actionMap(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
         public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
-
         }
 
         @Override
         public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
-
         }
     }
 }
