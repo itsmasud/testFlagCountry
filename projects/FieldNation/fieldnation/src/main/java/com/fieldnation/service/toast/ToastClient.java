@@ -41,6 +41,10 @@ public class ToastClient extends TopicClient {
         snackbar(context, title, null, null, duration);
     }
 
+    public static void snackbar(Context context, int titleResId, int duration) {
+        snackbar(context, context.getString(titleResId), duration);
+    }
+
     public static void snackbar(Context context, String title, String buttonText, PendingIntent buttonIntent, int duration) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
@@ -50,6 +54,10 @@ public class ToastClient extends TopicClient {
         bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
 
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
+    }
+
+    public static void snackbar(Context context, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
+        snackbar(context, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
     }
 
     public boolean subSnackbar() {

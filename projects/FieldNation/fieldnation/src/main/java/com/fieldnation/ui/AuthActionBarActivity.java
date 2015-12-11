@@ -156,10 +156,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         super.onResume();
         _toastClient = new ToastClient(_toastListener);
         _toastClient.connect(App.get());
-        _globalClient = new GlobalTopicClient(_globalListener);
-        _globalClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(App.get());
+        _globalClient = new GlobalTopicClient(_globalListener);
+        _globalClient.connect(App.get());
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
