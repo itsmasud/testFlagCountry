@@ -102,9 +102,6 @@ public class WorkorderCardView extends RelativeLayout {
         _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
         _rightOrangeButton.setOnClickListener(_right_onClick);
 
-//        _statusStrings = getContext().getResources().getStringArray(R.array.workorder_status);
-//        _substatusStrings = getContext().getResources().getStringArray(R.array.workorder_substatus);
-
         // attach my listeners
         setOnClickListener(_this_onClick);
 
