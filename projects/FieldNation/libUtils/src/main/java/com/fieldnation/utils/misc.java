@@ -218,30 +218,44 @@ public class misc {
     }
 
     public static String toRoundDuration(long milliseconds) {
-
+        long count = 0;
         if (milliseconds < 60000) {
-            return milliseconds / 1000 + " s";
+            count = milliseconds / 1000;
+            if (count > 1) {
+                return count + " seconds";
+            }
+            return count + " second";
         }
 
         if (milliseconds < 3600000) {
-            return milliseconds / 60000 + " m";
+            count = milliseconds / 60000;
+            if (count > 1) {
+                return count + " minutes";
+            }
+            return count + " minute";
         }
 
         if (milliseconds < 86400000) {
-            return milliseconds / 3600000 + " hr";
+            count = milliseconds / 3600000;
+            if (count > 1) {
+                return count + " hours";
+            }
+            return count + " hour";
         }
 
         if (milliseconds < 31536000000L) {
-            if (milliseconds / 86400000 > 1) {
-                return milliseconds / 86400000 + " days";
+            count = milliseconds / 86400000;
+            if (count > 1) {
+                return count + " days";
             }
-            return milliseconds / 86400000 + " day";
+            return count + " day";
         }
 
-        if (milliseconds / 31536000000L > 1) {
-            return milliseconds / 31536000000L + " years";
+        count = milliseconds / 31536000000L;
+        if (count > 1) {
+            return count + " years";
         }
-        return milliseconds / 31536000000L + " year";
+        return count + " year";
     }
 
     public static Spannable linkifyHtml(String html, int linkifyMask) {

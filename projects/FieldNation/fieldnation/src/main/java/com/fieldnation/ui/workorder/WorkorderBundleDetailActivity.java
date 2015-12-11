@@ -143,45 +143,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     };
 
-    private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.Listener() {
-        @Override
-        public void viewCounter(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: viewCounter()
-            Log.v(TAG, "Method Stub: viewCounter()");
-        }
-
-        @Override
-        public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: onViewPayments()
-            Log.v(TAG, "Method Stub: onViewPayments()");
-        }
-
-        @Override
-        public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionReadyToGo()
-            Log.v(TAG, "Method Stub: actionReadyToGo()");
-        }
-
-        @Override
-        public void actionConfirm(WorkorderCardView view, Workorder workorder) {
-            // TODO
-        }
-
-        @Override
-        public void actionMap(WorkorderCardView view, Workorder workorder) {
-            // TODO
-        }
-
-        @Override
-        public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
-            // TODO
-        }
-
-        @Override
-        public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
-            // TODO
-        }
-
+    private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
@@ -189,44 +151,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             WorkorderBundleDetailActivity.this.startActivity(intent);
             // Todo set loading here
         }
-
-        @Override
-        public void actionRequest(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionRequest()
-            Log.v(TAG, "Method Stub: actionRequest()");
-
-        }
-
-        @Override
-        public void actionWithdrawRequest(WorkorderCardView view, Workorder workorder) {
-            // TODO actionWithdrawRequest
-        }
-
-        @Override
-        public void actionCheckout(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionCheckout()
-            Log.v(TAG, "Method Stub: actionCheckout()");
-
-        }
-
-        @Override
-        public void actionCheckin(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionCheckin()
-            Log.v(TAG, "Method Stub: actionCheckin()");
-        }
-
-        @Override
-        public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionAssignment()
-            Log.v(TAG, "Method Stub: actionAssignment()");
-        }
-
-        @Override
-        public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-            // TODO Method Stub: actionAcknowledgeHold()
-            Log.v(TAG, "Method Stub: actionAcknowledgeHold()");
-        }
     };
-
 }
 

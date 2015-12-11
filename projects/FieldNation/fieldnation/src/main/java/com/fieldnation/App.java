@@ -178,7 +178,6 @@ public class App extends Application {
         }.executeEx(this);
 
         watch.finishAndRestart();
-        // TODO look at async task
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
@@ -186,7 +185,6 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        // TODO look at using async task here
         _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
         _gaTopicClient.connect(this);
 

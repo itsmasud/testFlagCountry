@@ -47,6 +47,7 @@ public class WorkorderCardView extends RelativeLayout {
     private TextView _priceTextView;
     private TextView _extraTextView;
     private TextView _stateTextView;
+    private TextView _remoteWorkTextView;
     private Button _leftButton;
     private Button _rightWhiteButton;
     private Button _rightOrangeButton;
@@ -90,6 +91,7 @@ public class WorkorderCardView extends RelativeLayout {
         _priceTextView = (TextView) findViewById(R.id.price_textview);
         _extraTextView = (TextView) findViewById(R.id.extra_textview);
         _stateTextView = (TextView) findViewById(R.id.status_textview);
+        _remoteWorkTextView = (TextView) findViewById(R.id.remoteWork_textview);
 
         _leftButton = (Button) findViewById(R.id.left_button);
         _leftButton.setOnClickListener(_left_onClick);
@@ -157,6 +159,7 @@ public class WorkorderCardView extends RelativeLayout {
         _rightGreenButton.setVisibility(GONE);
         _rightOrangeButton.setVisibility(GONE);
         _rightWhiteButton.setVisibility(GONE);
+        _remoteWorkTextView.setVisibility(GONE);
     }
 
 	/*-*********************************-*/
@@ -298,7 +301,7 @@ public class WorkorderCardView extends RelativeLayout {
                 && !misc.isEmptyOrNull(_workorder.getLocation().getContactName())) {
             _companyNameTextView.setText(_workorder.getLocation().getContactName());
         } else {
-            _companyNameTextView.setText("Company Name Hidden");
+            _companyNameTextView.setText(R.string.company_name_hidden);
         }
 
         _workorderIdTextView.setText("WO ID: " + _workorder.getWorkorderId());
@@ -318,16 +321,19 @@ public class WorkorderCardView extends RelativeLayout {
         try {
             if (schedule != null) {
                 long startTime = ISO8601.toUtc(schedule.getStartTime());
+                _timeTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
                 if (startTime - System.currentTimeMillis() <= 0
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText(misc.toRoundDuration(System.currentTimeMillis() - startTime) + " late");
+                    _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
                 } else if (System.currentTimeMillis() - startTime <= 3600000
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
                     _timeTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText(misc.toRoundDuration(startTime - System.currentTimeMillis()));
+                    _timeTextView.setText("In " + misc.toRoundDuration(startTime - System.currentTimeMillis()));
+                    _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
                 } else if (schedule.isExact()) {
                     _timeTextView.setVisibility(VISIBLE);
                     _extraTextView.setVisibility(VISIBLE);
@@ -388,13 +394,20 @@ public class WorkorderCardView extends RelativeLayout {
         }
 
 
+        _remoteWorkTextView.setVisibility(GONE);
         switch (_workorder.getLeftButtonAction()) {
             case Workorder.BUTTON_ACTION_NONE:
                 _leftButton.setVisibility(GONE);
                 break;
             case Workorder.BUTTON_ACTION_MAP:
-                if (_workorder.getLocation() == null || _workorder.getIsRemoteWork()) {
+                if (_workorder.getLocation() == null) {
                     _leftButton.setVisibility(GONE);
+                    _remoteWorkTextView.setVisibility(VISIBLE);
+                    _remoteWorkTextView.setText(R.string.btn_no_location);
+                } else if (_workorder.getIsRemoteWork()) {
+                    _leftButton.setVisibility(GONE);
+                    _remoteWorkTextView.setVisibility(VISIBLE);
+                    _remoteWorkTextView.setText(R.string.btn_remote_work);
                 } else {
                     Location location = _workorder.getLocation();
                     _leftButton.setVisibility(VISIBLE);
@@ -402,7 +415,7 @@ public class WorkorderCardView extends RelativeLayout {
                 }
                 break;
             case Workorder.BUTTON_ACTION_REPORT_PROBLEM:
-                _leftButton.setText("REPORT PROBLEM");
+                _leftButton.setText(R.string.btn_report_problem);
                 break;
             default:
                 break;
@@ -416,50 +429,50 @@ public class WorkorderCardView extends RelativeLayout {
         switch (_workorder.getRightButtonAction()) {
             case Workorder.BUTTON_ACTION_NONE:
                 if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
-                    _rightWhiteButton.setText("ON HOLD");
+                    _rightWhiteButton.setText(R.string.btn_on_hold);
                     _rightWhiteButton.setVisibility(VISIBLE);
                     _rightWhiteButton.setEnabled(false);
                 }
                 break;
             case Workorder.BUTTON_ACTION_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText("REQUEST");
+                _rightWhiteButton.setText(R.string.btn_request);
                 break;
             case Workorder.BUTTON_ACTION_ACCEPT:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText("ACCEPT");
+                _rightOrangeButton.setText(R.string.btn_accept);
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText("WITHDRAW");
+                _rightWhiteButton.setText(R.string.btn_withdraw_request);
                 break;
             case Workorder.BUTTON_ACTION_READY_TO_GO:
                 _rightGreenButton.setVisibility(VISIBLE);
-                _rightGreenButton.setText("READY TO GO");
+                _rightGreenButton.setText(R.string.btn_ready_to_go);
                 break;
             case Workorder.BUTTON_ACTION_CONFIRM:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText("CONFIRM");
+                _rightOrangeButton.setText(R.string.btn_confirm);
                 break;
             case Workorder.BUTTON_ACTION_CHECKIN:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText("CHECK IN");
+                _rightWhiteButton.setText(R.string.btn_check_in);
                 break;
             case Workorder.BUTTON_ACTION_RECOGNIZE_HOLD:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText("RECOGNIZE HOLD");
+                _rightOrangeButton.setText(R.string.brn_recognize_hold);
                 break;
             case Workorder.BUTTON_ACTION_CHECKOUT:
                 _rightGreenButton.setVisibility(VISIBLE);
-                _rightGreenButton.setText("CHECK OUT");
+                _rightGreenButton.setText(R.string.btn_check_out);
                 break;
             case Workorder.BUTTON_ACTION_MARK_INCOMPLETE:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText("MARK INCOMPLETE");
+                _rightWhiteButton.setText(R.string.btn_mark_incomplete);
                 break;
             case Workorder.BUTTON_ACTION_VIEW_PAYMENT:
                 _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText("VIEW PAYMENT");
+                _rightWhiteButton.setText(R.string.btn_view_payment);
                 break;
             default:
                 break;
