@@ -96,7 +96,7 @@ public class Schedule implements Parcelable {
                     if (ecal.get(Calendar.YEAR) > 2000
                             && (ecal.get(Calendar.DAY_OF_YEAR) != cal.get(Calendar.DAY_OF_YEAR))) {
                         when += "\n";
-                        when += misc.formatDateReallyLong(cal);
+                        when += misc.formatDateReallyLong(ecal);
                     }
                 }
                 return when;

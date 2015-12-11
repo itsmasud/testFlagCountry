@@ -24,6 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
         android:layout_marginTop="12dp"
         android:layout_toRightOf="@+id/bundle_iconFont"
         android:ellipsize="end"

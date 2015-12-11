@@ -328,9 +328,10 @@ public class WorkorderCardView extends RelativeLayout {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText(misc.toRoundDuration(System.currentTimeMillis() - startTime) + " late");
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                } else if (System.currentTimeMillis() - startTime <= 3600000
+                } else if (startTime - System.currentTimeMillis() <= 3600000
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                        || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText("In " + misc.toRoundDuration(startTime - System.currentTimeMillis()));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
@@ -344,7 +345,12 @@ public class WorkorderCardView extends RelativeLayout {
                     Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
                     Calendar eCal = ISO8601.toCalendar(schedule.getEndTime());
 
-                    if ((endTime - System.currentTimeMillis()) / 604800000L <= 7) {
+                    if (endTime < System.currentTimeMillis()) {
+                        _timeTextView.setVisibility(VISIBLE);
+                        _extraTextView.setVisibility(VISIBLE);
+                        _timeTextView.setText(schedule.getFormatedTime());
+                        _extraTextView.setText(schedule.getFormatedDate());
+                    } else if ((endTime - System.currentTimeMillis()) / 604800000L <= 7) {
                         _timeTextView.setVisibility(VISIBLE);
                         _extraTextView.setVisibility(VISIBLE);
                         _timeTextView.setText(new SimpleDateFormat("c").format(sCal.getTime())
