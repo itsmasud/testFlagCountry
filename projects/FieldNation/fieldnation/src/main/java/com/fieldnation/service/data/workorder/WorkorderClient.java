@@ -865,7 +865,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         // details
         protected void preGet(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onGet(null, true, false);
+                onGet(null, true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, Workorder>() {
                     private boolean _isCached = false;
