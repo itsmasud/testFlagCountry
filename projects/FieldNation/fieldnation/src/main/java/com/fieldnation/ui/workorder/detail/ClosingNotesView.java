@@ -62,10 +62,11 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private void refresh() {
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
             _notesTextView.setText(_workorder.getClosingNotes());
+            _notesTextView.setVisibility(VISIBLE);
             _noNotesTextView.setVisibility(GONE);
         } else {
-            _noNotesTextView.setVisibility(VISIBLE);
             _notesTextView.setVisibility(GONE);
+            _noNotesTextView.setVisibility(VISIBLE);
             if (!_workorder.canChangeClosingNotes()) {
                 setVisibility(View.GONE);
                 return;
