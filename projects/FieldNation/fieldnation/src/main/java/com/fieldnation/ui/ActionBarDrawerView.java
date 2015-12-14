@@ -25,7 +25,6 @@ public class ActionBarDrawerView extends FrameLayout {
     private FrameLayout _body;
     private RightDrawerMessagesView _messageDrawerView;
     private RightDrawerNotificationsView _notificationDrawerView;
-    private WarningView _warningView;
     private DrawerLayout _drawerLayout;
     private DrawerView _drawerView;
     private ViewStub _switchUserOverlayViewStub;
@@ -124,7 +123,7 @@ public class ActionBarDrawerView extends FrameLayout {
     private final DrawerView.Listener _drawerView_lsitener = new DrawerView.Listener() {
         @Override
         public void onSwitchUser(long userId) {
-            if (_switchUserOverlay == null){
+            if (_switchUserOverlay == null) {
                 _switchUserOverlay = (SwitchUserOverlayView) _switchUserOverlayViewStub.inflate();
             }
             _switchUserOverlay.startSwitch(userId);

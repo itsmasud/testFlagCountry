@@ -123,6 +123,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
@@ -174,8 +175,9 @@
             android:label="@string/activity_share_activity_title"
             android:process=":frontside">
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="*/*" />
             </intent-filter>
@@ -245,7 +247,7 @@
         <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":crawler" />
+            android:process=":frontside" />
 
         <service
             android:name=".gcm.MyGcmListenerService"

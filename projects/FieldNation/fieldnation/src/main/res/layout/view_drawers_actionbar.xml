@@ -28,13 +28,6 @@
             android:id="@+id/rightDrawerNotifications_view"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
-
-        <com.fieldnation.ui.WarningView
-            android:id="@+id/reconnect_view"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:visibility="gone" />
     </RelativeLayout>
 
     <!-- The navigation drawer -->

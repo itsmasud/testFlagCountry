@@ -159,7 +159,7 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     private void register(Bundle bundle, Messenger replyTo) {
-        Log.v(TAG, "register");
+        //Log.v(TAG, "register");
         String topicId = bundle.getString(PARAM_TOPIC_ID);
         String userTag = bundle.getString(PARAM_USER_TAG);
 
@@ -254,6 +254,10 @@ public class TopicService extends MSService implements TopicConstants {
 
     // queues up an event for sending
     public static void dispatchEvent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
+        context.startService(dispatchEventIntent(context, topicId, payload, stickyType));
+    }
+
+    public static Intent dispatchEventIntent(Context context, String topicId, Parcelable payload, Sticky stickyType) {
         //Log.v(TAG, "dispatchEvent(" + topicId + ")");
         Intent intent = new Intent(context, TopicService.class);
         intent.putExtra(PARAM_TOPIC_ID, topicId);
@@ -266,7 +270,7 @@ public class TopicService extends MSService implements TopicConstants {
 
         intent.putExtra(PARAM_STICKY, stickyType);
 
-        context.startService(intent);
+        return intent;
     }
 
     public static void dispatchEvent(Context context, Bundle event) {
