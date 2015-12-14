@@ -21,6 +21,11 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+    public MyWorkActivity() {
+        super();
+        Log.v(TAG, "Construct");
+    }
+
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
         setTitle(R.string.mywork_title);

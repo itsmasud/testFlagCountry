@@ -54,6 +54,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     private OAuth _auth;
     private AuthTopicClient _authTopicClient;
+    private GlobalTopicClient _globalTopicClient;
     private boolean _isAuthenticated = false;
     private ThreadManager _manager;
     private boolean _allowSync = true;
@@ -75,6 +76,9 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
         _authTopicClient.connect(App.get());
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
+        _globalTopicClient.connect(App.get());
 
         _manager = new ThreadManager();
         _manager.addThread(new TransactionThread(_manager, this, false)); // 0
@@ -98,7 +102,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     @Override
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
-        _authTopicClient.disconnect(App.get());
+        if (_authTopicClient != null && _authTopicClient.isConnected())
+            _authTopicClient.disconnect(App.get());
+
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
+            _globalTopicClient.disconnect(App.get());
+
         _manager.shutdown();
         super.onDestroy();
     }
@@ -152,6 +161,18 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         }
     }
 
+    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalTopicClient.subNetworkConnect();
+        }
+
+        @Override
+        public void onNetworkConnect() {
+            _manager.wakeUp();
+        }
+    };
+
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -193,6 +214,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this,
                         extras.getString(PARAM_KEY))) {
                     Log.v(TAG, "processIntent end duplicate " + extras.getString(PARAM_KEY));
+                    _manager.wakeUp();
                     return;
                 }
 
@@ -393,6 +415,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     WebTransaction.delete(context, trans.getId());
                 } else {
                     transFailNetworkDown(trans);
+                    return false;
                 }
             } catch (FileNotFoundException ex) {
                 Log.v(TAG, ex);
@@ -400,19 +423,24 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
             } catch (UnknownHostException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (ConnectException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (SocketTimeoutException ex) {
                 transFailNetworkDown(trans);
+                return false;
             } catch (EOFException ex) {
                 Log.v(TAG, ex);
                 trans.requeue(context);
             } catch (IOException ex) {
                 Log.v(TAG, ex);
                 transFailNetworkDown(trans);
+                return false;
             } catch (Exception ex) {
                 if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                     transFailNetworkDown(trans);
+                    return false;
                 } else {
                     // no freaking clue
                     Debug.logException(ex);

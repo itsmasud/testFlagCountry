@@ -2,6 +2,7 @@ package com.fieldnation;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,6 +18,7 @@ import android.os.Looper;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
@@ -28,6 +30,7 @@ import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.Stopwatch;
@@ -312,6 +315,11 @@ public class App extends Application {
 
         @Override
         public void onNetworkDisconnected() {
+            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
+            if (intent != null) {
+                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            }
         }
     };
 
