@@ -319,9 +319,10 @@ public class WorkorderCardView extends RelativeLayout {
 
                 if (startTime - System.currentTimeMillis() <= 0
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
                     _timeTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText(misc.toRoundDuration(System.currentTimeMillis() - startTime) + " late");
+                    _timeTextView.setText(misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime)) + " late");
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                 } else if (startTime - System.currentTimeMillis() <= 3600000
@@ -329,7 +330,7 @@ public class WorkorderCardView extends RelativeLayout {
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
                         || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
                     _timeTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText("In " + misc.toRoundDuration(startTime - System.currentTimeMillis()));
+                    _timeTextView.setText("In " + misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis())));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
 
                 } else if (schedule.isExact()) {
