@@ -733,7 +733,7 @@ public class Workorder implements Parcelable {
                 _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
                 break;
             case APPROVED_PROCESSINGPAYMENT:
-                _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
                 break;
             case PAID:
                 _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
