@@ -320,7 +320,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     @Override
     protected void onActivityResult(int arg0, int arg1, Intent arg2) {
+        Fragment fragment = _fragments[0];
+        if (fragment instanceof WorkFragment) {
+            fragment.onActivityResult(arg0, arg1, arg2);
+        }
         super.onActivityResult(arg0, arg1, arg2);
+
     }
 
     private class ScreenSlidePagerAdapter extends FragmentStatePagerAdapter {
@@ -417,11 +422,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
-	                try {
-	                    Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-	                    finish();
-	                } catch (Exception ex) {
-	                    Log.v(TAG, ex);
+                    try {
+                        Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
                     }
                 }
                 return;

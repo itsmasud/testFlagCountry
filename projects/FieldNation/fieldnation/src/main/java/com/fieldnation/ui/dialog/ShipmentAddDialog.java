@@ -26,7 +26,6 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
-import com.journeyapps.barcodescanner.CaptureActivity;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
@@ -67,7 +66,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
         Log.e(TAG, "onActivityResult");
         if (requestCode == RESULT_CODE_BARCODE_SCAN) {
             if (resultCode == Activity.RESULT_OK) {
@@ -75,6 +73,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
             }
         }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -180,6 +180,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+    public void setTrackingId(String trackingId) {
+        _trackingIdEditText.setText(trackingId);
     }
 
     public void show(CharSequence title, long taskId) {
@@ -293,13 +297,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
+
     private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), CaptureActivity.class);
-            intent.setAction("com.google.zxing.client.android.SCAN");
-            intent.putExtra("SAVE_HISTORY", false);
-            startActivityForResult(intent, RESULT_CODE_BARCODE_SCAN);
+            _listener.onScan();
         }
     };
 
@@ -310,6 +312,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
         void onCancel();
+
+        void onScan();
     }
 
 
