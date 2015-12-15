@@ -506,6 +506,7 @@
     <string name="icon_available_job">\uF10a</string>
     <string name="icon_back_arrow">\uF10b</string>
     <string name="icon_background_check">\uF10c</string>
+    <string name="icon_barcode">\uF193</string>
     <string name="icon_block">\uF10d</string>
     <string name="icon_bookmark">\uF10e</string>
     <string name="icon_box">\uF10f</string>
@@ -566,10 +567,12 @@
     <string name="icon_gear">\uF146</string>
     <string name="icon_globe">\uF147</string>
     <string name="icon_government">\uF148</string>
+    <string name="icon_gps">\uF194</string>
     <string name="icon_group">\uF149</string>
     <string name="icon_hands">\uF14a</string>
     <string name="icon_help">\uF14b</string>
     <string name="icon_hiring">\uF14c</string>
+    <string name="icon_hospitality">\uF18f</string>
     <string name="icon_hourglass">\uF14d</string>
     <string name="icon_house">\uF14e</string>
     <string name="icon_info">\uF14f</string>
@@ -579,6 +582,7 @@
     <string name="icon_jpg">\uF153</string>
     <string name="icon_line_graph">\uF154</string>
     <string name="icon_location">\uF155</string>
+    <string name="icon_lock">\uF190</string>
     <string name="icon_logout">\uF156</string>
     <string name="icon_magnify_glass">\uF157</string>
     <string name="icon_menu_icon">\uF158</string>
@@ -624,6 +628,8 @@
     <string name="icon_task">\uF180</string>
     <string name="icon_task_done">\uF181</string>
     <string name="icon_tax">\uF182</string>
+    <string name="icon_telecom">\uF191</string>
+    <string name="icon_tie">\uF192</string>
     <string name="icon_tooltip">\uF183</string>
     <string name="icon_tooltip_2">\uF184</string>
     <string name="icon_trash">\uF185</string>
