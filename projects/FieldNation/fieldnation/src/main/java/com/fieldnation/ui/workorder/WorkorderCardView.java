@@ -298,7 +298,7 @@ public class WorkorderCardView extends RelativeLayout {
             _companyNameTextView.setText(R.string.company_name_hidden);
         }
 
-        _workorderIdTextView.setText("WO ID: " + _workorder.getWorkorderId());
+        _workorderIdTextView.setText(getResources().getString(R.string.wo_id, _workorder.getWorkorderId()));
         _extraTextView.setVisibility(INVISIBLE);
 
         // date/time rules.
@@ -322,7 +322,7 @@ public class WorkorderCardView extends RelativeLayout {
                         || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS)) {
                     _timeTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText(misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime)) + " late");
+                    _timeTextView.setText(getResources().getString(R.string.time_late, misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                 } else if (startTime - System.currentTimeMillis() <= 3600000
@@ -330,7 +330,7 @@ public class WorkorderCardView extends RelativeLayout {
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
                         || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
                     _timeTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText("In " + misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis())));
+                    _timeTextView.setText(getResources().getString(R.string.in_time, misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
 
                 } else if (schedule.isExact()) {
@@ -397,18 +397,17 @@ public class WorkorderCardView extends RelativeLayout {
         if (_workorder.getPay() != null && !_workorder.getPay().hidePay()) {
             Pay pay = _workorder.getPay();
             if (pay.isBlendedRate()) {
-                _priceTextView.setText(misc.toCurrency(pay.getBlendedStartRate())
-                        + " " + misc.toCurrency(pay.getBlendedAdditionalRate()));
-                _stateTextView.setText("First " + pay.getBlendedFirstHours() + " hours  Hourly after");
+                _priceTextView.setText(misc.toCurrency(pay.getBlendedStartRate()) + " " + misc.toCurrency(pay.getBlendedAdditionalRate()));
+                _stateTextView.setText(getResources().getString(R.string.first_time_hours_hourly_after, pay.getBlendedFirstHours()));
             } else if (pay.isFixedRate()) {
                 _priceTextView.setText(misc.toCurrency(pay.getFixedAmount()));
-                _stateTextView.setText("Fixed");
+                _stateTextView.setText(R.string.fixed);
             } else if (pay.isHourlyRate()) {
                 _priceTextView.setText(misc.toCurrency(pay.getPerHour()));
-                _stateTextView.setText("Hourly");
+                _stateTextView.setText(R.string.hourly);
             } else if (pay.isPerDeviceRate()) {
                 _priceTextView.setText(misc.toCurrency(pay.getPerDevice()));
-                _stateTextView.setText("Per Device");
+                _stateTextView.setText(R.string.per_device);
             }
             _priceTextView.setVisibility(VISIBLE);
             _stateTextView.setVisibility(VISIBLE);
