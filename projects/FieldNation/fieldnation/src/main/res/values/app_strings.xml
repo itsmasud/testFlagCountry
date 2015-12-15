@@ -45,6 +45,7 @@
     <string name="activity_share_activity_title">Field Nation</string>
 
     <string name="btn_accept">ACCEPT</string>
+    <string name="btn_accept_bundle">ACCEPT BUNDLE</string>
     <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
@@ -297,7 +298,7 @@
     <string name="i_accept">I accept</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
-    <string name="loading_">Loading...</string>
+    <string name="loading_">Loading…</string>
     <string name="manage_profiles">Manage Profiles</string>
     <string name="mark_as_complete">Mark as complete</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>

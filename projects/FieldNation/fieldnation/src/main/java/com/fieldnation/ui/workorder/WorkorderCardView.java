@@ -334,40 +334,51 @@ public class WorkorderCardView extends RelativeLayout {
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
 
                 } else if (schedule.isExact()) {
+                    Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
                     _timeTextView.setVisibility(VISIBLE);
                     _extraTextView.setVisibility(VISIBLE);
-                    _timeTextView.setText(schedule.getFormatedTime());
-                    _extraTextView.setText(schedule.getFormatedDate());
+
+                    if (startTime < System.currentTimeMillis()) {
+                        _extraTextView.setText(schedule.getFormatedTime());
+                        _timeTextView.setText(new SimpleDateFormat("MMMM d").format(sCal.getTime()) + ", " + sCal.get(Calendar.YEAR));
+
+                    } else if ((startTime - System.currentTimeMillis()) / 3600000L <= 24) {
+                        _timeTextView.setText(schedule.getFormatedTime());
+                        _extraTextView.setText(schedule.getFormatedDate());
+
+                    } else if ((startTime - System.currentTimeMillis()) / 86400000L <= 7) {
+                        _timeTextView.setText(new SimpleDateFormat("EEEE").format(sCal.getTime()));
+                        _extraTextView.setText(schedule.getFormatedTime());
+
+                    } else {
+                        _extraTextView.setText(schedule.getFormatedTime());
+                        _timeTextView.setText(new SimpleDateFormat("MMMM d").format(sCal.getTime()));
+                    }
 
                 } else {
                     long endTime = ISO8601.toUtc(schedule.getEndTime());
                     Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
                     Calendar eCal = ISO8601.toCalendar(schedule.getEndTime());
+                    _timeTextView.setVisibility(VISIBLE);
+                    _extraTextView.setVisibility(VISIBLE);
 
                     if (endTime < System.currentTimeMillis()) {
-                        _timeTextView.setVisibility(VISIBLE);
-                        _extraTextView.setVisibility(VISIBLE);
                         _timeTextView.setText(schedule.getFormatedTime());
                         _extraTextView.setText(schedule.getFormatedDate());
 
-                    } else if ((endTime - System.currentTimeMillis()) / 604800000L <= 7) {
-                        _timeTextView.setVisibility(VISIBLE);
-                        _extraTextView.setVisibility(VISIBLE);
+                    } else if ((endTime - System.currentTimeMillis()) / 86400000L <= 7) {
                         _timeTextView.setText(new SimpleDateFormat("c").format(sCal.getTime())
                                 + " - " + new SimpleDateFormat("c").format(eCal.getTime()));
                         _extraTextView.setText(schedule.getFormatedTime());
 
                     } else {
-                        _timeTextView.setVisibility(VISIBLE);
-                        _extraTextView.setVisibility(VISIBLE);
                         if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
                                 || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
                             _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime())
                                     + " - " + new SimpleDateFormat("MMM d").format(eCal.getTime()));
                         } else {
-                            _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime()));
+                            _timeTextView.setText(new SimpleDateFormat("MMMM d").format(sCal.getTime()));
                         }
-
                         _extraTextView.setText(schedule.getFormatedTime());
                     }
                 }
@@ -453,7 +464,12 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case Workorder.BUTTON_ACTION_ACCEPT:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText(R.string.btn_accept);
+                if (_workorder.isBundle()) {
+                    _rightOrangeButton.setText(R.string.btn_accept_bundle);
+                } else {
+                    _rightOrangeButton.setText(R.string.btn_accept);
+                }
+
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
