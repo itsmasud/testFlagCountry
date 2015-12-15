@@ -340,7 +340,7 @@ public class WorkorderCardView extends RelativeLayout {
 
                     if (startTime < System.currentTimeMillis()) {
                         _extraTextView.setText(schedule.getFormatedTime());
-                        _timeTextView.setText(new SimpleDateFormat("MMMM d").format(sCal.getTime()) + ", " + sCal.get(Calendar.YEAR));
+                        _timeTextView.setText(new SimpleDateFormat("MMM d, y").format(sCal.getTime()));
 
                     } else if ((startTime - System.currentTimeMillis()) / 3600000L <= 24) {
                         _timeTextView.setText(schedule.getFormatedTime());
@@ -377,7 +377,7 @@ public class WorkorderCardView extends RelativeLayout {
                             _timeTextView.setText(new SimpleDateFormat("MMM d").format(sCal.getTime())
                                     + " - " + new SimpleDateFormat("MMM d").format(eCal.getTime()));
                         } else {
-                            _timeTextView.setText(new SimpleDateFormat("MMMM d").format(sCal.getTime()));
+                            _timeTextView.setText(new SimpleDateFormat("MMM d, y").format(sCal.getTime()));
                         }
                         _extraTextView.setText(schedule.getFormatedTime());
                     }
