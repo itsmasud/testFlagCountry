@@ -49,7 +49,7 @@ public class PaymentFeeView extends RelativeLayout {
             return;
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _iconView.setTextColor(getResources().getColor(R.color.fn_red));
+        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
         _iconView.setText(R.string.icon_missing);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
@@ -63,7 +63,7 @@ public class PaymentFeeView extends RelativeLayout {
 
     public void setWorkorder(Payment payment, Fee fee) {
         _titleTextView.setText(fee.getTitle());
-        _paymentTextView.setText("-" + misc.toCurrency(fee.getAmount()));
+        _paymentTextView.setText(misc.toCurrency(fee.getAmount()));
         _payTypeTextView.setText("Fee");
     }
 }

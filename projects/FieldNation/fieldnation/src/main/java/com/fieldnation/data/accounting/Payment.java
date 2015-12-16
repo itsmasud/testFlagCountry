@@ -7,6 +7,9 @@ import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
+
+import java.util.Calendar;
 
 public class Payment implements Parcelable {
     private static final String TAG = "Payment";
@@ -35,6 +38,15 @@ public class Payment implements Parcelable {
 
     public String getDatePaid() {
         return _datePaid;
+    }
+
+    public Calendar getDatePaidCalendar() {
+        try {
+            return ISO8601.toCalendar(_datePaid);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
     }
 
     public Fee[] getFees() {

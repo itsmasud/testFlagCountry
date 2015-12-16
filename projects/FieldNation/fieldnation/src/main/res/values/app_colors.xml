@@ -37,6 +37,7 @@
     <color name="fn_menu_bg_80">#CCf9f9f9</color>
     <color name="fn_menu_bg_50">#80f9f9f9</color>
 
+    <color name="fn_list_bg">#FFFCFCFC</color>
 
     <!--<color name="fn_primary_bg">#FF4444FF</color>-->
     <!--<color name="fn_primary_bg_medium">#FF4444FF</color>-->

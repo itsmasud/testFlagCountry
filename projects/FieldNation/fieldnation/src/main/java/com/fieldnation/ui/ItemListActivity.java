@@ -37,8 +37,6 @@ public abstract class ItemListActivity<O> extends AuthActionBarActivity {
         _listView = (OverScrollListView) findViewById(R.id.items_listview);
         _listView.setOnOverScrollListener(_refreshView);
         _listView.setAdapter(_adapter);
-
-        //addActionBarAndDrawer(R.id.container);
     }
 
     @Override

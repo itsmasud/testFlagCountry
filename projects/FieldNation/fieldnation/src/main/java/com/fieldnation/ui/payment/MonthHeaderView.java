@@ -65,7 +65,7 @@ public class MonthHeaderView extends RelativeLayout {
 
             if (calendar.get(Calendar.YEAR) != now.get(Calendar.YEAR)) {
                 _yearTextView.setVisibility(VISIBLE);
-                _yearTextView.setText(new SimpleDateFormat("y").format(calendar));
+                _yearTextView.setText(new SimpleDateFormat("y").format(calendar.getTime()));
             } else {
                 _yearTextView.setVisibility(GONE);
             }
