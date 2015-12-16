@@ -22,12 +22,14 @@ import java.util.Calendar;
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
 
+    // UI
     private IconFontTextView _iconView;
     private TextView _titleTextView;
     private TextView _subTitleTextView;
     private TextView _paymentTextView;
     private TextView _payTypeTextView;
 
+    // Data
     private Payment _paymentInfo;
 
     /*-*****************************-*/
@@ -118,7 +120,7 @@ public class PaymentCardView extends RelativeLayout {
                 _iconView.setText(R.string.icon_circle_check);
             } else {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));
-                _iconView.setText(R.string.icon_circle_check);
+                _iconView.setText(R.string.icon_missing);
             }
             _titleTextView.setText(status);
         } catch (Exception ex) {

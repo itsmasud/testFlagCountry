@@ -25,15 +25,11 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     private static final int WEB_GET_PAY = 1;
 
     // UI
-    private View _paymentHeaderLayout;
-    private TextView _idTextView;
+    private TextView _titleTextView;
     private TextView _paymentTextView;
-    private TextView _paymentTypeTextView;
-    private TextView _dateTextView;
-    private TextView _workorderCountTextView;
-    private TextView _feesCountTextView;
+    private TextView _timeTextView;
+
     private ListView _listView;
-    private TextView _stateTextView;
 
     // Data
     private long _paymentId = -1;
@@ -63,14 +59,9 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             finish();
         }
 
-        _paymentHeaderLayout = findViewById(R.id.paymentheader_layout);
-        _idTextView = (TextView) findViewById(R.id.id_textview);
+        _titleTextView = (TextView) findViewById(R.id.title_textview);
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _workorderCountTextView = (TextView) findViewById(R.id.workordercount_textview);
-        _feesCountTextView = (TextView) findViewById(R.id.feescount_textview);
-        _stateTextView = (TextView) findViewById(R.id.state_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
 
         _listView = (ListView) findViewById(R.id.items_listview);
         // TODO set loading info
@@ -101,7 +92,6 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
         if (_paid == null || _paid.getPaymentId() != _paymentId) {
             _listView.setVisibility(View.GONE);
-            _paymentHeaderLayout.setVisibility(View.GONE);
             return;
         }
 
@@ -112,43 +102,20 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
 
                 when = misc.formatDate(cal);
 
-                _dateTextView.setVisibility(View.VISIBLE);
-                _dateTextView.setText("Paid On " + when);
+                _timeTextView.setVisibility(View.VISIBLE);
+                _timeTextView.setText("Paid On " + when + " by " + misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")));
             } else {
-                _dateTextView.setVisibility(View.GONE);
+                _timeTextView.setVisibility(View.GONE);
             }
         } catch (Exception ex) {
-            _dateTextView.setVisibility(View.GONE);
-        }
-
-        if (_paid.getWorkorders().length == 1) {
-            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Order");
-        } else if (_paid.getWorkorders().length > 1) {
-            _workorderCountTextView.setText(_paid.getWorkorders().length + " Work Orders");
-        }
-
-        if (_paid.getFees() != null && _paid.getFees().length == 1) {
-            _feesCountTextView.setText(_paid.getFees().length + " Fee");
-        } else if (_paid.getFees() != null && _paid.getFees().length > 1) {
-            _feesCountTextView.setText(_paid.getFees().length + " Fees");
-        } else {
-            _feesCountTextView.setText("0 Fees");
+            _timeTextView.setVisibility(View.GONE);
         }
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _idTextView.setText("Payment ID: " + _paid.getPaymentId());
+        _titleTextView.setText("PAYMENT ID " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
-        try {
-            String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
-            _paymentTypeTextView.setText(paymethod);
-        } catch (Exception ex) {
-            _paymentTypeTextView.setText("No Pay Method");
-        }
-        _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));
-
         _listView.setVisibility(View.VISIBLE);
-        _paymentHeaderLayout.setVisibility(View.VISIBLE);
     }
 
     /*-*********************************-*/

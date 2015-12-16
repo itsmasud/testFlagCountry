@@ -18,63 +18,52 @@ public class PaymentFeeView extends RelativeLayout {
     private static final String TAG = "PaymentFeeView";
 
     // UI
-    private IconFontTextView _bundleIconFontView;
+    private IconFontTextView _iconView;
     private TextView _titleTextView;
-    private TextView _priceTextView;
-    private TextView _stateTextView;
+    private TextView _subTitleTextView;
+    private TextView _paymentTextView;
+    private TextView _payTypeTextView;
 
-    // Data
+    /*-*****************************-*/
+    /*-			Life cycle			-*/
+    /*-*****************************-*/
     public PaymentFeeView(Context context) {
-        this(context, null, -1);
+        super(context);
+        init();
     }
 
     public PaymentFeeView(Context context, AttributeSet attrs) {
-        this(context, attrs, -1);
+        super(context, attrs);
+        init();
     }
 
     public PaymentFeeView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_card, this);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card, this);
 
         if (isInEditMode())
             return;
 
-        _bundleIconFontView = (IconFontTextView) findViewById(R.id.bundle_iconFont);
+        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _iconView.setTextColor(getResources().getColor(R.color.fn_red));
+        _iconView.setText(R.string.icon_missing);
+
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        findViewById(R.id.companyName_textview).setVisibility(GONE);
-        findViewById(R.id.workorderId_textview).setVisibility(GONE);
-        findViewById(R.id.time_textview).setVisibility(INVISIBLE);
-        _priceTextView = (TextView) findViewById(R.id.price_textview);
-        findViewById(R.id.extra_textview).setVisibility(INVISIBLE);
-        _stateTextView = (TextView) findViewById(R.id.status_textview);
+        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
 
-        findViewById(R.id.left_button).setVisibility(GONE);
-        findViewById(R.id.rightWhite_button).setVisibility(GONE);
-        findViewById(R.id.rightGreen_button).setVisibility(GONE);
-        findViewById(R.id.rightOrange_button).setVisibility(GONE);
+        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
+        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
 
-        setIsBundle(false);
-    }
-
-    private void setIsBundle(boolean isBundle) {
-        if (isBundle) {
-            _bundleIconFontView.setVisibility(VISIBLE);
-        } else {
-            _bundleIconFontView.setVisibility(GONE);
-        }
+        _subTitleTextView.setVisibility(GONE);
     }
 
     public void setWorkorder(Payment payment, Fee fee) {
-        _titleTextView.setText("Fee [" + fee.getWorkorderId() + "]");
-
-        if (!misc.isEmptyOrNull(payment.getPayMethod())) {
-            String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
-            _stateTextView.setText(paymethod + "\n" + payment.getStatus());
-            _stateTextView.setVisibility(VISIBLE);
-        } else {
-            _stateTextView.setText(payment.getStatus());
-            _stateTextView.setVisibility(VISIBLE);
-        }
-        _priceTextView.setText(misc.toCurrency(fee.getAmount()).substring(1));
+        _titleTextView.setText(fee.getTitle());
+        _paymentTextView.setText("-" + misc.toCurrency(fee.getAmount()));
+        _payTypeTextView.setText("Fee");
     }
 }

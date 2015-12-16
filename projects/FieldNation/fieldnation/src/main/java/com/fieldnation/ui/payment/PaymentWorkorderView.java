@@ -23,99 +23,61 @@ public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";
 
     // UI
-    private IconFontTextView _bundleIconFontView;
+    private IconFontTextView _iconView;
     private TextView _titleTextView;
-    private TextView _companyNameTextView;
-    private TextView _workorderIdTextView;
-    private TextView _timeTextView;
-    private TextView _priceTextView;
-    private TextView _extraTextView;
-    private TextView _stateTextView;
-    private Button _leftButton;
-    private Button _rightWhiteButton;
-    private Button _rightOrangeButton;
-    private Button _rightGreenButton;
+    private TextView _subTitleTextView;
+    private TextView _paymentTextView;
+    private TextView _payTypeTextView;
 
     // Data
     private Workorder _workorder;
 
+    /*-*****************************-*/
+    /*-			Life cycle			-*/
+    /*-*****************************-*/
     public PaymentWorkorderView(Context context) {
-        this(context, null, -1);
+        super(context);
+        init();
     }
 
     public PaymentWorkorderView(Context context, AttributeSet attrs) {
-        this(context, attrs, -1);
+        super(context, attrs);
+        init();
     }
 
     public PaymentWorkorderView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        LayoutInflater.from(getContext()).inflate(R.layout.view_workorder_card, this);
+        init();
+    }
+
+    private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card, this);
 
         if (isInEditMode())
             return;
 
-        _bundleIconFontView = (IconFontTextView) findViewById(R.id.bundle_iconFont);
+        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+        _iconView.setText(R.string.icon_missing);
+
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
-        _workorderIdTextView = (TextView) findViewById(R.id.workorderId_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _priceTextView = (TextView) findViewById(R.id.price_textview);
-        _extraTextView = (TextView) findViewById(R.id.extra_textview);
-        _stateTextView = (TextView) findViewById(R.id.status_textview);
 
-        findViewById(R.id.left_button).setVisibility(GONE);
-        findViewById(R.id.rightWhite_button).setVisibility(GONE);
-        findViewById(R.id.rightGreen_button).setVisibility(GONE);
-        findViewById(R.id.rightOrange_button).setVisibility(GONE);
+        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
+        _subTitleTextView.setVisibility(GONE);
 
-        setIsBundle(false);
-/*
-        findViewById(R.id.location_textview).setVisibility(View.GONE);
-        _statusView.setBackgroundResource(R.drawable.card_status_green);
-        _statusTextView.setTextColor(getContext().getResources().getColor(R.color.fn_white_text));
-*/
+        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
+        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+
+
         setOnClickListener(_this_onClick);
-    }
-
-    private void setIsBundle(boolean isBundle) {
-        if (isBundle) {
-            _bundleIconFontView.setVisibility(VISIBLE);
-        } else {
-            _bundleIconFontView.setVisibility(GONE);
-        }
     }
 
     public void setWorkorder(Payment payment, Workorder wo) {
         _workorder = wo;
+
         _titleTextView.setText(wo.getTitle());
-        _companyNameTextView.setText(wo.getClientName());
-
-        try {
-            if (wo.getEndTime() != null) {
-                String when = "";
-                Calendar cal = ISO8601.toCalendar(wo.getEndTime());
-
-                when = misc.formatDate(cal);
-
-                _timeTextView.setVisibility(VISIBLE);
-                _timeTextView.setText(when);
-            } else {
-                _timeTextView.setVisibility(INVISIBLE);
-            }
-        } catch (Exception ex) {
-            // Log.v(TAG, ex);
-            _timeTextView.setVisibility(INVISIBLE);
-        }
-
-        if (payment.getPayMethod() != null) {
-            String paymethod = misc.capitalize(payment.getPayMethod().replaceAll("_", " "));
-            _stateTextView.setText(paymethod);
-        } else {
-            _stateTextView.setVisibility(View.INVISIBLE);
-        }
-        _priceTextView.setText(misc.toCurrency(wo.getAmount()));
-        _stateTextView.setText(misc.capitalize(payment.getStatus()));
-        _workorderIdTextView.setText("WO ID: " + _workorder.getWorkorderId());
+        _paymentTextView.setText(misc.toCurrency(wo.getAmount()));
+        _payTypeTextView.setText(getResources().getString(R.string.wo_x, wo.getWorkorderId()));
     }
 
     private View.OnClickListener _this_onClick = new View.OnClickListener() {

@@ -298,7 +298,7 @@ public class WorkorderCardView extends RelativeLayout {
             _companyNameTextView.setText(R.string.company_name_hidden);
         }
 
-        _workorderIdTextView.setText(getResources().getString(R.string.wo_id, _workorder.getWorkorderId()));
+        _workorderIdTextView.setText(getResources().getString(R.string.wo_id_x, _workorder.getWorkorderId()));
         _extraTextView.setVisibility(INVISIBLE);
 
         // date/time rules.
