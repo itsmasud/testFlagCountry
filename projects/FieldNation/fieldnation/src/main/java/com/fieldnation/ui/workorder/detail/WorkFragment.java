@@ -759,10 +759,6 @@ public class WorkFragment extends WorkorderFragment {
         Log.v(TAG, "WorkFragment#onActivityResult");
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Log.e(TAG, "onActivityResult: requestCode: " + requestCode);
-        Log.e(TAG, "onActivityResult: resultCode: " + resultCode);
-        Log.e(TAG, "onActivityResult: data: " + data);
-
 
         if (result != null) {
             Log.e(TAG, "onActivityResult: result not null");
@@ -772,8 +768,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.e(TAG, "onActivityResult: no image path");
             } else {
                 scannedImagePath = result.getBarcodeImagePath();
-                String trackingId = result.getContents();
-                _shipmentAddDialog.setTrackingId(trackingId);
+                _shipmentAddDialog.setTrackingId(content);
             }
         }
 
@@ -1083,10 +1078,11 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             final UploadSlot[] slots = _workorder.getUploadSlots();
             for (UploadSlot uploadSlot : slots) {
-                Log.e(TAG, "uploadSlot: uploadSlotName=" + uploadSlot.getSlotName());
                 if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
+                    String fileName = scannedImagePath.substring(scannedImagePath.lastIndexOf(File.separator) + 1, scannedImagePath.length());
                     WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
-                            uploadSlot.getSlotId(), new File(scannedImagePath).getName(), scannedImagePath);
+                            uploadSlot.getSlotId(), fileName, scannedImagePath);
+
                 }
             }
 
