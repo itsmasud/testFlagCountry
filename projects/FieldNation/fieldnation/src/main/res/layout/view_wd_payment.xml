@@ -38,6 +38,8 @@
 
     </LinearLayout>
 
+    <View style="@style/DividerFull" />
+
     <TextView
         android:id="@+id/terms_textview"
         style="@style/TextViewLink"
