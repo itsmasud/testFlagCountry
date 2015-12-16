@@ -36,6 +36,7 @@ public class Debug {
                 protected Object doInBackground(Object... params) {
                     Crashlytics c = new Crashlytics();
                     Fabric.with(App.get(), c);
+                    Fabric.with(App.get(), new Answers());
                     setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
                     setString("sdk", Build.VERSION.SDK_INT + "");
                     setBool("debug", BuildConfig.DEBUG);

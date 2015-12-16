@@ -11,25 +11,22 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+
+import org.w3c.dom.Text;
 
 import java.util.Calendar;
 
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
 
-    private static final int[] _HEADER_BG = new int[]{
-            R.drawable.card_title_green,
-            R.drawable.card_title_black};
-
+    private IconFontTextView _iconView;
     private TextView _titleTextView;
-    private TextView _idTextView;
-    private TextView _descriptionTextView;
-    private TextView _dateTextView;
-    private TextView _amountTextView;
-    private TextView _paymentTypeTextView;
-    private View _paymentHeaderLayout;
+    private TextView _subTitleTextView;
+    private TextView _paymentTextView;
+    private TextView _payTypeTextView;
 
     private Payment _paymentInfo;
 
@@ -57,13 +54,11 @@ public class PaymentCardView extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _idTextView = (TextView) findViewById(R.id.id_textview);
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _amountTextView = (TextView) findViewById(R.id.amount_textview);
-        _paymentTypeTextView = (TextView) findViewById(R.id.paymenttype_textview);
-        _paymentHeaderLayout = findViewById(R.id.paymentheader_layout);
+        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
+        _paymentTextView = (TextView) findViewById(R.id.payment_textview);
+        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
 
         setOnClickListener(_this_onClick);
     }
@@ -88,59 +83,67 @@ public class PaymentCardView extends RelativeLayout {
     private void refresh() {
         // amount
         try {
-            _amountTextView.setText(misc.toCurrency(_paymentInfo.getAmount()));
+            _paymentTextView.setText(misc.toCurrency(_paymentInfo.getAmount()));
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _amountTextView.setText("NA");
+            _paymentTextView.setText("NA");
         }
         try {
             // TODO create string resources.
             if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length == 1) {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
-                        + " " + getContext().getString(
-                        R.string.work_orders) + " / 1 Fee");
+                _subTitleTextView.setText(getResources().getString(
+                        R.string.number_workorders_and_one_fee, _paymentInfo.getWorkorders().length));
             } else if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
-                        + " " + getContext().getString(
-                        R.string.work_orders) + " / " + _paymentInfo.getFees().length + " Fees");
+                _subTitleTextView.setText(getResources().getString(
+                        R.string.number_workorders_and_x_fees,
+                        _paymentInfo.getWorkorders().length,
+                        _paymentInfo.getFees().length));
             } else {
-                _descriptionTextView.setText(_paymentInfo.getWorkorders().length
-                        + " " + getContext().getString(R.string.work_orders) + " / 0 Fees");
+                _subTitleTextView.setText(getResources().getString(
+                        R.string.number_workorders_and_x_fees,
+                        _paymentInfo.getWorkorders().length,
+                        0));
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _descriptionTextView.setText("");
+            _subTitleTextView.setText("");
         }
-        // pay_method
-        try {
-            String method = _paymentInfo.getPayMethod().toLowerCase().replaceAll("_", " ");
-            method = misc.capitalize(method);
-            _paymentTypeTextView.setText(method);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            _paymentTypeTextView.setText("");
-        }
-        // payment_id
-        try {
-            _idTextView.setText("Payment ID: " + _paymentInfo.getPaymentId());
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            _idTextView.setText("Payment ID: ???");
-        }
+
         // status
         try {
             String status = misc.capitalize(_paymentInfo.getStatus());
 
             if (status.toLowerCase().equals("paid")) {
-                _paymentHeaderLayout.setBackgroundResource(_HEADER_BG[1]);
+                _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+                _iconView.setText(R.string.icon_circle_check);
             } else {
-                _paymentHeaderLayout.setBackgroundResource(_HEADER_BG[0]);
+                _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));
+                _iconView.setText(R.string.icon_circle_check);
             }
             _titleTextView.setText(status);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+
+        // pay_method
+        try {
+            String method = _paymentInfo.getPayMethod().toLowerCase().replaceAll("_", " ");
+            method = misc.capitalize(method);
+            _payTypeTextView.setText(method);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            _payTypeTextView.setText("");
+        }
+        // payment_id
+        try {
+            _titleTextView.setText(getResources().getString(R.string.payment_id_x, _paymentInfo.getPaymentId()));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            _titleTextView.setText(getResources().getString(R.string.payment_id_na));
+        }
+
         // date_paid
+/*
         try {
             String d = _paymentInfo.getDatePaid();
             Calendar cal = ISO8601.toCalendar(d);
@@ -150,5 +153,6 @@ public class PaymentCardView extends RelativeLayout {
             Log.v(TAG, ex);
             _dateTextView.setText("");
         }
+*/
     }
 }

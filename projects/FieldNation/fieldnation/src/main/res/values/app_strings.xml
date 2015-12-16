@@ -285,12 +285,16 @@
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="number_of_devices">Number of Devices</string>
+    <string name="number_workorders_and_one_fee">%1$s Work Orders and 1 Fee</string>
+    <string name="number_workorders_and_x_fees">%1$s Work Orders and %2$s Fees</string>
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating__">Overall rating: </string>
     <string name="payment">Payment</string>
+    <string name="payment_id_na">Payment ID NA</string>
+    <string name="payment_id_x">Payment %1$s</string>
     <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="pending">Pending</string>
     <string name="per_device">Per Device</string>
