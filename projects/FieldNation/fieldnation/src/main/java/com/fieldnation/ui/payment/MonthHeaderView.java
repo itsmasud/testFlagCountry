@@ -78,9 +78,6 @@ public class MonthHeaderView extends RelativeLayout {
 
             if (amount != null) {
                 _moneyTextView.setText(misc.toCurrency(amount));
-                _moneyTextView.setVisibility(VISIBLE);
-            } else {
-                _moneyTextView.setVisibility(INVISIBLE);
             }
 
         } catch (Exception ex) {
