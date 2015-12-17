@@ -56,7 +56,13 @@ public class MonthHeaderView extends RelativeLayout {
         _yearTextView = (TextView) findViewById(R.id.year_textview);
     }
 
-    public void setData(String iso8601, double amount) {
+    public void setData(String iso8601, Double amount) {
+        if (iso8601 == null) {
+            _monthTextView.setText("Pending");
+            _yearTextView.setVisibility(GONE);
+            _moneyTextView.setText(misc.toCurrency(amount));
+            return;
+        }
         try {
             Calendar calendar = ISO8601.toCalendar(iso8601);
             Calendar now = Calendar.getInstance();
@@ -70,7 +76,12 @@ public class MonthHeaderView extends RelativeLayout {
                 _yearTextView.setVisibility(GONE);
             }
 
-            _moneyTextView.setText(misc.toCurrency(amount));
+            if (amount != null) {
+                _moneyTextView.setText(misc.toCurrency(amount));
+                _moneyTextView.setVisibility(VISIBLE);
+            } else {
+                _moneyTextView.setVisibility(INVISIBLE);
+            }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
