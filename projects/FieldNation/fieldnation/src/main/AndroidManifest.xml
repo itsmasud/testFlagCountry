@@ -245,7 +245,7 @@
         <service
             android:name=".service.crawler.WebCrawlerService"
             android:exported="false"
-            android:process=":crawler" />
+            android:process=":frontside" />
 
         <service
             android:name=".gcm.MyGcmListenerService"
