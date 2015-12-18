@@ -199,6 +199,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionCompleteTask(context, workorderId, taskId);
     }
 
+    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
+        WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type);
+    }
+
     /*-*********************************-*/
     /*-             Messages            -*/
     /*-*********************************-*/
@@ -861,7 +865,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         // details
         protected void preGet(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onGet(null, true, true);
+                onGet(null, true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, Workorder>() {
                     private boolean _isCached = false;

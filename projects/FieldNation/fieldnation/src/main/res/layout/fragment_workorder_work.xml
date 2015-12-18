@@ -14,7 +14,6 @@
             android:orientation="vertical">
 
             <!-- top action bar -->
-
             <com.fieldnation.ui.workorder.detail.ActionBarTopView
                 android:id="@+id/actiontop_view"
                 android:layout_width="match_parent"

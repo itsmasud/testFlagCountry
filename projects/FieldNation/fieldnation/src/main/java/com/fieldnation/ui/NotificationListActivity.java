@@ -28,12 +28,13 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
     protected void onResume() {
         super.onResume();
         _profiles = new ProfileClient(_profile_listener);
-        _profiles.connect(this);
+        _profiles.connect(App.get());
     }
 
     @Override
     protected void onPause() {
-        _profiles.disconnect(this);
+        if (_profiles != null && _profiles.isConnected())
+            _profiles.disconnect(App.get());
         super.onPause();
     }
 

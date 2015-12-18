@@ -237,13 +237,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
     protected void onResume() {
         super.onResume();
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(this);
+        _workorderClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(this);
+            _workorderClient.disconnect(App.get());
 
         super.onPause();
     }
@@ -417,11 +417,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
-                    try {
-                        Toast.makeText(WorkorderActivity.this, "You do not have permission to view this work order.", Toast.LENGTH_LONG).show();
-                        finish();
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
+	                try {
+	                    Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+	                    finish();
+	                } catch (Exception ex) {
+	                    Log.v(TAG, ex);
                     }
                 }
                 return;

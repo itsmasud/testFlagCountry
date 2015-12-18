@@ -8,6 +8,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
@@ -83,14 +84,15 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     protected void onResume() {
         super.onResume();
         _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(this);
+        _workorderClient.connect(App.get());
 
         WorkorderClient.getBundle(this, _bundleId);
     }
 
     @Override
     protected void onPause() {
-        _workorderClient.disconnect(this);
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
         super.onPause();
     }
 

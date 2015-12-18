@@ -1,86 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fieldnation.ui.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutCardView"
+    style="?attr/cardContainerStyle"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp">
 
-    <RelativeLayout
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/filetype_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="16dp"
+        android:text="@string/icon_file_generic"
+        android:textColor="@color/fn_light_text"
+        android:textSize="48sp" />
+
+
+    <TextView
+        android:id="@+id/filename_textview"
+        style="@style/Text_Subhead"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/filetype_imageview"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/filetype_imageview"
+        android:ellipsize="middle"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="File Name.ext"
+        android:textColor="@color/fn_dark_text" />
 
-        <com.fieldnation.ui.IconFontTextView
-            android:id="@+id/filetype_imageview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="16dp"
-            android:text="@string/icon_file_generic"
-            android:textColor="@color/fn_light_text"
-            android:textSize="48sp" />
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filename_textview"
+        android:layout_toRightOf="@id/filetype_imageview"
+        android:indeterminate="true"
+        android:visibility="gone" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_toRightOf="@+id/filetype_imageview"
-            android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/filename_textview"
-                style="@style/Text_Subhead"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:ellipsize="middle"
-                android:maxLines="1"
-                android:singleLine="true"
-                android:text="File Name.ext"
-                android:textColor="@color/fn_dark_text" />
+    <TextView
+        android:id="@+id/date_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:layout_toRightOf="@id/filetype_imageview"
+        android:text="Dec 25, 2014 at 12:00 am" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:indeterminate="true"
-                android:visibility="gone" />
+    <TextView
+        android:id="@+id/by_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/date_textview"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_toRightOf="@id/date_textview"
+        android:text="@string/by" />
 
-            <LinearLayout
-                android:id="@+id/username_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
+    <TextView
+        android:id="@+id/username_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/by_textview"
+        android:layout_toRightOf="@+id/by_textview"
+        android:text="Kevin Mccalister" />
 
-                <TextView
-                    android:id="@+id/date_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Dec 25, 2014 at 12:00 am" />
-
-                <TextView
-                    android:id="@+id/by_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:layout_marginRight="2dp"
-                    android:text="@string/by" />
-
-                <TextView
-                    android:id="@+id/username_textview"
-                    style="@style/Text_Caption"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Kevin Mccalister" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/status_textview"
-                style="@style/Text_Caption"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Uploading..."
-                android:visibility="gone" />
-        </LinearLayout>
-    </RelativeLayout>
-</com.fieldnation.ui.CardView>
+    <TextView
+        android:id="@+id/status_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_textview"
+        android:layout_toRightOf="@+id/filetype_imageview"
+        android:text="Uploading..."
+        android:visibility="gone" />
+</RelativeLayout>

@@ -69,17 +69,22 @@ public class AppPickerDialog extends DialogFragmentBase {
         for (int i = 0; i < infos.size(); i++) {
             ResolveInfo info = infos.get(i);
 
-            if (!_packages.contains(info.activityInfo.packageName + "." + info.activityInfo.name)) {
-                AppPickerPackage data = new AppPickerPackage();
+            try {
+                if (!_packages.contains(info.activityInfo.packageName + "." + info.activityInfo.name)) {
+                    AppPickerPackage data = new AppPickerPackage();
 
-                data.postfix = postfix;
-                data.intent = intent;
-                data.resolveInfo = info;
-                data.appName = pm.getApplicationLabel(info.activityInfo.applicationInfo).toString();
-                data.icon = info.loadIcon(pm);
+                    data.postfix = postfix;
+                    data.intent = intent;
+                    data.resolveInfo = info;
+                    data.appName = pm.getApplicationLabel(info.activityInfo.applicationInfo).toString();
+                    data.icon = info.loadIcon(pm);
 
-                _activityList.add(data);
-                _packages.add(info.activityInfo.packageName + "." + info.activityInfo.name);
+                    _activityList.add(data);
+                    _packages.add(info.activityInfo.packageName + "." + info.activityInfo.name);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, info.toString());
+                Log.v(TAG, ex);
             }
         }
     }
@@ -104,7 +109,7 @@ public class AppPickerDialog extends DialogFragmentBase {
                     _listener.onClick(pack);
 
             } catch (Exception ex) {
-                ToastClient.toast(App.get(), "Can not open. Please try again."  , Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), "Can not open. Please try again.", Toast.LENGTH_LONG);
                 Log.v(TAG, ex);
             }
         }

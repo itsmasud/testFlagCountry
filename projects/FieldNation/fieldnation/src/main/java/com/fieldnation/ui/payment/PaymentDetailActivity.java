@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
@@ -80,12 +81,13 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     protected void onResume() {
         super.onResume();
         _paymentClient = new PaymentClient(_paymentClient_listener);
-        _paymentClient.connect(this);
+        _paymentClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
-        _paymentClient.disconnect(this);
+        if (_paymentClient != null && _paymentClient.isConnected())
+            _paymentClient.disconnect(App.get());
         super.onPause();
     }
 
@@ -140,7 +142,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         try {
             String paymethod = misc.capitalize(_paid.getPayMethod().replaceAll("_", " "));
             _paymentTypeTextView.setText(paymethod);
-        } catch (Exception ex){
+        } catch (Exception ex) {
             _paymentTypeTextView.setText("No Pay Method");
         }
         _stateTextView.setText(misc.capitalize(_paid.getStatus() + " "));

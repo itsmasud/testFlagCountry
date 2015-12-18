@@ -667,6 +667,7 @@ public class WorkorderCardView extends RelativeLayout {
                     _actionButton.setText(R.string.btn_check_in);
                 }
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -675,6 +676,7 @@ public class WorkorderCardView extends RelativeLayout {
             case ONHOLD_UNACKNOWLEDGED:
                 _actionButton.setText(R.string.btn_acknowledge);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -688,6 +690,7 @@ public class WorkorderCardView extends RelativeLayout {
                 }
                 //setNotInterestedEnabled(true);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -695,6 +698,7 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case ONHOLD_ACKNOWLEDGED:
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -702,6 +706,7 @@ public class WorkorderCardView extends RelativeLayout {
             case CHECKEDIN:
                 _actionButton.setText(R.string.btn_check_out);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -710,6 +715,7 @@ public class WorkorderCardView extends RelativeLayout {
             case CHECKEDOUT:
                 _actionButton.setText(R.string.btn_check_in);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
@@ -718,6 +724,7 @@ public class WorkorderCardView extends RelativeLayout {
             default:
 //                _titleTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _clientNameTextView.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 Log.v(TAG,
@@ -790,6 +797,7 @@ public class WorkorderCardView extends RelativeLayout {
             case CHECKEDOUT:
                 _actionButton.setText(R.string.btn_check_in);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
@@ -798,6 +806,7 @@ public class WorkorderCardView extends RelativeLayout {
             case ONHOLD_UNACKNOWLEDGED:
                 _actionButton.setText(R.string.btn_acknowledge);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
@@ -806,6 +815,7 @@ public class WorkorderCardView extends RelativeLayout {
             case CHECKEDIN:
                 _actionButton.setText(R.string.btn_check_out);
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 _actionButton.setVisibility(VISIBLE);
@@ -813,12 +823,14 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case ONHOLD_ACKNOWLEDGED:
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 // TODO show 'task' ui?
                 break;
             default:
 //                _titleTextView.setVisibility(VISIBLE);
+                _paymentLayout.setVisibility(VISIBLE);
                 _locationTextView.setVisibility(VISIBLE);
                 _whenTextView.setVisibility(VISIBLE);
                 Log.v(TAG,

@@ -24,11 +24,11 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewStub;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
@@ -47,7 +47,9 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -72,6 +74,7 @@ import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -136,7 +139,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
     private PayDialog _payDialog;
 
-
     // Dialogs
     private AcceptBundleDialog _acceptBundleWOConfirmDialog;
     private AcceptBundleDialog _acceptBundleWOExpiresDialog;
@@ -160,6 +162,7 @@ public class WorkFragment extends WorkorderFragment {
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
+    private ReportProblemDialog _reportProblemDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -189,6 +192,9 @@ public class WorkFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
+        _topBar.setListener(_actionbartop_listener);
+
         _sumView = (WorkSummaryView) view.findViewById(R.id.summary_view);
         _sumView.setListener(_summaryView_listener);
 
@@ -211,9 +217,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _discountListView = (DiscountListLayout) view.findViewById(R.id.discountListLayout_view);
         _discountListView.setListener(_discountListView_listener);
-
-        _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
-        _topBar.setListener(_actionbartop_listener);
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
@@ -351,12 +354,13 @@ public class WorkFragment extends WorkorderFragment {
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
+        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
-        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+        _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -380,15 +384,11 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override
@@ -433,7 +433,6 @@ public class WorkFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
-
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
             _sumView.setWorkorder(_workorder);
@@ -713,6 +712,13 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
+        @Override
+        public void onReportAProblem(String explanation, ReportProblemType type) {
+            WorkorderClient.actionReportProblem(App.get(), _workorder.getWorkorderId(), explanation, type);
+        }
+    };
+
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -1210,6 +1216,11 @@ public class WorkFragment extends WorkorderFragment {
                 Intent intent = new Intent(getActivity(), PaymentListActivity.class);
                 startActivity(intent);
             }
+        }
+
+        @Override
+        public void onReportProblem() {
+            _reportProblemDialog.show();
         }
 
         @Override

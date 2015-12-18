@@ -16,6 +16,9 @@ import com.fieldnation.utils.misc;
 public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";
 
+    // disabled until 1AM December 21st 2015
+    private static final boolean SHOW_REPORT_A_PROBLEM = System.currentTimeMillis() > 1450677600000L;
+
     // Ui
     private Button _leftWhiteButton;
     private Button _leftGrayButton;
@@ -29,6 +32,7 @@ public class ActionBarTopView extends LinearLayout {
     // Data
     private Listener _listener;
     private Workorder _workorder;
+    private boolean _inflated = false;
 
     public ActionBarTopView(Context context) {
         super(context);
@@ -46,10 +50,17 @@ public class ActionBarTopView extends LinearLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
-
         if (isInEditMode())
             return;
+
+        setVisibility(View.GONE);
+    }
+
+    private void inflate() {
+        if (_inflated)
+            return;
+
+        LayoutInflater.from(getContext()).inflate(R.layout.view_action_bar_top, this);
 
         _leftWhiteButton = (Button) findViewById(R.id.leftWhite_button);
         _leftGreenButton = (Button) findViewById(R.id.leftGreen_button);
@@ -61,25 +72,29 @@ public class ActionBarTopView extends LinearLayout {
         _rightGrayButton = (Button) findViewById(R.id.rightGray_button);
 
         setVisibility(View.GONE);
+        _inflated = true;
     }
 
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        _leftWhiteButton.setVisibility(View.GONE);
-        _leftGreenButton.setVisibility(View.GONE);
-        _leftOrangeButton.setVisibility(View.GONE);
-        _leftGrayButton.setVisibility(View.GONE);
-        _rightWhiteButton.setVisibility(View.GONE);
-        _rightGreenButton.setVisibility(View.GONE);
-        _rightOrangeButton.setVisibility(View.GONE);
-        _rightGrayButton.setVisibility(View.GONE);
+        if (_inflated) {
+            _leftWhiteButton.setVisibility(View.GONE);
+            _leftGreenButton.setVisibility(View.GONE);
+            _leftOrangeButton.setVisibility(View.GONE);
+            _leftGrayButton.setVisibility(View.GONE);
+            _rightWhiteButton.setVisibility(View.GONE);
+            _rightGreenButton.setVisibility(View.GONE);
+            _rightOrangeButton.setVisibility(View.GONE);
+            _rightGrayButton.setVisibility(View.GONE);
+        }
         setVisibility(View.GONE);
 
         WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
         switch (substatus) {
             case AVAILABLE:
+                inflate();
                 // not interested
                 // request
                 _leftWhiteButton.setVisibility(VISIBLE);
@@ -91,6 +106,7 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case ROUTED:
+                inflate();
                 // not interested, accept work
                 _leftWhiteButton.setVisibility(VISIBLE);
                 _leftWhiteButton.setText(R.string.btn_not_interested);
@@ -102,6 +118,7 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case COUNTEROFFERED:
             case REQUESTED:
+                inflate();
                 // withdraw/withdraw request
                 _leftWhiteButton.setVisibility(VISIBLE);
                 _leftWhiteButton.setText(R.string.btn_withdraw_request);
@@ -116,37 +133,58 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case CONFIRMED:
+                inflate();
                 // Ready-To-Go if needed
                 if (_workorder.getNeedsReadyToGo()) {
+                    if (SHOW_REPORT_A_PROBLEM) {
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    }
+
                     _rightGreenButton.setVisibility(VISIBLE);
                     _rightGreenButton.setText(R.string.btn_ready_to_go);
                     _rightGreenButton.setOnClickListener(_readyToGo_onClick);
                 } else {
-                    _leftWhiteButton.setVisibility(VISIBLE);
-                    _leftWhiteButton.setText(R.string.btn_check_in);
-                    _leftWhiteButton.setOnClickListener(_checkin_onClick);
+                    if (SHOW_REPORT_A_PROBLEM) {
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    }
+
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_check_in);
+                    _rightWhiteButton.setOnClickListener(_checkin_onClick);
                 }
                 setVisibility(View.VISIBLE);
                 break;
             case UNCONFIRMED:
+                inflate();
                 // Confirm
+                if (SHOW_REPORT_A_PROBLEM) {
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                }
+
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_confirm);
                 _rightOrangeButton.setOnClickListener(_confirm_onClick);
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDOUT:
-                // check in, or check in again
-                _leftWhiteButton.setVisibility(VISIBLE);
-                if (_workorder.getIsWorkPerformed()) {
-                    _leftWhiteButton.setText(R.string.btn_check_in_again);
-                } else {
-                    _leftWhiteButton.setText(R.string.btn_check_in);
-                }
-                _leftWhiteButton.setOnClickListener(_checkin_onClick);
-
+                inflate();
                 // if everything is done except closing notes then closing notes
                 if (_workorder.canComplete()) {
+                    // check in, or check in again
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    if (_workorder.getIsWorkPerformed()) {
+                        _leftWhiteButton.setText(R.string.btn_check_in_again);
+                    } else {
+                        _leftWhiteButton.setText(R.string.btn_check_in);
+                    }
+                    _leftWhiteButton.setOnClickListener(_checkin_onClick);
+
                     _rightOrangeButton.setVisibility(VISIBLE);
                     _rightOrangeButton.setText(R.string.btn_mark_completed);
                     _rightOrangeButton.setOnClickListener(_markComplete_onClick);
@@ -155,14 +193,45 @@ public class ActionBarTopView extends LinearLayout {
                 } else if (_workorder.areTasksComplete()
                         && misc.isEmptyOrNull(_workorder.getClosingNotes())
                         && _workorder.canChangeClosingNotes()) {
+                    // check in, or check in again
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    if (_workorder.getIsWorkPerformed()) {
+                        _leftWhiteButton.setText(R.string.btn_check_in_again);
+                    } else {
+                        _leftWhiteButton.setText(R.string.btn_check_in);
+                    }
+                    _leftWhiteButton.setOnClickListener(_checkin_onClick);
+
                     _rightOrangeButton.setVisibility(VISIBLE);
                     _rightOrangeButton.setText(R.string.btn_closing_notes);
                     _rightOrangeButton.setOnClickListener(_closing_onClick);
+                } else {
+                    if (SHOW_REPORT_A_PROBLEM) {
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    }
+
+                    // check in, or check in again
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    if (_workorder.getIsWorkPerformed()) {
+                        _rightWhiteButton.setText(R.string.btn_check_in_again);
+                    } else {
+                        _rightWhiteButton.setText(R.string.btn_check_in);
+                    }
+                    _rightWhiteButton.setOnClickListener(_checkin_onClick);
                 }
 
                 setVisibility(View.VISIBLE);
                 break;
             case CHECKEDIN:
+                inflate();
+                if (SHOW_REPORT_A_PROBLEM) {
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                }
+
                 // Check out
                 _rightGreenButton.setVisibility(VISIBLE);
                 _rightGreenButton.setText(R.string.btn_check_out);
@@ -171,8 +240,22 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case ONHOLD_ACKNOWLEDGED:
                 // nothing
+                if (SHOW_REPORT_A_PROBLEM) {
+                    inflate();
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    setVisibility(View.VISIBLE);
+                }
                 break;
             case ONHOLD_UNACKNOWLEDGED:
+                inflate();
+                if (SHOW_REPORT_A_PROBLEM) {
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                }
+
                 // ack hold
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_acknowledge_hold);
@@ -180,6 +263,13 @@ public class ActionBarTopView extends LinearLayout {
                 setVisibility(View.VISIBLE);
                 break;
             case PENDINGREVIEW: // marked completed
+                inflate();
+                if (SHOW_REPORT_A_PROBLEM) {
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                }
+
                 // mark incomplete
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_mark_incomplete);
@@ -189,8 +279,22 @@ public class ActionBarTopView extends LinearLayout {
             case APPROVED_PROCESSINGPAYMENT:
             case INREVIEW:
                 // nothing
+                if (SHOW_REPORT_A_PROBLEM) {
+                    inflate();
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    setVisibility(View.VISIBLE);
+                }
                 break;
             case PAID: // completed
+                inflate();
+                if (SHOW_REPORT_A_PROBLEM) {
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                }
+
                 // view payment
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_payments);
@@ -202,6 +306,7 @@ public class ActionBarTopView extends LinearLayout {
                 // nothing
                 break;
             case CANCELED_LATEFEEPAID:
+                inflate();
                 // view fee
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_fees);
@@ -220,6 +325,15 @@ public class ActionBarTopView extends LinearLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
+    private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onReportProblem();
+            }
+        }
+    };
+
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -367,6 +481,7 @@ public class ActionBarTopView extends LinearLayout {
         void onMarkIncomplete();
 
         void onViewPayment();
+
+        void onReportProblem();
     }
 }
-

@@ -15,7 +15,7 @@ import com.fieldnation.service.topics.TopicService;
 public class WorkorderDispatch implements WorkorderConstants {
     private static final String TAG = "WorkorderDispatch";
 
-    public static void get(Context context, JsonObject workorder, long workorderId, boolean failed, boolean isCached, boolean isSync) {
+    public static void get(Context context, JsonObject workorder, long workorderId, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_GET);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);

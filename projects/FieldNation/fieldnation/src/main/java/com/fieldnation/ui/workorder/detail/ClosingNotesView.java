@@ -5,7 +5,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -18,7 +17,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
     // UI
     private TextView _noNotesTextView;
-    private FrameLayout _notesCardLayout;
     private TextView _notesTextView;
     private Button _addButton;
 
@@ -44,9 +42,8 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
         _noNotesTextView = (TextView) findViewById(R.id.noNotes_textview);
 
-        _notesCardLayout = (FrameLayout) findViewById(R.id.notesCard_layout);
-        _notesCardLayout.setOnClickListener(_notes_onClick);
         _notesTextView = (TextView) findViewById(R.id.notes_textview);
+        _notesTextView.setOnClickListener(_notes_onClick);
 
         _addButton = (Button) findViewById(R.id.add_button);
         _addButton.setOnClickListener(_notes_onClick);
@@ -65,10 +62,10 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
     private void refresh() {
         if (!misc.isEmptyOrNull(_workorder.getClosingNotes())) {
             _notesTextView.setText(_workorder.getClosingNotes());
-            _notesCardLayout.setVisibility(VISIBLE);
+            _notesTextView.setVisibility(VISIBLE);
             _noNotesTextView.setVisibility(GONE);
         } else {
-            _notesCardLayout.setVisibility(GONE);
+            _notesTextView.setVisibility(GONE);
             _noNotesTextView.setVisibility(VISIBLE);
             if (!_workorder.canChangeClosingNotes()) {
                 setVisibility(View.GONE);
@@ -79,10 +76,10 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
         if (_workorder.canChangeClosingNotes()) {
             _addButton.setVisibility(View.VISIBLE);
-            _notesCardLayout.setClickable(true);
+            _notesTextView.setClickable(true);
         } else {
             _addButton.setVisibility(View.GONE);
-            _notesCardLayout.setClickable(false);
+            _notesTextView.setClickable(false);
         }
     }
 
