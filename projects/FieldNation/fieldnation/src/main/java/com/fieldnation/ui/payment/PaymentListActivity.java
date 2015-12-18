@@ -102,7 +102,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
                         lastCal.add(Calendar.MONTH, -1);
                         int lastCalHash = lastCal.get(Calendar.YEAR) * 100 + lastCal.get(Calendar.MONTH);
                         while (lastCalHash > hash) {
-                            _paymentList.add(new Header(ISO8601.fromCalendar(lastCal), null, lastCalHash));
+                            _paymentList.add(new Header(ISO8601.fromCalendar(lastCal), 0.0, lastCalHash));
                             _paymentList.add(new Placeholder());
                             lastCal.add(Calendar.MONTH, -1);
                             lastCalHash = lastCal.get(Calendar.YEAR) * 100 + lastCal.get(Calendar.MONTH);
@@ -158,10 +158,10 @@ public class PaymentListActivity extends AuthActionBarActivity {
 
     private static class Header {
         public String date;
-        public Double amount = null;
+        public double amount = 0.0;
         public int hash = 0;
 
-        public Header(String date, Double amount, int hash) {
+        public Header(String date, double amount, int hash) {
             this.date = date;
             this.amount = amount;
             this.hash = hash;

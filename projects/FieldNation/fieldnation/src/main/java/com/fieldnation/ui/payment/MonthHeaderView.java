@@ -56,7 +56,7 @@ public class MonthHeaderView extends RelativeLayout {
         _yearTextView = (TextView) findViewById(R.id.year_textview);
     }
 
-    public void setData(String iso8601, Double amount) {
+    public void setData(String iso8601, double amount) {
         if (iso8601 == null) {
             _monthTextView.setText("Pending");
             _yearTextView.setVisibility(GONE);
@@ -76,10 +76,7 @@ public class MonthHeaderView extends RelativeLayout {
                 _yearTextView.setVisibility(GONE);
             }
 
-            if (amount != null) {
-                _moneyTextView.setText(misc.toCurrency(amount));
-            }
-
+            _moneyTextView.setText(misc.toCurrency(amount));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
