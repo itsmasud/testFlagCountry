@@ -116,6 +116,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
+    private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
     // UI
     private OverScrollView _scrollView;
@@ -176,7 +177,7 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
-    private String scannedImagePath;
+    private String _scannedImagePath;
 
     private List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -278,6 +279,9 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
+            if (savedInstanceState.containsKey(STATE_SCANNED_IMAGE_PATH)) {
+                _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
+            }
         }
 
         populateUi();
@@ -308,6 +312,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_currentTask != null) {
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+        }
+
+        if (_scannedImagePath != null) {
+            outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
         }
 
         super.onSaveInstanceState(outState);
@@ -767,7 +775,7 @@ public class WorkFragment extends WorkorderFragment {
             if (content == null) {
                 Log.e(TAG, "onActivityResult: no image path");
             } else {
-                scannedImagePath = result.getBarcodeImagePath();
+                _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
             }
         }
@@ -1079,9 +1087,9 @@ public class WorkFragment extends WorkorderFragment {
             final UploadSlot[] slots = _workorder.getUploadSlots();
             for (UploadSlot uploadSlot : slots) {
                 if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                    String fileName = scannedImagePath.substring(scannedImagePath.lastIndexOf(File.separator) + 1, scannedImagePath.length());
+                    String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
                     WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
-                            uploadSlot.getSlotId(), fileName, scannedImagePath);
+                            uploadSlot.getSlotId(), fileName, _scannedImagePath);
 
                 }
             }
