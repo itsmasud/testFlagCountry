@@ -1,6 +1,8 @@
 package com.fieldnation.ui.dialog;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -20,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
@@ -31,9 +34,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String STATE_TASKID = "STATE_TASKID";
     private static final String STATE_TITLE = "STATE_TITLE";
 
+    private static final int RESULT_CODE_BARCODE_SCAN = 0;
+
     // UI
     private TextView _titleTextView;
     private EditText _trackingIdEditText;
+    private Button _scanButton;
     private Spinner _carrierSpinner;
     private EditText _carrierEditText;
     private TextInputLayout _carrierLayout;
@@ -55,6 +61,20 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     /*-*************************************-*/
     public static ShipmentAddDialog getInstance(FragmentManager fm, String tag) {
         return getInstance(fm, tag, ShipmentAddDialog.class);
+    }
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        Log.e(TAG, "onActivityResult");
+        if (requestCode == RESULT_CODE_BARCODE_SCAN) {
+            if (resultCode == Activity.RESULT_OK) {
+                Log.v(TAG, "requestCode");
+                _trackingIdEditText.setText(data.getStringExtra("SCAN_RESULT"));
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data);
+
     }
 
     @Override
@@ -93,6 +113,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _trackingIdEditText = (EditText) v.findViewById(R.id.trackingid_edittext);
         _trackingIdEditText.setOnEditorActionListener(_onEditor);
 
+        _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
+        _scanButton.setOnClickListener(_scan_onClick);
+
         _carrierSpinner = (Spinner) v.findViewById(R.id.carrier_spinner);
         _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
@@ -102,7 +125,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         _carrierAdapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        
+
         _carrierSpinner.setAdapter(_carrierAdapter);
 
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
@@ -154,8 +177,13 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         super.onDismiss(dialog);
     }
 
+
     public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+    public void setTrackingId(String trackingId) {
+        _trackingIdEditText.setText(trackingId);
     }
 
     public void show(CharSequence title, long taskId) {
@@ -269,12 +297,23 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
+
+    private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _listener.onScan();
+        }
+    };
+
+
     public interface Listener {
         void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
         void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
         void onCancel();
+
+        void onScan();
     }
 
 

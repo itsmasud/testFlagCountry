@@ -163,6 +163,10 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         @Override
         public void onCancel() {
         }
+
+        @Override
+        public void onScan() {
+        }
     };
 
     private final ShipmentRowView.Listener _summaryListener = new ShipmentRowView.Listener() {
