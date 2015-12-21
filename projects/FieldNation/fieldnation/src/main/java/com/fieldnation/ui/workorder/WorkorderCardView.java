@@ -318,12 +318,14 @@ public class WorkorderCardView extends RelativeLayout {
                 _timeTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
 
                 if (startTime - System.currentTimeMillis() <= 0
-                        && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED)) {
+                        && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED)
+                        && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.CHECKEDIN) {
                     _timeTextView.setVisibility(VISIBLE);
                     _timeTextView.setText(getResources().getString(R.string.time_late, misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))));
                     _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                 } else if (startTime - System.currentTimeMillis() <= 3600000
+                        && startTime - System.currentTimeMillis() > 0
                         && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
                         || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
                         || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
