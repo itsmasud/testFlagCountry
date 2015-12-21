@@ -1,7 +1,6 @@
 package com.fieldnation.ui.payment;
 
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -10,12 +9,10 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
-import com.fieldnation.service.objectstore.ObjectStoreConstants;
 import com.fieldnation.ui.AuthActionBarActivity;
-import com.fieldnation.ui.ItemListActivity;
 import com.fieldnation.ui.OverScrollListView;
-import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.payment.MonthHeaderView.Header;
 import com.fieldnation.utils.ISO8601;
 
 import java.util.Calendar;
@@ -156,18 +153,6 @@ public class PaymentListActivity extends AuthActionBarActivity {
         }
     }
 
-    private static class Header {
-        public String date;
-        public double amount = 0.0;
-        public int hash = 0;
-
-        public Header(String date, double amount, int hash) {
-            this.date = date;
-            this.amount = amount;
-            this.hash = hash;
-        }
-    }
-
     private static class MyAdapter extends BaseAdapter {
         private List<Object> _items = new LinkedList<>();
 
@@ -217,7 +202,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
                 else
                     v = new MonthHeaderView(parent.getContext());
 
-                v.setData(header.date, header.amount);
+                v.setData(header.startDate, header.amount);
                 return v;
             } else if (object instanceof Payment) {
                 PaymentCardView v = null;

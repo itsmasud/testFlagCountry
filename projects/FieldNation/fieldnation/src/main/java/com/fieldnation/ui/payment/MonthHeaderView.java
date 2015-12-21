@@ -82,4 +82,28 @@ public class MonthHeaderView extends RelativeLayout {
         }
     }
 
+    public static class Header {
+        public String startDate;
+        public String endDate;
+        public double amount = 0.0;
+        public int hash = 0;
+        public boolean isRange = false;
+
+        public Header(String startDate, double amount, int hash) {
+            this.startDate = startDate;
+            this.amount = amount;
+            this.hash = hash;
+            this.isRange = false;
+        }
+
+        public Header(String startDate, String endDate, double amount, int hash) {
+            this.startDate = startDate;
+            this.endDate = endDate;
+            this.amount = amount;
+            this.hash = hash;
+            this.isRange = false;
+        }
+    }
+
+
 }
