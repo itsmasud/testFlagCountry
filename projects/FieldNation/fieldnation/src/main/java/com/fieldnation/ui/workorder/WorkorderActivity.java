@@ -320,10 +320,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
     @Override
     protected void onActivityResult(int arg0, int arg1, Intent arg2) {
-//        Fragment fragment = _fragments[0];
-//        if (fragment instanceof WorkFragment) {
-//            fragment.onActivityResult(arg0, arg1, arg2);
-//        }
+        if (_fragments != null) {
+            for (Fragment fragment : _fragments) {
+                if (fragment != null)
+                    fragment.onActivityResult(arg0, arg1, arg2);
+            }
+        }
         super.onActivityResult(arg0, arg1, arg2);
     }
 
