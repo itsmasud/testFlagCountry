@@ -1366,7 +1366,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequestNewPay(Workorder workorder) {
             // TODO show request new pay dialog
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-
             _payDialog.show(_workorder.getPay(), true);
         }
 
