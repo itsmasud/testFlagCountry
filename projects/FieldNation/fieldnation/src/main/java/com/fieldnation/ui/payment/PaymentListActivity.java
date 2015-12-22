@@ -6,6 +6,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
@@ -73,7 +74,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
         _paymentList.clear();
 
         int lastHash = 0;
-        Calendar lastCal = null;
+        Calendar futureCal = null;
         Header header = null;
 
         for (int i = 0; i < _pages.size(); i++) {
@@ -91,23 +92,59 @@ public class PaymentListActivity extends AuthActionBarActivity {
                     continue;
                 }
 
-                Calendar cal = payment.getDatePaidCalendar();
-                int hash = cal.get(Calendar.YEAR) * 100 + cal.get(Calendar.MONTH);
+                Calendar pastCal = payment.getDatePaidCalendar();
+                int hash = pastCal.get(Calendar.YEAR) * 100 + pastCal.get(Calendar.MONTH);
 
                 if (hash != lastHash) {
-                    if (lastCal != null) {
-                        lastCal.add(Calendar.MONTH, -1);
-                        int lastCalHash = lastCal.get(Calendar.YEAR) * 100 + lastCal.get(Calendar.MONTH);
-                        while (lastCalHash > hash) {
-                            _paymentList.add(new Header(ISO8601.fromCalendar(lastCal), 0.0, lastCalHash));
+                    // next will be further in the past
+                    // prev will be future
+                    if (futureCal != null) {
+                        futureCal.add(Calendar.MONTH, -1);
+                        int lastCalHash = futureCal.get(Calendar.YEAR) * 100 + futureCal.get(Calendar.MONTH);
+
+                        // ok, there is at least one year skip in here.
+                        while (futureCal.get(Calendar.YEAR) > pastCal.get(Calendar.YEAR)) {
+                            int year = futureCal.get(Calendar.YEAR);
+
+                            Header h = new Header(ISO8601.fromCalendar(futureCal), 0.0, lastCalHash);
+                            futureCal.add(Calendar.MONTH, -1);
+                            while (futureCal.get(Calendar.YEAR) == year) {
+                                h.endDate = ISO8601.fromCalendar(futureCal);
+                                futureCal.add(Calendar.MONTH, -1);
+                            }
+                            _paymentList.add(h);
                             _paymentList.add(new Placeholder());
-                            lastCal.add(Calendar.MONTH, -1);
-                            lastCalHash = lastCal.get(Calendar.YEAR) * 100 + lastCal.get(Calendar.MONTH);
+                            lastCalHash = futureCal.get(Calendar.YEAR) * 100 + futureCal.get(Calendar.MONTH);
                         }
+
+                        if (futureCal.get(Calendar.MONTH) - pastCal.get(Calendar.MONTH) == 1) {
+                            Header h = new Header(ISO8601.fromCalendar(futureCal), 0.0, lastCalHash);
+                            _paymentList.add(h);
+                            _paymentList.add(new Placeholder());
+                            futureCal.add(Calendar.MONTH, -1);
+                            lastCalHash = futureCal.get(Calendar.YEAR) * 100 + futureCal.get(Calendar.MONTH);
+                        } else if (futureCal.get(Calendar.MONTH) - pastCal.get(Calendar.MONTH) > 1) {
+                            Header h = new Header(ISO8601.fromCalendar(futureCal), 0.0, lastCalHash);
+                            futureCal.add(Calendar.MONTH, -1);
+                            while (futureCal.get(Calendar.MONTH) > pastCal.get(Calendar.MONTH)) {
+                                h.endDate = ISO8601.fromCalendar(futureCal);
+                                futureCal.add(Calendar.MONTH, -1);
+                            }
+                            _paymentList.add(h);
+                            _paymentList.add(new Placeholder());
+                            lastCalHash = futureCal.get(Calendar.YEAR) * 100 + futureCal.get(Calendar.MONTH);
+                        }
+
+                        //while (lastCalHash > hash) {
+                        //    _paymentList.add(new Header(ISO8601.fromCalendar(futureCal), 0.0, lastCalHash));
+                        //    _paymentList.add(new Placeholder());
+                        //    futureCal.add(Calendar.MONTH, -1);
+                        //    lastCalHash = futureCal.get(Calendar.YEAR) * 100 + futureCal.get(Calendar.MONTH);
+                        //}
                     }
 
                     lastHash = hash;
-                    lastCal = cal;
+                    futureCal = pastCal;
                     header = new Header(payment.getDatePaid(), 0.0, hash);
                     _paymentList.add(header);
                 }
@@ -202,7 +239,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
                 else
                     v = new MonthHeaderView(parent.getContext());
 
-                v.setData(header.startDate, header.amount);
+                v.setData(header);
                 return v;
             } else if (object instanceof Payment) {
                 PaymentCardView v = null;

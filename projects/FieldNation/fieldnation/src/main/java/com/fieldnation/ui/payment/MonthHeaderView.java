@@ -56,18 +56,27 @@ public class MonthHeaderView extends RelativeLayout {
         _yearTextView = (TextView) findViewById(R.id.year_textview);
     }
 
-    public void setData(String iso8601, double amount) {
-        if (iso8601 == null) {
+    public void setData(Header header) {
+        if (header.startDate == null) {
             _monthTextView.setText("Pending");
             _yearTextView.setVisibility(GONE);
-            _moneyTextView.setText(misc.toCurrency(amount));
+            _moneyTextView.setText(misc.toCurrency(header.amount));
             return;
         }
         try {
-            Calendar calendar = ISO8601.toCalendar(iso8601);
+            Calendar calendar = ISO8601.toCalendar(header.startDate);
             Calendar now = Calendar.getInstance();
 
-            _monthTextView.setText(new SimpleDateFormat("MMMM").format(calendar.getTime()));
+            if (misc.isEmptyOrNull(header.endDate)) {
+                _monthTextView.setText(new SimpleDateFormat("MMMM").format(calendar.getTime()));
+            } else {
+                Calendar end = ISO8601.toCalendar(header.endDate);
+                _monthTextView.setText(
+                        new SimpleDateFormat("MMMM").format(end.getTime())
+                                + " - "
+                                + new SimpleDateFormat("MMMM").format(calendar.getTime())
+                );
+            }
 
             if (calendar.get(Calendar.YEAR) != now.get(Calendar.YEAR)) {
                 _yearTextView.setVisibility(VISIBLE);
@@ -76,7 +85,7 @@ public class MonthHeaderView extends RelativeLayout {
                 _yearTextView.setVisibility(GONE);
             }
 
-            _moneyTextView.setText(misc.toCurrency(amount));
+            _moneyTextView.setText(misc.toCurrency(header.amount));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
