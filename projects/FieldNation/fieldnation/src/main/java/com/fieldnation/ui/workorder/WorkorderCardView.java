@@ -353,8 +353,12 @@ public class WorkorderCardView extends RelativeLayout {
                             && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
                             && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
                         _timeTextView.setVisibility(VISIBLE);
-                        _timeTextView.setText(getResources().getString(R.string.time_late,
-                                misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))));
+                        _timeTextView.setText(
+                                getResources().getString(
+                                        R.string.time_late,
+                                        misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))
+                                )
+                        );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                     } else if (startTime - System.currentTimeMillis() <= 3600000
@@ -365,8 +369,12 @@ public class WorkorderCardView extends RelativeLayout {
                             || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
                             || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
                         _timeTextView.setVisibility(VISIBLE);
-                        _timeTextView.setText(getResources().getString(R.string.in_time,
-                                misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))));
+                        _timeTextView.setText(
+                                getResources().getString(
+                                        R.string.in_time,
+                                        misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))
+                                )
+                        );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
 
                     } else if (startTime < System.currentTimeMillis()) {
@@ -422,8 +430,8 @@ public class WorkorderCardView extends RelativeLayout {
                         if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
                                 || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
                             if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(eCal.getTime()));
+                                _timeTextView.setText(new SimpleDateFormat("MMM d, yy", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                                _time2TextView.setText(new SimpleDateFormat("MMM d, yy", Locale.getDefault()).format(eCal.getTime()));
                                 _extraTextView.setText(misc.formatTime(sCal, false));
                                 _extra2TextView.setText(misc.formatTime(eCal, false));
                             } else {
