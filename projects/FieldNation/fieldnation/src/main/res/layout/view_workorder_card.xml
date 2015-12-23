@@ -48,10 +48,14 @@
         style="@style/Text_Body_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/divider"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
         android:layout_marginTop="6dp"
+        android:layout_toLeftOf="@+id/workorderId_textview"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
         android:text="Company Name" />
 
     <TextView
@@ -66,55 +70,105 @@
         android:layout_marginTop="6dp"
         android:text="WO ID: 123456789" />
 
-    <TextView
-        android:id="@+id/time_textview"
-        style="@style/Text_Title"
+    <LinearLayout
+        android:id="@+id/time1_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/companyName_textview"
         android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="8dp"
-        android:text="In 45 mins" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/price_textview"
-        style="@style/Text_Title"
+        <TextView
+            android:id="@+id/time_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="In 45 mins" />
+
+        <TextView
+            android:id="@+id/extra_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time2_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/companyName_textview"
+        android:layout_toRightOf="@+id/time1_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time2_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/extra2_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/price2_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/workorderId_textview"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@+id/price_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/price2_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/status2_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/price_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/workorderId_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="8dp"
-        android:text="$104.00" />
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/extra_textview"
-        style="@style/Text_Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/time_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:text="Marked Complete" />
+        <TextView
+            android:id="@+id/price_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="8dp"
+            android:text="$104.00" />
 
-    <TextView
-        android:id="@+id/status_textview"
-        style="@style/Text_Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/price_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:text="In Review" />
-
+        <TextView
+            android:id="@+id/status_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:text="In Review" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/extra_textview"
+        android:layout_below="@+id/time1_layout"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
