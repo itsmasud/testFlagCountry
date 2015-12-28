@@ -21,6 +21,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -385,7 +386,7 @@ public class WorkorderCardView extends RelativeLayout {
                         _timeTextView.setText(schedule.getFormatedTime());
                         _extraTextView.setText(schedule.getFormatedDate());
 
-                    } else if ((startTime - System.currentTimeMillis()) / 86400000L <= 7) {
+                    } else if ((startTime - System.currentTimeMillis()) / 86400000L < 6) {
                         _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
                         _extraTextView.setText(schedule.getFormatedTime());
 
@@ -402,10 +403,32 @@ public class WorkorderCardView extends RelativeLayout {
                     _extraTextView.setVisibility(VISIBLE);
 
                     if (endTime < System.currentTimeMillis()) {
-                        _timeTextView.setText(schedule.getFormatedTime());
-                        _extraTextView.setText(schedule.getFormatedDate());
+                        if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
+                                || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
+                            if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
+                                //_timeTextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                                //_time2TextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(eCal.getTime()));
+                                //_extraTextView.setText(misc.formatTime(sCal, false));
+                                //_extra2TextView.setText(misc.formatTime(eCal, false));
+                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                                _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
+                                _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
+                                _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
+                            } else {
+                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                                _time2TextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(eCal.getTime()));
+                                _extraTextView.setText(misc.formatTime(sCal, false));
+                                _extra2TextView.setText(misc.formatTime(eCal, false));
+                            }
+                        } else {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
+                            _extraTextView.setText(schedule.getFormatedTime());
+                        }
 
-                    } else if ((endTime - System.currentTimeMillis()) / 86400000L <= 7) {
+                        //_timeTextView.setText(schedule.getFormatedTime());
+                        //_extraTextView.setText(schedule.getFormatedDate());
+
+                    } else if ((endTime - System.currentTimeMillis()) / 86400000L < 6) {
                         String sDay = new SimpleDateFormat("c", Locale.getDefault()).format(sCal.getTime());
                         String eDay = new SimpleDateFormat("c", Locale.getDefault()).format(eCal.getTime());
 
@@ -423,17 +446,31 @@ public class WorkorderCardView extends RelativeLayout {
                                 _extra2TextView.setText(misc.formatTime(eCal, false));
                             }
                         } else {
-                            _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
-                            _extraTextView.setText(schedule.getFormatedTime());
+                            if (DateUtils.isToday(sCal)) {
+                                _timeTextView.setText("Today");
+                                _extraTextView.setText(schedule.getFormatedTime());
+                            } else if (DateUtils.isAfterDay(sCal, Calendar.getInstance())) {
+                                _timeTextView.setText("Tomorrow");
+                                _extraTextView.setText(schedule.getFormatedTime());
+                            } else {
+                                _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
+                                _extraTextView.setText(schedule.getFormatedTime());
+                            }
                         }
                     } else {
                         if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
                                 || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
                             if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d, yy", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d, yy", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(misc.formatTime(sCal, false));
-                                _extra2TextView.setText(misc.formatTime(eCal, false));
+//                                _timeTextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(sCal.getTime()) + " - ");
+//                                _time2TextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(eCal.getTime()));
+//                                _extraTextView.setText(misc.formatTime(sCal, false));
+//                                _extra2TextView.setText(misc.formatTime(eCal, false));
+
+                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                                _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
+                                _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
+                                _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
+
                             } else {
                                 _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
