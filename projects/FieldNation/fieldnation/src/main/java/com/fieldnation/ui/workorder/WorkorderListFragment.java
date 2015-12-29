@@ -370,24 +370,32 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
         getLocationService().setListener(_gps_checkOutListener);
-
-        if (getActivity() != null && !getLocationService().isLocationServicesEnabled()) {
-            _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
-                    _locationDialog_checkOutListener);
-        } else if (getLocationService().hasLocation()) {
-            doCheckOut();
-        } else if (getActivity() != null && getLocationService().isRunning() && _locationDialog.isAdded()) {
-            _locationLoadingDialog.show();
-        } else if (getActivity() != null && getLocationService().isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            getLocationService().startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
-            return;
+        try {
+            if (getActivity() != null && !getLocationService().isLocationServicesEnabled()) {
+                _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
+                        _locationDialog_checkOutListener);
+            } else if (getLocationService().hasLocation()) {
+                doCheckOut();
+            } else if (getActivity() != null && getLocationService().isRunning() && _locationDialog.isAdded()) {
+                _locationLoadingDialog.show();
+            } else if (getActivity() != null && getLocationService().isLocationServicesEnabled()) {
+                _locationLoadingDialog.show();
+                getLocationService().startLocation();
+            } else {
+                // location is disabled, or failed. ask for them to be enabled
+                Log.v(TAG, "Should not be here");
+            }
+        } catch (Exception ex) {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckOut();
+                }
+            }, 500);
         }
         setLoading(true);
     }
+
     private void doCheckin() {
         Log.v(TAG, "doCheckin()");
         getLocationService().setListener(null);
