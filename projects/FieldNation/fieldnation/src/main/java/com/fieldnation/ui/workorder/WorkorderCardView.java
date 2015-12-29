@@ -447,10 +447,10 @@ public class WorkorderCardView extends RelativeLayout {
                             }
                         } else {
                             if (DateUtils.isToday(sCal)) {
-                                _timeTextView.setText("Today");
+                                _timeTextView.setText(R.string.today);
                                 _extraTextView.setText(schedule.getFormatedTime());
                             } else if (DateUtils.isAfterDay(sCal, Calendar.getInstance())) {
-                                _timeTextView.setText("Tomorrow");
+                                _timeTextView.setText(R.string.tomorrow);
                                 _extraTextView.setText(schedule.getFormatedTime());
                             } else {
                                 _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));

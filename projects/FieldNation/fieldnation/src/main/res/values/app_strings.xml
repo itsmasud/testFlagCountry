@@ -333,6 +333,8 @@
     <string name="time_late">%1$s late</string>
     <string name="time_logged">Time Logged</string>
     <string name="time_to_approval">Time to approval</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
     <string name="tracking_number">Tracking number</string>
     <string name="uploading">Uploading…</string>
     <string name="valid_until">Valid until</string>
