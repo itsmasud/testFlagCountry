@@ -112,12 +112,20 @@
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
 
+    <string name="notification_title_start">FN Alert!</string>
+    <string name="notification_content_text_start_uploading">Wait a bit. Uploading...</string>
+    <string name="notification_content_text_start_downloading">Wait a bit. Downloading...</string>
     <!--<string name="notification_title_start_upload">Starting Upload…</string>-->
     <!--<string name="notification_context_getting_file">Getting file</string>-->
     <!--<string name="notification_uploading">Uploading</string>-->
     <!--<string name="notification_uploading_dot">Uploading…</string>-->
-    <!--<string name="notification_failed">Failed!</string>-->
+    <string name="notification_title_failed">Failed!</string>
+    <string name="notification_content_text_failed_uploading">Uploading Failed.</string>
+    <string name="notification_content_text_failed_downloading">Downloading Failed.!</string>
     <!--<string name="notification_success">Success!</string>-->
+    <string name="notification_title_success">Success!</string>
+    <string name="notification_content_text_success_uploading">Uploaded successfully.</string>
+    <string name="notification_content_text_success_downloading">Downloaded successfully.</string>
 
     <string name="fieldnation_expected_fee_percentage">Field Nation Fee (%1$.1f%%)</string>
     <string name="fieldnation_expected_insurance_percentage">Insurance Fee (%1$.1f%%)</string>

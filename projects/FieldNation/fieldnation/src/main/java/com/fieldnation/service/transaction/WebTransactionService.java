@@ -1,16 +1,16 @@
 package com.fieldnation.service.transaction;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.system.ErrnoException;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -25,7 +25,6 @@ import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
@@ -227,6 +226,21 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "processIntent end");
     }
 
+
+    private void generateNotification(int notifyId, String title, String body) {
+        NotificationCompat.Builder mBuilder =
+                new NotificationCompat.Builder(App.get())
+                        .setSmallIcon(R.drawable.fn_logo)
+                        .setContentTitle(title)
+                        .setContentText(body);
+
+        NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Log.v(TAG, "notification created");
+
+        mNotifyMgr.notify(notifyId, mBuilder.build());
+    }
+
     class TransactionThread extends ThreadManager.ManagedThread {
         private String TAG = UniqueTag.makeTag("TransactionThread");
         private Context context;
@@ -272,6 +286,16 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             String handlerName = null;
             HttpResult result = null;
+
+            int notificationId = 0;
+            String notificationTitleStart = "";
+            String notificationStartContentText = "";
+            String notificationTitleSuccess = "";
+            String notificationContentTextSuccess = "";
+            String notificationTitleFailed = "";
+            String notificationContentTextFailed = "";
+            boolean hasNotification = false;
+
             try {
                 // apply authentication if needed
                 if (trans.useAuth()) {
@@ -288,6 +312,35 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     request.put(HttpJsonBuilder.PARAM_WEB_PROTOCOL, "https");
                     auth.applyToRequest(request);
                 }
+
+
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
+                    notificationId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
+                    hasNotification = true;
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START)) {
+                    notificationTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START);
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START)) {
+                    notificationStartContentText = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START);
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS)) {
+                    notificationTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS);
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS)) {
+                    notificationContentTextSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS);
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED)) {
+                    notificationTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED);
+                }
+                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED)) {
+                    notificationContentTextFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED);
+                }
+
+                if (hasNotification) {
+                    generateNotification(notificationId, notificationTitleStart, notificationStartContentText);
+                }
+
                 Log.v(TAG, request.display());
 
                 handlerName = trans.getHandlerName();
@@ -361,6 +414,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     WebTransaction.delete(context, trans.getId());
                     return true;
                 }
+                Log.e(TAG, "no error");
 
                 GlobalTopicClient.networkConnected(context);
 
@@ -370,10 +424,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                     switch (wresult) {
                         case ERROR:
+                            if (hasNotification)
+                                generateNotification(notificationId, notificationTitleFailed, notificationContentTextFailed);
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case FINISH:
+                            if (hasNotification)
+                                generateNotification(notificationId, notificationTitleSuccess, notificationContentTextSuccess);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case REQUEUE:

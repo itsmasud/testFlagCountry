@@ -2,11 +2,13 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.location.Location;
 import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
+import com.fieldnation.R;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -567,13 +569,20 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-
+        Resources res = context.getResources();
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
+                    .notify(HttpJsonBuilder.NOTIFICATION_ID_UPLOADING,
+                            res.getString(R.string.notification_title_start),
+                            res.getString(R.string.notification_content_text_start_uploading),
+                            res.getString(R.string.notification_title_success),
+                            res.getString(R.string.notification_content_text_success_uploading),
+                            res.getString(R.string.notification_title_failed),
+                            res.getString(R.string.notification_content_text_failed_uploading))
                     .doNotRead();
 
             if (uploadSlotId != 0) {
@@ -595,11 +604,19 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
         try {
+            Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, uri)
+                    .notify(HttpJsonBuilder.NOTIFICATION_ID_UPLOADING,
+                            res.getString(R.string.notification_title_start),
+                            res.getString(R.string.notification_content_text_start_uploading),
+                            res.getString(R.string.notification_title_success),
+                            res.getString(R.string.notification_content_text_success_uploading),
+                            res.getString(R.string.notification_title_failed),
+                            res.getString(R.string.notification_content_text_failed_uploading))
                     .doNotRead();
 
             if (uploadSlotId != 0) {
