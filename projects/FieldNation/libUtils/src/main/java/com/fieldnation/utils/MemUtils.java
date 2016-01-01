@@ -14,6 +14,7 @@ public class MemUtils {
 
     private static final float BYTES_IN_MB = 1024.0f * 1024.0f;
     private static final float BYTES_PER_PX = 4.0f;
+    private static final float MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE = 0.3f;
 
     public static Bitmap getMemoryEfficientBitmap(Context context, int sourceImage, int reqHeight) {
 //        Log.v(TAG, "getDeviceFreeMemory:" + getDeviceFreeMemory());
@@ -87,6 +88,17 @@ public class MemUtils {
 //        Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
 
         return (int) memoryInfo.getTotalPss() / 1024;
+    }
+
+
+    public static boolean shouldSuspendLoadingMore(Context context){
+        if (getAppHeapMemory(context)* MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppFreeHeapMemory(context)){
+//            Log.v(TAG,"AppHeapMemory: " + getAppHeapMemory(context));
+//            Log.v(TAG,"Threshold of Minimum Free HeapMemory: " + getAppHeapMemory(context)* MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE);
+//            Log.v(TAG,"AppFreeHeapMemory: " + getAppFreeHeapMemory(context));
+            return true;
+        }
+        return false;
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
