@@ -1,10 +1,8 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Rect;
@@ -46,6 +44,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.regex.Pattern;
 
 
 public class misc {
@@ -1321,6 +1320,17 @@ public class misc {
     public static String formatDateTimeForCF(final Calendar calendar) {
         Date date = calendar.getTime();
         return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
+    }
+
+    public static String getCareerName(final String trackingId) {
+        if (Pattern.compile("/(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)/").matcher(trackingId).matches() ||
+                Pattern.compile("/\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d) ?\\d\\d\\d\\d ?\\d\\d\\d\\d( ?\\d\\d\\d)?)\\b/").matcher(trackingId).matches() ||
+                Pattern.compile("/^[0-9]{15}$/").matcher(trackingId).matches()) {
+            return "Fedex";
+        } else if (Pattern.compile("/\\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\\dT]\\d\\d\\d ?\\d\\d\\d\\d ?\\d\\d\\d|\\d{22})\\b/i").matcher(trackingId).matches()) {
+            return "UPS";
+        }
+        return "Other";
     }
 
 }
