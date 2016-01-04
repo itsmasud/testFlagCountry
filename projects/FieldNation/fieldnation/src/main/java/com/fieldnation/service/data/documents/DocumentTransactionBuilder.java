@@ -28,16 +28,16 @@ public class DocumentTransactionBuilder {
                     .request(new HttpJsonBuilder()
                             .path(link)
                             .notify(res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_content_text_start_downloading, filename),
-                                    res.getString(R.string.notification_content_text_start_downloading, filename),
+                                    res.getString(R.string.notification_start_body_downloading, filename),
+                                    res.getString(R.string.notification_start_body_downloading, filename),
                                     R.drawable.ic_notification,
-                                    res.getString(R.string.notification_title_success),
-                                    res.getString(R.string.notification_content_text_success_downloading, filename),
-                                    res.getString(R.string.notification_content_text_success_downloading, filename),
+                                    res.getString(R.string.notification_success_title),
+                                    res.getString(R.string.notification_success_body_downloading, filename),
+                                    res.getString(R.string.notification_success_body_downloading, filename),
                                     R.drawable.ic_notification,
-                                    res.getString(R.string.notification_title_failed),
-                                    res.getString(R.string.notification_content_text_failed_downloading, filename),
-                                    res.getString(R.string.notification_content_text_failed_downloading, filename),
+                                    res.getString(R.string.notification_failed_title),
+                                    res.getString(R.string.notification_failed_body_downloading, filename),
+                                    res.getString(R.string.notification_failed_body_downloading, filename),
                                     R.drawable.ic_notification))
                     .send();
         } catch (Exception ex) {

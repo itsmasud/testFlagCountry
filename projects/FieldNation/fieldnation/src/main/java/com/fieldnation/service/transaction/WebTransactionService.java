@@ -7,7 +7,6 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -328,20 +327,20 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
                     notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
                     hasNotification = true;
-                    notifTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START);
-                    notifContentStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START);
-                    notifIconStart = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_START);
-                    notifTickerStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_START);
+                    notifTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_TITLE);
+                    notifContentStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_BODY);
+                    notifIconStart = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_START_ICON);
+                    notifTickerStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_TICKER);
 
-                    notifTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS);
-                    notifContentSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS);
-                    notifIconSuccess = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_SUCCESS);
-                    notifTickerSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_SUCCESS);
+                    notifTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_TITLE);
+                    notifContentSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_BODY);
+                    notifIconSuccess = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_ICON);
+                    notifTickerSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_TICKER);
 
-                    notifTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED);
-                    notifContentFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED);
-                    notifIconFailed = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_FAILED);
-                    notifTickerFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_FAILED);
+                    notifTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_TITLE);
+                    notifContentFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_BODY);
+                    notifIconFailed = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_ICON);
+                    notifTickerFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_TICKER);
 
                     generateNotification(notifId, notifIconStart, notifTitleStart, notifTickerStart, notifContentStart);
                 }

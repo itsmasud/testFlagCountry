@@ -112,14 +112,16 @@
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
 
-    <string name="notification_content_text_start_uploading">Uploading %1$s</string>
-    <string name="notification_content_text_start_downloading">Downloading %1$s</string>
-    <string name="notification_title_failed">Failed!</string>
-    <string name="notification_content_text_failed_uploading">Upload of %1$s Failed</string>
-    <string name="notification_content_text_failed_downloading">Download of %1$s Failed</string>
-    <string name="notification_title_success">Success!</string>
-    <string name="notification_content_text_success_uploading">Uploaded %1$s</string>
-    <string name="notification_content_text_success_downloading">Downloaded %1$s</string>
+    <string name="notification_start_body_uploading">Uploading %1$s</string>
+    <string name="notification_start_body_downloading">Downloading %1$s</string>
+
+    <string name="notification_success_title">Success!</string>
+    <string name="notification_success_body_uploading">Upload %1$s complete</string>
+    <string name="notification_success_body_downloading">Download %1$s complete</string>
+
+    <string name="notification_failed_title">Failed!</string>
+    <string name="notification_failed_body_uploading">Upload %1$s Failed</string>
+    <string name="notification_failed_body_downloading">Download %1$s Failed</string>
     <!--<string name="notification_title_start_upload">Starting Upload…</string>-->
     <!--<string name="notification_context_getting_file">Getting file</string>-->
     <!--<string name="notification_uploading">Uploading</string>-->

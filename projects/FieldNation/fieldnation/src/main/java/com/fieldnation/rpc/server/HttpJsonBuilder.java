@@ -30,22 +30,22 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_BODY = "PARAM_BODY";
     public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
 
-    public static final String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
+    public static final String PARAM_NOTIFICATION_ID = "notification.id";
 
-    public static final String PARAM_NOTIFICATION_TICKER_START = "PARAM_NOTIFICATION_TICKER_START";
-    public static final String PARAM_NOTIFICATION_TITLE_START = "PARAM_NOTIFICATION_TITLE_START";
-    public static final String PARAM_NOTIFICATION_CONTENT_TEXT_START = "PARAM_NOTIFICATION_CONTENT_TEXT_START";
-    public static final String PARAM_NOTIFICATION_ICON_START = "PARAM_NOTIFICATION_ICON_START";
+    public static final String PARAM_NOTIFICATION_START_TICKER = "notification.start.ticker";
+    public static final String PARAM_NOTIFICATION_START_TITLE = "notification.start.title";
+    public static final String PARAM_NOTIFICATION_START_BODY = "notification.start.body";
+    public static final String PARAM_NOTIFICATION_START_ICON = "notification.start.icon";
 
-    public static final String PARAM_NOTIFICATION_TICKER_SUCCESS = "PARAM_NOTIFICATION_TICKER_SUCCESS";
-    public static final String PARAM_NOTIFICATION_TITLE_SUCCESS = "PARAM_NOTIFICATION_TITLE_SUCCESS";
-    public static final String PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS = "PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS";
-    public static final String PARAM_NOTIFICATION_ICON_SUCCESS = "PARAM_NOTIFICATION_ICON_SUCCESS";
+    public static final String PARAM_NOTIFICATION_SUCCESS_TICKER = "notification.success.ticker";
+    public static final String PARAM_NOTIFICATION_SUCCESS_TITLE = "notification.success.title";
+    public static final String PARAM_NOTIFICATION_SUCCESS_BODY = "notification.success.body";
+    public static final String PARAM_NOTIFICATION_SUCCESS_ICON = "notification.success.icon";
 
-    public static final String PARAM_NOTIFICATION_TICKER_FAILED = "PARAM_NOTIFICATION_TICKER_FAILED";
-    public static final String PARAM_NOTIFICATION_TITLE_FAILED = "PARAM_NOTIFICATION_TITLE_FAILED";
-    public static final String PARAM_NOTIFICATION_CONTENT_TEXT_FAILED = "PARAM_NOTIFICATION_CONTENT_TEXT_FAILED";
-    public static final String PARAM_NOTIFICATION_ICON_FAILED = "PARAM_NOTIFICATION_ICON_FAILED";
+    public static final String PARAM_NOTIFICATION_FAILED_TICKER = "notification.failed.ticker";
+    public static final String PARAM_NOTIFICATION_FAILED_TITLE = "notification.failed.title";
+    public static final String PARAM_NOTIFICATION_FAILED_BODY = "notification.failed.body";
+    public static final String PARAM_NOTIFICATION_FAILED_ICON = "notification.failed.icon";
 
 
     private JsonObject request;
@@ -126,20 +126,20 @@ public class HttpJsonBuilder {
         if (!misc.isEmptyOrNull(titleStart)) {
             request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
 
-            request.put(PARAM_NOTIFICATION_TITLE_START, titleStart);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_START, contentStart);
-            request.put(PARAM_NOTIFICATION_ICON_START, iconStart);
-            request.put(PARAM_NOTIFICATION_TICKER_START, tickerStart);
+            request.put(PARAM_NOTIFICATION_START_TITLE, titleStart);
+            request.put(PARAM_NOTIFICATION_START_BODY, contentStart);
+            request.put(PARAM_NOTIFICATION_START_ICON, iconStart);
+            request.put(PARAM_NOTIFICATION_START_TICKER, tickerStart);
 
-            request.put(PARAM_NOTIFICATION_TITLE_SUCCESS, titleSuccess);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS, contentSuccess);
-            request.put(PARAM_NOTIFICATION_ICON_SUCCESS, iconSuccess);
-            request.put(PARAM_NOTIFICATION_TICKER_SUCCESS, tickerSuccess);
+            request.put(PARAM_NOTIFICATION_SUCCESS_TITLE, titleSuccess);
+            request.put(PARAM_NOTIFICATION_SUCCESS_BODY, contentSuccess);
+            request.put(PARAM_NOTIFICATION_SUCCESS_ICON, iconSuccess);
+            request.put(PARAM_NOTIFICATION_SUCCESS_TICKER, tickerSuccess);
 
-            request.put(PARAM_NOTIFICATION_TITLE_FAILED, titleFailed);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_FAILED, contentFailed);
-            request.put(PARAM_NOTIFICATION_ICON_FAILED, iconFailed);
-            request.put(PARAM_NOTIFICATION_TICKER_FAILED, tickerFailed);
+            request.put(PARAM_NOTIFICATION_FAILED_TITLE, titleFailed);
+            request.put(PARAM_NOTIFICATION_FAILED_BODY, contentFailed);
+            request.put(PARAM_NOTIFICATION_FAILED_ICON, iconFailed);
+            request.put(PARAM_NOTIFICATION_FAILED_TICKER, tickerFailed);
         }
         return this;
     }
