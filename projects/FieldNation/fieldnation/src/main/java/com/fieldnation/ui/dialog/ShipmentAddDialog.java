@@ -186,6 +186,15 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _trackingIdEditText.setText(trackingId);
     }
 
+    public void setSelectedCarrier(final String careerName) {
+        for (int i = 0; i < _carrierSpinner.getCount(); i++) {
+            if (_carrierSpinner.getItemAtPosition(i).equals(careerName)) {
+                _carrierSpinner.setSelection(i);
+                break;
+            }
+        }
+    }
+
     public void show(CharSequence title, long taskId) {
         _title = (String) title;
         _taskId = taskId;
