@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -62,7 +63,11 @@ public class HelpDialog extends DialogFragmentBase {
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_DIAL);
             intent.setData(Uri.parse("tel:18775734353"));
-            startActivity(intent);
+            if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                startActivity(intent);
+            } else {
+                Toast.makeText(getActivity(), "No phone app is available", Toast.LENGTH_LONG).show();
+            }
         }
     };
 
