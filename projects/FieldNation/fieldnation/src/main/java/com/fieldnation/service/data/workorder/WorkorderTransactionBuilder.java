@@ -579,15 +579,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .notify(res.getString(R.string.app_name),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
-                            R.drawable.ic_notif_logo,
+                            R.drawable.ic_notification,
                             res.getString(R.string.notification_title_success),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
-                            R.drawable.ic_notif_logo,
+                            R.drawable.ic_notification,
                             res.getString(R.string.notification_title_failed),
                             res.getString(R.string.notification_content_text_failed_uploading, filename),
                             res.getString(R.string.notification_content_text_failed_uploading, filename),
-                            R.drawable.ic_notif_logo)
+                            R.drawable.ic_notification)
                     .doNotRead();
 
             if (uploadSlotId != 0) {
@@ -618,15 +618,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .notify(res.getString(R.string.app_name),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
-                            R.drawable.ic_notif_logo,
+                            R.drawable.ic_notification,
                             res.getString(R.string.notification_title_success),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
-                            R.drawable.ic_notif_logo,
+                            R.drawable.ic_notification,
                             res.getString(R.string.notification_title_failed),
                             res.getString(R.string.notification_content_text_failed_uploading, filename),
                             res.getString(R.string.notification_content_text_failed_uploading, filename),
-                            R.drawable.ic_notif_logo)
+                            R.drawable.ic_notification)
                     .doNotRead();
 
             if (uploadSlotId != 0) {
