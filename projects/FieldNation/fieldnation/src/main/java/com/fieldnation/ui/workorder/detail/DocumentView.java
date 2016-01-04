@@ -211,11 +211,8 @@ public class DocumentView extends RelativeLayout {
             if (_document == null || _document.getDocumentId() == null) {
                 return;
             }
-
-            if (_workorder.canChangeDeliverables()) {
-                DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
-                        _document.getFilePath(), _document.getFileName(), false);
-            }
+            DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
+                    _document.getFilePath(), _document.getFileName(), false);
         }
     };
 }
