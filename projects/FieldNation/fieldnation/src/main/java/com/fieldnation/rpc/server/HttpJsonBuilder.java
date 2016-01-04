@@ -7,6 +7,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.misc;
 
+import java.security.SecureRandom;
 import java.text.ParseException;
 
 /**
@@ -27,22 +28,32 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart.fields";
     public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY_SOID";
     public static final String PARAM_WEB_BODY = "PARAM_BODY";
-    public static final int NOTIFICATION_ID_UPLOADING = 8888;
-    public static final int NOTIFICATION_ID_DOWNLOADING = 9999;
     public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
+
     public static final String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
+
+    public static final String PARAM_NOTIFICATION_TICKER_START = "PARAM_NOTIFICATION_TICKER_START";
     public static final String PARAM_NOTIFICATION_TITLE_START = "PARAM_NOTIFICATION_TITLE_START";
     public static final String PARAM_NOTIFICATION_CONTENT_TEXT_START = "PARAM_NOTIFICATION_CONTENT_TEXT_START";
+    public static final String PARAM_NOTIFICATION_ICON_START = "PARAM_NOTIFICATION_ICON_START";
+
+    public static final String PARAM_NOTIFICATION_TICKER_SUCCESS = "PARAM_NOTIFICATION_TICKER_SUCCESS";
     public static final String PARAM_NOTIFICATION_TITLE_SUCCESS = "PARAM_NOTIFICATION_TITLE_SUCCESS";
     public static final String PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS = "PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS";
+    public static final String PARAM_NOTIFICATION_ICON_SUCCESS = "PARAM_NOTIFICATION_ICON_SUCCESS";
+
+    public static final String PARAM_NOTIFICATION_TICKER_FAILED = "PARAM_NOTIFICATION_TICKER_FAILED";
     public static final String PARAM_NOTIFICATION_TITLE_FAILED = "PARAM_NOTIFICATION_TITLE_FAILED";
     public static final String PARAM_NOTIFICATION_CONTENT_TEXT_FAILED = "PARAM_NOTIFICATION_CONTENT_TEXT_FAILED";
+    public static final String PARAM_NOTIFICATION_ICON_FAILED = "PARAM_NOTIFICATION_ICON_FAILED";
 
 
     private JsonObject request;
     private JsonObject headers;
     private JsonObject multiPartFields;
     private JsonObject multiPartFiles;
+
+    private static final SecureRandom _random = new SecureRandom();
 
     public HttpJsonBuilder() {
     }
@@ -108,19 +119,27 @@ public class HttpJsonBuilder {
         return this;
     }
 
-    public HttpJsonBuilder notify(int notifyId,
-                                  String titleStart, String notificationContentTextStarting,
-                                  String titleSuccess, String notificationContentTextSuccess,
-                                  String titleFailed, String notificationContentTextFailed) throws ParseException {
+    public HttpJsonBuilder notify(String titleStart, String tickerStart, String contentStart, int iconStart,
+                                  String titleSuccess, String tickerSuccess, String contentSuccess, int iconSuccess,
+                                  String titleFailed, String tickerFailed, String contentFailed, int iconFailed) throws ParseException {
         getRequest();
         if (!misc.isEmptyOrNull(titleStart)) {
-            request.put(PARAM_NOTIFICATION_ID, notifyId);
+            request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
+
             request.put(PARAM_NOTIFICATION_TITLE_START, titleStart);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_START, notificationContentTextStarting);
+            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_START, contentStart);
+            request.put(PARAM_NOTIFICATION_ICON_START, iconStart);
+            request.put(PARAM_NOTIFICATION_TICKER_START, tickerStart);
+
             request.put(PARAM_NOTIFICATION_TITLE_SUCCESS, titleSuccess);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS, notificationContentTextSuccess);
+            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS, contentSuccess);
+            request.put(PARAM_NOTIFICATION_ICON_SUCCESS, iconSuccess);
+            request.put(PARAM_NOTIFICATION_TICKER_SUCCESS, tickerSuccess);
+
             request.put(PARAM_NOTIFICATION_TITLE_FAILED, titleFailed);
-            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_FAILED, notificationContentTextFailed);
+            request.put(PARAM_NOTIFICATION_CONTENT_TEXT_FAILED, contentFailed);
+            request.put(PARAM_NOTIFICATION_ICON_FAILED, iconFailed);
+            request.put(PARAM_NOTIFICATION_TICKER_FAILED, tickerFailed);
         }
         return this;
     }

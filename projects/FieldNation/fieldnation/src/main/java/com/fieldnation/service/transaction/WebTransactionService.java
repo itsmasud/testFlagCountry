@@ -228,13 +228,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
 
-    private void generateNotification(int notifyId, String title, String body) {
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(App.get())
-                        .setSmallIcon(R.drawable.ic_animation_test)
-                        .setTicker(body)
-                        .setContentTitle(title)
-                        .setContentText(body);
+    private void generateNotification(int notifyId, int icon, String title, String ticker, String body) {
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.get())
+                .setLargeIcon(null)
+                .setSmallIcon(icon)
+                .setContentTitle(title)
+                .setTicker(ticker)
+                .setContentText(body);
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -289,13 +289,22 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             String handlerName = null;
             HttpResult result = null;
 
-            int notificationId = 0;
-            String notificationTitleStart = "";
-            String notificationStartContentText = "";
-            String notificationTitleSuccess = "";
-            String notificationContentTextSuccess = "";
-            String notificationTitleFailed = "";
-            String notificationContentTextFailed = "";
+            int notifId = 0;
+
+            int notifIconStart = R.drawable.ic_notif_logo;
+            String notifTitleStart = "";
+            String notifContentStart = "";
+            String notifTickerStart = "";
+
+            int notifIconSuccess = R.drawable.ic_notif_logo;
+            String notifTitleSuccess = "";
+            String notifContentSuccess = "";
+            String notifTickerSuccess = "";
+
+            int notifIconFailed = R.drawable.ic_notif_logo;
+            String notifTitleFailed = "";
+            String notifContentFailed = "";
+            String notifTickerFailed = "";
             boolean hasNotification = false;
 
             try {
@@ -317,30 +326,24 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
 
                 if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
-                    notificationId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
+                    notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
                     hasNotification = true;
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START)) {
-                    notificationTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START);
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START)) {
-                    notificationStartContentText = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START);
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS)) {
-                    notificationTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS);
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS)) {
-                    notificationContentTextSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS);
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED)) {
-                    notificationTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED);
-                }
-                if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED)) {
-                    notificationContentTextFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED);
-                }
+                    notifTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_START);
+                    notifContentStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_START);
+                    notifIconStart = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_START);
+                    notifTickerStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_START);
 
-                if (hasNotification) {
-                    generateNotification(notificationId, notificationTitleStart, notificationStartContentText);
+                    notifTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_SUCCESS);
+                    notifContentSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_SUCCESS);
+                    notifIconSuccess = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_SUCCESS);
+                    notifTickerSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_SUCCESS);
+
+                    notifTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TITLE_FAILED);
+                    notifContentFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_CONTENT_TEXT_FAILED);
+                    notifIconFailed = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ICON_FAILED);
+                    notifTickerFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_TICKER_FAILED);
+
+                    generateNotification(notifId, notifIconStart, notifTitleStart, notifTickerStart, notifContentStart);
                 }
 
                 Log.v(TAG, request.display());
@@ -427,13 +430,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     switch (wresult) {
                         case ERROR:
                             if (hasNotification)
-                                generateNotification(notificationId, notificationTitleFailed, notificationContentTextFailed);
+                                generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case FINISH:
                             if (hasNotification)
-                                generateNotification(notificationId, notificationTitleSuccess, notificationContentTextSuccess);
+                                generateNotification(notifId, notifIconSuccess, notifTitleSuccess, notifTickerSuccess, notifContentSuccess);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case REQUEUE:

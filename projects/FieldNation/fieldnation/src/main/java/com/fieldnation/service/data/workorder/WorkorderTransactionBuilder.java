@@ -576,13 +576,18 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
-                    .notify(HttpJsonBuilder.NOTIFICATION_ID_UPLOADING,
-                            res.getString(R.string.app_name),
+                    .notify(res.getString(R.string.app_name),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
+                            res.getString(R.string.notification_content_text_start_uploading, filename),
+                            R.drawable.ic_notif_logo,
                             res.getString(R.string.notification_title_success),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
+                            res.getString(R.string.notification_content_text_success_uploading, filename),
+                            R.drawable.ic_notif_logo,
                             res.getString(R.string.notification_title_failed),
-                            res.getString(R.string.notification_content_text_failed_uploading, filename))
+                            res.getString(R.string.notification_content_text_failed_uploading, filename),
+                            res.getString(R.string.notification_content_text_failed_uploading, filename),
+                            R.drawable.ic_notif_logo)
                     .doNotRead();
 
             if (uploadSlotId != 0) {
@@ -610,13 +615,18 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .method("POST")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, uri)
-                    .notify(HttpJsonBuilder.NOTIFICATION_ID_UPLOADING,
-                            res.getString(R.string.app_name),
+                    .notify(res.getString(R.string.app_name),
                             res.getString(R.string.notification_content_text_start_uploading, filename),
+                            res.getString(R.string.notification_content_text_start_uploading, filename),
+                            R.drawable.ic_notif_logo,
                             res.getString(R.string.notification_title_success),
                             res.getString(R.string.notification_content_text_success_uploading, filename),
+                            res.getString(R.string.notification_content_text_success_uploading, filename),
+                            R.drawable.ic_notif_logo,
                             res.getString(R.string.notification_title_failed),
-                            res.getString(R.string.notification_content_text_failed_uploading, filename))
+                            res.getString(R.string.notification_content_text_failed_uploading, filename),
+                            res.getString(R.string.notification_content_text_failed_uploading, filename),
+                            R.drawable.ic_notif_logo)
                     .doNotRead();
 
             if (uploadSlotId != 0) {

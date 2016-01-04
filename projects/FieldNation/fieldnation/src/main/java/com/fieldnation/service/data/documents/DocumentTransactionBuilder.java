@@ -27,13 +27,18 @@ public class DocumentTransactionBuilder {
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
                             .path(link)
-                            .notify(HttpJsonBuilder.NOTIFICATION_ID_UPLOADING,
-                                    res.getString(R.string.app_name),
+                            .notify(res.getString(R.string.app_name),
                                     res.getString(R.string.notification_content_text_start_downloading, filename),
+                                    res.getString(R.string.notification_content_text_start_downloading, filename),
+                                    R.drawable.ic_notif_logo,
                                     res.getString(R.string.notification_title_success),
                                     res.getString(R.string.notification_content_text_success_downloading, filename),
+                                    res.getString(R.string.notification_content_text_success_downloading, filename),
+                                    R.drawable.ic_notif_logo,
                                     res.getString(R.string.notification_title_failed),
-                                    res.getString(R.string.notification_content_text_failed_downloading, filename)))
+                                    res.getString(R.string.notification_content_text_failed_downloading, filename),
+                                    res.getString(R.string.notification_content_text_failed_downloading, filename),
+                                    R.drawable.ic_notif_logo))
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
