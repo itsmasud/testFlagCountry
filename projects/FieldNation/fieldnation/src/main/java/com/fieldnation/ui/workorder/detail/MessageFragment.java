@@ -97,7 +97,7 @@ public class MessageFragment extends WorkorderFragment {
     public void update() {
         Log.v(TAG, "update");
 
-        if (getActivity() != null && _workorder != null)
+        if (_workorder != null)
             WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
     }
 
@@ -113,12 +113,9 @@ public class MessageFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (getActivity() == null)
-            return;
-
         Log.v(TAG, "getMessages");
 
-        WorkorderClient.listMessages(getActivity(), _workorder.getWorkorderId(), false, false);
+        WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
     }
 
     private void populateUi() {
@@ -130,8 +127,8 @@ public class MessageFragment extends WorkorderFragment {
 
             if (!_isMarkedRead) {
                 _isMarkedRead = true;
-                WorkorderClient.actionMarkMessagesRead(getActivity(), _workorder.getWorkorderId());
-                ProfileClient.get(getActivity());
+                WorkorderClient.actionMarkMessagesRead(App.get(), _workorder.getWorkorderId());
+                ProfileClient.get(App.get());
             }
 
         } else {
@@ -203,7 +200,7 @@ public class MessageFragment extends WorkorderFragment {
                         User.fromJson(App.get().getProfile().toJson()), _inputView.getInputText()));
                 rebuildList();
 
-                WorkorderClient.actionAddMessage(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.actionAddMessage(App.get(), _workorder.getWorkorderId(),
                         _inputView.getInputText());
 
                 _inputView.clearText();
