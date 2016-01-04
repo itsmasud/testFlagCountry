@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.os.Handler;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.workorder.WorkorderFragment;
@@ -131,6 +131,7 @@ public class MessageFragment extends WorkorderFragment {
             if (!_isMarkedRead) {
                 _isMarkedRead = true;
                 WorkorderClient.actionMarkMessagesRead(getActivity(), _workorder.getWorkorderId());
+                ProfileClient.get(getActivity());
             }
 
         } else {
