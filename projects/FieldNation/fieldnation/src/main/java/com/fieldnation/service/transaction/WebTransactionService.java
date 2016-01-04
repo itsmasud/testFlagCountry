@@ -7,6 +7,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -230,7 +231,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     private void generateNotification(int notifyId, String title, String body) {
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(App.get())
-                        .setSmallIcon(R.drawable.fn_logo)
+                        .setSmallIcon(R.drawable.ic_animation_test)
+                        .setTicker(body)
                         .setContentTitle(title)
                         .setContentText(body);
 
