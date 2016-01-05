@@ -63,7 +63,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     private OverScrollListView _fileList;
     private RefreshView _refreshView;
-    private EmptyWoListView _emptyView;
+    private UnavailableCardView _emptyView;
 
     private ActionBarDrawerView _actionBarView;
     private Toolbar _toolbar;
@@ -136,7 +136,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _titleTaskTextView = (TextView) findViewById(R.id.titleTask_textview);
         _maxFilesNumberTextView = (TextView) findViewById(R.id.maxFilesNumber_textview);
 
-        _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
+        _emptyView = (UnavailableCardView) findViewById(R.id.empty_view);
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
@@ -553,11 +553,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
                 } else {
-                	try {
-	                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-    	                finish();
-        	        } catch (Exception ex) {
-            	        ex.printStackTrace();
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return;

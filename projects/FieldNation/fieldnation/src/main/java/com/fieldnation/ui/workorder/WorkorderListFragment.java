@@ -24,6 +24,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -235,12 +236,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
 
-        Profile profile = GlobalState.getContext().getProfile();
+        Profile profile = App.get().getProfile();
 
         if (profile.getMarketplaceStatusOn())
-
-        requestList(0);
-    }    }
+            requestList(0, true);
+    }
 
     @Override
     public void onPause() {
@@ -249,7 +249,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         getLocationService().stopLocationUpdates();
 
         if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-            Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
+            ToastClient.toast(App.get(), "Aborted", Toast.LENGTH_LONG);
             _locationLoadingDialog.dismiss();
         }
         super.onPause();
@@ -314,12 +314,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
+        page = 0;
+        list.clear();
         if (page == 0 && list != null) {
-            if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
-                _emptyView.setVisibility(View.VISIBLE);
-            } else {
-                _emptyView.setVisibility(View.GONE);
-            }
+            _emptyView.setData(_displayView);
+            _emptyView.setVisibility(View.VISIBLE);
         } else {
             _emptyView.setVisibility(View.GONE);
         }
