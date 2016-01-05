@@ -43,6 +43,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
@@ -77,6 +78,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     // Data
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
+    private final List<Runnable> _onAdded = new LinkedList<>();
 
     // state data
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
@@ -286,6 +288,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
+
+        while (_onAdded.size() > 0) {
+            _onAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -348,8 +354,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
 
+        if (!isAdded()) {
+            _onAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckin();
+                }
+            });
+            return;
+        }
         getLocationService().setListener(_gps_checkInListener);
-
         if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkInListener);
@@ -369,14 +383,22 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
+        if (!isAdded()) {
+            _onAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckOut();
+                }
+            });
+            return;
+        }
         getLocationService().setListener(_gps_checkOutListener);
-
         if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkOutListener);
         } else if (getLocationService().hasLocation()) {
             doCheckOut();
-        } else if (getLocationService().isRunning()) {
+        } else if (getLocationService().isRunning() && _locationDialog.isAdded()) {
             _locationLoadingDialog.show();
         } else if (getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
