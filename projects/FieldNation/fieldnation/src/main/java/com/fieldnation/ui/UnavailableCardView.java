@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
@@ -17,6 +18,9 @@ public class UnavailableCardView extends FrameLayout {
     private static final String TAG = "UnavailableCardView";
 
     // Ui
+    private LinearLayout _layoutMarketplaceUnavailable;
+    private LinearLayout _layoutMarketplaceAccessDenied;
+    private LinearLayout _layoutMarketplaceSuspended;
     private TextView _titleTextView;
     private TextView _captionTexView;
     private Button _actionButton;
@@ -41,6 +45,9 @@ public class UnavailableCardView extends FrameLayout {
 
         if (isInEditMode())
             return;
+         _layoutMarketplaceUnavailable = (LinearLayout) findViewById(R.id.marketplaceUnavailable_layout);
+         _layoutMarketplaceAccessDenied = (LinearLayout) findViewById(R.id.marketplaceAccessDenied_layout);
+         _layoutMarketplaceSuspended = (LinearLayout) findViewById(R.id.marketplaceSuspended_layout);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _captionTexView = (TextView) findViewById(R.id.caption_textview);
