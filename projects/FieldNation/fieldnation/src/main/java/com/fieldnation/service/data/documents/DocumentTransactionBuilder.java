@@ -30,15 +30,15 @@ public class DocumentTransactionBuilder {
                             .notify(res.getString(R.string.app_name),
                                     res.getString(R.string.notification_start_body_downloading, filename),
                                     res.getString(R.string.notification_start_body_downloading, filename),
-                                    R.drawable.ic_notification,
+                                    R.drawable.ic_animation_test,
                                     res.getString(R.string.notification_success_title),
                                     res.getString(R.string.notification_success_body_downloading, filename),
                                     res.getString(R.string.notification_success_body_downloading, filename),
-                                    R.drawable.ic_notification,
+                                    R.drawable.ic_animation_test,
                                     res.getString(R.string.notification_failed_title),
                                     res.getString(R.string.notification_failed_body_downloading, filename),
                                     res.getString(R.string.notification_failed_body_downloading, filename),
-                                    R.drawable.ic_notification))
+                                    R.drawable.ic_animation_test))
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
