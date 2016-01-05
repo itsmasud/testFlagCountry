@@ -19,10 +19,6 @@ public class Photo {
     }
 
     public String getLarge() {
-        if(!MemUtils.shouldSuspendLoadingMore(App.get())) {
-            return null;
-        }
-
         if ("/images/missing.png".equals(_large))
             return null;
 
