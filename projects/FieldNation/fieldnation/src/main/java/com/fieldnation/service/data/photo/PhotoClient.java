@@ -39,11 +39,9 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
             return;
         // misc.printStackTrace("PhotoClient.get()");
 
-        if(!MemUtils.shouldSuspendLoadingMore(context)) {
-                for (int i = 0; i < _pictureCache.size(); i++) {
-                    _pictureCache.remove(i);
-                }
-                return;
+        if (!MemUtils.shouldSuspendLoadingMore(context)) {
+            _pictureCache.clear();
+            return;
         }
 
         Intent intent = new Intent(context, PhotoService.class);
