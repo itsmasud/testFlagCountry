@@ -18,7 +18,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by Michael Carver on 2/26/2015.
@@ -561,6 +560,8 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                     while (cursor.moveToNext()) {
                         list.add(new StoredObject(cursor));
                     }
+                } catch (IllegalStateException e) {
+                    list.clear();
                 } finally {
                     cursor.close();
                 }
