@@ -7,10 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.ui.market.MarketActivity;
@@ -54,52 +54,59 @@ public class UnavailableCardView extends FrameLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _captionTexView = (TextView) findViewById(R.id.caption_textview);
         _actionButton = (Button) findViewById(R.id.action_button);
-
-        _actionButton.setOnClickListener(_action_OnClick);
     }
 
     public void setData(WorkorderDataSelector displayView) {
         _displayView = displayView;
         switch (displayView) {
             case ASSIGNED:
-                _titleTextView.setText("No Assigned Work");
-                _captionTexView.setText("Go check out work in the marketplace");
-                _actionButton.setText("View Marketplace");
+                _titleTextView.setText("No assigned work");
+                _captionTexView.setText("Check our marketplace for new work");
+                _actionButton.setText("VIEW MARKETPLACE");
                 _actionButton.setVisibility(VISIBLE);
+                _actionButton.setOnClickListener(_viewMarketplace_onClick);
                 break;
             case AVAILABLE:
                 Profile profile = App.get().getProfile();
 
                 if (profile.getMarketplaceStatusOn()) {
-                    _titleTextView.setText("No work available");
-                    _captionTexView.setText("Try updating your profile on the web site");
-                    //_actionButton.setText("View Marketplace");
-                    _actionButton.setVisibility(GONE);
+                    _titleTextView.setText("No available work");
+                    _captionTexView.setText("Try adding to your profile");
+                    _actionButton.setText("EDIT PROFILE");
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setOnClickListener(_editProfile_onClick);
                 } else {
                     String reason = profile.getMarketplaceStatusReason();
                     if (misc.isEmptyOrNull(reason)) {
                         _titleTextView.setText("No work available");
-                        _captionTexView.setText("Try updating your profile on the web site");
-                        _actionButton.setVisibility(GONE);
+                        _captionTexView.setText("Try adding to your profile");
+                        _actionButton.setText("EDIT PROFILE");
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_editProfile_onClick);
                     } else if ("KEEP_PRIVATE".equals(reason)) {
                         _titleTextView.setText("Marketplace access");
-                        _captionTexView.setText("You do not have Marketplace access");
-                        _actionButton.setVisibility(GONE);
+                        _captionTexView.setText("Looks like you need to finish setting up your account");
+                        _actionButton.setText("SETUP ACCOUNT");
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_setupAccount_onClick);
                     } else if ("PENDING_VERIFICATION".equals(reason)) {
                         _titleTextView.setText("Marketplace access");
                         _captionTexView.setText("Your account is pending verification. Try again later");
-                        //_actionButton.setText("View Marketplace");
-                        _actionButton.setVisibility(GONE);
+                        _actionButton.setText("CONTACT SUPPORT");
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_contactSupport_onClick);
                     } else if ("SUSPENDED".equals(reason)) {
                         _titleTextView.setText("Marketplace suspension");
                         _captionTexView.setText("You are currently suspended");
-                        _actionButton.setVisibility(GONE);
+                        _actionButton.setText("CONTACT SUPPORT");
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_contactSupport_onClick);
                     }
                 }
                 break;
             case CANCELED:
                 _titleTextView.setText("No canceled work");
-                _captionTexView.setText("This is a good thing.");
+                _captionTexView.setText("Nothing to worry about");
                 _actionButton.setVisibility(GONE);
                 break;
             case COMPLETED:
@@ -109,18 +116,40 @@ public class UnavailableCardView extends FrameLayout {
                 break;
             case REQUESTED:
                 _titleTextView.setText("Requested work");
-                _captionTexView.setText("You haven't requested a work order yet");
+                _captionTexView.setText("You no requested work orders currently");
                 _actionButton.setVisibility(GONE);
                 break;
         }
     }
 
-    private final View.OnClickListener _action_OnClick = new View.OnClickListener() {
+    private final View.OnClickListener _viewMarketplace_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // go to marketplace
+            Intent intent = new Intent(getContext(), MarketActivity.class);
+            getContext().startActivity(intent);
+        }
+    };
+
+    private final View.OnClickListener _contactSupport_onClick = new View.OnClickListener() {
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), MarketActivity.class);
-            getContext().startActivity(intent);
+            GlobalTopicClient.showHelpDialog(getContext());
+        }
+    };
+
+    private final View.OnClickListener _setupAccount_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO generate a link to the web.
+        }
+    };
+
+    private final View.OnClickListener _editProfile_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            // TODO generate a link to the web
         }
     };
 }
