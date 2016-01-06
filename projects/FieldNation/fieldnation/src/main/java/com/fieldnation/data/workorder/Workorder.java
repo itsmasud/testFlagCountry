@@ -53,6 +53,8 @@ public class Workorder implements Parcelable {
     private ExpectedPayment _expectedPayment;
     @Json(name = "fullWorkDescription")
     private String _fullWorkDescription;
+    @Json(name = "hasClosingNotes ")
+    private Boolean _hasClosingNotes;
     @Json(name = "isCounter")
     private Boolean _isCounter;
     @Json(name = "isGpsRequired")
@@ -182,6 +184,10 @@ public class Workorder implements Parcelable {
 
     public String getFullWorkDescription() {
         return _fullWorkDescription;
+    }
+
+    public Boolean hasClosingNotes() {
+        return _hasClosingNotes;
     }
 
     public Boolean getIsCounter() {
@@ -400,6 +406,9 @@ public class Workorder implements Parcelable {
 
     public boolean canComplete() {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
+            if (hasClosingNotes() != null && !hasClosingNotes()) {
+                return false;
+            }
             if (misc.isEmptyOrNull(getClosingNotes())) {
                 return false;
             }
