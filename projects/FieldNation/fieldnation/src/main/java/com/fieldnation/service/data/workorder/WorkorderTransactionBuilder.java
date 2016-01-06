@@ -587,7 +587,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             res.getString(R.string.notification_failed_title),
                             res.getString(R.string.notification_failed_body_uploading, filename),
                             res.getString(R.string.notification_failed_body_uploading, filename),
-                            R.drawable.ic_anim_upload_failed)
+                            R.drawable.ic_anim_upload_failed,
+                            res.getString(R.string.notification_failed_title),
+                            res.getString(R.string.notification_failed_body_uploading, filename),
+                            res.getString(R.string.notification_failed_body_uploading, filename),
+                            R.drawable.ic_anim_upload_retry)
                     .doNotRead();
 
             if (uploadSlotId != 0) {
@@ -626,7 +630,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             res.getString(R.string.notification_failed_title),
                             res.getString(R.string.notification_failed_body_uploading, filename),
                             res.getString(R.string.notification_failed_body_uploading, filename),
-                            R.drawable.ic_anim_upload_failed)
+                            R.drawable.ic_anim_upload_failed,
+                            res.getString(R.string.notification_failed_title),
+                            res.getString(R.string.notification_failed_body_uploading, filename),
+                            res.getString(R.string.notification_failed_body_uploading, filename),
+                            R.drawable.ic_anim_upload_retry)
                     .doNotRead();
 
             if (uploadSlotId != 0) {

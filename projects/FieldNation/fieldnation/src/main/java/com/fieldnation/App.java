@@ -76,6 +76,7 @@ public class App extends Application {
     private Handler _handler = new Handler();
     private boolean _switchingUser = false;
     public String deviceToken = null;
+    private boolean _isConnected = false;
 
 
     @Override
@@ -284,6 +285,11 @@ public class App extends Application {
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
+
+    public boolean isConnected() {
+        return _isConnected;
+    }
+
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -299,6 +305,8 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
+            Log.v(TAG, "onNetworkConnected");
+            _isConnected = true;
             AuthTopicClient.requestCommand(App.this);
         }
 
@@ -314,6 +322,8 @@ public class App extends Application {
 
         @Override
         public void onNetworkDisconnected() {
+            Log.v(TAG, "onNetworkDisconnected");
+            _isConnected = false;
         }
     };
 

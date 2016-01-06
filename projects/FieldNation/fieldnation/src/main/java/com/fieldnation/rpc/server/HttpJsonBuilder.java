@@ -47,6 +47,11 @@ public class HttpJsonBuilder {
     public static final String PARAM_NOTIFICATION_FAILED_BODY = "notification.failed.body";
     public static final String PARAM_NOTIFICATION_FAILED_ICON = "notification.failed.icon";
 
+    public static final String PARAM_NOTIFICATION_RETRY_TICKER = "notification.retry.ticker";
+    public static final String PARAM_NOTIFICATION_RETRY_TITLE = "notification.retry.title";
+    public static final String PARAM_NOTIFICATION_RETRY_BODY = "notification.retry.body";
+    public static final String PARAM_NOTIFICATION_RETRY_ICON = "notification.retry.icon";
+
 
     private JsonObject request;
     private JsonObject headers;
@@ -121,7 +126,8 @@ public class HttpJsonBuilder {
 
     public HttpJsonBuilder notify(String titleStart, String tickerStart, String contentStart, int iconStart,
                                   String titleSuccess, String tickerSuccess, String contentSuccess, int iconSuccess,
-                                  String titleFailed, String tickerFailed, String contentFailed, int iconFailed) throws ParseException {
+                                  String titleFailed, String tickerFailed, String contentFailed, int iconFailed,
+                                  String titleRetry, String tickerRetry, String contentRetry, int iconRetry) throws ParseException {
         getRequest();
         if (!misc.isEmptyOrNull(titleStart)) {
             request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
@@ -140,6 +146,11 @@ public class HttpJsonBuilder {
             request.put(PARAM_NOTIFICATION_FAILED_BODY, contentFailed);
             request.put(PARAM_NOTIFICATION_FAILED_ICON, iconFailed);
             request.put(PARAM_NOTIFICATION_FAILED_TICKER, tickerFailed);
+
+            request.put(PARAM_NOTIFICATION_RETRY_TITLE, titleRetry);
+            request.put(PARAM_NOTIFICATION_RETRY_BODY, contentRetry);
+            request.put(PARAM_NOTIFICATION_RETRY_ICON, iconRetry);
+            request.put(PARAM_NOTIFICATION_RETRY_TICKER, tickerRetry);
         }
         return this;
     }

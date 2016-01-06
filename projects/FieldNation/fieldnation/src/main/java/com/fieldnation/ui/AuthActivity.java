@@ -223,6 +223,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
 
+                        GlobalTopicClient.networkConnected(AuthActivity.this);
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
