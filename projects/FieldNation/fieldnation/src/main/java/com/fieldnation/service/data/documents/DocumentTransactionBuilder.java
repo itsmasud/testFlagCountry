@@ -34,11 +34,11 @@ public class DocumentTransactionBuilder {
                                     res.getString(R.string.notification_success_title),
                                     res.getString(R.string.notification_success_body_downloading, filename),
                                     res.getString(R.string.notification_success_body_downloading, filename),
-                                    R.drawable.ic_anim_upload_done,
+                                    R.drawable.ic_anim_download_success,
                                     res.getString(R.string.notification_failed_title),
                                     res.getString(R.string.notification_failed_body_downloading, filename),
                                     res.getString(R.string.notification_failed_body_downloading, filename),
-                                    R.drawable.ic_anim_upload_done))
+                                    R.drawable.ic_anim_download_failed))
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
