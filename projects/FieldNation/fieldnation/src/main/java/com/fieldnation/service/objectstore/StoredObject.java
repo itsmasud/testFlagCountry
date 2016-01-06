@@ -561,7 +561,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         list.add(new StoredObject(cursor));
                     }
                 } catch (IllegalStateException e) {
-                    list.clear();
+                    // Do nothing, all delete of what we have so far
                 } finally {
                     cursor.close();
                 }
