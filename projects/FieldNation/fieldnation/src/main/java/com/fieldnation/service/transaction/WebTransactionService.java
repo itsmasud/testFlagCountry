@@ -296,7 +296,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             // if failed, then exit
             if (trans == null) {
-                // Log.v(TAG, "skip no transaction");
                 return false;
             }
 
@@ -315,6 +314,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             if (request == null) {
                 // should never happen!
                 WebTransaction.delete(context, trans.getId());
+                return false;
             }
 
             String handlerName = null;
@@ -350,7 +350,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     notifSuccess = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS));
                     notifFailed = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED));
                     notifRetry = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY));
-
                     generateNotification(notifId, notifStart);
                 }
 
@@ -430,7 +429,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     generateNotification(notifId, notifFailed);
                     return true;
                 }
-                Log.v(TAG, "no error");
+                Log.v(TAG, "Passed response error checks");
 
                 GlobalTopicClient.networkConnected(context);
 
@@ -475,7 +474,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Log.v(TAG, "7");
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                 }
-                
+
             } catch (IOException ex) {
                 Log.v(TAG, "8");
                 transRequeueNetworkDown(trans, notifId, notifRetry);
