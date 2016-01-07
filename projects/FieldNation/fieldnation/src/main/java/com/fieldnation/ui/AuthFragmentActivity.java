@@ -286,7 +286,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _globalTopicClient.subGotProfile();
             _globalTopicClient.subUpdateApp();
             _globalTopicClient.subAppShutdown();
-            _globalTopicClient.subNetworkState();
+            //_globalTopicClient.subNetworkState();
         }
 
         @Override
@@ -310,11 +310,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onNetworkDisconnected() {
-            Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
-            if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-                ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            }
+            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
+            //if (intent != null) {
+            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            //}
         }
 
         @Override

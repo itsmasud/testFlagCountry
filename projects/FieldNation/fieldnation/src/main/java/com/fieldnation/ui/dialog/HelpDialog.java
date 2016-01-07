@@ -12,8 +12,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.toast.ToastClient;
 
 /**
  * Created by Michael Carver on 6/12/2015.
@@ -66,7 +68,7 @@ public class HelpDialog extends DialogFragmentBase {
             if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
                 startActivity(intent);
             } else {
-                Toast.makeText(getActivity(), "No phone app is available", Toast.LENGTH_LONG).show();
+                ToastClient.toast(App.get(), "No phone app is available", Toast.LENGTH_LONG);
             }
         }
     };

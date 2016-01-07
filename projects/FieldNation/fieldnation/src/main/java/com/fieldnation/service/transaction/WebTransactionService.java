@@ -442,6 +442,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     generateNotification(notifId, notifFailed);
                     return true;
 
+                } else if (result.getResponseCode() == 413) {
+                    ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                    WebTransaction.delete(context, trans.getId());
+                    generateNotification(notifId, notifFailed);
+                    return true;
+
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
                     Log.v(TAG, "2");
@@ -489,6 +496,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
             } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
                 Log.v(TAG, "5");
+                Log.v(TAG, ex);
                 transRequeueNetworkDown(trans, notifId, notifRetry);
 
             } catch (SSLException ex) {

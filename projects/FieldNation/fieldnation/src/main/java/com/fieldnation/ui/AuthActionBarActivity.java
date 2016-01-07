@@ -360,7 +360,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _globalClient.subAppShutdown();
             _globalClient.subShowFeedbackDialog();
             _globalClient.subShowHelpDialog();
-            _globalClient.subNetworkState();
+            //_globalClient.subNetworkState();
         }
 
         @Override
@@ -403,11 +403,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void onNetworkDisconnected() {
-            Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
-            if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-                ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            }
+            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
+            //if (intent != null) {
+            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            //}
         }
     };
 
