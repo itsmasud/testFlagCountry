@@ -1,16 +1,16 @@
 package com.fieldnation.service.transaction;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.system.ErrnoException;
+import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
@@ -25,7 +25,6 @@ import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
@@ -35,9 +34,11 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
+import javax.net.ssl.SSLProtocolException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
@@ -482,7 +483,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 }
             } catch (MalformedURLException | FileNotFoundException ex) {
                 Log.v(TAG, "4");
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
                 generateNotification(notifId, notifFailed);
 

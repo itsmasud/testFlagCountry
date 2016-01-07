@@ -328,11 +328,11 @@ public class App extends Application {
         public void onNetworkDisconnected() {
             Log.v(TAG, "onNetworkDisconnected");
             _isConnected = false;
-            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
-            if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
-                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            }
+//            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
+//            if (intent != null) {
+//                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+//                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+//            }
         }
     };
 
