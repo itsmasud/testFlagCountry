@@ -34,6 +34,7 @@ import java.net.ConnectException;
 import java.net.MalformedURLException;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
+import java.text.ParseException;
 import java.util.List;
 
 import javax.net.ssl.SSLException;
@@ -228,19 +229,32 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
 
-    private void generateNotification(int notifyId, int icon, String title, String ticker, String body) {
+    private void generateNotification(int notifyId, NotificationDefinition notif) {
+        if (notif == null)
+            return;
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.get())
                 .setLargeIcon(null)
-                .setSmallIcon(icon)
-                .setContentTitle(title)
-                .setTicker(ticker)
-                .setContentText(body);
+                .setSmallIcon(notif.icon)
+                .setContentTitle(notif.title)
+                .setTicker(notif.ticker)
+                .setContentText(notif.body);
 
         NotificationManager mNotifyMgr = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
         Log.v(TAG, "notification created");
 
         mNotifyMgr.notify(notifyId, mBuilder.build());
+    }
+
+    private static JsonObject TEST_QUERY;
+
+    static {
+        try {
+            TEST_QUERY = new HttpJsonBuilder().path("http://www.fieldnation.com").build();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 
     class TransactionThread extends ThreadManager.ManagedThread {
@@ -261,13 +275,20 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             // try to get a transaction
 
             if (!App.get().isConnected()) {
+                Log.v(TAG, "Testing connection");
                 try {
-                    Thread.sleep(10000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+                    HttpJson.run(TEST_QUERY);
+                    GlobalTopicClient.networkConnected(context);
+                    Log.v(TAG, "Testing connection... success!");
+                } catch (Exception e) {
+                    Log.v(TAG, "Testing connection... failed!");
+                    GlobalTopicClient.networkDisconnected(context);
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException ex) {
+                    }
+                    return false;
                 }
-                GlobalTopicClient.networkConnected(context);
-                return false;
             }
 
             //Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
@@ -300,27 +321,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             HttpResult result = null;
 
             int notifId = 0;
-
-            int notifIconStart = R.drawable.ic_notif_logo;
-            String notifTitleStart = "";
-            String notifContentStart = "";
-            String notifTickerStart = "";
-
-            int notifIconSuccess = R.drawable.ic_notif_logo;
-            String notifTitleSuccess = "";
-            String notifContentSuccess = "";
-            String notifTickerSuccess = "";
-
-            int notifIconFailed = R.drawable.ic_notif_logo;
-            String notifTitleFailed = "";
-            String notifContentFailed = "";
-            String notifTickerFailed = "";
-
-            int notifIconRetry = R.drawable.ic_notif_logo;
-            String notifTitleRetry = "";
-            String notifContentRetry = "";
-            String notifTickerRetry = "";
-            boolean hasNotification = false;
+            NotificationDefinition notifStart = null;
+            NotificationDefinition notifSuccess = null;
+            NotificationDefinition notifFailed = null;
+            NotificationDefinition notifRetry = null;
 
             try {
                 // apply authentication if needed
@@ -342,28 +346,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
                     notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
-                    hasNotification = true;
-                    notifTitleStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_TITLE);
-                    notifContentStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_BODY);
-                    notifIconStart = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_START_ICON);
-                    notifTickerStart = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_START_TICKER);
+                    notifStart = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_START));
+                    notifSuccess = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS));
+                    notifFailed = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED));
+                    notifRetry = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY));
 
-                    notifTitleSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_TITLE);
-                    notifContentSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_BODY);
-                    notifIconSuccess = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_ICON);
-                    notifTickerSuccess = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS_TICKER);
-
-                    notifTitleFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_TITLE);
-                    notifContentFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_BODY);
-                    notifIconFailed = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_ICON);
-                    notifTickerFailed = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED_TICKER);
-
-                    notifTitleRetry = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY_TITLE);
-                    notifContentRetry = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY_BODY);
-                    notifIconRetry = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY_ICON);
-                    notifTickerRetry = request.getString(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY_TICKER);
-
-                    generateNotification(notifId, notifIconStart, notifTitleStart, notifTickerStart, notifContentStart);
+                    generateNotification(notifId, notifStart);
                 }
 
                 Log.v(TAG, request.display());
@@ -396,10 +384,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
                     AuthTopicClient.invalidateCommand(context);
-                    trans.requeue(context);
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
                     return true;
                 } else if (result.getResponseCode() == 400) {
                     // Bad request
@@ -412,44 +398,39 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else {
+                        Log.v(TAG, "1");
                         AuthTopicClient.invalidateCommand(context);
-                        trans.requeue(context);
-                        Thread.sleep(5000);
+                        transRequeueNetworkDown(trans, notifId, notifRetry);
                         AuthTopicClient.requestCommand(context);
                     }
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
-                    Log.v(TAG, "Reauth");
+                    Log.v(TAG, "Reauth 2");
                     _isAuthenticated = false;
                     AuthTopicClient.invalidateCommand(context);
-                    trans.requeue(context);
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
                     return true;
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                     WebTransaction.delete(context, trans.getId());
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                    generateNotification(notifId, notifFailed);
                     return true;
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
-                    trans.requeue(context);
-                    Thread.sleep(5000);
+                    Log.v(TAG, "2");
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
                     return true;
                 } else if (result.getResponseCode() / 100 != 2) {
+                    Log.v(TAG, "3");
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                     WebTransaction.delete(context, trans.getId());
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                    generateNotification(notifId, notifFailed);
                     return true;
                 }
-                Log.e(TAG, "no error");
+                Log.v(TAG, "no error");
 
                 GlobalTopicClient.networkConnected(context);
 
@@ -459,98 +440,67 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                     switch (wresult) {
                         case ERROR:
-                            if (hasNotification)
-                                generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                            generateNotification(notifId, notifFailed);
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case FINISH:
-                            if (hasNotification)
-                                generateNotification(notifId, notifIconSuccess, notifTitleSuccess, notifTickerSuccess, notifContentSuccess);
+                            generateNotification(notifId, notifSuccess);
                             WebTransaction.delete(context, trans.getId());
                             break;
                         case REQUEUE:
-                            if (hasNotification)
-                                generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
-                            trans.requeue(context);
+                            Log.v(TAG, "3");
+                            transRequeueNetworkDown(trans, notifId, notifRetry);
                             break;
                     }
                 }
-            } catch (MalformedURLException ex) {
-                if (handlerName != null && result != null)
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                WebTransaction.delete(context, trans.getId());
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-            } catch (SSLProtocolException ex) {
-                trans.requeue(context);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
-            } catch (SSLException ex) {
-                Log.v(TAG, ex);
-                if (ex.getMessage().contains("Broken pipe")) {
-                    trans.requeue(context);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
-                } else {
-                    transFailNetworkDown(trans);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-                }
-            } catch (FileNotFoundException ex) {
-                Log.v(TAG, ex);
+            } catch (MalformedURLException | FileNotFoundException ex) {
+                Log.v(TAG, "4");
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                 WebTransaction.delete(context, trans.getId());
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-            } catch (UnknownHostException ex) {
-                trans.requeue(context);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
-/*
-                transFailNetworkDown(trans);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-*/
-            } catch (ConnectException ex) {
-                transFailNetworkDown(trans);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-            } catch (SocketTimeoutException ex) {
-                transFailNetworkDown(trans);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
-            } catch (EOFException ex) {
-                Log.v(TAG, ex);
-                trans.requeue(context);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconRetry, notifTitleRetry, notifTickerRetry, notifContentRetry);
+                generateNotification(notifId, notifFailed);
+
+            } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
+                Log.v(TAG, "5");
+                transRequeueNetworkDown(trans, notifId, notifRetry);
+
+            } catch (SSLException ex) {
+                if (ex.getMessage().contains("Broken pipe")) {
+                    Log.v(TAG, "6");
+                    ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
+                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                    WebTransaction.delete(context, trans.getId());
+                    generateNotification(notifId, notifFailed);
+                } else {
+                    Log.v(TAG, "7");
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
+                }
+                
             } catch (IOException ex) {
-                Log.v(TAG, ex);
-                transFailNetworkDown(trans);
-                if (hasNotification)
-                    generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                Log.v(TAG, "8");
+                transRequeueNetworkDown(trans, notifId, notifRetry);
+
             } catch (Exception ex) {
+                Log.v(TAG, "9");
                 if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
-                    transFailNetworkDown(trans);
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
                 } else {
                     // no freaking clue
                     Debug.logException(ex);
                     Log.v(TAG, ex);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
                     WebTransaction.delete(context, trans.getId());
-                    if (hasNotification)
-                        generateNotification(notifId, notifIconFailed, notifTitleFailed, notifTickerFailed, notifContentFailed);
+                    generateNotification(notifId, notifFailed);
                 }
             }
+            Log.v(TAG, "10");
             return true;
         }
 
-        private void transFailNetworkDown(WebTransaction trans) {
-            Log.v(TAG, "transFailNetworkDown");
-            misc.printStackTrace("transFailNetworkDown");
+        private void transRequeueNetworkDown(WebTransaction trans, int notifId, NotificationDefinition notif) {
+            Log.v(TAG, "transRequeueNetworkDown");
+            misc.printStackTrace("transRequeueNetworkDown");
+            generateNotification(notifId, notif);
             GlobalTopicClient.networkDisconnected(context);
             try {
                 Thread.sleep(5000);

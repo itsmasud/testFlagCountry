@@ -273,6 +273,7 @@ public class App extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            _isConnected = true;
         }
 
         @Override
@@ -305,8 +306,8 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
-            Log.v(TAG, "onNetworkConnected");
             _isConnected = true;
+            Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
         }
 

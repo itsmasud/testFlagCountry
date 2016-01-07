@@ -5,6 +5,7 @@ import android.net.Uri;
 import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.utils.misc;
 
 import java.security.SecureRandom;
@@ -31,26 +32,10 @@ public class HttpJsonBuilder {
     public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
 
     public static final String PARAM_NOTIFICATION_ID = "notification.id";
-
-    public static final String PARAM_NOTIFICATION_START_TICKER = "notification.start.ticker";
-    public static final String PARAM_NOTIFICATION_START_TITLE = "notification.start.title";
-    public static final String PARAM_NOTIFICATION_START_BODY = "notification.start.body";
-    public static final String PARAM_NOTIFICATION_START_ICON = "notification.start.icon";
-
-    public static final String PARAM_NOTIFICATION_SUCCESS_TICKER = "notification.success.ticker";
-    public static final String PARAM_NOTIFICATION_SUCCESS_TITLE = "notification.success.title";
-    public static final String PARAM_NOTIFICATION_SUCCESS_BODY = "notification.success.body";
-    public static final String PARAM_NOTIFICATION_SUCCESS_ICON = "notification.success.icon";
-
-    public static final String PARAM_NOTIFICATION_FAILED_TICKER = "notification.failed.ticker";
-    public static final String PARAM_NOTIFICATION_FAILED_TITLE = "notification.failed.title";
-    public static final String PARAM_NOTIFICATION_FAILED_BODY = "notification.failed.body";
-    public static final String PARAM_NOTIFICATION_FAILED_ICON = "notification.failed.icon";
-
-    public static final String PARAM_NOTIFICATION_RETRY_TICKER = "notification.retry.ticker";
-    public static final String PARAM_NOTIFICATION_RETRY_TITLE = "notification.retry.title";
-    public static final String PARAM_NOTIFICATION_RETRY_BODY = "notification.retry.body";
-    public static final String PARAM_NOTIFICATION_RETRY_ICON = "notification.retry.icon";
+    public static final String PARAM_NOTIFICATION_START = "notification.start";
+    public static final String PARAM_NOTIFICATION_SUCCESS = "notification.success";
+    public static final String PARAM_NOTIFICATION_FAILED = "notification.failed";
+    public static final String PARAM_NOTIFICATION_RETRY = "notification.retry";
 
 
     private JsonObject request;
@@ -124,37 +109,18 @@ public class HttpJsonBuilder {
         return this;
     }
 
-    public HttpJsonBuilder notify(String titleStart, String tickerStart, String contentStart, int iconStart,
-                                  String titleSuccess, String tickerSuccess, String contentSuccess, int iconSuccess,
-                                  String titleFailed, String tickerFailed, String contentFailed, int iconFailed,
-                                  String titleRetry, String tickerRetry, String contentRetry, int iconRetry) throws ParseException {
+    public HttpJsonBuilder notify(NotificationDefinition start, NotificationDefinition success,
+                                  NotificationDefinition failed, NotificationDefinition retry) throws ParseException {
         getRequest();
-        if (!misc.isEmptyOrNull(titleStart)) {
-            request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
+        request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
 
-            request.put(PARAM_NOTIFICATION_START_TITLE, titleStart);
-            request.put(PARAM_NOTIFICATION_START_BODY, contentStart);
-            request.put(PARAM_NOTIFICATION_START_ICON, iconStart);
-            request.put(PARAM_NOTIFICATION_START_TICKER, tickerStart);
+        request.put(PARAM_NOTIFICATION_START, start.toJson());
+        request.put(PARAM_NOTIFICATION_SUCCESS, success.toJson());
+        request.put(PARAM_NOTIFICATION_FAILED, failed.toJson());
+        request.put(PARAM_NOTIFICATION_RETRY, retry.toJson());
 
-            request.put(PARAM_NOTIFICATION_SUCCESS_TITLE, titleSuccess);
-            request.put(PARAM_NOTIFICATION_SUCCESS_BODY, contentSuccess);
-            request.put(PARAM_NOTIFICATION_SUCCESS_ICON, iconSuccess);
-            request.put(PARAM_NOTIFICATION_SUCCESS_TICKER, tickerSuccess);
-
-            request.put(PARAM_NOTIFICATION_FAILED_TITLE, titleFailed);
-            request.put(PARAM_NOTIFICATION_FAILED_BODY, contentFailed);
-            request.put(PARAM_NOTIFICATION_FAILED_ICON, iconFailed);
-            request.put(PARAM_NOTIFICATION_FAILED_TICKER, tickerFailed);
-
-            request.put(PARAM_NOTIFICATION_RETRY_TITLE, titleRetry);
-            request.put(PARAM_NOTIFICATION_RETRY_BODY, contentRetry);
-            request.put(PARAM_NOTIFICATION_RETRY_ICON, iconRetry);
-            request.put(PARAM_NOTIFICATION_RETRY_TICKER, tickerRetry);
-        }
         return this;
     }
-
 
     // Headers
     private void getHeaders() throws ParseException {

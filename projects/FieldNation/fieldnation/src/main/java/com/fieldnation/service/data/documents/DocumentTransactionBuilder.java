@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 
@@ -27,22 +28,30 @@ public class DocumentTransactionBuilder {
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
                             .path(link)
-                            .notify(res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_start_body_downloading, filename),
-                                    res.getString(R.string.notification_start_body_downloading, filename),
-                                    R.drawable.ic_anim_download_start,
-                                    res.getString(R.string.notification_success_title),
-                                    res.getString(R.string.notification_success_body_downloading, filename),
-                                    res.getString(R.string.notification_success_body_downloading, filename),
-                                    R.drawable.ic_anim_download_success,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_downloading, filename),
-                                    res.getString(R.string.notification_failed_body_downloading, filename),
-                                    R.drawable.ic_anim_download_failed,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_downloading, filename),
-                                    res.getString(R.string.notification_failed_body_downloading, filename),
-                                    R.drawable.ic_anim_download_retry))
+                            .notify(new NotificationDefinition(
+                                            R.drawable.ic_anim_download_start,
+                                            res.getString(R.string.app_name),
+                                            res.getString(R.string.notification_start_body_downloading, filename),
+                                            res.getString(R.string.notification_start_body_downloading, filename)
+                                    ),
+                                    new NotificationDefinition(
+                                            R.drawable.ic_anim_download_success,
+                                            res.getString(R.string.notification_success_title),
+                                            res.getString(R.string.notification_success_body_downloading, filename),
+                                            res.getString(R.string.notification_success_body_downloading, filename)
+                                    ),
+                                    new NotificationDefinition(
+                                            R.drawable.ic_anim_download_failed,
+                                            res.getString(R.string.notification_failed_title),
+                                            res.getString(R.string.notification_failed_body_downloading, filename),
+                                            res.getString(R.string.notification_failed_body_downloading, filename)
+                                    ),
+                                    new NotificationDefinition(
+                                            R.drawable.ic_anim_download_retry,
+                                            res.getString(R.string.notification_retry_title),
+                                            res.getString(R.string.notification_retry_body_downloading, filename),
+                                            res.getString(R.string.notification_retry_body_downloading, filename)
+                                    )))
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
