@@ -386,6 +386,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
                     return true;
+
                 } else if (result.getResponseCode() == 400) {
                     // Bad request
                     // need to report this
@@ -402,6 +403,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         transRequeueNetworkDown(trans, notifId, notifRetry);
                         AuthTopicClient.requestCommand(context);
                     }
+
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
                     Log.v(TAG, "Reauth 2");
@@ -410,18 +412,21 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
                     return true;
+
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                     WebTransaction.delete(context, trans.getId());
                     generateNotification(notifId, notifFailed);
                     return true;
+
                     // usually means code is being updated on the server
                 } else if (result.getResponseCode() == 502) {
                     Log.v(TAG, "2");
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(context);
                     return true;
+
                 } else if (result.getResponseCode() / 100 != 2) {
                     Log.v(TAG, "3");
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
@@ -429,6 +434,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     generateNotification(notifId, notifFailed);
                     return true;
                 }
+
                 Log.v(TAG, "Passed response error checks");
 
                 GlobalTopicClient.networkConnected(context);
