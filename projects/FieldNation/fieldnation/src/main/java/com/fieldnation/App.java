@@ -79,6 +79,7 @@ public class App extends Application {
     private Handler _handler = new Handler();
     private boolean _switchingUser = false;
     public String deviceToken = null;
+    private boolean _isConnected = false;
 
 
     @Override
@@ -275,6 +276,7 @@ public class App extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            _isConnected = true;
         }
 
         @Override
@@ -287,6 +289,11 @@ public class App extends Application {
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
+
+    public boolean isConnected() {
+        return _isConnected;
+    }
+
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -302,6 +309,8 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
+            _isConnected = true;
+            Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
         }
 
@@ -317,6 +326,8 @@ public class App extends Application {
 
         @Override
         public void onNetworkDisconnected() {
+            Log.v(TAG, "onNetworkDisconnected");
+            _isConnected = false;
             Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
             if (intent != null) {
                 PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
