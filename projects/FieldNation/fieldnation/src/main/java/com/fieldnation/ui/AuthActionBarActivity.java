@@ -39,6 +39,7 @@ import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutionException;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -63,6 +64,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
     private HelpDialog _helpDialog;
+    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -447,6 +449,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 });
             }
             snackbar.show();
+            _snackbar = snackbar;
+
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -454,6 +458,18 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         public void showToast(String title, int duration) {
             Log.v(TAG, "showToast");
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
+        }
+
+        @Override
+        public void dismissSnackBar() {
+            if (_snackbar == null)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     };
 }

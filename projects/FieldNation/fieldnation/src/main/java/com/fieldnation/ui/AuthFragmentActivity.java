@@ -46,6 +46,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
+    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalTopicClient;
@@ -370,6 +371,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 });
             }
             snackbar.show();
+            _snackbar = snackbar;
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -377,6 +379,18 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         public void showToast(String title, int duration) {
             Log.v(TAG, "onConnected");
             Toast.makeText(AuthFragmentActivity.this, title, duration).show();
+        }
+
+        @Override
+        public void dismissSnackBar() {
+            if (_snackbar == null)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     };
 }

@@ -21,6 +21,7 @@ public class ToastClient extends TopicClient {
 
     private static final String PARAM_ACTION = "PARAM_ACTION";
     private static final String PARAM_ACTION_SNACKBAR = "PARAM_ACTION_SNACKBAR";
+    private static final String PARAM_ACTION_DISMISS_SNACKBAR = "PARAM_ACTION_DISMISS_SNACKBAR";
     private static final String PARAM_ACTION_TOAST = "PARAM_ACTION_TOAST";
 
     private static final String PARAM_TITLE = "PARAM_TITLE";
@@ -53,6 +54,12 @@ public class ToastClient extends TopicClient {
         bundle.putString(PARAM_BUTTON_TEXT, buttonText);
         bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
 
+        dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
+    }
+
+    public static void dismissSnackbar(Context context) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
     }
 
@@ -91,7 +98,15 @@ public class ToastClient extends TopicClient {
         public void onEvent(String topicId, Parcelable payload) {
             switch (topicId) {
                 case TOPIC_ID_SNACKBAR:
-                    preShowSnackBar((Bundle) payload);
+                    String action = ((Bundle) payload).getString(PARAM_ACTION);
+                    switch (action) {
+                        case PARAM_ACTION_DISMISS_SNACKBAR:
+                            dismissSnackBar();
+                            break;
+                        default:
+                            preShowSnackBar((Bundle) payload);
+                            break;
+                    }
                     break;
                 case TOPIC_ID_TOAST:
                     preShowToast((Bundle) payload);
@@ -115,6 +130,9 @@ public class ToastClient extends TopicClient {
 
         public void showToast(String title, int duration) {
 
+        }
+
+        public void dismissSnackBar() {
         }
     }
 }

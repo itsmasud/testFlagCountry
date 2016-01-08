@@ -312,6 +312,7 @@ public class App extends Application {
             _isConnected = true;
             Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
+            ToastClient.dismissSnackbar(App.this);
         }
 
         @Override
