@@ -64,14 +64,14 @@ public class MemUtils {
 
 
     private static int getAppFreeHeapMemory(Context context) {
-//        Log.v(TAG, "getAppFreeHeapMemory:" + (getAppHeapMemory(context) - getAppsUsedHeapMemory()));
+        Log.v(TAG, "getAppFreeHeapMemory:" + (getAppHeapMemory(context) - getAppsUsedHeapMemory()));
         return getAppHeapMemory(context) - getAppsUsedHeapMemory();
     }
 
     public static int getAppHeapMemory(Context context) {
         ActivityManager am = (ActivityManager) context.getSystemService(Activity.ACTIVITY_SERVICE);
         int memoryClass = am.getMemoryClass();
-//        Log.v(TAG, "getAppHeapMemory:" + memoryClass);
+        Log.v(TAG, "getAppHeapMemory:" + memoryClass);
         return memoryClass;
     }
 
@@ -80,22 +80,22 @@ public class MemUtils {
         Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
         Debug.getMemoryInfo(memoryInfo);
 
-//        String memMessage = String.format("App Memory: Pss=%.2f MB\nPrivate=%.2f MB\nShared=%.2f MB",
-//                memoryInfo.getTotalPss() / 1024.0,
-//                memoryInfo.getTotalPrivateDirty() / 1024.0,
-//                memoryInfo.getTotalSharedDirty() / 1024.0);
-//        Log.i(TAG, memMessage);
-//        Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
+        String memMessage = String.format("App Memory: Pss=%.2f MB\nPrivate=%.2f MB\nShared=%.2f MB",
+                memoryInfo.getTotalPss() / 1024.0,
+                memoryInfo.getTotalPrivateDirty() / 1024.0,
+                memoryInfo.getTotalSharedDirty() / 1024.0);
+        Log.i(TAG, memMessage);
+        Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
 
         return (int) memoryInfo.getTotalPss() / 1024;
     }
 
 
-    public static boolean shouldSuspendLoadingMore(Context context){
-        if (getAppHeapMemory(context)* MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppFreeHeapMemory(context)){
-//            Log.v(TAG,"AppHeapMemory: " + getAppHeapMemory(context));
-//            Log.v(TAG,"Threshold of Minimum Free HeapMemory: " + getAppHeapMemory(context)* MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE);
-//            Log.v(TAG,"AppFreeHeapMemory: " + getAppFreeHeapMemory(context));
+    public static boolean shouldSuspendLoadingMore(Context context) {
+        if (getAppHeapMemory(context) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE > getAppFreeHeapMemory(context)) {
+            Log.v(TAG, "AppHeapMemory: " + getAppHeapMemory(context));
+            Log.v(TAG, "Threshold of Minimum Free HeapMemory: " + getAppHeapMemory(context) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE);
+            Log.v(TAG, "AppFreeHeapMemory: " + getAppFreeHeapMemory(context));
             return true;
         }
         return false;

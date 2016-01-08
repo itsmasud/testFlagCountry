@@ -33,6 +33,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -44,6 +45,8 @@ import io.fabric.sdk.android.Fabric;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -211,6 +214,20 @@ public class App extends Application {
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
         Log.v(TAG, "onCreate time: " + mwatch.finish());
+
+        new AsyncTaskEx<Object, Object, Object>() {
+            @Override
+            protected Object doInBackground(Object... params) {
+
+                List<byte[]> chunks = new LinkedList<byte[]>();
+                while (!MemUtils.shouldSuspendLoadingMore(App.get())) {
+                    chunks.add(new byte[1024]);
+                }
+
+                Log.v(TAG, "Memory used: " + chunks.size() + "KB");
+                return null;
+            }
+        }.executeEx(null);
     }
 
     private Runnable _anrReport = new Runnable() {
