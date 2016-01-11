@@ -386,9 +386,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onShowFeedbackDialog() {
+        public void onShowFeedbackDialog(String source) {
             try {
-                _feedbackDialog.show();
+                _feedbackDialog.show(source);
             } catch (Exception ex) {
                 Debug.logException(ex);
             }
