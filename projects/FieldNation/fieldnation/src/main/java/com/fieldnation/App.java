@@ -226,6 +226,11 @@ public class App extends Application {
         }
     };
 
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(getPackageName() + "_preferences",
+                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+    }
+
     public static void anrReport() {
         final Thread mainThread = Looper.getMainLooper().getThread();
         final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();

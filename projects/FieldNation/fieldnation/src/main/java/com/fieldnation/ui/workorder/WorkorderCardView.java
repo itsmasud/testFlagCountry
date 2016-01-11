@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -24,6 +26,7 @@ import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -527,7 +530,8 @@ public class WorkorderCardView extends RelativeLayout {
                 _leftButton.setVisibility(GONE);
                 break;
             case Workorder.BUTTON_ACTION_MAP:
-                if (_workorder.getLocation() == null) {
+                Location location = _workorder.getLocation();
+                if (location == null) {
                     _leftButton.setVisibility(GONE);
                     _remoteWorkTextView.setVisibility(VISIBLE);
                     _remoteWorkTextView.setText(R.string.btn_no_location);
@@ -536,9 +540,24 @@ public class WorkorderCardView extends RelativeLayout {
                     _remoteWorkTextView.setVisibility(VISIBLE);
                     _remoteWorkTextView.setText(R.string.btn_remote_work);
                 } else {
-                    Location location = _workorder.getLocation();
-                    _leftButton.setVisibility(VISIBLE);
-                    _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
+                    SharedPreferences settings = App.get().getSharedPreferences();
+                    if (settings.getString(getResources().getString(R.string.pref_key_workorder_card_location), "city_state").equals("city_state")
+                            || (location.getGeo() == null || _gpsLocation == null)) {
+                        _leftButton.setVisibility(VISIBLE);
+                        _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
+                    } else {
+                        _leftButton.setVisibility(VISIBLE);
+                        try {
+                            LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                            LatLng myLoc = new LatLng(_gpsLocation);
+
+                            _leftButton.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                        } catch (Exception ex) {
+                            //Log.v(TAG, ex);
+                            _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
+                        }
+                    }
+
                 }
                 break;
             case Workorder.BUTTON_ACTION_REPORT_PROBLEM:
