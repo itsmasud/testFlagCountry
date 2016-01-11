@@ -92,11 +92,14 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     // feedback dialog
-    public static void showFeedbackDialog(Context context) {
+    public static void showFeedbackDialog(Context context, String source) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, null, Sticky.NONE);
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_FEEDBACK_SOURCE, source);
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, bundle, Sticky.NONE);
     }
 
     public boolean subShowFeedbackDialog() {
@@ -221,7 +224,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                     onShutdown();
                     break;
                 case TOPIC_ID_SHOW_FEEDBACK:
-                    onShowFeedbackDialog();
+                    onShowFeedbackDialog(((Bundle) payload).getString(PARAM_FEEDBACK_SOURCE));
                     break;
                 case TOPIC_ID_SHOW_HELP_DIALOG:
                     onShowHelpDialog();
@@ -267,7 +270,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         public void onShutdown() {
         }
 
-        public void onShowFeedbackDialog() {
+        public void onShowFeedbackDialog(String source) {
         }
 
         public void onShowHelpDialog() {

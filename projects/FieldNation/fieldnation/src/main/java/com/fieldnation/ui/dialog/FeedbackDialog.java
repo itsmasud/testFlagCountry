@@ -14,8 +14,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
@@ -29,7 +31,8 @@ public class FeedbackDialog extends DialogFragmentBase {
     private static final String TAG = "FeedbackDialog";
 
     // State
-    private static final String STATE_NOTES = "FeedbackDialog:message";
+    private static final String STATE_MESSAGE = "FeedbackDialog:message";
+    private static final String STATE_SOURCE = "FeedbackDialog:source";
 
     // Ui
     private EditText _messageEditText;
@@ -39,6 +42,7 @@ public class FeedbackDialog extends DialogFragmentBase {
     // Data
     private String _message;
     private Listener _listener;
+    private String _source;
 
     /*-*****************************-*/
     /*-         Life Cycle          -*/
@@ -52,8 +56,10 @@ public class FeedbackDialog extends DialogFragmentBase {
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_NOTES))
-                _message = savedInstanceState.getString(STATE_NOTES);
+            if (savedInstanceState.containsKey(STATE_MESSAGE))
+                _message = savedInstanceState.getString(STATE_MESSAGE);
+            if (savedInstanceState.containsKey(STATE_SOURCE))
+                _source = savedInstanceState.getString(STATE_SOURCE);
         }
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -63,8 +69,10 @@ public class FeedbackDialog extends DialogFragmentBase {
     public void onViewStateRestored(Bundle savedInstanceState) {
         Log.v(TAG, "onViewStateRestored");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_NOTES))
-                _message = savedInstanceState.getString(STATE_NOTES);
+            if (savedInstanceState.containsKey(STATE_MESSAGE))
+                _message = savedInstanceState.getString(STATE_MESSAGE);
+            if (savedInstanceState.containsKey(STATE_SOURCE))
+                _source = savedInstanceState.getString(STATE_SOURCE);
         }
         super.onViewStateRestored(savedInstanceState);
     }
@@ -74,8 +82,11 @@ public class FeedbackDialog extends DialogFragmentBase {
         Log.v(TAG, "onSaveInstanceState");
         if (_messageEditText != null && !misc.isEmptyOrNull(_messageEditText.getText().toString())) {
             _message = _messageEditText.getText().toString();
-            outState.putString(STATE_NOTES, _message);
+            outState.putString(STATE_MESSAGE, _message);
         }
+        if (!misc.isEmptyOrNull(_source))
+            outState.putString(STATE_SOURCE, _source);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -91,7 +102,6 @@ public class FeedbackDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -106,6 +116,11 @@ public class FeedbackDialog extends DialogFragmentBase {
             _messageEditText.setText(_message);
         else
             _messageEditText.setText("");
+    }
+
+    public void show(String source) {
+        _source = source;
+        super.show();
     }
 
     public void setListener(Listener listener) {
@@ -138,8 +153,11 @@ public class FeedbackDialog extends DialogFragmentBase {
                 _listener.onOk(_messageEditText.getText().toString());
             }
 
+            Debug.logCustom(new CustomEvent("FeedbackDialog")
+                    .putCustomAttribute("Source", _source));
+
             try {
-                HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, "Version " +
+                HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), _source, "Version " +
                         (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim(), null);
             } catch (Exception ex) {
                 HelpClient.sendFeedback(App.get(), _messageEditText.getText().toString(), null, "Version Unknown", null);
