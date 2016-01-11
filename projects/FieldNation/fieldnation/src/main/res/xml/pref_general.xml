@@ -1,5 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory android:title="@string/pref_string_location_category_title">
+        <ListPreference
+            android:defaultValue="@string/pref_default_workorder_card_location"
+            android:entries="@array/pref_workorder_card_location_entries"
+            android:entryValues="@array/pref_workorder_card_location_entry_values"
+            android:key="@string/pref_key_workorder_card_location"
+            android:negativeButtonText="@null"
+            android:positiveButtonText="@null"
+            android:title="@string/pref_string_workorder_card_location_title" />
+
+    </PreferenceCategory>
     <PreferenceCategory android:title="@string/pref_string_sync_category_title">
         <SwitchPreference
             android:defaultValue="false"

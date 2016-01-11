@@ -393,6 +393,21 @@
     <string name="confirm">Confirm</string>
 
     <!-- Preferences -->
+    <!-- location settings -->
+    <string name="pref_string_location_category_title">Location Settings</string>
+    <string name="pref_string_workorder_card_location_title">Information on Work Order List</string>
+    <string name="pref_default_workorder_card_location">city_state</string>
+    <string name="pref_key_workorder_card_location">pref_key_workorder_card_location</string>
+
+    <string-array name="pref_workorder_card_location_entries">
+        <item>Show distance (uses GPS)</item>
+        <item>Show City, State</item>
+    </string-array>
+    <string-array name="pref_workorder_card_location_entry_values">
+        <item>distance</item>
+        <item>city_state</item>
+    </string-array>
+
     <!-- sync settings -->
     <string name="pref_string_sync_category_title">Sync Settings</string>
 
@@ -597,7 +612,7 @@
     <string name="icon_x">\uf18c</string>
     <string name="icon_x_icon">\uf18d</string>
     <string name="icon_xls">\uf18e</string>
-    
+
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
