@@ -60,6 +60,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     private void updatePreference(Preference preference) {
+        if (preference == null)
+            return;
+
         if (String.valueOf(preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_sync_enabled)) && preference.isEnabled()) {
             getActivity().startService(new Intent(getActivity(), WebCrawlerService.class));
         }
