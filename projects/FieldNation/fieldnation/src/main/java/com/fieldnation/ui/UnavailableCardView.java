@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,14 +143,16 @@ public class UnavailableCardView extends FrameLayout {
     private final View.OnClickListener _setupAccount_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO generate a link to the web.
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://app.fieldnation.com/"));
+            getContext().startActivity(intent);
         }
     };
 
     private final View.OnClickListener _editProfile_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO generate a link to the web
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://app.fieldnation.com/"));
+            getContext().startActivity(intent);
         }
     };
 }

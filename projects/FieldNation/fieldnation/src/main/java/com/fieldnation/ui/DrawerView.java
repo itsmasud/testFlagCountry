@@ -417,8 +417,12 @@ public class DrawerView extends RelativeLayout {
 
             // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://red.fieldnation.com/"));
+            getContext().startActivity(intent);
+
+
             // Feedback Dialog
-            GlobalTopicClient.showFeedbackDialog(getContext());
+            //GlobalTopicClient.showFeedbackDialog(getContext());
         }
     };
 

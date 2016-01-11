@@ -314,9 +314,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
-        page = 0;
-        list.clear();
-        if (page == 0 && list != null) {
+        if (page == 0 && (list == null || list.size() == 0)) {
             _emptyView.setData(_displayView);
             _emptyView.setVisibility(View.VISIBLE);
         } else {
