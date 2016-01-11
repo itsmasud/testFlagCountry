@@ -139,14 +139,14 @@ public class UnavailableCardView extends FrameLayout {
         }
     };
 
-    private final View.OnClickListener _setupAccount_onClick = new OnClickListener() {
+    private final View.OnClickListener _setupAccount_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO generate a link to the web.
         }
     };
 
-    private final View.OnClickListener _editProfile_onClick = new OnClickListener() {
+    private final View.OnClickListener _editProfile_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             // TODO generate a link to the web
