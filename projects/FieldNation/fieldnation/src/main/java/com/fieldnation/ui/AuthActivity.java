@@ -209,6 +209,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
 
+            if (misc.isEmptyOrNull(_username) || misc.isEmptyOrNull(_password)) {
+                Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             new AsyncTaskEx<Object, Object, OAuth>() {
                 @Override
                 protected OAuth doInBackground(Object... params) {
