@@ -172,7 +172,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         obj = new StoredObject(cursor);
                     }
                 } finally {
-                    cursor.close();
+                    if (cursor != null) cursor.close();
                 }
             } finally {
                 //db.close();
@@ -216,7 +216,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                             obj = new StoredObject(cursor);
                         }
                     } finally {
-                        cursor.close();
+                        if (cursor != null) cursor.close();
                     }
                 } finally {
                     //db.close();
@@ -493,7 +493,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         list.add(new StoredObject(cursor));
                     }
                 } finally {
-                    cursor.close();
+                    if (cursor != null) cursor.close();
                 }
             } finally {
                 //db.close();
@@ -533,7 +533,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                         list.add(new StoredObject(cursor));
                     }
                 } finally {
-                    cursor.close();
+                    if (cursor != null) cursor.close();
                 }
             } finally {
                 //db.close();
@@ -563,7 +563,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
                 } catch (IllegalStateException e) {
                     // Do nothing, all delete of what we have so far
                 } finally {
-                    cursor.close();
+                    if (cursor != null) cursor.close();
                 }
             } finally {
                 //db.close();
