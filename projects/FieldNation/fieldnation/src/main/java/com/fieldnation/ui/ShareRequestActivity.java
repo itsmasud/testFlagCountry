@@ -22,7 +22,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -32,7 +31,6 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -357,7 +355,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
                 for (int i = 0; i < _sharedFilesLayout.getChildCount(); i++) {
                     final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
-                    if (row.isChecked()) {
+                    if (row.isChecked() && row.getUploadingDocument() != null) {
                         WorkorderClient.uploadDeliverable(ShareRequestActivity.this, _workorder.getWorkorderId(),
                                 _currentUploadSlot.getSlotId(), row.getUploadingDocument().getFileName(), row.getUploadingDocument().getUri());
                     }
@@ -553,11 +551,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
                 } else {
-                	try {
-	                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-    	                finish();
-        	        } catch (Exception ex) {
-            	        ex.printStackTrace();
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return;
