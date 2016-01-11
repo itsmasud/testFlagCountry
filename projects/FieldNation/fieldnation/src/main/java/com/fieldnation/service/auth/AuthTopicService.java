@@ -354,8 +354,16 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         @Override
         public void onComplete(Object result) {
             Log.v(TAG, "_futureWaitAsync_token.onComplete");
+
+            if (result == null) {
+                Log.v(TAG, "token response is null");
+                onFail(null);
+                return;
+            }
+
             Bundle bundle = (Bundle) result;
             Log.v(TAG, bundle.toString());
+
             // auth is complete
             // if however, data invalid, need to ask again.
             if (!bundle.containsKey(AccountManager.KEY_AUTHTOKEN)) {
