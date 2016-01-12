@@ -29,9 +29,6 @@ public class UnavailableCardView extends FrameLayout {
     private TextView _captionTexView;
     private Button _actionButton;
 
-    // Data
-    private WorkorderDataSelector _displayView;
-
     public UnavailableCardView(Context context) {
         super(context);
         init();
@@ -58,12 +55,11 @@ public class UnavailableCardView extends FrameLayout {
     }
 
     public void setData(WorkorderDataSelector displayView) {
-        _displayView = displayView;
         switch (displayView) {
             case ASSIGNED:
-                _titleTextView.setText("No assigned work");
-                _captionTexView.setText("Check our marketplace for new work");
-                _actionButton.setText("VIEW MARKETPLACE");
+                _titleTextView.setText(R.string.no_assigned_work);
+                _captionTexView.setText(R.string.check_our_marketplace_for_new_work);
+                _actionButton.setText(R.string.btn_view_marketplace);
                 _actionButton.setVisibility(VISIBLE);
                 _actionButton.setOnClickListener(_viewMarketplace_onClick);
                 break;
@@ -71,53 +67,53 @@ public class UnavailableCardView extends FrameLayout {
                 Profile profile = App.get().getProfile();
 
                 if (profile.getMarketplaceStatusOn()) {
-                    _titleTextView.setText("No available work");
-                    _captionTexView.setText("Try adding to your profile");
-                    _actionButton.setText("EDIT PROFILE");
+                    _titleTextView.setText(R.string.no_available_work);
+                    _captionTexView.setText(R.string.try_adding_to_your_profile);
+                    _actionButton.setText(R.string.btn_edit_profile);
                     _actionButton.setVisibility(VISIBLE);
                     _actionButton.setOnClickListener(_editProfile_onClick);
                 } else {
                     String reason = profile.getMarketplaceStatusReason();
                     if (misc.isEmptyOrNull(reason)) {
-                        _titleTextView.setText("No work available");
-                        _captionTexView.setText("Try adding to your profile");
-                        _actionButton.setText("EDIT PROFILE");
+                        _titleTextView.setText(R.string.no_available_work);
+                        _captionTexView.setText(R.string.try_adding_to_your_profile);
+                        _actionButton.setText(R.string.btn_edit_profile);
                         _actionButton.setVisibility(VISIBLE);
                         _actionButton.setOnClickListener(_editProfile_onClick);
                     } else if ("KEEP_PRIVATE".equals(reason)) {
-                        _titleTextView.setText("Marketplace access");
-                        _captionTexView.setText("Looks like you need to finish setting up your account");
-                        _actionButton.setText("SETUP ACCOUNT");
+                        _titleTextView.setText(R.string.marketplace_access);
+                        _captionTexView.setText(R.string.looks_like_you_need_to_finish_setup);
+                        _actionButton.setText(R.string.btn_setup_account);
                         _actionButton.setVisibility(VISIBLE);
                         _actionButton.setOnClickListener(_setupAccount_onClick);
                     } else if ("PENDING_VERIFICATION".equals(reason)) {
-                        _titleTextView.setText("Marketplace access");
-                        _captionTexView.setText("Your account is pending verification. Try again later");
-                        _actionButton.setText("CONTACT SUPPORT");
+                        _titleTextView.setText(R.string.marketplace_access);
+                        _captionTexView.setText(R.string.your_account_is_pending_verification);
+                        _actionButton.setText(R.string.btn_contact_support);
                         _actionButton.setVisibility(VISIBLE);
                         _actionButton.setOnClickListener(_contactSupport_onClick);
                     } else if ("SUSPENDED".equals(reason)) {
-                        _titleTextView.setText("Marketplace suspension");
-                        _captionTexView.setText("You are currently suspended");
-                        _actionButton.setText("CONTACT SUPPORT");
+                        _titleTextView.setText(R.string.marketplace_suspension);
+                        _captionTexView.setText(R.string.you_are_currently_suspended);
+                        _actionButton.setText(R.string.btn_contact_support);
                         _actionButton.setVisibility(VISIBLE);
                         _actionButton.setOnClickListener(_contactSupport_onClick);
                     }
                 }
                 break;
             case CANCELED:
-                _titleTextView.setText("No canceled work");
-                _captionTexView.setText("Nothing to worry about");
+                _titleTextView.setText(R.string.no_canceled_work);
+                _captionTexView.setText(R.string.nothing_to_worry_about);
                 _actionButton.setVisibility(GONE);
                 break;
             case COMPLETED:
-                _titleTextView.setText("Completed work");
-                _captionTexView.setText("You haven't completed a work order yet");
+                _titleTextView.setText(R.string.completed_work);
+                _captionTexView.setText(R.string.you_havent_completed_work_yet);
                 _actionButton.setVisibility(GONE);
                 break;
             case REQUESTED:
-                _titleTextView.setText("Requested work");
-                _captionTexView.setText("You no requested work orders currently");
+                _titleTextView.setText(R.string.requested_work);
+                _captionTexView.setText(R.string.you_currently_have_no_requested_work_orders);
                 _actionButton.setVisibility(GONE);
                 break;
         }
@@ -143,16 +139,14 @@ public class UnavailableCardView extends FrameLayout {
     private final View.OnClickListener _setupAccount_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://app.fieldnation.com/"));
-            getContext().startActivity(intent);
+            LeavingActivity.start(getContext(), R.string.edit_your_profile, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 
     private final View.OnClickListener _editProfile_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://app.fieldnation.com/"));
-            getContext().startActivity(intent);
+            LeavingActivity.start(getContext(), R.string.setup_your_account, R.string.currently_to_setup_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 }

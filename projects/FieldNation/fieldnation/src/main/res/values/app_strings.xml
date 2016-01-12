@@ -66,7 +66,9 @@
     <string name="btn_closing_notes">CLOSING NOTES</string>
     <string name="btn_confirm">CONFIRM</string>
     <string name="btn_continue">CONTINUE</string>
+    <string name="btn_contact_support">CONTACT SUPPORT</string>
     <string name="btn_done">DONE</string>
+    <string name="btn_edit_profile">EDIT PROFILE</string>
     <string name="btn_email">EMAIL US</string>
     <string name="btn_faq">FREQUENTLY ASKED QUESTIONS</string>
     <string name="btn_gps_settings">GPS SETTINGS</string>
@@ -89,12 +91,14 @@
     <string name="btn_save">SAVE</string>
     <string name="btn_send">SEND</string>
     <string name="btn_send_counter">SEND COUNTER</string>
+    <string name="btn_setup_account">SETUP ACCOUNT</string>
     <string name="btn_counter">COUNTER</string>
     <string name="btn_report_a_problem">REPORT A PROBLEM</string>
     <string name="btn_sign_off">SIGN OFF</string>
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
+    <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
     <string name="btn_no">NO</string>
@@ -233,10 +237,12 @@
     <string name="carrier">Carrier</string>
     <string name="carrier_name">Carrier Name</string>
     <string name="change_pay">Change Pay</string>
+    <string name="check_our_marketplace_for_new_work">Check our marketplace for new work</string>
     <string name="clear_expectations">Clear Expectations</string>
     <string name="closing_notes">Closing Notes</string>
     <string name="collect_a_sign_off_signature">Collect a sign off signature</string>
     <string name="company_information">COMPANY INFORMATION</string>
+    <string name="completed_work">Completed work</string>
     <!--<string name="completed_devices_colon">Completed Devices:</string>-->
     <string name="confirm_schedule">Confirm schedule</string>
     <string name="counter_offer">Counter Offer</string>
@@ -245,6 +251,8 @@
     <!--<string name="counter_offers">Counter Offers</string>-->
     <string name="contacts">CONTACTS</string>
     <!--<string name="continue_the_conversation">Continue the conversation…</string>-->
+    <string name="currently_to_edit_your">Currently to edit your profile you will need to visit app.fieldnation.com.</string>
+    <string name="currently_to_setup_your">Currently to setup your account you will need to visit app.fieldnation.com.</string>
     <string name="custom_field">Custom Field</string>
     <string name="date_and_time">Date and Time</string>
     <!--<string name="date_colon">Date:</string>-->
@@ -263,6 +271,7 @@
     <string name="done">Done</string>
     <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="downloading">Downloading…</string>
+    <string name="edit_your_profile">Edit your profile</string>
     <!--<string name="edit">Edit</string>-->
     <!--<string name="edit_payment_counter">Edit Payment Counter</string>-->
     <!--<string name="edit_schedule_counter">Edit Schedule Counter</string>-->
@@ -291,21 +300,30 @@
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
     <string name="loading_">Loading...</string>
+    <string name="looks_like_you_need_to_finish_setup">Looks like you need to finish setting up your account</string>
     <string name="manage_profiles">Manage Profiles</string>
     <string name="mark_as_complete">Mark as complete</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
+    <string name="marketplace_access">Marketplace access</string>
+    <string name="marketplace_suspension">Marketplace suspension</string>
     <string name="max_devices">Max Devices</string>
     <string name="max_hours">Max Hours</string>
     <!--<string name="my_additional_files">My Additional Files</string>-->
     <string name="name_cap">Name</string>
     <string name="need_some_help">Need some help?</string>
     <string name="new_buyer">NEW BUYER</string>
+    <string name="no_assigned_work">No assigned work</string>
+    <string name="no_available_work">No available work</string>
+    <string name="no_canceled_work">No canceled work</string>
     <string name="no_documents_headline">No documents</string>
+    <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
+    <string name="no_work_available">No work available</string>
+    <string name="nothing_to_worry_about">Nothing to worry about</string>
     <!--<string name="not_interested">Not Interested</string>-->
     <string name="number_of_devices">Number of Devices</string>
     <!--<string name="offer_expires_colon">Offer Expires:</string>-->
@@ -341,11 +359,13 @@
     <!--<string name="request_schedule_change">Request Schedule Change</string>-->
     <!--<string name="request_work">Request Work</string>-->
     <string name="request_workorder">Request Work Order</string>
+    <string name="requested_work">Requested work</string>
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
     <string name="schedule">Schedule</string>
     <!--<string name="scope_of_work">Scope of Work</string>-->
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
+    <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
     <!--<string name="shipment">Shipment</string>-->
     <string name="shipment_description">Shipment Description</string>
@@ -374,6 +394,7 @@
     <!--<string name="tip_colon_space">Tip: </string>-->
     <!--<string name="total_amount">Total Amount</string>-->
     <string name="tracking_number">Tracking number</string>
+    <string name="try_adding_to_your_profile">Try adding to your profile</string>
     <!--<string name="travel_time">Travel Time</string>-->
     <!--<string name="try_again">Action failed, please try again</string>-->
     <!--<string name="upload_file">Upload File</string>-->
@@ -401,6 +422,10 @@
     <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
     <string name="you_currently_have_no_expenses">You currently have no expenses.</string>
+    <string name="you_havent_completed_work_yet">You haven't completed a work order yet</string>
+    <string name="you_currently_have_no_requested_work_orders">You currently have no requested work orders</string>
+    <string name="your_account_is_pending_verification">Your account is pending verification. Try again later</string>
+    <string name="you_are_currently_suspended">You are currently suspended</string>
     <!-- /general strings -->
 
     <!-- symbols -->

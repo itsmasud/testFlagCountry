@@ -82,6 +82,8 @@ public class LeavingActivity extends Activity {
             public void onClick(View v) {
                 Intent todo = new Intent(Intent.ACTION_VIEW, _uri);
                 startActivity(todo);
+
+                finish();
             }
         });
     }
