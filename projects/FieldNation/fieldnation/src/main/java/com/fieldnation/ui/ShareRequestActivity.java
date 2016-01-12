@@ -22,7 +22,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -32,7 +31,6 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -91,17 +89,21 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         layoutType = LayoutType.WORKORDER_LAYOUT;
 
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_LAYOUT)) {
-                layoutType = LayoutType.values()[savedInstanceState.getInt(STATE_LAYOUT)];
-            }
-            if (savedInstanceState.containsKey(STATE_WORKORDER)) {
-                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
-            }
-            if (savedInstanceState.containsKey(STATE_CURRENT_UPLOAD_SLOT)) {
-                _currentUploadSlot = savedInstanceState.getParcelable(STATE_CURRENT_UPLOAD_SLOT);
-            }
-            if (savedInstanceState.containsKey(STATE_UPLAODING_DOCS)) {
-                _uploadingDocumentList = (UploadingDocument[]) savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+            try {
+                if (savedInstanceState.containsKey(STATE_LAYOUT)) {
+                    layoutType = LayoutType.values()[savedInstanceState.getInt(STATE_LAYOUT)];
+                }
+                if (savedInstanceState.containsKey(STATE_WORKORDER)) {
+                    _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+                }
+                if (savedInstanceState.containsKey(STATE_CURRENT_UPLOAD_SLOT)) {
+                    _currentUploadSlot = savedInstanceState.getParcelable(STATE_CURRENT_UPLOAD_SLOT);
+                }
+                if (savedInstanceState.containsKey(STATE_UPLAODING_DOCS)) {
+                    _uploadingDocumentList = (UploadingDocument[]) savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+                }
+            } catch (ClassCastException e) {
+
             }
         }
 
@@ -553,11 +555,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
                 } else {
-                	try {
-	                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-    	                finish();
-        	        } catch (Exception ex) {
-            	        ex.printStackTrace();
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return;
