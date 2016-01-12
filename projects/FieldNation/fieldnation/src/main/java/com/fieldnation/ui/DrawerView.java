@@ -391,7 +391,7 @@ public class DrawerView extends RelativeLayout {
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getContext().startActivity(intent);
             } else {
-                Toast.makeText(getContext(), "No email app is available", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.no_email_app_is_available, Toast.LENGTH_LONG).show();
             }
         }
     };

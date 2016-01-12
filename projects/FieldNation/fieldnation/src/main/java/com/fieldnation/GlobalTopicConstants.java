@@ -16,7 +16,6 @@ public interface GlobalTopicConstants {
     String TOPIC_ID_USER_SWITCHED = "GlobalTopicConstants:TOPIC_ID_USER_SWITCHED";
     String TOPIC_ID_SHOW_LOADING = "GlobalTopicConstants:TOPIC_ID_SHOW_LOADING";
 
-
     String PARAM_NETWORK_STATE = "PARAM_NETWORK_STATE";
     String PARAM_PROFILE = "PARAM_PROFILE";
     String PARAM_IS_LOADING = "PARAM_IS_LOADING";

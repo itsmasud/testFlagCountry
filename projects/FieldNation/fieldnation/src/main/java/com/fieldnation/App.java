@@ -80,6 +80,7 @@ public class App extends Application {
     private boolean _switchingUser = false;
     public String deviceToken = null;
     private boolean _isConnected = false;
+	private OAuth _auth = null;
 
 
     @Override
@@ -266,6 +267,18 @@ public class App extends Application {
     /*-**********************-*/
     /*-         Auth         -*/
     /*-**********************-*/
+    public OAuth getAuth() {
+        synchronized (STAG) {
+            return _auth;
+        }
+    }
+
+    private void setAuth(OAuth auth) {
+        synchronized (STAG) {
+            _auth = auth;
+        }
+    }
+
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -277,11 +290,13 @@ public class App extends Application {
         @Override
         public void onAuthenticated(OAuth oauth) {
             _isConnected = true;
+			setAuth(oauth);
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
+			setAuth(null);
             AuthTopicClient.requestCommand(App.this);
         }
     };
