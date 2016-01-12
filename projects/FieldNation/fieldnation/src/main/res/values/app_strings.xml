@@ -422,7 +422,7 @@
     <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
     <string name="you_currently_have_no_expenses">You currently have no expenses.</string>
-    <string name="you_havent_completed_work_yet">You haven't completed a work order yet</string>
+    <string name="you_havent_completed_work_yet">You haven\'t completed a work order yet</string>
     <string name="you_currently_have_no_requested_work_orders">You currently have no requested work orders</string>
     <string name="your_account_is_pending_verification">Your account is pending verification. Try again later</string>
     <string name="you_are_currently_suspended">You are currently suspended</string>
