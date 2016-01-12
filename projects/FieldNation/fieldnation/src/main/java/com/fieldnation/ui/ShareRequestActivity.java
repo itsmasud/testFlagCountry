@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
@@ -99,7 +100,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 _currentUploadSlot = savedInstanceState.getParcelable(STATE_CURRENT_UPLOAD_SLOT);
             }
             if (savedInstanceState.containsKey(STATE_UPLAODING_DOCS)) {
-                _uploadingDocumentList = (UploadingDocument[]) savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+                Parcelable[] parcels = savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+                _uploadingDocumentList = new UploadingDocument[parcels.length];
+                for (int i = 0; i < parcels.length; i++) {
+                    _uploadingDocumentList[i] = (UploadingDocument) parcels[i];
+                }
             }
         }
 
