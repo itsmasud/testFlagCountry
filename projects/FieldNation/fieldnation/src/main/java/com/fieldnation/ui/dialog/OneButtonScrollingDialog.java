@@ -212,9 +212,10 @@ public class OneButtonScrollingDialog extends DialogFragmentBase {
     private final View.OnClickListener _button_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
-            if (_listener != null)
+
+            if (_listener != null) {
                 _listener.onButtonClick();
+            }
         }
     };
 
