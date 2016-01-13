@@ -33,6 +33,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
                 android:gravity="center"
                 android:textColor="@color/fn_white_text"
                 android:textSize="40sp"
@@ -43,6 +44,7 @@
                 style="@style/Text_Body_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
                 android:gravity="center"
                 android:textColor="@color/fn_white_text" />
 
