@@ -129,7 +129,7 @@ public class PaymentCardView extends RelativeLayout {
 
         // pay_method
         try {
-            String method = _paymentInfo.getPayMethod().toLowerCase().replaceAll("_", " ");
+            String method = _paymentInfo.getPayMethod();
             method = misc.capitalize(method);
             _payTypeTextView.setText(method);
         } catch (Exception ex) {

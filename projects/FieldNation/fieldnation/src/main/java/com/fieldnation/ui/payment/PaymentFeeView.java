@@ -18,7 +18,7 @@ public class PaymentFeeView extends RelativeLayout {
     private static final String TAG = "PaymentFeeView";
 
     // UI
-    private IconFontTextView _iconView;
+    //private IconFontTextView _iconView;
     private TextView _titleTextView;
     private TextView _subTitleTextView;
     private TextView _paymentTextView;
@@ -43,14 +43,14 @@ public class PaymentFeeView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card_noicon, this);
 
         if (isInEditMode())
             return;
 
-        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-        _iconView.setText(R.string.icon_circle_add);
+//        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+//        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+//        _iconView.setText(R.string.icon_circle_add);
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);

@@ -8,6 +8,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.misc;
 
 import java.util.Calendar;
 
@@ -54,7 +55,7 @@ public class Payment implements Parcelable {
     }
 
     public String getPayMethod() {
-        return _payMethod;
+        return misc.capitalizeWords(_payMethod.replaceAll("_", " ").toLowerCase());
     }
 
     public Long getPaymentId() {

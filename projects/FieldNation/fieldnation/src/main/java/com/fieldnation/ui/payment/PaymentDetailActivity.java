@@ -122,12 +122,12 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
                 when = misc.formatDate(cal);
 
                 _timeTextView.setVisibility(View.VISIBLE);
-                _timeTextView.setText(misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")) + " on " + when);
+                _timeTextView.setText(_paid.getPayMethod() + " on " + when);
             } else {
                 //_titleTextView.setText("PENDING");
 //                _timeTextView.setVisibility(View.INVISIBLE);
                 _timeTextView.setVisibility(View.VISIBLE);
-                _timeTextView.setText(misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")) + " Pending");
+                _timeTextView.setText(_paid.getPayMethod() + " Pending");
             }
         } catch (Exception ex) {
             _timeTextView.setVisibility(View.INVISIBLE);

@@ -355,6 +355,19 @@ public class misc {
 
     }
 
+    public static String capitalizeWords(String src) {
+        StringBuilder builder = new StringBuilder();
+
+
+        String[] strArr = src.split(" ");
+        for (String str : strArr) {
+            builder.append(capitalize(str.trim()));
+            builder.append(" ");
+        }
+
+        return builder.toString().trim();
+    }
+
     public static String capitalize(String src) {
         return src.substring(0, 1).toUpperCase() + src.substring(1);
     }
