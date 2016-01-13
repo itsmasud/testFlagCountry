@@ -113,26 +113,32 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         }
 
         try {
+            //_titleTextView.setVisibility(View.VISIBLE);
             if (_paid.getDatePaid() != null) {
+                //_titleTextView.setText("PAID");
                 String when = "";
                 Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
 
                 when = misc.formatDate(cal);
 
                 _timeTextView.setVisibility(View.VISIBLE);
-                _timeTextView.setText("Paid On " + when + " by " + misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")));
+                _timeTextView.setText(misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")) + " on " + when);
             } else {
-                _timeTextView.setVisibility(View.GONE);
+                //_titleTextView.setText("PENDING");
+//                _timeTextView.setVisibility(View.INVISIBLE);
+                _timeTextView.setVisibility(View.VISIBLE);
+                _timeTextView.setText(misc.capitalize(_paid.getPayMethod().replaceAll("_", " ")) + " Pending");
             }
         } catch (Exception ex) {
-            _timeTextView.setVisibility(View.GONE);
+            _timeTextView.setVisibility(View.INVISIBLE);
         }
 
         _adapter = new PaymentDetailAdapter(_paid);
         _listView.setAdapter(_adapter);
-        _titleTextView.setText("PAYMENT ID " + _paid.getPaymentId());
         _paymentTextView.setText(misc.toCurrency(_paid.getAmount()));
         _listView.setVisibility(View.VISIBLE);
+        _titleTextView.setVisibility(View.GONE);
+        setTitle("Payment " + _paid.getPaymentId());
     }
 
     /*-*********************************-*/

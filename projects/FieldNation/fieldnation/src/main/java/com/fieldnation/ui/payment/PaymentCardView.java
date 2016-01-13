@@ -120,7 +120,7 @@ public class PaymentCardView extends RelativeLayout {
                 _iconView.setText(R.string.icon_circle_check);
             } else {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));
-                _iconView.setText(R.string.icon_icon_circle_pending);
+                _iconView.setText(R.string.icon_circle_pending);
             }
             _titleTextView.setText(status);
         } catch (Exception ex) {
