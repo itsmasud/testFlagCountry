@@ -3,6 +3,7 @@ package com.fieldnation;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -22,7 +23,6 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -38,8 +38,6 @@ import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -722,5 +720,17 @@ public class App extends Application {
         } catch (Exception ex) {
         }
         return "application/octet-stream";
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Log.i(TAG, "Memory Trim Level: " + level);
+
+        //TODO: need to complete the if-else
+        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+        } else if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
+        }
+
     }
 }
