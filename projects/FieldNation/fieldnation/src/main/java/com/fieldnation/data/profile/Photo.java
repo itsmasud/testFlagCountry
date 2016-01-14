@@ -1,15 +1,13 @@
 package com.fieldnation.data.profile;
 
-import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.MemUtils;
 
 public class Photo {
     private static final String TAG = "Photo";
-    
+
     @Json(name = "large")
     private String _large;
     @Json(name = "thumb")
@@ -29,10 +27,6 @@ public class Photo {
     }
 
     public String getThumb() {
-        if(!MemUtils.shouldSuspendLoadingMore(App.get())) {
-            return null;
-        }
-
         if ("/images/missing.png".equals(_thumb))
             return null;
 

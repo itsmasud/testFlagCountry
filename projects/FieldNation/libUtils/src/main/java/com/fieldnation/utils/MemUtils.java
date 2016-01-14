@@ -99,12 +99,12 @@ public class MemUtils {
         Debug.MemoryInfo memoryInfo = new Debug.MemoryInfo();
         Debug.getMemoryInfo(memoryInfo);
 
-//        String memMessage = String.format("App Memory: Pss=%.2f MB\nPrivate=%.2f MB\nShared=%.2f MB",
-//                memoryInfo.getTotalPss() / 1024.0,
-//                memoryInfo.getTotalPrivateDirty() / 1024.0,
-//                memoryInfo.getTotalSharedDirty() / 1024.0);
-//        Log.i(TAG, memMessage);
-//        Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
+        String memMessage = String.format("App Memory: Pss=%.2f MB\nPrivate=%.2f MB\nShared=%.2f MB",
+                memoryInfo.getTotalPss() / 1024.0,
+                memoryInfo.getTotalPrivateDirty() / 1024.0,
+                memoryInfo.getTotalSharedDirty() / 1024.0);
+        Log.i(TAG, memMessage);
+        Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
 
         return (int) memoryInfo.getTotalPss() / 1024;
     }
@@ -133,8 +133,9 @@ public class MemUtils {
         return false;
     }
 
-    public static boolean isLowMemorySituation(Context context){
-        ActivityManager am=(ActivityManager)context.getSystemService(Context.ACTIVITY_SERVICE);
+
+    public static boolean isLowMemorySituation(Context context) {
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
         am.getMemoryInfo(memInfo);
         return memInfo.lowMemory;
