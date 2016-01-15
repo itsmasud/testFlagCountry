@@ -18,11 +18,8 @@ public class PaymentFeeView extends RelativeLayout {
     private static final String TAG = "PaymentFeeView";
 
     // UI
-    //private IconFontTextView _iconView;
     private TextView _titleTextView;
-    private TextView _subTitleTextView;
     private TextView _paymentTextView;
-    private TextView _payTypeTextView;
 
     /*-*****************************-*/
     /*-			Life cycle			-*/
@@ -43,27 +40,16 @@ public class PaymentFeeView extends RelativeLayout {
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card_noicon, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_payment_card_other, this);
 
         if (isInEditMode())
             return;
 
-//        _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-//        _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-//        _iconView.setText(R.string.icon_circle_add);
-
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _subTitleTextView = (TextView) findViewById(R.id.subtitle_textview);
-
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
-        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
-        _payTypeTextView.setVisibility(GONE);
-
-        _subTitleTextView.setVisibility(GONE);
     }
 
     public void setWorkorder(Payment payment, Fee fee) {
-        //_titleTextView.setText(fee.getTitle());
         _titleTextView.setText(fee.getDescription());
         _paymentTextView.setText(misc.toCurrency(fee.getAmount()));
     }
