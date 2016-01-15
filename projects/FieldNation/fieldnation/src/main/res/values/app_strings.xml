@@ -293,10 +293,6 @@
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
     </plurals>
-    <!--<string name="number_other_payments">and %1$s other payment</string>-->
-    <!--<string name="number_one_other_payments">and 1 other payment</string>-->
-    <!--<string name="number_one_workorder">1 Work Order</string>-->
-    <!--<string name="number_workorders">%1$s Work Orders</string>-->
     <plurals name="number_workorders">
         <item quantity="one">1 Work Order</item>
         <item quantity="other">%1$s Work Orders</item>
