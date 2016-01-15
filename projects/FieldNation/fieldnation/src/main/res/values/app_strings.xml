@@ -45,7 +45,7 @@
     <string name="activity_share_activity_title">Field Nation</string>
 
     <string name="btn_accept">ACCEPT</string>
-	<string name="btn_accept_bundle">ACCEPT BUNDLE</string>
+    <string name="btn_accept_bundle">ACCEPT BUNDLE</string>
     <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
@@ -247,11 +247,12 @@
     <string name="carrier">Carrier</string>
     <string name="carrier_name">Carrier Name</string>
     <string name="change_pay">Change Pay</string>
+    <string name="check_our_marketplace_for_new_work">Check our marketplace for new work</string>
     <string name="clear_expectations">Clear Expectations</string>
     <string name="closing_notes">Closing Notes</string>
     <string name="collect_a_sign_off_signature">Collect a sign off signature</string>
     <string name="company_information">COMPANY INFORMATION</string>
-	<string name="company_name_hidden">Company Name Hidden</string>
+    <string name="company_name_hidden">Company Name Hidden</string>
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
     <string name="counter_offer">Counter Offer</string>
@@ -299,6 +300,7 @@
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
     <string name="loading_">Loading…</string>
+    <string name="looks_like_you_need_to_finish_setup">Looks like you need to finish setting up your account</string>
     <string name="manage_profiles">Manage Profiles</string>
     <string name="mark_as_complete">Mark as complete</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
