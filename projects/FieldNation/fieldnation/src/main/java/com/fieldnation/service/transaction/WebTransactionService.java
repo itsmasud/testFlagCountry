@@ -401,7 +401,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 // **** Error handling ****
                 // check for invalid auth
                 if (!result.isFile()
-                        && "You must provide a valid OAuth token to make a request".equals(result.getString())) {
+                        && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
                     Log.v(TAG, "Reauth");
                     _isAuthenticated = false;
                     AuthTopicClient.invalidateCommand(context);
@@ -413,7 +413,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // Bad request
                     // need to report this
                     // need to re-auth?
-                    if ("You don't have permission to see this workorder".equals(result.getString())) {
+                    if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
                         WebTransaction.delete(context, trans.getId());
                     } else if (result.getResponseMessage().contains("Bad Request")) {

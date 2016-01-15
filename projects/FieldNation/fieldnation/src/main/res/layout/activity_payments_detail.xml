@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+<?xml version="1.0" encoding="utf-8"?><!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
 <com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/actionbardrawerview"
     android:layout_width="match_parent"
@@ -13,90 +12,42 @@
         android:orientation="vertical">
 
         <LinearLayout
-            android:id="@+id/paymentheader_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/fn_gradient"
-            android:baselineAligned="false"
-            android:gravity="bottom"
-            android:orientation="horizontal"
-            android:paddingBottom="10dp"
-            android:paddingLeft="20dp"
-            android:paddingRight="20dp"
-            android:paddingTop="10dp">
+            android:orientation="vertical"
+            android:paddingBottom="16dp">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/title_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.75"
-                android:orientation="vertical">
+                android:layout_marginBottom="4dp"
+                android:gravity="center"
+                android:textColor="@color/fn_white_text" />
 
-                <TextView
-                    android:id="@+id/id_textview"
-                    style="@style/Text_Subhead"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/fn_white_text" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:id="@+id/state_textview"
-                        style="@style/Text_Menu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/processing_"
-                        android:textColor="@color/fn_white_text" />
-
-                    <TextView
-                        android:id="@+id/payment_textview"
-                        style="@style/Text_Menu"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textColor="@color/fn_white_text" />
-                </LinearLayout>
-
-                <TextView
-                    android:id="@+id/paymenttype_textview"
-                    style="@style/Text_Menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/fn_white_text" />
-
-                <TextView
-                    android:id="@+id/date_textview"
-                    style="@style/Text_Menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textColor="@color/fn_white_text" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
+            <TextView
+                android:id="@+id/payment_textview"
+                style="@style/Text_Headline"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="bottom"
-                android:layout_weight="0.25"
-                android:orientation="vertical">
+                android:layout_marginBottom="4dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textColor="@color/fn_white_text"
+                android:textSize="40sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:id="@+id/workordercount_textview"
-                    style="@style/Text_Menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textColor="@color/fn_white_text" />
+            <TextView
+                android:id="@+id/time_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="18dp"
+                android:gravity="center"
+                android:textColor="@color/fn_white_text" />
 
-                <TextView
-                    android:id="@+id/feescount_textview"
-                    style="@style/Text_Menu"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="right"
-                    android:textColor="@color/fn_white_text" />
-            </LinearLayout>
         </LinearLayout>
 
         <ListView

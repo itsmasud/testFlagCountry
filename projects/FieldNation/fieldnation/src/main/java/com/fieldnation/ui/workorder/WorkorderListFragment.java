@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -23,6 +24,7 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.OverScrollListView;
@@ -36,7 +38,9 @@ import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
+import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
@@ -76,6 +80,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
+    private ReportProblemDialog _reportProblemDialog;
+    private MarkIncompleteDialog _markIncompleteDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -156,6 +162,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
+        _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
     }
@@ -235,6 +243,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
+        _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
 
         Profile profile = App.get().getProfile();
 
@@ -454,6 +464,27 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*************************************************-*/
     /*-				Events Workorder Card				-*/
     /*-*************************************************-*/
+    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+
+        // TODO: I am not pretty sure about the following method
+        @Override
+        public void onContinueClick() {
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkorderCardView", 1);
+
+            WorkorderClient.actionIncomplete(App.get(), _currentWorkorder.getWorkorderId());
+
+            setLoading(true);
+        }
+    };
+
+    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
+        @Override
+        public void onReportAProblem(String explanation, ReportProblemType type) {
+            WorkorderClient.actionReportProblem(App.get(), _currentWorkorder.getWorkorderId(), explanation, type);
+        }
+    };
+
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -648,6 +679,49 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
 
             WorkorderClient.actionReadyToGo(App.get(), workorder.getWorkorderId());
+        }
+
+        @Override
+        public void actionConfirm(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _confirmDialog.show(workorder, workorder.getSchedule());
+        }
+
+        @Override
+        public void actionMap(WorkorderCardView view, Workorder workorder) {
+            com.fieldnation.data.workorder.Location location = workorder.getLocation();
+            if (location != null) {
+                try {
+                    GoogleAnalyticsTopicClient
+                            .dispatchEvent(App.get(), getGaLabel(),
+                                    GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                    "WorkFragment", 1);
+                    String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                    String _uriString = "geo:0,0?q=" + _fullAddress;
+                    Uri _uri = Uri.parse(_uriString);
+                    Intent _intent = new Intent(Intent.ACTION_VIEW);
+                    _intent.setData(_uri);
+                    if (_intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        getActivity().startActivity(_intent);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        @Override
+        public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _reportProblemDialog.show();
+        }
+
+        @Override
+        public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _markIncompleteDialog.show(workorder);
         }
     };
 
