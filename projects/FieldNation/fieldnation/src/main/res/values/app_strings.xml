@@ -286,8 +286,22 @@
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="number_of_devices">Number of Devices</string>
-    <string name="number_workorders_and_one_fee">%1$s Work Orders and 1 other payment</string>
-    <string name="number_workorders_and_x_fees">%1$s Work Orders and %2$s other payments</string>
+
+    <string name="number_workorders_and_payments">%1$s %2$s</string>
+
+    <plurals name="number_other_payments">
+        <item quantity="one">and 1 other payment</item>
+        <item quantity="other">and %1$s other payments</item>
+    </plurals>
+    <!--<string name="number_other_payments">and %1$s other payment</string>-->
+    <!--<string name="number_one_other_payments">and 1 other payment</string>-->
+    <!--<string name="number_one_workorder">1 Work Order</string>-->
+    <!--<string name="number_workorders">%1$s Work Orders</string>-->
+    <plurals name="number_workorders">
+        <item quantity="one">1 Work Order</item>
+        <item quantity="other">%1$s Work Orders</item>
+    </plurals>
+
     <string name="once_submitted_you_will_be_removed">Once submitted you will be removed from this work order</string>
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>

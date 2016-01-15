@@ -92,19 +92,21 @@ public class PaymentCardView extends RelativeLayout {
         }
         try {
             // TODO create string resources.
-            if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length == 1) {
-                _subTitleTextView.setText(getResources().getString(
-                        R.string.number_workorders_and_one_fee, _paymentInfo.getWorkorders().length));
-            } else if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
-                _subTitleTextView.setText(getResources().getString(
-                        R.string.number_workorders_and_x_fees,
-                        _paymentInfo.getWorkorders().length,
-                        _paymentInfo.getFees().length));
+            if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
+                _subTitleTextView.setText(getResources().getString(R.string.number_workorders_and_payments,
+                        getResources().getQuantityString(
+                                R.plurals.number_workorders,
+                                _paymentInfo.getWorkorders().length,
+                                _paymentInfo.getWorkorders().length),
+                        getResources().getQuantityString(
+                                R.plurals.number_other_payments,
+                                _paymentInfo.getFees().length,
+                                _paymentInfo.getFees().length)));
             } else {
-                _subTitleTextView.setText(getResources().getString(
-                        R.string.number_workorders_and_x_fees,
+                _subTitleTextView.setText(getResources().getQuantityString(
+                        R.plurals.number_workorders,
                         _paymentInfo.getWorkorders().length,
-                        0));
+                        _paymentInfo.getWorkorders().length));
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -118,7 +120,9 @@ public class PaymentCardView extends RelativeLayout {
             if (status.toLowerCase().equals("paid")) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
                 _iconView.setText(R.string.icon_circle_check);
+                _payTypeTextView.setText(misc.formatDate(ISO8601.toCalendar(_paymentInfo.getDatePaid())));
             } else {
+                _payTypeTextView.setText(R.string.pending);
                 _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));
                 _iconView.setText(R.string.icon_circle_pending);
             }
@@ -128,14 +132,14 @@ public class PaymentCardView extends RelativeLayout {
         }
 
         // pay_method
-        try {
+/*        try {
             String method = _paymentInfo.getPayMethod();
             method = misc.capitalize(method);
             _payTypeTextView.setText(method);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             _payTypeTextView.setText("");
-        }
+        }*/
         // payment_id
         try {
             _titleTextView.setText(getResources().getString(R.string.payment_id_x, _paymentInfo.getPaymentId()));
