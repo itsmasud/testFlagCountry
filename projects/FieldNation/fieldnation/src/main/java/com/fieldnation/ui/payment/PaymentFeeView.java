@@ -57,13 +57,14 @@ public class PaymentFeeView extends RelativeLayout {
 
         _paymentTextView = (TextView) findViewById(R.id.payment_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _payTypeTextView.setVisibility(GONE);
 
         _subTitleTextView.setVisibility(GONE);
     }
 
     public void setWorkorder(Payment payment, Fee fee) {
-        _titleTextView.setText(fee.getTitle());
+        //_titleTextView.setText(fee.getTitle());
+        _titleTextView.setText(fee.getDescription());
         _paymentTextView.setText(misc.toCurrency(fee.getAmount()));
-        _payTypeTextView.setText("Fee");
     }
 }
