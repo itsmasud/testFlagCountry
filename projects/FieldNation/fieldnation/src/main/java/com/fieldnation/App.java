@@ -22,7 +22,6 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -38,8 +37,6 @@ import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -80,8 +77,10 @@ public class App extends Application {
     private boolean _switchingUser = false;
     public String deviceToken = null;
     private boolean _isConnected = false;
-	private OAuth _auth = null;
+    private OAuth _auth = null;
 
+    private static final int BYTES_IN_MB = 1024 * 1024;
+    private static final int THRESHOLD_FREE_MB = 5;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -290,13 +289,13 @@ public class App extends Application {
         @Override
         public void onAuthenticated(OAuth oauth) {
             _isConnected = true;
-			setAuth(oauth);
+            setAuth(oauth);
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
-			setAuth(null);
+            setAuth(null);
             AuthTopicClient.requestCommand(App.this);
         }
     };
@@ -749,5 +748,19 @@ public class App extends Application {
         } catch (Exception ex) {
         }
         return "application/octet-stream";
+    }
+
+
+    public boolean isFreeSpaceAvailable(Context context) {
+        final long freeMBInternal = new File(context.getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
+        final long freeMBExternal = new File(context.getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
+
+        Log.v(TAG, "Free internal space:" + freeMBInternal);
+        Log.v(TAG, "Free external space:" + freeMBExternal);
+
+        if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
+            return true;
+        }
+        return false;
     }
 }

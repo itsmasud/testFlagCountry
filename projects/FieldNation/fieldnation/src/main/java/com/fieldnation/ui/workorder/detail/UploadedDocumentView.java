@@ -27,8 +27,6 @@ public class UploadedDocumentView extends RelativeLayout {
     private static final String TAG = "UploadedDocumentView";
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
-    private static final int BYTES_IN_MB = 1024 * 1024;
-    private static final int THRESHOLD_FREE_MB = 5;
 
     // UI
     private IconFontTextView _fileTypeIconFont;
@@ -187,20 +185,6 @@ public class UploadedDocumentView extends RelativeLayout {
         setClickable(_workorder.canViewDeliverables());
     }
 
-
-    public boolean isFreeSpaceAvailable(Context context) {
-
-        final long freeMBInternal = new File(context.getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
-        final long freeMBExternal = new File(context.getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
-        Log.v(TAG, "Free internal space:" + freeMBInternal);
-        Log.v(TAG, "Free external space:" + freeMBExternal);
-        if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
-            return true;
-        }
-//        boolean isSDPresent = android.os.Environment.getExternalStorageState().equals(android.os.Environment.MEDIA_MOUNTED);
-        return false;
-    }
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -234,8 +218,8 @@ public class UploadedDocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!isFreeSpaceAvailable(getContext())) {
-                Toast.makeText(getContext(), "No disk space available. Free some disk space.", Toast.LENGTH_LONG).show();
+            if (!App.get().isFreeSpaceAvailable(getContext())) {
+                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
                 return;
             }
 
