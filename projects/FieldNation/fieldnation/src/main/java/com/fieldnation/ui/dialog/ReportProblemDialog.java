@@ -202,7 +202,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 break;
             }
             default: {
-                _problem1Spinner.requestFocus();
+                _problem1Spinner.clearFocus();
                 _okButton.setEnabled(false);
                 setProblem2Visibility(View.GONE);
                 break;
