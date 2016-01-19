@@ -745,11 +745,22 @@ public class App extends Application {
         super.onTrimMemory(level);
         Log.i(TAG, "Memory Trim Level: " + level);
 
-        //TODO: need to complete the if-else
-        if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
-            PhotoClient.clearPhotoClientCache();
-        } else if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
+        PhotoClient.clearPhotoClientCache();
+        switch (level) {
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+                break;
         }
-
     }
 }
