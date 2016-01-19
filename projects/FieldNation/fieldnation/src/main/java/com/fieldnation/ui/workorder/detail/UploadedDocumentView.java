@@ -218,7 +218,7 @@ public class UploadedDocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (!App.get().isFreeSpaceAvailable(getContext())) {
+            if (!App.get().isFreeSpaceAvailable()) {
                 Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
                 return;
             }

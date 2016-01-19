@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation;
 
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
@@ -6,9 +6,6 @@ import android.content.ContentProviderClient;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
-
-import com.fieldnation.Log;
-
 
 public class SyncAdapter extends AbstractThreadedSyncAdapter {
     private static final String TAG = "SyncAdapter";
