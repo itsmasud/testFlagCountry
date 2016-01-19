@@ -12,35 +12,33 @@
         android:gravity="center"
         android:text="PAYMENT" />
 
-    <com.fieldnation.ui.TileView
+    <LinearLayout
+        style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <com.fieldnation.ui.IconFontTextView
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal">
+            android:layout_gravity="center"
+            android:text="@string/icon_dollar"
+            android:textColor="@color/fn_light_text"
+            android:textSize="32sp" />
 
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:text="@string/icon_dollar"
-                android:textColor="@color/fn_light_text"
-                android:textSize="32sp" />
+        <TextView
+            android:id="@+id/pay_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginLeft="8dp"
+            android:text="@string/placeholder_date_long" />
 
-            <TextView
-                android:id="@+id/pay_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginLeft="8dp"
-                android:text="@string/placeholder_date_long" />
+    </LinearLayout>
 
-        </LinearLayout>
-    </com.fieldnation.ui.TileView>
+    <View style="@style/DividerFull" />
 
     <TextView
         android:id="@+id/terms_textview"

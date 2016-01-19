@@ -123,6 +123,7 @@
 
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
+
                 <action android:name="android.intent.action.VIEW" />
             </intent-filter>
         </activity>
@@ -135,6 +136,11 @@
             android:name=".ui.payment.PaymentListActivity"
             android:exported="false"
             android:label="@string/activity_payments_list_title"
+            android:process=":frontside" />
+        <activity
+            android:name=".ui.LeavingActivity"
+            android:exported="false"
+            android:label="Leaving Field Nation"
             android:process=":frontside" />
         <activity
             android:name=".ui.payment.PaymentDetailActivity"
@@ -174,13 +180,20 @@
             android:label="@string/activity_share_activity_title"
             android:process=":frontside">
             <intent-filter>
-                <action android:name="android.intent.action.SEND"/>
+                <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
+
                 <category android:name="android.intent.category.DEFAULT" />
                 <data android:mimeType="*/*" />
             </intent-filter>
 
         </activity>
+
+        <activity
+            android:name="com.journeyapps.barcodescanner.CaptureActivity"
+            android:exported="true"
+            android:label="@string/activity_share_activity_title"
+            android:process=":frontside"></activity>
 
 
         <service
@@ -196,7 +209,7 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name=".rpc.server.SyncService"
+            android:name=".SyncService"
             android:exported="true"
             android:process=":frontside">
             <intent-filter>${applicationId}.service
@@ -271,7 +284,7 @@
             android:process=":frontside" />
 
         <provider
-            android:name=".rpc.server.StubProvider"
+            android:name=".StubProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:process=":frontside"

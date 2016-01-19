@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder;
 import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -18,23 +19,28 @@ import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.EmptyWoListView;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
+import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
+import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
@@ -43,6 +49,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
+import java.util.LinkedList;
 import java.util.List;
 
 public class WorkorderListFragment extends Fragment implements TabActionBarFragmentActivity.TabFragment {
@@ -61,7 +68,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
-    private EmptyWoListView _emptyView;
+    private UnavailableCardView _emptyView;
 
     // Dialogs
     private ExpiresDialog _expiresDialog;
@@ -73,10 +80,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
+    private ReportProblemDialog _reportProblemDialog;
+    private MarkIncompleteDialog _markIncompleteDialog;
 
     // Data
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
+    private final List<Runnable> _onAdded = new LinkedList<>();
 
     // state data
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
@@ -141,7 +151,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
 
-        _emptyView = (EmptyWoListView) view.findViewById(R.id.empty_view);
+        _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
@@ -152,6 +162,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
+        _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
     }
@@ -180,13 +192,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     }
 
     @Override
-    public void onStart() {
-        Log.v(TAG, "onStart");
-        super.onStart();
-    }
-
-
-    @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
         outState.putString(STATE_DISPLAY, _displayView.name());
@@ -201,25 +206,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         super.onSaveInstanceState(outState);
     }
-
-    @Override
-    public void onStop() {
-        Log.v(TAG, "onStop");
-        super.onStop();
-    }
-
-    @Override
-    public void onDestroyView() {
-        Log.v(TAG, "onDestroyView");
-        super.onDestroyView();
-    }
-
-    @Override
-    public void onDestroy() {
-        Log.v(TAG, "onDestroy");
-        super.onDestroy();
-    }
-
 
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
         Log.v(TAG, "setDisplayType");
@@ -257,8 +243,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
+        _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
 
-        requestList(0, true);
+        Profile profile = App.get().getProfile();
+
+        if (profile.getMarketplaceStatusOn())
+            requestList(0, true);
     }
 
     @Override
@@ -268,7 +259,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         getLocationService().stopLocationUpdates();
 
         if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-            Toast.makeText(getActivity(), "Aborted", Toast.LENGTH_LONG).show();
+            ToastClient.toast(App.get(), "Aborted", Toast.LENGTH_LONG);
             _locationLoadingDialog.dismiss();
         }
         super.onPause();
@@ -286,6 +277,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
+
+        while (_onAdded.size() > 0) {
+            _onAdded.remove(0).run();
+        }
     }
 
     @Override
@@ -329,12 +324,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
-        if (page == 0 && list != null) {
-            if (list.size() == 0 && _displayView.shouldShowGoToMarketplace()) {
-                _emptyView.setVisibility(View.VISIBLE);
-            } else {
-                _emptyView.setVisibility(View.GONE);
-            }
+        if (page == 0 && (list == null || list.size() == 0)) {
+            _emptyView.setData(_displayView);
+            _emptyView.setVisibility(View.VISIBLE);
         } else {
             _emptyView.setVisibility(View.GONE);
         }
@@ -348,8 +340,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
 
+        if (!isAdded()) {
+            _onAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckin();
+                }
+            });
+            return;
+        }
         getLocationService().setListener(_gps_checkInListener);
-
         if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkInListener);
@@ -369,14 +369,22 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private void startCheckOut() {
         Log.v(TAG, "startCheckOut");
+        if (!isAdded()) {
+            _onAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    startCheckOut();
+                }
+            });
+            return;
+        }
         getLocationService().setListener(_gps_checkOutListener);
-
         if (!getLocationService().isLocationServicesEnabled()) {
             _locationDialog.show(_currentWorkorder.getIsGpsRequired(),
                     _locationDialog_checkOutListener);
         } else if (getLocationService().hasLocation()) {
             doCheckOut();
-        } else if (getLocationService().isRunning()) {
+        } else if (getLocationService().isRunning() && _locationDialog.isAdded()) {
             _locationLoadingDialog.show();
         } else if (getLocationService().isLocationServicesEnabled()) {
             _locationLoadingDialog.show();
@@ -456,6 +464,27 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*************************************************-*/
     /*-				Events Workorder Card				-*/
     /*-*************************************************-*/
+    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+
+        // TODO: I am not pretty sure about the following method
+        @Override
+        public void onContinueClick() {
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                    GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkorderCardView", 1);
+
+            WorkorderClient.actionIncomplete(App.get(), _currentWorkorder.getWorkorderId());
+
+            setLoading(true);
+        }
+    };
+
+    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
+        @Override
+        public void onReportAProblem(String explanation, ReportProblemType type) {
+            WorkorderClient.actionReportProblem(App.get(), _currentWorkorder.getWorkorderId(), explanation, type);
+        }
+    };
+
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -650,6 +679,49 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
 
             WorkorderClient.actionReadyToGo(App.get(), workorder.getWorkorderId());
+        }
+
+        @Override
+        public void actionConfirm(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _confirmDialog.show(workorder, workorder.getSchedule());
+        }
+
+        @Override
+        public void actionMap(WorkorderCardView view, Workorder workorder) {
+            com.fieldnation.data.workorder.Location location = workorder.getLocation();
+            if (location != null) {
+                try {
+                    GoogleAnalyticsTopicClient
+                            .dispatchEvent(App.get(), getGaLabel(),
+                                    GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                    "WorkFragment", 1);
+                    String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                    String _uriString = "geo:0,0?q=" + _fullAddress;
+                    Uri _uri = Uri.parse(_uriString);
+                    Intent _intent = new Intent(Intent.ACTION_VIEW);
+                    _intent.setData(_uri);
+                    if (_intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                        getActivity().startActivity(_intent);
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
+
+        @Override
+        public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _reportProblemDialog.show();
+        }
+
+        @Override
+        public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
+            _currentWorkorder = workorder;
+            _markIncompleteDialog.show(workorder);
         }
     };
 

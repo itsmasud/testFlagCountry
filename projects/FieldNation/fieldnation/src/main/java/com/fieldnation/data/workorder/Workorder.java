@@ -4,7 +4,6 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
@@ -16,34 +15,16 @@ import java.util.Set;
 
 public class Workorder implements Parcelable {
 
-    @Json(name = "acl")
-    private String[] _acl;
     @Json(name = "additionalExpenses")
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
     private Integer _alertCount;
-    @Json(name = "alerts")
-    private Integer _alerts;
-    @Json(name = "approximatePaymentDate")
-    private String _approximatePaymentDate;
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
     private Long _bundleId;
     @Json(name = "buyerRatingInfo")
     private BuyerRating _buyerRatingInfo;
-    @Json(name = "canEditFieldsForProviderToEnter")
-    private Boolean _canEditFieldsForProviderToEnter;
-    @Json(name = "canPerformPreassignmentAction")
-    private Boolean _canPerformPreassignmentAction;
-    @Json(name = "canRequestPayForThisWo")
-    private Boolean _canRequestPayForThisWo;
-    @Json(name = "canViewServicePayRateInfo")
-    private Boolean _canViewServicePayRateInfo;
-    @Json(name = "cancelFee")
-    private Double _cancelFee;
-    @Json(name = "checkInOutInfo")
-    private CheckInOutInfo _checkInOutInfo;
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "collectedSignature")
@@ -52,8 +33,6 @@ public class Workorder implements Parcelable {
     private Integer _companyId;
     @Json(name = "companyName")
     private String _companyName;
-    @Json(name = "completionSteps")
-    private CompletionStep[] _completionSteps;
     @Json(name = "confidentialInformation")
     private String _confidentialInformation;
     @Json(name = "counterOfferInfo")
@@ -64,64 +43,28 @@ public class Workorder implements Parcelable {
     private CustomField[] _customFields;
     @Json(name = "customerPoliciesProcedures")
     private String _customerPoliciesProcedures;
-    @Json(name = "days_since_approved_or_cancelled")
-    private Integer _daysSinceApprovedOrCanceled;
-    @Json(name = "declinedWo")
-    private Integer _declinedWo;
-    //    @Json(name = "deliverables")
-//    private Deliverable[] _deliverables;
     @Json(name = "discounts")
     private Discount[] _discounts;
-    @Json(name = "displayCounterOffer")
-    private Integer _displayCounterOffer;
-    @Json(name = "distance")
-    private Double _distance;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
     private Schedule _estimatedSchedule;
     @Json(name = "expectedPayment")
     private ExpectedPayment _expectedPayment;
-    @Json(name = "financeId")
-    private Integer _financeId;
     @Json(name = "fullWorkDescription")
     private String _fullWorkDescription;
-    @Json(name = "hasFund")
-    private Boolean _hasFund;
-    @Json(name = "hasMarketplaceAccess")
-    private Boolean _hasMarketplaceAccess;
-    @Json(name = "identifier")
-    private String _identifier;
-    // @Json(name = "increaseRequestInfo")
-    // private IncreaseRequestInfo _increaseRequestInfo;
-    @Json(name = "industry")
-    private String _industry;
-    @Json(name = "isAssignedToWorkorder")
-    private Boolean _isAssignedToWorkorder;
+    @Json(name = "hasClosingNotes ")
+    private Boolean _hasClosingNotes;
     @Json(name = "isCounter")
     private Boolean _isCounter;
-    @Json(name = "isDeliverablesUploaded")
-    private Boolean _isDeliverablesUploaded;
-    @Json(name = "isExemptFromFee")
-    private Boolean _isExemptFromFee;
     @Json(name = "isGpsRequired")
     private Boolean _isGpsRequired;
     @Json(name = "isRemoteWork")
     private Boolean _isRemoteWork;
-    @Json(name = "isRequest")
-    private Boolean _isRequest;
-    @Json(name = "isRequestedByProvider")
-    private Boolean _isRequestedByProvider;
-    @Json(name = "isWoOnHold")
-    private Boolean _isWoOnHold;
     @Json(name = "isWorkPerformed")
     private Boolean _isWorkPerformed;
-    //	@Json(name="label")
-//	private Label[] _label;
     @Json(name = "location")
     private Location _location;
-    //	@Json(name="locationContacts")
-//	private LocationContacts[] _locationContacts;
     @Json(name = "loggedWork")
     private LoggedWork[] _loggedWork;
     @Json(name = "messageCount")
@@ -130,50 +73,24 @@ public class Workorder implements Parcelable {
     private Integer _messages;
     @Json(name = "needsReadyToGo")
     private Boolean _needsReadyToGo;
-    @Json(name = "onlyApprovedAdditionalExpenses")
-    private Expense[] _onlyApprovedAdditionalExpenses;
-    @Json(name = "onlyDeniedAdditionalExpenses")
-    private Expense[] _onlyDeniedAdditionalExpenses;
-    @Json(name = "onlyNewAdditionalExpenses")
-    private Expense[] _onlyNewAdditionalExpenses;
-    @Json(name = "paidDate")
-    private String _paidDate;
     @Json(name = "pay")
     private Pay _pay;
     @Json(name = "paymentId")
     private Long _paymentId;
-    //    @Json(name = "provider")
-//    private Provider _provider;
     @Json(name = "schedule")
     private Schedule _schedule;
     @Json(name = "shipmentTracking")
     private ShipmentTracking[] _shipmentTracking;
-    @Json(name = "showProviderWasLatePrompt")
-    private Boolean _showProviderWasLatePrompt;
     @Json(name = "signatureList")
     private Signature[] _signatureList;
-    @Json(name = "skillsets")
-    private Skillset[] _skillsets;
     @Json(name = "standardInstruction")
     private String _standardInstruction;
     @Json(name = "standardInstructions")
     private String _standardInstructions;
     @Json(name = "status")
     private Status _status;
-    @Json(name = "statusId")
-    private Integer _statusId;
-    @Json(name = "taskEnabled")
-    private Integer _taskEnabled;
     @Json(name = "tasks")
     private Task[] _tasks;
-    @Json(name = "techCanPrint")
-    private Boolean _techCanPrint;
-    @Json(name = "time_since_published")
-    private Integer _timeSincePublished;
-    @Json(name = "timezone")
-    private String _timezone;
-    @Json(name = "timezoneIdentifier")
-    private String _timezoneIdentifier;
     @Json(name = "title")
     private String _title;
     @Json(name = "typeOfWork")
@@ -182,16 +99,10 @@ public class Workorder implements Parcelable {
     private UploadSlot[] _uploadSlots;
     @Json(name = "w2")
     private Integer _w2;
-    @Json(name = "workorderBonusInfo")
-    private WorkorderBonusInfo[] _workorderBonusInfo;
-    //@Json(name="workorderContacts")
-    //private Object[] _workorderContacts;
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
-//    @Json(name = "workorderPenaltyInfo")
-//    private JsonObject[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -204,14 +115,6 @@ public class Workorder implements Parcelable {
         return _alertCount;
     }
 
-    public Integer getAlerts() {
-        return _alerts;
-    }
-
-    public String getApproximatePaymentDate() {
-        return _approximatePaymentDate;
-    }
-
     public Integer getBundleCount() {
         return _bundleCount;
     }
@@ -222,33 +125,6 @@ public class Workorder implements Parcelable {
 
     public BuyerRating getBuyerRatingInfo() {
         return _buyerRatingInfo;
-    }
-
-    public Boolean getCanEditFieldsForProviderToEnter() {
-        return _canEditFieldsForProviderToEnter;
-    }
-
-    public Boolean getCanPerformPreassignmentAction() {
-        return _canPerformPreassignmentAction;
-    }
-
-    public Boolean getCanRequestPayForThisWo() {
-        return _canRequestPayForThisWo;
-    }
-
-    public Boolean getCanViewServicePayRateInfo() {
-        if (_canViewServicePayRateInfo == null)
-            return true;
-
-        return _canViewServicePayRateInfo;
-    }
-
-    public Double getCancelFee() {
-        return _cancelFee;
-    }
-
-    public CheckInOutInfo getCheckInOutInfo() {
-        return _checkInOutInfo;
     }
 
     public String getClosingNotes() {
@@ -268,10 +144,6 @@ public class Workorder implements Parcelable {
 
     public String getCompanyName() {
         return _companyName;
-    }
-
-    public CompletionStep[] getCompletionSteps() {
-        return _completionSteps;
     }
 
     public String getConfidentialInformation() {
@@ -294,28 +166,8 @@ public class Workorder implements Parcelable {
         return _customerPoliciesProcedures;
     }
 
-    public Integer getDaysSinceApprovedOrCanceled() {
-        return _daysSinceApprovedOrCanceled;
-    }
-
-    public Integer getDeclinedWo() {
-        return _declinedWo;
-    }
-
-//    public Deliverable[] getDeliverables() {
-//        return _deliverables;
-//    }
-
     public Discount[] getDiscounts() {
         return _discounts;
-    }
-
-    public Integer getDisplayCounterOffer() {
-        return _displayCounterOffer;
-    }
-
-    public Double getDistance() {
-        return _distance;
     }
 
     public Document[] getDocuments() {
@@ -330,36 +182,12 @@ public class Workorder implements Parcelable {
         return _expectedPayment;
     }
 
-    public Integer getFinanceId() {
-        return _financeId;
-    }
-
     public String getFullWorkDescription() {
         return _fullWorkDescription;
     }
 
-    public Boolean getHasFund() {
-        return _hasFund;
-    }
-
-    public Boolean getHasMarketplaceAccess() {
-        return _hasMarketplaceAccess;
-    }
-
-    public String getIdentifier() {
-        return _identifier;
-    }
-
-//    public IncreaseRequestInfo getIncreaseRequestInfo() {
-//        return _increaseRequestInfo;
-//    }
-
-    public String getIndustry() {
-        return _industry;
-    }
-
-    public Boolean getIsAssignedToWorkorder() {
-        return _isAssignedToWorkorder;
+    public Boolean hasClosingNotes() {
+        return _hasClosingNotes;
     }
 
     public Boolean getIsCounter() {
@@ -367,14 +195,6 @@ public class Workorder implements Parcelable {
             return _isCounter;
 
         return false;
-    }
-
-    public Boolean getIsDeliverablesUploaded() {
-        return _isDeliverablesUploaded;
-    }
-
-    public Boolean getIsExemptFromFee() {
-        return _isExemptFromFee;
     }
 
     public Boolean getIsGpsRequired() {
@@ -391,33 +211,13 @@ public class Workorder implements Parcelable {
         return false;
     }
 
-    public Boolean getIsRequest() {
-        return _isRequest;
-    }
-
-    public Boolean getIsRequestedByProvider() {
-        return _isRequestedByProvider;
-    }
-
-    public Boolean getIsWoOnHold() {
-        return _isWoOnHold;
-    }
-
     public Boolean getIsWorkPerformed() {
         return _isWorkPerformed;
     }
 
-//	public Label[] getLabel(){
-//		return _label;
-//	}
-
     public Location getLocation() {
         return _location;
     }
-
-//	public LocationContacts[] getLocationContacts(){
-//		return _locationContacts;
-//	}
 
     public LoggedWork[] getLoggedWork() {
         return _loggedWork;
@@ -438,34 +238,13 @@ public class Workorder implements Parcelable {
         return false;
     }
 
-    public Expense[] getOnlyApprovedAdditionalExpenses() {
-        return _onlyApprovedAdditionalExpenses;
-    }
-
-    public Expense[] getOnlyDeniedAdditionalExpenses() {
-        return _onlyDeniedAdditionalExpenses;
-    }
-
-    public Expense[] getOnlyNewAdditionalExpenses() {
-        return _onlyNewAdditionalExpenses;
-    }
-
-    public String getPaidDate() {
-        return _paidDate;
-    }
-
     public Pay getPay() {
         return _pay;
-//        return null;
     }
 
     public Long getPaymentId() {
         return _paymentId;
     }
-
-//    public Provider getProvider() {
-//        return _provider;
-//    }
 
     public Schedule getSchedule() {
         return _schedule;
@@ -475,16 +254,8 @@ public class Workorder implements Parcelable {
         return _shipmentTracking;
     }
 
-    public Boolean getShowProviderWasLatePrompt() {
-        return _showProviderWasLatePrompt;
-    }
-
     public Signature[] getSignatureList() {
         return _signatureList;
-    }
-
-    public Skillset[] getSkillsets() {
-        return _skillsets;
     }
 
     public String getStandardInstruction() {
@@ -494,36 +265,8 @@ public class Workorder implements Parcelable {
         return _standardInstructions;
     }
 
-//	public Status getStatus(){
-//		return _status;
-//	}
-
-    public Integer getStatusId() {
-        return _statusId;
-    }
-
-    public Integer getTaskEnabled() {
-        return _taskEnabled;
-    }
-
     public Task[] getTasks() {
         return _tasks;
-    }
-
-    public Boolean getTechCanPrint() {
-        return _techCanPrint;
-    }
-
-    public Integer getTimeSincePublished() {
-        return _timeSincePublished;
-    }
-
-    public String getTimezone() {
-        return _timezone;
-    }
-
-    public String getTimezoneIdentifier() {
-        return _timezoneIdentifier;
     }
 
     public String getTitle() {
@@ -542,10 +285,6 @@ public class Workorder implements Parcelable {
         return _w2;
     }
 
-    public WorkorderBonusInfo[] getWorkorderBonusInfo() {
-        return _workorderBonusInfo;
-    }
-
     public Long getWorkorderId() {
         return _workorderId;
     }
@@ -553,10 +292,6 @@ public class Workorder implements Parcelable {
     public User getWorkorderManagerInfo() {
         return _workorderManagerInfo;
     }
-
-//	public WorkorderPenaltyInfo[] getWorkorderPenaltyInfo(){
-//        return _workorderPenaltyInfo;
-//    }
 
     public JsonObject toJson() {
         return toJson(this);
@@ -588,38 +323,27 @@ public class Workorder implements Parcelable {
     private static final String TAG = "data.workorder.Workorder";
     public static final int BUTTON_ACTION_NONE = 0;
     public static final int BUTTON_ACTION_REQUEST = 1;
-    public static final int BUTTON_ACTION_ASSIGNMENT = 2;
+    public static final int BUTTON_ACTION_ACCEPT = 2;
     public static final int BUTTON_ACTION_CHECKIN = 3;
     public static final int BUTTON_ACTION_CHECKOUT = 4;
-    public static final int BUTTON_ACTION_ACKNOWLEDGE_HOLD = 5;
+    public static final int BUTTON_ACTION_RECOGNIZE_HOLD = 5;
     public static final int BUTTON_ACTION_VIEW_COUNTER = 6;
     public static final int BUTTON_ACTION_VIEW_PAYMENT = 7;
     public static final int BUTTON_ACTION_WITHDRAW_REQUEST = 8;
     public static final int BUTTON_ACTION_READY_TO_GO = 9;
+    public static final int BUTTON_ACTION_CONFIRM = 10;
+    public static final int BUTTON_ACTION_MAP = 11;
+    public static final int BUTTON_ACTION_NAVIGATE = 12;
+    public static final int BUTTON_ACTION_REPORT_PROBLEM = 13;
+    public static final int BUTTON_ACTION_CLOSING_NOTES = 14;
+    public static final int BUTTON_ACTION_MARK_INCOMPLETE = 15;
+    public static final int BUTTON_ACTION_REVIEW_UPDATE = 16;
+    public static final int BUTTON_ACTION_REVIEW_IN = 17;
+    public static final int BUTTON_ACTION_EDIT_REVIEW = 18;
+    public static final int BUTTON_ACTION_VIEW_REVIEW = 19;
 
-    public static final int NOT_INTERESTED_ACTION_NONE = 0;
-    public static final int NOT_INTERESTED_ACTION_DECLINE = 101;
-    public static final int NOT_INTERESTED_ACTION_WITHDRAW_REQUEST = 102;
-    public static final int NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT = 103;
-
-    // status colors lookuptable
-    private static final int[] _STATUS_LOOKUP_TABLE = {
-            R.drawable.card_status_white, R.drawable.card_status_orange,
-            R.drawable.card_status_green, R.drawable.card_status_gray};
-
-    private static final int[] _STATUS_TEXT_TABLE = {
-            R.color.fn_dark_text, R.color.fn_white_text,
-            R.color.fn_white_text, R.color.fn_white_text};
-
-    private static final int[] _STATUS_BUTTON_FG = {R.color.fn_dark_button_text,
-            R.color.fn_white_text, R.color.fn_white_text, R.color.fn_white_text};
-
-    private static final int[] _STATUS_BUTTON_BG = {R.drawable.btn_bg_white,
-            R.drawable.btn_bg_orange, R.drawable.btn_bg_green, R.drawable.btn_bg_white};
-
-    private int _buttonAction = 0;
-    private int _notInterestedAction = 0;
-    // private Set<Integer> _labelIds = new HashSet<Integer>();
+    private int _rightButtonAction = 0;
+    private int _leftButtonAction = 0;
 
     private final Set<Listener> _listeners = new HashSet<>();
 
@@ -682,6 +406,9 @@ public class Workorder implements Parcelable {
 
     public boolean canComplete() {
         if (getStatus().getWorkorderStatus() == WorkorderStatus.AVAILABLE || getStatus().getWorkorderStatus() == WorkorderStatus.INPROGRESS) {
+            if (hasClosingNotes() != null && !hasClosingNotes()) {
+                return false;
+            }
             if (misc.isEmptyOrNull(getClosingNotes())) {
                 return false;
             }
@@ -843,12 +570,12 @@ public class Workorder implements Parcelable {
         return getStatus().getWorkorderSubstatus();
     }
 
-    public int getButtonAction() {
-        return _buttonAction;
+    public int getLeftButtonAction() {
+        return _leftButtonAction;
     }
 
-    public int getNotInterestedAction() {
-        return _notInterestedAction;
+    public int getRightButtonAction() {
+        return _rightButtonAction;
     }
 
     public Status getStatus() {
@@ -869,22 +596,6 @@ public class Workorder implements Parcelable {
         return _status;
     }
 
-    public int getStatusBG() {
-        return _STATUS_LOOKUP_TABLE[getStatusIntent().ordinal()];
-    }
-
-    public int getStatusTextColor() {
-        return _STATUS_TEXT_TABLE[getStatusIntent().ordinal()];
-    }
-
-    public int getStatusButtonBG() {
-        return _STATUS_BUTTON_BG[getStatusIntent().ordinal()];
-    }
-
-    public int getStatusButtonFG() {
-        return _STATUS_BUTTON_FG[getStatusIntent().ordinal()];
-    }
-
     public StatusIntent getStatusIntent() {
         return getStatus().getStatusIntent();
     }
@@ -898,8 +609,8 @@ public class Workorder implements Parcelable {
     }
 
     private void buildStatus() {
-        _notInterestedAction = NOT_INTERESTED_ACTION_NONE;
-        _buttonAction = BUTTON_ACTION_NONE;
+        _leftButtonAction = BUTTON_ACTION_NONE;
+        _rightButtonAction = BUTTON_ACTION_NONE;
 
         Status status = getStatus();
 
@@ -925,93 +636,140 @@ public class Workorder implements Parcelable {
                 Log.v(TAG, "Unknown Status (" + _workorderId + "): "
                         + status.toJson().toString());
                 break;
-
         }
     }
 
     private void buildStatusAvailable(Status status) {
         switch (status.getWorkorderSubstatus()) {
             case AVAILABLE:
-                _buttonAction = BUTTON_ACTION_REQUEST;
-                _notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_REQUEST;
                 break;
             case ROUTED:
-                _buttonAction = BUTTON_ACTION_ASSIGNMENT;
-                _notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_ACCEPT;
                 break;
             case REQUESTED:
-                _buttonAction = BUTTON_ACTION_WITHDRAW_REQUEST;
-                _notInterestedAction = NOT_INTERESTED_ACTION_WITHDRAW_REQUEST;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_WITHDRAW_REQUEST;
                 break;
             case COUNTEROFFERED:
-                _buttonAction = BUTTON_ACTION_VIEW_COUNTER;
-                _notInterestedAction = NOT_INTERESTED_ACTION_DECLINE;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_WITHDRAW_REQUEST;
                 break;
             default:
-                return;
+                _leftButtonAction = BUTTON_ACTION_NONE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
         }
     }
 
     private void buildStatusAssigned(Status status) {
         switch (status.getWorkorderSubstatus()) {
             case UNCONFIRMED: // green
-                if (getNeedsReadyToGo())
-                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
-                else
-                    _buttonAction = BUTTON_ACTION_ASSIGNMENT;
-
-                _notInterestedAction = NOT_INTERESTED_ACTION_CANCEL_ASSIGNMENT;
+                if (getNeedsReadyToGo()) {
+                    _leftButtonAction = BUTTON_ACTION_REPORT_PROBLEM;
+                    _rightButtonAction = BUTTON_ACTION_READY_TO_GO;
+                } else {
+                    _leftButtonAction = BUTTON_ACTION_MAP;
+                    _rightButtonAction = BUTTON_ACTION_CONFIRM;
+                }
                 break;
             case CONFIRMED: // white
-                if (getNeedsReadyToGo())
-                    _buttonAction = BUTTON_ACTION_READY_TO_GO;
-                else
-                    _buttonAction = BUTTON_ACTION_CHECKIN;
+                if (getNeedsReadyToGo()) {
+                    _leftButtonAction = BUTTON_ACTION_REPORT_PROBLEM;
+                    _rightButtonAction = BUTTON_ACTION_READY_TO_GO;
+                } else {
+                    _leftButtonAction = BUTTON_ACTION_MAP;
+                    _rightButtonAction = BUTTON_ACTION_CHECKIN;
+                }
                 break;
             case ONHOLD_UNACKNOWLEDGED: // orange
-                _buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_RECOGNIZE_HOLD;
                 break;
             case ONHOLD_ACKNOWLEDGED: // gray
-                _buttonAction = BUTTON_ACTION_NONE;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_NONE;
                 break;
             case CHECKEDIN:
-                _buttonAction = BUTTON_ACTION_CHECKOUT;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_CHECKOUT;
                 break;
             case CHECKEDOUT:
-                _buttonAction = BUTTON_ACTION_CHECKIN;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_CHECKIN;
+                break;
             default:
-                return;
+                _leftButtonAction = BUTTON_ACTION_NONE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
         }
     }
 
     private void buildStatusInProgress(Status status) {
         switch (status.getWorkorderSubstatus()) {
             case CHECKEDIN: // green
-                _buttonAction = BUTTON_ACTION_CHECKOUT;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_CHECKOUT;
                 break;
             case CHECKEDOUT: // white
-                _buttonAction = BUTTON_ACTION_CHECKIN;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_CHECKIN;
                 break;
             case ONHOLD_UNACKNOWLEDGED: // orange
-                _buttonAction = BUTTON_ACTION_ACKNOWLEDGE_HOLD;
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_RECOGNIZE_HOLD;
                 break;
             case ONHOLD_ACKNOWLEDGED: // gray
-                // no action
+                _leftButtonAction = BUTTON_ACTION_MAP;
+                _rightButtonAction = BUTTON_ACTION_NONE;
                 break;
             default:
-                return;
+                _leftButtonAction = BUTTON_ACTION_NONE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
         }
     }
 
     private void buildStatusCompleted(Status status) {
-        if (status.getWorkorderSubstatus() == WorkorderSubstatus.APPROVED_PROCESSINGPAYMENT) {
-            _buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
+        _leftButtonAction = BUTTON_ACTION_NONE;
+        switch (status.getWorkorderSubstatus()) {
+            case PENDINGREVIEW:
+                _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
+                break;
+            case INREVIEW:
+                _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
+                break;
+            case APPROVED_PROCESSINGPAYMENT:
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
+            case PAID:
+                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                break;
+            default:
+                _leftButtonAction = BUTTON_ACTION_NONE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
         }
     }
 
     private void buildStatusCanceled(Status status) {
-        if (status.getWorkorderSubstatus() == WorkorderSubstatus.CANCELED_LATEFEEPROCESSING) {
-            _buttonAction = BUTTON_ACTION_VIEW_PAYMENT;
+        _leftButtonAction = BUTTON_ACTION_NONE;
+        switch (status.getWorkorderSubstatus()) {
+            case CANCELED:
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
+            case CANCELED_LATEFEEPAID:
+                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                break;
+            case CANCELED_LATEFEEPROCESSING:
+                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                break;
+            default:
+                _leftButtonAction = BUTTON_ACTION_NONE;
+                _rightButtonAction = BUTTON_ACTION_NONE;
+                break;
         }
     }
 

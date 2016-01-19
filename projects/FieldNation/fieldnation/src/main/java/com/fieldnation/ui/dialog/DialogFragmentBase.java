@@ -175,6 +175,12 @@ public class DialogFragmentBase extends DialogFragment {
     }
 
     @Override
+    public void dismiss() {
+        if (isAdded())
+            super.dismiss();
+    }
+
+    @Override
     public void onDismiss(DialogInterface dialog) {
         Log.v(TAG, "onDismiss");
         super.onDismiss(dialog);

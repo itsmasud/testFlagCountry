@@ -213,8 +213,9 @@ public class OneButtonScrollingDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
-            if (_listener != null)
+            if (_listener != null) {
                 _listener.onButtonClick();
+            }
         }
     };
 

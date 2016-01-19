@@ -5,9 +5,10 @@ import android.net.Uri;
 import com.fieldnation.App;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.utils.misc;
 
-import java.net.URLConnection;
+import java.security.SecureRandom;
 import java.text.ParseException;
 
 /**
@@ -30,11 +31,19 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_BODY = "PARAM_BODY";
     public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
 
+    public static final String PARAM_NOTIFICATION_ID = "notification.id";
+    public static final String PARAM_NOTIFICATION_START = "notification.start";
+    public static final String PARAM_NOTIFICATION_SUCCESS = "notification.success";
+    public static final String PARAM_NOTIFICATION_FAILED = "notification.failed";
+    public static final String PARAM_NOTIFICATION_RETRY = "notification.retry";
+
 
     private JsonObject request;
     private JsonObject headers;
     private JsonObject multiPartFields;
     private JsonObject multiPartFiles;
+
+    private static final SecureRandom _random = new SecureRandom();
 
     public HttpJsonBuilder() {
     }
@@ -97,6 +106,19 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(body))
             request.put(PARAM_WEB_BODY, body);
+        return this;
+    }
+
+    public HttpJsonBuilder notify(NotificationDefinition start, NotificationDefinition success,
+                                  NotificationDefinition failed, NotificationDefinition retry) throws ParseException {
+        getRequest();
+        request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
+
+        request.put(PARAM_NOTIFICATION_START, start.toJson());
+        request.put(PARAM_NOTIFICATION_SUCCESS, success.toJson());
+        request.put(PARAM_NOTIFICATION_FAILED, failed.toJson());
+        request.put(PARAM_NOTIFICATION_RETRY, retry.toJson());
+
         return this;
     }
 

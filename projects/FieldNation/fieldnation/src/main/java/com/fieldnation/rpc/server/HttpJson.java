@@ -1,6 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import android.content.Context;
 import android.net.Uri;
 
 import com.fieldnation.Log;

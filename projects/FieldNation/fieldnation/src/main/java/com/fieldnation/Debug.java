@@ -19,6 +19,7 @@ import io.fabric.sdk.android.services.common.Crash;
  */
 public class Debug {
     private static final boolean USE_CRASHLYTICS = !BuildConfig.DEBUG;
+    //private static final boolean USE_CRASHLYTICS = true;
     private static boolean _started = false;
     private static ANRWatchDog _anrWatchDog;
     private static Crashlytics _crashlytics = null;
@@ -36,6 +37,7 @@ public class Debug {
                 protected Object doInBackground(Object... params) {
                     Crashlytics c = new Crashlytics();
                     Fabric.with(App.get(), c);
+                    Fabric.with(App.get(), new Answers());
                     setString("app_version", (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
                     setString("sdk", Build.VERSION.SDK_INT + "");
                     setBool("debug", BuildConfig.DEBUG);

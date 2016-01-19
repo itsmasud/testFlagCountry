@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
@@ -22,7 +23,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GpsLocationService;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
@@ -32,7 +32,6 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
     private OverScrollListView _fileList;
     private RefreshView _refreshView;
-    private EmptyWoListView _emptyView;
+    private UnavailableCardView _emptyView;
 
     private ActionBarDrawerView _actionBarView;
     private Toolbar _toolbar;
@@ -101,7 +100,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 _currentUploadSlot = savedInstanceState.getParcelable(STATE_CURRENT_UPLOAD_SLOT);
             }
             if (savedInstanceState.containsKey(STATE_UPLAODING_DOCS)) {
-                _uploadingDocumentList = (UploadingDocument[]) savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+                Parcelable[] parcels = savedInstanceState.getParcelableArray(STATE_UPLAODING_DOCS);
+                _uploadingDocumentList = new UploadingDocument[parcels.length];
+                for (int i = 0; i < parcels.length; i++) {
+                    _uploadingDocumentList[i] = (UploadingDocument) parcels[i];
+                }
             }
         }
 
@@ -136,7 +139,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _titleTaskTextView = (TextView) findViewById(R.id.titleTask_textview);
         _maxFilesNumberTextView = (TextView) findViewById(R.id.maxFilesNumber_textview);
 
-        _emptyView = (EmptyWoListView) findViewById(R.id.empty_view);
+        _emptyView = (UnavailableCardView) findViewById(R.id.empty_view);
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
@@ -357,7 +360,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
                 for (int i = 0; i < _sharedFilesLayout.getChildCount(); i++) {
                     final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _sharedFilesLayout.getChildAt(i);
-                    if (row.isChecked()) {
+                    if (row.isChecked() && row.getUploadingDocument() != null) {
                         WorkorderClient.uploadDeliverable(ShareRequestActivity.this, _workorder.getWorkorderId(),
                                 _currentUploadSlot.getSlotId(), row.getUploadingDocument().getFileName(), row.getUploadingDocument().getUri());
                     }
@@ -553,11 +556,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorder.getWorkorderId(), false);
                 } else {
-                	try {
-	                    Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-    	                finish();
-        	        } catch (Exception ex) {
-            	        ex.printStackTrace();
+                    try {
+                        Toast.makeText(ShareRequestActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
+                        finish();
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
                     }
                 }
                 return;

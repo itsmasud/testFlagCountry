@@ -21,7 +21,7 @@ import java.text.ParseException;
  */
 public class HttpResult {
     private static final String TAG = "HttpResult";
-    
+
     private byte[] _baResults = null;
     private String _sResults = null;
     private JsonObject _jsonResults = null;

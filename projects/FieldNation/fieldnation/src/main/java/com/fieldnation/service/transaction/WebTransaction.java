@@ -188,7 +188,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                 //logCursor(cursor);
                 return cursor.getCount() > 0;
             } finally {
-                cursor.close();
+                if (cursor != null) cursor.close();
             }
         }
     }

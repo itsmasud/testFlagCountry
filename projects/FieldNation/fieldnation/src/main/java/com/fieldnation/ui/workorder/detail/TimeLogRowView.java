@@ -11,6 +11,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -85,7 +86,15 @@ public class TimeLogRowView extends RelativeLayout {
 
         try {
             Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
-            _dateTextView.setText(misc.formatDate(cal));
+            Calendar ecal = null;
+            if (_loggedWork.getEndDate() != null) {
+                ecal = ISO8601.toCalendar(_loggedWork.getEndDate());
+            }
+            if (ecal != null && !DateUtils.isSameDay(cal, ecal)) {
+                _dateTextView.setText(misc.formatDate(cal) + " - " + misc.formatDate(ecal));
+            } else {
+                _dateTextView.setText(misc.formatDate(cal));
+            }
         } catch (ParseException e) {
             Log.v(TAG, e);
         }

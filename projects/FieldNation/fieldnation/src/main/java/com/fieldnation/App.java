@@ -2,6 +2,8 @@ package com.fieldnation;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,30 +19,33 @@ import android.os.Looper;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
 
-import io.fabric.sdk.android.Fabric;
-
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -76,7 +81,11 @@ public class App extends Application {
     private Handler _handler = new Handler();
     private boolean _switchingUser = false;
     public String deviceToken = null;
+    private boolean _isConnected = false;
+    private OAuth _auth = null;
 
+    private static final int BYTES_IN_MB = 1024 * 1024;
+    private static final int THRESHOLD_FREE_MB = 5;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -178,7 +187,6 @@ public class App extends Application {
         }.executeEx(this);
 
         watch.finishAndRestart();
-        // TODO look at async task
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
@@ -186,7 +194,6 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        // TODO look at using async task here
         _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
         _gaTopicClient.connect(this);
 
@@ -225,6 +232,11 @@ public class App extends Application {
         }
     };
 
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(getPackageName() + "_preferences",
+                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+    }
+
     public static void anrReport() {
         final Thread mainThread = Looper.getMainLooper().getThread();
         final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
@@ -262,6 +274,18 @@ public class App extends Application {
     /*-**********************-*/
     /*-         Auth         -*/
     /*-**********************-*/
+    public OAuth getAuth() {
+        synchronized (STAG) {
+            return _auth;
+        }
+    }
+
+    private void setAuth(OAuth auth) {
+        synchronized (STAG) {
+            _auth = auth;
+        }
+    }
+
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -272,11 +296,14 @@ public class App extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            _isConnected = true;
+            setAuth(oauth);
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
+            setAuth(null);
             AuthTopicClient.requestCommand(App.this);
         }
     };
@@ -284,6 +311,11 @@ public class App extends Application {
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
+
+    public boolean isConnected() {
+        return _isConnected;
+    }
+
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -299,7 +331,10 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
+            _isConnected = true;
+            Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
+            ToastClient.dismissSnackbar(App.this);
         }
 
         @Override
@@ -314,6 +349,13 @@ public class App extends Application {
 
         @Override
         public void onNetworkDisconnected() {
+            Log.v(TAG, "onNetworkDisconnected");
+            _isConnected = false;
+            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
+            if (intent != null) {
+                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            }
         }
     };
 
@@ -714,5 +756,49 @@ public class App extends Application {
         } catch (Exception ex) {
         }
         return "application/octet-stream";
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Log.i(TAG, "Memory Trim Level: " + level);
+
+        PhotoClient.clearPhotoClientCache();
+        switch (level) {
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean isFreeSpaceAvailable() {
+        try {
+            final long freeMBInternal = new File(getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
+            final long freeMBExternal = new File(getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
+
+            Log.v(TAG, "Free internal space:" + freeMBInternal);
+            Log.v(TAG, "Free external space:" + freeMBExternal);
+
+            if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return true;
+        }
     }
 }
