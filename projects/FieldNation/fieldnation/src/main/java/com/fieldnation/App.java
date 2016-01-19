@@ -29,6 +29,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
@@ -746,6 +747,7 @@ public class App extends Application {
 
         //TODO: need to complete the if-else
         if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW) {
+            PhotoClient.clearPhotoClientCache();
         } else if (level >= ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL) {
         }
 

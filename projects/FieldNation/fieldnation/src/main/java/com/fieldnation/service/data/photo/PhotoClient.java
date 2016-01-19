@@ -52,6 +52,10 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
         context.startService(intent);
     }
 
+    public static void clearPhotoClientCache(){
+        _pictureCache.clear();
+    }
+
     public boolean subGet(String url, boolean getCircle, boolean isSync) {
         String topicId = TOPIC_ID_GET_PHOTO;
 
