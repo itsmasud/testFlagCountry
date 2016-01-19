@@ -209,7 +209,7 @@
                 android:resource="@xml/authenticator" />
         </service>
         <service
-            android:name=".rpc.server.SyncService"
+            android:name=".SyncService"
             android:exported="true"
             android:process=":frontside">
             <intent-filter>${applicationId}.service
@@ -284,7 +284,7 @@
             android:process=":frontside" />
 
         <provider
-            android:name=".rpc.server.StubProvider"
+            android:name=".StubProvider"
             android:authorities="${applicationId}.provider"
             android:exported="false"
             android:process=":frontside"

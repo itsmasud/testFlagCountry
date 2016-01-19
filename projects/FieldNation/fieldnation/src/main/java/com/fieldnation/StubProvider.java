@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
