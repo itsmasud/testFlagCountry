@@ -784,15 +784,21 @@ public class App extends Application {
         }
     }
 
-    public boolean isFreeSpaceAvailable(Context context) {
-        final long freeMBInternal = new File(context.getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
-        final long freeMBExternal = new File(context.getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
+    public boolean isFreeSpaceAvailable() {
+        try {
+            final long freeMBInternal = new File(getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
+            final long freeMBExternal = new File(getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
 
-        Log.v(TAG, "Free internal space:" + freeMBInternal);
-        Log.v(TAG, "Free external space:" + freeMBExternal);
+            Log.v(TAG, "Free internal space:" + freeMBInternal);
+            Log.v(TAG, "Free external space:" + freeMBExternal);
 
-        if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
+            if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
+                return true;
+            }
+            return false;
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
             return true;
         }
-        return false;
-    }}
+    }
+}
