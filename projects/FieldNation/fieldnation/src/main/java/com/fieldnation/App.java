@@ -761,6 +761,8 @@ public class App extends Application {
                 break;
             case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
                 break;
+            default:
+                break;
         }
     }
 }
