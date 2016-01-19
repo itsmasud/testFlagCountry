@@ -3,6 +3,7 @@ package com.fieldnation;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.PendingIntent;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -28,10 +29,12 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -41,6 +44,8 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Calendar;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -753,6 +758,31 @@ public class App extends Application {
         return "application/octet-stream";
     }
 
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Log.i(TAG, "Memory Trim Level: " + level);
+
+        PhotoClient.clearPhotoClientCache();
+        switch (level) {
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+                break;
+            default:
+                break;
+        }
+    }
 
     public boolean isFreeSpaceAvailable(Context context) {
         final long freeMBInternal = new File(context.getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
@@ -765,5 +795,4 @@ public class App extends Application {
             return true;
         }
         return false;
-    }
-}
+    }}

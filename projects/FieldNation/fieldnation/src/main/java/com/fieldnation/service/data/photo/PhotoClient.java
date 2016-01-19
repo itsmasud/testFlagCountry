@@ -10,6 +10,7 @@ import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -37,12 +38,22 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
         if (misc.isEmptyOrNull(url))
             return;
         // misc.printStackTrace("PhotoClient.get()");
+
+        if (!MemUtils.shouldSuspendLoadingMore(context)) {
+            _pictureCache.clear();
+            return;
+        }
+
         Intent intent = new Intent(context, PhotoService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET);
         intent.putExtra(PARAM_CIRCLE, getCircle);
         intent.putExtra(PARAM_URL, url);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         context.startService(intent);
+    }
+
+    public static void clearPhotoClientCache(){
+        _pictureCache.clear();
     }
 
     public boolean subGet(String url, boolean getCircle, boolean isSync) {

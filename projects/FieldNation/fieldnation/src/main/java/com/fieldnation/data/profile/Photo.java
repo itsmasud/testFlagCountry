@@ -7,7 +7,7 @@ import com.fieldnation.json.annotations.Json;
 
 public class Photo {
     private static final String TAG = "Photo";
-    
+
     @Json(name = "large")
     private String _large;
     @Json(name = "thumb")
