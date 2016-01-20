@@ -49,23 +49,23 @@ public class Pay implements Parcelable {
     }
 
     public Double getBlendedAdditionalHours() {
-        return _blendedAdditionalHours;
+        return _blendedAdditionalHours == null ? 0.0 : _blendedAdditionalHours;
     }
 
     public Double getBlendedAdditionalRate() {
-        return _blendedAdditionalRate;
+        return _blendedAdditionalRate == null ? 0.0 : _blendedAdditionalRate;
     }
 
     public Double getBlendedFirstHours() {
-        return _blendedFirstHours;
+        return _blendedFirstHours == null ? 0.0 : _blendedFirstHours;
     }
 
     public Double getBlendedStartRate() {
-        return _blendedStartRate;
+        return _blendedStartRate == null ? 0.0 : _blendedStartRate;
     }
 
     public Double getBonuses() {
-        return _bonuses;
+        return _bonuses == null ? 0.0 : _bonuses;
     }
 
     public String getDescription() {
@@ -77,7 +77,7 @@ public class Pay implements Parcelable {
     }
 
     public Double getFixedAmount() {
-        return _fixedAmount;
+        return _fixedAmount == null ? 0.0 : _fixedAmount;
     }
 
     public Boolean hidePay() {
@@ -88,15 +88,15 @@ public class Pay implements Parcelable {
     }
 
     public Integer getMaxDevice() {
-        return (int) (double) _maxDevice;
+        return (int) (double) (_maxDevice == null ? 0.0 : _maxDevice);
     }
 
     public Double getMaxHour() {
-        return _maxHour;
+        return _maxHour == null ? 0.0 : _maxHour;
     }
 
     public Double getMaximumAmount() {
-        return _maximumAmount;
+        return _maximumAmount == null ? 0.0 : _maximumAmount;
     }
 
     public String getPayRateBasis() {
@@ -104,15 +104,15 @@ public class Pay implements Parcelable {
     }
 
     public Double getPenaltyFees() {
-        return _penaltyFees;
+        return _penaltyFees == null ? 0.0 : _penaltyFees;
     }
 
     public Double getPerDevice() {
-        return _perDevice;
+        return _perDevice == null ? 0.0 : _perDevice;
     }
 
     public Double getPerHour() {
-        return _perHour;
+        return _perHour == null?0.0 :_perHour;
     }
 
     public JsonObject toJson() {
