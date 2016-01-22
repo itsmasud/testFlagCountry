@@ -14,13 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";
@@ -36,7 +36,7 @@ public class PayDialog extends DialogFragmentBase {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private Spinner _typeSpinner;
+    private MaterialBetterSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
     private EditText _fixedEditText;
@@ -116,8 +116,8 @@ public class PayDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_pay, container, false);
 
-        _typeSpinner = (Spinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
+        _typeSpinner = (MaterialBetterSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner.setOnItemClickListener(_type_selected);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),
                 R.array.pay_types,
@@ -346,15 +346,13 @@ public class PayDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemClickListener _type_selected = new AdapterView.OnItemClickListener() {
+
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {

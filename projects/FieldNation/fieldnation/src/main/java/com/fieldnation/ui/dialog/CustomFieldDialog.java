@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.fieldnation.Log;
@@ -23,6 +23,7 @@ import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 
@@ -40,7 +41,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private EditText _textEditText;
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
-    private Spinner _spinner;
+    private MaterialBetterSpinner _spinner;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
@@ -54,6 +55,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private Listener _listener;
     private Calendar _pickerCal;
     private Calendar _expirationDate;
+    private int _itemSelectedPosition;
 
 
     /*-*****************************-*/
@@ -98,7 +100,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-        _spinner = (Spinner) v.findViewById(R.id.spinner);
+        _spinner = (MaterialBetterSpinner) v.findViewById(R.id.spinner);
+        _spinner.setOnItemClickListener(_spinner_selected);
+
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -296,7 +300,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
             dismiss();
             switch (_customField.getFieldType()) {
                 case LIST:
-                    _listener.onOk(_customField, (String) _spinner.getSelectedItem());
+                    _listener.onOk(_customField, (String) _spinner.getAdapter().getItem(_itemSelectedPosition));
                     break;
                 default:
                     _listener.onOk(_customField, _textEditText.getText().toString());
@@ -327,6 +331,15 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         public void afterTextChanged(Editable s) {
         }
+    };
+
+    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _itemSelectedPosition = position;
+        }
+
     };
 
 

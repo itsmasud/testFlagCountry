@@ -68,17 +68,13 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/carrier" />
 
-                <Spinner
+                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/carrier_spinner"
-                    style="@style/Spinner"
-                    android:text="@string/carrier" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:text="What is the carrier?"/>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -122,17 +118,13 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/direction" />
 
-                <Spinner
+                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/direction_spinner"
-                    style="@style/Spinner"
-                    android:text="@string/carrier" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:text="What is the direction?"/>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
             </LinearLayout>
 
         </LinearLayout>

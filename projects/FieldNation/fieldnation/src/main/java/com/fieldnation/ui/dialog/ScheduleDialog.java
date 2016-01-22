@@ -12,7 +12,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.fieldnation.Log;
@@ -22,6 +21,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 
@@ -36,7 +36,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private static final int MODE_EXACT = 1;
 
     // UI
-    private Spinner _typeSpinner;
+    private MaterialBetterSpinner _typeSpinner;
 
     private LinearLayout _rangeLayout;
 
@@ -93,8 +93,8 @@ public class ScheduleDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_schedule, container, false);
 
-        _typeSpinner = (Spinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
+        _typeSpinner = (MaterialBetterSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner.setOnItemClickListener(_type_selected);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.schedule_types,
                 R.layout.view_spinner_item);
@@ -183,6 +183,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     private void setMode(int mode) {
+        Log.e(TAG, "setMode");
         _mode = mode;
 
         _typeSpinner.setSelection(_mode);
@@ -246,18 +247,15 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemClickListener _type_selected = new AdapterView.OnItemClickListener() {
 
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-
     };
+
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

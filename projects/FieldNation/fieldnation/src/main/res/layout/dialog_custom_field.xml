@@ -61,16 +61,13 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <Spinner
+                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
                     android:id="@+id/spinner"
-                    style="@style/Spinner" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:text="Select an option"/>
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
             </LinearLayout>
 
         </LinearLayout>

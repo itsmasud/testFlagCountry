@@ -17,7 +17,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +25,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
@@ -40,11 +40,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private TextView _titleTextView;
     private EditText _trackingIdEditText;
     private Button _scanButton;
-    private Spinner _carrierSpinner;
+    private MaterialBetterSpinner _carrierSpinner;
     private EditText _carrierEditText;
     private TextInputLayout _carrierLayout;
     private EditText _descriptionEditText;
-    private Spinner _directionSpinner;
+    private MaterialBetterSpinner _directionSpinner;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -55,6 +55,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private boolean _clear = false;
     private ArrayAdapter<CharSequence> _carrierAdapter;
     private ArrayAdapter<CharSequence> _directionAdapter;
+    private int _selectedPosition_carrierSpinner;
+    private int _selectedPosition_directionSpinner;
+
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -116,8 +119,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
         _scanButton.setOnClickListener(_scan_onClick);
 
-        _carrierSpinner = (Spinner) v.findViewById(R.id.carrier_spinner);
-        _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
+        _carrierSpinner = (MaterialBetterSpinner) v.findViewById(R.id.carrier_spinner);
+        _carrierSpinner.setOnItemClickListener(_carrier_selected);
 
         _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.carrier_list,
@@ -136,7 +139,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
 
-        _directionSpinner = (Spinner) v.findViewById(R.id.direction_spinner);
+        _directionSpinner = (MaterialBetterSpinner) v.findViewById(R.id.direction_spinner);
+        _directionSpinner.setOnItemClickListener(_direction_selected);
+
 
         _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
                 R.array.direction_list,
@@ -187,8 +192,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     }
 
     public void setSelectedCarrier(final String careerName) {
-        for (int i = 0; i < _carrierSpinner.getCount(); i++) {
-            if (_carrierSpinner.getItemAtPosition(i).equals(careerName)) {
+        for (int i = 0; i < _carrierSpinner.getAdapter().getCount(); i++) {
+            if (_carrierSpinner.getAdapter().getItem(i).equals(careerName)) {
                 _carrierSpinner.setSelection(i);
                 break;
             }
@@ -229,20 +234,28 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemClickListener _carrier_selected = new AdapterView.OnItemClickListener() {
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _selectedPosition_carrierSpinner = position;
+
+            if ("Other".equals(_carrierSpinner.getAdapter().getItem(position).toString())) {
                 _carrierLayout.setVisibility(View.VISIBLE);
             } else {
                 _carrierLayout.setVisibility(View.GONE);
             }
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
     };
+
+    private final AdapterView.OnItemClickListener _direction_selected = new AdapterView.OnItemClickListener() {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _selectedPosition_directionSpinner = position;
+        }
+
+    };
+
 
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
@@ -259,39 +272,39 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             if (_listener != null) {
                 if (_taskId != 0) {
-                    if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+                    if ("Other".equals(_carrierSpinner.getAdapter().getItem(_selectedPosition_carrierSpinner).toString())) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
                                 _carrierEditText.getText().toString(),
                                 _descriptionEditText.getText().toString(),
-                                _directionSpinner.getSelectedItemPosition() == 0,
+                                _selectedPosition_directionSpinner == 0,
                                 _taskId);
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                _carrierSpinner.getSelectedItem().toString(),
+                                _carrierSpinner.getAdapter().getItem(_selectedPosition_carrierSpinner).toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
-                                _directionSpinner.getSelectedItemPosition() == 0,
+                                _selectedPosition_directionSpinner == 0,
                                 _taskId);
                     }
 
                 } else {
-                    if ("Other".equals(_carrierSpinner.getSelectedItem().toString())) {
+                    if ("Other".equals(_carrierSpinner.getAdapter().getItem(_selectedPosition_carrierSpinner).toString())) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
                                 _carrierEditText.getText().toString(),
                                 _descriptionEditText.getText().toString(),
-                                _directionSpinner.getSelectedItemPosition() == 0);
+                                _selectedPosition_directionSpinner == 0);
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                _carrierSpinner.getSelectedItem().toString(),
+                                _carrierSpinner.getAdapter().getItem(_selectedPosition_carrierSpinner).toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
-                                _directionSpinner.getSelectedItemPosition() == 0);
+                                _selectedPosition_directionSpinner == 0);
                     }
                 }
             }
