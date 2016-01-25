@@ -1,7 +1,6 @@
 package com.fieldnation.rpc.server;
 
 import android.net.Uri;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
@@ -107,18 +106,15 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
-        try {
-            InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
-            Stopwatch stopwatch = new Stopwatch(true);
-            Log.v(TAG, "Start upload....");
-            misc.copyStream(inputStream, outputStream, 1024, -1, 1000);
-            Log.v(TAG, "Finish upload...." + stopwatch.finish());
-            outputStream.flush();
-            writer.append(LINE_FEED);
-            writer.flush();
-        } catch (SecurityException e){
-            Toast.makeText(App.get() , "Temporarily files permission denied. Try again later.", Toast.LENGTH_LONG).show();
-        }
+        InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
+        Stopwatch stopwatch = new Stopwatch(true);
+        Log.v(TAG, "Start upload....");
+        misc.copyStream(inputStream, outputStream, 1024, -1, 1000);
+        Log.v(TAG, "Finish upload...." + stopwatch.finish());
+        outputStream.flush();
+        writer.append(LINE_FEED);
+        writer.flush();
+
     }
 
     public void addFilePart(String fieldName, String filename, byte[] filedata, String contentType) throws IOException {
