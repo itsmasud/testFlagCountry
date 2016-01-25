@@ -494,6 +494,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 WebTransaction.delete(context, trans.getId());
                 generateNotification(notifId, notifFailed);
 
+            } catch (SecurityException ex) {
+                Log.v(TAG, "4b");
+                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransaction.delete(context, trans.getId());
+                generateNotification(notifId, notifFailed);
+
             } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
                 Log.v(TAG, "5");
                 Log.v(TAG, ex);
