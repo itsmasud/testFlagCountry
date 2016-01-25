@@ -12,11 +12,11 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,6 +27,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.misc;
+import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ExpenseDialog";
@@ -39,7 +40,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private Button _cancelButton;
     private EditText _amountEditText;
     private EditText _descriptionEditText;
-    private Spinner _categorySpinner;
+    private MaterialBetterSpinner _categorySpinner;
     private LinearLayout _categoryLayout;
 
     // Data
@@ -49,6 +50,8 @@ public class ExpenseDialog extends DialogFragmentBase {
     private InputMethodManager _imm;
     private boolean _reset = false;
     private boolean _showCategories = true;
+    private int _itemSelectedPosition;
+
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -85,7 +88,8 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
 
-        _categorySpinner = (Spinner) v.findViewById(R.id.category_spinner);
+        _categorySpinner = (MaterialBetterSpinner) v.findViewById(R.id.category_spinner);
+        _categorySpinner.setOnItemClickListener(_spinner_selected);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
@@ -170,7 +174,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     public ExpenseCategory getCategory() {
         try {
             if (_showCategories)
-                return _adapter.getItem(_categorySpinner.getSelectedItemPosition());
+                return _adapter.getItem(_itemSelectedPosition);
             else
                 return null;
         } catch (Exception ex) {
@@ -224,6 +228,15 @@ public class ExpenseDialog extends DialogFragmentBase {
 
             ExpenseDialog.this.dismiss();
         }
+    };
+
+    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _itemSelectedPosition = position;
+        }
+
     };
 
     public interface Listener {
