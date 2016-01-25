@@ -80,16 +80,12 @@ public class ThreadManager {
         @Override
         public void run() {
             while (_running) {
-                try {
-                    if (!doWork()) {
-                        //Log.v(TAG, "doWork=False");
-                        sleep();
-                    } //else {
-                    //Log.v(TAG, "doWork=True");
-                    //}
-                } catch (Exception e) {
-                    Toast.makeText(App.get(), "Temporarily files permission denied. Try again later.", Toast.LENGTH_LONG).show();
-                }
+                if (!doWork()) {
+                    //Log.v(TAG, "doWork=False");
+                    sleep();
+                } //else {
+                //Log.v(TAG, "doWork=True");
+                //}
             }
         }
 
