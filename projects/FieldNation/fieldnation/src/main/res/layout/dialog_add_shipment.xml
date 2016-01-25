@@ -68,12 +68,12 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/carrier" />
 
-                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                <com.fieldnation.ui.FnSpinner
                     android:id="@+id/carrier_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:text="What is the carrier?"/>
+                    android:text="What is the carrier?"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
@@ -118,12 +118,12 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/direction" />
 
-                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                <com.fieldnation.ui.FnSpinner
                     android:id="@+id/direction_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:text="What is the direction?"/>
+                    android:text="What is the direction?"
+                    android:visibility="visible" />
 
             </LinearLayout>
 

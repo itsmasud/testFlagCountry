@@ -20,6 +20,7 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
+import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
@@ -41,7 +42,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private EditText _textEditText;
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
-    private MaterialBetterSpinner _spinner;
+    private FnSpinner _spinner;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
@@ -100,7 +101,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-        _spinner = (MaterialBetterSpinner) v.findViewById(R.id.spinner);
+        _spinner = (FnSpinner) v.findViewById(R.id.spinner);
         _spinner.setOnItemClickListener(_spinner_selected);
 
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
@@ -213,6 +214,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
                                 _spinner.setSelection(i);
+                                _itemSelectedPosition = i;
                                 break;
                             }
                         }

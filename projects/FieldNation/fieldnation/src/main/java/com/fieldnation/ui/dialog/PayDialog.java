@@ -20,6 +20,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.FnSpinner;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class PayDialog extends DialogFragmentBase {
@@ -36,7 +37,7 @@ public class PayDialog extends DialogFragmentBase {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private MaterialBetterSpinner _typeSpinner;
+    private FnSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
     private EditText _fixedEditText;
@@ -116,7 +117,7 @@ public class PayDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_pay, container, false);
 
-        _typeSpinner = (MaterialBetterSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemClickListener(_type_selected);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),

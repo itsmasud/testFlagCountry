@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.ui.FnSpinner;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**

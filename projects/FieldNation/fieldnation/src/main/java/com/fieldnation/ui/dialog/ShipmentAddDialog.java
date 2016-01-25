@@ -24,6 +24,7 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -40,11 +41,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private TextView _titleTextView;
     private EditText _trackingIdEditText;
     private Button _scanButton;
-    private MaterialBetterSpinner _carrierSpinner;
+    private FnSpinner _carrierSpinner;
     private EditText _carrierEditText;
     private TextInputLayout _carrierLayout;
     private EditText _descriptionEditText;
-    private MaterialBetterSpinner _directionSpinner;
+    private FnSpinner _directionSpinner;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -119,7 +120,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
         _scanButton.setOnClickListener(_scan_onClick);
 
-        _carrierSpinner = (MaterialBetterSpinner) v.findViewById(R.id.carrier_spinner);
+        _carrierSpinner = (FnSpinner) v.findViewById(R.id.carrier_spinner);
         _carrierSpinner.setOnItemClickListener(_carrier_selected);
 
         _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
@@ -139,7 +140,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
 
-        _directionSpinner = (MaterialBetterSpinner) v.findViewById(R.id.direction_spinner);
+        _directionSpinner = (FnSpinner) v.findViewById(R.id.direction_spinner);
         _directionSpinner.setOnItemClickListener(_direction_selected);
 
 

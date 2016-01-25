@@ -121,6 +121,9 @@ public class Profile implements Parcelable {
     }
 
     public Boolean getMarketplaceStatusOn() {
+        if (_marketplaceStatusOn == null)
+            return true;
+        
         return _marketplaceStatusOn;
     }
 

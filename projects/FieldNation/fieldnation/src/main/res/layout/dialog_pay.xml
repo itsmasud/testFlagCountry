@@ -34,12 +34,12 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/pay_rate_basis" />
 
-                <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                <com.fieldnation.ui.FnSpinner
                     android:id="@+id/type_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="visible"
-                    android:text="What is the type?"/>
+                    android:text="What is the type?"
+                    android:visibility="visible" />
 
             </LinearLayout>
 

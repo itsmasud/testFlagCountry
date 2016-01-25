@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
+import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -36,7 +37,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private static final int MODE_EXACT = 1;
 
     // UI
-    private MaterialBetterSpinner _typeSpinner;
+    private FnSpinner _typeSpinner;
 
     private LinearLayout _rangeLayout;
 
@@ -93,7 +94,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_schedule, container, false);
 
-        _typeSpinner = (MaterialBetterSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemClickListener(_type_selected);
 
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.schedule_types,
