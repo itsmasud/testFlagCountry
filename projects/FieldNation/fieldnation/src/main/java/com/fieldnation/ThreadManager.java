@@ -1,5 +1,7 @@
 package com.fieldnation;
 
+import android.widget.Toast;
+
 import java.util.LinkedList;
 import java.util.List;
 
@@ -78,12 +80,16 @@ public class ThreadManager {
         @Override
         public void run() {
             while (_running) {
-                if (!doWork()) {
-                    //Log.v(TAG, "doWork=False");
-                    sleep();
-                } //else {
-                //Log.v(TAG, "doWork=True");
-                //}
+                try {
+                    if (!doWork()) {
+                        //Log.v(TAG, "doWork=False");
+                        sleep();
+                    } //else {
+                    //Log.v(TAG, "doWork=True");
+                    //}
+                } catch (Exception e) {
+                    Toast.makeText(App.get(), "Temporarily files permission denied. Try again later.", Toast.LENGTH_LONG).show();
+                }
             }
         }
 
