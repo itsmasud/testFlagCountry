@@ -19,6 +19,35 @@ public class DocumentTransactionBuilder {
     public static void download(Context context, long documentId, String link, String filename, boolean isSync) {
         try {
             Resources res = context.getResources();
+            HttpJsonBuilder builder = new HttpJsonBuilder().path(link);
+
+            if (!isSync) {
+                builder.notify(new NotificationDefinition(
+                                R.drawable.ic_anim_download_start,
+                                res.getString(R.string.app_name),
+                                res.getString(R.string.notification_start_body_downloading, filename),
+                                res.getString(R.string.notification_start_body_downloading, filename)
+                        ),
+                        new NotificationDefinition(
+                                R.drawable.ic_anim_download_success,
+                                res.getString(R.string.notification_success_title),
+                                res.getString(R.string.notification_success_body_downloading, filename),
+                                res.getString(R.string.notification_success_body_downloading, filename)
+                        ),
+                        new NotificationDefinition(
+                                R.drawable.ic_anim_download_failed,
+                                res.getString(R.string.notification_failed_title),
+                                res.getString(R.string.notification_failed_body_downloading, filename),
+                                res.getString(R.string.notification_failed_body_downloading, filename)
+                        ),
+                        new NotificationDefinition(
+                                R.drawable.ic_anim_download_retry,
+                                res.getString(R.string.notification_retry_title),
+                                res.getString(R.string.notification_retry_body_downloading, filename),
+                                res.getString(R.string.notification_retry_body_downloading, filename)
+                        ));
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(DocumentTransactionHandler.class)
@@ -26,32 +55,7 @@ public class DocumentTransactionBuilder {
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)
                     .useAuth(false)
                     .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .path(link)
-                            .notify(new NotificationDefinition(
-                                            R.drawable.ic_anim_download_start,
-                                            res.getString(R.string.app_name),
-                                            res.getString(R.string.notification_start_body_downloading, filename),
-                                            res.getString(R.string.notification_start_body_downloading, filename)
-                                    ),
-                                    new NotificationDefinition(
-                                            R.drawable.ic_anim_download_success,
-                                            res.getString(R.string.notification_success_title),
-                                            res.getString(R.string.notification_success_body_downloading, filename),
-                                            res.getString(R.string.notification_success_body_downloading, filename)
-                                    ),
-                                    new NotificationDefinition(
-                                            R.drawable.ic_anim_download_failed,
-                                            res.getString(R.string.notification_failed_title),
-                                            res.getString(R.string.notification_failed_body_downloading, filename),
-                                            res.getString(R.string.notification_failed_body_downloading, filename)
-                                    ),
-                                    new NotificationDefinition(
-                                            R.drawable.ic_anim_download_retry,
-                                            res.getString(R.string.notification_retry_title),
-                                            res.getString(R.string.notification_retry_body_downloading, filename),
-                                            res.getString(R.string.notification_retry_body_downloading, filename)
-                                    )))
+                    .request(builder)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
