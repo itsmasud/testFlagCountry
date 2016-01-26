@@ -68,15 +68,24 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        setRetainInstance(true);
+        //setRetainInstance(true);
         if (savedInstanceState != null) {
-            //TODO if it doesn't contain this, then we are in an error state
             if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
         }
         super.onCreate(savedInstanceState);
 
         setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
+                _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -118,6 +127,16 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     @Override
     public void reset() {
+        Log.v(TAG, "reset");
+        super.reset();
+    }
+
+    @Override
+    public void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
+        
+        populateUi();
     }
 
     @Override
@@ -131,7 +150,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     public void show(CustomField customField) {
         _customField = customField;
-        show();
+        super.show();
     }
 
     private void populateUi() {
@@ -250,7 +269,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
             _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
