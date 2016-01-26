@@ -419,10 +419,18 @@ public class WebCrawlerService extends Service {
                 return;
 
             for (int i = 0; i < messages.size(); i++) {
-                incRequestCounter(2);
                 com.fieldnation.data.workorder.Message message = messages.get(i);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                if (message != null && message.getFromUser() != null) {
+                    if (message.getFromUser().getPhotoUrl() != null) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    }
+
+                    if (message.getFromUser().getPhotoThumbUrl() != null) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                    }
+                }
             }
             _workorderThreadManager.wakeUp();
         }
