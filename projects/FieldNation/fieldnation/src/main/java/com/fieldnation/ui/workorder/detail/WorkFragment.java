@@ -1061,8 +1061,6 @@ public class WorkFragment extends WorkorderFragment {
             }
 
             WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
-            App.get().setCompletedWorkorder();
-
             setLoading(true);
         }
     };
@@ -1077,7 +1075,6 @@ public class WorkFragment extends WorkorderFragment {
                     GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkFragment", 1);
 
             WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
-
             setLoading(true);
         }
     };
@@ -1122,7 +1119,6 @@ public class WorkFragment extends WorkorderFragment {
             integrator.setBeepEnabled(false);
             integrator.setBarcodeImageEnabled(true);
             integrator.initiateScan();
-
         }
     };
 

@@ -143,6 +143,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                                 String contentType, String body,
                                 Class<? extends WebTransactionHandler> clazz,
                                 byte[] handlerParams) {
+        App.get().setInteractedWorkorder();
         try {
             JsonObject _action = new JsonObject();
             _action.put("_action[0].action", action);
