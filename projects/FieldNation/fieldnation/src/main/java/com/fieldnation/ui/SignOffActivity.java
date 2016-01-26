@@ -207,7 +207,6 @@ public class SignOffActivity extends AuthFragmentActivity {
 
         if (_completeWorkorder) {
             WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
-            App.get().setCompletedWorkorder();
             GoogleAnalyticsTopicClient.dispatchEvent(
                     SignOffActivity.this,
                     "WorkorderActivity",

@@ -59,7 +59,7 @@ public class App extends Application {
     public static final long DAY = 86400000;
 
     public static final String PREF_NAME = "GlobalPreferences";
-    public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
+    public static final String PREF_INTERACTED_WORKORDER = "PREF_HAS_INTERACTED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
@@ -83,6 +83,7 @@ public class App extends Application {
     public String deviceToken = null;
     private boolean _isConnected = false;
     private OAuth _auth = null;
+    private boolean _hasInteracted = false;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -566,7 +567,7 @@ public class App extends Application {
     }
 
     public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
+        return !hasShownReviewDialog() && hasInteractedWorkorder() && BuildConfig.FLAVOR.equals("prod");
     }
 
     public boolean hasShownReviewDialog() {
@@ -581,16 +582,24 @@ public class App extends Application {
         edit.apply();
     }
 
-    public boolean hasCompletedWorkorder() {
+    public boolean hasInteractedWorkorder() {
+        if (_hasInteracted)
+            return true;
+
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.contains(PREF_COMPLETED_WORKORDER);
+        _hasInteracted = settings.contains(PREF_INTERACTED_WORKORDER);
+        return _hasInteracted;
     }
 
-    public void setCompletedWorkorder() {
+    public void setInteractedWorkorder() {
+        if (_hasInteracted)
+            return;
+
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
+        edit.putBoolean(PREF_INTERACTED_WORKORDER, true);
         edit.apply();
+        _hasInteracted = true;
     }
 
 
@@ -659,27 +668,15 @@ public class App extends Application {
     }
 
     public boolean showRateMe() {
-        // if under 10 days, then no
-        if (System.currentTimeMillis() - getInstallTime() < DAY * 10) {
-            Log.v(TAG, "showRateMe: 10 day check failed");
-            return false;
-        }
-
         // if hasn't completed a work order, then no
-        if (!hasCompletedWorkorder()) {
+        if (!hasInteractedWorkorder()) {
             Log.v(TAG, "showRateMe: completed check failed");
             return false;
         }
 
-        // if have interacted before, then no
-        if (System.currentTimeMillis() - getRateMeInteracted() < DAY) {
-            Log.v(TAG, "showRateMe:  failed");
-            return false;
-        }
-
-        // if not in the time restraints, then no
+        // if not in the time restraints (10am to 5pm), then no
         Calendar cal = Calendar.getInstance();
-        if (cal.get(Calendar.HOUR_OF_DAY) <= 11) {
+        if (cal.get(Calendar.HOUR_OF_DAY) < 10 || cal.get(Calendar.HOUR_OF_DAY) > 17) {
             Log.v(TAG, "showRateMe:  time check failed");
             return false;
         }
