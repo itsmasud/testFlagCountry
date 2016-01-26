@@ -30,7 +30,7 @@ public class DeclineDialog extends DialogFragmentBase {
     // Ui
     private CheckBox _blockCheckBox;
     private LinearLayout _blockLayout;
-    private MaterialBetterSpinner _blockSpinner;
+    private FnSpinner _blockSpinner;
     private EditText _blockEditText;
     private Button _okButton;
     private Button _cancelButton;
@@ -64,7 +64,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
         _blockLayout = (LinearLayout) v.findViewById(R.id.block_layout);
 
-        _blockSpinner = (MaterialBetterSpinner) v.findViewById(R.id.block_spinner);
+        _blockSpinner = (FnSpinner) v.findViewById(R.id.block_spinner);
         ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.dialog_block_reasons,
                 R.layout.view_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);

@@ -88,7 +88,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
         View v = inflater.inflate(R.layout.dialog_custom_field, container);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
@@ -225,12 +224,9 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
-
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
     }
 
 
@@ -247,10 +243,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _timePicker.show(_fm, datePickerDialog.getTag());
                     break;
             }
-
         }
     };
-
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
@@ -270,16 +264,12 @@ public class CustomFieldDialog extends DialogFragmentBase {
                     _textEditText.setText(misc.formatTimeForCF(_expirationDate));
                     break;
             }
-
-
         }
     };
-
 
     private final View.OnClickListener _dateTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             switch (_customField.getFieldType()) {
                 case DATETIME:
                     _datePicker.show(_fm, TAG);
@@ -298,7 +288,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             dismiss();
             switch (_customField.getFieldType()) {
                 case LIST:
@@ -307,7 +296,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
                 default:
                     _listener.onOk(_customField, _textEditText.getText().toString());
             }
-
         }
     };
 
@@ -317,7 +305,6 @@ public class CustomFieldDialog extends DialogFragmentBase {
             dismiss();
         }
     };
-
 
     private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {

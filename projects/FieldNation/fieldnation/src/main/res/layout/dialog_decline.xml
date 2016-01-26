@@ -42,7 +42,7 @@
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+                    <com.fieldnation.ui.FnSpinner
                         android:id="@+id/block_spinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"

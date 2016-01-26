@@ -26,6 +26,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
@@ -40,7 +41,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private Button _cancelButton;
     private EditText _amountEditText;
     private EditText _descriptionEditText;
-    private MaterialBetterSpinner _categorySpinner;
+    private FnSpinner _categorySpinner;
     private LinearLayout _categoryLayout;
 
     // Data
@@ -88,7 +89,7 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
 
-        _categorySpinner = (MaterialBetterSpinner) v.findViewById(R.id.category_spinner);
+        _categorySpinner = (FnSpinner) v.findViewById(R.id.category_spinner);
         _categorySpinner.setOnItemClickListener(_spinner_selected);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
