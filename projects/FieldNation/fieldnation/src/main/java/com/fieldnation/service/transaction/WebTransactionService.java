@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteFullException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -313,7 +314,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
 
             //Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
-            WebTransaction trans = WebTransaction.getNext(_syncThread && allowSync(), _isAuthenticated);
+            WebTransaction trans = null;
+
+            try {
+                trans = WebTransaction.getNext(_syncThread && allowSync(), _isAuthenticated);
+            } catch (SQLiteFullException ex) {
+                ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
+                return false;
+            }
 
             // if failed, then exit
             if (trans == null) {
