@@ -25,6 +25,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
@@ -50,6 +51,7 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -1027,13 +1029,19 @@ public class WorkFragment extends WorkorderFragment {
             new AsyncTaskEx<Object, Object, Object>() {
                 @Override
                 protected Object doInBackground(Object... params) {
-                    Context context = (Context) params[0];
-                    Workorder workorder = (Workorder) params[1];
+                    try {
+                        Context context = (Context) params[0];
+                        Workorder workorder = (Workorder) params[1];
 
-                    Intent intent = new Intent(context, SignOffActivity.class);
-                    intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
-                    intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                    startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                        Intent intent = new Intent(context, SignOffActivity.class);
+                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
+                        startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                        return null;
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        ToastClient.toast(App.get(), "Could not start signature collection. Please try again.", Toast.LENGTH_LONG);
+                    }
                     return null;
                 }
             }.executeEx(getActivity(), _workorder);
