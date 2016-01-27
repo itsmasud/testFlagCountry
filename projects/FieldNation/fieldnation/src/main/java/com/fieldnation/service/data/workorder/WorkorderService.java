@@ -81,7 +81,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 try {
                     JsonObject workorder = new JsonObject(obj.getData());
 
-                    Transform.applyTransform(this, workorder, PSO_WORKORDER, workorderId);
+                    Transform.applyTransform(workorder, PSO_WORKORDER, workorderId);
 
                     WorkorderDispatch.get(this, workorder, workorderId, false, isSync, true);
                 } catch (Exception ex) {
@@ -108,7 +108,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     JsonArray ja = new JsonArray(obj.getData());
                     for (int i = 0; i < ja.size(); i++) {
                         JsonObject json = ja.getJsonObject(i);
-                        Transform.applyTransform(this, json, PSO_WORKORDER, json.getLong("workorderId"));
+                        Transform.applyTransform(json, PSO_WORKORDER, json.getLong("workorderId"));
                     }
 
                     WorkorderDispatch.list(this, ja, page, selector, false, isSync, true);

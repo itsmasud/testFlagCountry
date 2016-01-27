@@ -412,7 +412,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
 
-                Transform.applyTransform(context, json, PSO_WORKORDER, json.getLong("workorderId"));
+                Transform.applyTransform(json, PSO_WORKORDER, json.getLong("workorderId"));
             }
             Log.v(TAG, "handleList 3");
 
@@ -477,7 +477,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         JsonObject workorder = new JsonObject(workorderData);
 
-        Transform.applyTransform(context, workorder, PSO_WORKORDER, workorderId);
+        Transform.applyTransform(workorder, PSO_WORKORDER, workorderId);
 
         // dispatch the event
         WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync(), false);
