@@ -382,6 +382,9 @@ public class WebCrawlerService extends Service {
             for (int i = 0; i < list.size(); i++) {
                 Workorder workorder = list.get(i);
 
+                if (workorder == null)
+                    continue;
+
                 incrementPendingRequestCounter(1);
                 incRequestCounter(1);
                 WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), false, true);
