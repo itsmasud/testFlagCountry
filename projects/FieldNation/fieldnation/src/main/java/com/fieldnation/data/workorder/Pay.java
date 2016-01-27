@@ -112,7 +112,7 @@ public class Pay implements Parcelable {
     }
 
     public Double getPerHour() {
-        return _perHour == null?0.0 :_perHour;
+        return _perHour == null ? 0.0 : _perHour;
     }
 
     public JsonObject toJson() {
