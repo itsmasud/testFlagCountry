@@ -298,7 +298,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
 
         // don't back out of thank you
-        if (_displayMode == DISPLAY_THANK_YOU)
+        if (_displayMode == DISPLAY_THANK_YOU || _displayMode == DISPLAY_SORRY)
             return;
 
         super.onBackPressed();
