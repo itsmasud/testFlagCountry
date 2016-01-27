@@ -1,7 +1,6 @@
 package com.fieldnation.service.transaction;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -10,12 +9,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 
 /**
  * Created by Michael Carver on 3/3/2015.
