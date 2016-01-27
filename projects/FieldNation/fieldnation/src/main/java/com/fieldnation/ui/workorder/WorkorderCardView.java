@@ -570,7 +570,6 @@ public class WorkorderCardView extends RelativeLayout {
         _rightWhiteButton.setVisibility(GONE);
         _rightGreenButton.setVisibility(GONE);
         _rightOrangeButton.setVisibility(GONE);
-        _rightWhiteButton.setEnabled(true);
 
         switch (_workorder.getRightButtonAction()) {
             case Workorder.BUTTON_ACTION_NONE:
@@ -583,6 +582,7 @@ public class WorkorderCardView extends RelativeLayout {
             case Workorder.BUTTON_ACTION_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_request);
+                _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_ACCEPT:
                 _rightOrangeButton.setVisibility(VISIBLE);
@@ -591,11 +591,11 @@ public class WorkorderCardView extends RelativeLayout {
                 } else {
                     _rightOrangeButton.setText(R.string.btn_accept);
                 }
-
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_withdraw_request);
+                _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_READY_TO_GO:
                 _rightGreenButton.setVisibility(VISIBLE);
@@ -608,6 +608,7 @@ public class WorkorderCardView extends RelativeLayout {
             case Workorder.BUTTON_ACTION_CHECKIN:
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_check_in);
+                _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_RECOGNIZE_HOLD:
                 _rightOrangeButton.setVisibility(VISIBLE);
@@ -620,10 +621,12 @@ public class WorkorderCardView extends RelativeLayout {
             case Workorder.BUTTON_ACTION_MARK_INCOMPLETE:
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_mark_incomplete);
+                _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_VIEW_PAYMENT:
                 _rightWhiteButton.setVisibility(VISIBLE);
                 _rightWhiteButton.setText(R.string.btn_view_payment);
+                _rightWhiteButton.setEnabled(true);
                 break;
             default:
                 break;
