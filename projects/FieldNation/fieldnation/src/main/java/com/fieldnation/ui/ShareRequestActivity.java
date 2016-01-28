@@ -263,7 +263,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private String getFileNameFromUri(final Uri uri) {
         String fileName = "";
 
-        if (uri.getScheme().toString().compareTo("content") == 0) {
+        if (uri.getScheme().compareTo("content") == 0) {
             final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
             if (cursor == null) {
                 try {
