@@ -265,7 +265,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
 
         if (uri.getScheme().toString().compareTo("content") == 0) {
             final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor.moveToFirst()) {
+            if (cursor == null) {
+                try {
+                    Log.v(TAG, new Exception("Couldn't create cursor from uri: " + uri.toString()));
+                } catch (Exception ex) {
+                }
+            } else if (cursor.moveToFirst()) {
 
                 Log.v(TAG, "Columns");
                 for (int i = 0; i < cursor.getColumnCount(); i++) {
