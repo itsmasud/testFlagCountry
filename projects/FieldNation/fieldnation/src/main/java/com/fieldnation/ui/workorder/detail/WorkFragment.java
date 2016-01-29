@@ -1091,13 +1091,14 @@ public class WorkFragment extends WorkorderFragment {
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            final UploadSlot[] slots = _workorder.getUploadSlots();
-            for (UploadSlot uploadSlot : slots) {
-                if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                    String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
-                            uploadSlot.getSlotId(), fileName, _scannedImagePath);
-
+            if (_scannedImagePath != null) {
+                final UploadSlot[] slots = _workorder.getUploadSlots();
+                for (UploadSlot uploadSlot : slots) {
+                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
+                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
+                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                    }
                 }
             }
 
