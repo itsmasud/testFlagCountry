@@ -82,6 +82,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     // State data
     private WorkorderDataSelector _displayView = WorkorderDataSelector.ASSIGNED;
 
+    public ShareRequestActivity() {
+        super();
+        _adapter.setRateMeAllowed(false);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

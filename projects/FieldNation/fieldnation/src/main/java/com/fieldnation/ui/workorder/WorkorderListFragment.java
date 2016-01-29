@@ -96,6 +96,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
+
+    public WorkorderListFragment() {
+        super();
+        _adapter.setRateMeAllowed(true);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -902,6 +908,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     };
 
     private final PagingAdapter<Workorder> _adapter = new PagingAdapter<Workorder>() {
+
         @Override
         public View getView(Workorder object, View convertView, ViewGroup parent) {
             WorkorderCardView v = null;
