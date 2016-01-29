@@ -81,18 +81,28 @@ public class MemUtils {
 
     // returns used MB on heap (fetches almost same value like Device Monitor)
     public static double getAppPrivateMemory() {
-        Debug.MemoryInfo mi = new Debug.MemoryInfo();
-        Debug.getMemoryInfo(mi);
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            Debug.MemoryInfo mi = new Debug.MemoryInfo();
+            Debug.getMemoryInfo(mi);
 //        Log.e(TAG, "Private : " + mi.getTotalPrivateDirty() / BYTES_IN_KB);
-        return mi.getTotalPrivateDirty() / BYTES_IN_KB;
+            return mi.getTotalPrivateDirty() / BYTES_IN_KB;
+        } finally {
+            Log.v(TAG, "getAppPrivateMemory time: " + stopwatch.finish());
+        }
     }
 
     // returns free MB on heap (fetches almost same value like Device Monitor)
     public static double getAppNativeHeapFreeSize() {
-        Debug.MemoryInfo mi = new Debug.MemoryInfo();
-        Debug.getMemoryInfo(mi);
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            Debug.MemoryInfo mi = new Debug.MemoryInfo();
+            Debug.getMemoryInfo(mi);
 //        Log.e(TAG, "NativeHeapFreeSize() :" + Debug.getNativeHeapFreeSize() / BYTES_IN_MB);
-        return Debug.getNativeHeapFreeSize() / BYTES_IN_MB;
+            return Debug.getNativeHeapFreeSize() / BYTES_IN_MB;
+        } finally {
+            Log.v(TAG, "getAppNativeHeapFreeSize time: " + stopwatch.finish());
+        }
     }
 
     private static int getAppsUsedHeapMemory() {
@@ -120,25 +130,47 @@ public class MemUtils {
 //        return false;
 //    }
 
+    private static long shouldSuspendLoadingMore_timer = 0;
+    private static boolean shouldSuspendLoadingMore_cache = false;
+
     // Memory info matches with Device Monitor
     public static boolean shouldSuspendLoadingMore(Context context) {
-        if (((getAppPrivateMemory() + getAppNativeHeapFreeSize()) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppNativeHeapFreeSize())
-                && !isLowMemorySituation((context))) {
-            return true;
-        }
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+
+            if (System.currentTimeMillis() < shouldSuspendLoadingMore_timer)
+                return shouldSuspendLoadingMore_cache;
+
 //        Log.e(TAG,"getAppPrivateMemory: " + getAppPrivateMemory());
 //        Log.e(TAG,"getAppNativeHeapFreeSize: " + getAppNativeHeapFreeSize());
 //        Log.e(TAG,"isLowMemorySituation((context): " + isLowMemorySituation((context)));
 
-        return false;
+            if (!isLowMemorySituation(context)
+                    && ((getAppPrivateMemory() + getAppNativeHeapFreeSize()) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppNativeHeapFreeSize())) {
+                shouldSuspendLoadingMore_cache = true;
+            } else {
+                shouldSuspendLoadingMore_cache = false;
+            }
+
+            shouldSuspendLoadingMore_timer = System.currentTimeMillis() + 10000;
+
+            return shouldSuspendLoadingMore_cache;
+        } finally {
+            Log.v(TAG, "shouldSuspendLoadingMore time: " + stopwatch.finish());
+        }
     }
 
 
     public static boolean isLowMemorySituation(Context context) {
-        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-        ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
-        am.getMemoryInfo(memInfo);
-        return memInfo.lowMemory;
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+            ActivityManager.MemoryInfo memInfo = new ActivityManager.MemoryInfo();
+            am.getMemoryInfo(memInfo);
+            return memInfo.lowMemory;
+        } finally {
+            Log.v(TAG, "isLowMemorySituation time: " + stopwatch.finish());
+        }
     }
 
     public static int calculateInSampleSize(BitmapFactory.Options options, int reqWidth, int reqHeight) {
