@@ -263,9 +263,14 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private String getFileNameFromUri(final Uri uri) {
         String fileName = "";
 
-        if (uri.getScheme().toString().compareTo("content") == 0) {
+        if (uri.getScheme().compareTo("content") == 0) {
             final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor.moveToFirst()) {
+            if (cursor == null) {
+                try {
+                    Log.v(TAG, new Exception("Couldn't create cursor from uri: " + uri.toString()));
+                } catch (Exception ex) {
+                }
+            } else if (cursor.moveToFirst()) {
 
                 Log.v(TAG, "Columns");
                 for (int i = 0; i < cursor.getColumnCount(); i++) {

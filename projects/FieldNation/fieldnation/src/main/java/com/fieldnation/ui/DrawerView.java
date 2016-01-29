@@ -166,9 +166,6 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (BuildConfig.FLAVOR.equals("prod")) {
-            if (((App) getContext().getApplicationContext()).shouldShowReviewDialog()) {
-            } else {
-            }
         } else {
         }
 
@@ -418,7 +415,7 @@ public class DrawerView extends RelativeLayout {
             // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-            GlobalTopicClient.showFeedbackDialog(getContext(),"LeftNavDrawer");
+            GlobalTopicClient.showFeedbackDialog(getContext(), "LeftNavDrawer");
         }
     };
 

@@ -114,6 +114,19 @@
     <color name="fn_black_25">#40000000</color>
     <color name="fn_transparent">#00000000</color>
 
+    <color name="fn_material_spinner_bottom_line">#FFEFEFEF</color>
+
+    <color name="primary">#2196F3</color>
+    <color name="primary_dark">#1976D2</color>
+    <color name="primary_light">#BBDEFB</color>
+    <color name="accent">#FFFFFF</color>
+    <color name="primary_text">#212121</color>
+    <color name="secondary_text">#727272</color>
+    <color name="icons">#FFFFFF</color>
+    <color name="divider">#B6B6B6</color>
+
+    <color name="white">#FFFFFF</color>
+
     <!-- old colors -->
     <!--
         <color name="fn_gray">#FFf3f3eb</color>

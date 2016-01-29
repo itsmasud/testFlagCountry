@@ -22,7 +22,7 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     private static final String TAG = "ClosingNotesDialog";
 
     // State
-    private static final String STATE_NOTES = "ui.dialog.ClosingNotesDialog.ClosingNotesDialog";
+    private static final String STATE_NOTES = "ClosingNotesDialog:STATE_NOTES";
 
     // UI
     private EditText _editText;
@@ -94,6 +94,12 @@ public class ClosingNotesDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void reset() {
+        Log.v(TAG, "reset");
+        super.reset();
+    }
+
+    @Override
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
@@ -104,7 +110,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
             _editText.setText("");
     }
 
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -113,12 +118,6 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         Log.v(TAG, "show");
         _notes = notes;
         super.show();
-    }
-
-    @Override
-    public void reset() {
-        Log.v(TAG, "reset");
-        super.reset();
     }
 
     /*-*************************-*/
@@ -161,6 +160,5 @@ public class ClosingNotesDialog extends DialogFragmentBase {
         void onOk(String message);
 
         void onCancel();
-
     }
 }

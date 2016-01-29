@@ -13,7 +13,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.HttpURLConnection;
-import java.net.URLConnection;
 
 /**
  * This utility class provides an abstraction layer for sending multipart HTTP
@@ -113,9 +112,9 @@ public class MultipartUtility {
         misc.copyStream(inputStream, outputStream, 1024, -1, 1000);
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
-
         writer.append(LINE_FEED);
         writer.flush();
+
     }
 
     public void addFilePart(String fieldName, String filename, byte[] filedata, String contentType) throws IOException {

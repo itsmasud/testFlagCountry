@@ -4,6 +4,7 @@ import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteFullException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
@@ -66,7 +67,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         super.onCreate();
         Log.v(TAG, "onCreate");
 
-        WebTransaction.saveOrphans(this);
+        WebTransaction.saveOrphans();
 
         int threadCount = 4;
         if (App.get().isLowMemDevice()) {
@@ -97,7 +98,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
     @Override
     public boolean isStillWorking() {
-        return WebTransaction.count(this) > 0;
+        return WebTransaction.count() > 0;
     }
 
     @Override
@@ -212,15 +213,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             try {
                 Bundle extras = intent.getExtras();
 
-                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(this,
-                        extras.getString(PARAM_KEY))) {
+                if (extras.containsKey(PARAM_KEY) && WebTransaction.keyExists(extras.getString(PARAM_KEY))) {
                     Log.v(TAG, "processIntent end duplicate " + extras.getString(PARAM_KEY));
                     _manager.wakeUp();
                     return;
                 }
 
                 Log.v(TAG, "processIntent building transaction");
-                WebTransaction transaction = WebTransaction.put(this,
+                WebTransaction transaction = WebTransaction.put(
                         (Priority) extras.getSerializable(PARAM_PRIORITY),
                         extras.getString(PARAM_KEY),
                         extras.getBoolean(PARAM_USE_AUTH),
@@ -234,13 +234,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
                     for (int i = 0; i < transforms.length; i++) {
                         Bundle transform = (Bundle) transforms[i];
-                        Transform.put(this, transaction.getId(), transform);
+                        Transform.put(transaction.getId(), transform);
                     }
                 }
 
                 Log.v(TAG, "processIntent saving transaction");
                 transaction.setState(WebTransaction.State.IDLE);
-                transaction.save(this);
+                transaction.save();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -314,7 +314,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
 
             //Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
-            WebTransaction trans = WebTransaction.getNext(context, _syncThread && allowSync(), _isAuthenticated);
+            WebTransaction trans = null;
+
+            try {
+                trans = WebTransaction.getNext(_syncThread && allowSync(), _isAuthenticated);
+            } catch (SQLiteFullException ex) {
+                ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
+                return false;
+            }
 
             // if failed, then exit
             if (trans == null) {
@@ -335,7 +342,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             }
             if (request == null) {
                 // should never happen!
-                WebTransaction.delete(context, trans.getId());
+                WebTransaction.delete(trans.getId());
                 return false;
             }
 
@@ -354,7 +361,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     OAuth auth = getAuth();
                     if (!_isAuthenticated) {
                         Log.v(TAG, "skip no auth");
-                        trans.requeue(context);
+                        trans.requeue();
                         return false;
                     }
 
@@ -415,10 +422,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     // need to re-auth?
                     if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                        WebTransaction.delete(context, trans.getId());
+                        WebTransaction.delete(trans.getId());
                     } else if (result.getResponseMessage().contains("Bad Request")) {
                         WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                        WebTransaction.delete(context, trans.getId());
+                        WebTransaction.delete(trans.getId());
                     } else {
                         Log.v(TAG, "1");
                         AuthTopicClient.invalidateCommand(context);
@@ -438,14 +445,14 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 } else if (result.getResponseCode() == 404) {
                     // not found?... error
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                    WebTransaction.delete(context, trans.getId());
+                    WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                     return true;
 
                 } else if (result.getResponseCode() == 413) {
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                    WebTransaction.delete(context, trans.getId());
+                    WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                     return true;
 
@@ -459,7 +466,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 } else if (result.getResponseCode() / 100 != 2) {
                     Log.v(TAG, "3");
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                    WebTransaction.delete(context, trans.getId());
+                    WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                     return true;
                 }
@@ -476,11 +483,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         case ERROR:
                             generateNotification(notifId, notifFailed);
                             WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
-                            WebTransaction.delete(context, trans.getId());
+                            WebTransaction.delete(trans.getId());
                             break;
                         case FINISH:
                             generateNotification(notifId, notifSuccess);
-                            WebTransaction.delete(context, trans.getId());
+                            WebTransaction.delete(trans.getId());
                             break;
                         case REQUEUE:
                             Log.v(TAG, "3");
@@ -491,7 +498,13 @@ public class WebTransactionService extends MSService implements WebTransactionCo
             } catch (MalformedURLException | FileNotFoundException ex) {
                 Log.v(TAG, "4");
                 WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                WebTransaction.delete(context, trans.getId());
+                WebTransaction.delete(trans.getId());
+                generateNotification(notifId, notifFailed);
+
+            } catch (SecurityException ex) {
+                Log.v(TAG, "4b");
+                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
 
             } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
@@ -504,7 +517,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Log.v(TAG, "6");
                     ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                    WebTransaction.delete(context, trans.getId());
+                    WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                 } else {
                     Log.v(TAG, "7");
@@ -524,7 +537,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     Debug.logException(ex);
                     Log.v(TAG, ex);
                     WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
-                    WebTransaction.delete(context, trans.getId());
+                    WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                 }
             }
@@ -541,7 +554,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 Thread.sleep(5000);
             } catch (InterruptedException e) {
             }
-            trans.requeue(context);
+            trans.requeue();
         }
     }
 }

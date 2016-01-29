@@ -108,7 +108,7 @@ public class SignatureFragment extends FragmentBase {
     private final View.OnClickListener _submit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
+            if (_listener != null && isAdded()) {
                 if (misc.isEmptyOrNull(_nameEditText.getText().toString())) {
                     Toast.makeText(getActivity(), "Please enter your name", Toast.LENGTH_SHORT).show();
                     // TODO flash name thing

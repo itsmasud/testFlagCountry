@@ -246,10 +246,22 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _reportProblemDialog.setListener(_reportProblem_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
 
-        Profile profile = App.get().getProfile();
+        checkProfile();
+    }
 
-        if (profile.getMarketplaceStatusOn())
+    private void checkProfile() {
+        Profile profile = App.get().getProfile();
+        if (profile == null) {
+            Log.v(TAG, "profile is null");
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    checkProfile();
+                }
+            }, 100);
+        } else if (profile.getMarketplaceStatusOn()) {
             requestList(0, true);
+        }
     }
 
     @Override
