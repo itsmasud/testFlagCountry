@@ -123,15 +123,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _carrierSpinner = (FnSpinner) v.findViewById(R.id.carrier_spinner);
         _carrierSpinner.setOnItemClickListener(_carrier_selected);
 
-        _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.carrier_list,
-                R.layout.view_spinner_item);
-
-        _carrierAdapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _carrierSpinner.setAdapter(_carrierAdapter);
-
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
         _carrierEditText.setOnEditorActionListener(_onEditor);
 
@@ -142,17 +133,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         _directionSpinner = (FnSpinner) v.findViewById(R.id.direction_spinner);
         _directionSpinner.setOnItemClickListener(_direction_selected);
-
-
-        _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.direction_list,
-                R.layout.view_spinner_item);
-
-        _directionAdapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _directionSpinner.setAdapter(_directionAdapter);
-
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
@@ -166,6 +146,29 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
+
+        if (_carrierAdapter != null) {
+            _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.carrier_list,
+                    R.layout.view_spinner_item);
+
+            _carrierAdapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        }
+
+        if (_directionSpinner != null) {
+            _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.direction_list,
+                    R.layout.view_spinner_item);
+
+            _directionAdapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _directionSpinner.setAdapter(_directionAdapter);
+        }
+
+        _carrierSpinner.setAdapter(_carrierAdapter);
+
 
         if (_title != null)
             _titleTextView.setText(_title);

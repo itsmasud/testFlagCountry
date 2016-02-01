@@ -97,12 +97,6 @@ public class ScheduleDialog extends DialogFragmentBase {
         _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemClickListener(_type_selected);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.schedule_types,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _typeSpinner.setAdapter(adapter);
-
         _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
         _exactLayout = (LinearLayout) v.findViewById(R.id.exact_layout);
 
@@ -135,6 +129,13 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        populateUi();
+    }
+
+    @Override
     public void init() {
         populateUi();
     }
@@ -162,6 +163,12 @@ public class ScheduleDialog extends DialogFragmentBase {
     private void populateUi() {
         if (_typeSpinner == null)
             return;
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(), R.array.schedule_types,
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _typeSpinner.setAdapter(adapter);
 
         try {
             _startCal = ISO8601.toCalendar(_sched.getStartTime());

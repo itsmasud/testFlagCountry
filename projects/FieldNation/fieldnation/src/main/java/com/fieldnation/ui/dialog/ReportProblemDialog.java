@@ -64,14 +64,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _problem1Spinner = (FnSpinner) v.findViewById(R.id.problem1_spinner);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.enum_report_problem_1,
-                R.layout.view_spinner_item);
-
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _problem1Spinner.setAdapter(adapter);
         _problem1Spinner.setOnItemClickListener(_problem1_onItemClick);
 
         _problem2Spinner = (FnSpinner) v.findViewById(R.id.problem2_spinner);
@@ -93,6 +85,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
+    }
+
     private void setProblem2Visibility(int visibility) {
         _problem2Spinner.setVisibility(visibility);
     }
@@ -104,6 +102,15 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private void populateUi() {
         if (_noteTextView == null)
             return;
+
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.enum_report_problem_1,
+                R.layout.view_spinner_item);
+
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+        _problem1Spinner.setAdapter(adapter);
 
         setProblem2Visibility(View.GONE);
         _noteTextView.setVisibility(View.GONE);
@@ -203,7 +210,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 break;
             }
             default: {
-                _problem1Spinner.clearFocus();
+                //_problem1Spinner.clearFocus();
                 _okButton.setEnabled(false);
                 setProblem2Visibility(View.GONE);
                 break;
