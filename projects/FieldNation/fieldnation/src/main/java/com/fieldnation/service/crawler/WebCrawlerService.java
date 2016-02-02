@@ -376,7 +376,8 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            if (selector != WorkorderDataSelector.COMPLETED) // only grab the first page for completed work.
+            // only grab the first two pages for completed work.
+            if (selector != WorkorderDataSelector.COMPLETED || page < 2)
                 WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true, false);
 
             Log.v(TAG, "onWorkorderList, Request details");
