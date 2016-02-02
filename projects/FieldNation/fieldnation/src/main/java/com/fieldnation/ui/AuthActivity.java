@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;

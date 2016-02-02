@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 
 import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 

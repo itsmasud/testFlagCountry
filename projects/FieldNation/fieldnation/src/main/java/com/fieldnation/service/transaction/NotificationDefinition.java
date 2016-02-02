@@ -8,8 +8,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.annotations.Json;
 
-import java.text.ParseException;
-
 /**
  * Created by Michael Carver on 1/7/2016.
  */

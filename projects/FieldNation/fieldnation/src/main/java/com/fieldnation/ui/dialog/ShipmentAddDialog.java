@@ -26,7 +26,6 @@ import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";

@@ -21,7 +21,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
@@ -38,7 +37,6 @@ import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
-import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
@@ -50,7 +48,6 @@ import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;

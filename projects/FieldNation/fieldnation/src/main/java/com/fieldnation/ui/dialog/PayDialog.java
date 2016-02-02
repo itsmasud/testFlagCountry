@@ -21,7 +21,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";

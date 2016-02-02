@@ -28,7 +28,6 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class ExpenseDialog extends DialogFragmentBase {
     private static String TAG = "ExpenseDialog";

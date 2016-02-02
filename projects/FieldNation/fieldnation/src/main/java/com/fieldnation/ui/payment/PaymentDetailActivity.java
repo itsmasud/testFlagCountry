@@ -2,10 +2,7 @@ package com.fieldnation.ui.payment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v7.app.ActionBar;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -16,8 +13,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthActionBarActivity;
-import com.fieldnation.ui.MessagesActionBarView;
-import com.fieldnation.ui.NotificationActionBarView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 

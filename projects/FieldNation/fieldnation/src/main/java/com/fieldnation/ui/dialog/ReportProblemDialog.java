@@ -22,7 +22,6 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**
  * Created by Michael Carver on 11/25/2015.

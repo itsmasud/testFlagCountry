@@ -6,7 +6,6 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
