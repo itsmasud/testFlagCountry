@@ -251,9 +251,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Log.v(TAG, intent.getExtras() + "");
 
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
-        _uploadingDocumentList = new UploadingDocument[fileUris.size()];
-
         if (fileUris != null) {
+            _uploadingDocumentList = new UploadingDocument[fileUris.size()];
+
             for (int i = 0; i < fileUris.size(); i++) {
                 Log.v(TAG, "uris:" + fileUris.get(i));
             }

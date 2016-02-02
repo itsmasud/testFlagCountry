@@ -401,7 +401,7 @@ public class WebCrawlerService extends Service {
         public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             incrementPendingRequestCounter(-1);
 
-            if (failed) return;
+            if (failed || workorder == null) return;
 
             Log.v(TAG, "onDetails " + workorder.getWorkorderId());
 
