@@ -262,7 +262,7 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private void setMode(int mode) {
-        _typeSpinner.setSelection(mode);
+        _typeSpinner.setSelectedItem(mode);
         clearUi();
         _mode = mode;
         switch (mode) {

@@ -193,7 +193,7 @@ public class ScheduleDialog extends DialogFragmentBase {
         Log.e(TAG, "setMode");
         _mode = mode;
 
-        _typeSpinner.setSelection(_mode);
+        _typeSpinner.setSelectedItem(_mode);
 
         switch (_mode) {
             case MODE_EXACT:

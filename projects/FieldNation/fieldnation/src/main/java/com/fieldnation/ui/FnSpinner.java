@@ -60,6 +60,21 @@ public class FnSpinner extends MaterialAutoCompleteTextView implements AdapterVi
     }
 
     @Override
+    public void setListSelection(int position) {
+        super.setListSelection(position);
+        if (getAdapter() != null && getAdapter().getCount() > position && getAdapter().getItem(position) != null) {
+            setText(getAdapter().getItem(position).toString());
+        }
+    }
+
+    public void setSelectedItem(int index) {
+        if (getAdapter() != null && getAdapter().getCount() > index && getAdapter().getItem(index) != null) {
+            replaceText(getAdapter().getItem(index).toString());
+        }
+    }
+
+
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
 
         switch (event.getAction()) {
