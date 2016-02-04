@@ -139,23 +139,24 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
+        populateSpinners();
+
         return v;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
-        if (_carrierAdapter != null) {
+    private void populateSpinners() {
+        if (_carrierSpinner != null && _carrierAdapter == null) {
             _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.carrier_list,
                     R.layout.view_spinner_item);
 
             _carrierAdapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _carrierSpinner.setAdapter(_carrierAdapter);
         }
 
-        if (_directionSpinner != null) {
+        if (_directionSpinner != null && _directionAdapter == null) {
             _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.direction_list,
                     R.layout.view_spinner_item);
@@ -165,9 +166,13 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             _directionSpinner.setAdapter(_directionAdapter);
         }
+    }
 
-        _carrierSpinner.setAdapter(_carrierAdapter);
+    @Override
+    public void onResume() {
+        super.onResume();
 
+        populateSpinners();
 
         if (_title != null)
             _titleTextView.setText(_title);
@@ -197,7 +202,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     public void setSelectedCarrier(final String careerName) {
         for (int i = 0; i < _carrierSpinner.getAdapter().getCount(); i++) {
             if (_carrierSpinner.getAdapter().getItem(i).equals(careerName)) {
-                _carrierSpinner.setSelection(i);
+                _carrierSpinner.setSelectedItem(i);
                 break;
             }
         }

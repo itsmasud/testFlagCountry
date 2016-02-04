@@ -122,7 +122,7 @@ public class ExpenseDialog extends DialogFragmentBase {
             _adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
             _categorySpinner.setAdapter(_adapter);
-            _categorySpinner.setSelection(0);
+            _categorySpinner.setSelectedItem(0);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -139,7 +139,7 @@ public class ExpenseDialog extends DialogFragmentBase {
             _amountEditText.setText("");
 
         if (_categorySpinner != null)
-            _categorySpinner.setSelection(0);
+            _categorySpinner.setSelectedItem(0);
 
         if (_showCategories) {
             _categoryLayout.setVisibility(View.VISIBLE);
