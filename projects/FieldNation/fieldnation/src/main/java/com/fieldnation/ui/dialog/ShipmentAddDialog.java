@@ -203,6 +203,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         for (int i = 0; i < _carrierSpinner.getAdapter().getCount(); i++) {
             if (_carrierSpinner.getAdapter().getItem(i).equals(careerName)) {
                 _carrierSpinner.setSelectedItem(i);
+                _carrier_selected.onItemClick(null, null, i, 0);
                 break;
             }
         }
