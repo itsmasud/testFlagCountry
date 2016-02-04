@@ -3,15 +3,12 @@ package com.fieldnation.ui.payment;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.misc;
 
 public class PaymentFeeView extends RelativeLayout {

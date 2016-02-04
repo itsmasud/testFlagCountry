@@ -27,8 +27,6 @@ import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.overlay.Marker;
 import com.mapbox.mapboxsdk.views.MapView;
 
-import org.w3c.dom.Text;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;

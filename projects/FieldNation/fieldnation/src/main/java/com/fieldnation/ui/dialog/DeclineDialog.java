@@ -19,7 +19,6 @@ import android.widget.LinearLayout;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.ui.FnSpinner;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -65,10 +64,6 @@ public class DeclineDialog extends DialogFragmentBase {
         _blockLayout = (LinearLayout) v.findViewById(R.id.block_layout);
 
         _blockSpinner = (FnSpinner) v.findViewById(R.id.block_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.dialog_block_reasons,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _blockSpinner.setAdapter(adapter);
         _blockSpinner.setOnItemClickListener(_spinner_selected);
 
         _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
@@ -82,6 +77,18 @@ public class DeclineDialog extends DialogFragmentBase {
         _cancelButton.setOnClickListener(_cancel_onClick);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_blockSpinner != null) {
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_blockSpinner.getContext(), R.array.dialog_block_reasons,
+                    R.layout.view_spinner_item);
+            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+            _blockSpinner.setAdapter(adapter);
+        }
     }
 
     @Override

@@ -24,7 +24,6 @@ import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 
@@ -231,7 +230,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner.setSelection(i);
+                                _spinner.setSelectedItem(i);
                                 _itemSelectedPosition = i;
                                 break;
                             }

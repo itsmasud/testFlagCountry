@@ -155,14 +155,16 @@ public class WorkLogDialog extends DialogFragmentBase {
 
         try {
             String startDate = _loggedWork.getStartDate();
-            _startButton.setText(misc.formatDateTime(ISO8601.toCalendar(startDate), false));
+            _startCalendar = ISO8601.toCalendar(startDate);
+            _startButton.setText(misc.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
 
         try {
             String endDate = _loggedWork.getEndDate();
-            _endButton.setText(misc.formatDateTime(ISO8601.toCalendar(endDate), false));
+            _endCalendar = ISO8601.toCalendar(endDate);
+            _endButton.setText(misc.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -233,7 +235,9 @@ public class WorkLogDialog extends DialogFragmentBase {
             } catch (Exception ex) {
             }
 
-            if ((_startIsSet && _endIsSet) || (_loggedWork != null && (_startIsSet || _endIsSet)) || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
+            if ((_startIsSet && _endIsSet)
+                    || (_loggedWork != null && (_startIsSet || _endIsSet))
+                    || (_loggedWork != null && _showDevicesCount && deviceCount != _loggedWork.getNoOfDevices())) {
                 WorkLogDialog.this.dismiss();
                 if (_listener != null) {
                     _listener.onOk(_loggedWork, _startCalendar, _endCalendar, deviceCount);

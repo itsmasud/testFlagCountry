@@ -11,7 +11,6 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 
 /**

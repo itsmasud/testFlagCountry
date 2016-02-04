@@ -1,6 +1,5 @@
 package com.fieldnation.ui;
 
-import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;

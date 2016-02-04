@@ -21,7 +21,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";
@@ -119,13 +118,6 @@ public class PayDialog extends DialogFragmentBase {
 
         _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemClickListener(_type_selected);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),
-                R.array.pay_types,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _typeSpinner.setAdapter(adapter);
 
         // fixed
         _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
@@ -270,7 +262,7 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private void setMode(int mode) {
-        _typeSpinner.setSelection(mode);
+        _typeSpinner.setSelectedItem(mode);
         clearUi();
         _mode = mode;
         switch (mode) {
@@ -304,6 +296,13 @@ public class PayDialog extends DialogFragmentBase {
     private void populateUi() {
         if (_pay == null)
             return;
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(),
+                R.array.pay_types,
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _typeSpinner.setAdapter(adapter);
 
         if (_showExplanation) {
             _explanationLayout.setVisibility(View.VISIBLE);

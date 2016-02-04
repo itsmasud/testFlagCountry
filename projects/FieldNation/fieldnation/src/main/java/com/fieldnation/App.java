@@ -34,7 +34,6 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -44,8 +43,6 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.File;
 import java.net.URLConnection;
 import java.util.Calendar;
-import java.util.LinkedList;
-import java.util.List;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -789,10 +786,7 @@ public class App extends Application {
             Log.v(TAG, "Free internal space:" + freeMBInternal);
             Log.v(TAG, "Free external space:" + freeMBExternal);
 
-            if (freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB) {
-                return true;
-            }
-            return false;
+            return freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return true;

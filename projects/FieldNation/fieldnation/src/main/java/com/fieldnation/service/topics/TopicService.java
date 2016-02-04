@@ -263,7 +263,7 @@ public class TopicService extends MSService implements TopicConstants {
         intent.putExtra(PARAM_TOPIC_ID, topicId);
 
         if (payload != null) {
-            intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) payload);
+            intent.putExtra(PARAM_TOPIC_PARCELABLE, payload);
         } else {
             intent.putExtra(PARAM_TOPIC_PARCELABLE, (Parcelable) new Bundle());
         }

@@ -1362,14 +1362,16 @@ public class misc {
     }
 
     public static String getCareerName(final String trackingId) {
-        if (Pattern.compile("/(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)/").matcher(trackingId).matches() ||
-                Pattern.compile("/\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d) ?\\d\\d\\d\\d ?\\d\\d\\d\\d( ?\\d\\d\\d)?)\\b/").matcher(trackingId).matches() ||
-                Pattern.compile("/^[0-9]{15}$/").matcher(trackingId).matches()) {
+        if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
+                || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
+                || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
             return "Fedex";
-        } else if (Pattern.compile("/\\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\\dT]\\d\\d\\d ?\\d\\d\\d\\d ?\\d\\d\\d|\\d{22})\\b/i").matcher(trackingId).matches()) {
+        } else if (Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
+                || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
+                || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
             return "UPS";
+        } else {
+            return "Other";
         }
-        return "Other";
     }
-
 }

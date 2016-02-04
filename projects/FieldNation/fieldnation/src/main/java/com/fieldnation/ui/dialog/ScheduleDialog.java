@@ -22,7 +22,6 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 
@@ -97,12 +96,6 @@ public class ScheduleDialog extends DialogFragmentBase {
         _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemClickListener(_type_selected);
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.schedule_types,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _typeSpinner.setAdapter(adapter);
-
         _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
         _exactLayout = (LinearLayout) v.findViewById(R.id.exact_layout);
 
@@ -135,6 +128,13 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+
+        populateUi();
+    }
+
+    @Override
     public void init() {
         populateUi();
     }
@@ -163,6 +163,12 @@ public class ScheduleDialog extends DialogFragmentBase {
         if (_typeSpinner == null)
             return;
 
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(), R.array.schedule_types,
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _typeSpinner.setAdapter(adapter);
+
         try {
             _startCal = ISO8601.toCalendar(_sched.getStartTime());
         } catch (Exception e) {
@@ -187,7 +193,7 @@ public class ScheduleDialog extends DialogFragmentBase {
         Log.e(TAG, "setMode");
         _mode = mode;
 
-        _typeSpinner.setSelection(_mode);
+        _typeSpinner.setSelectedItem(_mode);
 
         switch (_mode) {
             case MODE_EXACT:

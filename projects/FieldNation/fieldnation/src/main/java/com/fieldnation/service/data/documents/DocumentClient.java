@@ -9,8 +9,6 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
-import com.fieldnation.App;
-import com.fieldnation.FileHelper;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;

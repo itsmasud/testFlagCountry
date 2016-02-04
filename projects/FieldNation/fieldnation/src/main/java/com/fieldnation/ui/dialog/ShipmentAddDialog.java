@@ -26,7 +26,6 @@ import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
@@ -123,15 +122,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _carrierSpinner = (FnSpinner) v.findViewById(R.id.carrier_spinner);
         _carrierSpinner.setOnItemClickListener(_carrier_selected);
 
-        _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.carrier_list,
-                R.layout.view_spinner_item);
-
-        _carrierAdapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _carrierSpinner.setAdapter(_carrierAdapter);
-
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
         _carrierEditText.setOnEditorActionListener(_onEditor);
 
@@ -143,29 +133,46 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _directionSpinner = (FnSpinner) v.findViewById(R.id.direction_spinner);
         _directionSpinner.setOnItemClickListener(_direction_selected);
 
-
-        _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.direction_list,
-                R.layout.view_spinner_item);
-
-        _directionAdapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _directionSpinner.setAdapter(_directionAdapter);
-
-
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
+        populateSpinners();
+
         return v;
+    }
+
+    private void populateSpinners() {
+        if (_carrierSpinner != null && _carrierAdapter == null) {
+            _carrierAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.carrier_list,
+                    R.layout.view_spinner_item);
+
+            _carrierAdapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _carrierSpinner.setAdapter(_carrierAdapter);
+        }
+
+        if (_directionSpinner != null && _directionAdapter == null) {
+            _directionAdapter = ArrayAdapter.createFromResource(getActivity(),
+                    R.array.direction_list,
+                    R.layout.view_spinner_item);
+
+            _directionAdapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _directionSpinner.setAdapter(_directionAdapter);
+        }
     }
 
     @Override
     public void onResume() {
         super.onResume();
+
+        populateSpinners();
 
         if (_title != null)
             _titleTextView.setText(_title);
@@ -195,7 +202,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     public void setSelectedCarrier(final String careerName) {
         for (int i = 0; i < _carrierSpinner.getAdapter().getCount(); i++) {
             if (_carrierSpinner.getAdapter().getItem(i).equals(careerName)) {
-                _carrierSpinner.setSelection(i);
+                _carrierSpinner.setSelectedItem(i);
+                _carrier_selected.onItemClick(null, null, i, 0);
                 break;
             }
         }

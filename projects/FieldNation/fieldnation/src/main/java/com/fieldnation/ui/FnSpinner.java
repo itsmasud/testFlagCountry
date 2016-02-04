@@ -11,7 +11,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
 
 import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 import java.util.Calendar;
 
@@ -59,6 +58,21 @@ public class FnSpinner extends MaterialAutoCompleteTextView implements AdapterVi
             isPopup = false;
         }
     }
+
+    @Override
+    public void setListSelection(int position) {
+        super.setListSelection(position);
+        if (getAdapter() != null && getAdapter().getCount() > position && getAdapter().getItem(position) != null) {
+            setText(getAdapter().getItem(position).toString());
+        }
+    }
+
+    public void setSelectedItem(int index) {
+        if (getAdapter() != null && getAdapter().getCount() > index && getAdapter().getItem(index) != null) {
+            replaceText(getAdapter().getItem(index).toString());
+        }
+    }
+
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {

@@ -15,10 +15,6 @@ import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
-import org.w3c.dom.Text;
-
-import java.util.Calendar;
-
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
 

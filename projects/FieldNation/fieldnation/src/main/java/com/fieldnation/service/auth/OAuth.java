@@ -1,6 +1,5 @@
 package com.fieldnation.service.auth;
 
-import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
 
@@ -136,7 +135,7 @@ public class OAuth implements Parcelable {
     }
 
     public void save() {
-        StoredObject obj = StoredObject.put(0, "OAuthToken", _username, (byte[]) null);
+        StoredObject obj = StoredObject.put(0, "OAuthToken", _username, null);
         _id = obj.getId();
         obj.setData(toJson().toByteArray());
         obj.save();
