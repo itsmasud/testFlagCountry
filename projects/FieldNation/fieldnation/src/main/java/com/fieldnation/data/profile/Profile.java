@@ -36,6 +36,8 @@ public class Profile implements Parcelable {
     private Profile[] _managedProviders;
     @Json(name = "marketplaceStatusOn")
     private Boolean _marketplaceStatusOn;
+    @Json(name = "marketplaceStatusReason ")
+    private String _marketplaceStatusReason;
     @Json(name = "newNotificationCount")
     private Integer _newNotificationCount;
     @Json(name = "phone")
@@ -65,7 +67,7 @@ public class Profile implements Parcelable {
     public Boolean getAcceptedTos() {
         if (_acceptedTos == null)
             return true;
-        
+
         return _acceptedTos;
     }
 
@@ -119,7 +121,14 @@ public class Profile implements Parcelable {
     }
 
     public Boolean getMarketplaceStatusOn() {
+        if (_marketplaceStatusOn == null)
+            return true;
+        
         return _marketplaceStatusOn;
+    }
+
+    public String getMarketplaceStatusReason() {
+        return _marketplaceStatusReason;
     }
 
     public Integer getNewNotificationCount() {

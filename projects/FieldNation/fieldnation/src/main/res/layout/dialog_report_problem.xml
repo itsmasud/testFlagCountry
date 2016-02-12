@@ -10,7 +10,7 @@
         style="?attr/dialogTitleStyle"
         android:text="There's a problem" />
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+    <com.fieldnation.ui.FnSpinner
         android:id="@+id/problem1_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         android:text="What\'s the problem?" />
 
 
-    <com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner
+    <com.fieldnation.ui.FnSpinner
         android:id="@+id/problem2_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

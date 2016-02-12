@@ -42,11 +42,12 @@
                     android:text="@string/placeholder_date_long" />
 
                 <View
-                    style="@style/DividerFull"
+                    style="@style/DividerSpinnerFull"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
             </LinearLayout>
 
             <TextView
@@ -77,11 +78,11 @@
                     android:text="@string/placeholder_word" />
 
                 <View
-                    style="@style/DividerFull"
+                    style="@style/DividerSpinnerFull"
                     android:layout_marginBottom="8dp"
                     android:layout_marginLeft="4dp"
                     android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
+                    android:background="@color/fn_material_spinner_bottom_line" />
             </LinearLayout>
 
 

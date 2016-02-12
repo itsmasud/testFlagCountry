@@ -2,7 +2,6 @@ package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
@@ -209,6 +208,11 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _username = _usernameEditText.getText().toString();
             _password = _passwordEditText.getText().toString();
 
+            if (misc.isEmptyOrNull(_username) || misc.isEmptyOrNull(_password)) {
+                Toast.makeText(AuthActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+                return;
+            }
+
             new AsyncTaskEx<Object, Object, OAuth>() {
                 @Override
                 protected OAuth doInBackground(Object... params) {
@@ -223,6 +227,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
                         OAuth auth = OAuth.authenticate(hostname, "/authentication/api/oauth/token",
                                 grantType, clientId, clientSecret, username, password);
 
+                        GlobalTopicClient.networkConnected(AuthActivity.this);
                         return auth;
                     } catch (Exception ex) {
                         // TODO, when we get here, app hangs at login screen. Need to do something

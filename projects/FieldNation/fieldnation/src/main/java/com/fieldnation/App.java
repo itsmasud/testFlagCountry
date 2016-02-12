@@ -2,6 +2,8 @@ package com.fieldnation;
 
 import android.app.ActivityManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.ComponentCallbacks2;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
@@ -17,17 +19,19 @@ import android.os.Looper;
 import android.os.UserManager;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
-import com.crashlytics.android.Crashlytics;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.utils.Stopwatch;
@@ -35,8 +39,6 @@ import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
-
-import io.fabric.sdk.android.Fabric;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -54,7 +56,7 @@ public class App extends Application {
     public static final long DAY = 86400000;
 
     public static final String PREF_NAME = "GlobalPreferences";
-    public static final String PREF_COMPLETED_WORKORDER = "PREF_HAS_COMPLETED_WORKORDER";
+    public static final String PREF_INTERACTED_WORKORDER = "PREF_HAS_INTERACTED_WORKORDER";
     public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
@@ -76,7 +78,12 @@ public class App extends Application {
     private Handler _handler = new Handler();
     private boolean _switchingUser = false;
     public String deviceToken = null;
+    private boolean _isConnected = false;
+    private OAuth _auth = null;
+    private boolean _hasInteracted = false;
 
+    private static final int BYTES_IN_MB = 1024 * 1024;
+    private static final int THRESHOLD_FREE_MB = 5;
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -178,7 +185,6 @@ public class App extends Application {
         }.executeEx(this);
 
         watch.finishAndRestart();
-        // TODO look at async task
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
             System.setProperty("http.keepalive", "false");
@@ -186,7 +192,6 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        // TODO look at using async task here
         _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
         _gaTopicClient.connect(this);
 
@@ -225,6 +230,11 @@ public class App extends Application {
         }
     };
 
+    public SharedPreferences getSharedPreferences() {
+        return getSharedPreferences(getPackageName() + "_preferences",
+                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+    }
+
     public static void anrReport() {
         final Thread mainThread = Looper.getMainLooper().getThread();
         final StackTraceElement[] mainStackTrace = mainThread.getStackTrace();
@@ -262,6 +272,18 @@ public class App extends Application {
     /*-**********************-*/
     /*-         Auth         -*/
     /*-**********************-*/
+    public OAuth getAuth() {
+        synchronized (STAG) {
+            return _auth;
+        }
+    }
+
+    private void setAuth(OAuth auth) {
+        synchronized (STAG) {
+            _auth = auth;
+        }
+    }
+
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -272,11 +294,14 @@ public class App extends Application {
 
         @Override
         public void onAuthenticated(OAuth oauth) {
+            _isConnected = true;
+            setAuth(oauth);
         }
 
         @Override
         public void onNotAuthenticated() {
             Log.v(TAG, "onNotAuthenticated");
+            setAuth(null);
             AuthTopicClient.requestCommand(App.this);
         }
     };
@@ -284,6 +309,11 @@ public class App extends Application {
     /*-*************************-*/
     /*-         Profile         -*/
     /*-*************************-*/
+
+    public boolean isConnected() {
+        return _isConnected;
+    }
+
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -299,7 +329,10 @@ public class App extends Application {
 
         @Override
         public void onNetworkConnected() {
+            _isConnected = true;
+            Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
+            ToastClient.dismissSnackbar(App.this);
         }
 
         @Override
@@ -314,6 +347,13 @@ public class App extends Application {
 
         @Override
         public void onNetworkDisconnected() {
+            Log.v(TAG, "onNetworkDisconnected");
+            _isConnected = false;
+            Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
+            if (intent != null) {
+                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            }
         }
     };
 
@@ -524,7 +564,7 @@ public class App extends Application {
     }
 
     public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasCompletedWorkorder() && BuildConfig.FLAVOR.equals("prod");
+        return !hasShownReviewDialog() && hasInteractedWorkorder() && BuildConfig.FLAVOR.equals("prod");
     }
 
     public boolean hasShownReviewDialog() {
@@ -539,16 +579,24 @@ public class App extends Application {
         edit.apply();
     }
 
-    public boolean hasCompletedWorkorder() {
+    public boolean hasInteractedWorkorder() {
+        if (_hasInteracted)
+            return true;
+
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.contains(PREF_COMPLETED_WORKORDER);
+        _hasInteracted = settings.contains(PREF_INTERACTED_WORKORDER);
+        return _hasInteracted;
     }
 
-    public void setCompletedWorkorder() {
+    public void setInteractedWorkorder() {
+        if (_hasInteracted)
+            return;
+
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_COMPLETED_WORKORDER, true);
+        edit.putBoolean(PREF_INTERACTED_WORKORDER, true);
         edit.apply();
+        _hasInteracted = true;
     }
 
 
@@ -617,27 +665,15 @@ public class App extends Application {
     }
 
     public boolean showRateMe() {
-        // if under 10 days, then no
-        if (System.currentTimeMillis() - getInstallTime() < DAY * 10) {
-            Log.v(TAG, "showRateMe: 10 day check failed");
-            return false;
-        }
-
         // if hasn't completed a work order, then no
-        if (!hasCompletedWorkorder()) {
+        if (!hasInteractedWorkorder()) {
             Log.v(TAG, "showRateMe: completed check failed");
             return false;
         }
 
-        // if have interacted before, then no
-        if (System.currentTimeMillis() - getRateMeInteracted() < DAY) {
-            Log.v(TAG, "showRateMe:  failed");
-            return false;
-        }
-
-        // if not in the time restraints, then no
+        // if not in the time restraints (10am to 5pm), then no
         Calendar cal = Calendar.getInstance();
-        if (cal.get(Calendar.HOUR_OF_DAY) <= 11) {
+        if (cal.get(Calendar.HOUR_OF_DAY) < 10 || cal.get(Calendar.HOUR_OF_DAY) > 17) {
             Log.v(TAG, "showRateMe:  time check failed");
             return false;
         }
@@ -714,5 +750,46 @@ public class App extends Application {
         } catch (Exception ex) {
         }
         return "application/octet-stream";
+    }
+
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        Log.i(TAG, "Memory Trim Level: " + level);
+
+        PhotoClient.clearPhotoClientCache();
+        switch (level) {
+            case ComponentCallbacks2.TRIM_MEMORY_BACKGROUND:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_COMPLETE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_CRITICAL:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_LOW:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_RUNNING_MODERATE:
+                break;
+            case ComponentCallbacks2.TRIM_MEMORY_UI_HIDDEN:
+                break;
+            default:
+                break;
+        }
+    }
+
+    public boolean isFreeSpaceAvailable() {
+        try {
+            final long freeMBInternal = new File(getFilesDir().getAbsoluteFile().toString()).getFreeSpace() / BYTES_IN_MB;
+            final long freeMBExternal = new File(getExternalFilesDir(null).toString()).getFreeSpace() / BYTES_IN_MB;
+
+            Log.v(TAG, "Free internal space:" + freeMBInternal);
+            Log.v(TAG, "Free external space:" + freeMBExternal);
+
+            return freeMBInternal >= THRESHOLD_FREE_MB || freeMBExternal >= THRESHOLD_FREE_MB;
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return true;
+        }
     }
 }

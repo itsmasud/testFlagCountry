@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Spinner" parent="Widget.AppCompat.Spinner">
+    <style name="Spinner" parent="TileSpinnerButton.Material">
         <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:textColor">@color/fn_dark_text</item>
@@ -13,8 +13,8 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:textSize">16sp</item>
-        <item name="android:textColor">@color/fn_dark_text</item>
-        <item name="android:textColorHint">@color/fn_light_text</item>
+        <item name="android:background">@color/fn_light_text_0</item>
+        <item name="android:drawableRight">@drawable/ic_expand_more_black_18dp</item>
     </style>
 
 </resources>

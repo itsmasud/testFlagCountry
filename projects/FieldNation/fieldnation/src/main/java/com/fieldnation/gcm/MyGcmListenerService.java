@@ -25,7 +25,6 @@ import android.util.Log;
 
 import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.Debug;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;

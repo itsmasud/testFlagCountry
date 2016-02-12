@@ -1,11 +1,11 @@
 package com.fieldnation.data.workorder;
 
 import android.net.Uri;
-import android.os.*;
 import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
 
 public class UploadingDocument implements Parcelable {
     private static final String TAG = "UploadingDocument";

@@ -21,18 +21,39 @@
                 style="?attr/dialogTitleStyle"
                 android:text="@string/dialog_shipment_title" />
 
-            <android.support.design.widget.TextInputLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp">
+                android:layout_height="wrap_content">
 
-                <EditText
-                    android:id="@+id/trackingid_edittext"
-                    style="@style/EditText"
-                    android:hint="@string/tracking_number"
-                    android:imeOptions="actionNext"
-                    android:inputType="text" />
-            </android.support.design.widget.TextInputLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/trackingid_textInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_toLeftOf="@+id/scanBarcode_button"
+                    android:layout_weight="3">
+
+                    <EditText
+                        android:id="@+id/trackingid_edittext"
+                        style="@style/EditText"
+                        android:hint="@string/tracking_number"
+                        android:imeOptions="actionNext"
+                        android:inputType="text" />
+                </android.support.design.widget.TextInputLayout>
+
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/scanBarcode_button"
+                    style="?attr/buttonFlatStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="48dp"
+                    android:layout_alignParentRight="true"
+                    android:layout_centerVertical="true"
+                    android:layout_margin="0dp"
+                    android:minWidth="0dp"
+                    android:text="@string/icon_barcode"
+                    android:textSize="16sp" />
+
+            </RelativeLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -47,17 +68,13 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/carrier" />
 
-                <Spinner
+                <com.fieldnation.ui.FnSpinner
                     android:id="@+id/carrier_spinner"
-                    style="@style/Spinner"
-                    android:text="@string/carrier" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="What is the carrier?"
+                    android:visibility="visible" />
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_marginBottom="16dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
             </LinearLayout>
 
             <android.support.design.widget.TextInputLayout
@@ -101,17 +118,13 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/direction" />
 
-                <Spinner
+                <com.fieldnation.ui.FnSpinner
                     android:id="@+id/direction_spinner"
-                    style="@style/Spinner"
-                    android:text="@string/carrier" />
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="What is the direction?"
+                    android:visibility="visible" />
 
-                <View
-                    style="@style/DividerFull"
-                    android:layout_marginBottom="8dp"
-                    android:layout_marginLeft="4dp"
-                    android:layout_marginRight="4dp"
-                    android:background="@color/fn_dark_text_80" />
             </LinearLayout>
 
         </LinearLayout>

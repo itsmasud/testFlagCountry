@@ -79,8 +79,11 @@ public class ThreadManager {
         public void run() {
             while (_running) {
                 if (!doWork()) {
+                    //Log.v(TAG, "doWork=False");
                     sleep();
-                }
+                } //else {
+                //Log.v(TAG, "doWork=True");
+                //}
             }
         }
 

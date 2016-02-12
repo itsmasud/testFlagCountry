@@ -1,271 +1,227 @@
 <?xml version="1.0" encoding="UTF-8"?><!-- RelativeLayout -->
-<merge xmlns:android="http://schemas.android.com/apk/res/android"
-    style="?attr/cardStyle">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/CardContainer"
+    android:layout_marginBottom="0dp"
+    android:padding="0dp">
 
-    <!-- not interested layout -->
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/bundle_iconFont"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical"
+        android:text="@string/icon_bundle"
+        android:textColor="@color/fn_accent_color"
+        android:textSize="24sp" />
 
-    <!--
-        <RelativeLayout
-            android:id="@+id/notinterested_layout"
-            style="@style/WorkorderCard_NotInterested"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@+id/bundle_iconFont"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Workorder Name" />
 
-            <ImageView
-                android:id="@+id/back_imageview"
-                style="@style/WorkorderCard_NotInterested_BackButton"
-                android:layout_alignParentLeft="true"
-                android:layout_centerVertical="true" />
-
-            <LinearLayout
-                android:id="@+id/notinterested_button_layout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerHorizontal="true"
-                android:layout_centerVertical="true"
-                android:orientation="horizontal">
-
-                <ImageView style="@style/WorkorderCard_NotInterested_Icon" />
-
-                <TextView
-                    style="@style/WorkorderCard_NotInterested_Text"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center"
-                    android:text="@string/not_interested" />
-            </LinearLayout>
-        </RelativeLayout>
-    -->
-
-    <!-- main content -->
-
-    <RelativeLayout
-        android:id="@+id/content_layout"
-        style="@style/CardContainer"
-        android:layout_marginBottom="4dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="4dp">
-
-        <!-- stilt to set minimum height -->
-
-        <View style="@style/CardStilt" />
-
-        <!-- bundle bar -->
-        <!-- title + pay -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="32dp"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginBottom="4dp"
-                    android:layout_toLeftOf="@+id/payment_layout"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <com.fieldnation.ui.IconFontTextView
-                            android:id="@+id/bundle_imageview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginRight="5dp"
-                            android:text="@string/icon_bundle"
-                            android:textColor="@color/fn_accent_color"
-                            android:textSize="24sp"
-                            android:visibility="gone" />
-
-                        <com.fieldnation.ui.IconFontTextView
-                            android:id="@+id/message_alert_imageview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/icon_messages_solid"
-                            android:textColor="@color/fn_brandcolor"
-                            android:textSize="16dp"
-                            android:visibility="gone" />
-
-                        <ImageView
-                            android:id="@+id/notification_alert_imageview"
-                            android:layout_width="16dp"
-                            android:layout_height="16dp"
-                            android:src="@drawable/ic_alert_thumb"
-                            android:visibility="gone" />
-
-                        <TextView
-                            android:id="@+id/title_textview"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:maxLines="1"
-                            android:singleLine="true"
-                            android:text="Workorder Name"
-                            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            style="?attr/tileTextStatusStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Work Order ID: " />
-
-                        <TextView
-                            android:id="@+id/workorderid_textview"
-                            style="?attr/tileTextStatusStyle"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="6546513516516" />
-                    </LinearLayout>
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/payment_layout"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginRight="2dp"
-                    android:gravity="right"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/payment_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="$1000.00" />
-
-                    <TextView
-                        android:id="@+id/basis_textview"
-                        style="?attr/tileTextStatusStyle"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:gravity="right"
-                        android:text="Hourly" />
-
-                </LinearLayout>
-            </RelativeLayout>
-            <!-- body -->
-            <TextView
-                android:id="@+id/clientname_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_phrase" />
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/location_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_toLeftOf="@id/distance_textview"
-                    android:text="@string/placeholder_phrase" />
-
-                <TextView
-                    android:id="@+id/distance_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:gravity="right"
-                    android:text="@string/placeholder_phrase"
-                    android:visibility="visible" />
-            </RelativeLayout>
-
-            <TextView
-                android:id="@+id/when_textview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_phrase" />
-
-            <FrameLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right">
-
-                <Button
-                    android:id="@+id/action_button_green"
-                    style="?attr/buttonGreenStyle"
-                    android:minWidth="150dp"
-                    android:text="@string/placeholder_phrase"
-                    android:visibility="visible" />
-
-                <Button
-                    android:id="@+id/action_button_white"
-                    style="?attr/buttonWhiteStyle"
-                    android:minWidth="150dp"
-                    android:text="@string/placeholder_phrase"
-                    android:visibility="visible" />
-
-                <Button
-                    android:id="@+id/action_button_orange"
-                    style="?attr/buttonOrangeStyle"
-                    android:minWidth="150dp"
-                    android:text="@string/placeholder_phrase"
-                    android:visibility="visible" />
-            </FrameLayout>
-        </LinearLayout>
-
-    </RelativeLayout>
-
-    <!-- status layout -->
     <View
-        android:id="@+id/status_view"
-        android:layout_width="32dp"
-        android:layout_height="16dp"
-        android:layout_alignBottom="@+id/content_layout"
-        android:layout_alignTop="@+id/content_layout"
-        android:layout_marginLeft="8dp"
-        android:background="@drawable/card_status_orange" />
+        android:id="@+id/divider"
+        style="@style/DividerFull"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="4dp"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="2dp" />
 
-    <com.fieldnation.ui.VerticalTextView
-        android:id="@+id/status_textview"
-        android:layout_width="32dp"
+    <TextView
+        android:id="@+id/companyName_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_below="@+id/divider"
         android:layout_marginLeft="12dp"
-        android:ellipsize="none"
-        android:gravity="center"
+        android:layout_marginTop="6dp"
+        android:layout_toLeftOf="@+id/workorderId_textview"
+        android:ellipsize="end"
         android:maxLines="1"
-        android:text="@string/placeholder_word" />
-    <!-- loading layout -->
+        android:singleLine="true"
+        android:text="Company Name" />
 
-    <RelativeLayout
-        android:id="@+id/loading_layout"
-        style="@style/CardOverlay"></RelativeLayout>
+    <TextView
+        android:id="@+id/workorderId_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/divider"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="6dp"
+        android:text="WO ID: 123456789" />
 
-    <!-- undo layout -->
+    <LinearLayout
+        android:id="@+id/time1_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/companyName_textview"
+        android:layout_marginLeft="12dp"
+        android:orientation="vertical">
 
-    <RelativeLayout
-        android:id="@+id/undo_layout"
-        style="@style/CardOverlay">
-
-        <Button
-            android:id="@+id/undo_button"
+        <TextView
+            android:id="@+id/time_textview"
+            style="@style/Text_Title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Undo" />
-    </RelativeLayout>
+            android:layout_marginTop="8dp"
+            android:text="In 45 mins" />
 
-</merge>
+        <TextView
+            android:id="@+id/extra_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:text="" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/time2_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/companyName_textview"
+        android:layout_toRightOf="@+id/time1_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/time2_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/extra2_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/price2_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/workorderId_textview"
+        android:layout_marginRight="12dp"
+        android:layout_toLeftOf="@+id/price_layout"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/price2_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/status2_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/price_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/workorderId_textview"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/price_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:layout_marginTop="8dp"
+            android:text="$104.00" />
+
+        <TextView
+            android:id="@+id/status_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="12dp"
+            android:text="In Review" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time1_layout"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp">
+
+        <TextView
+            android:id="@+id/remoteWork_textview"
+            style="@style/Text_Body_1_Caption"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/btn_remote_work"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/left_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 1"
+            android:visibility="visible" />
+
+        <Button
+            android:id="@+id/rightWhite_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2" />
+
+        <Button
+            android:id="@+id/rightOrange_button"
+            style="?attr/buttonOrangeStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/rightGreen_button"
+            style="?attr/buttonGreenStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
+    </LinearLayout>
+
+</RelativeLayout>

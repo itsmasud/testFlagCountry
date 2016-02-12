@@ -14,13 +14,13 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.FnSpinner;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";
@@ -36,7 +36,7 @@ public class PayDialog extends DialogFragmentBase {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private Spinner _typeSpinner;
+    private FnSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
     private EditText _fixedEditText;
@@ -69,7 +69,7 @@ public class PayDialog extends DialogFragmentBase {
 
 
     // Payable & Hours
-    private static double MINIMUM_PAYABLE_AMOUNT = .01;
+    private static double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
     private double _fixedAmount;
     private double _hourlyRateAmount;
     private double _maxHours;
@@ -116,15 +116,8 @@ public class PayDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_pay, container, false);
 
-        _typeSpinner = (Spinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemSelectedListener(_type_selected);
-
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(),
-                R.array.pay_types,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _typeSpinner.setAdapter(adapter);
+        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner.setOnItemClickListener(_type_selected);
 
         // fixed
         _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
@@ -217,21 +210,21 @@ public class PayDialog extends DialogFragmentBase {
             switch (_mode) {
                 case MODE_FIXED:
                     _fixedAmount = getAmount(_fixedEditText.getText().toString());
-                    return _fixedAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _fixedAmount >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_HOURLY:
                     _hourlyRateAmount = getAmount((_hourlyRateEditText.getText().toString()));
                     _maxHours = getAmount((_maxHoursEditText.getText().toString()));
-                    return _hourlyRateAmount > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _hourlyRateAmount * _maxHours >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_PER_DEVICE:
                     _deviceRate = getAmount((_deviceRateEditText.getText().toString()));
                     _maxDevices = getNumberOfDevice((_maxDevicesEditText.getText().toString()));
-                    return _deviceRate > MINIMUM_PAYABLE_AMOUNT ? true : false;
+                    return _deviceRate * _maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
                 case MODE_BLENDED:
                     blendedHourlyAmount = getAmount((_blendedHourlyEditText.getText().toString()));
                     _blendedMaxHours = getAmount((_blendedMaxHoursEditText.getText().toString()));
                     _extraHourly = getAmount((_extraHourlyEditText.getText().toString()));
                     _extraMaxHours = getAmount((_extraMaxHoursEditText.getText().toString()));
-                    return (blendedHourlyAmount > MINIMUM_PAYABLE_AMOUNT && _extraHourly > MINIMUM_PAYABLE_AMOUNT) ? true : false;
+                    return (blendedHourlyAmount * _blendedMaxHours) + (_extraHourly * _extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
             }
         } catch (Exception ex) {
             return false;
@@ -269,7 +262,7 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private void setMode(int mode) {
-        _typeSpinner.setSelection(mode);
+        _typeSpinner.setSelectedItem(mode);
         clearUi();
         _mode = mode;
         switch (mode) {
@@ -303,6 +296,13 @@ public class PayDialog extends DialogFragmentBase {
     private void populateUi() {
         if (_pay == null)
             return;
+
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(),
+                R.array.pay_types,
+                R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _typeSpinner.setAdapter(adapter);
 
         if (_showExplanation) {
             _explanationLayout.setVisibility(View.VISIBLE);
@@ -346,15 +346,13 @@ public class PayDialog extends DialogFragmentBase {
     /*-				Events				-*/
     /*-*********************************-*/
 
-    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
+    private final AdapterView.OnItemClickListener _type_selected = new AdapterView.OnItemClickListener() {
+
         @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
         }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
@@ -370,7 +368,7 @@ public class PayDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (!isValidAmount()) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_accumulated_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
 

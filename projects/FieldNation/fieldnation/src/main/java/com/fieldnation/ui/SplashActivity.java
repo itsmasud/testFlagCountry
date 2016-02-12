@@ -149,16 +149,20 @@ public class SplashActivity extends AuthFragmentActivity {
     };
 
     private void doNextStep() {
+        Log.v(TAG, "doNextStep 1");
         if (!_isAuth)
             return;
 
+        Log.v(TAG, "doNextStep 2");
         if (_profile == null)
             return;
 
-        Log.v(TAG, "doNextStep");
+        Log.v(TAG, "doNextStep 3");
 
         if (_profile.isProvider()) {
+            Log.v(TAG, "doNextStep 4");
             if (!_calledMyWork) {
+                Log.v(TAG, "doNextStep 5");
                 _calledMyWork = true;
                 MyWorkActivity.startNew(this);
                 finish();

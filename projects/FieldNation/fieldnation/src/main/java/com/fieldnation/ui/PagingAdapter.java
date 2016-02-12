@@ -34,7 +34,14 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     private OnLoadingCompleteListener _onLoadingCompleteListener;
 
     public PagingAdapter() {
-        _showRateMe = App.get().showRateMe();
+    }
+
+    public void setRateMeAllowed(boolean allowed) {
+        if (allowed) {
+            _showRateMe = App.get().showRateMe();
+        } else {
+            _showRateMe = false;
+        }
     }
 
     public void setPage(int page, List<T> items) {

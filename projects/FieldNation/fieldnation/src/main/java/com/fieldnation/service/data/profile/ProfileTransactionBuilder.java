@@ -2,7 +2,6 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
-import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;

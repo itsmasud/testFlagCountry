@@ -1,13 +1,13 @@
 package com.fieldnation.service.transaction;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.transaction.TransformSqlHelper.Column;
@@ -113,11 +113,11 @@ public class Transform implements Parcelable, TransformConstants {
     /*-*****************************-*/
     /*-         Database            -*/
     /*-*****************************-*/
-    public static Transform get(Context context, long id) {
+    public static Transform get(long id) {
 //        Log.v(TAG, "get(" + id + ")");
         Transform obj = null;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             try {
                 Cursor cursor = db.query(
@@ -140,12 +140,12 @@ public class Transform implements Parcelable, TransformConstants {
         return obj;
     }
 
-    public static void applyTransform(Context context, JsonObject dest, String objectName, long objectKey) {
-        applyTransform(context, dest, objectName, objectKey + "");
+    public static void applyTransform(JsonObject dest, String objectName, long objectKey) {
+        applyTransform(dest, objectName, objectKey + "");
     }
 
-    public static void applyTransform(Context context, JsonObject dest, String objectName, String objectKey) {
-        List<Transform> transList = getObjectTransforms(context, objectName, objectKey);
+    public static void applyTransform(JsonObject dest, String objectName, String objectKey) {
+        List<Transform> transList = getObjectTransforms(objectName, objectKey);
         for (int i = 0; i < transList.size(); i++) {
             Transform t = transList.get(i);
             try {
@@ -157,15 +157,15 @@ public class Transform implements Parcelable, TransformConstants {
         }
     }
 
-    public static List<Transform> getObjectTransforms(Context context, String objectName, long objectKey) {
-        return getObjectTransforms(context, objectName, objectKey + "");
+    public static List<Transform> getObjectTransforms(String objectName, long objectKey) {
+        return getObjectTransforms(objectName, objectKey + "");
     }
 
-    public static List<Transform> getObjectTransforms(Context context, String objectName, String objectKey) {
+    public static List<Transform> getObjectTransforms(String objectName, String objectKey) {
         final String objectNameKey = objectName + "/" + objectKey;
         List<Transform> list = new LinkedList<>();
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             try {
                 Cursor cursor = db.query(
@@ -191,16 +191,16 @@ public class Transform implements Parcelable, TransformConstants {
         return list;
     }
 
-    public static Transform put(Context context, long transactionId, Bundle query) {
-        return put(context, transactionId, query.getString(PARAM_OBJECT_NAME), query.getString(PARAM_OBJECT_KEY),
+    public static Transform put(long transactionId, Bundle query) {
+        return put(transactionId, query.getString(PARAM_OBJECT_NAME), query.getString(PARAM_OBJECT_KEY),
                 query.getString(PARAM_ACTION), query.getByteArray(PARAM_DATA));
     }
 
-    public static Transform put(Context context, long transactionId, String objectName, long objectKey, String action, byte[] data) {
-        return put(context, transactionId, objectName, objectKey + "", action, data);
+    public static Transform put(long transactionId, String objectName, long objectKey, String action, byte[] data) {
+        return put(transactionId, objectName, objectKey + "", action, data);
     }
 
-    public static Transform put(Context context, long transactionId, String objectName, String objectKey, String action, byte[] data) {
+    public static Transform put(long transactionId, String objectName, String objectKey, String action, byte[] data) {
         final String objectNameKey = objectName + "/" + objectKey;
 
 //        Log.v(TAG, "put(" + transactionId + "," + objectName + "," + objectKey + "," + action + "," + new String(data) + ")");
@@ -214,7 +214,7 @@ public class Transform implements Parcelable, TransformConstants {
 
         long id = -1;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 id = db.insert(TransformSqlHelper.TABLE_NAME, null, v);
@@ -223,16 +223,16 @@ public class Transform implements Parcelable, TransformConstants {
             }
         }
         if (id != -1)
-            return get(context, id);
+            return get(id);
         else
             return null;
     }
 
-    public static boolean deleteTransaction(Context context, long transactionId) {
+    public static boolean deleteTransaction(long transactionId) {
 //        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 success = db.delete(
@@ -246,11 +246,11 @@ public class Transform implements Parcelable, TransformConstants {
         return success;
     }
 
-    public static boolean delete(Context context, long id) {
+    public static boolean delete(long id) {
 //        Log.v(TAG, "delete(" + id + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(context);
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 success = db.delete(

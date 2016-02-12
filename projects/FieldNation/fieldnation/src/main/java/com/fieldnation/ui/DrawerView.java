@@ -166,9 +166,6 @@ public class DrawerView extends RelativeLayout {
         }
 
         if (BuildConfig.FLAVOR.equals("prod")) {
-            if (((App) getContext().getApplicationContext()).shouldShowReviewDialog()) {
-            } else {
-            }
         } else {
         }
 
@@ -391,7 +388,7 @@ public class DrawerView extends RelativeLayout {
             if (intent.resolveActivity(getContext().getPackageManager()) != null) {
                 getContext().startActivity(intent);
             } else {
-                Toast.makeText(getContext(), "No email app is available", Toast.LENGTH_LONG).show();
+                Toast.makeText(getContext(), R.string.no_email_app_is_available, Toast.LENGTH_LONG).show();
             }
         }
     };
@@ -418,7 +415,7 @@ public class DrawerView extends RelativeLayout {
             // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
             // Feedback Dialog
-            GlobalTopicClient.showFeedbackDialog(getContext());
+            GlobalTopicClient.showFeedbackDialog(getContext(), "LeftNavDrawer");
         }
     };
 
@@ -456,7 +453,7 @@ public class DrawerView extends RelativeLayout {
 
         @Override
         public void onGotProfile(Profile profile) {
-            if (_profile == null || (long) profile.getUserId() != (long) _profile.getUserId()) {
+            if (_profile == null || profile.getUserId() != _profile.getUserId()) {
                 _profilePic = null;
                 _profile = profile;
 

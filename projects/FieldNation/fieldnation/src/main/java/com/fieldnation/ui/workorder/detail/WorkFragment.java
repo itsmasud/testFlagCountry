@@ -24,8 +24,8 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewStub;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
@@ -45,12 +45,13 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -89,6 +90,8 @@ import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
 import java.security.SecureRandom;
@@ -115,6 +118,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_CURRENT_TASK = "WorkFragment:STATE_CURRENT_TASK";
     private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
+    private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
 
     // UI
     private OverScrollView _scrollView;
@@ -175,6 +179,7 @@ public class WorkFragment extends WorkorderFragment {
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
+    private String _scannedImagePath;
 
     private List<Runnable> _untilAdded = new LinkedList<>();
 
@@ -276,6 +281,9 @@ public class WorkFragment extends WorkorderFragment {
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
                 _deviceCount = savedInstanceState.getInt(STATE_DEVICE_COUNT);
             }
+            if (savedInstanceState.containsKey(STATE_SCANNED_IMAGE_PATH)) {
+                _scannedImagePath = savedInstanceState.getString(STATE_SCANNED_IMAGE_PATH);
+            }
         }
 
         populateUi();
@@ -306,6 +314,10 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_currentTask != null) {
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
+        }
+
+        if (_scannedImagePath != null) {
+            outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
         }
 
         super.onSaveInstanceState(outState);
@@ -754,6 +766,25 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.v(TAG, "WorkFragment#onActivityResult");
+
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+
+        if (result != null) {
+            Log.e(TAG, "onActivityResult: result not null");
+            String content = result.getContents();
+
+            if (content == null) {
+                Log.e(TAG, "onActivityResult: no image path");
+            } else {
+                _scannedImagePath = result.getBarcodeImagePath();
+                _shipmentAddDialog.setTrackingId(content);
+                _shipmentAddDialog.setSelectedCarrier(misc.getCareerName(content));
+
+            }
+        }
+
+
         if (!isAdded()) {
             Log.v(TAG, "onActivityResult -> try later");
             _untilAdded.add(new Runnable() {
@@ -998,13 +1029,19 @@ public class WorkFragment extends WorkorderFragment {
             new AsyncTaskEx<Object, Object, Object>() {
                 @Override
                 protected Object doInBackground(Object... params) {
-                    Context context = (Context) params[0];
-                    Workorder workorder = (Workorder) params[1];
+                    try {
+                        Context context = (Context) params[0];
+                        Workorder workorder = (Workorder) params[1];
 
-                    Intent intent = new Intent(context, SignOffActivity.class);
-                    intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
-                    intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                    startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                        Intent intent = new Intent(context, SignOffActivity.class);
+                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
+                        startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                        return null;
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        ToastClient.toast(App.get(), "Could not start signature collection. Please try again.", Toast.LENGTH_LONG);
+                    }
                     return null;
                 }
             }.executeEx(getActivity(), _workorder);
@@ -1032,8 +1069,6 @@ public class WorkFragment extends WorkorderFragment {
             }
 
             WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
-            App.get().setCompletedWorkorder();
-
             setLoading(true);
         }
     };
@@ -1048,7 +1083,6 @@ public class WorkFragment extends WorkorderFragment {
                     GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkFragment", 1);
 
             WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
-
             setLoading(true);
         }
     };
@@ -1057,6 +1091,17 @@ public class WorkFragment extends WorkorderFragment {
     private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            if (_scannedImagePath != null) {
+                final UploadSlot[] slots = _workorder.getUploadSlots();
+                for (UploadSlot uploadSlot : slots) {
+                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
+                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
+                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                    }
+                }
+            }
+
             WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
                     carrier, carrierName, trackingId);
             setLoading(true);
@@ -1065,6 +1110,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String trackingId, String carrier, String carrierName, String description,
                          boolean shipToSite, long taskId) {
+            Log.v(TAG, "ShipmentAddDialog#onOk");
             WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
                     carrier, carrierName, trackingId, taskId);
             setLoading(true);
@@ -1072,6 +1118,16 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCancel() {
+        }
+
+        @Override
+        public void onScan() {
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.setPrompt("Scan a barcode");
+            integrator.setCameraId(0);
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan();
         }
     };
 
@@ -1317,7 +1373,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequestNewPay(Workorder workorder) {
             // TODO show request new pay dialog
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-
             _payDialog.show(_workorder.getPay(), true);
         }
 
@@ -1741,6 +1796,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConnected() {
             subscribeData();
+            _workorderClient.subDeliverableUpload();
+
         }
 
         @Override

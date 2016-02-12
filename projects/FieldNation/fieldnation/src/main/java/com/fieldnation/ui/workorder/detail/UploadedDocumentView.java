@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
@@ -184,7 +185,6 @@ public class UploadedDocumentView extends RelativeLayout {
         setClickable(_workorder.canViewDeliverables());
     }
 
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -218,6 +218,12 @@ public class UploadedDocumentView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (!App.get().isFreeSpaceAvailable()) {
+                Toast.makeText(getContext(), getResources().getString(R.string.toast_no_disk_space), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+
             if (_isLoading)
                 return;
             setDownloading(_doc.getFileName());

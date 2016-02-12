@@ -200,6 +200,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
+        Debug.logCustom(new CustomEvent("ReportProblem")
+                .putCustomAttribute("type", type.value));
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type);
     }
 

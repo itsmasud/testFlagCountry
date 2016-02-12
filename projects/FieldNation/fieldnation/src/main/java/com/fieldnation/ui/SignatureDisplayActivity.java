@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.os.Parcelable;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -170,10 +169,10 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_signature != null)
-            outState.putParcelable(STATE_SIGNATURE, (Parcelable) _signature);
+            outState.putParcelable(STATE_SIGNATURE, _signature);
 
         if (_workorder != null)
-            outState.putParcelable(STATE_WORKORDER, (Parcelable) _workorder);
+            outState.putParcelable(STATE_WORKORDER, _workorder);
 
         outState.putLong(STATE_SIGNATURE_ID, _signatureId);
 
@@ -335,7 +334,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     public static void startIntent(Context context, long signatureId, Workorder workorder) {
         Intent intent = new Intent(context, SignatureDisplayActivity.class);
         intent.putExtra(INTENT_PARAM_SIGNATURE, signatureId);
-        intent.putExtra(INTENT_PARAM_WORKORDER, (Parcelable) workorder);
+        intent.putExtra(INTENT_PARAM_WORKORDER, workorder);
         intent.setExtrasClassLoader(Workorder.class.getClassLoader());
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);

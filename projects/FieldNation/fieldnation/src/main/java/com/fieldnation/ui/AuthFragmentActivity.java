@@ -1,14 +1,19 @@
 package com.fieldnation.ui;
 
 import android.accounts.AccountManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
@@ -19,6 +24,7 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -40,10 +46,12 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
+    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalTopicClient;
     private AuthTopicClient _authTopicClient;
+    private ToastClient _toastClient;
 
     // Data
     private Profile _profile;
@@ -89,6 +97,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        _toastClient = new ToastClient(_toastListener);
+        _toastClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(App.get());
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
@@ -106,6 +116,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         if (_authTopicClient != null && _authTopicClient.isConnected())
             _authTopicClient.disconnect(App.get());
+
+        if (_toastClient != null && _toastClient.isConnected())
+            _toastClient.disconnect(App.get());
 
         super.onPause();
     }
@@ -274,7 +287,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             _globalTopicClient.subGotProfile();
             _globalTopicClient.subUpdateApp();
             _globalTopicClient.subAppShutdown();
-            _globalTopicClient.subNetworkState();
+            //_globalTopicClient.subNetworkState();
         }
 
         @Override
@@ -298,6 +311,11 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         @Override
         public void onNetworkDisconnected() {
+            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
+            //if (intent != null) {
+            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            //}
         }
 
         @Override
@@ -316,4 +334,63 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
+    private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "onConnected");
+            _toastClient.subSnackbar();
+            _toastClient.subToast();
+        }
+
+        @Override
+        public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+            Log.v(TAG, "showSnackBar(" + title + ")");
+            if (findViewById(android.R.id.content) == null) {
+                Log.v(TAG, "showSnackBar.findViewById() == null");
+                return;
+            }
+
+            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), title, duration);
+            TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(getResources().getColor(R.color.fn_white_text));
+            snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
+
+            if (buttonText != null) {
+                snackbar.setAction(buttonText, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (buttonIntent != null) {
+                            try {
+                                buttonIntent.send(AuthFragmentActivity.this, 0, new Intent());
+                            } catch (PendingIntent.CanceledException e) {
+                                Log.v(TAG, e);
+                            }
+                        }
+                    }
+                });
+            }
+            snackbar.show();
+            _snackbar = snackbar;
+            Log.v(TAG, "snackbar.show()");
+        }
+
+        @Override
+        public void showToast(String title, int duration) {
+            Log.v(TAG, "onConnected");
+            Toast.makeText(AuthFragmentActivity.this, title, duration).show();
+        }
+
+        @Override
+        public void dismissSnackBar() {
+            if (_snackbar == null)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    };
 }

@@ -8,16 +8,17 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
-import android.widget.Spinner;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.ui.FnSpinner;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -28,7 +29,7 @@ public class DeclineDialog extends DialogFragmentBase {
     // Ui
     private CheckBox _blockCheckBox;
     private LinearLayout _blockLayout;
-    private Spinner _blockSpinner;
+    private FnSpinner _blockSpinner;
     private EditText _blockEditText;
     private Button _okButton;
     private Button _cancelButton;
@@ -36,6 +37,7 @@ public class DeclineDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private int[] _reasonIds;
+    private int _itemSelectedPosition;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -61,11 +63,8 @@ public class DeclineDialog extends DialogFragmentBase {
 
         _blockLayout = (LinearLayout) v.findViewById(R.id.block_layout);
 
-        _blockSpinner = (Spinner) v.findViewById(R.id.block_spinner);
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(v.getContext(), R.array.dialog_block_reasons,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _blockSpinner.setAdapter(adapter);
+        _blockSpinner = (FnSpinner) v.findViewById(R.id.block_spinner);
+        _blockSpinner.setOnItemClickListener(_spinner_selected);
 
         _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
 
@@ -78,6 +77,18 @@ public class DeclineDialog extends DialogFragmentBase {
         _cancelButton.setOnClickListener(_cancel_onClick);
 
         return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_blockSpinner != null) {
+            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_blockSpinner.getContext(), R.array.dialog_block_reasons,
+                    R.layout.view_spinner_item);
+            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+            _blockSpinner.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -100,7 +111,7 @@ public class DeclineDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    _listener.onOk(true, _reasonIds[_blockSpinner.getSelectedItemPosition()], _blockEditText.getText().toString());
+                    _listener.onOk(true, _reasonIds[_itemSelectedPosition], _blockEditText.getText().toString());
                 } else {
                     _listener.onOk(false, 0, null);
                 }
@@ -125,6 +136,15 @@ public class DeclineDialog extends DialogFragmentBase {
                 _blockLayout.setVisibility(View.GONE);
             }
         }
+    };
+
+    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
+
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _itemSelectedPosition = position;
+        }
+
     };
 
     public interface Listener {

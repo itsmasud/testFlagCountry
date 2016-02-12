@@ -376,11 +376,16 @@ public class WebCrawlerService extends Service {
 
             incrementPendingRequestCounter(1);
             incRequestCounter(1);
-            WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true, false);
+            // only grab the first two pages for completed work.
+            if (selector != WorkorderDataSelector.COMPLETED || page < 2)
+                WorkorderClient.list(WebCrawlerService.this, selector, page + 1, true, false);
 
             Log.v(TAG, "onWorkorderList, Request details");
             for (int i = 0; i < list.size(); i++) {
                 Workorder workorder = list.get(i);
+
+                if (workorder == null)
+                    continue;
 
                 incrementPendingRequestCounter(1);
                 incRequestCounter(1);
@@ -397,7 +402,7 @@ public class WebCrawlerService extends Service {
         public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             incrementPendingRequestCounter(-1);
 
-            if (failed) return;
+            if (failed || workorder == null) return;
 
             Log.v(TAG, "onDetails " + workorder.getWorkorderId());
 
@@ -419,10 +424,18 @@ public class WebCrawlerService extends Service {
                 return;
 
             for (int i = 0; i < messages.size(); i++) {
-                incRequestCounter(2);
                 com.fieldnation.data.workorder.Message message = messages.get(i);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
-                PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                if (message != null && message.getFromUser() != null) {
+                    if (message.getFromUser().getPhotoUrl() != null) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoUrl(), true, true);
+                    }
+
+                    if (message.getFromUser().getPhotoThumbUrl() != null) {
+                        incRequestCounter(1);
+                        PhotoClient.get(WebCrawlerService.this, message.getFromUser().getPhotoThumbUrl(), true, true);
+                    }
+                }
             }
             _workorderThreadManager.wakeUp();
         }

@@ -1,6 +1,7 @@
 package com.fieldnation;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
@@ -87,11 +88,14 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     // feedback dialog
-    public static void showFeedbackDialog(Context context) {
+    public static void showFeedbackDialog(Context context, String source) {
         if (context == null)
             return;
 
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, null, Sticky.NONE);
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_FEEDBACK_SOURCE, source);
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, bundle, Sticky.NONE);
     }
 
     public boolean subShowFeedbackDialog() {
@@ -155,6 +159,14 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         TopicService.dispatchEvent(context, TOPIC_ID_NETWORK_COMMAND_CONNECT, null, Sticky.NONE);
     }
 
+    public static Intent networkConnectIntent(Context context) {
+        Log.v(STAG, "networkConnect");
+        if (context == null)
+            return null;
+
+        return TopicService.dispatchEventIntent(context, TOPIC_ID_NETWORK_COMMAND_CONNECT, null, Sticky.NONE);
+    }
+
     public boolean subNetworkConnect() {
         return register(TOPIC_ID_NETWORK_COMMAND_CONNECT, TAG);
     }
@@ -208,7 +220,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                     onShutdown();
                     break;
                 case TOPIC_ID_SHOW_FEEDBACK:
-                    onShowFeedbackDialog();
+                    onShowFeedbackDialog(((Bundle) payload).getString(PARAM_FEEDBACK_SOURCE));
                     break;
                 case TOPIC_ID_SHOW_HELP_DIALOG:
                     onShowHelpDialog();
@@ -254,7 +266,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         public void onShutdown() {
         }
 
-        public void onShowFeedbackDialog() {
+        public void onShowFeedbackDialog(String source) {
         }
 
         public void onShowHelpDialog() {

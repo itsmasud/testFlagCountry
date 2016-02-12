@@ -20,8 +20,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
-import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 
 /**
  * Created by Michael Carver on 11/25/2015.
@@ -30,8 +30,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private static final String TAG = "ReportProblemDialog";
 
     // Ui
-    private MaterialBetterSpinner _problem1Spinner;
-    private MaterialBetterSpinner _problem2Spinner;
+    private FnSpinner _problem1Spinner;
+    private FnSpinner _problem2Spinner;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
     private TextView _noteTextView;
@@ -62,18 +62,10 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _problem1Spinner = (MaterialBetterSpinner) v.findViewById(R.id.problem1_spinner);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(),
-                R.array.enum_report_problem_1,
-                R.layout.view_spinner_item);
-
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
-
-        _problem1Spinner.setAdapter(adapter);
+        _problem1Spinner = (FnSpinner) v.findViewById(R.id.problem1_spinner);
         _problem1Spinner.setOnItemClickListener(_problem1_onItemClick);
 
-        _problem2Spinner = (MaterialBetterSpinner) v.findViewById(R.id.problem2_spinner);
+        _problem2Spinner = (FnSpinner) v.findViewById(R.id.problem2_spinner);
         _problem2Spinner.setOnItemClickListener(_problem2_onItemClick);
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
@@ -92,6 +84,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return v;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        populateUi();
+    }
+
     private void setProblem2Visibility(int visibility) {
         _problem2Spinner.setVisibility(visibility);
     }
@@ -103,6 +101,15 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private void populateUi() {
         if (_noteTextView == null)
             return;
+
+        ArrayAdapter adapter = ArrayAdapter.createFromResource(getActivity(),
+                R.array.enum_report_problem_1,
+                R.layout.view_spinner_item);
+
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+        _problem1Spinner.setAdapter(adapter);
 
         setProblem2Visibility(View.GONE);
         _noteTextView.setVisibility(View.GONE);
@@ -129,7 +136,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
-                _problem2Spinner.requestFocus();
+                _problem2Spinner.clearFocus();
                 _problem2Spinner.setHint(R.string.what_are_you_missing);
                 _problem2Spinner.setText("");
                 _problem2Spinner.dismissDropDown();
@@ -146,7 +153,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
-                _problem2Spinner.requestFocus();
+                _problem2Spinner.clearFocus();
                 _problem2Spinner.setHint(R.string.what_about_approval);
                 _problem2Spinner.setText("");
                 _problem2Spinner.dismissDropDown();
@@ -163,7 +170,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
-                _problem2Spinner.requestFocus();
+                _problem2Spinner.clearFocus();
                 _problem2Spinner.setHint(R.string.what_about_payment);
                 _problem2Spinner.setText("");
                 _problem2Spinner.dismissDropDown();
@@ -189,7 +196,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
                 _problem2Spinner.setAdapter(adap);
                 setProblem2Visibility(View.VISIBLE);
-                _problem2Spinner.requestFocus();
+                _problem2Spinner.clearFocus();
                 _problem2Spinner.setHint(R.string.what_about_site);
                 _problem2Spinner.setText("");
                 _problem2Spinner.dismissDropDown();
@@ -202,7 +209,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 break;
             }
             default: {
-                _problem1Spinner.requestFocus();
+                //_problem1Spinner.clearFocus();
                 _okButton.setEnabled(false);
                 setProblem2Visibility(View.GONE);
                 break;

@@ -56,6 +56,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _coiWarningDialog;
     private FeedbackDialog _feedbackDialog;
     private HelpDialog _helpDialog;
+    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -144,19 +145,15 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     @Override
-    protected void onStart() {
-        super.onStart();
+    protected void onResume() {
+        Log.v(TAG, "onResume");
+        super.onResume();
         _toastClient = new ToastClient(_toastListener);
         _toastClient.connect(App.get());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        _globalClient = new GlobalTopicClient(_globalListener);
-        _globalClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(App.get());
+        _globalClient = new GlobalTopicClient(_globalListener);
+        _globalClient.connect(App.get());
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
@@ -165,20 +162,16 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     @Override
     protected void onPause() {
+        Log.v(TAG, "onPause");
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
 
-        if (_authTopicClient != null && _authTopicClient.isConnected()) {
+        if (_authTopicClient != null && _authTopicClient.isConnected())
             _authTopicClient.disconnect(App.get());
-        }
-        super.onPause();
-    }
 
-    @Override
-    protected void onStop() {
         if (_toastClient != null && _toastClient.isConnected())
             _toastClient.disconnect(App.get());
-        super.onStop();
+        super.onPause();
     }
 
     @Override
@@ -361,6 +354,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _globalClient.subAppShutdown();
             _globalClient.subShowFeedbackDialog();
             _globalClient.subShowHelpDialog();
+            //_globalClient.subNetworkState();
         }
 
         @Override
@@ -384,9 +378,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onShowFeedbackDialog() {
+        public void onShowFeedbackDialog(String source) {
             try {
-                _feedbackDialog.show();
+                _feedbackDialog.show(source);
             } catch (Exception ex) {
                 Debug.logException(ex);
             }
@@ -400,17 +394,28 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 Debug.logException(ex);
             }
         }
+
+        @Override
+        public void onNetworkDisconnected() {
+            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
+            //if (intent != null) {
+            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            //}
+        }
     };
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
         @Override
         public void onConnected() {
+            Log.v(TAG, "onConnected");
             _toastClient.subSnackbar();
             _toastClient.subToast();
         }
 
         @Override
         public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+            Log.v(TAG, "showSnackBar(" + title + ")");
             if (findViewById(android.R.id.content) == null) {
                 Log.v(TAG, "showSnackBar.findViewById() == null");
                 return;
@@ -436,11 +441,27 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 });
             }
             snackbar.show();
+            _snackbar = snackbar;
+
+            Log.v(TAG, "snackbar.show()");
         }
 
         @Override
         public void showToast(String title, int duration) {
+            Log.v(TAG, "showToast");
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
+        }
+
+        @Override
+        public void dismissSnackBar() {
+            if (_snackbar == null)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     };
 }

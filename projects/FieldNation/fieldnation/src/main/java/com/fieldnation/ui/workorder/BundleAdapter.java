@@ -47,8 +47,6 @@ public class BundleAdapter extends BaseAdapter {
 
         v.setWorkorder(_workorders[position]);
         v.setIsBundle(false);
-        v.showMessageAlertIcon(false);
-        v.showAlertIcon(false);
         v.setWorkorderSummaryListener(_listener);
 
         return v;
