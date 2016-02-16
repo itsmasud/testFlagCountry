@@ -54,9 +54,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private long _taskId = 0;
     private String _title;
     private boolean _clear = false;
-    private int _selectedPosition_carrierSpinner;
     private int _selectedPosition_directionSpinner;
-
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -264,8 +262,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final AdapterView.OnItemClickListener _carrier_selected = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            _selectedPosition_carrierSpinner = position;
-
             if ("Other".equals(getCarrierSpinner().getAdapter().getItem(position).toString())) {
                 _carrierLayout.setVisibility(View.VISIBLE);
             } else {
@@ -280,9 +276,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _selectedPosition_directionSpinner = position;
         }
-
     };
-
 
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
@@ -299,7 +293,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             if (_listener != null) {
                 if (_taskId != 0) {
-                    if ("Other".equals(getCarrierSpinner().getAdapter().getItem(_selectedPosition_carrierSpinner).toString())) {
+                    if ("Other".equals(getCarrierSpinner().getText().toString())) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
@@ -310,7 +304,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                getCarrierSpinner().getAdapter().getItem(_selectedPosition_carrierSpinner).toString(),
+                                getCarrierSpinner().getText().toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
                                 _selectedPosition_directionSpinner == 0,
@@ -318,7 +312,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     }
 
                 } else {
-                    if ("Other".equals(getCarrierSpinner().getAdapter().getItem(_selectedPosition_carrierSpinner).toString())) {
+                    if ("Other".equals(getCarrierSpinner().getText().toString())) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
@@ -328,7 +322,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                getCarrierSpinner().getAdapter().getItem(_selectedPosition_carrierSpinner).toString(),
+                                getCarrierSpinner().getText().toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
                                 _selectedPosition_directionSpinner == 0);
@@ -346,14 +340,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-
     private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _listener.onScan();
         }
     };
-
 
     public interface Listener {
         void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
