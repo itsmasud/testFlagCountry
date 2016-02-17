@@ -1,11 +1,10 @@
 package com.fieldnation.ui.payment;
 
 import android.os.Bundle;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.BaseAdapter;
 
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
@@ -14,6 +13,7 @@ import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.payment.MonthHeaderView.Header;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.Stopwatch;
 
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -31,7 +31,8 @@ public class PaymentListActivity extends AuthActionBarActivity {
     private PaymentClient _paymentClient;
     private Hashtable<Integer, List<Payment>> _pages = new Hashtable<>();
     private List<Object> _paymentList = new LinkedList<>();
-    private MyAdapter _adapter = new MyAdapter(_paymentList);
+    private PaymentListAdapter _adapter;
+    private int _nextPage = 0;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -48,6 +49,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
 
         _listView = (OverScrollListView) findViewById(R.id.items_listview);
         _listView.setOnOverScrollListener(_refreshView);
+        _adapter = new PaymentListAdapter(_paymentList, _paymentListAdapter);
         _listView.setAdapter(_adapter);
     }
 
@@ -71,7 +73,6 @@ public class PaymentListActivity extends AuthActionBarActivity {
 
     private void rebuildList() {
         _paymentList.clear();
-
         int lastHash = 0;
         Calendar futureCal = null;
         Header header = null;
@@ -153,7 +154,6 @@ public class PaymentListActivity extends AuthActionBarActivity {
                 _paymentList.add(payment);
             }
         }
-
         _adapter.notifyDataSetChanged();
     }
 
@@ -166,94 +166,32 @@ public class PaymentListActivity extends AuthActionBarActivity {
         @Override
         public void onList(int page, List<Payment> list, boolean failed, boolean isCached) {
             if (list == null || list.size() == 0) {
-                if (_refreshView != null)
-                    _refreshView.refreshComplete();
+                _nextPage = -1;
                 return;
             }
 
+            if (_refreshView != null)
+                _refreshView.refreshComplete();
+
             _pages.put(page, list);
             rebuildList();
-            PaymentClient.list(App.get(), page + 1);
+            _nextPage = page + 1;
         }
     };
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
+            _nextPage = 1;
             PaymentClient.list(App.get(), 0);
         }
     };
 
-    private static class Placeholder {
-        public Placeholder() {
-        }
-    }
-
-    private static class MyAdapter extends BaseAdapter {
-        private List<Object> _items = new LinkedList<>();
-
-        public MyAdapter(List<Object> items) {
-            _items = items;
-        }
-
+    private final PaymentListAdapter.Listener _paymentListAdapter = new PaymentListAdapter.Listener() {
         @Override
-        public int getCount() {
-            return _items.size();
+        public void onNextPage() {
+            if (_nextPage > -1)
+                PaymentClient.list(App.get(), _nextPage);
         }
-
-        @Override
-        public Object getItem(int position) {
-            return _items.get(position);
-        }
-
-        @Override
-        public long getItemId(int position) {
-            return position;
-        }
-
-        @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
-            Object object = getItem(position);
-
-            if (object instanceof Placeholder) {
-                NoPaymentsTileView v = null;
-
-                if (convertView == null)
-                    v = new NoPaymentsTileView(parent.getContext());
-                else if (convertView instanceof NoPaymentsTileView)
-                    v = (NoPaymentsTileView) convertView;
-                else
-                    v = new NoPaymentsTileView(parent.getContext());
-
-                return v;
-            } else if (object instanceof Header) {
-                Header header = (Header) object;
-
-                MonthHeaderView v = null;
-
-                if (convertView == null)
-                    v = new MonthHeaderView(parent.getContext());
-                else if (convertView instanceof MonthHeaderView)
-                    v = (MonthHeaderView) convertView;
-                else
-                    v = new MonthHeaderView(parent.getContext());
-
-                v.setData(header);
-                return v;
-            } else if (object instanceof Payment) {
-                PaymentCardView v = null;
-
-                if (convertView == null)
-                    v = new PaymentCardView(parent.getContext());
-                else if (convertView instanceof PaymentCardView)
-                    v = (PaymentCardView) convertView;
-                else
-                    v = new PaymentCardView(parent.getContext());
-
-                v.setData((Payment) object);
-                return v;
-            }
-            return null;
-        }
-    }
+    };
 }
