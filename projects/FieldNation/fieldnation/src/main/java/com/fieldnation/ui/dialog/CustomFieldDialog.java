@@ -35,6 +35,12 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     // State
     private static final String STATE_CUSTOM_FIELD = "CustomFieldDialog:STATE_CUSTOM_FIELD";
+    private static final String STATE_CUSTOM_FIELD_DATE = "CustomFieldDialog:STATE_CUSTOM_FIELD_DATE";
+    private static final String STATE_CUSTOM_FIELD_DATETIME = "CustomFieldDialog:STATE_CUSTOM_FIELD_DATETIME";
+    private static final String STATE_CUSTOM_FIELD_TIME = "CustomFieldDialog:STATE_CUSTOM_FIELD_TIME";
+    private static final String STATE_CUSTOM_FIELD_TEXT = "CustomFieldDialog:STATE_CUSTOM_FIELD_TEXT";
+    private static final String STATE_CUSTOM_FIELD_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_NUMBER";
+    private static final String STATE_CUSTOM_FIELD_PHONE_NUMBER = "CustomFieldDialog:STATE_CUSTOM_FIELD_PHONE_NUMBER";
 
     // UI
     private TextView _titleTextView;
@@ -56,6 +62,12 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private Calendar _pickerCal;
     private Calendar _expirationDate;
     private int _itemSelectedPosition;
+    private String _customFieldDateData;
+    private String _customFieldDateTimeData;
+    private String _customFieldTimeData;
+    private String _customFieldTextData;
+    private String _customFieldNumberData;
+    private String _customFieldPhoneNumberData;
 
 
     /*-*****************************-*/
@@ -67,10 +79,31 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         //setRetainInstance(true);
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATE))
+                _customFieldDateData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATE);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATETIME))
+                _customFieldDateTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATETIME);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TIME))
+                _customFieldTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TIME);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TEXT))
+                _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TEXT);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_NUMBER))
+                _customFieldNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_NUMBER);
+
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_PHONE_NUMBER))
+                _customFieldPhoneNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_PHONE_NUMBER);
+
+
         }
         super.onCreate(savedInstanceState);
 
@@ -81,28 +114,115 @@ public class CustomFieldDialog extends DialogFragmentBase {
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onViewStateRestored");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD))
+            if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD)) {
                 _customField = savedInstanceState.getParcelable(STATE_CUSTOM_FIELD);
+            }
+
+
+            CustomField.FieldType type = _customField.getFieldType();
+            switch (type) {
+                case DATE:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATE)) {
+                        _customFieldDateData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATE);
+                        _textEditText.setText(_customFieldDateData);
+                    }
+                    break;
+                case DATETIME:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_DATETIME)) {
+                        _customFieldDateTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_DATETIME);
+                        _textEditText.setText(_customFieldDateTimeData);
+                    }
+                    break;
+                case TIME:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TIME)) {
+                        _customFieldTimeData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TIME);
+                        _textEditText.setText(_customFieldTimeData);
+                    }
+                    break;
+                case TEXT:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_TEXT)) {
+                        _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_TEXT);
+                        _textEditText.setText(_customFieldTextData);
+                    }
+                    break;
+                case NUMBER:
+                    Log.e(TAG, "onViewStateRestored: case NUMBER");
+
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_NUMBER)) {
+                        _customFieldNumberData = savedInstanceState.getString(STATE_CUSTOM_FIELD_NUMBER);
+                        _textEditText.setText(_customFieldNumberData);
+                    }
+                    break;
+                case PHONE:
+                    if (savedInstanceState.containsKey(STATE_CUSTOM_FIELD_PHONE_NUMBER)) {
+                        _customFieldTextData = savedInstanceState.getString(STATE_CUSTOM_FIELD_PHONE_NUMBER);
+                        _textEditText.setText(_customFieldPhoneNumberData);
+                    }
+                    break;
+            }
+
         }
         super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         if (_customField != null)
             outState.putParcelable(STATE_CUSTOM_FIELD, _customField);
+
+        CustomField.FieldType type = _customField.getFieldType();
+        switch (type) {
+            case DATE:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldDateData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_DATE, _customFieldDateData);
+                }
+                break;
+            case DATETIME:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldDateTimeData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_DATETIME, _customFieldDateTimeData);
+                }
+                break;
+            case TIME:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldTimeData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_TIME, _customFieldTimeData);
+                }
+                break;
+            case TEXT:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldTextData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_TEXT, _customFieldTextData);
+                }
+                break;
+            case NUMBER:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldNumberData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_NUMBER, _customFieldNumberData);
+                }
+                break;
+            case PHONE:
+                if (_textEditText != null && !misc.isEmptyOrNull(_textEditText.getText().toString())) {
+                    _customFieldPhoneNumberData = _textEditText.getText().toString();
+                    outState.putString(STATE_CUSTOM_FIELD_PHONE_NUMBER, _customFieldPhoneNumberData);
+                }
+                break;
+        }
+//        Log.e(TAG, "_customFieldTextData: " + _customFieldTextData);
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_custom_field, container);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _textEditText = (EditText) v.findViewById(R.id.text_edittext);
         _textEditText.addTextChangedListener(_textEditText_watcherListener);
-        Log.v(TAG, "onCreateView() _textEditText = " + _textEditText.toString());
 
         _dateTimeButton = (Button) v.findViewById(R.id.datetime_button);
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
@@ -134,7 +254,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        
+
         populateUi();
     }
 
@@ -182,9 +302,52 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _textEditText.setVisibility(View.VISIBLE);
         _textEditText.getEditableText().clear();
         //_textEditText.setText("", TextView.BufferType.EDITABLE);
-        if (!misc.isEmptyOrNull(_customField.getValue())) {
-            _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+
+        switch (type) {
+            case DATE:
+                if (!misc.isEmptyOrNull(_customFieldDateData)) {
+                    _textEditText.setText(_customFieldDateData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case DATETIME:
+                if (!misc.isEmptyOrNull(_customFieldDateTimeData)) {
+                    _textEditText.setText(_customFieldDateTimeData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case TIME:
+                if (!misc.isEmptyOrNull(_customFieldTimeData)) {
+                    _textEditText.setText(_customFieldTimeData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case TEXT:
+                if (!misc.isEmptyOrNull(_customFieldTextData)) {
+                    _textEditText.setText(_customFieldTextData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case NUMBER:
+                if (!misc.isEmptyOrNull(_customFieldNumberData)) {
+                    _textEditText.setText(_customFieldNumberData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
+            case PHONE:
+                if (!misc.isEmptyOrNull(_customFieldPhoneNumberData)) {
+                    _textEditText.setText(_customFieldPhoneNumberData, TextView.BufferType.EDITABLE);
+                } else if (!misc.isEmptyOrNull(_customField.getValue())) {
+                    _textEditText.setText(_customField.getValue(), TextView.BufferType.EDITABLE);
+                }
+                break;
         }
+
         switch (type) {
             case DATE:
                 _dateTimeButton.setVisibility(View.VISIBLE);
@@ -230,7 +393,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner.setSelectedItem(i);
+                                _spinner.setSelection(i);
                                 _itemSelectedPosition = i;
                                 break;
                             }
