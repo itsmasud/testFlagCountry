@@ -4,7 +4,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
+import com.fieldnation.Log;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -13,6 +16,8 @@ import java.util.List;
  * Created by Michael on 2/17/2016.
  */
 class PaymentListAdapter extends BaseAdapter {
+    private final static String TAG = "PaymentListAdapter";
+
     private List<Object> _items = new LinkedList<>();
     private Listener _listener;
 
@@ -28,7 +33,7 @@ class PaymentListAdapter extends BaseAdapter {
 
     @Override
     public Object getItem(int position) {
-        if (position == (getCount() * 3) / 4 && _listener != null) {
+        if (position == (getCount() * 2) / 3 && _listener != null) {
             _listener.onNextPage();
         }
         return _items.get(position);
@@ -37,6 +42,24 @@ class PaymentListAdapter extends BaseAdapter {
     @Override
     public long getItemId(int position) {
         return position;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        Object object = getItem(position);
+        if (object instanceof Placeholder)
+            return 0;
+        else if (object instanceof MonthHeaderView.Header)
+            return 1;
+        else if (object instanceof Payment)
+            return 2;
+
+        return 0;
+    }
+
+    @Override
+    public int getViewTypeCount() {
+        return 3;
     }
 
     @Override
@@ -55,8 +78,6 @@ class PaymentListAdapter extends BaseAdapter {
 
             return v;
         } else if (object instanceof MonthHeaderView.Header) {
-            MonthHeaderView.Header header = (MonthHeaderView.Header) object;
-
             MonthHeaderView v = null;
 
             if (convertView == null)
@@ -66,7 +87,7 @@ class PaymentListAdapter extends BaseAdapter {
             else
                 v = new MonthHeaderView(parent.getContext());
 
-            v.setData(header);
+            v.setData((MonthHeaderView.Header) object);
             return v;
         } else if (object instanceof Payment) {
             PaymentCardView v = null;

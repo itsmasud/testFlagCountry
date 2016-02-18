@@ -56,12 +56,11 @@ public class PaymentListActivity extends AuthActionBarActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        _refreshView.startRefreshing();
         _paymentClient = new PaymentClient(_payment_listener);
         _paymentClient.connect(App.get());
 
-        PaymentClient.list(this, 0);
         _refreshView.startRefreshing();
+        PaymentClient.list(this, 0);
     }
 
     @Override
@@ -170,12 +169,12 @@ public class PaymentListActivity extends AuthActionBarActivity {
                 return;
             }
 
-            if (_refreshView != null)
-                _refreshView.refreshComplete();
-
             _pages.put(page, list);
             rebuildList();
             _nextPage = page + 1;
+
+            if (_refreshView != null)
+                _refreshView.refreshComplete();
         }
     };
 
