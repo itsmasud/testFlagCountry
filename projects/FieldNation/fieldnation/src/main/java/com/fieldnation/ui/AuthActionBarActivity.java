@@ -106,11 +106,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _coiWarningDialog.setCancelable(false);
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
-        onFinishCreate(savedInstanceState);
-
         _feedbackDialog = FeedbackDialog.getInstance(getSupportFragmentManager(), TAG);
-
         _helpDialog = HelpDialog.getInstance(getSupportFragmentManager(), TAG);
+
+        onFinishCreate(savedInstanceState);
     }
 
     public abstract int getLayoutResource();
