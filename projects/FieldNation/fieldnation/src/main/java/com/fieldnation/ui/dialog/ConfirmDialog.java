@@ -15,10 +15,12 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -52,7 +54,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private Calendar _startCalendar;
-    private long _durationMilliseconds;
+    private long _durationMilliseconds = -1;
     private Schedule _schedule;
     private Workorder _workorder;
     private boolean _tacAccept = false;
@@ -102,7 +104,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_confirm, container, false);
 
-        _startDateLayout = (LinearLayout)v.findViewById(R.id.startDate_layout);
+        _startDateLayout = (LinearLayout) v.findViewById(R.id.startDate_layout);
 
         _startDateButton = (Button) v.findViewById(R.id.startDate_button);
         _startDateButton.setOnClickListener(_startDate_onClick);
@@ -177,14 +179,12 @@ public class ConfirmDialog extends DialogFragmentBase {
 //        }
 //    }
 
-
     public void show(Workorder workorder, Schedule schedule) {
         _schedule = schedule;
         _workorder = workorder;
 
         super.show();
     }
-
 
     private void populateUi() {
         if (_schedule == null)
@@ -197,29 +197,32 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         String display = _schedule.getDisplayString(false);
         _scheduleTextView.setText(display);
-        setDuration(3600000);
-        if (_schedule.isExact()) {
-            try {
-                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-                _startDateLayout.setVisibility(View.GONE);
-                setDuration(3600000);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        if (_durationMilliseconds > -1) {
+            setDuration(_durationMilliseconds);
         } else {
-            try {
-                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
-                _startCalendar = cal;
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                _startDateLayout.setVisibility(View.VISIBLE);
-                setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+            setDuration(3600000);
+            if (_schedule.isExact()) {
+                try {
+                    _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+                    _startDateLayout.setVisibility(View.GONE);
+                    setDuration(3600000);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                try {
+                    Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
+                    Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
+                    _startCalendar = cal;
+                    _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                    _startDateLayout.setVisibility(View.VISIBLE);
+                    setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
     }
-
 
     /*-*****************************-*/
     /*-				Events			-*/
@@ -256,6 +259,7 @@ public class ConfirmDialog extends DialogFragmentBase {
             }
         }
     };
+
     private final CompoundButton.OnCheckedChangeListener _tacCheck_change = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -305,7 +309,7 @@ public class ConfirmDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             if (!_tacAccept) {
-                Toast.makeText(getActivity(), "Please accept the terms and conditions to continue", Toast.LENGTH_LONG).show();
+                ToastClient.toast(App.get(), R.string.please_accept_the_terms_and_conditions_to_continue, Toast.LENGTH_LONG);
                 return;
             }
             if (_listener != null) {
@@ -314,15 +318,15 @@ public class ConfirmDialog extends DialogFragmentBase {
             dismiss();
         }
     };
-    private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
 
+    private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _durationDialog.show(_durationMilliseconds);
         }
     };
-    private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
 
+    private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
         @Override
         public void onOk(long timeMilliseconds) {
             _durationMilliseconds = timeMilliseconds;
@@ -341,5 +345,4 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         void termsOnClick(Workorder workorder);
     }
-
 }
