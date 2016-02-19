@@ -29,6 +29,8 @@ public class WorkLogDialog extends DialogFragmentBase {
     private static final String STATE_TITLE = "STATE_TITLE";
     private static final String STATE_LOGGEDWORK = "STATE_LOGGED_WORK";
     private static final String STATE_DEVICES_COUNT = "STATE_DEVICES_COUNT";
+    private static final String STATE_START_DATE = "STATE_START_DATE";
+    private static final String STATE_END_DATE = "STATE_END_DATE";
 
     // UI
     private Button _startButton;
@@ -51,6 +53,8 @@ public class WorkLogDialog extends DialogFragmentBase {
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
+    private String _startDateData;
+    private String _endDateDate;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -62,16 +66,47 @@ public class WorkLogDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+
             if (savedInstanceState.containsKey(STATE_TITLE))
                 _title = savedInstanceState.getString(STATE_TITLE);
+
             if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
                 _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
+
             if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
                 _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
+
+            if (savedInstanceState.containsKey(STATE_START_DATE)) {
+                _startDateData = savedInstanceState.getString(STATE_START_DATE);
+                Log.e(TAG, "onCreate STATE_START_DATE:" + _startDateData);
+            }
+
+            if (savedInstanceState.containsKey(STATE_END_DATE))
+                _endDateDate = savedInstanceState.getString(STATE_END_DATE);
         }
         super.onCreate(savedInstanceState);
 
         setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
+                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
+
+            if (savedInstanceState.containsKey(STATE_START_DATE)) {
+                _startDateData = savedInstanceState.getString(STATE_START_DATE);
+                _startButton.setText(_startDateData);
+            }
+
+            if (savedInstanceState.containsKey(STATE_END_DATE)) {
+                _endDateDate = savedInstanceState.getString(STATE_END_DATE);
+                _endButton.setText(_endDateDate);
+            }
+
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -81,6 +116,14 @@ public class WorkLogDialog extends DialogFragmentBase {
             outState.putString(STATE_TITLE, _title);
         if (_loggedWork != null) {
             outState.putParcelable(STATE_LOGGEDWORK, _loggedWork);
+        }
+
+        if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString())) {
+            outState.putString(STATE_START_DATE, _startDateData);
+        }
+
+        if (_endButton != null && !misc.isEmptyOrNull(_endButton.getText().toString())) {
+            outState.putString(STATE_END_DATE, _endButton.getText().toString());
         }
 
         super.onSaveInstanceState(outState);
