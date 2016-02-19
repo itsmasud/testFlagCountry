@@ -61,14 +61,6 @@ public class WorkLogDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TITLE))
-                _title = savedInstanceState.getString(STATE_TITLE);
-            if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
-                _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
-            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
-                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
-        }
         super.onCreate(savedInstanceState);
 
         setStyle(STYLE_NO_TITLE, 0);
@@ -119,6 +111,20 @@ public class WorkLogDialog extends DialogFragmentBase {
         _endCalendar = Calendar.getInstance();
 
         return v;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TITLE))
+                _title = savedInstanceState.getString(STATE_TITLE);
+            if (savedInstanceState.containsKey(STATE_DEVICES_COUNT))
+                _showDevicesCount = savedInstanceState.getBoolean(STATE_DEVICES_COUNT);
+            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
+                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
+        }
     }
 
     @Override

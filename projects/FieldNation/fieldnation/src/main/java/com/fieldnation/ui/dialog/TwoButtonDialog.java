@@ -96,6 +96,12 @@ public class TwoButtonDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onStop() {
+        dismiss();
+        super.onStop();
+    }
+
+    @Override
     public void reset() {
         Log.v(TAG, "reset");
         super.reset();

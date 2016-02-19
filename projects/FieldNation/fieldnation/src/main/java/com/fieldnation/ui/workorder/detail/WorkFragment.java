@@ -1759,8 +1759,6 @@ public class WorkFragment extends WorkorderFragment {
                         }
                     });
             _yesNoDialog.show();
-
-
         }
     };
 
