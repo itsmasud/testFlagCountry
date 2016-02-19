@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.utils.misc;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";
@@ -28,6 +29,7 @@ public class PayDialog extends DialogFragmentBase {
     // State
     private static final String STATE_MODE = "STATE_MODE";
     private static final String STATE_PAY = "STATE_PAY";
+    private static final String STATE_SHOW_EXPLANATION = "STATE_SHOW_EXPLANATION";
 
     // Modes
     private static final int MODE_FIXED = 0;
@@ -67,7 +69,6 @@ public class PayDialog extends DialogFragmentBase {
     private boolean _showExplanation;
     private int _mode = MODE_FIXED;
 
-
     // Payable & Hours
     private static double MINIMUM_ACCUMULATED_PAYABLE_AMOUNT = 20;
     private double _fixedAmount;
@@ -79,6 +80,7 @@ public class PayDialog extends DialogFragmentBase {
     private double _blendedMaxHours;
     private double _extraHourly;
     private double _extraMaxHours;
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -89,24 +91,38 @@ public class PayDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_PAY))
-                _pay = savedInstanceState.getParcelable(STATE_PAY);
-
-            if (savedInstanceState.containsKey(STATE_MODE))
-                _mode = savedInstanceState.getInt(STATE_MODE);
-        }
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_PAY))
+                _pay = savedInstanceState.getParcelable(STATE_PAY);
+
+            if (savedInstanceState.containsKey(STATE_MODE))
+                _mode = savedInstanceState.getInt(STATE_MODE);
+
+            if (savedInstanceState.containsKey(STATE_SHOW_EXPLANATION))
+                _showExplanation = savedInstanceState.getBoolean(STATE_SHOW_EXPLANATION);
+        }
+        super.onViewStateRestored(savedInstanceState);
+    }
+
+    @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_pay != null) {
-            outState.putParcelable(STATE_PAY, _pay);
+
+        try {
+            outState.putParcelable(STATE_PAY, makePay());
+        } catch (Exception ex) {
+            if (_pay != null) {
+                outState.putParcelable(STATE_PAY, _pay);
+            }
         }
 
+        outState.putBoolean(STATE_SHOW_EXPLANATION, _showExplanation);
         outState.putInt(STATE_MODE, _mode);
 
         super.onSaveInstanceState(outState);
@@ -203,34 +219,31 @@ public class PayDialog extends DialogFragmentBase {
         }
     }
 
-
     private boolean isValidAmount() {
         try {
-
             switch (_mode) {
                 case MODE_FIXED:
                     _fixedAmount = getAmount(_fixedEditText.getText().toString());
-                    return _fixedAmount >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
+                    return _fixedAmount >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
                 case MODE_HOURLY:
                     _hourlyRateAmount = getAmount((_hourlyRateEditText.getText().toString()));
                     _maxHours = getAmount((_maxHoursEditText.getText().toString()));
-                    return _hourlyRateAmount * _maxHours >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
+                    return _hourlyRateAmount * _maxHours >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
                 case MODE_PER_DEVICE:
                     _deviceRate = getAmount((_deviceRateEditText.getText().toString()));
                     _maxDevices = getNumberOfDevice((_maxDevicesEditText.getText().toString()));
-                    return _deviceRate * _maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
+                    return _deviceRate * _maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
                 case MODE_BLENDED:
                     blendedHourlyAmount = getAmount((_blendedHourlyEditText.getText().toString()));
                     _blendedMaxHours = getAmount((_blendedMaxHoursEditText.getText().toString()));
                     _extraHourly = getAmount((_extraHourlyEditText.getText().toString()));
                     _extraMaxHours = getAmount((_extraMaxHoursEditText.getText().toString()));
-                    return (blendedHourlyAmount * _blendedMaxHours) + (_extraHourly * _extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT ? true : false;
+                    return (blendedHourlyAmount * _blendedMaxHours) + (_extraHourly * _extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
             }
         } catch (Exception ex) {
             return false;
         }
         return false;
-
     }
 
 
@@ -238,18 +251,27 @@ public class PayDialog extends DialogFragmentBase {
         Pay pay = null;
         switch (_mode) {
             case MODE_FIXED:
-                return new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
+                pay = new Pay(Double.parseDouble(_fixedEditText.getText().toString()));
+                break;
             case MODE_HOURLY:
-                return new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
+                pay = new Pay(Double.parseDouble(_hourlyRateEditText.getText().toString()),
                         Double.parseDouble(_maxHoursEditText.getText().toString()));
+                break;
             case MODE_PER_DEVICE:
-                return new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
+                pay = new Pay(Double.parseDouble(_deviceRateEditText.getText().toString()),
                         Integer.parseInt(_maxDevicesEditText.getText().toString()));
+                break;
             case MODE_BLENDED:
-                return new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
+                pay = new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
                         Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
                         Double.parseDouble(_extraHourlyEditText.getText().toString()),
                         Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
+                break;
+        }
+        if (pay != null
+                && _explanationEditText != null
+                && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
+            pay.setDescription(_explanationEditText.getText().toString());
         }
         return pay;
     }
@@ -267,28 +289,28 @@ public class PayDialog extends DialogFragmentBase {
         _mode = mode;
         switch (mode) {
             case MODE_FIXED:
+                _blendedLayout.setVisibility(View.GONE);
+                _devicesLayout.setVisibility(View.GONE);
                 _fixedLayout.setVisibility(View.VISIBLE);
                 _hourlyLayout.setVisibility(View.GONE);
-                _devicesLayout.setVisibility(View.GONE);
-                _blendedLayout.setVisibility(View.GONE);
                 break;
             case MODE_HOURLY:
-                _hourlyLayout.setVisibility(View.VISIBLE);
-                _fixedLayout.setVisibility(View.GONE);
-                _devicesLayout.setVisibility(View.GONE);
                 _blendedLayout.setVisibility(View.GONE);
+                _devicesLayout.setVisibility(View.GONE);
+                _fixedLayout.setVisibility(View.GONE);
+                _hourlyLayout.setVisibility(View.VISIBLE);
                 break;
             case MODE_PER_DEVICE:
+                _blendedLayout.setVisibility(View.GONE);
                 _devicesLayout.setVisibility(View.VISIBLE);
                 _fixedLayout.setVisibility(View.GONE);
                 _hourlyLayout.setVisibility(View.GONE);
-                _blendedLayout.setVisibility(View.GONE);
                 break;
             case MODE_BLENDED:
                 _blendedLayout.setVisibility(View.VISIBLE);
+                _devicesLayout.setVisibility(View.GONE);
                 _fixedLayout.setVisibility(View.GONE);
                 _hourlyLayout.setVisibility(View.GONE);
-                _devicesLayout.setVisibility(View.GONE);
                 break;
         }
     }
@@ -297,11 +319,9 @@ public class PayDialog extends DialogFragmentBase {
         if (_pay == null)
             return;
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(),
-                R.array.pay_types,
-                R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
+                _typeSpinner.getContext(), R.array.pay_types, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _typeSpinner.setAdapter(adapter);
 
         if (_showExplanation) {
@@ -317,15 +337,18 @@ public class PayDialog extends DialogFragmentBase {
             _extraHourlyEditText.setText(_pay.getBlendedAdditionalRate() + "");
             _extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
             _blendedHourlyEditText.requestFocus();
+
         } else if (_pay.isFixedRate()) {
             setMode(MODE_FIXED);
             _fixedEditText.setText((_pay.getFixedAmount() + "").trim());
             _fixedEditText.requestFocus();
+
         } else if (_pay.isHourlyRate()) {
             setMode(MODE_HOURLY);
             _hourlyRateEditText.setText((_pay.getPerHour() + "").trim());
             _maxHoursEditText.setText((_pay.getMaxHour() + "").trim());
             _hourlyRateEditText.requestFocus();
+
         } else if (_pay.isPerDeviceRate()) {
             setMode(MODE_PER_DEVICE);
             _deviceRateEditText.setText((_pay.getPerDevice() + "").trim());
@@ -378,7 +401,7 @@ public class PayDialog extends DialogFragmentBase {
             try {
                 _listener.onComplete(makePay(), _explanationEditText.getText().toString());
             } catch (Exception ex) {
-                ToastClient.toast(App.get(), "Please enter a value greater than $0.10.", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), R.string.please_enter_a_value_greater_than, Toast.LENGTH_SHORT);
                 return;
             }
             dismiss();

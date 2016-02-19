@@ -72,6 +72,10 @@ public class Pay implements Parcelable {
         return _description;
     }
 
+    public void setDescription(String description) {
+        _description = description;
+    }
+
     public String getExpenses() {
         return _expenses;
     }
