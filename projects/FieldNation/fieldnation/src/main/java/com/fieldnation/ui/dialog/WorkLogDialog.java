@@ -119,7 +119,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         }
 
         if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString())) {
-            outState.putString(STATE_START_DATE, _startDateData);
+            outState.putString(STATE_START_DATE, _startButton.getText().toString());
         }
 
         if (_endButton != null && !misc.isEmptyOrNull(_endButton.getText().toString())) {
