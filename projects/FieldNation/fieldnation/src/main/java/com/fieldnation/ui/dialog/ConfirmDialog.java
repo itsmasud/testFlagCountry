@@ -197,29 +197,25 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         String display = _schedule.getDisplayString(false);
         _scheduleTextView.setText(display);
-        if (_durationMilliseconds > -1) {
-            setDuration(_durationMilliseconds);
+        setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : 3600000);
+        if (_schedule.isExact()) {
+            try {
+                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+                _startDateLayout.setVisibility(View.GONE);
+                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : 3600000);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         } else {
-            setDuration(3600000);
-            if (_schedule.isExact()) {
-                try {
-                    _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-                    _startDateLayout.setVisibility(View.GONE);
-                    setDuration(3600000);
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-            } else {
-                try {
-                    Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                    Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
-                    _startCalendar = cal;
-                    _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-                    _startDateLayout.setVisibility(View.VISIBLE);
-                    setDuration(cal2.getTimeInMillis() - cal.getTimeInMillis());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
+            try {
+                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
+                Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
+                _startCalendar = cal;
+                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                _startDateLayout.setVisibility(View.VISIBLE);
+                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
     }

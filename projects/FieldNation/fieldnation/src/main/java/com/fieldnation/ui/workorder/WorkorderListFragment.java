@@ -277,7 +277,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         getLocationService().stopLocationUpdates();
 
         if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-            ToastClient.toast(App.get(), "Aborted", Toast.LENGTH_LONG);
+            ToastClient.toast(App.get(), R.string.aborted, Toast.LENGTH_LONG);
             _locationLoadingDialog.dismiss();
         }
         super.onPause();
