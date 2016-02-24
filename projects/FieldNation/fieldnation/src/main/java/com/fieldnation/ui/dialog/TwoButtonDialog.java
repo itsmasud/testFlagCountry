@@ -1,6 +1,7 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.DialogInterface;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -45,18 +46,13 @@ public class TwoButtonDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onSaveInstanceState(Bundle outState) {
-        outState.putString("title", _title);
-        outState.putString("body", _body);
-        outState.putString("positiveText", _positiveText);
-        outState.putString("negativeText", _negativeText);
-        super.onSaveInstanceState(outState);
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
         super.onCreate(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            dismiss();
+        }
         setStyle(STYLE_NO_TITLE, 0);
     }
 
@@ -76,28 +72,12 @@ public class TwoButtonDialog extends DialogFragmentBase {
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
 
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey("title"))
-                _title = savedInstanceState.getString("title");
-
-            if (savedInstanceState.containsKey("body"))
-                _body = savedInstanceState.getString("body");
-
-            if (savedInstanceState.containsKey("positiveText"))
-                _positiveText = savedInstanceState.getString("positiveText");
-
-            if (savedInstanceState.containsKey("negativeText"))
-                _negativeText = savedInstanceState.getString("negativeText");
-
-            reset();
-        }
-
         return v;
     }
 
     @Override
     public void onStop() {
-        dismiss();
+        Log.e(TAG, "onStop");
         super.onStop();
     }
 
@@ -157,9 +137,14 @@ public class TwoButtonDialog extends DialogFragmentBase {
     private final View.OnClickListener _negative_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Log.e(TAG, "_negative_onClick");
+
             dismiss();
-            if (_listener != null)
+            if (_listener != null) {
                 _listener.onNegative();
+                Log.e(TAG, "_listener");
+
+            }
         }
     };
 
