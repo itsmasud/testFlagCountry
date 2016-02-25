@@ -45,7 +45,7 @@ public class WorkLogDialog extends DialogFragmentBase {
     // Data State
     private String _title;
     private LoggedWork _loggedWork;
-    private boolean _showDevicesCount;
+    private boolean _showDevicesCount = false;
 
     // Data
     private Listener _listener;
@@ -53,8 +53,6 @@ public class WorkLogDialog extends DialogFragmentBase {
     private Calendar _endCalendar;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
-    private String _startDateData;
-    private String _endDateDate;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -65,8 +63,13 @@ public class WorkLogDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
+    }
 
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TITLE))
                 _title = savedInstanceState.getString(STATE_TITLE);
 
@@ -76,55 +79,32 @@ public class WorkLogDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
                 _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
 
-            if (savedInstanceState.containsKey(STATE_START_DATE)) {
-                _startDateData = savedInstanceState.getString(STATE_START_DATE);
-                Log.e(TAG, "onCreate STATE_START_DATE:" + _startDateData);
-            }
+            if (savedInstanceState.containsKey(STATE_START_DATE))
+                _startButton.setText(savedInstanceState.getString(STATE_START_DATE));
 
             if (savedInstanceState.containsKey(STATE_END_DATE))
-                _endDateDate = savedInstanceState.getString(STATE_END_DATE);
-        }
-        super.onCreate(savedInstanceState);
-
-        setStyle(STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_LOGGEDWORK))
-                _loggedWork = savedInstanceState.getParcelable(STATE_LOGGEDWORK);
-
-            if (savedInstanceState.containsKey(STATE_START_DATE)) {
-                _startDateData = savedInstanceState.getString(STATE_START_DATE);
-                _startButton.setText(_startDateData);
-            }
-
-            if (savedInstanceState.containsKey(STATE_END_DATE)) {
-                _endDateDate = savedInstanceState.getString(STATE_END_DATE);
-                _endButton.setText(_endDateDate);
-            }
-
+                _endButton.setText(savedInstanceState.getString(STATE_END_DATE));
         }
         super.onViewStateRestored(savedInstanceState);
+
+        populateUi();
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_DEVICES_COUNT, _showDevicesCount);
+
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
-        if (_loggedWork != null) {
+
+        if (_loggedWork != null)
             outState.putParcelable(STATE_LOGGEDWORK, _loggedWork);
-        }
 
-        if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString())) {
+        if (_startButton != null && !misc.isEmptyOrNull(_startButton.getText().toString()))
             outState.putString(STATE_START_DATE, _startButton.getText().toString());
-        }
 
-        if (_endButton != null && !misc.isEmptyOrNull(_endButton.getText().toString())) {
+        if (_endButton != null && !misc.isEmptyOrNull(_endButton.getText().toString()))
             outState.putString(STATE_END_DATE, _endButton.getText().toString());
-        }
 
         super.onSaveInstanceState(outState);
     }
@@ -150,13 +130,10 @@ public class WorkLogDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
 
         _startCalendar = Calendar.getInstance();
         _endCalendar = Calendar.getInstance();
