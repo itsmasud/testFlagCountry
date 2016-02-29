@@ -12,6 +12,7 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -140,20 +141,35 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
             if (bundle.containsKey(PARAM_ERROR) && bundle.getBoolean(PARAM_ERROR)) {
                 onList(bundle.getInt(PARAM_PAGE), null, true, true);
             } else {
-                int page = bundle.getInt(PARAM_PAGE);
-                List<Payment> list = new LinkedList<>();
-                try {
-                    JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
+                new AsyncTaskEx<Bundle, Object, List<Payment>>() {
+                    private boolean _isCached = true;
+                    private int _page = 0;
 
-                    for (int i = 0; i < ja.size(); i++) {
-                        list.add(Payment.fromJson(ja.getJsonObject(i)));
+                    @Override
+                    protected List<Payment> doInBackground(Bundle... params) {
+                        Bundle bundle = params[0];
+                        _page = bundle.getInt(PARAM_PAGE);
+                        _isCached = bundle.getBoolean(PARAM_IS_CACHED);
+                        List<Payment> list = new LinkedList<>();
+                        try {
+                            JsonArray ja = bundle.getParcelable(PARAM_DATA_PARCELABLE);
+
+                            for (int i = 0; i < ja.size(); i++) {
+                                list.add(Payment.fromJson(ja.getJsonObject(i)));
+                            }
+
+                            return list;
+                        } catch (Exception ex) {
+                            Log.v(STAG, ex);
+                        }
+                        return null;
                     }
 
-                    onList(page, list, false, bundle.getBoolean(PARAM_IS_CACHED));
-                } catch (Exception ex) {
-                    Log.v(STAG, ex);
-                    onList(page, null, false, bundle.getBoolean(PARAM_IS_CACHED));
-                }
+                    @Override
+                    protected void onPostExecute(List<Payment> o) {
+                        onList(_page, o, false, _isCached);
+                    }
+                }.executeEx(bundle);
             }
         }
 

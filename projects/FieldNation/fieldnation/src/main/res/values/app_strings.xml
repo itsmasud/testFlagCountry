@@ -224,6 +224,7 @@
     <string name="tab_requested">REQUESTED</string>
 
 
+    <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
@@ -349,6 +350,8 @@
     <string name="pending">Pending</string>
     <string name="per_device">Per Device</string>
     <string name="per_device_rate">Per Device Rate</string>
+    <string name="please_accept_the_terms_and_conditions_to_continue">Please accept the terms and conditions to continue</string>
+    <string name="please_enter_a_value_greater_than">Please enter a value greater than $0.10.</string>
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>

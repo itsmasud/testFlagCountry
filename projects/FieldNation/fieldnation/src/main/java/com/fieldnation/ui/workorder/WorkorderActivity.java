@@ -1,7 +1,9 @@
 package com.fieldnation.ui.workorder;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -17,6 +19,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
@@ -425,7 +428,16 @@ public class WorkorderActivity extends AuthActionBarActivity {
                 } else {
                     try {
                         Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-                        finish();
+
+                        Intent intent = new Intent(WorkorderActivity.this, MarketActivity.class);
+                        startActivity(intent);
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                            finishAndRemoveTask();
+                        } else {
+                            finish();
+                        }
+                        setLoading(false);
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                     }
