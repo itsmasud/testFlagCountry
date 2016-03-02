@@ -1,6 +1,6 @@
+
 package com.fieldnation.ui.workorder;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -10,6 +10,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
+import android.view.View;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -18,6 +20,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
@@ -52,6 +55,10 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
 
+    private ActionBarDrawerView _actionBarView;
+    private Toolbar _toolbar;
+
+
     // Data
     private WorkorderClient _workorderClient;
     private long _workorderId = 0;
@@ -71,6 +78,15 @@ public class WorkorderActivity extends AuthActionBarActivity {
     @Override
     public int getLayoutResource() {
         return R.layout.activity_workorder;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
+        _toolbar = _actionBarView.getToolbar();
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
 
     @Override
@@ -228,7 +244,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
 
         _pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         _viewPager.setAdapter(_pagerAdapter);
-        _viewPager.setOnPageChangeListener(_viewPager_onChange);
+        _viewPager.addOnPageChangeListener(_viewPager_onChange);
 
         _tabview = (WorkorderTabView) findViewById(R.id.tabview);
         _tabview.setListener(_tabview_onChange);
@@ -450,6 +466,13 @@ public class WorkorderActivity extends AuthActionBarActivity {
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
             populateUi();
+        }
+    };
+
+    private View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 
