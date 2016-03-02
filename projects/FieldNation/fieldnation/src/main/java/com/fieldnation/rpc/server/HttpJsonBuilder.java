@@ -27,9 +27,9 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_MULTIPART = "multipart";
     public static final String PARAM_WEB_MULTIPART_FILES = "multipart.files";
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart.fields";
-    public static final String PARAM_WEB_BODY_SOID = "PARAM_BODY_SOID";
-    public static final String PARAM_WEB_BODY = "PARAM_BODY";
-    public static final String PARAM_DO_NOT_READ = "PARAM_DO_NOT_READ";
+    public static final String PARAM_WEB_BODY_SOID = "bodySoID";
+    public static final String PARAM_WEB_BODY = "body";
+    public static final String PARAM_DO_NOT_READ = "doNotRead";
 
     public static final String PARAM_NOTIFICATION_ID = "notification.id";
     public static final String PARAM_NOTIFICATION_START = "notification.start";
@@ -37,6 +37,7 @@ public class HttpJsonBuilder {
     public static final String PARAM_NOTIFICATION_FAILED = "notification.failed";
     public static final String PARAM_NOTIFICATION_RETRY = "notification.retry";
 
+    public static final String PARAM_TIMING_KEY = "timingKey";
 
     private JsonObject request;
     private JsonObject headers;
@@ -86,6 +87,13 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(urlParams))
             request.put(PARAM_WEB_URL_PARAMS, urlParams);
+        return this;
+    }
+
+    public HttpJsonBuilder timingKey(String timingKey) throws ParseException {
+        getRequest();
+        if (!misc.isEmptyOrNull(timingKey))
+            request.put(PARAM_TIMING_KEY, timingKey);
         return this;
     }
 

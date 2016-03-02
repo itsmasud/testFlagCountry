@@ -30,6 +30,7 @@ public class HelpTransactionBuilder {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/help/feedback")
                     .path("/api/rest/v1/help/feedback");
 
             if (body != null) {

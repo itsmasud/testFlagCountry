@@ -197,6 +197,7 @@ public class OAuth implements Parcelable {
                 .protocol("https")
                 .host(host)
                 .path(path)
+                .timingKey("POST" + path)
                 .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                 .body("grant_type=" + grantType +
                         "&client_id=" + clientId +

@@ -44,6 +44,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/details")
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
                     .send();
         } catch (Exception ex) {
@@ -63,6 +64,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/" + selector)
                             .path("/api/rest/v1/workorder/" + selector)
                             .urlParams("?page=" + page))
                     .send();
@@ -83,6 +85,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/notifications")
                             .path("/api/rest/v1/workorder/" + workorderId + "/notifications"))
                     .send();
         } catch (Exception ex) {
@@ -102,6 +105,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/tasks")
                             .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
                     .send();
         } catch (Exception ex) {
@@ -121,6 +125,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/bundle/[bundleId]")
                             .path("/api/rest/v1/workorder/bundle/" + bundleId))
                     .send();
         } catch (Exception ex) {
@@ -151,6 +156,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/" + action)
                     .path("/api/rest/v1/workorder/" + workorderId + "/" + action);
 
             if (params != null) {
@@ -406,6 +412,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/withdraw-request")
                             .path("/api/rest/v1/workorder/" + workorderId + "/withdraw-request"))
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
@@ -437,6 +444,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/rate")
                     .path("/api/rest/v1/workorder/" + workorderId + "/rate");
 
             if (body != null) {
@@ -475,6 +483,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
@@ -492,6 +501,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
                     .send();
         } catch (Exception ex) {
@@ -545,6 +555,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
+                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/deliverables/[deliverableId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
                     .send();
         } catch (Exception ex) {
@@ -576,6 +587,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
                     .notify(new NotificationDefinition(
@@ -627,6 +639,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, uri)
                     .notify(new NotificationDefinition(
@@ -683,6 +696,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("DELETE")
+                                    .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/deliverables/[workorderUploadId]")
                                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + workorderUploadId))
                     .send();
         } catch (Exception ex) {
@@ -698,6 +712,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/messages")
                     .path("/api/rest/v1/workorder/" + workorderId + "/messages");
 
             if (isRead) {
@@ -732,9 +747,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .protocol("https")
                             .method("POST")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .timingKey("POST/api/rest/v1/workorder/[workorderId]/discount")
                             .path("/api/rest/v1/workorder/" + workorderId + "/discount")
-                            .body("description=" + misc.escapeForURL(description)
-                                    + "&amount=" + misc.escapeForURL(price + "")))
+                            .body("description=" + misc.escapeForURL(description) + "&amount=" + misc.escapeForURL(price + "")))
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -752,6 +767,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/discounts/[discountId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/discounts/" + discountId))
                     .send();
         } catch (Exception ex) {
@@ -774,6 +790,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .protocol("https")
                             .method("POST")
                             .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+                            .timingKey("POST/api/rest/v1/workorder/[workorderId]/expense")
                             .path("/api/rest/v1/workorder/" + workorderId + "/expense")
                             .body(("description=" + misc.escapeForURL(description)
                                     + "&price=" + misc.escapeForURL(price + "")
@@ -795,6 +812,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/expense/[expenseId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/expense/" + expenseId))
                     .send();
         } catch (Exception ex) {
@@ -841,6 +859,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/log/[loggedHoursId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/log/" + loggedHoursId))
                     .send();
         } catch (Exception ex) {
@@ -934,6 +953,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
+                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/shipments/[shipmentId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId))
                     .send();
         } catch (Exception ex) {
