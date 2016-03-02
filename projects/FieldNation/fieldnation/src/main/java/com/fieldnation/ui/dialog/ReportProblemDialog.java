@@ -251,7 +251,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
             switch (_spinner1Position) {
                 case 0: { // I can\'t make my assignment
-                    ToastClient.toast(App.get(), R.string.sorry_to_hear_that_you_have_been_removed, Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                     _listener.onReportAProblem(explanation, ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
                     break;
                 }
