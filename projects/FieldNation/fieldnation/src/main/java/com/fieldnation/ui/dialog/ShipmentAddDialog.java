@@ -136,8 +136,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        populateSpinners();
-
         return v;
     }
 
