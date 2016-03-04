@@ -17,8 +17,8 @@ import io.fabric.sdk.android.Fabric;
  * Created by Michael Carver on 8/31/2015.
  */
 public class Debug {
-    private static final boolean USE_CRASHLYTICS = !BuildConfig.DEBUG;
-    //private static final boolean USE_CRASHLYTICS = true;
+    //private static final boolean USE_CRASHLYTICS = !BuildConfig.DEBUG;
+    private static final boolean USE_CRASHLYTICS = true;
     private static boolean _started = false;
     private static ANRWatchDog _anrWatchDog;
     private static Crashlytics _crashlytics = null;
@@ -138,6 +138,7 @@ public class Debug {
                     }
                 });
             }
+            android.util.Log.println(android.util.Log.VERBOSE, "Debug", msg);
             return;
         }
         Crashlytics.log(msg);
@@ -153,6 +154,7 @@ public class Debug {
                     }
                 });
             }
+            android.util.Log.println(priority, tag, msg);
             return;
         }
         Crashlytics.log(priority, tag, msg);
