@@ -131,7 +131,7 @@ public class DiscountDialog extends DialogFragmentBase {
         public void onClick(View v) {
             // convert to penies
             if ((int) (getAmount() * 100) < 10) {
-                ToastClient.toast(App.get(), "Amount must be more than $0.10", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
                 return;
             }
 
