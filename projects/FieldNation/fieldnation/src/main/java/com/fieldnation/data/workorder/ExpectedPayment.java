@@ -45,31 +45,35 @@ public class ExpectedPayment {
 //	}
 
     public Double getDiscounts() {
-        return _discounts;
+        return _discounts == null ? 0.0 : _discounts;
     }
 
     public Double getExpectedAmount() {
-        return _expectedAmount;
+        return _expectedAmount == null ? 0.0 : _expectedAmount;
     }
 
     public Double getExpectedFee() {
-        return _expectedFee;
+        return _expectedFee == null ? 0.0 : _expectedFee;
+
     }
 
     public Double getExpectedInsuranceFee() {
-        return _expectedInsuranceFee;
+        return _expectedInsuranceFee == null ? 0.0 : _expectedInsuranceFee;
+
     }
 
     public Double getExpectedServiceFee() {
-        return _expectedServiceFee;
+        return _expectedServiceFee == null ? 0.0 : _expectedServiceFee;
+
     }
 
     public Double getExpectedTotal() {
-        return _expectedTotal;
+        return _expectedTotal == null ? 0.0 : _expectedTotal;
     }
 
     public Double getExpensesApproved() {
-        return _expensesApproved;
+        return _expensesApproved == null ? 0.0 : _expensesApproved;
+
     }
 
     public Fee[] getFees() {
@@ -77,15 +81,16 @@ public class ExpectedPayment {
     }
 
     public Float getFnFeePercentage() {
-        return _fnFeePercentage;
+        return _fnFeePercentage == null ? 0.0f : _fnFeePercentage;
+
     }
 
     public Double getLaborEarned() {
-        return _laborEarned;
+        return _laborEarned == null ? 0.0 : _laborEarned;
     }
 
     public Double getMaxPayLimit() {
-        return _maxPayLimit;
+        return _maxPayLimit == null ? 0.0 : _maxPayLimit;
     }
 
     public String getPaymentStatus() {
