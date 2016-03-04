@@ -56,6 +56,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/careerLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -73,7 +74,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="What is the carrier?"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:editable="false"/>
 
             </LinearLayout>
 
@@ -106,6 +108,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
+                android:id="@+id/directionLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -123,7 +126,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="What is the direction?"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    android:editable="false"/>
 
             </LinearLayout>
 
