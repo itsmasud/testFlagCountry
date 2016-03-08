@@ -359,6 +359,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 // apply authentication if needed
                 if (trans.useAuth()) {
                     OAuth auth = getAuth();
+                    if (auth.getAccessToken() == null) {
+                        Log.v(TAG, "accessToken is null");
+                        _authTopicClient.invalidateCommand(context);
+                    }
+
                     if (!_isAuthenticated) {
                         Log.v(TAG, "skip no auth");
                         trans.requeue();
