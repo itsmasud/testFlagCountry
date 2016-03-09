@@ -362,6 +362,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                     if (auth.getAccessToken() == null) {
                         Log.v(TAG, "accessToken is null");
                         _authTopicClient.invalidateCommand(context);
+                        return false;
                     }
 
                     if (!_isAuthenticated) {
