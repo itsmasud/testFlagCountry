@@ -11,6 +11,7 @@ import android.widget.Button;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -121,7 +122,7 @@ public class ExpiresDialog extends DialogFragmentBase {
             _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
                     _calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
-            _expirationButton.setText(misc.formatDateTimeLong(_calendar));
+            _expirationButton.setText(DateUtils.formatDateTimeLong(_calendar));
             _isDateSet = true;
         }
     };

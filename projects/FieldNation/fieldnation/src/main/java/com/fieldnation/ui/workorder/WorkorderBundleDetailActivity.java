@@ -15,6 +15,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -123,7 +124,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
             } catch (Exception ex) {
             }
             try {
-                _dateTextView.setText("Range " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + misc.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
+                _dateTextView.setText("Range " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
             } catch (Exception ex) {
             }
 

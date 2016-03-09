@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -211,7 +212,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
                 _startCalendar = cal;
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
                 _startDateLayout.setVisibility(View.VISIBLE);
                 setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
             } catch (Exception ex) {
@@ -249,7 +250,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                     _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
                 }
 
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

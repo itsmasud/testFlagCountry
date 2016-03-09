@@ -18,6 +18,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -247,7 +248,7 @@ public class ScheduleDialog extends DialogFragmentBase {
                 _rangeLayout.setVisibility(View.GONE);
                 _exactLayout.setVisibility(View.VISIBLE);
                 if (misc.isEmptyOrNull(_stateFixedDateTime)) {
-                    _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                    _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
                     _dateTimeButton.setText(_stateFixedDateTime);
                 }
@@ -257,12 +258,12 @@ public class ScheduleDialog extends DialogFragmentBase {
                 _exactLayout.setVisibility(View.GONE);
 
                 if (misc.isEmptyOrNull(_stateFixedDateTime)) {
-                    _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                    _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
                     _startDateButton.setText(_stateRangeStartDateTime);
                 }
                 if (misc.isEmptyOrNull(_stateRangeEndDateTime)) {
-                    _endDateButton.setText(misc.formatDateTimeLong(_endCal));
+                    _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
                 } else {
                     _endDateButton.setText(_stateRangeEndDateTime);
                 }
@@ -298,16 +299,16 @@ public class ScheduleDialog extends DialogFragmentBase {
                 _startIsSet = true;
 
                 if (_mode == MODE_EXACT) {
-                    _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                    _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
-                    _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                    _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 }
 
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),
                         _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
                 _endIsSet = true;
-                _endDateButton.setText(misc.formatDateTimeLong(_endCal));
+                _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
             }
         }
     };

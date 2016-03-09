@@ -12,6 +12,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -116,7 +117,7 @@ public class PaymentCardView extends RelativeLayout {
             if (status.toLowerCase().equals("paid")) {
                 _iconView.setTextColor(getResources().getColor(R.color.fn_accent_color));
                 _iconView.setText(R.string.icon_circle_check);
-                _payTypeTextView.setText(misc.formatDate(ISO8601.toCalendar(_paymentInfo.getDatePaid())));
+                _payTypeTextView.setText(DateUtils.formatDate(ISO8601.toCalendar(_paymentInfo.getDatePaid())));
             } else {
                 _payTypeTextView.setText(R.string.pending);
                 _iconView.setTextColor(getResources().getColor(R.color.fn_yellow));

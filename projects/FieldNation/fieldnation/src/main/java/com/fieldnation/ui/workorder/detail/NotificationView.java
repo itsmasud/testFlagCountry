@@ -18,6 +18,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -100,7 +101,7 @@ public class NotificationView extends RelativeLayout {
         try {
             long milliseconds = System.currentTimeMillis() - ISO8601.toCalendar(_notification.getDate()).getTimeInMillis();
 
-            _dateTextView.setText(misc.toRoundDuration(milliseconds));
+            _dateTextView.setText(DateUtils.toRoundDuration(milliseconds));
         } catch (Exception e) {
             _dateTextView.setText(_notification.getDate());
         }
