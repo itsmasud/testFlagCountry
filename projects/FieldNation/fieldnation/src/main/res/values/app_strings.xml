@@ -112,7 +112,7 @@
     <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
-    <string name="c">YES</string>
+    <string name="btn_yes">YES</string>
 
 
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
