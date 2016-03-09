@@ -393,7 +393,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner.setSelection(i);
+                                _spinner.setSelectedItem(i);
                                 _itemSelectedPosition = i;
                                 break;
                             }
