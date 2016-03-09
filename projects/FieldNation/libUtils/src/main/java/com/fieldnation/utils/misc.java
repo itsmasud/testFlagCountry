@@ -44,6 +44,8 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -610,6 +612,30 @@ public class misc {
 
     }
 
+    private static final List<byte[]> PACKET_QUEUE = new LinkedList<>();
+
+    private static int packetcount = 0;
+
+    private static byte[] allocPacket() {
+        synchronized (PACKET_QUEUE) {
+            if (PACKET_QUEUE.size() > 0) {
+                return PACKET_QUEUE.remove(0);
+            }
+
+            packetcount++;
+            Log.v("MISC", "Packet Count " + packetcount);
+
+            return new byte[1024];
+        }
+    }
+
+    private static void freePacket(byte[] packet) {
+        if (packet != null)
+            synchronized (PACKET_QUEUE) {
+                PACKET_QUEUE.add(packet);
+            }
+    }
+
     public static boolean copyFile(File src, File dest) throws IOException {
         OutputStream outFile = null;
         InputStream inFile = null;
@@ -617,36 +643,41 @@ public class misc {
         long size = src.length();
         long pos = 0;
         int read = 0;
-        byte[] packet = new byte[1024]; // 10MB
-
+        byte[] packet = null;
         try {
-            inFile = new BufferedInputStream(new FileInputStream(src));
-            outFile = new BufferedOutputStream(new FileOutputStream(dest));
-            while (pos < size) {
-                read = inFile.read(packet);
-                if (read > 0) {
-                    outFile.write(packet, 0, read);
-                    pos += read;
-                } else if (read == 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
+            packet = allocPacket();
+
+            try {
+                inFile = new BufferedInputStream(new FileInputStream(src));
+                outFile = new BufferedOutputStream(new FileOutputStream(dest));
+                while (pos < size) {
+                    read = inFile.read(packet);
+                    if (read > 0) {
+                        outFile.write(packet, 0, read);
+                        pos += read;
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                        }
+                    } else if (read == -1) {
+                        break;
                     }
-                } else if (read == -1) {
-                    break;
+                }
+            } finally {
+                try {
+                    inFile.close();
+                } catch (IOException e) {
+                }
+                try {
+                    outFile.close();
+                } catch (IOException e) {
                 }
             }
+            return pos == size;
         } finally {
-            try {
-                inFile.close();
-            } catch (IOException e) {
-            }
-            try {
-                outFile.close();
-            } catch (IOException e) {
-            }
+            freePacket(packet);
         }
-        return pos == size;
     }
 
     public static void deleteDirectoryTree(File file) throws IOException {
@@ -901,7 +932,7 @@ public class misc {
         return Data;
     }
 
-    public static byte[] readAllFromStreamUntil(InputStream in, int packetSize, int expectedSize, int maxSize, long timeoutInMilli) throws IOException {
+    public static byte[] readAllFromStreamUntil(InputStream in, int expectedSize, int maxSize, long timeoutInMilli) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
         int read = 0;
@@ -909,76 +940,74 @@ public class misc {
         int size = expectedSize;
         long timeout = System.currentTimeMillis() + timeoutInMilli;
 
-        if (packetSize > expectedSize && expectedSize != -1) {
-            packetSize = expectedSize;
-        }
-
-        byte[] packet = new byte[packetSize];
+        byte[] packet = null;
         boolean error = false;
         boolean timedOut = false;
         boolean complete = false;
-
         try {
-            while (!error && !timedOut && !complete && bout.size() < maxSize) {
+            packet = allocPacket();
+
+
+            try {
+                while (!error && !timedOut && !complete && bout.size() < maxSize) {
 
 				/*
                  * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
 				 * break; }
 				 */
 
-                read = in.read(packet, 0, packetSize);
+                    read = in.read(packet, 0, 1024);
 
-                if (read > 0) {
-                    pos += read;
+                    if (read > 0) {
+                        pos += read;
 
-                    if (size - pos < packetSize && size != -1) {
-                        packetSize = size - pos;
+                        bout.write(packet, 0, read);
+                        timeout = System.currentTimeMillis() + timeoutInMilli;
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception ex) {
+                        }
+                    } else if (read == -1) {
+                        // error, stop
+                        error = true;
                     }
 
-                    bout.write(packet, 0, read);
-                    timeout = System.currentTimeMillis() + timeoutInMilli;
-                } else if (read == 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception ex) {
+                    // finished, stop
+                    if (pos == size && size != -1) {
+                        complete = true;
                     }
-                } else if (read == -1) {
-                    // error, stop
-                    error = true;
-                }
 
-                // finished, stop
-                if (pos == size && size != -1) {
-                    complete = true;
-                }
+                    // read too much!
+                    if (pos > size && size != -1) {
+                        error = true;
+                    }
 
-                // read too much!
-                if (pos > size && size != -1) {
-                    error = true;
-                }
+                    // timeout, stop
+                    if (timeout < System.currentTimeMillis()) {
+                        timedOut = true;
+                    }
 
-                // timeout, stop
-                if (timeout < System.currentTimeMillis()) {
-                    timedOut = true;
                 }
-
+            } catch (IOException e) {
+                return bout.toByteArray();
             }
-        } catch (IOException e) {
-            return bout.toByteArray();
-        }
 
-        if (timedOut && size != -1) {
-            return bout.toByteArray();
-        } else if (complete) {
-            return bout.toByteArray();
-        } else if (size == -1) {
-            return bout.toByteArray();
-        }
+            if (timedOut && size != -1) {
+                return bout.toByteArray();
+            } else if (complete) {
+                return bout.toByteArray();
+            } else if (size == -1) {
+                return bout.toByteArray();
+            }
 
-        return null;
+            return null;
+        } finally {
+            freePacket(packet);
+        }
     }
 
-    public static byte[] readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli) throws IOException {
+    public static byte[] readAllFromStream(InputStream in, int expectedSize, long timeoutInMilli) throws IOException {
         ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
         int read = 0;
@@ -986,213 +1015,206 @@ public class misc {
         int size = expectedSize;
         long timeout = System.currentTimeMillis() + timeoutInMilli;
 
-        if (packetSize > expectedSize && expectedSize != -1) {
-            packetSize = expectedSize;
-        }
-
-        byte[] packet = new byte[packetSize];
+        byte[] packet = null;
         boolean error = false;
         boolean timedOut = false;
         boolean complete = false;
 
         try {
-            while (!error && !timedOut && !complete) {
+            packet = allocPacket();
+
+            try {
+                while (!error && !timedOut && !complete) {
 
 				/*
                  * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
 				 * break; }
 				 */
 
-                read = in.read(packet, 0, packetSize);
+                    read = in.read(packet, 0, 1024);
 
-                if (read > 0) {
-                    pos += read;
+                    if (read > 0) {
+                        pos += read;
 
-                    if (size - pos < packetSize && size != -1) {
-                        packetSize = size - pos;
+                        bout.write(packet, 0, read);
+                        timeout = System.currentTimeMillis() + timeoutInMilli;
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception ex) {
+                        }
+                    } else if (read == -1) {
+                        // error, stop
+                        error = true;
                     }
 
-                    bout.write(packet, 0, read);
-                    timeout = System.currentTimeMillis() + timeoutInMilli;
-                } else if (read == 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception ex) {
+                    // finished, stop
+                    if (pos == size && size != -1) {
+                        complete = true;
                     }
-                } else if (read == -1) {
-                    // error, stop
-                    error = true;
-                }
 
-                // finished, stop
-                if (pos == size && size != -1) {
-                    complete = true;
-                }
+                    // read too much!
+                    if (pos > size && size != -1) {
+                        error = true;
+                    }
 
-                // read too much!
-                if (pos > size && size != -1) {
-                    error = true;
-                }
+                    // timeout, stop
+                    if (timeout < System.currentTimeMillis()) {
+                        timedOut = true;
+                    }
 
-                // timeout, stop
-                if (timeout < System.currentTimeMillis()) {
-                    timedOut = true;
                 }
-
+            } catch (IOException e) {
+                return bout.toByteArray();
             }
-        } catch (IOException e) {
-            return bout.toByteArray();
-        }
 
-        if (timedOut && size != -1) {
-            return bout.toByteArray();
-        } else if (complete) {
-            return bout.toByteArray();
-        } else if (size == -1) {
-            return bout.toByteArray();
-        }
+            if (timedOut && size != -1) {
+                return bout.toByteArray();
+            } else if (complete) {
+                return bout.toByteArray();
+            } else if (size == -1) {
+                return bout.toByteArray();
+            }
 
-        return null;
+            return null;
+        } finally {
+            freePacket(packet);
+        }
     }
 
     public interface PacketListener {
         void onPacket(byte[] packet, int length);
     }
 
-    public static void readAllFromStream(InputStream in, int packetSize, int expectedSize, long timeoutInMilli,
+    public static void readAllFromStream(InputStream in, int expectedSize, long timeoutInMilli,
                                          PacketListener listener) throws IOException {
         int read = 0;
         int pos = 0;
         int size = expectedSize;
         long timeout = System.currentTimeMillis() + timeoutInMilli;
 
-        if (packetSize > expectedSize && expectedSize != -1) {
-            packetSize = expectedSize;
-        }
-
-        byte[] packet = new byte[packetSize];
+        byte[] packet = null;
         boolean error = false;
         boolean timedOut = false;
         boolean complete = false;
 
         try {
-            while (!error && !timedOut && !complete) {
+            packet = allocPacket();
+            try {
+                while (!error && !timedOut && !complete) {
 
 				/*
                  * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
 				 * break; }
 				 */
 
-                read = in.read(packet, 0, packetSize);
+                    read = in.read(packet, 0, 1024);
 
-                if (read > 0) {
-                    pos += read;
+                    if (read > 0) {
+                        pos += read;
 
-                    if (size - pos < packetSize && size != -1) {
-                        packetSize = size - pos;
+                        listener.onPacket(packet, read);
+                        timeout = System.currentTimeMillis() + timeoutInMilli;
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception ex) {
+                        }
+                    } else if (read == -1) {
+                        // error, stop
+                        error = true;
                     }
-                    listener.onPacket(packet, read);
-                    timeout = System.currentTimeMillis() + timeoutInMilli;
-                } else if (read == 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception ex) {
+
+                    // finished, stop
+                    if (pos == size && size != -1) {
+                        complete = true;
                     }
-                } else if (read == -1) {
-                    // error, stop
-                    error = true;
-                }
 
-                // finished, stop
-                if (pos == size && size != -1) {
-                    complete = true;
-                }
+                    // read too much!
+                    if (pos > size && size != -1) {
+                        error = true;
+                    }
 
-                // read too much!
-                if (pos > size && size != -1) {
-                    error = true;
-                }
+                    // timeout, stop
+                    if (timeout < System.currentTimeMillis()) {
+                        timedOut = true;
+                    }
 
-                // timeout, stop
-                if (timeout < System.currentTimeMillis()) {
-                    timedOut = true;
                 }
-
+            } catch (IOException e) {
             }
-        } catch (IOException e) {
+        } finally {
+            freePacket(packet);
         }
     }
 
-    public static void copyStream(InputStream source, OutputStream dest, int packetSize, int expectedSize,
+    public static void copyStream(InputStream source, OutputStream dest, int expectedSize,
                                   long timeoutInMilli) throws IOException {
         int read = 0;
         int pos = 0;
         int size = expectedSize;
         long timeout = System.currentTimeMillis() + timeoutInMilli;
 
-        if (packetSize > expectedSize && expectedSize != -1) {
-            packetSize = expectedSize;
-        }
-
-        byte[] packet = new byte[packetSize];
+        byte[] packet = null;
         boolean error = false;
         boolean timedOut = false;
         boolean complete = false;
 
         try {
-            // if (!waitForData(source, timeoutInMilli)) {
-            // return;
-            // }
+            packet = allocPacket();
+            try {
+                // if (!waitForData(source, timeoutInMilli)) {
+                // return;
+                // }
 
-            while (!error && !timedOut && !complete) {
-                read = source.read(packet, 0, packetSize);
-                if (read > 0) {
-                    pos += read;
+                while (!error && !timedOut && !complete) {
+                    read = source.read(packet, 0, 1024);
+                    if (read > 0) {
+                        pos += read;
 
-                    if (size - pos < packetSize && size != -1) {
-                        packetSize = size - pos;
+                        dest.write(packet, 0, read);
+                        timeout = System.currentTimeMillis() + timeoutInMilli;
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (Exception ex) {
+                        }
+                    } else if (read == -1) {
+                        // error, stop
+                        error = true;
                     }
 
-                    dest.write(packet, 0, read);
-                    timeout = System.currentTimeMillis() + timeoutInMilli;
-                } else if (read == 0) {
-                    try {
-                        Thread.sleep(100);
-                    } catch (Exception ex) {
+                    // finished, stop
+                    if (pos == size && size != -1) {
+                        complete = true;
                     }
-                } else if (read == -1) {
-                    // error, stop
-                    error = true;
-                }
 
-                // finished, stop
-                if (pos == size && size != -1) {
-                    complete = true;
-                }
+                    // read too much!
+                    if (pos > size && size != -1) {
+                        error = true;
+                    }
 
-                // read too much!
-                if (pos > size && size != -1) {
-                    error = true;
-                }
+                    // timeout, stop
+                    if (timeout < System.currentTimeMillis()) {
+                        timedOut = true;
+                    }
 
-                // timeout, stop
-                if (timeout < System.currentTimeMillis()) {
-                    timedOut = true;
                 }
-
+            } catch (IOException e) {
+                return;
             }
-        } catch (IOException e) {
-            return;
-        }
-        if (timedOut && size != -1) {
-            return;
-        } else if (complete) {
-            return;
-        } else if (size == -1) {
-            return;
-        }
+            if (timedOut && size != -1) {
+                return;
+            } else if (complete) {
+                return;
+            } else if (size == -1) {
+                return;
+            }
 
-        throw new IOException("Error, could not read entire stream!");
+            throw new IOException("Error, could not read entire stream!");
+        } finally {
+            freePacket(packet);
+        }
     }
 
     public static boolean waitForData(InputStream inputStream, long timeout) {
