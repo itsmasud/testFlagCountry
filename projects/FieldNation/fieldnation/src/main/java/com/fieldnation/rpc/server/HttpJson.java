@@ -153,7 +153,7 @@ public class HttpJson {
                 conn.setDoOutput(true);
                 OutputStream out = conn.getOutputStream();
                 if (so.isFile()) {
-                    misc.copyStream(new FileInputStream(so.getFile()), out, 1024, (int) so.getFile().length(), 100);
+                    misc.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100);
                 } else {
                     out.write(so.getData());
                 }

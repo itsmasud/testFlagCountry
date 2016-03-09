@@ -87,7 +87,7 @@ public class MultipartUtility {
 
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        misc.copyStream(inputStream, outputStream, 1024, length, 1000);
+        misc.copyStream(inputStream, outputStream, length, 1000);
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
 
@@ -109,7 +109,7 @@ public class MultipartUtility {
         InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        misc.copyStream(inputStream, outputStream, 1024, -1, 1000);
+        misc.copyStream(inputStream, outputStream, -1, 1000);
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
         writer.append(LINE_FEED);

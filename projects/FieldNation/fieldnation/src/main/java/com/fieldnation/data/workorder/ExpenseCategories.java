@@ -44,7 +44,7 @@ public class ExpenseCategories {
                 InputStream is = _context.getResources().openRawResource(R.raw.expensecategories);
                 //noinspection ConstantConditions, can't be null beacuse resource always exists
                 JsonArray ja = new JsonArray(
-                        new String(misc.readAllFromStream(is, 1024, -1, 1000)));
+                        new String(misc.readAllFromStream(is, -1, 1000)));
 
                 ExpenseCategory[] cats = new ExpenseCategory[ja.size()];
 
