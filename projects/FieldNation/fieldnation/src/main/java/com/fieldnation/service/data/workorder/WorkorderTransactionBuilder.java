@@ -138,16 +138,27 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     public static void action(Context context, long workorderId, String action, String params,
                               String contentType, String body) {
+        action(context, workorderId, action, params, contentType, body, true);
+    }
+
+    public static void action(Context context, long workorderId, String action, String params,
+                              String contentType, String body, boolean useKey) {
+
         context.startService(
                 action(context, workorderId, action, params, contentType, body,
                         WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pAction(workorderId, action)));
+                        WorkorderTransactionHandler.pAction(workorderId, action), useKey));
     }
 
     public static Intent action(Context context, long workorderId, String action, String params,
-                                String contentType, String body,
-                                Class<? extends WebTransactionHandler> clazz,
+                                String contentType, String body, Class<? extends WebTransactionHandler> clazz,
                                 byte[] handlerParams) {
+        return action(context, workorderId, action, params, contentType, body, clazz, handlerParams, true);
+    }
+
+    public static Intent action(Context context, long workorderId, String action, String params,
+                                String contentType, String body, Class<? extends WebTransactionHandler> clazz,
+                                byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
         try {
             JsonObject _action = new JsonObject();
@@ -171,19 +182,23 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 }
             }
 
-            return WebTransactionBuilder.builder(context)
+            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(clazz)
                     .handlerParams(handlerParams)
                     .useAuth(true)
-//                    .key("Workorder/" + workorderId + "/" + action)
+                    .key("Workorder/" + workorderId + "/" + action)
                     .request(http)
                     .transform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
-                            _action.toByteArray()))
-                    .makeIntent();
+                            _action.toByteArray()));
+
+            if (useKey)
+                builder.key("Workorder/" + workorderId + "/" + action);
+
+            return builder.makeIntent();
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

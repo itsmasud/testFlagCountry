@@ -238,7 +238,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionAddMessage(Context context, long workorderId, String message) {
         WorkorderTransactionBuilder.action(context, workorderId,
                 "messages/new", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "message=" + misc.escapeForURL(message));
+                "message=" + misc.escapeForURL(message), false);
     }
 
     public static void actionMarkMessagesRead(Context context, long workorderId) {
