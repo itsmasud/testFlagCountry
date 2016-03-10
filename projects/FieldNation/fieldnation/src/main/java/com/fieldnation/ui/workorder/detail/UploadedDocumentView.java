@@ -17,6 +17,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -163,7 +164,7 @@ public class UploadedDocumentView extends RelativeLayout {
 
         _filenameTextView.setText(_doc.getFileName());
         try {
-            _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_doc.getUploadedTime())));
+            _dateTextView.setText(DateUtils.formatDateLong(ISO8601.toCalendar(_doc.getUploadedTime())));
         } catch (Exception e) {
             Log.v(TAG, e);
         }

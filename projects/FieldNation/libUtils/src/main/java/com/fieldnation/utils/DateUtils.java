@@ -1,9 +1,225 @@
 package com.fieldnation.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 
 public class DateUtils {
+
+    public static String formatDateForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public static String formatTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("h:mm a").format(date);
+    }
+
+    public static String formatDateTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
+    }
+
+    public static String toRoundDuration(long milliseconds) {
+        long count = 0;
+        if (milliseconds < 60000) {
+            count = milliseconds / 1000;
+            if (count > 1) {
+                return count + " seconds";
+            }
+            return count + " second";
+        }
+
+        if (milliseconds < 3600000) {
+            count = milliseconds / 60000;
+            if (count > 1) {
+                return count + " minutes";
+            }
+            return count + " minute";
+        }
+
+        if (milliseconds < 86400000) {
+            count = milliseconds / 3600000;
+            if (count > 1) {
+                return count + " hours";
+            }
+            return count + " hour";
+        }
+
+        if (milliseconds < 31536000000L) {
+            count = milliseconds / 86400000;
+            if (count > 1) {
+                return count + " days";
+            }
+            return count + " day";
+        }
+
+        count = milliseconds / 31536000000L;
+        if (count > 1) {
+            return count + " years";
+        }
+        return count + " year";
+    }
+
+    public static Calendar applyTimeZone(Calendar fromCal) {
+        TimeZone fromTz = fromCal.getTimeZone();
+        TimeZone toTz = TimeZone.getDefault();
+
+        if (toTz.equals(fromTz))
+            return fromCal;
+
+        Calendar toCal = Calendar.getInstance(toTz);
+
+        if (toTz.useDaylightTime()) {
+            toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset() - toTz.getDSTSavings());
+        } else {
+            toCal.setTimeInMillis(fromCal.getTimeInMillis() + toTz.getRawOffset());
+        }
+
+        return toCal;
+    }
+
+	/*
+     * http://docs.oracle.com/javase/7/docs/api/java/util/Formatter.html#dt
+	 */
+
+    /**
+     * @param calendar
+     * @return June 3, 2014
+     */
+    public static String formatDateLong(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tB", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+    }
+
+    /**
+     * @param calendar
+     * @return Wednesday, Jun 3, 2014
+     */
+    public static String formatDateReallyLong(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+    }
+
+    /**
+     * @param calendar
+     * @param seconds
+     * @return MM/DD/YYYY HH:MM:SS am/pm
+     */
+    public static String formatDateTime(Calendar calendar, boolean seconds) {
+        return formatDate(calendar) + " " + formatTime(calendar, seconds);
+    }
+
+    /**
+     * @param calendar
+     * @return June 3, 2014 @ HH:MM am/pm
+     */
+    public static String formatDateTimeLong(Calendar calendar) {
+        return formatDateLong(calendar) + " @ " + formatTime(calendar, false);
+    }
+
+    /**
+     * @param calendar
+     * @return in the form MM/DD/YYYY
+     */
+    public static String formatDate(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        int months = calendar.get(Calendar.MONTH) + 1;
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int year = calendar.get(Calendar.YEAR);
+
+        return months + "/" + day + "/" + year;
+    }
+
+    public static String formatMessageTime(Calendar calendar) {
+        Calendar cal = applyTimeZone(calendar);
+
+        // today
+        if (calendar.getTimeInMillis() / 86400000 == Calendar.getInstance().getTimeInMillis() / 86400000) {
+            return "Today";
+        }
+
+        // > 1 year old
+        if (Calendar.getInstance().get(Calendar.YEAR) > calendar.get(Calendar.YEAR)) {
+            return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
+        }
+        return String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + " " + formatTime(
+                cal, false);
+    }
+
+    /**
+     * @param calendar
+     * @param seconds  if true, then seconds are displayed.
+     * @return HH:MM:SSam/pm
+     */
+    public static String formatTime(Calendar calendar, boolean seconds) {
+        calendar = applyTimeZone(calendar);
+
+        String time = "";
+
+        int hours = calendar.get(Calendar.HOUR);
+
+        if (hours == 0) {
+            time += "12:";
+        } else {
+            time += hours + ":";
+        }
+
+        int min = calendar.get(Calendar.MINUTE);
+
+        if (min < 10) {
+            time += "0" + min;
+        } else {
+            time += min + "";
+        }
+
+        if (seconds) {
+            int sec = calendar.get(Calendar.SECOND);
+
+            if (sec < 10) {
+                time += ":0" + sec;
+            } else {
+                time += ":" + sec;
+            }
+
+        }
+
+        if (calendar.get(Calendar.AM_PM) == Calendar.AM) {
+            time += "am";
+        } else {
+            time += "pm";
+        }
+
+        return time;
+    }
+
+    public static String formatTime2(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+
+        String time = "";
+
+        int hours = calendar.get(Calendar.HOUR);
+
+        if (hours == 0) {
+            time += "12:";
+        } else {
+            time += hours + ":";
+        }
+
+        int min = calendar.get(Calendar.MINUTE);
+
+        if (min < 10) {
+            time += "0" + min;
+        } else {
+            time += min + "";
+        }
+
+        return time;
+    }
+
 
     /**
      * <p>Checks if two dates are on the same day ignoring time.</p>

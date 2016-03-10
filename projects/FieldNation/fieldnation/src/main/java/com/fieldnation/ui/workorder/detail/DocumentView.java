@@ -16,6 +16,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -152,7 +153,7 @@ public class DocumentView extends RelativeLayout {
         }
 
         try {
-            _dateTextView.setText(misc.formatDateLong(ISO8601.toCalendar(_document.getLastUpdated())));
+            _dateTextView.setText(DateUtils.formatDateLong(ISO8601.toCalendar(_document.getLastUpdated())));
         } catch (Exception e) {
             Log.v(TAG, e);
             _dateTextView.setVisibility(View.GONE);

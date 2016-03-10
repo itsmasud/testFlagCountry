@@ -16,6 +16,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.ProfilePicView;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -90,7 +91,7 @@ public class MessageRcvdView extends RelativeLayout {
         }
 
         try {
-            _timeTextView.setText(misc.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
+            _timeTextView.setText(DateUtils.formatMessageTime(ISO8601.toCalendar(_message.getMsgCreateDate())));
         } catch (ParseException e) {
             Log.v(TAG, e);
         }
