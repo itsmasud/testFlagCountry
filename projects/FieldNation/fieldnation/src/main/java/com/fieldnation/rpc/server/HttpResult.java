@@ -4,6 +4,7 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.StreamUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -46,7 +47,7 @@ public class HttpResult {
     }
 
     private void storeData(InputStream in) throws IOException {
-        _baResults = misc.readAllFromStreamUntil(in, -1, 102400, 1000);
+        _baResults = StreamUtils.readAllFromStreamUntil(in, -1, 102400, 1000);
         if (_baResults != null && _baResults.length >= 102400) {
             // temp file
             File tempFolder = new File(App.get().getStoragePath() + "/temp");
@@ -54,7 +55,7 @@ public class HttpResult {
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
             fout.write(_baResults);
-            misc.copyStream(in, fout, -1, 1000);
+            StreamUtils.copyStream(in, fout, -1, 1000);
             fout.close();
             _baResults = null;
 
@@ -107,7 +108,7 @@ public class HttpResult {
                 FileInputStream fin = null;
                 try {
                     fin = new FileInputStream(_file);
-                    _baResults = misc.readAllFromStream(fin, -1, 1000);
+                    _baResults = StreamUtils.readAllFromStream(fin, -1, 1000);
                 } finally {
                     if (fin != null) {
                         fin.close();

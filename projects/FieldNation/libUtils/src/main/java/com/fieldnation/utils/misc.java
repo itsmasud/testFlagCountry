@@ -1,25 +1,16 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.Bitmap.Config;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Matrix;
 import android.graphics.Rect;
-import android.graphics.RectF;
 import android.location.Location;
-import android.os.Build;
-import android.os.Environment;
 import android.text.Html;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
@@ -27,27 +18,11 @@ import android.widget.ScrollView;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.regex.Pattern;
 
 
@@ -56,22 +31,6 @@ public class misc {
     private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
     private static NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
 
-    // private static NumberFormat _normalNumber =
-    // NumberFormat.getIntegerInstance();
-
-    public static Bitmap resizeBitmap(Bitmap source, int width, int height) {
-        Matrix m = new Matrix();
-        m.setRectToRect(new RectF(0, 0, source.getWidth(), source.getHeight()), new RectF(0, 0, width, height), Matrix.ScaleToFit.CENTER);
-        return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), m, true);
-    }
-
-    public static void printStackTrace(String message) {
-        try {
-            throw new Exception(message);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
 
     public static Location locationFromCoordinates(double lat, double lon) {
         Location loc = new Location("reverseGeocoded");
@@ -83,90 +42,6 @@ public class misc {
     public static String cardinalDirectionBetween(Location start, Location end) {
         return null;
     }
-
-    public static int dpToPx(Context context, int dp) {
-        DisplayMetrics displayMetrics = context.getResources().getDisplayMetrics();
-        int px = Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-        return px;
-    }
-
-    public static File dumpLogcat(Context context, String version) {
-        File externalPath = Environment.getExternalStorageDirectory();
-        String packageName = context.getPackageName();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
-        temppath.mkdirs();
-        File tempfile = new File(temppath + "/logcat-" + (System.currentTimeMillis() / 1000) + ".log");
-        try {
-            OutputStreamWriter fout = new OutputStreamWriter(new FileOutputStream(tempfile));
-
-            fout.write("APP VERSION: " + version + "\n");
-            fout.write("MANUFACTURER: " + Build.MANUFACTURER + "\n");
-            fout.write("MODEL: " + Build.MODEL + "\n");
-            fout.write("RELEASE: " + Build.VERSION.RELEASE + "\n");
-            fout.write("SDK: " + Build.VERSION.SDK_INT + "\n");
-
-            try {
-                Process process = Runtime.getRuntime().exec("logcat -d");
-                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-                String line = "";
-                while ((line = bufferedReader.readLine()) != null) {
-                    fout.write(line);
-                    fout.write("\n");
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-
-            fout.close();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return tempfile;
-    }
-
-    public static void flushLogs(Context context, long deathAge) {
-        File externalPath = Environment.getExternalStorageDirectory();
-        String packageName = context.getPackageName();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Android/data/" + packageName + "/temp");
-
-        String[] files = temppath.list();
-
-        if (files == null)
-            return;
-
-        for (int i = 0; i < files.length; i++) {
-            File file = new File(temppath.getAbsolutePath() + "/" + files[i]);
-
-            Log.v("misc", "checking " + file.getAbsolutePath() + ":" + file.lastModified());
-
-            if (file.lastModified() + deathAge < System.currentTimeMillis()) {
-                Log.v("misc", "deleting " + file.getAbsolutePath());
-                file.delete();
-            }
-        }
-
-    }
-
-/*
-    public static String getLogcat() {
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-
-            StringBuilder log = new StringBuilder();
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line);
-                log.append("\n");
-            }
-            return log.toString();
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-        return null;
-    }
-*/
 
     public static boolean isViewVisisble(ScrollView scrollView, View childView) {
         Rect scrollBounds = new Rect();
@@ -249,65 +124,6 @@ public class misc {
         return buffer;
     }
 
-    /**
-     * removes a circle from the source bitmap that is exactly centered
-     *
-     * @param source
-     * @return
-     */
-    public static Bitmap extractCircle(Bitmap source) {
-        int[] pixels = new int[source.getWidth() * source.getHeight()];
-
-        source.getPixels(pixels, 0, source.getWidth(), 0, 0, source.getWidth(), source.getHeight());
-
-        int size = Math.min(source.getWidth(), source.getHeight());
-        int cx = source.getWidth() / 2;
-        int cy = source.getHeight() / 2;
-        int xoff = (source.getWidth() - size) / 2;
-        int yoff = (source.getHeight() - size) / 2;
-
-        int[] destpix = new int[size * size];
-
-        int dist2 = Math.min(cx, cy);
-        dist2 = dist2 * dist2;
-
-        int l1 = (dist2 * 94) / 100;
-        int l2 = (dist2 * 96) / 100;
-        int l3 = (dist2 * 98) / 100;
-
-        int dx = 0;
-        int dy = 0;
-
-
-        for (int x = xoff; x < source.getWidth() - xoff; x++) {
-            for (int y = yoff; y < source.getHeight() - yoff; y++) {
-                dx = cx - x;
-                dy = cy - y;
-                int dist = dx * dx + dy * dy;
-
-                if (dist <= l1) {
-                    destpix[(x - xoff) + (y - yoff) * size] = pixels[x + y * source.getWidth()];
-                } else if (dist <= l2) {
-                    int c = pixels[x + y * source.getWidth()];
-                    int i = (x - xoff) + (y - yoff) * size;
-                    if (i < destpix.length)
-                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 192) / 256) << 56 & 0xFF000000);
-                } else if (dist <= l3) {
-                    int c = pixels[x + y * source.getWidth()];
-                    int i = (x - xoff) + (y - yoff) * size;
-                    if (i < destpix.length)
-                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 128) / 256) << 56 & 0xFF000000);
-                } else if (dist <= dist2) {
-                    int c = pixels[x + y * source.getWidth()];
-                    int i = (x - xoff) + (y - yoff) * size;
-                    if (i < destpix.length)
-                        destpix[i] = (c & 0x00FFFFFF) + ((((c >> 56 & 0xFF) * 64) / 256) << 56 & 0xFF000000);
-                }
-            }
-        }
-
-        return Bitmap.createBitmap(destpix, size, size, Config.ARGB_8888);
-    }
 
     public static boolean isEmptyOrNull(String str) {
         if (str == null)
@@ -389,127 +205,6 @@ public class misc {
         }
 
         return requestPath;
-    }
-
-    public static void copyDirectoryTree(File sourceDir, File destDir) throws IOException {
-
-        if (!destDir.exists()) {
-            destDir.mkdir();
-        }
-
-        File[] children = sourceDir.listFiles();
-
-        for (File sourceChild : children) {
-
-            String name = sourceChild.getName();
-
-            File destChild = new File(destDir, name);
-
-            if (sourceChild.isDirectory()) {
-                copyDirectoryTree(sourceChild, destChild);
-            } else {
-                copyFile(sourceChild, destChild);
-            }
-
-        }
-
-    }
-
-    private static final List<byte[]> PACKET_QUEUE = new LinkedList<>();
-
-    private static int packetcount = 0;
-
-    private static byte[] allocPacket() {
-        synchronized (PACKET_QUEUE) {
-            if (PACKET_QUEUE.size() > 0) {
-                return PACKET_QUEUE.remove(0);
-            }
-
-            packetcount++;
-            Log.v("MISC", "Packet Count " + packetcount);
-
-            return new byte[1024];
-        }
-    }
-
-    private static void freePacket(byte[] packet) {
-        if (packet != null)
-            synchronized (PACKET_QUEUE) {
-                PACKET_QUEUE.add(packet);
-            }
-    }
-
-    public static boolean copyFile(File src, File dest) throws IOException {
-        OutputStream outFile = null;
-        InputStream inFile = null;
-
-        long size = src.length();
-        long pos = 0;
-        int read = 0;
-        byte[] packet = null;
-        try {
-            packet = allocPacket();
-
-            try {
-                inFile = new BufferedInputStream(new FileInputStream(src));
-                outFile = new BufferedOutputStream(new FileOutputStream(dest));
-                while (pos < size) {
-                    read = inFile.read(packet);
-                    if (read > 0) {
-                        outFile.write(packet, 0, read);
-                        pos += read;
-                    } else if (read == 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (InterruptedException e) {
-                        }
-                    } else if (read == -1) {
-                        break;
-                    }
-                }
-            } finally {
-                try {
-                    inFile.close();
-                } catch (IOException e) {
-                }
-                try {
-                    outFile.close();
-                } catch (IOException e) {
-                }
-            }
-            return pos == size;
-        } finally {
-            freePacket(packet);
-        }
-    }
-
-    public static void deleteDirectoryTree(File file) throws IOException {
-        if (file.isDirectory()) {
-            // directory is empty, then delete it
-            if (file.list().length == 0) {
-                file.delete();
-            } else {
-                // list all the directory contents
-                String files[] = file.list();
-
-                for (String temp : files) {
-                    // construct the file structure
-                    File fileDelete = new File(file, temp);
-
-                    // recursive delete
-                    deleteDirectoryTree(fileDelete);
-                }
-
-                // check the directory again, if empty then delete it
-                if (file.list().length == 0) {
-                    file.delete();
-                }
-            }
-
-        } else {
-            // if file, then delete it
-            file.delete();
-        }
     }
 
     public static String escapeForHTML(String Value) {
@@ -735,311 +430,6 @@ public class misc {
         return Data;
     }
 
-    public static byte[] readAllFromStreamUntil(InputStream in, int expectedSize, int maxSize, long timeoutInMilli) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-        int read = 0;
-        int pos = 0;
-        int size = expectedSize;
-        long timeout = System.currentTimeMillis() + timeoutInMilli;
-
-        byte[] packet = null;
-        boolean error = false;
-        boolean timedOut = false;
-        boolean complete = false;
-        try {
-            packet = allocPacket();
-
-
-            try {
-                while (!error && !timedOut && !complete && bout.size() < maxSize) {
-
-				/*
-                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
-				 * break; }
-				 */
-
-                    read = in.read(packet, 0, 1024);
-
-                    if (read > 0) {
-                        pos += read;
-
-                        bout.write(packet, 0, read);
-                        timeout = System.currentTimeMillis() + timeoutInMilli;
-                    } else if (read == 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception ex) {
-                        }
-                    } else if (read == -1) {
-                        // error, stop
-                        error = true;
-                    }
-
-                    // finished, stop
-                    if (pos == size && size != -1) {
-                        complete = true;
-                    }
-
-                    // read too much!
-                    if (pos > size && size != -1) {
-                        error = true;
-                    }
-
-                    // timeout, stop
-                    if (timeout < System.currentTimeMillis()) {
-                        timedOut = true;
-                    }
-
-                }
-            } catch (IOException e) {
-                return bout.toByteArray();
-            }
-
-            if (timedOut && size != -1) {
-                return bout.toByteArray();
-            } else if (complete) {
-                return bout.toByteArray();
-            } else if (size == -1) {
-                return bout.toByteArray();
-            }
-
-            return null;
-        } finally {
-            freePacket(packet);
-        }
-    }
-
-    public static byte[] readAllFromStream(InputStream in, int expectedSize, long timeoutInMilli) throws IOException {
-        ByteArrayOutputStream bout = new ByteArrayOutputStream();
-
-        int read = 0;
-        int pos = 0;
-        int size = expectedSize;
-        long timeout = System.currentTimeMillis() + timeoutInMilli;
-
-        byte[] packet = null;
-        boolean error = false;
-        boolean timedOut = false;
-        boolean complete = false;
-
-        try {
-            packet = allocPacket();
-
-            try {
-                while (!error && !timedOut && !complete) {
-
-				/*
-                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
-				 * break; }
-				 */
-
-                    read = in.read(packet, 0, 1024);
-
-                    if (read > 0) {
-                        pos += read;
-
-                        bout.write(packet, 0, read);
-                        timeout = System.currentTimeMillis() + timeoutInMilli;
-                    } else if (read == 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception ex) {
-                        }
-                    } else if (read == -1) {
-                        // error, stop
-                        error = true;
-                    }
-
-                    // finished, stop
-                    if (pos == size && size != -1) {
-                        complete = true;
-                    }
-
-                    // read too much!
-                    if (pos > size && size != -1) {
-                        error = true;
-                    }
-
-                    // timeout, stop
-                    if (timeout < System.currentTimeMillis()) {
-                        timedOut = true;
-                    }
-
-                }
-            } catch (IOException e) {
-                return bout.toByteArray();
-            }
-
-            if (timedOut && size != -1) {
-                return bout.toByteArray();
-            } else if (complete) {
-                return bout.toByteArray();
-            } else if (size == -1) {
-                return bout.toByteArray();
-            }
-
-            return null;
-        } finally {
-            freePacket(packet);
-        }
-    }
-
-    public interface PacketListener {
-        void onPacket(byte[] packet, int length);
-    }
-
-    public static void readAllFromStream(InputStream in, int expectedSize, long timeoutInMilli,
-                                         PacketListener listener) throws IOException {
-        int read = 0;
-        int pos = 0;
-        int size = expectedSize;
-        long timeout = System.currentTimeMillis() + timeoutInMilli;
-
-        byte[] packet = null;
-        boolean error = false;
-        boolean timedOut = false;
-        boolean complete = false;
-
-        try {
-            packet = allocPacket();
-            try {
-                while (!error && !timedOut && !complete) {
-
-				/*
-                 * if (!waitForData(in, timeoutInMilli)) { timedOut = true;
-				 * break; }
-				 */
-
-                    read = in.read(packet, 0, 1024);
-
-                    if (read > 0) {
-                        pos += read;
-
-                        listener.onPacket(packet, read);
-                        timeout = System.currentTimeMillis() + timeoutInMilli;
-                    } else if (read == 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception ex) {
-                        }
-                    } else if (read == -1) {
-                        // error, stop
-                        error = true;
-                    }
-
-                    // finished, stop
-                    if (pos == size && size != -1) {
-                        complete = true;
-                    }
-
-                    // read too much!
-                    if (pos > size && size != -1) {
-                        error = true;
-                    }
-
-                    // timeout, stop
-                    if (timeout < System.currentTimeMillis()) {
-                        timedOut = true;
-                    }
-
-                }
-            } catch (IOException e) {
-            }
-        } finally {
-            freePacket(packet);
-        }
-    }
-
-    public static void copyStream(InputStream source, OutputStream dest, int expectedSize,
-                                  long timeoutInMilli) throws IOException {
-        int read = 0;
-        int pos = 0;
-        int size = expectedSize;
-        long timeout = System.currentTimeMillis() + timeoutInMilli;
-
-        byte[] packet = null;
-        boolean error = false;
-        boolean timedOut = false;
-        boolean complete = false;
-
-        try {
-            packet = allocPacket();
-            try {
-                // if (!waitForData(source, timeoutInMilli)) {
-                // return;
-                // }
-
-                while (!error && !timedOut && !complete) {
-                    read = source.read(packet, 0, 1024);
-                    if (read > 0) {
-                        pos += read;
-
-                        dest.write(packet, 0, read);
-                        timeout = System.currentTimeMillis() + timeoutInMilli;
-                    } else if (read == 0) {
-                        try {
-                            Thread.sleep(100);
-                        } catch (Exception ex) {
-                        }
-                    } else if (read == -1) {
-                        // error, stop
-                        error = true;
-                    }
-
-                    // finished, stop
-                    if (pos == size && size != -1) {
-                        complete = true;
-                    }
-
-                    // read too much!
-                    if (pos > size && size != -1) {
-                        error = true;
-                    }
-
-                    // timeout, stop
-                    if (timeout < System.currentTimeMillis()) {
-                        timedOut = true;
-                    }
-
-                }
-            } catch (IOException e) {
-                return;
-            }
-            if (timedOut && size != -1) {
-                return;
-            } else if (complete) {
-                return;
-            } else if (size == -1) {
-                return;
-            }
-
-            throw new IOException("Error, could not read entire stream!");
-        } finally {
-            freePacket(packet);
-        }
-    }
-
-    public static boolean waitForData(InputStream inputStream, long timeout) {
-        long finish = System.currentTimeMillis() + timeout;
-
-        try {
-            while (finish > System.currentTimeMillis()) {
-                if (inputStream.available() > 0) {
-                    return true;
-                }
-
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException e) {
-                }
-            }
-        } catch (IOException e) {
-        }
-
-        return false;
-    }
-
     public static String readableFileSize(long size) {
         if (size <= 0) {
             return "0";
@@ -1047,18 +437,6 @@ public class misc {
         final String[] units = new String[]{"B", "KB", "MB", "GB", "TB"};
         int digitGroups = (int) (Math.log10(size) / Math.log10(1024));
         return new DecimalFormat("#,##0.##").format(size / Math.pow(1024, digitGroups)) + " " + units[digitGroups];
-    }
-
-    public static String getStackTrace(Exception e) {
-        StringBuilder trace = new StringBuilder();
-
-        trace.append(e.getMessage() + "\n");
-        for (int i = 0; i < e.getStackTrace().length; i++) {
-            StackTraceElement elem = e.getStackTrace()[i];
-            trace.append(elem.getClassName() + "." + elem.getMethodName() + "(" + elem.getFileName() + ":" + String.valueOf(elem.getLineNumber()) + ")\n");
-        }
-
-        return trace.toString();
     }
 
     // Return a substring between the bedingString and endString
@@ -1171,22 +549,7 @@ public class misc {
         }
     }
 
-    public static String formatDateForCF(final Calendar calendar) {
-        Date date = calendar.getTime();
-        return new SimpleDateFormat("MM/dd/yyyy").format(date);
-    }
-
-    public static String formatTimeForCF(final Calendar calendar) {
-        Date date = calendar.getTime();
-        return new SimpleDateFormat("h:mm a").format(date);
-    }
-
-    public static String formatDateTimeForCF(final Calendar calendar) {
-        Date date = calendar.getTime();
-        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
-    }
-
-    public static String getCareerName(final String trackingId) {
+    public static String getCarrierName(final String trackingId) {
         if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {

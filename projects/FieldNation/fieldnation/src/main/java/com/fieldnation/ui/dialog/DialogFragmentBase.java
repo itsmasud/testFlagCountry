@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
@@ -116,7 +117,7 @@ public class DialogFragmentBase extends DialogFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, misc.getStackTrace(new Exception("onSaveInstanceState - To discover the root of PA-46")));
+        Log.v(TAG, DebugUtils.getStackTrace(new Exception("onSaveInstanceState - To discover the root of PA-46")));
         if (_tag != null)
             outState.putString(STATE_TAG, _tag);
         super.onSaveInstanceState(outState);

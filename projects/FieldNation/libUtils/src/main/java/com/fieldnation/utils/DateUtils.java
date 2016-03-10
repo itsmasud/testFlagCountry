@@ -1,11 +1,27 @@
 package com.fieldnation.utils;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 
 public class DateUtils {
+
+    public static String formatDateForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public static String formatTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("h:mm a").format(date);
+    }
+
+    public static String formatDateTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
+    }
 
     public static String toRoundDuration(long milliseconds) {
         long count = 0;

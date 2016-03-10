@@ -28,6 +28,7 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -378,7 +379,7 @@ public class DrawerView extends RelativeLayout {
     private final View.OnClickListener _debugView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            File tempfile = misc.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
+            File tempfile = DebugUtils.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             Intent intent = new Intent(Intent.ACTION_SEND);
             intent.setType("plain/text");
             intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"apps@fieldnation.com"});

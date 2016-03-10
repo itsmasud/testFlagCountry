@@ -26,6 +26,7 @@ import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
@@ -553,7 +554,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
         private void transRequeueNetworkDown(WebTransaction trans, int notifId, NotificationDefinition notif) {
             Log.v(TAG, "transRequeueNetworkDown");
-            misc.printStackTrace("transRequeueNetworkDown");
+            DebugUtils.printStackTrace("transRequeueNetworkDown");
             generateNotification(notifId, notif);
             GlobalTopicClient.networkDisconnected(context);
             try {

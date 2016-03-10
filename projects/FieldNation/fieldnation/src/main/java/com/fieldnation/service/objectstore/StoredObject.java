@@ -11,6 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
+import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
@@ -320,7 +321,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
 
             boolean copySuccess = false;
             try {
-                copySuccess = misc.copyFile(file, dest);
+                copySuccess = FileUtils.copyFile(file, dest);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

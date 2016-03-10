@@ -7,6 +7,7 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.utils.StreamUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.InputStream;
@@ -44,7 +45,7 @@ public class ExpenseCategories {
                 InputStream is = _context.getResources().openRawResource(R.raw.expensecategories);
                 //noinspection ConstantConditions, can't be null beacuse resource always exists
                 JsonArray ja = new JsonArray(
-                        new String(misc.readAllFromStream(is, -1, 1000)));
+                        new String(StreamUtils.readAllFromStream(is, -1, 1000)));
 
                 ExpenseCategory[] cats = new ExpenseCategory[ja.size()];
 
