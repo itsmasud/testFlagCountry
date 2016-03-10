@@ -1,7 +1,5 @@
 package com.fieldnation.utils;
 
-import android.util.Log;
-
 import java.util.LinkedList;
 import java.util.List;
 
@@ -11,16 +9,18 @@ import java.util.List;
 public class DataUtils {
     private static final List<byte[]> PACKET_QUEUE = new LinkedList<>();
 
-    private static int packetcount = 0;
+    static {
+        synchronized (PACKET_QUEUE) {
+            PACKET_QUEUE.add(new byte[1024]);
+            PACKET_QUEUE.add(new byte[1024]);
+        }
+    }
 
     public static byte[] allocPacket() {
         synchronized (PACKET_QUEUE) {
             if (PACKET_QUEUE.size() > 0) {
                 return PACKET_QUEUE.remove(0);
             }
-
-            packetcount++;
-            Log.v("MISC", "Packet Count " + packetcount);
 
             return new byte[1024];
         }
