@@ -435,11 +435,21 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
                 } else if (result.getResponseCode() == 401) {
                     // 401 usually means bad auth token
-                    Log.v(TAG, "Reauth 2");
-                    _isAuthenticated = false;
-                    AuthTopicClient.invalidateCommand(context);
-                    transRequeueNetworkDown(trans, notifId, notifRetry);
-                    AuthTopicClient.requestCommand(context);
+
+                    // if this requests not a field nation url, then auth shouldn't have been required
+                    // it's a bad transaction, don't do it.
+                    if (!trans.useAuth() || !HttpJsonBuilder.isFieldNation(request)) {
+                        Log.v(TAG, "delete 2");
+                        WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                        WebTransaction.delete(trans.getId());
+                        generateNotification(notifId, notifFailed);
+                    } else {
+                        Log.v(TAG, "Reauth 2");
+                        _isAuthenticated = false;
+                        AuthTopicClient.invalidateCommand(context);
+                        transRequeueNetworkDown(trans, notifId, notifRetry);
+                        AuthTopicClient.requestCommand(context);
+                    }
                     return true;
 
                 } else if (result.getResponseCode() == 404) {
