@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
@@ -222,11 +223,22 @@ public class ScheduleDialog extends DialogFragmentBase {
             String tag = datePickerDialog.getTag();
             if (tag.equals("start")) {
                 _startCal.set(year, month, day);
+                if (misc.isPastDate(_startCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                } else {
+                    _timePicker.show(_fm, datePickerDialog.getTag());
+                }
+
             } else if (tag.equals("end")) {
                 _endCal.set(year, month, day);
+                if (misc.isPastDate(_endCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                } else {
+                    _timePicker.show(_fm, datePickerDialog.getTag());
+                }
             }
 
-            _timePicker.show(_fm, datePickerDialog.getTag());
+//            _timePicker.show(_fm, datePickerDialog.getTag());
         }
     };
 

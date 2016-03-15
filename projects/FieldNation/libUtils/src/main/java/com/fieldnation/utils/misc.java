@@ -44,6 +44,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
@@ -1373,5 +1374,10 @@ public class misc {
         } else {
             return "Other";
         }
+    }
+
+    public static boolean isPastDate(final Calendar sampleCal) {
+        Calendar today = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE));
+        return today.after(sampleCal);
     }
 }
