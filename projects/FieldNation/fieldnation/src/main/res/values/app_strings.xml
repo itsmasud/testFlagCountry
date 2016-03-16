@@ -121,8 +121,7 @@
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
-    <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
-
+	<string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
 
