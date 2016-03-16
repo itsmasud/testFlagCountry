@@ -134,18 +134,11 @@ public class TimeLogRowView extends RelativeLayout {
 
         if (_workorder.canModifyTimeLog()) {
             setClickable(true);
+            setLongClickable(true);
         } else {
             setClickable(false);
-        }
-
-        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED) ||
-                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)  ||
-                _workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
-            setLongClickable(false);
-        } else {
             setLongClickable(false);
         }
-
     }
 
     /*-******************************-*/
