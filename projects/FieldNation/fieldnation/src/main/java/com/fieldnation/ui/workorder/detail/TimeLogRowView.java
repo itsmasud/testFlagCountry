@@ -11,6 +11,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -136,6 +137,15 @@ public class TimeLogRowView extends RelativeLayout {
         } else {
             setClickable(false);
         }
+
+        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED) ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)  ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+            setLongClickable(false);
+        } else {
+            setLongClickable(false);
+        }
+
     }
 
     /*-******************************-*/
