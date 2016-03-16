@@ -1376,6 +1376,7 @@ public class misc {
             return "Other";
         }
     }
+
     public static boolean isPastDate(final Calendar sampleCal) {
         Calendar today = new GregorianCalendar(Calendar.getInstance().get(Calendar.YEAR), Calendar.getInstance().get(Calendar.MONTH), Calendar.getInstance().get(Calendar.DATE));
         return today.after(sampleCal);
