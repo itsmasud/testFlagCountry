@@ -249,6 +249,10 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+                if (misc.isPastTime(_startCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_datetime_not_allowed), Toast.LENGTH_LONG).show();
+                    return;
+                }
                 _startIsSet = true;
 
                 if (_mode == MODE_EXACT) {
@@ -260,6 +264,12 @@ public class ScheduleDialog extends DialogFragmentBase {
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),
                         _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+                if (misc.isPastTime(_endCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_datetime_not_allowed), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
                 _endIsSet = true;
                 _endDateButton.setText(misc.formatDateTimeLong(_endCal));
             }
