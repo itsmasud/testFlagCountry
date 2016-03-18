@@ -1,6 +1,7 @@
 package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -19,6 +20,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -61,6 +63,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
     private Listener _listener;
+    private Handler _handler = new Handler();
 
 
     /*-*****************************-*/
@@ -114,11 +117,9 @@ public class ScheduleDialog extends DialogFragmentBase {
         _okButton.setOnClickListener(_okButton_onClick);
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
         _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
 
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
@@ -220,19 +221,31 @@ public class ScheduleDialog extends DialogFragmentBase {
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            String tag = datePickerDialog.getTag();
+            final String tag = datePickerDialog.getTag();
             if (tag.equals("start")) {
                 _startCal.set(year, month, day);
-                if (misc.isPastDate(_startCal)) {
+                if (DateUtils.isBeforeToday(_startCal)) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _datePicker.show(_fm, tag);
+                        }
+                    });
                 } else {
                     _timePicker.show(_fm, datePickerDialog.getTag());
                 }
 
             } else if (tag.equals("end")) {
                 _endCal.set(year, month, day);
-                if (misc.isPastDate(_endCal)) {
+                if (DateUtils.isBeforeToday(_endCal)) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _datePicker.show(_fm, tag);
+                        }
+                    });
                 } else {
                     _timePicker.show(_fm, datePickerDialog.getTag());
                 }
@@ -245,12 +258,20 @@ public class ScheduleDialog extends DialogFragmentBase {
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
+            final String tag = view.getTag();
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                if (misc.isPastDate(_startCal)) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+
+                // truncate milliseconds to seconds
+                if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _timePicker.show(_fm, tag);
+                        }
+                    });
                     return;
                 }
                 _startIsSet = true;
@@ -265,8 +286,15 @@ public class ScheduleDialog extends DialogFragmentBase {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),
                         _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
-                if (misc.isPastDate(_endCal)) {
-                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                // truncate milliseconds to seconds
+                if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.post(new Runnable() {
+                        @Override
+                        public void run() {
+                            _timePicker.show(_fm, tag);
+                        }
+                    });
                     return;
                 }
 
