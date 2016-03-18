@@ -861,8 +861,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=Other"
-                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&carrier=" + carrier
+                        + "&carrier_name=" + (carrierName == null ? "" : misc.escapeForURL(carrierName))
                         + "&tracking_number=" + misc.escapeForURL(trackingNumber),
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pActionCreateShipment(workorderId,
@@ -879,8 +879,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=Other"
-                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&carrier=" + carrier
+                        + "&carrier_name=" + (carrierName == null ? "" : misc.escapeForURL(carrierName))
                         + "&tracking_number=" + misc.escapeForURL(trackingNumber)
                         + "&task_id=" + taskId,
                 WorkorderTransactionHandler.class,
