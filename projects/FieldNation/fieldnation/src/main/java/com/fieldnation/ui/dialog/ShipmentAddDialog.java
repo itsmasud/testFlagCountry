@@ -281,6 +281,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
                 ToastClient.toast(App.get(), "Missing tracking number", Toast.LENGTH_SHORT);
                 return;
@@ -289,6 +290,18 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
                 ToastClient.toast(App.get(), "Missing description", Toast.LENGTH_SHORT);
                 return;
+            }
+
+            if (!"Other".equals(getCarrierSpinner().getText().toString())) {
+                final String career = _carrierSpinner.getText().toString();
+                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                    ToastClient.toast(App.get(), "Tracking number is not a valid for UPS.", Toast.LENGTH_SHORT);
+                    return;
+                }
+                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                    ToastClient.toast(App.get(), "Tracking number is not a valid for Fedex.", Toast.LENGTH_SHORT);
+                    return;
+                }
             }
 
             if (_listener != null) {
