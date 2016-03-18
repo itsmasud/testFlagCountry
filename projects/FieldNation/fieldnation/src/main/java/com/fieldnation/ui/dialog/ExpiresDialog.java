@@ -8,7 +8,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
@@ -17,6 +19,7 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
 public class ExpiresDialog extends DialogFragmentBase {
     private static final String TAG = "ExpiresDialog";
@@ -109,8 +112,11 @@ public class ExpiresDialog extends DialogFragmentBase {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _calendar.set(year, month, day);
-
-            _timePicker.show(_fm, null);
+            if (misc.isPastDate(_calendar)) {
+                Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+            } else {
+                _timePicker.show(_fm, null);
+            }
         }
     };
 

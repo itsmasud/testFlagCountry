@@ -1735,7 +1735,6 @@ public class WorkFragment extends WorkorderFragment {
 //            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
 //                    loggedWork.getLoggedHoursId());
 //            setLoading(true);
-
             final long workorderID = workorder.getWorkorderId();
             final long loggedHoursID = loggedWork.getLoggedHoursId();
 
