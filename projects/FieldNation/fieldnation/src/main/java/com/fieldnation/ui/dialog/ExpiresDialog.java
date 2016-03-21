@@ -117,12 +117,12 @@ public class ExpiresDialog extends DialogFragmentBase {
             _calendar.set(year, month, day);
             if (DateUtils.isBeforeToday(_calendar)) {
                 Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
-                _handler.post(new Runnable() {
+                _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         _datePicker.show(_fm, null);
                     }
-                });
+                }, 100);
             } else {
                 _timePicker.show(_fm, null);
             }
@@ -139,12 +139,12 @@ public class ExpiresDialog extends DialogFragmentBase {
             // truncate milliseconds to seconds
             if (_calendar.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
                 Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
-                _handler.post(new Runnable() {
+                _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         _timePicker.show(_fm, null);
                     }
-                });
+                }, 100);
                 return;
             }
 

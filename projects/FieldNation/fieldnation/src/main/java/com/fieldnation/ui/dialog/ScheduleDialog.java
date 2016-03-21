@@ -221,33 +221,33 @@ public class ScheduleDialog extends DialogFragmentBase {
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            final String tag = datePickerDialog.getTag();
+            String tag = datePickerDialog.getTag();
             if (tag.equals("start")) {
                 _startCal.set(year, month, day);
                 if (DateUtils.isBeforeToday(_startCal)) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
-                    _handler.post(new Runnable() {
+                    _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            _datePicker.show(_fm, tag);
+                            _datePicker.show(_fm, "start");
                         }
-                    });
+                    }, 100);
                 } else {
-                    _timePicker.show(_fm, datePickerDialog.getTag());
+                    _timePicker.show(_fm, "start");
                 }
 
             } else if (tag.equals("end")) {
                 _endCal.set(year, month, day);
                 if (DateUtils.isBeforeToday(_endCal)) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
-                    _handler.post(new Runnable() {
+                    _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            _datePicker.show(_fm, tag);
+                            _datePicker.show(_fm, "end");
                         }
-                    });
+                    }, 100);
                 } else {
-                    _timePicker.show(_fm, datePickerDialog.getTag());
+                    _timePicker.show(_fm, "end");
                 }
             }
 
@@ -258,7 +258,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            final String tag = view.getTag();
+            String tag = view.getTag();
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
@@ -266,12 +266,12 @@ public class ScheduleDialog extends DialogFragmentBase {
                 // truncate milliseconds to seconds
                 if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
-                    _handler.post(new Runnable() {
+                    _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            _timePicker.show(_fm, tag);
+                            _timePicker.show(_fm, "start");
                         }
-                    });
+                    }, 100);
                     return;
                 }
                 _startIsSet = true;
@@ -289,12 +289,12 @@ public class ScheduleDialog extends DialogFragmentBase {
                 // truncate milliseconds to seconds
                 if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
                     Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
-                    _handler.post(new Runnable() {
+                    _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            _timePicker.show(_fm, tag);
+                            _timePicker.show(_fm, "end");
                         }
-                    });
+                    }, 100);
                     return;
                 }
 
