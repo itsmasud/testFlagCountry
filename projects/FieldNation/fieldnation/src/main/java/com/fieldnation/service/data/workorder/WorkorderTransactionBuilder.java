@@ -139,6 +139,23 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         WorkorderTransactionHandler.pAction(workorderId, action)));
     }
 
+    public static void sendAcknowledge(Context context, long workorderId, String action) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
+                    .useAuth(true)
+                    .request( new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/" + action))
+                    .send();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     public static Intent action(Context context, long workorderId, String action, String params,
                                 String contentType, String body,
                                 Class<? extends WebTransactionHandler> clazz,
@@ -261,7 +278,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionAcknowledgeHold(Context context, long workorderId) {
-        action(context, workorderId, "acknowledge-hold", null, null, null);
+        sendAcknowledge(context, workorderId, "acknowledge-hold");
     }
 
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
