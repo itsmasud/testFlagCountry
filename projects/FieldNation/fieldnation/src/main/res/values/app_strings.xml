@@ -753,17 +753,6 @@
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
     </string-array>
-    <!--<string-array name="enum_report_problem_assigned">-->
-        <!--<item>I can\'t make my assignment</item>-->
-        <!--<item>I\'m going to be late</item>-->
-        <!--<item>I don\'t have what I need</item>-->
-        <!--<item>Approval</item>-->
-        <!--<item>Payment</item>-->
-        <!--<item>Buyer unresponsive</item>-->
-        <!--<item>Scope of work</item>-->
-        <!--<item>Site is not ready</item>-->
-        <!--<item>Other</item>-->
-    <!--</string-array>-->
 
     <string-array name="enum_report_problem_assigned">
         <item>I can\'t make my assignment</item>
@@ -774,14 +763,12 @@
         <item>Site is not ready</item>
         <item>Other</item>
     </string-array>
-
     <string-array name="enum_report_problem_completed">
         <item>Haven\'t approved yet</item>
         <item>I\'m disagreed with approval</item>
         <item>Buyer unresponsive</item>
         <item>Other</item>
     </string-array>
-
     <string-array name="enum_report_problem_approved">
         <item>Haven\'t received payment</item>
         <item>Amount is not accurate</item>
@@ -793,14 +780,6 @@
         <item>Information</item>
         <item>Response from someone</item>
         <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_approval">
-        <item>WO not approved yet</item>
-        <item>Disagreement on completion</item>
-    </string-array>
-    <string-array name="enum_report_problem_payment">
-        <item>Haven\'t received payment</item>
-        <item>Amount is not accurate</item>
     </string-array>
     <string-array name="enum_report_problem_site_not_ready">
         <item>Contact not available</item>
