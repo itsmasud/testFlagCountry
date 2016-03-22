@@ -1,6 +1,7 @@
 package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -39,6 +41,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     private boolean _isDateSet;
     private Listener _listener;
     private Workorder _workorder;
+    private Handler _handler = new Handler();
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/
@@ -112,8 +115,14 @@ public class ExpiresDialog extends DialogFragmentBase {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _calendar.set(year, month, day);
-            if (misc.isPastDate(_calendar)) {
+            if (DateUtils.isBeforeToday(_calendar)) {
                 Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _datePicker.show(_fm, null);
+                    }
+                }, 100);
             } else {
                 _timePicker.show(_fm, null);
             }
@@ -126,6 +135,18 @@ public class ExpiresDialog extends DialogFragmentBase {
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
             _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
                     _calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            // truncate milliseconds to seconds
+            if (_calendar.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _timePicker.show(_fm, null);
+                    }
+                }, 100);
+                return;
+            }
 
             _expirationButton.setText(misc.formatDateTimeLong(_calendar));
             _isDateSet = true;
