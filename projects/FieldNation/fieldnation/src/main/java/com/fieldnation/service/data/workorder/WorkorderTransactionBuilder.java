@@ -544,7 +544,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
         action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "print_name=" + misc.escapeForURL(name)
-                        + "&signature_json=" + svg);
+                        + "&signature_svg=" + svg);
     }
 
     /*-**************************************-*/
