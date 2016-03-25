@@ -121,6 +121,8 @@
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
+    <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
+    <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -752,30 +754,33 @@
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
     </string-array>
-    <string-array name="enum_report_problem_1">
+
+    <string-array name="enum_report_problem_assigned">
         <item>I can\'t make my assignment</item>
         <item>I\'m going to be late</item>
         <item>I don\'t have what I need</item>
-        <item>Approval</item>
-        <item>Payment</item>
         <item>Buyer unresponsive</item>
         <item>Scope of work</item>
         <item>Site is not ready</item>
         <item>Other</item>
     </string-array>
+    <string-array name="enum_report_problem_completed">
+        <item>Haven\'t approved yet</item>
+        <item>I\'m disagreed with approval</item>
+        <item>Buyer unresponsive</item>
+        <item>Other</item>
+    </string-array>
+    <string-array name="enum_report_problem_approved">
+        <item>Haven\'t received payment</item>
+        <item>Amount is not accurate</item>
+        <item>Other</item>
+    </string-array>
+
     <string-array name="enum_report_problem_missing">
         <item>A shipment</item>
         <item>Information</item>
         <item>Response from someone</item>
         <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_approval">
-        <item>WO not approved yet</item>
-        <item>Disagreement on completion</item>
-    </string-array>
-    <string-array name="enum_report_problem_payment">
-        <item>Haven\'t received payment</item>
-        <item>Amount is not accurate</item>
     </string-array>
     <string-array name="enum_report_problem_site_not_ready">
         <item>Contact not available</item>
