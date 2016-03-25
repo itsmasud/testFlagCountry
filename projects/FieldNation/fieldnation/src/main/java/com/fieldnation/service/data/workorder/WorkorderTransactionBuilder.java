@@ -139,6 +139,23 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         WorkorderTransactionHandler.pAction(workorderId, action)));
     }
 
+    public static void sendAcknowledge(Context context, long workorderId, String action) {
+        try {
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkorderTransactionHandler.class)
+                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
+                    .useAuth(true)
+                    .request( new HttpJsonBuilder()
+                            .protocol("https")
+                            .method("GET")
+                            .path("/api/rest/v1/workorder/" + workorderId + "/" + action))
+                    .send();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     public static Intent action(Context context, long workorderId, String action, String params,
                                 String contentType, String body,
                                 Class<? extends WebTransactionHandler> clazz,
@@ -261,7 +278,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static void actionAcknowledgeHold(Context context, long workorderId) {
-        action(context, workorderId, "acknowledge-hold", null, null, null);
+        sendAcknowledge(context, workorderId, "acknowledge-hold");
     }
 
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
@@ -527,7 +544,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
         action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "print_name=" + misc.escapeForURL(name)
-                        + "&signature_json=" + svg);
+                        + "&signature_svg=" + svg);
     }
 
     /*-**************************************-*/
@@ -861,8 +878,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=Other"
-                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&carrier=" + carrier
+                        + "&carrier_name=" + (carrierName == null ? "" : misc.escapeForURL(carrierName))
                         + "&tracking_number=" + misc.escapeForURL(trackingNumber),
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pActionCreateShipment(workorderId,
@@ -879,8 +896,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
-                        + "&carrier=Other"
-                        + "&carrier_name=" + (carrierName == null ? misc.escapeForURL(carrier) : misc.escapeForURL(carrierName))
+                        + "&carrier=" + carrier
+                        + "&carrier_name=" + (carrierName == null ? "" : misc.escapeForURL(carrierName))
                         + "&tracking_number=" + misc.escapeForURL(trackingNumber)
                         + "&task_id=" + taskId,
                 WorkorderTransactionHandler.class,

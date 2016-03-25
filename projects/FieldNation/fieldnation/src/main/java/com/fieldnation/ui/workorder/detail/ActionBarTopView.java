@@ -288,11 +288,11 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case PAID: // completed
                 inflate();
-                if (SHOW_REPORT_A_PROBLEM) {
-                    _leftWhiteButton.setVisibility(VISIBLE);
-                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-                }
+//                if (SHOW_REPORT_A_PROBLEM) {
+//                    _leftWhiteButton.setVisibility(VISIBLE);
+//                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+//                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+//                }
 
                 // view payment
                 _rightWhiteButton.setVisibility(VISIBLE);

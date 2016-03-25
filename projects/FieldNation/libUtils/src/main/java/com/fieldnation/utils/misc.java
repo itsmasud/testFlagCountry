@@ -23,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.ScrollView;
+import android.widget.Toast;
 
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -44,6 +45,7 @@ import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
