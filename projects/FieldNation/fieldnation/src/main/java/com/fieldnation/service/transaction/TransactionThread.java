@@ -39,17 +39,18 @@ import javax.net.ssl.SSLProtocolException;
 
 /**
  * Created by itssh on 3/23/2016.
+ * <p/>
+ * This class executes requests that are stored in the transaction queue
  */
 public class TransactionThread extends ThreadManager.ManagedThread {
     private String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 
-    private Context context;
-    private boolean _syncThread = false;
+    private WebTransactionService _service;
 
+    private boolean _syncThread = false;
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
-
 
     private static JsonObject TEST_QUERY;
 
@@ -61,10 +62,10 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         }
     }
 
-    public TransactionThread(ThreadManager manager, Context context, boolean syncThread) {
+    public TransactionThread(ThreadManager manager, WebTransactionService service, boolean syncThread) {
         super(manager);
         setName(TAG);
-        this.context = context;
+        _service = service;
         _syncThread = syncThread;
         start();
     }
@@ -77,11 +78,11 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             Log.v(TAG, "Testing connection");
             try {
                 HttpJson.run(TEST_QUERY);
-                GlobalTopicClient.networkConnected(context);
+                GlobalTopicClient.networkConnected(_service);
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
                 Log.v(TAG, "Testing connection... failed!");
-                GlobalTopicClient.networkDisconnected(context);
+                GlobalTopicClient.networkDisconnected(_service);
                 try {
                     Thread.sleep(10000);
                 } catch (InterruptedException ex) {
@@ -90,11 +91,11 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
         }
 
-        //Log.v(TAG, "Trans Count: " + WebTransaction.count(context));
+        //Log.v(TAG, "Trans Count: " + WebTransaction.count(_service));
         WebTransaction trans = null;
 
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), WebTransactionService.isAuthenticated());
+            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated());
         } catch (SQLiteFullException ex) {
             ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -135,14 +136,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         try {
             // apply authentication if needed
             if (trans.useAuth()) {
-                OAuth auth = WebTransactionService.getAuth();
+                OAuth auth = _service.getAuth();
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
-                    WebTransactionService.invalidateAuthTopicClient();
+                    AuthTopicClient.invalidateCommand(App.get());
                     return false;
                 }
 
-                if (!WebTransactionService.isAuthenticated()) {
+                if (!_service.isAuthenticated()) {
                     Log.v(TAG, "skip no auth");
                     trans.requeue();
                     return false;
@@ -170,7 +171,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             handlerName = trans.getHandlerName();
 
             if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(context, handlerName, trans);
+                WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(_service, handlerName, trans);
             }
 
             // **** perform request ****
@@ -193,10 +194,9 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             if (!result.isFile()
                     && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
                 Log.v(TAG, "Reauth");
-                WebTransactionService.setAuthenticated(false);
-                AuthTopicClient.invalidateCommand(context);
+                AuthTopicClient.invalidateCommand(_service);
                 transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(context);
+                AuthTopicClient.requestCommand(_service);
                 return true;
 
             } else if (result.getResponseCode() == 400) {
@@ -204,37 +204,36 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 // need to report this
                 // need to re-auth?
                 if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                 } else if (result.getResponseMessage().contains("Bad Request")) {
-                    WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                 } else {
                     Log.v(TAG, "1");
-                    AuthTopicClient.invalidateCommand(context);
+                    AuthTopicClient.invalidateCommand(_service);
                     transRequeueNetworkDown(trans, notifId, notifRetry);
-                    AuthTopicClient.requestCommand(context);
+                    AuthTopicClient.requestCommand(_service);
                 }
 
             } else if (result.getResponseCode() == 401) {
                 // 401 usually means bad auth token
                 Log.v(TAG, "Reauth 2");
-                WebTransactionService.setAuthenticated(false);
-                AuthTopicClient.invalidateCommand(context);
+                AuthTopicClient.invalidateCommand(_service);
                 transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(context);
+                AuthTopicClient.requestCommand(_service);
                 return true;
 
             } else if (result.getResponseCode() == 404) {
                 // not found?... error
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
 
             } else if (result.getResponseCode() == 413) {
-                ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
+                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
@@ -243,12 +242,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             } else if (result.getResponseCode() == 502) {
                 Log.v(TAG, "2");
                 transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(context);
+                AuthTopicClient.requestCommand(_service);
                 return true;
 
             } else if (result.getResponseCode() / 100 != 2) {
                 Log.v(TAG, "3");
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
@@ -256,16 +255,16 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             Log.v(TAG, "Passed response error checks");
 
-            GlobalTopicClient.networkConnected(context);
+            GlobalTopicClient.networkConnected(_service);
 
             if (!misc.isEmptyOrNull(handlerName)) {
                 WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
-                        context, handlerName, trans, result);
+                        _service, handlerName, trans, result);
 
                 switch (wresult) {
                     case ERROR:
                         generateNotification(notifId, notifFailed);
-                        WebTransactionHandler.failTransaction(context, handlerName, trans, result, null);
+                        WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                         WebTransaction.delete(trans.getId());
                         break;
                     case FINISH:
@@ -280,13 +279,13 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
         } catch (MalformedURLException | FileNotFoundException ex) {
             Log.v(TAG, "4");
-            WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
         } catch (SecurityException ex) {
             Log.v(TAG, "4b");
-            WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
@@ -298,8 +297,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         } catch (SSLException ex) {
             if (ex.getMessage().contains("Broken pipe")) {
                 Log.v(TAG, "6");
-                ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
+                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
             } else {
@@ -319,7 +318,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 // no freaking clue
                 Debug.logException(ex);
                 Log.v(TAG, ex);
-                WebTransactionHandler.failTransaction(context, handlerName, trans, result, ex);
+                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
             }
@@ -332,7 +331,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         Log.v(TAG, "transRequeueNetworkDown");
         DebugUtils.printStackTrace("transRequeueNetworkDown");
         generateNotification(notifId, notif);
-        GlobalTopicClient.networkDisconnected(context);
+        GlobalTopicClient.networkDisconnected(_service);
         try {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
@@ -385,7 +384,4 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             return _allowSync;
         }
     }
-
-
 }
-

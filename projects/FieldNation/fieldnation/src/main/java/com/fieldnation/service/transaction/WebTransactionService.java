@@ -1,62 +1,33 @@
 package com.fieldnation.service.transaction;
 
-import android.app.NotificationManager;
-import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.database.sqlite.SQLiteFullException;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.os.Parcelable;
-import android.support.v4.app.NotificationCompat;
-import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpJson;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.DebugUtils;
-import com.fieldnation.utils.misc;
 
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.util.List;
-
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLProtocolException;
 
 /**
  * Created by Michael Carver on 2/27/2015.
  * <p/>
- * this class does two things.
- * 1) Accepts transactions from the rest of the application
- * 2) processes transactions from the queue until they are complete
+ * This class accepts web requests and stores them into the queue for processing
  */
 public class WebTransactionService extends MSService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
 
     private static final Object AUTH_LOCK = new Object();
 
-    private static OAuth _auth;
-    private static AuthTopicClient _authTopicClient;
+    private OAuth _auth;
+    private AuthTopicClient _authTopicClient;
     private GlobalTopicClient _globalTopicClient;
-    private static boolean _authenticated = false;
     private ThreadManager _manager;
 
     @Override
@@ -120,15 +91,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         Log.v(TAG, "setAuth end");
     }
 
-    protected static OAuth getAuth() {
+    protected OAuth getAuth() {
         Log.v(TAG, "getAuth");
         synchronized (AUTH_LOCK) {
             return _auth;
         }
-    }
-
-    protected static void invalidateAuthTopicClient(){
-        _authTopicClient.invalidateCommand(App.get());
     }
 
     @Override
@@ -160,13 +127,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         public void onAuthenticated(OAuth oauth) {
             Log.v(TAG, "AuthTopicClient.onAuthenticated");
             setAuth(oauth);
-            _authenticated = true;
             _manager.wakeUp();
         }
 
         @Override
         public void onNotAuthenticated() {
-            _authenticated = false;
+            _auth = null;
         }
     };
 
@@ -224,12 +190,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
     }
 
 
-    public static boolean isAuthenticated() {
-        return _authenticated;
+    public boolean isAuthenticated() {
+        return _auth != null;
     }
-
-    public static void setAuthenticated(final boolean authenticated) {
-        _authenticated = authenticated;
-    }
-
 }
