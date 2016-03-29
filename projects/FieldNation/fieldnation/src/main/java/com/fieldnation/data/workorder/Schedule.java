@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
@@ -63,7 +64,7 @@ public class Schedule implements Parcelable {
 
     public static Schedule fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Schedule.class, json);
+            return Unserializer.unserializeObject(Schedule.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

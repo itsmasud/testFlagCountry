@@ -482,6 +482,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         // dispatch the event
         WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync(), false);
 
+        if (workorder.has("_action"))
+            Log.v(TAG, "handleDetails _action=" + workorder.get("_action"));
+
         // store it in the store
         StoredObject.put(App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
 

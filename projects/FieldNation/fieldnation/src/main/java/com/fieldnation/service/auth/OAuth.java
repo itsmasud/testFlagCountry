@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
@@ -119,7 +120,7 @@ public class OAuth implements Parcelable {
 
     public static OAuth fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(OAuth.class, json);
+            return Unserializer.unserializeObject(OAuth.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

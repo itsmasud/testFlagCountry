@@ -46,7 +46,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
-    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalTopicClient;
@@ -336,6 +335,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        private Snackbar _snackbar;
+
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");

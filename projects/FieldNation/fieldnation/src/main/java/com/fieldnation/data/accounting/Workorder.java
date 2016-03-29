@@ -3,6 +3,7 @@ package com.fieldnation.data.accounting;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Workorder {
@@ -69,7 +70,7 @@ public class Workorder {
 
     public static Workorder fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Workorder.class, json);
+            return Unserializer.unserializeObject(Workorder.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

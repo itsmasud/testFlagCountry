@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ExpectedPayment {
@@ -116,7 +117,7 @@ public class ExpectedPayment {
 
     public static ExpectedPayment fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(ExpectedPayment.class, json);
+            return Unserializer.unserializeObject(ExpectedPayment.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
