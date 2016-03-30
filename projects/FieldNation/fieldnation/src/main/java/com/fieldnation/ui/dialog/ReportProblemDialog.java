@@ -18,18 +18,26 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.BuyerRating;
+import com.fieldnation.data.workorder.KeyEvents;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+
+import java.text.ParseException;
+import java.util.Calendar;
 
 /**
  * Created by Michael Carver on 11/25/2015.
  */
 public class ReportProblemDialog extends DialogFragmentBase {
     private static final String TAG = "ReportProblemDialog";
+    private static final int MILLISECOND_PER_DAY = 24 * 3600 * 1000;
 
     // Ui
     private FnSpinner _problem1Spinner;
@@ -211,6 +219,27 @@ public class ReportProblemDialog extends DialogFragmentBase {
         if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED)) {
             switch (_spinner1Position) {
                 case 0: { // Approval not yet
+                    BuyerRating buyerRatingInfo = _workorder.getBuyerRatingInfo();
+                    KeyEvents keyEvents = _workorder.getKeyEvents();
+
+                    try {
+                        if (buyerRatingInfo.getCurrentReviewPeriod() != null && keyEvents.getWorkDoneTime() != null) {
+                            Calendar calendarToday = Calendar.getInstance();
+//                            Calendar calendarWorkDoneTime = ISO8601.toCalendar("2016-03-29T05:29:29-05:00"); // test
+                            Calendar calendarWorkDoneTime = ISO8601.toCalendar(keyEvents.getWorkDoneTime());
+                            Long millisecondDifference = calendarToday.getTimeInMillis() - calendarWorkDoneTime.getTimeInMillis();
+
+                            if (millisecondDifference <= buyerRatingInfo.getCurrentReviewPeriod() * MILLISECOND_PER_DAY) {
+                                Toast.makeText(App.get(), getString(R.string.toast_warning_workorder_review_period, buyerRatingInfo.getCurrentReviewPeriod()), Toast.LENGTH_LONG).show();
+                                break;
+                            }
+
+                        }
+                    } catch (ParseException e) {
+                        Log.v(TAG, e);
+                    }
+
+
                     _explanationEditText.requestFocus();
                     _okButton.setEnabled(true);
                     break;
