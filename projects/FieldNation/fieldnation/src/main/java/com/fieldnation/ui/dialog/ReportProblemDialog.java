@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -76,6 +78,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
 
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
+        _noteTextView.addTextChangedListener(_textEditText_watcherListener);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -418,8 +421,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     }
                 }
             }
-
-
             dismiss();
         }
     };
@@ -428,6 +429,22 @@ public class ReportProblemDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
+        }
+    };
+
+    private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (_noteTextView.getText().toString().trim().length() > 0) {
+                _okButton.setEnabled(true);
+            } else {
+                _okButton.setEnabled(false);
+            }
+        }
+
+        public void afterTextChanged(Editable s) {
         }
     };
 
