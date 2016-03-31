@@ -73,6 +73,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void listAlerts(Context context, long workorderId, boolean isRead, boolean isSync) {
         try {
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .path("/api/rest/v1/workorder/" + workorderId + "/notifications");
+
+            if (isRead) {
+                builder.urlParams("?mark_read=1");
+            }
+
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
@@ -80,10 +89,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .key((isSync ? "Sync/" : "") + "WorkorderAlertList/" + workorderId)
                     .useAuth(true)
                     .isSyncCall(isSync)
-                    .request(new HttpJsonBuilder()
-                            .protocol("https")
-                            .method("GET")
-                            .path("/api/rest/v1/workorder/" + workorderId + "/notifications"))
+                    .request(builder)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -146,7 +152,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
                     .useAuth(true)
-                    .request( new HttpJsonBuilder()
+                    .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/" + action))
