@@ -26,15 +26,6 @@ public class Unserializer {
      *                   JsonObject, this could be any number of issues.
      */
     public static <T> T unserializeObject(Class<T> targetClazz, JsonObject source) throws Exception {
-        long start = System.currentTimeMillis();
-
-        T t = unserializeObject(targetClazz, source, true);
-
-        System.out.println("Unserializer.unserializeObject " + targetClazz.getName() + " time: " + (System.currentTimeMillis() - start));
-        return t;
-    }
-
-    public static <T> T unserializeObject(Class<T> targetClazz, JsonObject source, boolean junk) throws Exception {
         // Instantiate target class
         Constructor<T> targetConstructor = targetClazz.getConstructor((Class<?>[]) null);
         T dest = targetConstructor.newInstance();
@@ -117,7 +108,7 @@ public class Unserializer {
         }
 
         // this object is none of the above. try unserializing the object it represents
-        return unserializeObject(targetClass, (JsonObject) source, true);
+        return unserializeObject(targetClass, (JsonObject) source);
     }
 
     /**
