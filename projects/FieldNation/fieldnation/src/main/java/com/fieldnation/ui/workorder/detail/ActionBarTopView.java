@@ -15,9 +15,6 @@ import com.fieldnation.utils.misc;
 public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";
 
-    // disabled until 1AM December 21st 2015
-//    private static final boolean SHOW_REPORT_A_PROBLEM = System.currentTimeMillis() > 1450677600000L;
-
     // Ui
     private Button _leftWhiteButton;
     private Button _leftGrayButton;
