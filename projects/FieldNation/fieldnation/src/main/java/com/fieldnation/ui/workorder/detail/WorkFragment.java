@@ -1094,6 +1094,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             if (_scannedImagePath != null) {
                 final UploadSlot[] slots = _workorder.getUploadSlots();
+                if (slots == null) return;
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
