@@ -396,7 +396,6 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-//        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -426,6 +425,9 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
+        if (_reportProblemDialog == null) {
+            _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
+        }
         _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
         subscribeData();
         requestTasks();
