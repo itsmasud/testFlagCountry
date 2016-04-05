@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.workorder.ReportProblemType;
@@ -101,9 +102,14 @@ public class ReportProblemDialog extends DialogFragmentBase {
         _problem2Spinner.setVisibility(visibility);
     }
 
-    public void setListener(Listener listener, Workorder workorder) {
+    public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+    public void show(Workorder workorder) {
         _workorder = workorder;
+        super.show();
+        populateUi();
     }
 
     private void populateUi() {
