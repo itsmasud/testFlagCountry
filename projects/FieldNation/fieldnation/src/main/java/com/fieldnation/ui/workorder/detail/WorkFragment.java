@@ -396,6 +396,7 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();

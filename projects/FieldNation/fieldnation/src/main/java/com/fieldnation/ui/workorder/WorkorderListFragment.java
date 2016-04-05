@@ -250,6 +250,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         checkProfile();
     }
