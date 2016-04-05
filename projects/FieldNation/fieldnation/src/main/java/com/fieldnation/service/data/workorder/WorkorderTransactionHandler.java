@@ -679,6 +679,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
+        ToastClient.toast(App.get(), "Could not add your shipment. Please check your connection.", Toast.LENGTH_LONG);
+
+        // TODO the snackbar is not appearing
         ToastClient.snackbar(context, "Could not add your shipment. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
