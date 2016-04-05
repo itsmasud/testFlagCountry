@@ -425,10 +425,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        if (_reportProblemDialog == null) {
-            _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
-        }
-        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
         subscribeData();
         requestTasks();
         populateUi();
@@ -1280,7 +1276,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
-            _reportProblemDialog.show();
+            _reportProblemDialog.show(_workorder);
         }
 
         @Override

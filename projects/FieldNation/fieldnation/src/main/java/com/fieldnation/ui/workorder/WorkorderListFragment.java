@@ -732,9 +732,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _reportProblemDialog.setListener(_reportProblem_listener, workorder);
-
-            _reportProblemDialog.show();
+            _reportProblemDialog.show(workorder);
         }
 
         @Override
