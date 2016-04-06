@@ -33,6 +33,8 @@ import com.fieldnation.utils.misc;
  */
 public class ReportProblemDialog extends DialogFragmentBase {
     private static final String TAG = "ReportProblemDialog";
+    // State
+    private static final String STATE_WORKORDER = "ReportProblemDialog:STATE_WORKORDER";
 
     // Ui
     private FnSpinner _problem1Spinner;
@@ -59,7 +61,31 @@ public class ReportProblemDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        }
+
         setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (outState != null) {
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -109,7 +135,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     public void show(Workorder workorder) {
         _workorder = workorder;
         super.show();
-        populateUi();
+//        populateUi();
     }
 
     private void populateUi() {
@@ -124,7 +150,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     R.array.enum_report_problem_assigned,
                     R.layout.view_spinner_item);
         } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED)) {
-            adapter = ArrayAdapter.createFromResource(getActivity(),
+            adapter = ArrayAdapter.createFromResource(
+                    getActivity(),
                     R.array.enum_report_problem_completed,
                     R.layout.view_spinner_item);
         } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
