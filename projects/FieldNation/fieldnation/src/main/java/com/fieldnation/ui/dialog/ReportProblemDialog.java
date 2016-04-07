@@ -154,7 +154,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     getActivity(),
                     R.array.enum_report_problem_completed,
                     R.layout.view_spinner_item);
-        } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+        } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
             adapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.enum_report_problem_approved,
                     R.layout.view_spinner_item);
@@ -275,7 +276,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
             }
         }
 
-        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
             switch (_spinner1Position) {
                 case 0: { // Payment not received
                     _explanationEditText.requestFocus();
@@ -434,7 +436,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 }
             }
 
-            if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+            if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                    _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
                 switch (_spinner1Position) {
                     case 0: // Payment not received
                         ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
