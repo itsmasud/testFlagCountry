@@ -1348,6 +1348,13 @@ public class misc {
         }
     }
 
+    public static void showKeyboard(View v) {
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
     public static String formatDateForCF(final Calendar calendar) {
         Date date = calendar.getTime();
         return new SimpleDateFormat("MM/dd/yyyy").format(date);

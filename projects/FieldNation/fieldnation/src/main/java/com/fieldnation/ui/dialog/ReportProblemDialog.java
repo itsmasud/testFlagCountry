@@ -76,9 +76,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
 
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
-        _noteTextView.addTextChangedListener(_textEditText_watcherListener);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -145,12 +145,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
                     _noteTextView.setVisibility(View.VISIBLE);
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // I\'m going to be late
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 2: { // I don\'t have what I need
@@ -167,17 +167,16 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _problem2Spinner.setHint(R.string.what_are_you_missing);
                     _problem2Spinner.setText("");
                     _problem2Spinner.dismissDropDown();
-                    _okButton.setEnabled(false);
                     break;
                 }
                 case 3: { // Buyer unresponsive
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 4: { // Scope of work
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 5: { // Site is not ready
@@ -193,12 +192,11 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _problem2Spinner.setHint(R.string.what_about_site);
                     _problem2Spinner.setText("");
                     _problem2Spinner.dismissDropDown();
-                    _okButton.setEnabled(false);
                     break;
                 }
                 case 6: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -215,22 +213,22 @@ public class ReportProblemDialog extends DialogFragmentBase {
             switch (_spinner1Position) {
                 case 0: { // Approval not yet
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // Approval disagreement
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 2: { // Buyer unresponsive
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 3: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -246,17 +244,17 @@ public class ReportProblemDialog extends DialogFragmentBase {
             switch (_spinner1Position) {
                 case 0: { // Payment not received
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // Payment not accurate
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 3: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -284,7 +282,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _spinner2Position = position;
             _explanationEditText.requestFocus();
-            _okButton.setEnabled(true);
+            misc.showKeyboard(_explanationEditText);
         }
     };
 
@@ -437,7 +435,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (_noteTextView.getText().toString().trim().length() > 0) {
+            if (_explanationEditText.getText().toString().trim().length() > 0) {
                 _okButton.setEnabled(true);
             } else {
                 _okButton.setEnabled(false);
