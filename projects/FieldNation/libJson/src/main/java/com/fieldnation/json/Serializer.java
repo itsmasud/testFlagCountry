@@ -17,6 +17,16 @@ import java.util.Set;
 
 public class Serializer {
 
+    /**
+     * Reads the fields of the source and creates a JsonObject based on their contents. It only
+     * works on objects whose fields are annotated with the @Json annotation.
+     *
+     * @param source the object to serialize
+     * @return
+     * @throws ParseException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     */
     public static JsonObject serializeObject(Object source) throws ParseException, IllegalArgumentException, IllegalAccessException {
         JsonObject dest = new JsonObject();
         // get the source object's fields

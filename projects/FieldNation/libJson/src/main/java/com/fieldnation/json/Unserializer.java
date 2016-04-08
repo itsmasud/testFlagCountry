@@ -15,14 +15,14 @@ import java.util.Collection;
  */
 public class Unserializer {
     /**
-     * Instantiates targetClass and popultes the fields within that class based on the contents of
+     * Instantiates targetClass and populates the fields within that class based on the contents of
      * the JsonObject.
      *
      * @param targetClazz the class to create
      * @param source      the Json that represents the class
-     * @param <T>         the type to return. It should match targetClass
+     * @param <T>         the type to return. It must match targetClass
      * @return the populated class
-     * @throws Exception A million things can go wrong with reflection or the contextents of the
+     * @throws Exception A million things can go wrong with reflection or the contents of the
      *                   JsonObject, this could be any number of issues.
      */
     public static <T> T unserializeObject(Class<T> targetClazz, JsonObject source) throws Exception {
