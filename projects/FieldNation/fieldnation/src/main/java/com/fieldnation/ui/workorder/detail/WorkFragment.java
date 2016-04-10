@@ -1099,6 +1099,7 @@ public class WorkFragment extends WorkorderFragment {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
                         WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                        _scannedImagePath = null;
                     }
                 }
             }
