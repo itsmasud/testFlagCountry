@@ -28,6 +28,8 @@ public class KeyEvents {
     private String _paidTime;
     @Json(name = "canceledTime")
     private String _canceledTime;
+    @Json(name = "workDoneTimeISO")
+    private String _workDoneTimeISO;
 
     public KeyEvents() {
     }
@@ -62,6 +64,10 @@ public class KeyEvents {
 
     public String getCanceledTime() {
         return _canceledTime;
+    }
+
+    public String getWorkDoneTimeISO() {
+        return _workDoneTimeISO;
     }
 
     public JsonObject toJson() {

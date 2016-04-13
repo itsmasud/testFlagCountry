@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/title_textview"
         android:focusable="true"
-        android:text="What\'s the problem?" />
+        android:text="@string/dialog_report_problem_spinner_1" />
 
 
     <com.fieldnation.ui.FnSpinner
@@ -24,7 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/problem1_spinner"
-        android:text="What\'s the problem?"
+        android:text="@string/dialog_report_problem_spinner_1"
         android:visibility="gone" />
 
     <android.support.design.widget.TextInputLayout
