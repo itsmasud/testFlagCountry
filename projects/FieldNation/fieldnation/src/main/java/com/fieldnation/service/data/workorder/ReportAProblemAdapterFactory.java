@@ -33,12 +33,7 @@ public class ReportAProblemAdapterFactory {
                 switch (workorder.getWorkorderSubstatus()) {
                     case PENDINGREVIEW:
                         return new ReportProblemType[]{
-                                ReportProblemType.CANNOT_MAKE_ASSIGNMENT,
-                                ReportProblemType.WILL_BE_LATE,
-                                ReportProblemType.MISSING,
-                                ReportProblemType.BUYER_UNRESPONSIVE,
-                                ReportProblemType.SCOPE_OF_WORK,
-                                ReportProblemType.SITE_NOT_READY,
+                                ReportProblemType.APPROVAL_DISAGREEMENT,
                                 ReportProblemType.OTHER,
                         };
                     case INREVIEW:
