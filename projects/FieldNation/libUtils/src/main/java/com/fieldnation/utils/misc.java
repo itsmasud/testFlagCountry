@@ -1379,6 +1379,8 @@ public class misc {
                 || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
                 || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
             return "UPS";
+        } else if (Pattern.compile("'/^E\\D{1}\\d{9}\\D{2}$|^9\\d{15,21}$/'").matcher(trackingId).matches()) {
+            return "USPS";
         } else {
             return "Other";
         }

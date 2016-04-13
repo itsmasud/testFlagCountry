@@ -688,6 +688,7 @@
     <string-array name="carrier_list">
         <item>Fedex</item>
         <item>UPS</item>
+        <item>USPS</item>
         <item>Other</item>
     </string-array>
     <string-array name="pay_types">

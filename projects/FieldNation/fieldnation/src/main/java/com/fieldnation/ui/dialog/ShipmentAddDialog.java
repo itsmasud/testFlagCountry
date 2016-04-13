@@ -294,12 +294,21 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             if (!"Other".equals(getCarrierSpinner().getText().toString())) {
                 final String career = _carrierSpinner.getText().toString();
-                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), "Tracking number is not a valid for UPS.", Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), "Tracking number is not a valid for Fedex.", Toast.LENGTH_SHORT);
+                    return;
+                }
+                if ("USPS".equals(career) && !"USPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), "Tracking number is not a valid for USPS.", Toast.LENGTH_SHORT);
+                    return;
+                }
+            } else {
+                if (misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
+                    ToastClient.toast(App.get(), "Career name is not inserted", Toast.LENGTH_SHORT);
                     return;
                 }
             }
