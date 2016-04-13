@@ -238,7 +238,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
             }
         }
 
-
         if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED)) {
             switch (_spinner1Position) {
                 case 0: { // Approval not yet

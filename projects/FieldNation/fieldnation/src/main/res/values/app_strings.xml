@@ -123,8 +123,6 @@
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
-    <string name="toast_warning_workorder_review_period">Workorder review period (%1$d days) is not passed. Try after review period is passed.</string>
-
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -719,7 +717,6 @@
         <item>Approved</item>
     </string-array>
 
-
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
@@ -741,6 +738,7 @@
         <item>Fee Paid</item>
         <item>Unknown</item>
     </string-array>
+
     <string-array name="task_type">
         <item>Reserved</item>
         <item>Confirm Assignment</item>
@@ -756,6 +754,50 @@
         <item>Collect a signature</item>
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
+    </string-array>
+
+    <!-- If you change any of these, make sure you update
+        com.fieldnation.service.data.workorder.ReportProblemType -->
+    <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
+    <string name="im_going_to_be_late">I\'m going to be late</string>
+    <string name="buyer_unresponsive">Buyer unresponsive</string>
+    <string name="scope_of_work">Scope of work</string>
+    <string name="site_not_ready">Site is not ready</string>
+    <string name="other">Other</string>
+    <string name="havent_approved_yet">Haven\'t approved yet</string>
+    <string name="disagree_with_approval">I\'m disagreed with approval</string>
+    <string name="havent_received_payment">Haven\'t received payment</string>
+    <string name="amount_not_accurate">Amount is not accurate</string>
+    <string name="a_shipment">A shipment</string>
+    <string name="information">Information</string>
+    <string name="response_from_someone">Response from someone</string>
+    <string name="contact_not_available">Contact not available</string>
+    <string name="prior_work_needs_to_be_completed">Prior work needs to be completed</string>
+    <string name="i_dont_have_access">I don\'t have access</string>
+    <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
+
+    <string-array name="enum_report_problem_primary">
+        <item>I can\'t make my assignment</item>
+        <item>I\'m going to be late</item>
+        <item>I don\'t have what I need</item>
+        <item>Buyer unresponsive</item>
+        <item>Scope of work</item>
+        <item>Site is not ready</item>
+        <item>Other</item>
+        <item>Haven\'t approved yet</item>
+        <item>I\'m disagreed with approval</item>
+        <item>Haven\'t received payment</item>
+        <item>Amount is not accurate</item>
+    </string-array>
+
+    <string-array name="enum_report_problem_secondary">
+        <item>A shipment</item>
+        <item>Information</item>
+        <item>Response from someone</item>
+        <item>Other</item>
+        <item>Contact not available</item>
+        <item>Prior work needs to be completed</item>
+        <item>I don\'t have access</item>
     </string-array>
 
     <string-array name="enum_report_problem_assigned">
