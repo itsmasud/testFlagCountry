@@ -253,7 +253,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
                             if (millisecondDifference <= buyerRatingInfo.getCurrentReviewPeriod() * MILLISECOND_PER_DAY) {
                                 _okButton.setEnabled(false);
-                                Toast.makeText(App.get(), getString(R.string.toast_warning_workorder_review_period, buyerRatingInfo.getCurrentReviewPeriod()), Toast.LENGTH_LONG).show();
+                                //Toast.makeText(App.get(), getString(R.string.toast_warning_workorder_review_period, buyerRatingInfo.getCurrentReviewPeriod()), Toast.LENGTH_LONG).show();
                                 break;
                             }
 
