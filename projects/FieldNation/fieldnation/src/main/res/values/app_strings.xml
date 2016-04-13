@@ -765,7 +765,7 @@
     <string name="site_not_ready">Site is not ready</string>
     <string name="other">Other</string>
     <string name="havent_approved_yet">Haven\'t approved yet</string>
-    <string name="disagree_with_approval">I\'m disagreed with approval</string>
+    <string name="disagree_with_approval">Disagreement on work completion</string>
     <string name="havent_received_payment">Haven\'t received payment</string>
     <string name="amount_not_accurate">Amount is not accurate</string>
     <string name="a_shipment">A shipment</string>

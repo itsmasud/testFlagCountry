@@ -12,7 +12,7 @@ import java.util.List;
  * Created by Michael on 4/13/2016.
  */
 public class ReportAProblemAdapterFactory {
-/*
+
     public static ReportProblemType[] getPrimaryList(Workorder workorder) {
 
         switch (workorder.getWorkorderStatus()) {
@@ -67,7 +67,7 @@ public class ReportAProblemAdapterFactory {
     }
 
     public static ArrayAdapter getSecondaryList() {
-
+        return null;
     }
-    */
+
 }
