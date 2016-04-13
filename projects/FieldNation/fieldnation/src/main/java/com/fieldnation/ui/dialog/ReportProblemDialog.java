@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
@@ -53,6 +54,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private int _spinner2Position = -1;
     private Listener _listener;
     private Workorder _workorder;
+    private boolean _clear = true;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -99,7 +101,28 @@ public class ReportProblemDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
+        Log.v(TAG, "onResume");
+        if (_clear) {
+            _problem1Spinner.setText(getResources().getString(R.string.dialog_report_problem_spinner_1));
+            _explanationEditText.setText("");
+        }
         populateUi();
+    }
+
+    @Override
+    public void dismiss() {
+        super.dismiss();
+        Log.v(TAG, "dismiss");
+        _clear = true;
+        _spinner1Position = -1;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        Log.v(TAG, "onDismiss");
+        super.onDismiss(dialog);
+        _clear = true;
+        _spinner1Position = -1;
     }
 
     private void setProblem2Visibility(int visibility) {
@@ -223,13 +246,14 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     KeyEvents keyEvents = _workorder.getKeyEvents();
 
                     try {
-                        if (buyerRatingInfo.getCurrentReviewPeriod() != null && keyEvents.getWorkDoneTime() != null) {
+                        if (buyerRatingInfo.getCurrentReviewPeriod() != null && keyEvents.getWorkDoneTimeISO() != null) {
                             Calendar calendarToday = Calendar.getInstance();
 //                            Calendar calendarWorkDoneTime = ISO8601.toCalendar("2016-03-29T05:29:29-05:00"); // test
-                            Calendar calendarWorkDoneTime = ISO8601.toCalendar(keyEvents.getWorkDoneTime());
+                            Calendar calendarWorkDoneTime = ISO8601.toCalendar(keyEvents.getWorkDoneTimeISO());
                             Long millisecondDifference = calendarToday.getTimeInMillis() - calendarWorkDoneTime.getTimeInMillis();
 
                             if (millisecondDifference <= buyerRatingInfo.getCurrentReviewPeriod() * MILLISECOND_PER_DAY) {
+                                _okButton.setEnabled(false);
                                 Toast.makeText(App.get(), getString(R.string.toast_warning_workorder_review_period, buyerRatingInfo.getCurrentReviewPeriod()), Toast.LENGTH_LONG).show();
                                 break;
                             }
