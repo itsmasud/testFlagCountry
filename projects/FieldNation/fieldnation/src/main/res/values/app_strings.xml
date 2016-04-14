@@ -775,6 +775,7 @@
     <string name="prior_work_needs_to_be_completed">Prior work needs to be completed</string>
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
+    <string name="approval">Approval</string>
 
     <string-array name="enum_report_problem_primary">
         <item>I can\'t make my assignment</item>
