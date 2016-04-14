@@ -1370,7 +1370,7 @@ public class misc {
         return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
     }
 
-    public static String getCareerName(final String trackingId) {
+    public static String getCarrierName(final String trackingId) {
         if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
