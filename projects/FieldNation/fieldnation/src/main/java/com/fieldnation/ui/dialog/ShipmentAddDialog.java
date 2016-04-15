@@ -174,8 +174,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _carrierSpinner.setAdapter(adapter);
-
-
         }
         return _carrierSpinner;
     }
@@ -248,10 +246,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _trackingIdEditText.setText(trackingId);
     }
 
-    public void setSelectedCarrier(final String careerName) {
+    public void setSelectedCarrier(final String carrierName) {
         try {
             for (int i = 0; i < getCarrierSpinner().getAdapter().getCount(); i++) {
-                if (getCarrierSpinner().getAdapter().getItem(i).equals(careerName)) {
+                if (getCarrierSpinner().getAdapter().getItem(i).equals(carrierName)) {
                     getCarrierSpinner().setSelectedItem(i);
                     _carrier_selected.onItemClick(null, null, i, 0);
                     break;
@@ -261,7 +259,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setSelectedCarrier(careerName);
+                    setSelectedCarrier(carrierName);
                 }
             }, 100);
         }
@@ -326,39 +324,32 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         public void onClick(View v) {
 
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), "Missing tracking number", Toast.LENGTH_SHORT);
-                return;
-            }
-
-            if (getString(R.string.dialog_shipment_career_spinner_default_text).equals(_carrierSpinner.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_traking_number), Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), "Missing description", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
                 return;
             }
-
-            if (getString(R.string.dialog_shipment_direction_spinner_default_text).equals(_directionSpinner.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
-                return;
-            }
-
 
             if (!"Other".equals(getCarrierSpinner().getText().toString())) {
-                final String career = _carrierSpinner.getText().toString();
-                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), "Tracking number is not a valid for UPS.", Toast.LENGTH_SHORT);
+                final String carrier = _carrierSpinner.getText().toString();
+                if ("UPS".equals(carrier) && !"UPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
+                return;
+            }
+                if ("Fedex".equals(carrier) && !"Fedex".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), "Tracking number is not a valid for Fedex.", Toast.LENGTH_SHORT);
+                if ("USPS".equals(carrier) && !"USPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
             } else {
                 if (misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
-                    ToastClient.toast(App.get(), "Career name is not inserted", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), getString(R.string.toast_missing_carrier_name), Toast.LENGTH_SHORT);
                     return;
                 }
             }
