@@ -34,6 +34,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     // State
     private static final String STATE_TASKID = "STATE_TASKID";
     private static final String STATE_TITLE = "STATE_TITLE";
+    private static final String STATE_CAREER_SELECTION = "STATE_CAREER_SELECTION";
+    private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
 
     private static final int RESULT_CODE_BARCODE_SCAN = 0;
 
@@ -54,7 +56,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private long _taskId = 0;
     private String _title;
     private boolean _clear = false;
-    private int _selectedPosition_directionSpinner;
+    private int _selectedPosition_careerSpinner = -1;
+    private int _selectedPosition_directionSpinner = -1;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -66,7 +69,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.e(TAG, "onActivityResult");
+        Log.v(TAG, "onActivityResult");
         if (requestCode == RESULT_CODE_BARCODE_SCAN) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.v(TAG, "requestCode");
@@ -79,12 +82,20 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TASKID))
                 _taskId = savedInstanceState.getLong(STATE_TASKID);
 
             if (savedInstanceState.containsKey(STATE_TITLE))
                 _title = savedInstanceState.getString(STATE_TITLE);
+
+            if (savedInstanceState.containsKey(STATE_CAREER_SELECTION))
+                _selectedPosition_careerSpinner = savedInstanceState.getInt(STATE_CAREER_SELECTION);
+
+            if (savedInstanceState.containsKey(STATE_DIRECTION_SELECTION))
+                _selectedPosition_directionSpinner = savedInstanceState.getInt(STATE_DIRECTION_SELECTION);
+
         }
         super.onCreate(savedInstanceState);
 
@@ -93,11 +104,18 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
 
         if (_taskId != 0)
             outState.putLong(STATE_TASKID, _taskId);
+
+        if (_selectedPosition_careerSpinner != -1)
+            outState.putInt(STATE_CAREER_SELECTION, _selectedPosition_careerSpinner);
+
+        if (_selectedPosition_directionSpinner != -1)
+            outState.putInt(STATE_DIRECTION_SELECTION, _selectedPosition_directionSpinner);
 
         super.onSaveInstanceState(outState);
     }
@@ -136,7 +154,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        populateSpinners();
+//        populateSpinners();
 
         return v;
     }
@@ -156,6 +174,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _carrierSpinner.setAdapter(adapter);
+
+
         }
         return _carrierSpinner;
     }
@@ -178,6 +198,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
+        Log.v(TAG, "onResume");
 
         populateSpinners();
 
@@ -186,15 +207,36 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         if (_clear) {
             _clear = false;
+            _carrierSpinner.setText(getResources().getString(R.string.dialog_shipment_career_spinner_default_text));
+            _directionSpinner.setText(getResources().getString(R.string.dialog_shipment_direction_spinner_default_text));
             _carrierEditText.setText("");
             _descriptionEditText.setText("");
             _trackingIdEditText.setText("");
+        } else if (_selectedPosition_careerSpinner != -1) {
+            _carrierSpinner.setSelectedItem(_selectedPosition_careerSpinner);
+            _carrier_selected.onItemClick(null, null, _selectedPosition_careerSpinner, 0);
         }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Log.v(TAG, "onDestroy");
+        _clear = true;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
+//        Log.v(TAG, "onDismiss");
+        _clear = true;
+    }
+
+    @Override
+    public void dismiss() {
+//        Log.v(TAG, "dismiss");
+        _clear = true;
+        super.dismiss();
     }
 
 
@@ -262,6 +304,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final AdapterView.OnItemClickListener _carrier_selected = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            _selectedPosition_careerSpinner = position;
             if ("Other".equals(getCarrierSpinner().getAdapter().getItem(position).toString())) {
                 _carrierLayout.setVisibility(View.VISIBLE);
             } else {
@@ -287,19 +330,35 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 return;
             }
 
+            if (getString(R.string.dialog_shipment_career_spinner_default_text).equals(_carrierSpinner.getText().toString())) {
+                ToastClient.toast(App.get(), getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                return;
+            }
+
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
                 ToastClient.toast(App.get(), "Missing description", Toast.LENGTH_SHORT);
                 return;
             }
 
+            if (getString(R.string.dialog_shipment_direction_spinner_default_text).equals(_directionSpinner.getText().toString())) {
+                ToastClient.toast(App.get(), getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
+                return;
+            }
+
+
             if (!"Other".equals(getCarrierSpinner().getText().toString())) {
                 final String career = _carrierSpinner.getText().toString();
-                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), "Tracking number is not a valid for UPS.", Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))){
+                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), "Tracking number is not a valid for Fedex.", Toast.LENGTH_SHORT);
+                    return;
+                }
+            } else {
+                if (misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
+                    ToastClient.toast(App.get(), "Career name is not inserted", Toast.LENGTH_SHORT);
                     return;
                 }
             }
