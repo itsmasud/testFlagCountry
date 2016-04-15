@@ -17,7 +17,7 @@ import com.fieldnation.utils.ISO8601;
  * Workorder.Api.v1.ReportProblemController
  * Workorder.Service.Provider.GetWorkorderDetail
  */
-public class ReportAProblemAdapterFactory {
+public class ReportProblemListFactory {
 
     /**
      * These are created at the top to prevent them from being constantly re-created during runtime.
