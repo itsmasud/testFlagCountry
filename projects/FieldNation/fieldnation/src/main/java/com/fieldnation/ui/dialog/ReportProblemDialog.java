@@ -288,7 +288,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     misc.showKeyboard(_explanationEditText);
                     break;
                 }
-                case 3: { // Other
+                case 2: { // Other
                     _explanationEditText.requestFocus();
                     misc.showKeyboard(_explanationEditText);
                     break;
@@ -419,12 +419,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
                         ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_DISAGREEMENT);
                         break;
-                    case 3: { // Buyer unresponsive
+                    case 2: { // Buyer unresponsive
                         ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.BUYER_UNRESPONSIVE);
                         break;
                     }
-                    case 4: { // Other
+                    case 3: { // Other
                         ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.OTHER);
                         break;
