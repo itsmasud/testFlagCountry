@@ -31,7 +31,12 @@ import com.fieldnation.utils.misc;
  */
 public class ReportProblemDialog extends DialogFragmentBase {
     private static final String TAG = "ReportProblemDialog";
-    private static final int MILLISECOND_PER_DAY = 24 * 3600 * 1000;
+
+    // State keys
+    private static final String STATE_WORKORDER = "STATE_WORKORDER";
+    private static final String STATE_PRIMARY_POS = "STATE_PRIMARY_POS";
+    private static final String STATE_SECONDARY_POS = "STATE_SECONDARY_POS";
+    private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
 
     // Ui
     private FnSpinner _primarySpinner;
@@ -43,15 +48,16 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private Button _okButton;
 
     // Data
-    private int _primaryPosition = -1;
-    private int _secondaryPosition = -1;
     private Listener _listener;
-    private Workorder _workorder;
-    private boolean _clear = true;
     private ReportProblemType[] _primaryList = null;
     private ReportProblemType[] _secondaryList = null;
     private ArrayAdapter<ReportProblemType> _primaryAdapter = null;
     private ArrayAdapter<ReportProblemType> _secondaryAdapter = null;
+
+    // Saved Data
+    private Workorder _workorder;
+    private int _primaryPosition = -1;
+    private int _secondaryPosition = -1;
     private ReportProblemType _selectedProblem = null;
 
     /*-*************************************-*/
@@ -73,14 +79,13 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _primarySpinner = (FnSpinner) v.findViewById(R.id.problem1_spinner);
+        _primarySpinner = (FnSpinner) v.findViewById(R.id.primary_spinner);
         _primaryAdapter = new ArrayAdapter<ReportProblemType>(App.get(), R.layout.view_spinner_item);
         _primaryAdapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _primarySpinner.setAdapter(_primaryAdapter);
         _primarySpinner.setOnItemClickListener(_problem1_onItemClick);
 
-
-        _secondarySpinner = (FnSpinner) v.findViewById(R.id.problem2_spinner);
+        _secondarySpinner = (FnSpinner) v.findViewById(R.id.secondary_spinner);
         _secondaryAdapter = new ArrayAdapter<ReportProblemType>(App.get(), R.layout.view_spinner_item);
         _secondaryAdapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _secondarySpinner.setAdapter(_secondaryAdapter);
@@ -103,35 +108,79 @@ public class ReportProblemDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume");
-        if (_clear) {
-            _primarySpinner.setText(getResources().getString(R.string.dialog_report_problem_spinner_1));
-            _explanationEditText.setText("");
-            _clear = false;
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState == null)
+            return;
+
+        if (savedInstanceState.containsKey(STATE_PRIMARY_POS))
+            _primaryPosition = savedInstanceState.getInt(STATE_PRIMARY_POS);
+
+        if (savedInstanceState.containsKey(STATE_SECONDARY_POS))
+            _secondaryPosition = savedInstanceState.getInt(STATE_SECONDARY_POS);
+
+        if (savedInstanceState.containsKey(STATE_WORKORDER))
+            _workorder = (Workorder) savedInstanceState.getParcelable(STATE_WORKORDER);
+
+        if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
+            _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];
+
+        if (_primaryPosition != -1 && _workorder != null) {
+            _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
+            if (_primaryList != null) {
+                _primaryAdapter.clear();
+                for (ReportProblemType t : _primaryList) {
+                    _primaryAdapter.add(t);
+                }
+                _primarySpinner.setSelectedItem(_primaryPosition);
+                if (_secondaryPosition != -1) {
+                    _secondaryList = ReportProblemListFactory.getSecondaryList(_workorder, _primaryList[_primaryPosition]);
+                    if (_secondaryList != null) {
+                        _secondaryAdapter.clear();
+                        for (ReportProblemType t : _secondaryList) {
+                            _secondaryAdapter.add(t);
+                        }
+                        _secondarySpinner.setSelectedItem(_secondaryPosition);
+                    }
+                }
+            }
         }
         populateUi();
     }
 
     @Override
-    public void dismiss() {
-        super.dismiss();
-        Log.v(TAG, "dismiss");
-        _clear = true;
-        _primaryPosition = -1;
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(STATE_PRIMARY_POS, _primaryPosition);
+        outState.putInt(STATE_SECONDARY_POS, _secondaryPosition);
+        if (_workorder != null)
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+        if (_selectedProblem != null)
+            outState.putInt(STATE_SELECTED_PROBLEM, _selectedProblem.ordinal());
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        Log.v(TAG, "onDismiss");
-        super.onDismiss(dialog);
-        _clear = true;
         _primaryPosition = -1;
+        _secondaryPosition = -1;
+        _selectedProblem = null;
+        _explanationEditText.setText(null);
+        _primaryAdapter.clear();
+        _secondaryAdapter.clear();
+        _secondaryList = null;
+        _primaryList = null;
+        _secondarySpinner.setText(R.string.dialog_report_problem_spinner_1);
+        _primarySpinner.setText(R.string.dialog_report_problem_spinner_1);
+        super.onDismiss(dialog);
     }
 
-    private void setProblem2Visibility(int visibility) {
-        _secondarySpinner.setVisibility(visibility);
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
+        populateUi();
     }
 
     public void setListener(Listener listener, Workorder workorder) {
@@ -161,7 +210,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
             }
         }
 
-        setProblem2Visibility(View.GONE);
         _noteTextView.setVisibility(View.GONE);
 
         if (_primaryList == null) {
@@ -173,6 +221,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
             if (sList == null) {
                 _secondaryList = null;
+                _secondarySpinner.setVisibility(View.GONE);
                 _secondaryAdapter.clear();
             } else if (sList != _secondaryList) {
                 _secondaryList = sList;
@@ -187,6 +236,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             _secondarySpinner.setVisibility(View.VISIBLE);
             _secondarySpinner.clearFocus();
             _secondarySpinner.dismissDropDown();
+            //_secondarySpinner.setText("");
         }
 
         if (_selectedProblem == null) {
@@ -200,6 +250,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _explanationEditText.requestFocus();
                 _okButton.setEnabled(true);
                 break;
+
             case WILL_BE_LATE:
             case DO_NOT_HAVE_SHIPMENT:
             case DO_NOT_HAVE_INFO:
@@ -216,26 +267,26 @@ public class ReportProblemDialog extends DialogFragmentBase {
             case APPROVAL_DISAGREEMENT:
             case PAYMENT_NOT_RECEIVED:
             case PAYMENT_NOT_ACCURATE:
+            case APPROVAL:
                 _explanationEditText.requestFocus();
                 _okButton.setEnabled(true);
                 break;
+
             case SITE_NOT_READY:
                 _secondarySpinner.setHint(R.string.what_about_site);
-                _secondarySpinner.setText("");
                 _secondarySpinner.dismissDropDown();
                 _okButton.setEnabled(false);
                 break;
+
             case MISSING:
                 _secondarySpinner.setHint(R.string.what_are_you_missing);
-                _secondarySpinner.setText("");
                 _okButton.setEnabled(false);
                 break;
-            case APPROVAL:
-                break;
+
             default: {
                 //_primarySpinner.clearFocus();
                 _okButton.setEnabled(false);
-                setProblem2Visibility(View.GONE);
+                _secondarySpinner.setVisibility(View.GONE);
                 break;
             }
         }
@@ -279,9 +330,11 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 case CANNOT_MAKE_ASSIGNMENT:
                     ToastClient.toast(App.get(), R.string.sorry_to_hear_that_you_have_been_removed, Toast.LENGTH_LONG);
                     break;
+
                 case WILL_BE_LATE:
                     ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
                     break;
+
                 case SCOPE_OF_WORK:
                 case SITE_NOT_READY_CONTACT:
                 case SITE_NOT_READY_PRIOR_WORK:
@@ -297,12 +350,15 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 case DO_NOT_HAVE_OTHER:
                     ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                     break;
+
                 case BUYER_UNRESPONSIVE:
                     ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
                     break;
+
                 case PAYMENT_NOT_RECEIVED:
                     ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
                     break;
+
                 case SITE_NOT_READY:
                     break;
                 case MISSING:
