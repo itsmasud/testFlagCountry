@@ -59,6 +59,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private int _selectedPosition_careerSpinner = -1;
     private int _selectedPosition_directionSpinner = -1;
 
+    // Modes
+    private static final int CARRIER_FEDEX = 0;
+    private static final int CARRIER_UPS = 1;
+    private static final int CARRIER_USPS = 2;
+    private static final int CARRIER_OTHER = 3;
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -159,6 +165,27 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         return v;
     }
 
+    private void setCarieerSelection(final int selectedCarrier){
+        _selectedPosition_careerSpinner = selectedCarrier;
+        _carrierSpinner.setListSelection(_selectedPosition_careerSpinner);
+
+        switch (selectedCarrier){
+            case CARRIER_FEDEX: break;
+            case CARRIER_UPS: break;
+            case CARRIER_USPS: break;
+            case CARRIER_OTHER:
+                if (_selectedPosition_careerSpinner== CARRIER_OTHER) {
+                    _carrierLayout.setVisibility(View.VISIBLE);
+                } else {
+                    _carrierLayout.setVisibility(View.GONE);
+                }
+                break;
+
+        }
+
+
+    }
+
     private void populateSpinners() {
         getCarrierSpinner();
         getDirectionSpinner();
@@ -174,8 +201,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _carrierSpinner.setAdapter(adapter);
-
-
         }
         return _carrierSpinner;
     }
@@ -213,7 +238,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             _descriptionEditText.setText("");
             _trackingIdEditText.setText("");
         } else if (_selectedPosition_careerSpinner != -1) {
-            _carrierSpinner.setSelectedItem(_selectedPosition_careerSpinner);
             _carrier_selected.onItemClick(null, null, _selectedPosition_careerSpinner, 0);
         }
     }
@@ -248,12 +272,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _trackingIdEditText.setText(trackingId);
     }
 
-    public void setSelectedCarrier(final String careerName) {
+    public void setSelectedCarrier(final String carrierName) {
         try {
             for (int i = 0; i < getCarrierSpinner().getAdapter().getCount(); i++) {
-                if (getCarrierSpinner().getAdapter().getItem(i).equals(careerName)) {
-                    getCarrierSpinner().setSelectedItem(i);
+                if (getCarrierSpinner().getAdapter().getItem(i).equals(carrierName)) {
                     _carrier_selected.onItemClick(null, null, i, 0);
+                    getCarrierSpinner().setListSelection(i);
                     break;
                 }
             }
@@ -261,7 +285,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    setSelectedCarrier(careerName);
+                    setSelectedCarrier(carrierName);
                 }
             }, 100);
         }
@@ -304,12 +328,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final AdapterView.OnItemClickListener _carrier_selected = new AdapterView.OnItemClickListener() {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            _selectedPosition_careerSpinner = position;
-            if ("Other".equals(getCarrierSpinner().getAdapter().getItem(position).toString())) {
-                _carrierLayout.setVisibility(View.VISIBLE);
-            } else {
-                _carrierLayout.setVisibility(View.GONE);
-            }
+            setCarieerSelection(position);
         }
 
     };
@@ -326,39 +345,32 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         public void onClick(View v) {
 
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
-                ToastClient.toast(App.get(), "Missing tracking number", Toast.LENGTH_SHORT);
-                return;
-            }
-
-            if (getString(R.string.dialog_shipment_career_spinner_default_text).equals(_carrierSpinner.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_traking_number), Toast.LENGTH_SHORT);
                 return;
             }
 
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
-                ToastClient.toast(App.get(), "Missing description", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
                 return;
             }
-
-            if (getString(R.string.dialog_shipment_direction_spinner_default_text).equals(_directionSpinner.getText().toString())) {
-                ToastClient.toast(App.get(), getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
-                return;
-            }
-
 
             if (!"Other".equals(getCarrierSpinner().getText().toString())) {
-                final String career = _carrierSpinner.getText().toString();
-                if ("UPS".equals(career) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), "Tracking number is not a valid for UPS.", Toast.LENGTH_SHORT);
+                final String carrier = _carrierSpinner.getText().toString();
+                if ("UPS".equals(carrier) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(career) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), "Tracking number is not a valid for Fedex.", Toast.LENGTH_SHORT);
+                if ("Fedex".equals(carrier) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
+                    return;
+                }
+                if ("USPS".equals(carrier) && !"USPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
             } else {
                 if (misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
-                    ToastClient.toast(App.get(), "Career name is not inserted", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), getString(R.string.toast_missing_carrier_name), Toast.LENGTH_SHORT);
                     return;
                 }
             }
