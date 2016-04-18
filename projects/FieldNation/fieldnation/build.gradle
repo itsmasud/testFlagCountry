@@ -25,7 +25,7 @@ android {
     }
 
     defaultConfig {
-        minSdkVersion 11
+        minSdkVersion 14
         targetSdkVersion 22
         versionCode 78
         versionName "2.3.78"
@@ -96,11 +96,11 @@ dependencies {
     compile 'com.android.support:multidex:1.0.1'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') { transitive = true }
     compile 'com.google.android.gms:play-services:7.8.0'
-    compile 'com.google.android.gms:play-services-gcm:7.8'
+    compile 'com.google.android.gms:play-services-gcm:7.8.0'
     compile 'com.android.support:design:22.2.1'
-    compile 'com.android.support:appcompat-v7:22.2.1'
-    compile 'com.android.support:support-v4:22.2.1'
-    compile 'com.android.support:recyclerview-v7:22.2.1'
+    // compile 'com.android.support:appcompat-v7:22.2.1'
+    // compile 'com.android.support:support-v4:22.2.1'
+    // compile 'com.android.support:recyclerview-v7:22.2.1'
     compile('com.crashlytics.sdk.android:crashlytics:2.5.5@aar') {
         transitive = true;
     }
