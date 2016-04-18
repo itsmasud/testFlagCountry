@@ -123,6 +123,12 @@
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
+    <string name="toast_carrier_not_selected">Choose a carrier</string>
+    <string name="toast_direction_not_selected">Choose a direction</string>
+    <string name="toast_missing_traking_number">Missing tracking number</string>
+    <string name="toast_missing_description">Missing description</string>
+    <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -185,6 +191,8 @@
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
     <string name="dialog_shipment_title">Add Shipment</string>
+    <string name="dialog_shipment_career_spinner_default_text">What is the carrier?</string>
+    <string name="dialog_shipment_direction_spinner_default_text">What is the direction?</string>
 
     <string name="dialog_location_title">Location Settings</string>
     <string name="dialog_location_soft">We can\'t seem to gather your current location. Please enable your GPS.</string>
@@ -688,6 +696,7 @@
     <string-array name="carrier_list">
         <item>Fedex</item>
         <item>UPS</item>
+        <item>USPS</item>
         <item>Other</item>
     </string-array>
     <string-array name="pay_types">

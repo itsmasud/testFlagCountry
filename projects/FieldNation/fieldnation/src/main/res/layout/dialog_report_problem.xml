@@ -61,5 +61,6 @@
         style="?attr/dialogOkButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_below="@id/note_textview"
+        android:enabled="false"
         android:text="CONTINUE" />
 </RelativeLayout>
