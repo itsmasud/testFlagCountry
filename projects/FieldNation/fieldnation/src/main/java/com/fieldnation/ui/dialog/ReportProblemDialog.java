@@ -183,9 +183,13 @@ public class ReportProblemDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    public void setListener(Listener listener, Workorder workorder) {
-        _listener = listener;
+    public void show(Workorder workorder) {
         _workorder = workorder;
+        super.show();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void populateUi() {
