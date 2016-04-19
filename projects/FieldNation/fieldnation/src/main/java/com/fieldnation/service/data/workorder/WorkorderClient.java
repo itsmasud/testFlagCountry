@@ -248,9 +248,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Notification        -*/
     /*-*********************************-*/
-public static void actionMarkNotificationRead(Context context, long workorderId){
-    WorkorderTransactionBuilder.listAlerts(context, workorderId, true, false);
-}
+    public static void actionMarkNotificationRead(Context context, long workorderId) {
+        WorkorderTransactionBuilder.listAlerts(context, workorderId, true, false);
+    }
 
     /*-*********************************-*/
     /*-             Discounts           -*/

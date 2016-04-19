@@ -25,6 +25,8 @@ public class Workorder implements Parcelable {
     private Long _bundleId;
     @Json(name = "buyerRatingInfo")
     private BuyerRating _buyerRatingInfo;
+    @Json(name = "keyEvents")
+    private KeyEvents _keyEvents;
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "collectedSignature")
@@ -125,6 +127,10 @@ public class Workorder implements Parcelable {
 
     public BuyerRating getBuyerRatingInfo() {
         return _buyerRatingInfo;
+    }
+
+    public KeyEvents getKeyEvents() {
+        return _keyEvents;
     }
 
     public String getClosingNotes() {

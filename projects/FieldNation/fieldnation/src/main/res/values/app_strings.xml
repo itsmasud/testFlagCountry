@@ -223,6 +223,7 @@
 
     <string name="dialog_terms_title">Terms and Conditions</string>
     <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
+    <string name="dialog_report_problem_spinner_1">What\'s the problem?</string>
 
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
@@ -725,7 +726,6 @@
         <item>Approved</item>
     </string-array>
 
-
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
@@ -747,6 +747,7 @@
         <item>Fee Paid</item>
         <item>Unknown</item>
     </string-array>
+
     <string-array name="task_type">
         <item>Reserved</item>
         <item>Confirm Assignment</item>
@@ -764,37 +765,25 @@
         <item>Download a File</item>
     </string-array>
 
-    <string-array name="enum_report_problem_assigned">
-        <item>I can\'t make my assignment</item>
-        <item>I\'m going to be late</item>
-        <item>I don\'t have what I need</item>
-        <item>Buyer unresponsive</item>
-        <item>Scope of work</item>
-        <item>Site is not ready</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_completed">
-        <item>Haven\'t approved yet</item>
-        <item>I\'m disagreed with approval</item>
-        <item>Buyer unresponsive</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_approved">
-        <item>Haven\'t received payment</item>
-        <item>Amount is not accurate</item>
-        <item>Other</item>
-    </string-array>
+    <!-- If you change any of these, make sure you update
+        com.fieldnation.service.data.workorder.ReportProblemType -->
+    <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
+    <string name="im_going_to_be_late">I\'m going to be late</string>
+    <string name="buyer_unresponsive">Buyer unresponsive</string>
+    <string name="scope_of_work">Scope of work</string>
+    <string name="site_not_ready">Site is not ready</string>
+    <string name="other">Other</string>
+    <string name="havent_approved_yet">Haven\'t approved yet</string>
+    <string name="disagree_with_approval">Disagreement on work completion</string>
+    <string name="havent_received_payment">Haven\'t received payment</string>
+    <string name="amount_not_accurate">Amount is not accurate</string>
+    <string name="a_shipment">A shipment</string>
+    <string name="information">Information</string>
+    <string name="response_from_someone">Response from someone</string>
+    <string name="contact_not_available">Contact not available</string>
+    <string name="prior_work_needs_to_be_completed">Prior work needs to be completed</string>
+    <string name="i_dont_have_access">I don\'t have access</string>
+    <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
+    <string name="approval">Approval</string>
 
-    <string-array name="enum_report_problem_missing">
-        <item>A shipment</item>
-        <item>Information</item>
-        <item>Response from someone</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_site_not_ready">
-        <item>Contact not available</item>
-        <item>Prior work needs to be completed</item>
-        <item>I don\'t have access</item>
-        <item>Other</item>
-    </string-array>
 </resources>
