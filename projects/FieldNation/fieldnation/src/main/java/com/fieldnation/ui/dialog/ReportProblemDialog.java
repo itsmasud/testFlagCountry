@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.workorder.ReportProblemType;
@@ -30,6 +33,8 @@ import com.fieldnation.utils.misc;
  */
 public class ReportProblemDialog extends DialogFragmentBase {
     private static final String TAG = "ReportProblemDialog";
+    // State
+    private static final String STATE_WORKORDER = "ReportProblemDialog:STATE_WORKORDER";
 
     // Ui
     private FnSpinner _problem1Spinner;
@@ -56,7 +61,32 @@ public class ReportProblemDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        }
+
         setStyle(STYLE_NO_TITLE, 0);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (outState != null) {
+            outState.putParcelable(STATE_WORKORDER, _workorder);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_WORKORDER))
+                _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
+        }
+        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -74,6 +104,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
 
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
 
@@ -98,9 +129,14 @@ public class ReportProblemDialog extends DialogFragmentBase {
         _problem2Spinner.setVisibility(visibility);
     }
 
-    public void setListener(Listener listener, Workorder workorder) {
+    public void setListener(Listener listener) {
         _listener = listener;
+    }
+
+    public void show(Workorder workorder) {
         _workorder = workorder;
+        super.show();
+//        populateUi();
     }
 
     private void populateUi() {
@@ -115,10 +151,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     R.array.enum_report_problem_assigned,
                     R.layout.view_spinner_item);
         } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.COMPLETED)) {
-            adapter = ArrayAdapter.createFromResource(getActivity(),
+            adapter = ArrayAdapter.createFromResource(
+                    getActivity(),
                     R.array.enum_report_problem_completed,
                     R.layout.view_spinner_item);
-        } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+        } else if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
             adapter = ArrayAdapter.createFromResource(getActivity(),
                     R.array.enum_report_problem_approved,
                     R.layout.view_spinner_item);
@@ -142,12 +180,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
                     _noteTextView.setVisibility(View.VISIBLE);
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // I\'m going to be late
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 2: { // I don\'t have what I need
@@ -164,17 +202,16 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _problem2Spinner.setHint(R.string.what_are_you_missing);
                     _problem2Spinner.setText("");
                     _problem2Spinner.dismissDropDown();
-                    _okButton.setEnabled(false);
                     break;
                 }
                 case 3: { // Buyer unresponsive
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 4: { // Scope of work
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 5: { // Site is not ready
@@ -190,12 +227,11 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     _problem2Spinner.setHint(R.string.what_about_site);
                     _problem2Spinner.setText("");
                     _problem2Spinner.dismissDropDown();
-                    _okButton.setEnabled(false);
                     break;
                 }
                 case 6: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -212,22 +248,22 @@ public class ReportProblemDialog extends DialogFragmentBase {
             switch (_spinner1Position) {
                 case 0: { // Approval not yet
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // Approval disagreement
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 2: { // Buyer unresponsive
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 3: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -239,21 +275,22 @@ public class ReportProblemDialog extends DialogFragmentBase {
             }
         }
 
-        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
             switch (_spinner1Position) {
                 case 0: { // Payment not received
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 case 1: { // Payment not accurate
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
-                case 3: { // Other
+                case 2: { // Other
                     _explanationEditText.requestFocus();
-                    _okButton.setEnabled(true);
+                    misc.showKeyboard(_explanationEditText);
                     break;
                 }
                 default: {
@@ -281,7 +318,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _spinner2Position = position;
             _explanationEditText.requestFocus();
-            _okButton.setEnabled(true);
+            misc.showKeyboard(_explanationEditText);
         }
     };
 
@@ -382,12 +419,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
                         ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.APPROVAL_DISAGREEMENT);
                         break;
-                    case 3: { // Buyer unresponsive
+                    case 2: { // Buyer unresponsive
                         ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.BUYER_UNRESPONSIVE);
                         break;
                     }
-                    case 4: { // Other
+                    case 3: { // Other
                         ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
                         _listener.onReportAProblem(explanation, ReportProblemType.OTHER);
                         break;
@@ -398,7 +435,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 }
             }
 
-            if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED)) {
+            if (_workorder.getWorkorderStatus().equals(WorkorderStatus.APPROVED) ||
+                    _workorder.getWorkorderStatus().equals(WorkorderStatus.PAID)) {
                 switch (_spinner1Position) {
                     case 0: // Payment not received
                         ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
@@ -418,8 +456,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     }
                 }
             }
-
-
             dismiss();
         }
     };
@@ -428,6 +464,22 @@ public class ReportProblemDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
+        }
+    };
+
+    private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (_explanationEditText.getText().toString().trim().length() > 0) {
+                _okButton.setEnabled(true);
+            } else {
+                _okButton.setEnabled(false);
+            }
+        }
+
+        public void afterTextChanged(Editable s) {
         }
     };
 
