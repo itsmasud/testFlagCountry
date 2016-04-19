@@ -125,6 +125,10 @@
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
+    <string name="toast_missing_traking_number">Missing tracking number</string>
+    <string name="toast_missing_description">Missing description</string>
+    <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>

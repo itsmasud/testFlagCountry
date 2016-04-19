@@ -201,6 +201,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _carrierSpinner.setAdapter(adapter);
+
+
         }
         return _carrierSpinner;
     }
@@ -349,22 +351,33 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 return;
             }
 
+            if (getString(R.string.dialog_shipment_career_spinner_default_text).equals(_carrierSpinner.getText().toString())) {
+                ToastClient.toast(App.get(), getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
+                return;
+            }
+
             if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
                 return;
             }
 
+            if (getString(R.string.dialog_shipment_direction_spinner_default_text).equals(_directionSpinner.getText().toString())) {
+                ToastClient.toast(App.get(), getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
+                return;
+            }
+
             if (!"Other".equals(getCarrierSpinner().getText().toString())) {
                 final String carrier = _carrierSpinner.getText().toString();
-                if ("UPS".equals(carrier) && !"UPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                if ("UPS".equals(carrier) && !"UPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(carrier) && !"Fedex".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+                if ("Fedex".equals(carrier) && !"Fedex".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("USPS".equals(carrier) && !"USPS".equals(misc.getCareerName(_trackingIdEditText.getText().toString()))) {
+
+                if ("USPS".equals(carrier) && !"USPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
                     ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
                     return;
                 }
