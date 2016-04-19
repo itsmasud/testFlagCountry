@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CustomField implements Parcelable {
@@ -106,7 +107,7 @@ public class CustomField implements Parcelable {
 
     public static CustomField fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(CustomField.class, json);
+            return Unserializer.unserializeObject(CustomField.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

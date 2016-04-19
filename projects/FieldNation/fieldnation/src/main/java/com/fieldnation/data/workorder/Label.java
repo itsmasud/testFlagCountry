@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Label {
@@ -57,7 +58,7 @@ public class Label {
 
     public static Label fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Label.class, json);
+            return Unserializer.unserializeObject(Label.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

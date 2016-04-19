@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class IncreaseRequestInfo {
@@ -111,7 +112,7 @@ public class IncreaseRequestInfo {
 
     public static IncreaseRequestInfo fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(IncreaseRequestInfo.class, json);
+            return Unserializer.unserializeObject(IncreaseRequestInfo.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
