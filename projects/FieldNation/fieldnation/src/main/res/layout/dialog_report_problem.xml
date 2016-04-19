@@ -11,28 +11,33 @@
         android:text="There's a problem" />
 
     <com.fieldnation.ui.FnSpinner
-        android:id="@+id/problem1_spinner"
+        android:id="@+id/primary_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title_textview"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="4dp"
         android:focusable="true"
-        android:text="What\'s the problem?" />
+        android:text="@string/dialog_report_problem_spinner_1" />
 
 
     <com.fieldnation.ui.FnSpinner
-        android:id="@+id/problem2_spinner"
+        android:id="@+id/secondary_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/problem1_spinner"
-        android:text="What\'s the problem?"
+        android:layout_below="@id/primary_spinner"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="4dp"
+        android:text="@string/dialog_report_problem_spinner_1"
         android:visibility="gone" />
 
     <android.support.design.widget.TextInputLayout
         android:id="@+id/explanation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/problem2_spinner"
-        android:layout_marginBottom="16dp">
+        android:layout_below="@+id/secondary_spinner"
+        android:layout_marginBottom="16dp"
+        android:layout_marginLeft="-1dp">
 
         <EditText
             android:id="@+id/explanation_edittext"

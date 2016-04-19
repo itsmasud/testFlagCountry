@@ -1,13 +1,13 @@
 package com.fieldnation.data.workorder;
 
 public enum WorkorderStatus {
-    AVAILABLE("STATUS_AVAILABLE"),
-    ASSIGNED("STATUS_ASSIGNED"),
-    INPROGRESS("STATUS_INPROGRESS"), // == assigned
-    COMPLETED("STATUS_COMPLETED"),
-    CANCELED("STATUS_CANCELLED"),
-    PAID("STATUS_PAID"), // == completed
-    APPROVED("STATUS_APPROVED"), // == completed
+    AVAILABLE("STATUS_AVAILABLE"), // 2 or 9
+    ASSIGNED("STATUS_ASSIGNED"), // 3
+    INPROGRESS("STATUS_INPROGRESS"), // 3 + checkedin/out -- assigned
+    COMPLETED("STATUS_COMPLETED"), // 4 workdone
+    APPROVED("STATUS_APPROVED"), // 5 == completed
+    PAID("STATUS_PAID"), // 6 == completed
+    CANCELED("STATUS_CANCELLED"), // 7
     NA("NA");
 
     private String _value;
