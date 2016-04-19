@@ -75,7 +75,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.v(TAG, "onActivityResult");
+//        Log.v(TAG, "onActivityResult");
         if (requestCode == RESULT_CODE_BARCODE_SCAN) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.v(TAG, "requestCode");
@@ -88,7 +88,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
+//        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TASKID))
                 _taskId = savedInstanceState.getLong(STATE_TASKID);
@@ -165,25 +165,24 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         return v;
     }
 
-    private void setCarieerSelection(final int selectedCarrier){
+    private void setCarieerSelection(final int selectedCarrier) {
         _selectedPosition_careerSpinner = selectedCarrier;
         _carrierSpinner.setListSelection(_selectedPosition_careerSpinner);
 
-        switch (selectedCarrier){
-            case CARRIER_FEDEX: break;
-            case CARRIER_UPS: break;
-            case CARRIER_USPS: break;
-            case CARRIER_OTHER:
-                if (_selectedPosition_careerSpinner== CARRIER_OTHER) {
-                    _carrierLayout.setVisibility(View.VISIBLE);
-                } else {
-                    _carrierLayout.setVisibility(View.GONE);
-                }
+        switch (selectedCarrier) {
+            case CARRIER_FEDEX:
+                _carrierLayout.setVisibility(View.GONE);
                 break;
-
+            case CARRIER_UPS:
+                _carrierLayout.setVisibility(View.GONE);
+                break;
+            case CARRIER_USPS:
+                _carrierLayout.setVisibility(View.GONE);
+                break;
+            case CARRIER_OTHER:
+                _carrierLayout.setVisibility(View.VISIBLE);
+                break;
         }
-
-
     }
 
     private void populateSpinners() {
@@ -201,8 +200,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _carrierSpinner.setAdapter(adapter);
-
-
         }
         return _carrierSpinner;
     }
@@ -225,7 +222,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
-        Log.v(TAG, "onResume");
+//        Log.v(TAG, "onResume");
 
         populateSpinners();
 
@@ -247,7 +244,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.v(TAG, "onDestroy");
+//        Log.v(TAG, "onDestroy");
         _clear = true;
     }
 
@@ -279,7 +276,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             for (int i = 0; i < getCarrierSpinner().getAdapter().getCount(); i++) {
                 if (getCarrierSpinner().getAdapter().getItem(i).equals(carrierName)) {
                     _carrier_selected.onItemClick(null, null, i, 0);
-                    getCarrierSpinner().setListSelection(i);
                     break;
                 }
             }
