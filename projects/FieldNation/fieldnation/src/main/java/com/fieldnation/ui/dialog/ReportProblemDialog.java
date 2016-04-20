@@ -39,6 +39,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private static final String STATE_PRIMARY_POS = "STATE_PRIMARY_POS";
     private static final String STATE_SECONDARY_POS = "STATE_SECONDARY_POS";
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
+    private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
     // Ui
     private FnSpinner _primarySpinner;
@@ -129,6 +130,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
         if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];
 
+        if (savedInstanceState.containsKey(STATE_OK_ENABLED))
+            _okButton.setEnabled(savedInstanceState.getBoolean(STATE_OK_ENABLED));
+
         if (_primaryPosition != -1 && _workorder != null) {
             _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
             if (_primaryList != null) {
@@ -160,6 +164,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_WORKORDER, _workorder);
         if (_selectedProblem != null)
             outState.putInt(STATE_SELECTED_PROBLEM, _selectedProblem.ordinal());
+        if (_okButton != null)
+            outState.putBoolean(STATE_OK_ENABLED, _okButton.isEnabled());
 
         super.onSaveInstanceState(outState);
     }
