@@ -78,7 +78,7 @@ public class ReportProblemListFactory {
                 return RPT_ASSIGNED;
             case COMPLETED:
                 try {
-                    if (workorder.getKeyEvents() != null
+                    if (workorder.getKeyEvents() != null && workorder.getKeyEvents().getWorkDoneTimeISO() != null
                             && System.currentTimeMillis() < ISO8601.toUtc(workorder.getKeyEvents().getWorkDoneTimeISO())) {
                         return RPT_COMPLETED_PRE_REVIEW;
                     }
