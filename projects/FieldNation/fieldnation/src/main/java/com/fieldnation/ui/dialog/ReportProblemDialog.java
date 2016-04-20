@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,6 +39,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private static final String STATE_PRIMARY_POS = "STATE_PRIMARY_POS";
     private static final String STATE_SECONDARY_POS = "STATE_SECONDARY_POS";
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
+    private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
     // Ui
     private FnSpinner _primarySpinner;
@@ -93,6 +96,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
+        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
 
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
 
@@ -126,6 +130,9 @@ public class ReportProblemDialog extends DialogFragmentBase {
         if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];
 
+        if (savedInstanceState.containsKey(STATE_OK_ENABLED))
+            _okButton.setEnabled(savedInstanceState.getBoolean(STATE_OK_ENABLED));
+
         if (_primaryPosition != -1 && _workorder != null) {
             _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
             if (_primaryList != null) {
@@ -157,6 +164,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_WORKORDER, _workorder);
         if (_selectedProblem != null)
             outState.putInt(STATE_SELECTED_PROBLEM, _selectedProblem.ordinal());
+        if (_okButton != null)
+            outState.putBoolean(STATE_OK_ENABLED, _okButton.isEnabled());
 
         super.onSaveInstanceState(outState);
     }
@@ -181,6 +190,10 @@ public class ReportProblemDialog extends DialogFragmentBase {
         super.onResume();
         Log.v(TAG, "onResume");
         populateUi();
+        _textEditText_watcherListener.onTextChanged(
+                _explanationEditText.getText().toString(),
+                0, _explanationEditText.getText().toString().length(),
+                _explanationEditText.getText().toString().length());
     }
 
     public void show(Workorder workorder) {
@@ -252,7 +265,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
                 _noteTextView.setVisibility(View.VISIBLE);
                 _explanationEditText.requestFocus();
-                _okButton.setEnabled(true);
+                misc.showKeyboard(_explanationEditText);
                 break;
 
             case WILL_BE_LATE:
@@ -273,7 +286,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             case PAYMENT_NOT_ACCURATE:
             case APPROVAL:
                 _explanationEditText.requestFocus();
-                _okButton.setEnabled(true);
+                misc.showKeyboard(_explanationEditText);
                 break;
 
             case SITE_NOT_READY:
@@ -301,6 +314,10 @@ public class ReportProblemDialog extends DialogFragmentBase {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _primaryPosition = position;
             _selectedProblem = _primaryAdapter.getItem(position);
+            _textEditText_watcherListener.onTextChanged(
+                    _explanationEditText.getText().toString(),
+                    0, _explanationEditText.getText().toString().length(),
+                    _explanationEditText.getText().toString().length());
             populateUi();
         }
     };
@@ -310,8 +327,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _secondaryPosition = position;
             _explanationEditText.requestFocus();
-            _okButton.setEnabled(true);
+            misc.showKeyboard(_explanationEditText);
             _selectedProblem = _secondaryAdapter.getItem(position);
+            _textEditText_watcherListener.onTextChanged(
+                    _explanationEditText.getText().toString(),
+                    0, _explanationEditText.getText().toString().length(),
+                    _explanationEditText.getText().toString().length());
             populateUi();
         }
     };
@@ -381,6 +402,24 @@ public class ReportProblemDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
+        }
+    };
+
+    private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (_primaryPosition < 0) return;
+            if (_secondarySpinner.isShown()) if (_secondaryPosition < 0) return;
+            if (_explanationEditText.getText().toString().trim().length() > 0) {
+                _okButton.setEnabled(true);
+            } else {
+                _okButton.setEnabled(false);
+            }
+        }
+
+        public void afterTextChanged(Editable s) {
         }
     };
 
