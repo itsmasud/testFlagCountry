@@ -419,20 +419,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         public void onConnected() {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
-            _workorderClient.subActions(_workorderId);
-            _workorderClient.subDeliverableUpload();
             getData(true);
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            getData(false);
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
-            getData(false);
         }
 
         @Override

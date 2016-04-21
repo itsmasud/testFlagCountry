@@ -953,7 +953,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onConnected() {
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.subList(_displayView);
-            _workorderClient.subGet(false);
             _workorderClient.subActions();
             _adapter.refreshPages();
         }

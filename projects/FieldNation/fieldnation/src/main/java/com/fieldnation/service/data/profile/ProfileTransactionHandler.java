@@ -186,6 +186,8 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.switchUser(context, userId, false);
 
+        ProfileClient.get(context, userId, false, false);
+
         return Result.FINISH;
     }
 }

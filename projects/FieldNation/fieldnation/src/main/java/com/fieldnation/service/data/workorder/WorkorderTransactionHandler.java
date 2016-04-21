@@ -11,6 +11,7 @@ import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -325,6 +326,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
+        WorkorderClient.get(context, workorderId, false);
+
         return Result.FINISH;
     }
 
@@ -344,6 +347,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
+        WorkorderClient.get(context, workorderId, false);
+        WorkorderClient.listTasks(context, workorderId, false);
+
         return Result.FINISH;
     }
 
@@ -354,6 +360,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "assignment", false);
 
         ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        WorkorderClient.get(context, workorderId, false);
 
         return Result.FINISH;
     }
@@ -366,6 +374,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
+        WorkorderClient.get(context, workorderId, false);
+
         return Result.FINISH;
     }
 
@@ -375,6 +385,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         String action = params.getString("param");
 
         WorkorderDispatch.action(context, workorderId, action, false);
+
+        WorkorderClient.get(context, workorderId, false);
+
+        if ("messages/new".equals(action))
+            WorkorderClient.listMessages(context, workorderId, false, false);
 
         return Result.FINISH;
     }
@@ -387,6 +402,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "request", false);
 
         ToastClient.snackbar(context, "Success! You have requested this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+        WorkorderClient.get(context, workorderId, false);
 
         return Result.FINISH;
     }
@@ -496,7 +513,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long signatureId = params.getLong("signatureId");
         byte[] data = resultData.getByteArray();
 
-
         WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
 
         //store the signature data
@@ -522,6 +538,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         String filename = params.getString("filename");
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
+
+        WorkorderClient.get(context, workorderId, false);
 
         return Result.FINISH;
     }

@@ -1794,8 +1794,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConnected() {
             subscribeData();
-            _workorderClient.subDeliverableUpload();
-
         }
 
         @Override
