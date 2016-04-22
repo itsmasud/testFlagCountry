@@ -361,9 +361,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
-        WorkorderClient.get(context, workorderId, false);
-
-        return Result.FINISH;
+        return handleDetails(context, transaction, params, resultData);
     }
 
     private Result handleCreateShipment(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -386,10 +384,25 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, workorderId, action, false);
 
-        WorkorderClient.get(context, workorderId, false);
-
-        if ("messages/new".equals(action))
+        if (action.equals("messages/new")) {
             WorkorderClient.listMessages(context, workorderId, false, false);
+        } else if (action.startsWith("tasks/complete/")) {
+            WorkorderClient.listTasks(context, workorderId, false);
+        } else if (action.equals("closing-notes")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("complete")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("incomplete")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("checkin")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("checkout")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("delete_request")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else {
+            WorkorderClient.get(context, workorderId, false);
+        }
 
         return Result.FINISH;
     }
@@ -403,9 +416,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         ToastClient.snackbar(context, "Success! You have requested this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
-        WorkorderClient.get(context, workorderId, false);
-
-        return Result.FINISH;
+        return handleDetails(context, transaction, params, resultData);
     }
 
     private Result handleList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
@@ -564,6 +575,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     break;
                 case "pAction":
                     WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
+                    WorkorderClient.get(context, params.getLong("workorderId"), true, false);
                     break;
                 case "pMessageList":
                     WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());

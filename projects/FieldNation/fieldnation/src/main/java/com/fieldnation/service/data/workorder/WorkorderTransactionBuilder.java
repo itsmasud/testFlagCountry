@@ -205,19 +205,23 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         return null;
     }
 
+    // returns the modified task, not the work order details or task list
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
         action(context, workorderId, "tasks/complete/" + taskId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
     }
 
+    // returns the entire work order details
     public static void actionComplete(Context context, long workorderId) {
         action(context, workorderId, "complete", null, null, null);
     }
 
+    // returns the entire work order details
     public static void actionIncomplete(Context context, long workorderId) {
         action(context, workorderId, "incomplete", null, null, null);
     }
 
+    // returns an error/success message
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
         if (misc.isEmptyOrNull(explanation)) {
             action(context, workorderId, "report-problem", null,
@@ -231,12 +235,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId) {
         action(context, workorderId, "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkin_time=" + ISO8601.now());
     }
 
+    // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId, Location location) {
         action(context, workorderId, "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -245,12 +251,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&gps_lon=" + location.getLongitude());
     }
 
+    // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId) {
         action(context, workorderId, "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkout_time=" + ISO8601.now());
     }
 
+    // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, Location location) {
         action(context, workorderId, "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -259,6 +267,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&gps_lon=" + location.getLongitude());
     }
 
+    // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
         action(context, workorderId, "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -266,6 +275,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&checkout_time=" + ISO8601.now());
     }
 
+    // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
         action(context, workorderId, "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -275,6 +285,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&gps_lon=" + location.getLongitude());
     }
 
+    // returns the full work order details
     public static void actionClosingNotes(Context context, long workorderId, String closingNotes) {
         action(context, workorderId, "closing-notes", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -285,6 +296,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         action(context, workorderId, "acknowledge-hold", null, null, null);
     }
 
+    // returns error/success state
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
@@ -363,6 +375,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         expiresAfterInSecond, pay, schedule, expenses));
     }
 
+    // returns entire work order
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
         context.startService(
                 actionRequestIntent(context, workorderId, expireInSeconds));
@@ -382,9 +395,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds));
     }
 
+
+    // returns work order details
     public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
         Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
-
         context.startService(intent);
     }
 
@@ -413,7 +427,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         );
     }
 
-
+    // returns work order details
     public static void actionWithdrawRequest(Context context, long workorderId) {
         try {
             JsonObject _action = new JsonObject();
