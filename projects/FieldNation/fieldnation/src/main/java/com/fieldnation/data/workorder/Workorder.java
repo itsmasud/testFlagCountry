@@ -19,6 +19,8 @@ public class Workorder implements Parcelable {
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
     private Integer _alertCount;
+    @Json(name = "approvalGrade")
+    private ApprovalGrade _approvalGrade;
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
@@ -115,6 +117,10 @@ public class Workorder implements Parcelable {
 
     public Integer getAlertCount() {
         return _alertCount;
+    }
+
+    public ApprovalGrade getApprovalGrade() {
+        return _approvalGrade;
     }
 
     public Integer getBundleCount() {

@@ -3,6 +3,8 @@ package com.fieldnation.service.data.workorder;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 
+import java.util.Calendar;
+
 /**
  * Created by Michael on 4/13/2016.
  * <p/>
@@ -78,9 +80,14 @@ public class ReportProblemListFactory {
                 return RPT_ASSIGNED;
             case COMPLETED:
                 try {
-                    if (workorder.getKeyEvents() != null
-                            && System.currentTimeMillis() < ISO8601.toUtc(workorder.getKeyEvents().getWorkDoneTimeISO())) {
-                        return RPT_COMPLETED_PRE_REVIEW;
+                    if (workorder.getKeyEvents() != null && workorder.getKeyEvents().getWorkDoneTimeISO() != null
+                            && workorder.getApprovalGrade() != null && workorder.getApprovalGrade().getReviewPeriodDays() > 0) {
+                        Calendar doneTime = ISO8601.toCalendar(workorder.getKeyEvents().getWorkDoneTimeISO());
+                        doneTime.add(Calendar.DAY_OF_YEAR, workorder.getApprovalGrade().getReviewPeriodDays());
+
+                        if (System.currentTimeMillis() < doneTime.getTimeInMillis()) {
+                            return RPT_COMPLETED_PRE_REVIEW;
+                        }
                     }
                 } catch (Exception ex) {
                     ex.printStackTrace();
