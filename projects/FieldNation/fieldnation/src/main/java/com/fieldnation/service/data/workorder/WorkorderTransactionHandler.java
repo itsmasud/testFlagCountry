@@ -400,6 +400,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("delete_request")) {
             return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("DELETE_LOG")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.startsWith("log")) {
+            return handleDetails(context, transaction, params, resultData);
         } else {
             WorkorderClient.get(context, workorderId, false);
         }

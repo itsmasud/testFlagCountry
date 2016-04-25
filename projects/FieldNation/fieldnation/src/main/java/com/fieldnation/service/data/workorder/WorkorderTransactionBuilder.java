@@ -476,11 +476,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/rate")
                     .path("/api/rest/v1/workorder/" + workorderId + "/rate");
 
-            if (body != null) {
-                http.body(body);
-
-                http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
-            }
+            http.body(body);
+            http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
             return WebTransactionBuilder.builder(context)
                     .priority(Priority.LOW)
@@ -520,6 +517,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    // returns signature list
     public static void deleteSignature(Context context, long workorderId, long signatureId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -547,6 +545,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 */
 
+    // returns the signature list
     public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
         action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "signatureFormat=svg"
@@ -562,6 +561,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 */
 
+    // returns task list
     // TODO make sure this works
     public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
         action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -609,6 +609,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //        }
 //    }
 
+
+    // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
         Resources res = context.getResources();
@@ -713,6 +715,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    // returns deliverable list
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -765,6 +768,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-**********************************-*/
     /*-             Discount             -*/
     /*-**********************************-*/
+    // returns a discount list
     public static void createDiscount(Context context, long workorderId, String description, double price) {
         try {
             WebTransactionBuilder.builder(context)
@@ -785,6 +789,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    // returns a discount list
     public static void deleteDiscount(Context context, long workorderId, long discountId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -807,6 +812,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Expense             -*/
     /*-*********************************-*/
+    // returns boolean
     public static void createExpense(Context context, long workorderId, String description, double price,
                                      ExpenseCategory category) {
         try {
@@ -830,6 +836,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+    // returns the expense
     public static void deleteExpense(Context context, long workorderId, long expenseId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -852,12 +859,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-***********************************-*/
     /*-             Time Logs             -*/
     /*-***********************************-*/
+    // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
         action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate));
     }
 
+    // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
         action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
@@ -865,12 +874,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&noOfDevices=" + numberOfDevices);
     }
 
+    // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
         action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate));
     }
 
+    // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
         action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
@@ -878,6 +889,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&noOfDevices=" + numberOfDevices);
     }
 
+    // returns details
     public static void deleteTimeLog(Context context, long workorderId, long loggedHoursId) {
         try {
             WebTransactionBuilder.builder(context)
@@ -899,11 +911,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-***********************************-*/
     /*-             Shipments             -*/
     /*-***********************************-*/
+    // returns the shipment data
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber) {
         context.startService(postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber));
     }
 
+    // returns the shipment data
     public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
                                             String carrier, String carrierName, String trackingNumber) {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -917,11 +931,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         description, isToSite, carrier, carrierName, trackingNumber, -1));
     }
 
+    // returns the shipment data
     public static void postShipment(Context context, long workorderId, String description, boolean isToSite,
                                     String carrier, String carrierName, String trackingNumber, long taskId) {
         context.startService(postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId));
     }
 
+    // returns the shipment data
     public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
                                             String carrier, String carrierName, String trackingNumber, long taskId) {
         return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -936,10 +952,12 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         description, isToSite, carrier, carrierName, trackingNumber, taskId));
     }
 
+    // returns the task list
     public static void actionCompleteShipmentTask(Context context, long workorderId, long shipmentId, long taskId) {
         context.startService(actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId));
     }
 
+    // returns the task list
     public static Intent actionCompleteShipmentTaskIntent(Context context, long workorderId, long shipmentId, long taskId) {
         return action(context, workorderId, "tasks/complete/" + taskId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -972,6 +990,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //            Log.v(TAG, ex);
 //        }
 //    }
+
+    // returns shipment lists
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {
         try {
             WebTransactionBuilder.builder(context)
