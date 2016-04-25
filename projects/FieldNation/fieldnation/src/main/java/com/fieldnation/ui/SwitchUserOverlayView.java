@@ -98,6 +98,8 @@ public class SwitchUserOverlayView extends RelativeLayout {
         @Override
         public void onUserSwitched(Profile profile) {
             MyWorkActivity.startNew(getContext());
+//            _textView.clearAnimation();
+//            setVisibility(GONE);
         }
     };
 
