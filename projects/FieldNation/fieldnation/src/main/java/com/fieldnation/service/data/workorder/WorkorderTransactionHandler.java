@@ -383,11 +383,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         String action = params.getString("param");
 
         WorkorderDispatch.action(context, workorderId, action, false);
+        WorkorderClient.listTasks(context, workorderId, false);
 
         if (action.equals("messages/new")) {
             WorkorderClient.listMessages(context, workorderId, false, false);
-        } else if (action.startsWith("tasks/complete/")) {
-            WorkorderClient.listTasks(context, workorderId, false);
         } else if (action.equals("closing-notes")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("complete")) {
