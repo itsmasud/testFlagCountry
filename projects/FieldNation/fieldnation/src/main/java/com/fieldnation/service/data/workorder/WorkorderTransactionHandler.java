@@ -385,23 +385,31 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, action, false);
         WorkorderClient.listTasks(context, workorderId, false);
 
-        if (action.equals("messages/new")) {
-            WorkorderClient.listMessages(context, workorderId, false, false);
-        } else if (action.equals("closing-notes")) {
-            return handleDetails(context, transaction, params, resultData);
-        } else if (action.equals("complete")) {
-            return handleDetails(context, transaction, params, resultData);
-        } else if (action.equals("incomplete")) {
+        if (action.equals("acknowledge-hold")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("checkin")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("checkout")) {
             return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("closing-notes")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("complete")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("decline")) {
+            return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("delete_request")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("DELETE_LOG")) {
             return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("incomplete")) {
+            return handleDetails(context, transaction, params, resultData);
         } else if (action.startsWith("log")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("messages/new")) {
+            WorkorderClient.listMessages(context, workorderId, false, false);
+        } else if (action.equals("pay-change")) {
+            return handleDetails(context, transaction, params, resultData);
+        } else if (action.equals("ready")) {
             return handleDetails(context, transaction, params, resultData);
         } else {
             WorkorderClient.get(context, workorderId, false);

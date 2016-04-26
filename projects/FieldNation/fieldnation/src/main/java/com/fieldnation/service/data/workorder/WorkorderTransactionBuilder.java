@@ -136,13 +136,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
-    public static void action(Context context, long workorderId, String action, String params,
-                              String contentType, String body) {
+    private static void action(Context context, long workorderId, String action, String params,
+                               String contentType, String body) {
         action(context, workorderId, action, params, contentType, body, true);
     }
 
-    public static void action(Context context, long workorderId, String action, String params,
-                              String contentType, String body, boolean useKey) {
+    private static void action(Context context, long workorderId, String action, String params,
+                               String contentType, String body, boolean useKey) {
 
         context.startService(
                 action(context, workorderId, action, params, contentType, body,
@@ -150,15 +150,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         WorkorderTransactionHandler.pAction(workorderId, action), useKey));
     }
 
-    public static Intent action(Context context, long workorderId, String action, String params,
-                                String contentType, String body, Class<? extends WebTransactionHandler> clazz,
-                                byte[] handlerParams) {
+    private static Intent action(Context context, long workorderId, String action, String params,
+                                 String contentType, String body, Class<? extends WebTransactionHandler> clazz,
+                                 byte[] handlerParams) {
         return action(context, workorderId, action, params, contentType, body, clazz, handlerParams, true);
     }
 
-    public static Intent action(Context context, long workorderId, String action, String params,
-                                String contentType, String body, Class<? extends WebTransactionHandler> clazz,
-                                byte[] handlerParams, boolean useKey) {
+    private static Intent action(Context context, long workorderId, String action, String params,
+                                 String contentType, String body, Class<? extends WebTransactionHandler> clazz,
+                                 byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
         try {
             JsonObject _action = new JsonObject();
@@ -203,6 +203,51 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             Log.v(TAG, ex);
         }
         return null;
+    }
+
+    // returns work order details
+    public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
+        String payload = "";
+        if (pay != null) {
+            if (pay.isPerDeviceRate()) {
+                payload += "payBasis=per_device";
+                payload += "&payPerDevice=" + pay.getPerDevice();
+                payload += "&maxDevices=" + pay.getMaxDevice();
+            } else if (pay.isBlendedRate()) {
+                payload += "payBasis=blended";
+                payload += "&hourlyRate=" + pay.getBlendedStartRate();
+                payload += "&maxHours=" + pay.getBlendedFirstHours();
+                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
+                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
+            } else if (pay.isFixedRate()) {
+                payload += "payBasis=fixed";
+                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
+            } else if (pay.isHourlyRate()) {
+                payload += "payBasis=per_hour";
+                payload += "&hourlyRate=" + pay.getPerHour();
+                payload += "&maxHours=" + pay.getMaxHour();
+            }
+        }
+
+        payload += "&providerExplanation=" + misc.escapeForURL(explanation);
+
+        action(context, workorderId, "pay-change", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, payload);
+    }
+
+    // returns the new message
+    public static void actionAddMessage(Context context, long workorderId, String message) {
+        action(context, workorderId,
+                "messages/new", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "message=" + misc.escapeForURL(message), false);
+    }
+
+    // returns the custom field value
+    public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
+        action(context,
+                workorderId, "custom-fields/" + customFieldId, null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)));
     }
 
     // returns the modified task, not the work order details or task list
@@ -292,23 +337,27 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 "notes=" + (closingNotes == null ? "" : misc.escapeForURL(closingNotes)));
     }
 
+    // returns work order details
     public static void actionAcknowledgeHold(Context context, long workorderId) {
         action(context, workorderId, "acknowledge-hold", null, null, null);
     }
 
     // returns error/success state
-    public static void actionCounterOffer(Context context, long workorderId, boolean expires,
-                                          String reason, int expiresAfterInSecond, Pay pay,
-                                          Schedule schedule, Expense[] expenses) {
+    public static void actionCounterOffer(
+            Context context, long workorderId, boolean expires, String reason,
+            int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
+
         context.startService(
                 actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond,
                         pay, schedule, expenses)
         );
     }
 
-    public static Intent actionCounterOfferIntent(Context context, long workorderId, boolean expires,
-                                                  String reason, int expiresAfterInSecond, Pay pay,
-                                                  Schedule schedule, Expense[] expenses) {
+    // returns error message
+    public static Intent actionCounterOfferIntent(
+            Context context, long workorderId, boolean expires, String reason,
+            int expiresAfterInSecond, Pay pay, Schedule schedule, Expense[] expenses) {
+
         String payload = "";
         // reason/expire
         if (expires)
@@ -410,6 +459,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601));
     }
 
+    // returns the details
     public static void actionDecline(Context context, long workorderId) {
         action(context, workorderId, "decline", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "");
@@ -419,6 +469,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         context.startService(actionReadyIntent(context, workorderId));
     }
 
+    // return the details
     public static Intent actionReadyIntent(Context context, long workorderId) {
         return action(context, workorderId, "ready", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
@@ -662,7 +713,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             Log.v(TAG, ex);
         }
     }
-
 
     public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
         try {
