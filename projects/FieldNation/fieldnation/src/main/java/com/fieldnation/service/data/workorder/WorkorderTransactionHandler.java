@@ -390,7 +390,16 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } else if (action.equals("checkin")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("checkout")) {
-            return handleDetails(context, transaction, params, resultData);
+            try {
+                return handleDetails(context, transaction, params, resultData);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                try {
+                    ToastClient.toast(context, "Checkout Failed: " + resultData.getString(), Toast.LENGTH_LONG);
+                } catch (Exception ex1) {
+                    Log.v(TAG, ex1);
+                }
+            }
         } else if (action.equals("closing-notes")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("complete")) {
