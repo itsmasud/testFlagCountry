@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogContainerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dialogBg_Material">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="?attr/dialogTitleStyle"
+        android:layout_centerHorizontal="true"
+        android:text="@string/contact_us" />
+
+    <TextView
+        android:id="@+id/introduction_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:text="@string/dialog_introduction_text" />
+
+
+    <com.fieldnation.ui.FnSpinner
+        android:id="@+id/reason_spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/introduction_textview"
+        android:focusable="true"
+        android:editable="false"
+        android:hint="@string/dialog_reason_spinner_default" />
+
+    <EditText
+        android:id="@+id/explanation_edittext"
+        style="@style/EditText"
+        android:layout_below="@+id/reason_spinner"
+        android:hint="@string/dialog_explanation_default"
+        android:imeOptions="actionNext"
+        android:inputType="text" />
+
+    <TextView
+        android:id="@+id/additionalHelp_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/explanation_edittext"
+        android:autoLink="all"
+        android:text="@string/dialog_additional_help_text"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="?attr/dialogCancelButtonStyle"
+        android:layout_below="@+id/additionalHelp_textview"
+        android:layout_toLeftOf="@+id/send_button"
+        android:text="@string/btn_cancel" />
+
+    <Button
+        android:id="@+id/send_button"
+        style="?attr/dialogOkButtonStyle"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/additionalHelp_textview"
+        android:text="@string/btn_send"
+        android:enabled="false"/>
+</RelativeLayout>

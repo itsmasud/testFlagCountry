@@ -131,7 +131,7 @@ public class RateMeView extends RelativeLayout {
                             .putCustomAttribute("Attitude", "Hate")
                             .putCustomAttribute("Action", "Feedback"));
                     if (_listener != null) {
-                        GlobalTopicClient.showFeedbackDialog(getContext(), "RateMeCard");
+                        GlobalTopicClient.showContactUsDialog(getContext(), "RateMeCard");
                         _listener.onHide();
                     }
                     break;

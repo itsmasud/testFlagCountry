@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.help;
+package com.fieldnation.service.data.contact;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,17 +11,18 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 /**
  * Created by Shoaib on 7/4/2015.
  */
-public class HelpTransactionBuilder {
-    private static final String TAG = "HelpTransactionBuilder";
+public class ContactUsTransactionBuilder {
+    private static final String TAG = "ContactUsTransactionBuilder";
 
-    public static Intent actionPostFeedbackIntent(Context context, String message, String uri,
-                                                  String extraData, String extraType) {
+    public static Intent actionPostContactUsIntent(Context context, String message, String internalTeam, String uri,
+                                                   String extraData, String extraType) {
         try {
             String body = "";
 
             // parameterized body
             body += "topic=android";
             body += "&message=" + message;
+            body += "&internal_team=" + internalTeam;
             body += "&uri=" + uri;
             body += "&extra_data=" + extraData;
             body += "&extra_type=" + extraType;
@@ -40,8 +41,8 @@ public class HelpTransactionBuilder {
 
             return WebTransactionBuilder.builder(context)
                     .priority(Priority.LOW)
-                    .handler(HelpTransactionHandler.class)
-                    .handlerParams(HelpTransactionHandler.pFeedback(message, uri, extraData, extraType))
+                    .handler(ContactUsTransactionHandler.class)
+                    .handlerParams(ContactUsTransactionHandler.pContactUs(message, internalTeam, uri, extraData, extraType))
                     .useAuth(true)
                     .request(http)
                     .makeIntent();
