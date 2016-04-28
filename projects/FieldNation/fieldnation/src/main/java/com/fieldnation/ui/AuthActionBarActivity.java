@@ -404,7 +404,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
-        private Snackbar _snackbar;
+        //private Snackbar _snackbar;
 
         @Override
         public void onConnected() {
@@ -441,7 +441,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 });
             }
             snackbar.show();
-            _snackbar = snackbar;
+            //_snackbar = snackbar;
             Log.v(TAG, "snackbar.show()");
         }
 
