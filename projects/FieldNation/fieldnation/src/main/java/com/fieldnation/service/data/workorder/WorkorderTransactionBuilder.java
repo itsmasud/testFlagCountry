@@ -141,6 +141,20 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         action(context, workorderId, action, params, contentType, body, true);
     }
 
+    public static void actionWorkLog(Context context, long workorderId, String action, String params,
+                              String contentType, String body) {
+        actionWorkLog(context, workorderId, action, params, contentType, body, true);
+    }
+
+    public static void actionWorkLog(Context context, long workorderId, String action, String params,
+                              String contentType, String body, boolean useKey) {
+
+        context.startService(
+                action(context, workorderId, action, params, contentType, body,
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pTimeLog(workorderId, action), useKey));
+    }
+
     public static void action(Context context, long workorderId, String action, String params,
                               String contentType, String body, boolean useKey) {
 
@@ -839,26 +853,26 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-             Time Logs             -*/
     /*-***********************************-*/
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
-        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        actionWorkLog(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate));
     }
 
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
-        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        actionWorkLog(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate)
                         + "&noOfDevices=" + numberOfDevices);
     }
 
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
-        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        actionWorkLog(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate));
     }
 
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
-        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        actionWorkLog(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "startDate=" + ISO8601.fromUTC(startDate)
                         + "&endDate=" + ISO8601.fromUTC(endDate)
                         + "&noOfDevices=" + numberOfDevices);

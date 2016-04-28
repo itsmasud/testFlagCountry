@@ -212,16 +212,6 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                 } else if (result.getResponseMessage().contains("Bad Request")) {
-//                    Log.e(TAG, "Bad Request");
-                    Intent intent = new Intent(_service, WorkorderActivity.class);
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, 149672); // TODO there will be workorder id in the field of integer
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    if (intent != null) {
-                        PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-                        ToastClient.snackbar(App.get(), result.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
-                    }
-
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                 } else {
