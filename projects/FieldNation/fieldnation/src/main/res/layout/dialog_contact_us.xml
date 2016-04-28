@@ -16,16 +16,19 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
         android:text="@string/dialog_introduction_text" />
-
 
     <com.fieldnation.ui.FnSpinner
         android:id="@+id/reason_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/introduction_textview"
-        android:focusable="true"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
         android:editable="false"
+        android:focusable="true"
         android:hint="@string/dialog_reason_spinner_default" />
 
     <EditText
@@ -57,6 +60,6 @@
         style="?attr/dialogOkButtonStyle"
         android:layout_alignParentRight="true"
         android:layout_below="@id/additionalHelp_textview"
-        android:text="@string/btn_send"
-        android:enabled="false"/>
+        android:enabled="false"
+        android:text="@string/btn_send" />
 </RelativeLayout>
