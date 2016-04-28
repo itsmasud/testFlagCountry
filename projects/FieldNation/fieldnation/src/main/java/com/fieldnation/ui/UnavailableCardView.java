@@ -132,7 +132,7 @@ public class UnavailableCardView extends FrameLayout {
 
         @Override
         public void onClick(View v) {
-            GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
+            GlobalTopicClient.showContactUsDialog(getContext(), "UnavailableCardView");
         }
     };
 

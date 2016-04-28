@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.contact;
+package com.fieldnation.service.data.help;
 
 import android.app.PendingIntent;
 import android.content.Context;
@@ -17,8 +17,8 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
 /**
  * Created by Michael Carver on 7/20/2015.
  */
-public class ContactUsTransactionHandler extends WebTransactionHandler {
-    private static final String TAG = "ContactUsTransactionHandler";
+public class HelpTransactionHandler extends WebTransactionHandler {
+    private static final String TAG = "HelpTransactionHandler";
 
     public static byte[] pContactUs(String message, String internalTeam, String uri, String extraData, String extraType) {
         try {
@@ -56,6 +56,7 @@ public class ContactUsTransactionHandler extends WebTransactionHandler {
     }
 
     private Result handleContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+
         ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
 
         return Result.FINISH;
@@ -84,7 +85,7 @@ public class ContactUsTransactionHandler extends WebTransactionHandler {
 
     private Result handleContactUsFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
         try {
-            Intent intent = ContactUsTransactionBuilder.actionPostContactUsIntent(context,
+            Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
                     params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
                     params.getString("extraType"));
 

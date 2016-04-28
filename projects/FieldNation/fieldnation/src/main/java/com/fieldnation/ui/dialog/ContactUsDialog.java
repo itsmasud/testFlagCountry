@@ -23,7 +23,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.data.contact.ContactUsClient;
+import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.misc;
@@ -252,10 +252,10 @@ public class ContactUsDialog extends DialogFragmentBase {
                     .putCustomAttribute("Source", _source));
 
             try {
-                ContactUsClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
+                HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
                         (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim(), null);
             } catch (Exception ex) {
-                ContactUsClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, null, "Version Unknown", null);
+                HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, null, "Version Unknown", null);
             }
 
         }

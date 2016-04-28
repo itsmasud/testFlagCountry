@@ -53,7 +53,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
-    private ContactUsDialog _feedbackDialog;
+    private ContactUsDialog _contactUsDialog;
     private Snackbar _snackbar;
 
     // Services
@@ -104,7 +104,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _coiWarningDialog.setCancelable(false);
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
-        _feedbackDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
+        _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
     }
@@ -375,7 +375,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         @Override
         public void onShowContactUsDialog(String source) {
             try {
-                _feedbackDialog.show(source);
+                _contactUsDialog.show(source);
             } catch (Exception ex) {
                 Debug.logException(ex);
             }
