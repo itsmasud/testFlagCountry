@@ -410,9 +410,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, workorderId, "checkin", false);
         try {
+            WorkorderClient.listTasks(context, workorderId, false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
+            WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
@@ -432,9 +434,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, workorderId, "checkout", false);
         try {
+            WorkorderClient.listTasks(context, workorderId, false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
+            WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
