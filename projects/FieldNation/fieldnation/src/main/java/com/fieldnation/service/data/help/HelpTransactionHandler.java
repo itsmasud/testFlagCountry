@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.fieldnation.Log;
+import com.fieldnation.R;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.toast.ToastClient;
@@ -19,10 +20,11 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
 public class HelpTransactionHandler extends WebTransactionHandler {
     private static final String TAG = "HelpTransactionHandler";
 
-    public static byte[] pFeedback(String message, String uri, String extraData, String extraType) {
+    public static byte[] pContactUs(String message, String internalTeam, String uri, String extraData, String extraType) {
         try {
-            JsonObject obj = new JsonObject("action", "pFeedback");
+            JsonObject obj = new JsonObject("action", "pContactUs");
             obj.put("message", message);
+            obj.put("internalTeam", internalTeam);
             obj.put("uri", uri);
             obj.put("extraData", extraData);
             obj.put("extraType", extraType);
@@ -42,8 +44,8 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             switch (action) {
-                case "pFeedback":
-                    handleFeedback(context, transaction, resultData, params);
+                case "pContactUs":
+                    handleContactUs(context, transaction, resultData, params);
                     break;
             }
             return super.handleResult(context, transaction, resultData);
@@ -53,8 +55,9 @@ public class HelpTransactionHandler extends WebTransactionHandler {
         return Result.ERROR;
     }
 
-    private Result handleFeedback(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
-        ToastClient.snackbar(context, "Success! Your feedback has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+    private Result handleContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+
+        ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
 
         return Result.FINISH;
     }
@@ -69,8 +72,8 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             switch (action) {
-                case "pFeedback":
-                    handleFeedbackFail(context, transaction, resultData, params);
+                case "pContactUs":
+                    handleContactUsFail(context, transaction, resultData, params);
                     break;
             }
             return super.handleResult(context, transaction, resultData);
@@ -80,21 +83,21 @@ public class HelpTransactionHandler extends WebTransactionHandler {
         return Result.FINISH;
     }
 
-    private Result handleFeedbackFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+    private Result handleContactUsFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
         try {
-            Intent intent = HelpTransactionBuilder.actionPostFeedbackIntent(context,
-                    params.getString("message"), params.getString("uri"), params.getString("extraData"),
+            Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
+                    params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
                     params.getString("extraType"));
 
             PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
 
-            ToastClient.snackbar(context, "Could not send your feedback. Please check your connection.",
+            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            ToastClient.snackbar(context, "Failed. Your feedback could not be sent.", Toast.LENGTH_LONG);
+            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
         }
         return Result.FINISH;
     }
