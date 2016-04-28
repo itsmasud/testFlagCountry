@@ -451,16 +451,17 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
         }
 
-        @Override
-        public void dismissSnackBar() {
-            if (_snackbar == null)
-                return;
-
-            try {
-                _snackbar.dismiss();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+//        @Override
+//        public void dismissSnackBar() {
+//            Log.v(TAG, "dismissSnackBar");
+//            if (_snackbar == null)
+//                return;
+//
+//            try {
+//                _snackbar.dismiss();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     };
 }

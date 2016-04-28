@@ -408,6 +408,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
 
+        WorkorderDispatch.action(context, workorderId, "checkin", false);
         try {
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
@@ -429,6 +430,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
 
+        WorkorderDispatch.action(context, workorderId, "checkout", false);
         try {
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {

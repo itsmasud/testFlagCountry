@@ -335,7 +335,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
-        private Snackbar _snackbar;
+        //private Snackbar _snackbar;
 
         @Override
         public void onConnected() {
@@ -372,7 +372,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 });
             }
             snackbar.show();
-            _snackbar = snackbar;
+            //_snackbar = snackbar;
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -382,16 +382,16 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             Toast.makeText(AuthFragmentActivity.this, title, duration).show();
         }
 
-        @Override
-        public void dismissSnackBar() {
-            if (_snackbar == null)
-                return;
-
-            try {
-                _snackbar.dismiss();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+//        @Override
+//        public void dismissSnackBar() {
+//            if (_snackbar == null)
+//                return;
+//
+//            try {
+//                _snackbar.dismiss();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     };
 }
