@@ -20,6 +20,7 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
@@ -60,6 +61,28 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             JsonObject obj = new JsonObject("action", "pAction");
             obj.put("workorderId", workorderId);
             obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static byte[] pCheckIn(long workorderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pCheckIn");
+            obj.put("workorderId", workorderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static byte[] pCheckOut(long workorderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pCheckOut");
+            obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -289,6 +312,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleGetSignature(context, transaction, params, resultData);
                 case "pAction":
                     return handleAction(context, transaction, params, resultData);
+                case "pCheckIn":
+                    return handleCheckIn(context, transaction, params, resultData);
+                case "pCheckOut":
+                    return handleCheckOut(context, transaction, params, resultData);
                 case "pActionRequest":
                     return handleActionRequest(context, transaction, params, resultData);
                 case "pMessageList":
@@ -377,6 +404,49 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return Result.FINISH;
     }
 
+    private Result handleCheckIn(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCheckIn");
+        long workorderId = params.getLong("workorderId");
+
+        try {
+            return handleDetails(context, transaction, params, resultData);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            try {
+                Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+                ToastClient.snackbar(context, "Checkin failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                return Result.ERROR;
+            } catch (Exception ex1) {
+                Log.v(TAG, ex1);
+            }
+            return Result.ERROR;
+        }
+    }
+
+    private Result handleCheckOut(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleCheckOut");
+        long workorderId = params.getLong("workorderId");
+
+        try {
+            return handleDetails(context, transaction, params, resultData);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            try {
+                Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+
+                ToastClient.snackbar(context, "Checkout failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                Log.v(TAG, "Sent snackbar");
+                return Result.ERROR;
+            } catch (Exception ex1) {
+                Log.v(TAG, ex1);
+            }
+            return Result.ERROR;
+        }
+    }
+
     private Result handleAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleAction");
         long workorderId = params.getLong("workorderId");
@@ -387,30 +457,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         if (action.equals("acknowledge-hold")) {
             return handleDetails(context, transaction, params, resultData);
-        } else if (action.equals("checkin")) {
-            try {
-                return handleDetails(context, transaction, params, resultData);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                try {
-                    ToastClient.toast(context, "Checkin Failed: " + resultData.getString(), Toast.LENGTH_LONG);
-                } catch (Exception ex1) {
-                    Log.v(TAG, ex1);
-                }
-                return Result.ERROR;
-            }
-        } else if (action.equals("checkout")) {
-            try {
-                return handleDetails(context, transaction, params, resultData);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                try {
-                    ToastClient.toast(context, "Checkout Failed: " + resultData.getString(), Toast.LENGTH_LONG);
-                } catch (Exception ex1) {
-                    Log.v(TAG, ex1);
-                }
-                return Result.ERROR;
-            }
         } else if (action.equals("closing-notes")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("complete")) {

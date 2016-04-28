@@ -282,52 +282,70 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId) {
-        action(context, workorderId, "checkin", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkin_time=" + ISO8601.now());
+        context.startService(
+                action(context, workorderId, "checkin", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "checkin_time=" + ISO8601.now(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckIn(workorderId)));
     }
 
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId, Location location) {
-        action(context, workorderId, "checkin", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkin_time=" + ISO8601.now()
-                        + "&gps_lat=" + location.getLatitude()
-                        + "&gps_lon=" + location.getLongitude());
+        context.startService(
+                action(context, workorderId, "checkin", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "checkin_time=" + ISO8601.now()
+                                + "&gps_lat=" + location.getLatitude()
+                                + "&gps_lon=" + location.getLongitude(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckIn(workorderId)));
     }
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId) {
-        action(context, workorderId, "checkout", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkout_time=" + ISO8601.now());
+        context.startService(
+                action(context, workorderId, "checkout", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "checkout_time=" + ISO8601.now(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, Location location) {
-        action(context, workorderId, "checkout", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkout_time=" + ISO8601.now()
-                        + "&gps_lat=" + location.getLatitude()
-                        + "&gps_lon=" + location.getLongitude());
+        context.startService(
+                action(context, workorderId, "checkout", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "checkout_time=" + ISO8601.now()
+                                + "&gps_lat=" + location.getLatitude()
+                                + "&gps_lon=" + location.getLongitude(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        action(context, workorderId, "checkout", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "device_count=" + deviceCount
-                        + "&checkout_time=" + ISO8601.now());
+        context.startService(
+                action(context, workorderId, "checkout", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "device_count=" + deviceCount
+                                + "&checkout_time=" + ISO8601.now(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        action(context, workorderId, "checkout", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "device_count=" + deviceCount
-                        + "&checkout_time=" + ISO8601.now()
-                        + "&gps_lat=" + location.getLatitude()
-                        + "&gps_lon=" + location.getLongitude());
+        context.startService(
+                action(context, workorderId, "checkout", null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "device_count=" + deviceCount
+                                + "&checkout_time=" + ISO8601.now()
+                                + "&gps_lat=" + location.getLatitude()
+                                + "&gps_lon=" + location.getLongitude(),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the full work order details

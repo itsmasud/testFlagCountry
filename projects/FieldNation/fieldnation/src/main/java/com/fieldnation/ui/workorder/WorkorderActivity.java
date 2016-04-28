@@ -474,5 +474,14 @@ public class WorkorderActivity extends AuthActionBarActivity {
         return intent;
     }
 
+    public static Intent makeIntentShow(Context context, long workorderId) {
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.setAction("DUMMY");
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
+        return intent;
+    }
+
 }
 
