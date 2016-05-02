@@ -114,7 +114,7 @@
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
 
-
+    <string name="toast_cant_delete_shipment_permission">Can\'t delete a shipment not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_downloading">Downloading</string>
     <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>

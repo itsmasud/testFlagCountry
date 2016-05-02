@@ -173,7 +173,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         @Override
         public void onDelete(ShipmentTracking shipment) {
             if (_listener != null) {
-                _listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
+                _listener.onDelete(_workorder, shipment);
             }
         }
 
@@ -209,7 +209,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     public interface Listener {
         void onCancel();
 
-        void onDelete(Workorder workorder, int shipmentId);
+        void onDelete(Workorder workorder, ShipmentTracking shipment);
 
         void onAssign(Workorder workorder, int shipmentId, long taskId);
 

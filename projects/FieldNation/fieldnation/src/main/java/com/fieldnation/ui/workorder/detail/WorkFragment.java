@@ -1135,8 +1135,8 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
-        public void onDelete(Workorder workorder, int shipmentId) {
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipmentId);
+        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
             setLoading(true);
         }
 
@@ -1475,14 +1475,19 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDelete(Workorder workorder, final int shipmentId) {
+        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
+            if ((long) shipment.getUserId() != App.getProfileId()) {
+                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
+                return;
+            }
+
             _yesNoDialog.setData("Delete Shipment",
                     "Are you sure you want to delete this shipment?", "YES", "NO",
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workorder.getWorkorderId(), shipmentId);
+                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
                         }
 
                         @Override
@@ -1497,7 +1502,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAssign(Workorder workorder, int shipmentId) {
+        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too
