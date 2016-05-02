@@ -131,12 +131,10 @@
     <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
 
-<!--
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="snackbar_feedback_success_message">Success! Your feedback has been sent.</string>
     <string name="snackbar_feedback_connection_failed">Could not send your feedback. Please check your connection.</string>
     <string name="snackbar_feedback_sent_failed">Failed. Your feedback could not be sent.</string>
--->
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -309,7 +307,7 @@
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
-	<string name="contact_us">Contact Us</string>
+    <string name="contact_us">Contact Us</string>
     <string name="first_time_hours">First %1$s hrs</string>
     <string name="fixed">Fixed</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
@@ -798,5 +796,11 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+
+    <string-array name="reason_list">
+        <item>App Feedback</item>
+        <item>Work Order Issues</item>
+        <item>Account Issue</item>
+    </string-array>
 
 </resources>
