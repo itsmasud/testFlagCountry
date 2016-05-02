@@ -129,6 +129,7 @@
     <string name="toast_missing_description">Missing description</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
+    <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
 
 <!--
     <string name="toast_empty_feedback">Please enter a feedback.</string>
