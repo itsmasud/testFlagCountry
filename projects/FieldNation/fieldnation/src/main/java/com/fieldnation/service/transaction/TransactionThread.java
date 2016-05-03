@@ -211,14 +211,17 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    return true;
                 } else if (result.getResponseMessage().contains("Bad Request")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    return true;
                 } else {
                     Log.v(TAG, "1");
                     AuthTopicClient.invalidateCommand(_service);
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(_service);
+                    return true;
                 }
 
             } else if (result.getResponseCode() == 401) {

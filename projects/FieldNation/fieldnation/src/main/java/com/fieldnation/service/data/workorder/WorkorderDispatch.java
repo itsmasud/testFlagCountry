@@ -263,7 +263,6 @@ public class WorkorderDispatch implements WorkorderConstants {
             ToastClient.snackbar(App.get(), resultData.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
         }
 
-
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
