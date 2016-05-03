@@ -130,8 +130,10 @@
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
-
     <string name="toast_empty_feedback">Please enter a feedback.</string>
+
+    <string name="spinner_custom_field_default">Select an option</string>
+
     <string name="snackbar_feedback_success_message">Success! Your feedback has been sent.</string>
     <string name="snackbar_feedback_connection_failed">Could not send your feedback. Please check your connection.</string>
     <string name="snackbar_feedback_sent_failed">Failed. Your feedback could not be sent.</string>
