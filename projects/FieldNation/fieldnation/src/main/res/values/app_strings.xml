@@ -799,7 +799,7 @@
 
     <string-array name="reason_list">
         <item>App Feedback</item>
-        <item>Work Order Issues</item>
+        <item>Work Order Issue</item>
         <item>Account Issue</item>
     </string-array>
 
