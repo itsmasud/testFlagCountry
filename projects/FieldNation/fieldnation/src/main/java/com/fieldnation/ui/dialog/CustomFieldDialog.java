@@ -407,9 +407,8 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner_selected.onItemClick(null, null, i, _spinner.getId()); // TODO this line is not working somehow
-                                _spinner.setText(val); // So I used this line
-//                                Log.e(TAG, "selected value: " + val);
+                                _spinner.setSelectedItem(i);
+                                _itemSelectedPosition = i;
                                 break;
                             }
                         }
@@ -518,14 +517,11 @@ public class CustomFieldDialog extends DialogFragmentBase {
     };
 
     private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
-
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
         }
-
     };
-
 
     public interface Listener {
         void onOk(CustomField field, String value);
