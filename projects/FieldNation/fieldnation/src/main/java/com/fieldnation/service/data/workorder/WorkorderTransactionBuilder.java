@@ -608,8 +608,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         + "&signature=" + json);
     }
 */
-    
-	// returns the signature list
+
+    // returns the signature list
     public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
         action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "signatureFormat=svg"
@@ -656,7 +656,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-//    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+    //    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
 //        try {
 //            WebTransactionBuilder.builder(context)
 //                    .priority(Priority.HIGH)
@@ -922,32 +922,44 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-***********************************-*/
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
-        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "startDate=" + ISO8601.fromUTC(startDate)
-                        + "&endDate=" + ISO8601.fromUTC(endDate));
+        context.startService(
+                action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "startDate=" + ISO8601.fromUTC(startDate)
+                                + "&endDate=" + ISO8601.fromUTC(endDate),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pTimeLog(workorderId)));
     }
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
-        action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "startDate=" + ISO8601.fromUTC(startDate)
-                        + "&endDate=" + ISO8601.fromUTC(endDate)
-                        + "&noOfDevices=" + numberOfDevices);
+        context.startService(
+                action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "startDate=" + ISO8601.fromUTC(startDate)
+                                + "&endDate=" + ISO8601.fromUTC(endDate)
+                                + "&noOfDevices=" + numberOfDevices,
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pTimeLog(workorderId)));
     }
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
-        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "startDate=" + ISO8601.fromUTC(startDate)
-                        + "&endDate=" + ISO8601.fromUTC(endDate));
+        context.startService(
+                action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "startDate=" + ISO8601.fromUTC(startDate)
+                                + "&endDate=" + ISO8601.fromUTC(endDate),
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pTimeLog(workorderId)));
     }
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
-        action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "startDate=" + ISO8601.fromUTC(startDate)
-                        + "&endDate=" + ISO8601.fromUTC(endDate)
-                        + "&noOfDevices=" + numberOfDevices);
+        context.startService(
+                action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        "startDate=" + ISO8601.fromUTC(startDate)
+                                + "&endDate=" + ISO8601.fromUTC(endDate)
+                                + "&noOfDevices=" + numberOfDevices,
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pTimeLog(workorderId)));
     }
 
     // returns details
@@ -1052,7 +1064,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //            Log.v(TAG, ex);
 //        }
 //    }
-    
+
     // returns shipment lists
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {
         try {

@@ -68,11 +68,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pTimeLog(long workorderId, String action) {
+    public static byte[] pTimeLog(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pTimeLog");
             obj.put("workorderId", workorderId);
-            obj.put("param", action);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -324,6 +323,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     return handleGetSignature(context, transaction, params, resultData);
                 case "pAction":
                     return handleAction(context, transaction, params, resultData);
+                case "pTimeLog":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), action, false);
+                    return handleDetails(context, transaction, params, resultData);
                 case "pCheckIn":
                     return handleCheckIn(context, transaction, params, resultData);
                 case "pCheckOut":
@@ -486,8 +488,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } else if (action.equals("DELETE_LOG")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("incomplete")) {
-            return handleDetails(context, transaction, params, resultData);
-        } else if (action.startsWith("log")) {
             return handleDetails(context, transaction, params, resultData);
         } else if (action.equals("messages/new")) {
             WorkorderClient.listMessages(context, workorderId, false, false);
@@ -673,8 +673,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderClient.get(context, params.getLong("workorderId"), true, false);
                     break;
                 case "pTimeLog":
-                    WorkorderDispatch.actionTimeLog(context, params.getLong("workorderId"), params.getString("param"), true, resultData);
-					WorkorderClient.get(context, params.getLong("workorderId"), true, false);
+                    handleTimeLogFail(context, transaction, params, resultData);
                     break;
                 case "pMessageList":
                     WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());
@@ -712,6 +711,21 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+        return Result.FINISH;
+    }
+
+    private Result handleTimeLogFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, params.getLong("workorderId"));
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (intent != null) {
+            PendingIntent pi = PendingIntent.getActivity(App.get(), 0, intent, 0);
+            ToastClient.snackbar(App.get(), resultData.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+        }
+
+        WorkorderDispatch.action(context, params.getLong("workorderId"), "pTimeLog", true);
+
         return Result.FINISH;
     }
 
