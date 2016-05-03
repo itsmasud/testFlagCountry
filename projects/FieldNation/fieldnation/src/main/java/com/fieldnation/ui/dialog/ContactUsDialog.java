@@ -193,6 +193,10 @@ public class ContactUsDialog extends DialogFragmentBase {
         if (position != -1)
             _explanationEditText.requestFocus();
 
+        _textEditText_watcherListener.onTextChanged(
+                _explanationEditText.getText().toString(),
+                0, _explanationEditText.getText().toString().length(),
+                _explanationEditText.getText().toString().length());
     }
 
     private FnSpinner populateSpinners() {
