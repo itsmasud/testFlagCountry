@@ -68,6 +68,18 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
+    public static byte[] pTimeLog(long workorderId, String action) {
+        try {
+            JsonObject obj = new JsonObject("action", "pTimeLog");
+            obj.put("workorderId", workorderId);
+            obj.put("param", action);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
     public static byte[] pCheckIn(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pCheckIn");
@@ -659,6 +671,10 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 case "pAction":
                     WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
                     WorkorderClient.get(context, params.getLong("workorderId"), true, false);
+                    break;
+                case "pTimeLog":
+                    WorkorderDispatch.actionTimeLog(context, params.getLong("workorderId"), params.getString("param"), true, resultData);
+					WorkorderClient.get(context, params.getLong("workorderId"), true, false);
                     break;
                 case "pMessageList":
                     WorkorderDispatch.listMessages(context, params.getLong("workorderId"), null, true, transaction.isSync());

@@ -599,13 +599,31 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    // returns the signature list
+
+/*
+    public static void addSignatureJson(Context context, long workorderId, String name, String json) {
+        action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "signatureFormat=json"
+                        + "&printName=" + misc.escapeForURL(name)
+                        + "&signature=" + json);
+    }
+*/
+    
+	// returns the signature list
     public static void addSignatureSvg(Context context, long workorderId, String name, String svg) {
         action(context, workorderId, "signature", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "signatureFormat=svg"
                         + "&printName=" + misc.escapeForURL(name)
                         + "&signature=" + svg);
     }
+
+/*
+    public static void addSignatureJsonTask(Context context, long workorderId, long taskId, String name, String json) {
+        action(context, workorderId, "tasks/complete/" + taskId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "print_name=" + misc.escapeForURL(name)
+                        + "&signature_json=" + json);
+    }
+*/
 
     // returns task list
     // TODO make sure this works
@@ -638,6 +656,22 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
+//    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
+//        try {
+//            WebTransactionBuilder.builder(context)
+//                    .priority(Priority.HIGH)
+//                    .handler(DeliverableTransactionHandler.class)
+//                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
+//                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
+//                    .isSyncCall(isSync)
+//                    .request(new HttpJsonBuilder()
+//                            .method("GET")
+//                            .path(url))
+//                    .send();
+//        } catch (Exception ex) {
+//            Log.v(TAG, ex);
+//        }
+//    }
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
@@ -994,6 +1028,30 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pActionCompleteShipmentTask(workorderId, shipmentId, taskId));
     }
+
+    //    public static void postShipment(Context context, long workorderId, long shipmentId, String description, boolean isToSite,
+//                                    String carrier, String carrierName, String trackingNumber) {
+//        try {
+//            WebTransactionBuilder.builder(context)
+//                    .priority(Priority.HIGH)
+//                    .handler(WorkorderTransactionHandler.class)
+//                    .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "create_shipment"))
+//                    .useAuth(true)
+//                    .request(new HttpJsonBuilder()
+//                            .protocol("https")
+//                            .method("POST")
+//                            .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
+//                            .path("/api/rest/v1/workorder/" + workorderId + "/shipments/" + shipmentId)
+//                            .body("description=" + misc.escapeForURL(description)
+//                                    + "&direction=" + (isToSite ? "to_site" : "from_site")
+//                                    + "&carrier=" + carrier
+//                                    + (carrierName == null ? "" : ("&carrier_name=" + misc.escapeForURL(carrierName)))
+//                                    + "&tracking_number=" + misc.escapeForURL(trackingNumber)))
+//                    .send();
+//        } catch (Exception ex) {
+//            Log.v(TAG, ex);
+//        }
+//    }
     
     // returns shipment lists
     public static void deleteShipment(Context context, long workorderId, long shipmentId) {

@@ -1,10 +1,13 @@
 package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -22,6 +25,8 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -206,14 +211,17 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    return true;
                 } else if (result.getResponseMessage().contains("Bad Request")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    return true;
                 } else {
                     Log.v(TAG, "1");
                     AuthTopicClient.invalidateCommand(_service);
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(_service);
+                    return true;
                 }
 
             } else if (result.getResponseCode() == 401) {

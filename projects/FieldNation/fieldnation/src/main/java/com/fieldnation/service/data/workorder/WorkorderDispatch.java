@@ -1,13 +1,20 @@
 package com.fieldnation.service.data.workorder;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael Carver on 4/20/2015.
@@ -237,6 +244,28 @@ public class WorkorderDispatch implements WorkorderConstants {
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
+
+    public static void actionTimeLog(Context context, long workorderId, String action, boolean failed,  HttpResult resultData) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_COMPLETE);
+        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        String topicId = TOPIC_ID_ACTION_COMPLETE;
+        topicId += "/" + workorderId;
+
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        if (intent != null) {
+            PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            ToastClient.snackbar(App.get(), resultData.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+        }
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+    }
+
 
     public static void action(Context context, long workorderId, String action, boolean failed) {
         Bundle bundle = new Bundle();
