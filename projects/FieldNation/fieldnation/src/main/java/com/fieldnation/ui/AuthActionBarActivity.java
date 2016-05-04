@@ -412,23 +412,27 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             tv.setTextColor(getResources().getColor(R.color.fn_white_text));
             snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
 
-            if (buttonText != null) {
-                snackbar.setAction(buttonText, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (buttonIntent != null) {
-                            try {
-                                buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
-                            } catch (PendingIntent.CanceledException e) {
-                                Log.v(TAG, e);
-                            }
+            if (buttonText == null)
+                buttonText = "DISMISS";
+
+            snackbar.setAction(buttonText, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_snackbar != null)
+                        _snackbar.dismiss();
+
+                    if (buttonIntent != null) {
+                        try {
+                            buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
+                        } catch (PendingIntent.CanceledException e) {
+                            Log.v(TAG, e);
                         }
                     }
-                });
-            }
+                }
+            });
+
             snackbar.show();
             _snackbar = snackbar;
-
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -438,16 +442,16 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
         }
 
-        @Override
-        public void dismissSnackBar() {
-            if (_snackbar == null)
-                return;
-
-            try {
-                _snackbar.dismiss();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-        }
+//        @Override
+//        public void dismissSnackBar() {
+//            if (_snackbar == null)
+//                return;
+//
+//            try {
+//                _snackbar.dismiss();
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            }
+//        }
     };
 }
