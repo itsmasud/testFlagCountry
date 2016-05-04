@@ -28,7 +28,7 @@ android {
         minSdkVersion 11
         targetSdkVersion 22
         versionCode 80
-        versionName "2.3.80"
+        versionName "2.3.81"
         multiDexEnabled true
     }
 
