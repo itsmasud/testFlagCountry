@@ -122,7 +122,7 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
         @Override
         public void onDelete(ShipmentTracking shipment) {
             if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onDelete(_workorder, shipment.getWorkorderShipmentId());
+                _listener.onDelete(_workorder, shipment);
             }
         }
 
@@ -130,7 +130,7 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
         public void onEdit(ShipmentTracking shipment) {
             // TODO need to show an edit dialog
             if (_listener != null && _workorder.canChangeShipments()) {
-                _listener.onAssign(_workorder, shipment.getWorkorderShipmentId());
+                _listener.onAssign(_workorder, shipment);
             }
         }
     };
@@ -138,9 +138,9 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
     public interface Listener {
         void addShipment();
 
-        void onDelete(Workorder workorder, int shipmentId);
+        void onDelete(Workorder workorder, ShipmentTracking shipmentId);
 
-        void onAssign(Workorder workorder, int shipmentId);
+        void onAssign(Workorder workorder, ShipmentTracking shipmentId);
     }
 
 

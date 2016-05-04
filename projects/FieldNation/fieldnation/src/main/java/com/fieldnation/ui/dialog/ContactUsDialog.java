@@ -138,24 +138,22 @@ public class ContactUsDialog extends DialogFragmentBase {
         Log.v(TAG, "onResume");
         super.onResume();
         populateSpinners();
-        if (_clear){
+        if (_clear) {
             _reasonSpinnre.setText("");
             _explanationEditText.setText("");
             _explanationEditText.setHint(getString(R.string.dialog_explanation_default));
-            _spinnerPosition = -1;
+            _reasonSpinner_onItemClick.onItemClick(null, null, -1, 0);
             _clear = false;
-        }else {
-            if (!misc.isEmptyOrNull(_message))
-                _explanationEditText.setText(_message);
-
-            onSpinnerSelection(_spinnerPosition);
+            return;
         }
+
+        if (!misc.isEmptyOrNull(_message))
+            _explanationEditText.setText(_message);
+
         _textEditText_watcherListener.onTextChanged(
                 _explanationEditText.getText().toString(),
                 0, _explanationEditText.getText().toString().length(),
                 _explanationEditText.getText().toString().length());
-
-
     }
 
     @Override
@@ -195,6 +193,10 @@ public class ContactUsDialog extends DialogFragmentBase {
         if (position != -1)
             _explanationEditText.requestFocus();
 
+        _textEditText_watcherListener.onTextChanged(
+                _explanationEditText.getText().toString(),
+                0, _explanationEditText.getText().toString().length(),
+                _explanationEditText.getText().toString().length());
     }
 
     private FnSpinner populateSpinners() {

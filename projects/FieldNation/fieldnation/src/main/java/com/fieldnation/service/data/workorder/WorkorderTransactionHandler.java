@@ -7,6 +7,7 @@ import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
@@ -164,10 +165,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
-    public static byte[] pMessageList(long workorderId) {
+    public static byte[] pMessageList(long workorderId, boolean isRead) {
         try {
             JsonObject obj = new JsonObject("action", "pMessageList");
             obj.put("workorderId", workorderId);
+            obj.put("isRead", isRead);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -175,10 +177,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         return null;
     }
 
-    public static byte[] pAlertList(long workorderId) {
+    public static byte[] pAlertList(long workorderId, boolean isRead) {
         try {
             JsonObject obj = new JsonObject("action", "pAlertList");
             obj.put("workorderId", workorderId);
+            obj.put("isRead", isRead);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -436,6 +439,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
+        if (params.has("isRead") && params.getBoolean("isRead")) {
+            GlobalTopicClient.profileInvalid(context);
+            WorkorderClient.get(context, workorderId, false);
+        }
+
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
 
         return Result.FINISH;
@@ -448,6 +456,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         byte[] data = resultData.getByteArray();
 
         WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
+
+        if (params.has("isRead") && params.getBoolean("isRead")) {
+            GlobalTopicClient.profileInvalid(context);
+            WorkorderClient.get(context, workorderId, false);
+        }
 
         StoredObject.put(App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
 
@@ -679,6 +692,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
+        ToastClient.toast(App.get(), "Could not add your shipment. Please check your connection.", Toast.LENGTH_LONG);
+
+        // TODO the snackbar is not appearing
         ToastClient.snackbar(context, "Could not add your shipment. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 

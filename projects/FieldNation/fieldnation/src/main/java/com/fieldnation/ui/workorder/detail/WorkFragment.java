@@ -396,7 +396,7 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-//        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -426,7 +426,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
         subscribeData();
         requestTasks();
         populateUi();
@@ -780,7 +779,7 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCareerName(content));
+                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierName(content));
 
             }
         }
@@ -1094,11 +1093,13 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             if (_scannedImagePath != null) {
                 final UploadSlot[] slots = _workorder.getUploadSlots();
+                if (slots == null) return;
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
                         WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                        _scannedImagePath = null;
                     }
                 }
             }
@@ -1134,8 +1135,8 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
-        public void onDelete(Workorder workorder, int shipmentId) {
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipmentId);
+        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
             setLoading(true);
         }
 
@@ -1277,7 +1278,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
-            _reportProblemDialog.show();
+            _reportProblemDialog.show(_workorder);
         }
 
         @Override
@@ -1474,14 +1475,19 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDelete(Workorder workorder, final int shipmentId) {
+        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
+            if ((long) shipment.getUserId() != App.getProfileId()) {
+                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
+                return;
+            }
+
             _yesNoDialog.setData("Delete Shipment",
                     "Are you sure you want to delete this shipment?", "YES", "NO",
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workorder.getWorkorderId(), shipmentId);
+                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
                         }
 
                         @Override
@@ -1496,7 +1502,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAssign(Workorder workorder, int shipmentId) {
+        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too

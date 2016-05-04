@@ -19,12 +19,16 @@ public class Workorder implements Parcelable {
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
     private Integer _alertCount;
+    @Json(name = "approvalGrade")
+    private ApprovalGrade _approvalGrade;
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
     private Long _bundleId;
     @Json(name = "buyerRatingInfo")
     private BuyerRating _buyerRatingInfo;
+    @Json(name = "keyEvents")
+    private KeyEvents _keyEvents;
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "collectedSignature")
@@ -115,6 +119,10 @@ public class Workorder implements Parcelable {
         return _alertCount;
     }
 
+    public ApprovalGrade getApprovalGrade() {
+        return _approvalGrade;
+    }
+
     public Integer getBundleCount() {
         return _bundleCount;
     }
@@ -125,6 +133,10 @@ public class Workorder implements Parcelable {
 
     public BuyerRating getBuyerRatingInfo() {
         return _buyerRatingInfo;
+    }
+
+    public KeyEvents getKeyEvents() {
+        return _keyEvents;
     }
 
     public String getClosingNotes() {
