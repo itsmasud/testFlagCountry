@@ -1,6 +1,7 @@
 
 package com.fieldnation.ui.workorder;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -118,12 +119,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
                     if (segments.size() > 1) {
                         if (segments.get(0).equals("wo")) {
                             _workorderId = Long.parseLong(segments.get(1));
-                        }
-                        if (segments.get(0).equals("workorder")) {
+                        } else if (segments.get(0).equals("workorder")) {
                             _workorderId = Long.parseLong(segments.get(2));
-                        }
-                        if (segments.get(0).equals("marketplace")) {
+                        } else if (segments.get(0).equals("marketplace")) {
                             _workorderId = Long.parseLong(intent.getData().getQueryParameter("workorder_id"));
+                        } else if (segments.get(0).equals("w") && segments.get(1).equals("r")) {
+                            _workorderId = Long.parseLong(segments.get(2));
                         }
                     }
                 } catch (Exception ex) {
@@ -245,6 +246,8 @@ public class WorkorderActivity extends AuthActionBarActivity {
         _pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         _viewPager.setAdapter(_pagerAdapter);
         _viewPager.addOnPageChangeListener(_viewPager_onChange);
+		// FIXME not sure which is the right call!
+		//_viewPager.setOnPageChangeListener(_viewPager_onChange);
 
         _tabview = (WorkorderTabView) findViewById(R.id.tabview);
         _tabview.setListener(_tabview_onChange);

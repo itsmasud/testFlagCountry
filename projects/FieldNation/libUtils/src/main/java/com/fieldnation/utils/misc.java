@@ -549,17 +549,42 @@ public class misc {
         }
     }
 
+    public static void showKeyboard(View v) {
+        if (v != null) {
+            InputMethodManager imm = (InputMethodManager) v.getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.showSoftInput(v, InputMethodManager.SHOW_IMPLICIT);
+        }
+    }
+
+    public static String formatDateForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+    }
+
+    public static String formatTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("h:mm a").format(date);
+    }
+
+    public static String formatDateTimeForCF(final Calendar calendar) {
+        Date date = calendar.getTime();
+        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
+    }
+
     public static String getCarrierName(final String trackingId) {
-        if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
+        if (Pattern.compile("^E\\D{1}\\d{9}\\D{2}$|^9\\d{15,21}$").matcher(trackingId).matches()) {
+            Log.e("ShipmentAddDialog", "tracking id: " + trackingId);
+            return "USPS";
+        } else if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
-            return "Fedex";
+            return "Fedex"; // test with any 12 digit
         } else if (Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
                 || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
                 || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
-            return "UPS";
-        } else {
-            return "Other";
+            return "UPS"; // test with any 11 digit
         }
+        return "Other";
+
     }
 }

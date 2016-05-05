@@ -114,13 +114,29 @@
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
 
-
+    <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_downloading">Downloading</string>
     <string name="toast_change_schedule_or_cancel">Please change the schedule or tap Cancel</string>
     <string name="toast_minimum_payable_amount">Amount must be more than $0.10.</string>
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
+    <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
+    <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
+    <string name="toast_carrier_not_selected">Choose a carrier</string>
+    <string name="toast_direction_not_selected">Choose a direction</string>
+    <string name="toast_missing_traking_number">Missing tracking number</string>
+    <string name="toast_missing_description">Missing description</string>
+    <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
+    <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
+    <string name="toast_empty_feedback">Please enter a feedback.</string>
+
+    <string name="spinner_custom_field_default">Select an option</string>
+
+    <string name="snackbar_feedback_success_message">Success! Your feedback has been sent.</string>
+    <string name="snackbar_feedback_connection_failed">Could not send your feedback. Please check your connection.</string>
+    <string name="snackbar_feedback_sent_failed">Failed. Your feedback could not be sent.</string>
 
     <string name="notification_start_body_uploading">Uploading %1$s</string>
     <string name="notification_start_body_downloading">Downloading %1$s</string>
@@ -184,6 +200,8 @@
 
     <string name="dialog_shipment_title">Add Shipment</string>
     <string name="dialog_task_shipment_title">Assign/Add New</string>
+    <string name="dialog_shipment_career_spinner_default_text">What is the carrier?</string>
+    <string name="dialog_shipment_direction_spinner_default_text">What is the direction?</string>
 
     <string name="dialog_location_title">Location Settings</string>
     <string name="dialog_location_soft">We can\'t seem to gather your current location. Please enable your GPS.</string>
@@ -214,6 +232,11 @@
 
     <string name="dialog_terms_title">Terms and Conditions</string>
     <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
+    <string name="dialog_report_problem_spinner_1">What\'s the problem?</string>
+    <string name="dialog_introduction_text">We\'re actively trying to improve the Field Nation App to better cater to your needs.</string>
+    <string name="dialog_reason_spinner_default">Reason for contacting</string>
+    <string name="dialog_explanation_default">How can we help</string>
+    <string name="dialog_additional_help_text">Would you rather talk with someone? Feel free to call us at (877) 373-7558</string>
 
     <string name="dialog_delete_worklog_title">Delete Worklog</string>
     <string name="dialog_delete_worklog_body">Are you sure you want to delete this work log?</string>
@@ -308,6 +331,7 @@
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
+    <string name="contact_us">Contact Us</string>
     <string name="first_time_hours">First %1$s hrs</string>
     <string name="fixed">Fixed</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>
@@ -708,6 +732,7 @@
     <string-array name="carrier_list">
         <item>Fedex</item>
         <item>UPS</item>
+        <item>USPS</item>
         <item>Other</item>
     </string-array>
     <string-array name="pay_types">
@@ -774,35 +799,31 @@
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
     </string-array>
-    <string-array name="enum_report_problem_1">
-        <item>I can\'t make my assignment</item>
-        <item>I\'m going to be late</item>
-        <item>I don\'t have what I need</item>
-        <item>Approval</item>
-        <item>Payment</item>
-        <item>Buyer unresponsive</item>
-        <item>Scope of work</item>
-        <item>Site is not ready</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_missing">
-        <item>A shipment</item>
-        <item>Information</item>
-        <item>Response from someone</item>
-        <item>Other</item>
-    </string-array>
-    <string-array name="enum_report_problem_approval">
-        <item>WO not approved yet</item>
-        <item>Disagreement on completion</item>
-    </string-array>
-    <string-array name="enum_report_problem_payment">
-        <item>Haven\'t received payment</item>
-        <item>Amount is not accurate</item>
-    </string-array>
-    <string-array name="enum_report_problem_site_not_ready">
-        <item>Contact not available</item>
-        <item>Prior work needs to be completed</item>
-        <item>I don\'t have access</item>
-        <item>Other</item>
+
+	<!-- If you change any of these, make sure you update
+        com.fieldnation.service.data.workorder.ReportProblemType -->
+    <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
+    <string name="im_going_to_be_late">I\'m going to be late</string>
+    <string name="buyer_unresponsive">Buyer unresponsive</string>
+    <string name="scope_of_work">Scope of work</string>
+    <string name="site_not_ready">Site is not ready</string>
+    <string name="other">Other</string>
+    <string name="havent_approved_yet">Haven\'t approved yet</string>
+    <string name="disagree_with_approval">Disagreement on work completion</string>
+    <string name="havent_received_payment">Haven\'t received payment</string>
+    <string name="amount_not_accurate">Amount is not accurate</string>
+    <string name="a_shipment">A shipment</string>
+    <string name="information">Information</string>
+    <string name="response_from_someone">Response from someone</string>
+    <string name="contact_not_available">Contact not available</string>
+    <string name="prior_work_needs_to_be_completed">Prior work needs to be completed</string>
+    <string name="i_dont_have_access">I don\'t have access</string>
+    <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
+    <string name="approval">Approval</string>
+
+    <string-array name="reason_list">
+        <item>App Feedback</item>
+        <item>Work Order Issue</item>
+        <item>Account Issue</item>
     </string-array>
 </resources>

@@ -48,6 +48,8 @@ public class DurationDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
+			// FIXME this line comes from 2.3.81, not sure if it's right
+			// dismiss(); 
             if (savedInstanceState.containsKey(STATE_NUMBER))
                 _number = savedInstanceState.getString(STATE_NUMBER);
         }

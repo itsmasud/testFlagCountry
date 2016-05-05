@@ -335,8 +335,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
-        //private Snackbar _snackbar;
-
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
@@ -357,10 +355,15 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             tv.setTextColor(getResources().getColor(R.color.fn_white_text));
             snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
 
-            if (buttonText != null) {
+            if (buttonText == null)
+                buttonText = "DISMISS";
+
                 snackbar.setAction(buttonText, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                    if (_snackbar != null)
+                        _snackbar.dismiss();
+
                         if (buttonIntent != null) {
                             try {
                                 buttonIntent.send(AuthFragmentActivity.this, 0, new Intent());
@@ -370,9 +373,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                         }
                     }
                 });
-            }
+
             snackbar.show();
-            //_snackbar = snackbar;
             Log.v(TAG, "snackbar.show()");
         }
 

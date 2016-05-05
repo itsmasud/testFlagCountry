@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -69,6 +70,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private String _customFieldTextData;
     private String _customFieldNumberData;
     private String _customFieldPhoneNumberData;
+    private boolean _clear = false;
 
 
     /*-*****************************-*/
@@ -253,15 +255,27 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
     @Override
     public void onResume() {
-        Log.v(TAG, "onResume");
+        Log.e(TAG, "onResume");
         super.onResume();
+
+        if (_clear) {
+            _spinner.setText(getString(R.string.spinner_custom_field_default));
+        }
 
         populateUi();
     }
 
     @Override
-    public void init() {
-        populateUi();
+    public void dismiss() {
+//        Log.e(TAG, "dismiss");
+        _clear = true;
+        super.dismiss();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+//        Log.e(TAG, "onDismiss");
+        super.onDismiss(dialog);
     }
 
     public void setListener(Listener listener) {
@@ -504,14 +518,11 @@ public class CustomFieldDialog extends DialogFragmentBase {
     };
 
     private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
-
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
         }
-
     };
-
 
     public interface Listener {
         void onOk(CustomField field, String value);

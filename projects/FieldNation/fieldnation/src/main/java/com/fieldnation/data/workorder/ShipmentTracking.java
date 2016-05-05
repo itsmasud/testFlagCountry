@@ -32,7 +32,7 @@ public class ShipmentTracking {
     @Json(name = "trackingId")
     private String _trackingId;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "workorderId")
     private Integer _workorderId;
     @Json(name = "workorderShipmentId")
@@ -85,7 +85,7 @@ public class ShipmentTracking {
         return _trackingId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return _userId;
     }
 

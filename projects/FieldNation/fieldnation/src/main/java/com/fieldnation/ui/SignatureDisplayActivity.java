@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -42,6 +43,9 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
 
     // Ui
+    private ActionBarDrawerView _actionBarView;
+    private Toolbar _toolbar;
+
     private TextView _titleTextView;
     private TextView _descriptionTextView;
 
@@ -69,6 +73,15 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
     // Service
     private WorkorderClient _workorderClient;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState){
+        super.onCreate(savedInstanceState);
+        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
+        _toolbar = _actionBarView.getToolbar();
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+    }
 
     @Override
     public int getLayoutResource() {
@@ -327,6 +340,13 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         @Override
         public void onClick(View v) {
             finish();
+        }
+    };
+
+    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
         }
     };
 

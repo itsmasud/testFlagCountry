@@ -281,11 +281,34 @@ public class ScheduleDialog extends DialogFragmentBase {
             String tag = datePickerDialog.getTag();
             if (tag.equals("start")) {
                 _startCal.set(year, month, day);
+                if (DateUtils.isBeforeToday(_startCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            _datePicker.show(_fm, "start");
+                        }
+                    }, 100);
+                } else {
+                    _timePicker.show(_fm, "start");
+                }
+
             } else if (tag.equals("end")) {
                 _endCal.set(year, month, day);
+                if (DateUtils.isBeforeToday(_endCal)) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            _datePicker.show(_fm, "end");
+                        }
+                    }, 100);
+                } else {
+                    _timePicker.show(_fm, "end");
+                }
             }
 
-            _timePicker.show(_fm, datePickerDialog.getTag());
+//            _timePicker.show(_fm, datePickerDialog.getTag());
         }
     };
 
@@ -296,6 +319,18 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (tag.equals("start")) {
                 _startCal.set(_startCal.get(Calendar.YEAR), _startCal.get(Calendar.MONTH),
                         _startCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+                // truncate milliseconds to seconds
+                if (_startCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            _timePicker.show(_fm, "start");
+                        }
+                    }, 100);
+                    return;
+                }
                 _startIsSet = true;
 
                 if (_mode == MODE_EXACT) {
@@ -307,6 +342,19 @@ public class ScheduleDialog extends DialogFragmentBase {
             } else if (tag.equals("end")) {
                 _endCal.set(_endCal.get(Calendar.YEAR), _endCal.get(Calendar.MONTH),
                         _endCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+                // truncate milliseconds to seconds
+                if (_endCal.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                    Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                    _handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            _timePicker.show(_fm, "end");
+                        }
+                    }, 100);
+                    return;
+                }
+
                 _endIsSet = true;
                 _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
             }

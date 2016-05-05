@@ -249,8 +249,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
-        _reportProblemDialog.setListener(_reportProblem_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         checkProfile();
     }
@@ -733,7 +733,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _reportProblemDialog.show();
+            _reportProblemDialog.show(workorder);
         }
 
         @Override

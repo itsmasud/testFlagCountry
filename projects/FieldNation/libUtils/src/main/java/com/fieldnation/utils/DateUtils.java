@@ -293,6 +293,16 @@ public class DateUtils {
     }
 
     /**
+     * <p>Checks if the date is before today.</p>
+     *
+     * @param date the date to test against
+     * @return true if the date is before today
+     */
+    public static boolean isBeforeToday(Date date) {
+        return isBeforeDay(date, Calendar.getInstance().getTime());
+    }
+
+    /**
      * <p>Checks if the first date is before the second date ignoring time.</p>
      *
      * @param date1 the first date, not altered, not null
@@ -309,6 +319,17 @@ public class DateUtils {
         Calendar cal2 = Calendar.getInstance();
         cal2.setTime(date2);
         return isBeforeDay(cal1, cal2);
+    }
+
+
+    /**
+     * <p>Checks if cal is before today</p>
+     *
+     * @param cal
+     * @return
+     */
+    public static boolean isBeforeToday(Calendar cal) {
+        return isBeforeDay(cal, Calendar.getInstance());
     }
 
     /**

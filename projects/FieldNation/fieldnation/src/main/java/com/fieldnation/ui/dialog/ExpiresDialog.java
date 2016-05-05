@@ -110,8 +110,17 @@ public class ExpiresDialog extends DialogFragmentBase {
         @Override
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _calendar.set(year, month, day);
-
+            if (DateUtils.isBeforeToday(_calendar)) {
+                Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _datePicker.show(_fm, null);
+                    }
+                }, 100);
+            } else {
             _timePicker.show(_fm, null);
+        }
         }
     };
 
@@ -121,6 +130,18 @@ public class ExpiresDialog extends DialogFragmentBase {
         public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
             _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
                     _calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            // truncate milliseconds to seconds
+            if (_calendar.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
+                Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _timePicker.show(_fm, null);
+                    }
+                }, 100);
+                return;
+            }
 
             _expirationButton.setText(DateUtils.formatDateTimeLong(_calendar));
             _isDateSet = true;

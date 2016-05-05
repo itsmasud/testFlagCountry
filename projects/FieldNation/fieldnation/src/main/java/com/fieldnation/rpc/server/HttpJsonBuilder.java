@@ -15,6 +15,8 @@ import java.text.ParseException;
  * Created by Michael Carver on 3/10/2015.
  */
 public class HttpJsonBuilder {
+    private static final String TAG = "HttpJsonBuilder";
+
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_CONTENT_TYPE_FORM_ENCODED = "application/x-www-form-urlencoded";
 
@@ -202,6 +204,45 @@ public class HttpJsonBuilder {
 
     public JsonObject build() {
         return request;
+    }
+
+    public static boolean isFieldNation(JsonObject request) {
+        try {
+            String protocol = "";
+            String path = "";
+            String hostname = "";
+
+            if (request.has(HttpJsonBuilder.PARAM_WEB_PROTOCOL)) {
+                protocol = request.getString(HttpJsonBuilder.PARAM_WEB_PROTOCOL);
+            }
+            if (request.has(HttpJsonBuilder.PARAM_WEB_PATH)) {
+                path = request.getString(HttpJsonBuilder.PARAM_WEB_PATH);
+            }
+            if (request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
+                hostname = request.getString(HttpJsonBuilder.PARAM_WEB_HOST);
+            }
+
+            if (protocol == null)
+                protocol = "";
+
+            if (protocol.length() > 0 && !protocol.endsWith("://"))
+                protocol += "://";
+
+            if (path == null)
+                path = "";
+
+            if (hostname == null)
+                hostname = "";
+
+            String url = protocol + hostname + path;
+
+            return url.startsWith("https://app.fieldnation.com");
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return false;
     }
 
 }

@@ -35,7 +35,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="visible">
+                android:visibility="gone">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -47,6 +47,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:text="Select first"
+                        android:editable="false"
                         android:visibility="visible" />
                 </LinearLayout>
 
@@ -54,7 +55,8 @@
                     android:id="@+id/blockdetails_edittext"
                     style="@style/EditText"
                     android:layout_width="match_parent"
-                    android:hint="@string/dialog_block_details" />
+                    android:hint="@string/dialog_block_details"
+                    android:visibility="visible"/>
             </LinearLayout>
         </LinearLayout>
 

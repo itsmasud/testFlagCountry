@@ -66,9 +66,8 @@ public class DrawerView extends RelativeLayout {
 
     // sub items
     private LinearLayout _settingsView;
-    private LinearLayout _feedbackView;
+    private LinearLayout _contactUsView;
     private LinearLayout _debugView;
-    private LinearLayout _helpView;
     private LinearLayout _logoutView;
 
     // misc
@@ -147,11 +146,8 @@ public class DrawerView extends RelativeLayout {
         _debugView = (LinearLayout) findViewById(R.id.debug_view);
         _debugView.setOnClickListener(_debugView_onClick);
 
-        _feedbackView = (LinearLayout) findViewById(R.id.feedback_view);
-        _feedbackView.setOnClickListener(_feedback_onClick);
-
-        _helpView = (LinearLayout) findViewById(R.id.help_view);
-        _helpView.setOnClickListener(_help_onClick);
+        _contactUsView = (LinearLayout) findViewById(R.id.contactUs_view);
+        _contactUsView.setOnClickListener(_contactUsView_onClick);
 
         _logoutView = (LinearLayout) findViewById(R.id.logout_view);
         _logoutView.setOnClickListener(_logoutView_onClick);
@@ -394,7 +390,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final OnClickListener _feedback_onClick = new OnClickListener() {
+    private final OnClickListener _contactUsView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 /*
@@ -415,15 +411,8 @@ public class DrawerView extends RelativeLayout {
 
             // getContext().startService(new Intent(getContext(), WebCrawlerService.class));
 
-            // Feedback Dialog
-            GlobalTopicClient.showFeedbackDialog(getContext(), "LeftNavDrawer");
-        }
-    };
-
-    private final OnClickListener _help_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            GlobalTopicClient.showHelpDialog(getContext());
+            // ContactUs Dialog
+            GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
         }
     };
 
