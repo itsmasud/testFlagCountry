@@ -335,6 +335,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     }
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        private Snackbar _snackbar = null;
+
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
@@ -358,21 +360,21 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             if (buttonText == null)
                 buttonText = "DISMISS";
 
-                snackbar.setAction(buttonText, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
+            snackbar.setAction(buttonText, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
                     if (_snackbar != null)
                         _snackbar.dismiss();
 
-                        if (buttonIntent != null) {
-                            try {
-                                buttonIntent.send(AuthFragmentActivity.this, 0, new Intent());
-                            } catch (PendingIntent.CanceledException e) {
-                                Log.v(TAG, e);
-                            }
+                    if (buttonIntent != null) {
+                        try {
+                            buttonIntent.send(AuthFragmentActivity.this, 0, new Intent());
+                        } catch (PendingIntent.CanceledException e) {
+                            Log.v(TAG, e);
                         }
                     }
-                });
+                }
+            });
 
             snackbar.show();
             Log.v(TAG, "snackbar.show()");

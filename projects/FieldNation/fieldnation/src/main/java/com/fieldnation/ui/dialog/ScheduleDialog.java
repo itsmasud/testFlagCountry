@@ -1,6 +1,7 @@
 package com.fieldnation.ui.dialog;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
@@ -14,6 +15,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
@@ -68,6 +70,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private String _stateFixedDateTime;
     private String _stateRangeStartDateTime;
     private String _stateRangeEndDateTime;
+    private Handler _handler = new Handler();
 
 
     /*-*****************************-*/

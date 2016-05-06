@@ -246,8 +246,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
         _pagerAdapter = new ScreenSlidePagerAdapter(getSupportFragmentManager());
         _viewPager.setAdapter(_pagerAdapter);
         _viewPager.addOnPageChangeListener(_viewPager_onChange);
-		// FIXME not sure which is the right call!
-		//_viewPager.setOnPageChangeListener(_viewPager_onChange);
 
         _tabview = (WorkorderTabView) findViewById(R.id.tabview);
         _tabview.setListener(_tabview_onChange);
