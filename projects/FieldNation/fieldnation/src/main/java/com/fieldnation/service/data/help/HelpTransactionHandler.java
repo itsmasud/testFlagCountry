@@ -52,14 +52,14 @@ public class HelpTransactionHandler extends WebTransactionHandler {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.ERROR;
+        return Result.DELETE;
     }
 
     private Result handleContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
 
         ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
 
@@ -80,7 +80,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleContactUsFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
@@ -99,7 +99,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
             Log.v(TAG, ex);
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
 }

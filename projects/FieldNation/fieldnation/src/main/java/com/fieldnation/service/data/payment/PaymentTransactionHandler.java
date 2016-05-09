@@ -55,7 +55,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.ERROR;
+            return Result.DELETE;
         }
         return Result.REQUEUE;
     }
@@ -77,7 +77,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
 
@@ -89,7 +89,7 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         StoredObject.put(App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
         PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData,
@@ -101,6 +101,6 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
         StoredObject.put(App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
         PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

@@ -100,7 +100,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             Log.v(TAG, ex);
             return Result.REQUEUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     @Override
@@ -125,9 +125,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.FINISH;
+            return Result.CONTINUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -141,7 +141,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put((int) profileId, PSO_PROFILE, profileId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -154,7 +154,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -167,7 +167,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -178,7 +178,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.action(context, profileId, action, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -197,6 +197,6 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.switchUser(context, userId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

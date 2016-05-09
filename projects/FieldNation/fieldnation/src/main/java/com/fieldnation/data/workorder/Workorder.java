@@ -53,6 +53,8 @@ public class Workorder implements Parcelable {
     private String _customerPoliciesProcedures;
     @Json(name = "discounts")
     private Discount[] _discounts;
+    @Json(name = "displayCounterOffer")
+    private Integer _displayCounterOffer;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
@@ -188,6 +190,10 @@ public class Workorder implements Parcelable {
 
     public Discount[] getDiscounts() {
         return _discounts;
+    }
+
+    public Boolean displayCounterOffer() {
+        return _displayCounterOffer == 1;
     }
 
     public Document[] getDocuments() {
@@ -421,7 +427,8 @@ public class Workorder implements Parcelable {
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
                 && !isBundle()
                 && getPay() != null
-                && !getPay().hidePay();
+                && !getPay().hidePay()
+                && displayCounterOffer();
     }
 
     public boolean canComplete() {

@@ -12,7 +12,7 @@ public abstract class WebTransactionHandler {
     private static final String TAG = "WebTransactionHandler";
 
     public enum Result {
-        REQUEUE, FINISH, ERROR
+        REQUEUE, CONTINUE, DELETE
     }
 
     public static Result startTransaction(Context context, String handlerName, WebTransaction transaction) {
@@ -27,7 +27,7 @@ public abstract class WebTransactionHandler {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.ERROR;
+        return Result.DELETE;
     }
 
     public static Result completeTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData) {
@@ -42,7 +42,7 @@ public abstract class WebTransactionHandler {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.ERROR;
+        return Result.DELETE;
     }
 
     public static Result failTransaction(Context context, String handlerName, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
@@ -59,15 +59,15 @@ public abstract class WebTransactionHandler {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.ERROR;
+        return Result.DELETE;
     }
 
     public Result handleStart(Context context, WebTransaction transaction) {
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     public abstract Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable);

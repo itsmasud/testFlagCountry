@@ -296,7 +296,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
@@ -306,7 +306,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     /*-**********************************-*/
@@ -359,7 +359,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleCounterOffer(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -372,13 +372,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderClient.get(context, workorderId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleRating(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
         ToastClient.snackbar(context, "Success! Your rating has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleCompleteShipmentTask(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -394,7 +394,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderClient.get(context, workorderId, false);
         WorkorderClient.listTasks(context, workorderId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleConfirmAssignment(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -418,7 +418,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderClient.get(context, workorderId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleCheckIn(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -437,11 +437,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
                 ToastClient.snackbar(context, "Checkin failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
-                return Result.ERROR;
+                return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
-            return Result.ERROR;
+            return Result.DELETE;
         }
     }
 
@@ -462,11 +462,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
                 ToastClient.snackbar(context, "Checkout failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 Log.v(TAG, "Sent snackbar");
-                return Result.ERROR;
+                return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
-            return Result.ERROR;
+            return Result.DELETE;
         }
     }
 
@@ -502,7 +502,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             WorkorderClient.get(context, workorderId, false);
         }
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleActionRequest(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -546,7 +546,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
             Log.v(TAG, "handleList 4");
 
-            return Result.FINISH;
+            return Result.CONTINUE;
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -569,7 +569,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleAlertList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -587,7 +587,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         StoredObject.put(App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleTaskList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -599,7 +599,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         StoredObject.put(App.getProfileId(), PSO_TASK_LIST, workorderId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     // individual commands
@@ -624,7 +624,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         // store it in the store
         StoredObject.put(App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleGetSignature(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -637,7 +637,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         //store the signature data
         StoredObject.put(App.getProfileId(), PSO_SIGNATURE, signatureId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     public Result handleGetBundle(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -648,7 +648,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleFinishUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
@@ -660,7 +660,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderClient.get(context, workorderId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     /*-********************************-*/
@@ -724,7 +724,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleTimeLogFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -739,7 +739,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, params.getLong("workorderId"), "pTimeLog", true);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleCounterOfferFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -777,7 +777,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleRatingFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
@@ -796,7 +796,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             Log.v(TAG, ex);
             ToastClient.snackbar(context, "Failed. Your rating could not be sent.", Toast.LENGTH_LONG);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
 
@@ -815,7 +815,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         ToastClient.snackbar(context, "Could not complete your shipment. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleCreateShipmentFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -844,7 +844,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         ToastClient.snackbar(context, "Could not add your shipment. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleActionRequestFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -861,7 +861,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleConfirmAssignmentFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -879,6 +879,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

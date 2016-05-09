@@ -270,12 +270,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                         _service, handlerName, trans, result);
 
                 switch (wresult) {
-                    case ERROR:
+                    case DELETE:
                         generateNotification(notifId, notifFailed);
                         WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                         WebTransaction.delete(trans.getId());
                         break;
-                    case FINISH:
+                    case CONTINUE:
                         generateNotification(notifId, notifSuccess);
                         WebTransaction.delete(trans.getId());
                         break;

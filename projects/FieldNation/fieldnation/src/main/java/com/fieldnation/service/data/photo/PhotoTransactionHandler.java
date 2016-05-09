@@ -80,11 +80,11 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
                 PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
             }
             Log.v(TAG, "handleResult");
-            return Result.FINISH;
+            return Result.CONTINUE;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             Log.v(TAG, "handleResult");
-            return Result.ERROR;
+            return Result.DELETE;
         }
 
     }
@@ -100,6 +100,6 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }
