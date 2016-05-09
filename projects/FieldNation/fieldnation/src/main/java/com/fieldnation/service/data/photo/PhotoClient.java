@@ -46,7 +46,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
         context.startService(intent);
     }
 
-    public static void clearPhotoClientCache() {
+    public static void clearPhotoClientCache(){
         _pictureCache.clear();
     }
 

@@ -4,6 +4,7 @@ import com.fieldnation.Log;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Replies {
@@ -76,7 +77,7 @@ public class Replies {
 
     public static Replies fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Replies.class, json);
+            return Unserializer.unserializeObject(Replies.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

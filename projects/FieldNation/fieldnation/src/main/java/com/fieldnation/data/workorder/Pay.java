@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
@@ -134,7 +135,7 @@ public class Pay implements Parcelable {
 
     public static Pay fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Pay.class, json);
+            return Unserializer.unserializeObject(Pay.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

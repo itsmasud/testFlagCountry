@@ -54,7 +54,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
-    private Snackbar _snackbar;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -392,6 +391,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        private Snackbar _snackbar = null;
+
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
@@ -432,7 +433,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             });
 
             snackbar.show();
-            _snackbar = snackbar;
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -444,6 +444,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
 //        @Override
 //        public void dismissSnackBar() {
+//            Log.v(TAG, "dismissSnackBar");
 //            if (_snackbar == null)
 //                return;
 //

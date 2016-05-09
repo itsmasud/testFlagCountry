@@ -192,21 +192,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         super.onSaveInstanceState(outState);
     }
 
-
-    private void getData() {
-        if (_workorder == null)
-            return;
-
-        if (_workorderClient == null)
-            return;
-
-        if (_workorderClient.isConnected()) {
-            _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
-        }
-
-        WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
-    }
-
     @Override
     protected void onStart() {
         super.onStart();
@@ -321,6 +306,20 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
     }
 
+    private void getData() {
+        if (_workorder == null)
+            return;
+
+        if (_workorderClient == null)
+            return;
+
+        if (_workorderClient.isConnected()) {
+            _workorderClient.subGetSignature(_workorder.getWorkorderId(), _signatureId, false);
+        }
+
+        WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
+    }
+
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -361,5 +360,4 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         }
         context.startActivity(intent);
     }
-
 }

@@ -85,6 +85,8 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         WorkorderTransactionBuilder.get(context, workorderId, false);
 
+        WorkorderClient.get(context, workorderId, false, false);
+
         return Result.FINISH;
     }
 

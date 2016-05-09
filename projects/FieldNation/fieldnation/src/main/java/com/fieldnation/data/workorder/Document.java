@@ -6,6 +6,7 @@ import android.os.Parcelable;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Document implements Parcelable {
@@ -78,7 +79,7 @@ public class Document implements Parcelable {
 
     public static Document fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Document.class, json);
+            return Unserializer.unserializeObject(Document.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

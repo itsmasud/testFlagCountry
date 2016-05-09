@@ -14,6 +14,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -21,7 +22,6 @@ import com.fourmob.datetimepicker.date.DatePickerDialog;
 import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 
 public class ExpiresDialog extends DialogFragmentBase {
     private static final String TAG = "ExpiresDialog";
@@ -116,7 +116,7 @@ public class ExpiresDialog extends DialogFragmentBase {
         public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
             _calendar.set(year, month, day);
             if (DateUtils.isBeforeToday(_calendar)) {
-                Toast.makeText(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG).show();
+                ToastClient.toast(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -138,7 +138,7 @@ public class ExpiresDialog extends DialogFragmentBase {
 
             // truncate milliseconds to seconds
             if (_calendar.getTimeInMillis() / 1000 < System.currentTimeMillis() / 1000) {
-                Toast.makeText(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG).show();
+                ToastClient.toast(App.get(), getString(R.string.toast_previous_time_not_allowed), Toast.LENGTH_LONG);
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -148,7 +148,7 @@ public class ExpiresDialog extends DialogFragmentBase {
                 return;
             }
 
-            _expirationButton.setText(misc.formatDateTimeLong(_calendar));
+            _expirationButton.setText(DateUtils.formatDateTimeLong(_calendar));
             _isDateSet = true;
         }
     };

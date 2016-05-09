@@ -33,6 +33,10 @@ public class ScheduleDialog extends DialogFragmentBase {
 
     // State
     private static final String STATE_SCHEDULE = "STATE_SCHEDULE";
+    private static final String STATE_SPINNER = "STATE_SPINNER";
+    private static final String STATE_FIXED_DATETIME = "STATE_FIXED_DATETIME";
+    private static final String STATE_RANGE_DATETIME_START = "STATE_RANGE_DATETIME_START";
+    private static final String STATE_RANGE_DATETIME_END = "STATE_RANGE_DATETIME_END";
 
     // Modes
     private static final int MODE_RANGE = 0;
@@ -56,13 +60,16 @@ public class ScheduleDialog extends DialogFragmentBase {
     private TimePickerDialog _timePicker;
 
     // Data
-    private int _mode;
+    private int _mode = 1;
     private Schedule _sched;
     private Calendar _startCal;
     private Calendar _endCal;
     private boolean _startIsSet = false;
     private boolean _endIsSet = false;
     private Listener _listener;
+    private String _stateFixedDateTime;
+    private String _stateRangeStartDateTime;
+    private String _stateRangeEndDateTime;
     private Handler _handler = new Handler();
 
 
@@ -87,10 +94,48 @@ public class ScheduleDialog extends DialogFragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_sched != null)
+        if (_sched != null) {
             outState.putParcelable(STATE_SCHEDULE, _sched);
+        }
+
+        outState.putInt(STATE_SPINNER, _mode);
+
+        if (_dateTimeButton != null && !misc.isEmptyOrNull(_dateTimeButton.getText().toString())) {
+            outState.putString(STATE_FIXED_DATETIME, _dateTimeButton.getText().toString());
+            Log.e(TAG, "STATE_FIXED_DATETIME: " + _dateTimeButton.getText().toString());
+        }
+
+        if (_startDateButton != null && !misc.isEmptyOrNull(_startDateButton.getText().toString())) {
+            outState.putString(STATE_RANGE_DATETIME_START, _startDateButton.getText().toString());
+        }
+
+        if (_endDateButton != null && !misc.isEmptyOrNull(_endDateButton.getText().toString())) {
+            outState.putString(STATE_RANGE_DATETIME_END, _endDateButton.getText().toString());
+        }
+
 
         super.onSaveInstanceState(outState);
+    }
+
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_SPINNER)) {
+                _mode = savedInstanceState.getInt(STATE_SPINNER);
+            }
+            if (savedInstanceState.containsKey(STATE_FIXED_DATETIME)) {
+                _stateFixedDateTime = savedInstanceState.getString(STATE_FIXED_DATETIME);
+            }
+            if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_START)) {
+                _stateRangeStartDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_START);
+            }
+            if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_END)) {
+                _stateRangeEndDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_END);
+            }
+
+        }
     }
 
     @Override
@@ -117,9 +162,11 @@ public class ScheduleDialog extends DialogFragmentBase {
         _okButton.setOnClickListener(_okButton_onClick);
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
+                c.get(Calendar.DAY_OF_MONTH));
         _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
+        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
+                false, false);
 
         _startCal = Calendar.getInstance();
         _endCal = Calendar.getInstance();
@@ -162,6 +209,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     }
 
     private void populateUi() {
+        Log.e(TAG, "populateUi");
         if (_typeSpinner == null)
             return;
 
@@ -181,18 +229,19 @@ public class ScheduleDialog extends DialogFragmentBase {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
+        setMode(_mode);
 
-        if (_sched != null) {
-            if (_sched.isExact()) {
-                setMode(MODE_EXACT);
-            } else {
-                setMode(MODE_RANGE);
-            }
-        }
+
+//        if (_sched != null) {
+//            if (_sched.isExact()) {
+//                setMode(MODE_EXACT);
+//            } else {
+//                setMode(MODE_RANGE);
+//            }
+//        }
     }
 
     private void setMode(int mode) {
-        Log.e(TAG, "setMode");
         _mode = mode;
 
         _typeSpinner.setSelectedItem(_mode);
@@ -201,15 +250,26 @@ public class ScheduleDialog extends DialogFragmentBase {
             case MODE_EXACT:
                 _rangeLayout.setVisibility(View.GONE);
                 _exactLayout.setVisibility(View.VISIBLE);
-
-                _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                if (misc.isEmptyOrNull(_stateFixedDateTime)) {
+                    _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
+                } else {
+                    _dateTimeButton.setText(_stateFixedDateTime);
+                }
                 break;
             case MODE_RANGE:
                 _rangeLayout.setVisibility(View.VISIBLE);
                 _exactLayout.setVisibility(View.GONE);
 
-                _startDateButton.setText(misc.formatDateTimeLong(_startCal));
-                _endDateButton.setText(misc.formatDateTimeLong(_endCal));
+                if (misc.isEmptyOrNull(_stateFixedDateTime)) {
+                    _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
+                } else {
+                    _startDateButton.setText(_stateRangeStartDateTime);
+                }
+                if (misc.isEmptyOrNull(_stateRangeEndDateTime)) {
+                    _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
+                } else {
+                    _endDateButton.setText(_stateRangeEndDateTime);
+                }
 
                 break;
         }
@@ -277,9 +337,9 @@ public class ScheduleDialog extends DialogFragmentBase {
                 _startIsSet = true;
 
                 if (_mode == MODE_EXACT) {
-                    _dateTimeButton.setText(misc.formatDateTimeLong(_startCal));
+                    _dateTimeButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 } else {
-                    _startDateButton.setText(misc.formatDateTimeLong(_startCal));
+                    _startDateButton.setText(DateUtils.formatDateTimeLong(_startCal));
                 }
 
             } else if (tag.equals("end")) {
@@ -299,7 +359,7 @@ public class ScheduleDialog extends DialogFragmentBase {
                 }
 
                 _endIsSet = true;
-                _endDateButton.setText(misc.formatDateTimeLong(_endCal));
+                _endDateButton.setText(DateUtils.formatDateTimeLong(_endCal));
             }
         }
     };

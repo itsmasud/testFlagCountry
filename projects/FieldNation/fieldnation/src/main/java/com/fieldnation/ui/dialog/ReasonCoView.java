@@ -12,6 +12,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -143,7 +144,7 @@ public class ReasonCoView extends RelativeLayout {
             _expiresButton.setVisibility(View.GONE);
         }
         if (_expirationDate != null) {
-            _expiresButton.setText(misc.formatDateTime(_expirationDate, false));
+            _expiresButton.setText(DateUtils.formatDateTime(_expirationDate, false));
         }
 
         if (_reset) {

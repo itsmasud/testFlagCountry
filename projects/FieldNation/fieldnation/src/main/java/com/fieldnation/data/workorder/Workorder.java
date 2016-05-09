@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
@@ -15,6 +17,8 @@ import java.util.Set;
 
 public class Workorder implements Parcelable {
 
+    @Json(name = "_action")
+    private JsonArray _action;
     @Json(name = "additionalExpenses")
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
@@ -109,6 +113,10 @@ public class Workorder implements Parcelable {
     private User _workorderManagerInfo;
 
     public Workorder() {
+    }
+
+    public JsonArray getActions() {
+        return _action;
     }
 
     public Expense[] getAdditionalExpenses() {
@@ -320,7 +328,7 @@ public class Workorder implements Parcelable {
 
     public static Workorder fromJson(JsonObject json) {
         try {
-            Workorder wo = Serializer.unserializeObject(Workorder.class, json);
+            Workorder wo = Unserializer.unserializeObject(Workorder.class, json);
             wo.buildStatus();
             return wo;
         } catch (Exception ex) {

@@ -24,6 +24,7 @@ public class PhotoTransactionBuilder implements PhotoConstants {
                     .request(
                             new HttpJsonBuilder()
                                     .method("GET")
+                                    .timingKey("GET/ProfilePhotoDownload")
                                     .path(url)
                     ).send();
         } catch (Exception ex) {

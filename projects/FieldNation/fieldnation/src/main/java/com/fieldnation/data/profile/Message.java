@@ -5,6 +5,7 @@ import com.fieldnation.data.workorder.Status;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Message {
@@ -104,7 +105,7 @@ public class Message {
 
     public static Message fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Message.class, json);
+            return Unserializer.unserializeObject(Message.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

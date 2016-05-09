@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ShipmentTracking {
@@ -111,7 +112,7 @@ public class ShipmentTracking {
 
     public static ShipmentTracking fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(ShipmentTracking.class, json);
+            return Unserializer.unserializeObject(ShipmentTracking.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

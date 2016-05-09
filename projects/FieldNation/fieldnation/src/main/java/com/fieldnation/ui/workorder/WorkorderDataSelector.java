@@ -3,11 +3,9 @@ package com.fieldnation.ui.workorder;
 /**
  * <P>
  * An enum that provides data selection abilities. Used primarily in
- * {@link WorkorderListAdapter}
  * </p>
  *
  * @author michael.carver
- * @see WorkorderListAdapter
  */
 public enum WorkorderDataSelector {
     AVAILABLE("available"),

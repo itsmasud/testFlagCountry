@@ -92,9 +92,9 @@ public class TimeLogRowView extends RelativeLayout {
                 ecal = ISO8601.toCalendar(_loggedWork.getEndDate());
             }
             if (ecal != null && !DateUtils.isSameDay(cal, ecal)) {
-                _dateTextView.setText(misc.formatDate(cal) + " - " + misc.formatDate(ecal));
+                _dateTextView.setText(DateUtils.formatDate(cal) + " - " + DateUtils.formatDate(ecal));
             } else {
-                _dateTextView.setText(misc.formatDate(cal));
+                _dateTextView.setText(DateUtils.formatDate(cal));
             }
         } catch (ParseException e) {
             Log.v(TAG, e);
@@ -103,12 +103,12 @@ public class TimeLogRowView extends RelativeLayout {
         try {
             Calendar cal = ISO8601.toCalendar(_loggedWork.getStartDate());
 
-            String date = misc.formatTime(cal, false);
+            String date = DateUtils.formatTime(cal, false);
 
             if (_loggedWork.getEndDate() != null) {
                 cal = ISO8601.toCalendar(_loggedWork.getEndDate());
 
-                date += " - " + misc.formatTime(cal, false);
+                date += " - " + DateUtils.formatTime(cal, false);
             } else {
                 date += " - ----";
             }

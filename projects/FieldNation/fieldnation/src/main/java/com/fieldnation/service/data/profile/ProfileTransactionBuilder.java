@@ -18,6 +18,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     public static void get(Context context, long profileId, boolean isSync) {
         try {
             HttpJsonBuilder http = new HttpJsonBuilder()
+                    .timingKey("GET/api/rest/v1/profile/")
                     .protocol("https")
                     .method("GET");
 
@@ -54,6 +55,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
+                                    .timingKey("GET/api/rest/v1/profile/notifications")
                                     .path("/api/rest/v1/profile/notifications")
                                     .urlParams("?page=" + page)
                     ).send();
@@ -75,6 +77,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
+                                    .timingKey("GET/api/rest/v1/profile/messages")
                                     .path("/api/rest/v1/profile/messages")
                                     .urlParams("?page=" + page)
                     ).send();
@@ -95,6 +98,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
+                                    .timingKey("GET/api/rest/v1/profile/[userId]/switch")
                                     .path("/api/rest/v1/profile/" + userId + "/switch")
                     ).send();
         } catch (Exception ex) {
@@ -108,6 +112,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/profile/[profileId]/" + action)
                     .path("/api/rest/v1/profile/" + profileId + "/" + action);
 
             if (params != null) {
@@ -152,6 +157,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/api/record")
                     .path("/api/rest/v1/api/record");
 
             JsonObject body = new JsonObject();

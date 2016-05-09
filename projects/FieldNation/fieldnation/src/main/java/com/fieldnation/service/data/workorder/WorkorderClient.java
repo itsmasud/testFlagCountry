@@ -236,9 +236,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionAddMessage(Context context, long workorderId, String message) {
-        WorkorderTransactionBuilder.action(context, workorderId,
-                "messages/new", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "message=" + misc.escapeForURL(message));
+        WorkorderTransactionBuilder.actionAddMessage(context, workorderId, message);
     }
 
     public static void actionMarkMessagesRead(Context context, long workorderId) {
@@ -405,45 +403,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionChangePay(Context context, long workorderId, Pay pay, String explanation) {
-
-        String payload = "";
-        if (pay != null) {
-            if (pay.isPerDeviceRate()) {
-                payload += "payBasis=per_device";
-                payload += "&payPerDevice=" + pay.getPerDevice();
-                payload += "&maxDevices=" + pay.getMaxDevice();
-            } else if (pay.isBlendedRate()) {
-                payload += "payBasis=blended";
-                payload += "&hourlyRate=" + pay.getBlendedStartRate();
-                payload += "&maxHours=" + pay.getBlendedFirstHours();
-                payload += "&additionalHourRate=" + pay.getBlendedAdditionalRate();
-                payload += "&additionalMaxHours=" + pay.getBlendedAdditionalHours();
-            } else if (pay.isFixedRate()) {
-                payload += "payBasis=fixed";
-                payload += "&fixedTotalAmount=" + pay.getFixedAmount();
-            } else if (pay.isHourlyRate()) {
-                payload += "payBasis=per_hour";
-                payload += "&hourlyRate=" + pay.getPerHour();
-                payload += "&maxHours=" + pay.getMaxHour();
-            }
-        }
-
-        payload += "&providerExplanation=" + misc.escapeForURL(explanation);
-
-        WorkorderTransactionBuilder.action(context, workorderId, "pay-change", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, payload);
+        WorkorderTransactionBuilder.actionChangePay(context, workorderId, pay, explanation);
     }
 
     public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
-        WorkorderTransactionBuilder.action(context,
-                workorderId, "custom-fields/" + customFieldId, null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)));
+        WorkorderTransactionBuilder.actionCustomField(context, workorderId, customFieldId, value);
     }
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
-
         Debug.logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }

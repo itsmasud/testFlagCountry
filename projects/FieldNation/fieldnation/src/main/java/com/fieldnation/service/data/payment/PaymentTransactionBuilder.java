@@ -28,6 +28,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
+                                    .timingKey("GET/api/rest/v1/accounting/payment-queue/all")
                                     .path("/api/rest/v1/accounting/payment-queue/all")
                                     .urlParams("?page=" + page)
                     ).send();
@@ -49,6 +50,7 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
+                                    .timingKey("GET/api/rest/v1/accounting/payment-queue/[paymentId]")
                                     .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
                     ).send();
         } catch (Exception ex) {

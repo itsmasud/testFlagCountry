@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -72,7 +73,7 @@ public class SignatureCardView extends RelativeLayout {
         _nameTextView.setText(_sig.getPrintName());
         try {
             _dateTextView.setText("Signed by " + _sig.getPrintName()
-                    + " on " + misc.formatDateLong(ISO8601.toCalendar(_sig.getDateSaved())));
+                    + " on " + DateUtils.formatDateLong(ISO8601.toCalendar(_sig.getDateSaved())));
             _dateTextView.setVisibility(VISIBLE);
         } catch (Exception ex) {
             Log.v(TAG, ex);

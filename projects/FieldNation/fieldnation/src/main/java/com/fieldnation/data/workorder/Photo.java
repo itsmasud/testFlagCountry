@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class Photo {
@@ -39,7 +40,7 @@ public class Photo {
 
     public static Photo fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(Photo.class, json);
+            return Unserializer.unserializeObject(Photo.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

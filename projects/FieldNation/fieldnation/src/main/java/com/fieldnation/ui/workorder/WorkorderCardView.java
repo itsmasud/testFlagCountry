@@ -359,7 +359,7 @@ public class WorkorderCardView extends RelativeLayout {
                         _timeTextView.setText(
                                 getResources().getString(
                                         R.string.time_late,
-                                        misc.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))
+                                        DateUtils.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))
                                 )
                         );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
@@ -375,7 +375,7 @@ public class WorkorderCardView extends RelativeLayout {
                         _timeTextView.setText(
                                 getResources().getString(
                                         R.string.in_time,
-                                        misc.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))
+                                        DateUtils.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))
                                 )
                         );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
@@ -419,8 +419,8 @@ public class WorkorderCardView extends RelativeLayout {
                             } else {
                                 _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(misc.formatTime(sCal, false));
-                                _extra2TextView.setText(misc.formatTime(eCal, false));
+                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
                             }
                         } else {
                             _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
@@ -438,14 +438,14 @@ public class WorkorderCardView extends RelativeLayout {
                             if (eDay.equals(sDay)) {
                                 _timeTextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(misc.formatTime(sCal, false));
-                                _extra2TextView.setText(misc.formatTime(eCal, false));
+                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
 
                             } else {
                                 _timeTextView.setText(sDay + " - ");
                                 _time2TextView.setText(eDay);
-                                _extraTextView.setText(misc.formatTime(sCal, false));
-                                _extra2TextView.setText(misc.formatTime(eCal, false));
+                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
                             }
                         } else {
                             if (DateUtils.isToday(sCal)) {
@@ -476,8 +476,8 @@ public class WorkorderCardView extends RelativeLayout {
                             } else {
                                 _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(misc.formatTime(sCal, false));
-                                _extra2TextView.setText(misc.formatTime(eCal, false));
+                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
                             }
 
                         } else {

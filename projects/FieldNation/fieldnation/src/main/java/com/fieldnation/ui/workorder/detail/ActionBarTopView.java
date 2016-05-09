@@ -132,17 +132,17 @@ public class ActionBarTopView extends LinearLayout {
                 inflate();
                 // Ready-To-Go if needed
                 if (_workorder.getNeedsReadyToGo()) {
-                    _leftWhiteButton.setVisibility(VISIBLE);
-                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                     _rightGreenButton.setVisibility(VISIBLE);
                     _rightGreenButton.setText(R.string.btn_ready_to_go);
                     _rightGreenButton.setOnClickListener(_readyToGo_onClick);
                 } else {
-                    _leftWhiteButton.setVisibility(VISIBLE);
-                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                     _rightWhiteButton.setVisibility(VISIBLE);
                     _rightWhiteButton.setText(R.string.btn_check_in);
@@ -153,9 +153,9 @@ public class ActionBarTopView extends LinearLayout {
             case UNCONFIRMED:
                 inflate();
                 // Confirm
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                 _rightOrangeButton.setVisibility(VISIBLE);
                 _rightOrangeButton.setText(R.string.btn_confirm);
@@ -196,9 +196,9 @@ public class ActionBarTopView extends LinearLayout {
                     _rightOrangeButton.setText(R.string.btn_closing_notes);
                     _rightOrangeButton.setOnClickListener(_closing_onClick);
                 } else {
-                    _leftWhiteButton.setVisibility(VISIBLE);
-                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                        _leftWhiteButton.setVisibility(VISIBLE);
+                        _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                        _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                     // check in, or check in again
                     _rightWhiteButton.setVisibility(VISIBLE);
@@ -214,9 +214,9 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case CHECKEDIN:
                 inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                 // Check out
                 _rightGreenButton.setVisibility(VISIBLE);
@@ -226,18 +226,18 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case ONHOLD_ACKNOWLEDGED:
                 // nothing
-                inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-                setVisibility(View.VISIBLE);
+                    inflate();
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    setVisibility(View.VISIBLE);
 
                 break;
             case ONHOLD_UNACKNOWLEDGED:
                 inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                 // ack hold
                 _rightOrangeButton.setVisibility(VISIBLE);
@@ -247,9 +247,9 @@ public class ActionBarTopView extends LinearLayout {
                 break;
             case PENDINGREVIEW: // marked completed
                 inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                 // mark incomplete
                 _rightWhiteButton.setVisibility(VISIBLE);
@@ -260,17 +260,17 @@ public class ActionBarTopView extends LinearLayout {
             case APPROVED_PROCESSINGPAYMENT:
             case INREVIEW:
                 // nothing
-                inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
-                setVisibility(View.VISIBLE);
+                    inflate();
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    setVisibility(View.VISIBLE);
                 break;
             case PAID: // completed
                 inflate();
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_report_a_problem);
-                _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_report_a_problem);
+                    _leftWhiteButton.setOnClickListener(_reportProblem_onClick);
 
                 // view payment
                 _rightWhiteButton.setVisibility(VISIBLE);

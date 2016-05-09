@@ -75,7 +75,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//        Log.v(TAG, "onActivityResult");
+        Log.e(TAG, "onActivityResult");
         if (requestCode == RESULT_CODE_BARCODE_SCAN) {
             if (resultCode == Activity.RESULT_OK) {
                 Log.v(TAG, "requestCode");
@@ -88,7 +88,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TASKID))
                 _taskId = savedInstanceState.getLong(STATE_TASKID);
@@ -110,7 +109,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
 
@@ -159,8 +157,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
-//        populateSpinners();
 
         return v;
     }
@@ -222,7 +218,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
-//        Log.v(TAG, "onResume");
 
         populateSpinners();
 
@@ -239,7 +234,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         } else if (_selectedPosition_careerSpinner != -1) {
             _carrier_selected.onItemClick(null, null, _selectedPosition_careerSpinner, 0);
         }
-    }
+        }
 
     @Override
     public void onDestroy() {
@@ -341,7 +336,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             if (misc.isEmptyOrNull(_trackingIdEditText.getText().toString())) {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_traking_number), Toast.LENGTH_SHORT);
                 return;

@@ -409,9 +409,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         public void onConnected() {
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.subList(_displayView);
-            _workorderClient.subGet(false);
             _workorderClient.subActions();
-            _workorderClient.subDeliverableUpload();
             _adapter.refreshPages();
         }
 
@@ -541,21 +539,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         public void onConnected() {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorder.getWorkorderId());
             _workorderClient.subGet(_workorder.getWorkorderId());
-            _workorderClient.subActions(_workorder.getWorkorderId());
-            _workorderClient.subDeliverableUpload();
-            getData(false);
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onUploadDeliverable ");
-            if (isComplete)
-                getData(false);
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onAction " + workorderId + "/" + action);
             getData(false);
         }
 

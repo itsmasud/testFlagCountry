@@ -132,6 +132,9 @@ public class TaskRowView extends RelativeLayout {
         }
     }
 
+    /*-*********************************-*/
+    /*-             Events              -*/
+    /*-*********************************-*/
     private void subscribeUpload() {
         if (_workorder == null)
             return;
@@ -145,13 +148,8 @@ public class TaskRowView extends RelativeLayout {
         if (!_workorderClient.isConnected())
             return;
 
-
         _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _task.getSlotId());
     }
-
-    /*-*********************************-*/
-    /*-             Events              -*/
-    /*-*********************************-*/
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
@@ -170,7 +168,6 @@ public class TaskRowView extends RelativeLayout {
             }
         }
     };
-
 
     private final View.OnClickListener _checkbox_onClick = new View.OnClickListener() {
         @Override
