@@ -371,6 +371,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                     if (_snackbar != null) {
                         _snackbar.dismiss();
                         _snackbar = null;
+                        _lastId = 0;
                     }
 
                     if (buttonIntent != null) {
@@ -409,6 +410,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
                 ex.printStackTrace();
             }
             _snackbar = null;
+            _lastId = 0;
         }
     };
 }

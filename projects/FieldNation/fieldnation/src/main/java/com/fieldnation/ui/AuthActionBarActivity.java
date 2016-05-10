@@ -427,6 +427,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                     if (_snackbar != null) {
                         _snackbar.dismiss();
                         _snackbar = null;
+                        _lastId = 0;
                     }
 
                     if (buttonIntent != null) {
@@ -466,6 +467,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 ex.printStackTrace();
             }
             _snackbar = null;
+            _lastId = 0;
         }
     };
 }
