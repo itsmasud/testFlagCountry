@@ -366,17 +366,17 @@ public class DeliverableFragment extends WorkorderFragment {
 
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
-                        Uri uri;
 
                         if (clipData != null) {
                             int count = clipData.getItemCount();
+                            Intent intent = new Intent();
+                            Uri uri = null;
                             for (int i = 0; i < count; ++i) {
                                 uri = clipData.getItemAt(i).getUri();
                                 if (uri != null) {
-                                    ClipData.Item item = clipData.getItemAt(i);
                                     Log.v(TAG, "Multiple local/ non-local files upload");
                                     WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
-                                            _uploadingSlotId, new Intent().setData(item.getUri()));
+                                            _uploadingSlotId, intent.setData(uri));
                                 }
                             }
                         } else {
@@ -393,6 +393,7 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         } catch (Exception ex) {
             Debug.logException(ex);
+            Log.e(TAG, ex.getMessage());
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
