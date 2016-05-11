@@ -29,6 +29,8 @@ public class ToastClient extends TopicClient {
 
     private static final String PARAM_BUTTON_INTENT = "PARAM_BUTTON_INTENT";
     private static final String PARAM_DURATION = "PARAM_DURATION";
+    private static final String PARAM_MESSAGE_ID = "PARAM_MESSAGE_ID";
+
 
     public ToastClient(Listener listener) {
         super(listener);
@@ -38,33 +40,52 @@ public class ToastClient extends TopicClient {
         super.disconnect(context, STAG);
     }
 
+    public static void snackbar(Context context, long id, String title, int duration) {
+        snackbar(context, id, title, null, null, duration);
+    }
+
+    public static void snackbar(Context context, long id, int titleResId, int duration) {
+        snackbar(context, id, context.getString(titleResId), duration);
+    }
+
+    public static void snackbar(Context context, long id, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
+        snackbar(context, id, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
+    }
+
     public static void snackbar(Context context, String title, int duration) {
-        snackbar(context, title, null, null, duration);
+        snackbar(context, 0, title, null, null, duration);
     }
 
     public static void snackbar(Context context, int titleResId, int duration) {
-        snackbar(context, context.getString(titleResId), duration);
+        snackbar(context, 0, context.getString(titleResId), duration);
+    }
+
+    public static void snackbar(Context context, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
+        snackbar(context, 0, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
     }
 
     public static void snackbar(Context context, String title, String buttonText, PendingIntent buttonIntent, int duration) {
+        snackbar(context, 0, title, buttonText, buttonIntent, duration);
+    }
+
+    public static void snackbar(Context context, long id, String title, String buttonText, PendingIntent buttonIntent, int duration) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_SNACKBAR);
         bundle.putString(PARAM_TITLE, title);
         bundle.putInt(PARAM_DURATION, duration);
         bundle.putString(PARAM_BUTTON_TEXT, buttonText);
         bundle.putParcelable(PARAM_BUTTON_INTENT, buttonIntent);
+        bundle.putLong(PARAM_MESSAGE_ID, id);
 
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
     }
 
-    public static void dismissSnackbar(Context context) {
+
+    public static void dismissSnackbar(Context context, long id) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);
+        bundle.putLong(PARAM_MESSAGE_ID, id);
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
-    }
-
-    public static void snackbar(Context context, int titleResId, int buttonTextResId, PendingIntent buttonIntent, int duration) {
-        snackbar(context, context.getString(titleResId), context.getString(buttonTextResId), buttonIntent, duration);
     }
 
     public boolean subSnackbar() {
@@ -101,7 +122,7 @@ public class ToastClient extends TopicClient {
                     String action = ((Bundle) payload).getString(PARAM_ACTION);
                     switch (action) {
                         case PARAM_ACTION_DISMISS_SNACKBAR:
-                            dismissSnackBar();
+                            dismissSnackBar(((Bundle) payload).getLong(PARAM_MESSAGE_ID));
                             break;
                         default:
                             preShowSnackBar((Bundle) payload);
@@ -115,13 +136,14 @@ public class ToastClient extends TopicClient {
         }
 
         private void preShowSnackBar(Bundle bundle) {
-            showSnackBar(bundle.getString(PARAM_TITLE),
+            showSnackBar(bundle.getLong(PARAM_MESSAGE_ID),
+                    bundle.getString(PARAM_TITLE),
                     bundle.getString(PARAM_BUTTON_TEXT),
                     (PendingIntent) bundle.getParcelable(PARAM_BUTTON_INTENT),
                     bundle.getInt(PARAM_DURATION));
         }
 
-        public void showSnackBar(String title, String buttonText, PendingIntent buttonIntent, int duration) {
+        public void showSnackBar(long id, String title, String buttonText, PendingIntent buttonIntent, int duration) {
         }
 
         private void preShowToast(Bundle bundle) {
@@ -132,7 +154,7 @@ public class ToastClient extends TopicClient {
 
         }
 
-        public void dismissSnackBar() {
+        public void dismissSnackBar(long id) {
         }
     }
 }

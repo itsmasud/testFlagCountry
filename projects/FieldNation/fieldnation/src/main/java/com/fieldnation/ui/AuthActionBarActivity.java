@@ -392,6 +392,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
         private Snackbar _snackbar = null;
+        private long _lastId = 0;
 
         @Override
         public void onConnected() {
@@ -401,8 +402,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+        public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
             Log.v(TAG, "showSnackBar(" + title + ")");
+
+            if (id > 0 && id == _lastId)
+                return;
+
             if (findViewById(android.R.id.content) == null) {
                 Log.v(TAG, "showSnackBar.findViewById() == null");
                 return;
@@ -419,8 +424,11 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             snackbar.setAction(buttonText, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (_snackbar != null)
+                    if (_snackbar != null) {
                         _snackbar.dismiss();
+                        _snackbar = null;
+                        _lastId = 0;
+                    }
 
                     if (buttonIntent != null) {
                         try {
@@ -433,6 +441,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             });
 
             snackbar.show();
+            _snackbar = snackbar;
+            _lastId = id;
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -442,17 +452,22 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             Toast.makeText(AuthActionBarActivity.this, title, duration).show();
         }
 
-//        @Override
-//        public void dismissSnackBar() {
-//            Log.v(TAG, "dismissSnackBar");
-//            if (_snackbar == null)
-//                return;
-//
-//            try {
-//                _snackbar.dismiss();
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            }
-//        }
+        @Override
+        public void dismissSnackBar(long id) {
+            Log.v(TAG, "dismissSnackBar");
+            if (_snackbar == null)
+                return;
+
+            if (_lastId != id)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            _snackbar = null;
+            _lastId = 0;
+        }
     };
 }
