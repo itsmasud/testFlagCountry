@@ -78,7 +78,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-					.timingKey("GET/api/rest/v1/workorder/[workorderId]/notifications")
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/notifications")
                     .path("/api/rest/v1/workorder/" + workorderId + "/notifications");
 
             if (isRead) {
@@ -743,6 +743,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
+                    .setWifiRequired(App.get().onlyUploadWithWifi())
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -794,6 +795,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
+                    .setWifiRequired(App.get().onlyUploadWithWifi())
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);

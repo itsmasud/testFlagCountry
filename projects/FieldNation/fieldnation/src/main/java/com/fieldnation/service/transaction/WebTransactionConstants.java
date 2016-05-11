@@ -15,4 +15,5 @@ public interface WebTransactionConstants {
     String PARAM_TRANSFORM_LIST = "PARAM_TRANSFORM_LIST";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_QUEUE_TIME = "PARAM_QUEUE_TIME";
+    String PARAM_WIFI_REQUIRED = "PARAM_WIFI_REQUIRED";
 }

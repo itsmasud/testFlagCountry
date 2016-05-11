@@ -27,6 +27,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _requestString;
     private String _key;
     private long _queueTime;
+    private boolean _wifiRequired;
 
     public enum State {
         BUILDING, IDLE, WORKING
@@ -49,6 +50,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
         _priority = Priority.values()[cursor.getInt(Column.PRIORITY.getIndex())];
         _key = cursor.getString(Column.KEY.getIndex());
+        _wifiRequired = cursor.getInt(Column.WIFI_REQUIRED.getIndex()) == 1;
     }
 
     public WebTransaction(Bundle bundle) {
@@ -65,6 +67,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         }
         _priority = (Priority) bundle.getSerializable(PARAM_PRIORITY);
         _key = bundle.getString(PARAM_KEY);
+        _wifiRequired = bundle.getBoolean(PARAM_WIFI_REQUIRED);
     }
 
     public Bundle toBundle() {
@@ -81,6 +84,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
+        bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
         return bundle;
     }
 
@@ -153,6 +157,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public void setQueueTime(long queueTime) {
         _queueTime = queueTime;
+    }
+
+    public void setWifiRequired(boolean required) {
+        _wifiRequired = required;
+    }
+
+    public boolean isWifiRequired() {
+        return _wifiRequired;
     }
 
     public void requeue() {
@@ -252,7 +264,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     WebTransactionSqlHelper.getColumnNames(),
                     Column.STATE + "=?"
                             + (allowSync ? "" : " AND is_sync = 0")
-                            + (allowAuth ? "" : " AND use_auth = 0"),
+                            + (allowAuth ? "" : " AND use_auth = 0")
+                            + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
                     GET_NEXT_PARAMS,
                     null, null, GET_NEXT_SORT, "1");
             try {
@@ -298,6 +311,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
         v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
         v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
+        v.put(Column.WIFI_REQUIRED.getName(), obj._wifiRequired ? 1 : 0);
 
         boolean success = false;
         synchronized (TAG) {
@@ -315,7 +329,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Priority priority, String key, boolean useAuth,
-                                     boolean isSync, byte[] request, String handlerName, byte[] handlerParams) {
+                                     boolean isSync, byte[] request, boolean wifiRequired, String handlerName, byte[] handlerParams) {
 //        Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
@@ -327,6 +341,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.PRIORITY.getName(), priority.ordinal());
         v.put(Column.KEY.getName(), key);
         v.put(Column.QUEUE_TIME.getName(), 0);
+        v.put(Column.WIFI_REQUIRED.getName(), wifiRequired ? 1 : 0);
 
         long id = -1;
         synchronized (TAG) {
@@ -362,6 +377,23 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
+
+            try {
+                if (cursor.moveToNext()) {
+                    return cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return 0;
+    }
+
+    public static int countWifiRequired() {
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE wifi_req = 1", null);
 
             try {
                 if (cursor.moveToNext()) {

@@ -1,13 +1,9 @@
 package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -25,8 +21,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -57,6 +51,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
 
+    public boolean _isFirstThread = false;
+
     private static JsonObject TEST_QUERY;
 
     static {
@@ -77,8 +73,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
     @Override
     public boolean doWork() {
-        // try to get a transaction
+        if (_isFirstThread) {
+            Log.v(TAG, "Trans Count: " + WebTransaction.count());
+            Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
+        }
 
+        // try to get a transaction
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
             try {
@@ -95,8 +95,6 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 return false;
             }
         }
-
-        //Log.v(TAG, "Trans Count: " + WebTransaction.count(_service));
         WebTransaction trans = null;
 
         try {
@@ -379,8 +377,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "Running allowSync");
                 _allowSync = true;
 
-                SharedPreferences settings = App.get().getSharedPreferences(App.get().getPackageName() + "_preferences",
-                        Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+                SharedPreferences settings = App.get().getSharedPreferences();
 
                 boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
                 boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);

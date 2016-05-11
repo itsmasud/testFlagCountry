@@ -51,7 +51,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         _globalTopicClient.connect(App.get());
 
         _manager = new ThreadManager();
-        _manager.addThread(new TransactionThread(_manager, this, false)); // 0
+        TransactionThread t = new TransactionThread(_manager, this, false);
+        t._isFirstThread = true;
+        _manager.addThread(t); // 0
+
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
         for (int i = 2; i < threadCount; i++) {
             // every other can do sync
@@ -165,6 +168,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getBoolean(PARAM_USE_AUTH),
                         extras.getBoolean(PARAM_IS_SYNC),
                         extras.getByteArray(PARAM_REQUEST),
+                        extras.getBoolean(PARAM_WIFI_REQUIRED),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
 

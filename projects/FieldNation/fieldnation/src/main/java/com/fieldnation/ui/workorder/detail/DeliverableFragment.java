@@ -484,7 +484,8 @@ public class DeliverableFragment extends WorkorderFragment {
                 _tempFile = temppath;
                 Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
 
-                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                // removed because this doesn't work on my motorola
+                //src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
                 startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
             }
         }

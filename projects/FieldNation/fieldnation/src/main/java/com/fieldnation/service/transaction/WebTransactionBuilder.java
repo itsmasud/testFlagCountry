@@ -27,6 +27,7 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent = new Intent(context, WebTransactionService.class);
         intent.putExtra(PARAM_PRIORITY, Priority.NORMAL);
         intent.putExtra(PARAM_IS_SYNC, false);
+        intent.putExtra(PARAM_WIFI_REQUIRED, false);
     }
 
     public static WebTransactionBuilder builder(Context context) {
@@ -53,6 +54,11 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent.putExtra(PARAM_IS_SYNC, sync);
         if (sync)
             intent.putExtra(PARAM_PRIORITY, Priority.LOW);
+        return this;
+    }
+
+    public WebTransactionBuilder setWifiRequired(boolean required) {
+        intent.putExtra(PARAM_WIFI_REQUIRED, required);
         return this;
     }
 
