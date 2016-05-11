@@ -226,11 +226,18 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             } else if (result.getResponseCode() == 401) {
                 // 401 usually means bad auth token
-                Log.v(TAG, "Reauth 2");
-                AuthTopicClient.invalidateCommand(_service);
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(_service);
-                return true;
+                if (HttpJsonBuilder.isFieldNation(request)) {
+                    Log.v(TAG, "Reauth 2");
+                    AuthTopicClient.invalidateCommand(_service);
+                    transRequeueNetworkDown(trans, notifId, notifRetry);
+                    AuthTopicClient.requestCommand(_service);
+                    return true;
+                } else {
+                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                    WebTransaction.delete(trans.getId());
+                    generateNotification(notifId, notifFailed);
+                    return true;
+                }
 
             } else if (result.getResponseCode() == 404) {
                 // not found?... error
