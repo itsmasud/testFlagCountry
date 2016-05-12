@@ -6,6 +6,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,9 +36,11 @@ import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
+import com.fieldnation.ui.MessageTileView;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
@@ -48,7 +52,9 @@ import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.security.SecureRandom;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
@@ -88,6 +94,8 @@ public class DeliverableFragment extends WorkorderFragment {
     private int _uploadingSlotId = -1;
     private File _tempFile;
     private DocumentClient _docClient;
+    private PhotoClient _photos;
+    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
 
     // Temporary storage
@@ -156,13 +164,21 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         Log.e(TAG, "onResume");
-
+        _photos = new PhotoClient(_photoClient_listener);
+        _photos.connect(App.get());
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
+    }
+
+    @Override
+    public void onPause() {
+        if (_photos != null && _photos.isConnected())
+            _photos.disconnect(App.get());
+        super.onPause();
     }
 
     @Override
@@ -277,6 +293,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                     Document doc = _docs[i];
                     v.setData(_workorder, doc);
+                    v.setListener(_document_listener);
                 }
             };
             _reviewList.postDelayed(r, new Random().nextInt(1000));
@@ -443,7 +460,32 @@ public class DeliverableFragment extends WorkorderFragment {
             _yesNoDialog.show();
 
         }
+
+        @Override
+        public Drawable getPhoto(UploadedDocumentView view, String url, boolean circle) {
+            if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
+                return _picCache.get(url).get();
+            } else {
+                _photos.subGet(url, false, false);
+                PhotoClient.get(getActivity(), url, false, false);
+            }
+            return null;
+        }
     };
+
+    private final DocumentView.Listener _document_listener = new DocumentView.Listener() {
+        @Override
+        public Drawable getPhoto(DocumentView view, String url, boolean circle) {
+            if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
+                return _picCache.get(url).get();
+            } else {
+                _photos.subGet(url, false, false);
+                PhotoClient.get(getActivity(), url, false, false);
+            }
+            return null;
+        }
+    };
+
 
     // step 1, user taps on the add button
     private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
@@ -545,4 +587,21 @@ public class DeliverableFragment extends WorkorderFragment {
             }
         }
     };
+
+    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
+        @Override
+        public void onConnected() {
+        }
+
+        @Override
+        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
+            if (drawable == null || url == null || failed)
+                return;
+
+            Drawable pic = drawable;
+            _picCache.put(url, new WeakReference<>(pic));
+        }
+    };
+
+
 }

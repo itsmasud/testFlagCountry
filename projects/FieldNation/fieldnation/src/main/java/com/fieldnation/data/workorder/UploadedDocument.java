@@ -14,6 +14,8 @@ public class UploadedDocument implements Parcelable {
 
     @Json(name = "downloadLink")
     private String _downloadLink;
+    @Json(name = "downloadThumbLink")
+    private String _downloadThumbLink;
     @Json(name = "fileName")
     private String _fileName;
     @Json(name = "fileSize")
@@ -34,6 +36,10 @@ public class UploadedDocument implements Parcelable {
 
     public String getDownloadLink() {
         return _downloadLink;
+    }
+
+    public String getDownloadThumbLink() {
+        return _downloadThumbLink;
     }
 
     public String getFileName() {

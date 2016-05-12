@@ -1,9 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -31,6 +33,7 @@ public class UploadedDocumentView extends RelativeLayout {
 
     // UI
     private IconFontTextView _fileTypeIconFont;
+    private ImageView _thumbnailImageview;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -81,6 +84,7 @@ public class UploadedDocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
+        _thumbnailImageview = (ImageView) findViewById(R.id.thumbnail_imageview);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -174,8 +178,40 @@ public class UploadedDocumentView extends RelativeLayout {
             String ext = _doc.getFileName();
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
-                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                switch (ext) {
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                        _fileTypeIconFont.setVisibility(GONE);
+                        _thumbnailImageview.setVisibility(VISIBLE);
+
+                        if (_listener != null && !misc.isEmptyOrNull(_doc.getDownloadThumbLink())) {
+                            Drawable result = _listener.getPhoto(this, _doc.getDownloadThumbLink(), true);
+                            if (result == null) {
+                                postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        populateUi();
+                                    }
+                                }, 2000);
+                            } else {
+                                _thumbnailImageview.setImageDrawable(result);
+                            }
+                        } else {
+                            // TODO: here the default image will be set if the listener is null
+                        }
+                        break;
+
+                    default:
+                        _thumbnailImageview.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                        break;
+                }
+
             } else {
+                _thumbnailImageview.setVisibility(GONE);
+                _fileTypeIconFont.setVisibility(VISIBLE);
                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
         } catch (Exception ex) {
@@ -254,5 +290,8 @@ public class UploadedDocumentView extends RelativeLayout {
 
     public interface Listener {
         void onDelete(UploadedDocumentView v, UploadedDocument document);
+
+        Drawable getPhoto(UploadedDocumentView view, String url, boolean circle);
+
     }
 }
