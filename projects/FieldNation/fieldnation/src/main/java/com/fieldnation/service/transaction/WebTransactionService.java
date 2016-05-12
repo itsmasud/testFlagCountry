@@ -176,8 +176,8 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                 Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-                    for (int i = 0; i < transforms.length; i++) {
-                        Bundle transform = (Bundle) transforms[i];
+                    for (Parcelable parcel : transforms) {
+                        Bundle transform = (Bundle) parcel;
                         Transform.put(transaction.getId(), transform);
                     }
                 }
