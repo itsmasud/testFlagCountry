@@ -55,6 +55,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         t._isFirstThread = true;
         _manager.addThread(t); // 0
 
+        //_manager.addThread(new TransactionThread(_manager, this, false)); // 0
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
         for (int i = 2; i < threadCount; i++) {
             // every other can do sync
@@ -192,7 +193,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
         Log.v(TAG, "processIntent end");
     }
-
 
     public boolean isAuthenticated() {
         return _auth != null;

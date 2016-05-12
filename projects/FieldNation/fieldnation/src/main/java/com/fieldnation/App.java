@@ -720,7 +720,7 @@ public class App extends Application {
 
     public String getDownloadsFolder() {
         File externalPath = Environment.getExternalStorageDirectory();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Download");
+        File temppath = new File(externalPath.getAbsolutePath() + "/Download/FieldNation");
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }
