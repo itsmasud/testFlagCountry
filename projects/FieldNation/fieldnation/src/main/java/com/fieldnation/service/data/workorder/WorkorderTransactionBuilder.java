@@ -744,6 +744,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .useAuth(true)
                     .request(builder)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
+                    .setTrack(true)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -796,6 +797,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .useAuth(true)
                     .request(builder)
                     .setWifiRequired(App.get().onlyUploadWithWifi())
+                    .setTrack(true)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);

@@ -170,6 +170,7 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getBoolean(PARAM_IS_SYNC),
                         extras.getByteArray(PARAM_REQUEST),
                         extras.getBoolean(PARAM_WIFI_REQUIRED),
+                        extras.getBoolean(PARAM_TRACK),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
 

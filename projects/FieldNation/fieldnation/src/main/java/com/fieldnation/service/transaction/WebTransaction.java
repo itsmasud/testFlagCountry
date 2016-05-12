@@ -28,6 +28,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private String _key;
     private long _queueTime;
     private boolean _wifiRequired;
+    private boolean _track;
 
     public enum State {
         BUILDING, IDLE, WORKING
@@ -51,6 +52,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _priority = Priority.values()[cursor.getInt(Column.PRIORITY.getIndex())];
         _key = cursor.getString(Column.KEY.getIndex());
         _wifiRequired = cursor.getInt(Column.WIFI_REQUIRED.getIndex()) == 1;
+        _track = cursor.getInt(Column.TRACK.getIndex()) == 1;
     }
 
     public WebTransaction(Bundle bundle) {
@@ -68,6 +70,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _priority = (Priority) bundle.getSerializable(PARAM_PRIORITY);
         _key = bundle.getString(PARAM_KEY);
         _wifiRequired = bundle.getBoolean(PARAM_WIFI_REQUIRED);
+        _track = bundle.getBoolean(PARAM_TRACK);
     }
 
     public Bundle toBundle() {
@@ -85,6 +88,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
+        bundle.putBoolean(PARAM_TRACK, _track);
         return bundle;
     }
 
@@ -165,6 +169,14 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public boolean isWifiRequired() {
         return _wifiRequired;
+    }
+
+    public void setTracking(boolean track) {
+        _track = track;
+    }
+
+    public boolean isTracked() {
+        return _track;
     }
 
     public void requeue() {
@@ -312,6 +324,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.IS_SYNC.getName(), obj._isSync ? 1 : 0);
         v.put(Column.QUEUE_TIME.getName(), obj._queueTime);
         v.put(Column.WIFI_REQUIRED.getName(), obj._wifiRequired ? 1 : 0);
+        v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
 
         boolean success = false;
         synchronized (TAG) {
@@ -329,7 +342,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Priority priority, String key, boolean useAuth,
-                                     boolean isSync, byte[] request, boolean wifiRequired, String handlerName, byte[] handlerParams) {
+                                     boolean isSync, byte[] request, boolean wifiRequired, boolean track, String handlerName, byte[] handlerParams) {
 //        Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
@@ -342,6 +355,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.KEY.getName(), key);
         v.put(Column.QUEUE_TIME.getName(), 0);
         v.put(Column.WIFI_REQUIRED.getName(), wifiRequired ? 1 : 0);
+        v.put(Column.TRACK.getName(), track ? 1 : 0);
 
         long id = -1;
         synchronized (TAG) {
@@ -394,6 +408,23 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE wifi_req = 1", null);
+
+            try {
+                if (cursor.moveToNext()) {
+                    return cursor.getInt(0);
+                }
+            } finally {
+                cursor.close();
+            }
+        }
+        return 0;
+    }
+
+    public static int countTracked() {
+        synchronized (TAG) {
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            SQLiteDatabase db = helper.getReadableDatabase();
+            Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE track = 1", null);
 
             try {
                 if (cursor.moveToNext()) {

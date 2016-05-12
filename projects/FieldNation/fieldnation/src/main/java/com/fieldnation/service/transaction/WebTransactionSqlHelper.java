@@ -33,7 +33,8 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         PRIORITY(7, "priority", "integer not null", true),
         KEY(8, "key", "text", true),
         QUEUE_TIME(9, "queue_time", "integer not null", true),
-        WIFI_REQUIRED(10, "wifi_req", "integer not null", true);
+        WIFI_REQUIRED(10, "wifi_req", "integer not null", true),
+        TRACK(11, "track", "integer not null");
 
         private final int _index;
         private final String _name;
