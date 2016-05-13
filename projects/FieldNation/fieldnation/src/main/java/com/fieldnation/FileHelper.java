@@ -39,7 +39,7 @@ public class FileHelper {
                 return;
             } else {
                 // generate temp file
-                File temppath = new File(App.get().getDownloadsFolder() + "/temp");
+                File temppath = new File(App.get().getDownloadsFolder() + "/");
                 temppath.mkdirs();
                 tempfile = File.createTempFile("DATA", null, temppath);
             }
