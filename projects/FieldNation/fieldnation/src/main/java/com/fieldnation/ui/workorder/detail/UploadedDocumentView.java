@@ -182,12 +182,13 @@ public class UploadedDocumentView extends RelativeLayout {
                     case "png":
                     case "jpg":
                     case "jpeg":
-                        _fileTypeIconFont.setVisibility(GONE);
-                        _thumbnailImageview.setVisibility(VISIBLE);
-
+                        _thumbnailImageview.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                         if (_listener != null && !misc.isEmptyOrNull(_doc.getDownloadThumbLink())) {
                             Drawable result = _listener.getPhoto(this, _doc.getDownloadThumbLink(), true);
                             if (result == null) {
+
                                 postDelayed(new Runnable() {
                                     @Override
                                     public void run() {
@@ -196,9 +197,13 @@ public class UploadedDocumentView extends RelativeLayout {
                                 }, 2000);
                             } else {
                                 _thumbnailImageview.setImageDrawable(result);
+                                _fileTypeIconFont.setVisibility(GONE);
+                                _thumbnailImageview.setVisibility(VISIBLE);
                             }
                         } else {
-                            // TODO: here the default image will be set if the listener is null
+                            _thumbnailImageview.setVisibility(GONE);
+                            _fileTypeIconFont.setVisibility(VISIBLE);
+                            _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                         }
                         break;
 

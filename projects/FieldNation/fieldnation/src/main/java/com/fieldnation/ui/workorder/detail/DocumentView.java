@@ -159,8 +159,9 @@ public class DocumentView extends RelativeLayout {
                         case "png":
                         case "jpg":
                         case "jpeg":
-                            _fileTypeIconFont.setVisibility(GONE);
-                            _thumbnailImageview.setVisibility(VISIBLE);
+                            _thumbnailImageview.setVisibility(GONE);
+                            _fileTypeIconFont.setVisibility(VISIBLE);
+                            _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
 
                             if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
                                 Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
@@ -175,7 +176,9 @@ public class DocumentView extends RelativeLayout {
                                     _thumbnailImageview.setImageDrawable(result);
                                 }
                             } else {
-                                // TODO: here the default image will be set if the listener is null
+                                _thumbnailImageview.setVisibility(GONE);
+                                _fileTypeIconFont.setVisibility(VISIBLE);
+                                _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
                             }
                             break;
 
