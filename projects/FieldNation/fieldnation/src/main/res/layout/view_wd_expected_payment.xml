@@ -39,6 +39,18 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Bonus" />
+
+            <TextView
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Penalty" />
+
+            <TextView
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Discounts" />
 
             <View
@@ -107,6 +119,20 @@
 
             <TextView
                 android:id="@+id/discounts_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00" />
+
+            <TextView
+                android:id="@+id/bonus_textview"
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$0.00" />
+
+            <TextView
+                android:id="@+id/penalty_textview"
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
