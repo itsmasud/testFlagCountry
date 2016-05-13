@@ -39,6 +39,12 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:text="Discounts" />
+
+            <TextView
+                style="@style/Text_Body_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:text="Bonus" />
 
             <TextView
@@ -46,12 +52,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Penalty" />
-
-            <TextView
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Discounts" />
 
             <View
                 style="@style/DividerFull"
