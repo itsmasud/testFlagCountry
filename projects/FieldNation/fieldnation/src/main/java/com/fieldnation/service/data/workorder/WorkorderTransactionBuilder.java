@@ -268,9 +268,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the custom field value
     public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
-        action(context, workorderId, "custom-fields/" + customFieldId, null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)));
+        context.startService(
+                action(context, workorderId, "custom-fields/" + customFieldId, null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                        (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)),
+                        "POST/api/rest/v1/workorder/[workorderId]/custom-fields/[customFieldId]",
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pAction(workorderId, "custom-fields"), true));
     }
 
     // returns the modified task, not the work order details or task list
@@ -960,8 +964,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate),
+                        "POST/api/rest/v1/workorder/[workorderId]/log",
                         WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pTimeLog(workorderId)));
+                        WorkorderTransactionHandler.pTimeLog(workorderId), true));
     }
 
     // returns details
@@ -971,18 +976,21 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
                                 + "&noOfDevices=" + numberOfDevices,
+                        "POST/api/rest/v1/workorder/[workorderId]/log",
                         WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pTimeLog(workorderId)));
+                        WorkorderTransactionHandler.pTimeLog(workorderId), true));
     }
 
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
         context.startService(
-                action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                action(context, workorderId, "log/" + loggedHoursId, null,
+                        HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate),
+                        "POST/api/rest/v1/workorder/[workorderId]/log/[loggedHoursId]",
                         WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pTimeLog(workorderId)));
+                        WorkorderTransactionHandler.pTimeLog(workorderId), true));
     }
 
     // returns details
@@ -992,8 +1000,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
                                 + "&noOfDevices=" + numberOfDevices,
+                        "POST/api/rest/v1/workorder/[workorderId]/log/[loggedHoursId]",
                         WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pTimeLog(workorderId)));
+                        WorkorderTransactionHandler.pTimeLog(workorderId), true));
     }
 
     // returns details
