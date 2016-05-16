@@ -466,8 +466,8 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photos.subGet(url, false, false);
-                PhotoClient.get(getActivity(), url, false, false);
+                _photos.subGet(url, circle, false);
+                PhotoClient.get(getActivity(), url, circle, false);
             }
             return null;
         }
@@ -479,8 +479,9 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photos.subGet(url, false, false);
-                PhotoClient.get(getActivity(), url, false, false);
+                _photos.subGet(url, circle, false);
+                PhotoClient.get(getActivity(), url, circle, false);
+
             }
             return null;
         }

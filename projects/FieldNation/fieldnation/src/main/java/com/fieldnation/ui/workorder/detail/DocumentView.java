@@ -19,6 +19,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -33,7 +34,7 @@ public class DocumentView extends RelativeLayout {
 
     // UI
     private IconFontTextView _fileTypeIconFont;
-    private ImageView _thumbnailImageview;
+    private ProfilePicView _picView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -83,7 +84,7 @@ public class DocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
-        _thumbnailImageview = (ImageView) findViewById(R.id.thumbnail_imageview);
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -120,6 +121,13 @@ public class DocumentView extends RelativeLayout {
         _listener = listener;
     }
 
+    private void setPhoto(Drawable photo) {
+        if (photo == null) {
+            _picView.setProfilePic(R.drawable.missing_circle);
+            return;
+        }
+        _picView.setProfilePic(photo);
+    }
 
     public void setLoading(boolean isloading, int messageResId) {
         _isLoading = isloading;
@@ -159,7 +167,7 @@ public class DocumentView extends RelativeLayout {
                         case "png":
                         case "jpg":
                         case "jpeg":
-                            _thumbnailImageview.setVisibility(GONE);
+                            _picView.setVisibility(GONE);
                             _fileTypeIconFont.setVisibility(VISIBLE);
                             _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
 
@@ -173,29 +181,29 @@ public class DocumentView extends RelativeLayout {
                                         }
                                     }, 2000);
                                 } else {
-                                    _thumbnailImageview.setImageDrawable(result);
+                                    setPhoto(result);
                                 }
                             } else {
-                                _thumbnailImageview.setVisibility(GONE);
+                                _picView.setVisibility(GONE);
                                 _fileTypeIconFont.setVisibility(VISIBLE);
                                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
                             }
                             break;
 
                         default:
-                            _thumbnailImageview.setVisibility(GONE);
+                            _picView.setVisibility(GONE);
                             _fileTypeIconFont.setVisibility(VISIBLE);
                             _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                             break;
                     }
 
                 } else {
-                    _thumbnailImageview.setVisibility(GONE);
+                    _picView.setVisibility(GONE);
                     _fileTypeIconFont.setVisibility(VISIBLE);
                     _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
                 }
             } else {
-                _thumbnailImageview.setVisibility(GONE);
+                _picView.setVisibility(GONE);
                 _fileTypeIconFont.setVisibility(VISIBLE);
                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
