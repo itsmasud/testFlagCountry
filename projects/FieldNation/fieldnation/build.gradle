@@ -27,8 +27,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 81
-        versionName "2.3.81"
+        versionCode 82
+        versionName "2.3.82_beta1"
         multiDexEnabled true
     }
 
