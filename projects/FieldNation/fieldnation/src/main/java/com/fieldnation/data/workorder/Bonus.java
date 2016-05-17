@@ -6,15 +6,15 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
-public class Bonuses {
-    private static final String TAG = "Bonuses";
+public class Bonus {
+    private static final String TAG = "Bonus";
 
     @Json(name = "amount")
     private Double _amount;
     @Json(name = "name")
     private String _name;
 
-    public Bonuses() {
+    public Bonus() {
     }
 
     public Double getAmount() {
@@ -29,18 +29,18 @@ public class Bonuses {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Bonuses bonuses) {
+    public static JsonObject toJson(Bonus bonus) {
         try {
-            return Serializer.serializeObject(bonuses);
+            return Serializer.serializeObject(bonus);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 
-    public static Bonuses fromJson(JsonObject json) {
+    public static Bonus fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(Bonuses.class, json);
+            return Unserializer.unserializeObject(Bonus.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

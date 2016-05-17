@@ -11,10 +11,9 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.data.workorder.BonusInfo;
+import com.fieldnation.data.workorder.Bonus;
 import com.fieldnation.data.workorder.ExpectedPayment;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.data.workorder.PenaltyInfo;
+import com.fieldnation.data.workorder.Penalty;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.utils.misc;
@@ -88,7 +87,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
     }
 
     private void populateUi() {
-
         Log.e(TAG, "populateUi");
 
         if (_payStatusTextView == null)
@@ -102,7 +100,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         setVisibility(View.VISIBLE);
 
         ExpectedPayment expectedPayment = _workorder.getExpectedPayment();
-        Pay pay = _workorder.getPay();
 
         if (expectedPayment == null) {
             this.setVisibility(GONE);
@@ -115,7 +112,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         }
 
         WorkorderStatus status = _workorder.getStatus().getWorkorderStatus();
-
         if (status == WorkorderStatus.AVAILABLE) {
             this.setVisibility(GONE);
             return;
@@ -128,6 +124,7 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
         _feeTextView.setText(misc.toCurrency(expectedPayment.getExpectedServiceFee()));
         _totalTextView.setText(misc.toCurrency(expectedPayment.getExpectedAmount()));
         _payStatusTextView.setText(misc.capitalize(expectedPayment.getPaymentStatus()));
+
         if (expectedPayment.getFnFeePercentage() != null) {
             _feePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_fee_percentage), expectedPayment.getFnFeePercentage()));
         } else {
@@ -149,22 +146,20 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
             }
         }
 
-        PenaltyInfo[] penaltyInfos = _workorder.getPenaltyInfo();
+        Penalty[] penaltyList = expectedPayment.getPenalties();
         double penalties = 0.0;
-        if (penaltyInfos != null) {
-            for (PenaltyInfo info : penaltyInfos) {
-                if (info.isCharged())
-                    penalties += info.getAmount();
+        if (penaltyList != null) {
+            for (Penalty info : penaltyList) {
+                penalties += info.getAmount();
             }
         }
         _penaltyTextView.setText(misc.toCurrency(penalties));
 
+        Bonus[] bonusList = expectedPayment.getBonuses();
         double bonuses = 0.0;
-        BonusInfo[] bonusInfos = _workorder.getBounsInfo();
-        if (bonusInfos != null) {
-            for (BonusInfo info : bonusInfos) {
-                if (info.isCharged())
-                    bonuses += info.getAmount();
+        if (bonusList != null) {
+            for (Bonus info : bonusList) {
+                bonuses += info.getAmount();
             }
         }
         _bonusTextView.setText(misc.toCurrency(bonuses));

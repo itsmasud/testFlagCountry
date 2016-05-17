@@ -109,14 +109,14 @@ public class Workorder implements Parcelable {
     private UploadSlot[] _uploadSlots;
     @Json(name = "w2")
     private Integer _w2;
-    @Json(name = "workorderBonusInfo")
-    private BonusInfo[] _workorderBonusInfo;
+    //    @Json(name = "workorderBonusInfo")
+//    private BonusInfo[] _workorderBonusInfo;
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
-    @Json(name = "workorderPenaltyInfo")
-    private PenaltyInfo[] _workorderPenaltyInfo;
+//    @Json(name = "workorderPenaltyInfo")
+//    private PenaltyInfo[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -315,9 +315,9 @@ public class Workorder implements Parcelable {
         return _w2;
     }
 
-    public BonusInfo[] getBounsInfo() {
-        return _workorderBonusInfo;
-    }
+//    public BonusInfo[] getBounsInfo() {
+//        return _workorderBonusInfo;
+//    }
 
     public Long getWorkorderId() {
         return _workorderId;
@@ -327,9 +327,9 @@ public class Workorder implements Parcelable {
         return _workorderManagerInfo;
     }
 
-    public PenaltyInfo[] getPenaltyInfo() {
-        return _workorderPenaltyInfo;
-    }
+//    public PenaltyInfo[] getPenaltyInfo() {
+//        return _workorderPenaltyInfo;
+//    }
 
     public JsonObject toJson() {
         return toJson(this);
