@@ -11,8 +11,10 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.workorder.BonusInfo;
 import com.fieldnation.data.workorder.ExpectedPayment;
 import com.fieldnation.data.workorder.Pay;
+import com.fieldnation.data.workorder.PenaltyInfo;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.utils.misc;
@@ -121,8 +123,6 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
 
         _laborTextView.setText(misc.toCurrency(expectedPayment.getLaborEarned()));
         _expensesTextView.setText(misc.toCurrency(expectedPayment.getExpensesApproved()));
-        _bonusTextView.setText(misc.toCurrency(pay.getBonuses()));
-        _penaltyTextView.setText(misc.toCurrency(pay.getPenaltyFees()));
         _discountsTextView.setText(misc.toCurrency(expectedPayment.getDiscounts()));
         _expectedTotalTextView.setText(misc.toCurrency(expectedPayment.getExpectedTotal()));
         _feeTextView.setText(misc.toCurrency(expectedPayment.getExpectedServiceFee()));
@@ -148,5 +148,25 @@ public class ExpectedPaymentView extends LinearLayout implements WorkorderRender
                 _insurancePercentTextView.setText(String.format(getContext().getString(R.string.fieldnation_expected_insurance_percentage), 1.3F));
             }
         }
+
+        PenaltyInfo[] penaltyInfos = _workorder.getPenaltyInfo();
+        double penalties = 0.0;
+        if (penaltyInfos != null) {
+            for (PenaltyInfo info : penaltyInfos) {
+                if (info.isCharged())
+                    penalties += info.getAmount();
+            }
+        }
+        _penaltyTextView.setText(misc.toCurrency(penalties));
+
+        double bonuses = 0.0;
+        BonusInfo[] bonusInfos = _workorder.getBounsInfo();
+        if (bonusInfos != null) {
+            for (BonusInfo info : bonusInfos) {
+                if (info.isCharged())
+                    bonuses += info.getAmount();
+            }
+        }
+        _bonusTextView.setText(misc.toCurrency(bonuses));
     }
 }

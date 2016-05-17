@@ -6,8 +6,8 @@ import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
-public class WorkorderPenaltyInfo {
-    private static final String TAG = "WorkorderPenaltyInfo";
+public class PenaltyInfo {
+    private static final String TAG = "PenaltyInfo";
 
     @Json(name = "amount")
     private Double _amount;
@@ -30,7 +30,7 @@ public class WorkorderPenaltyInfo {
     @Json(name = "wocpf_id")
     private Integer _wocpfId;
 
-    public WorkorderPenaltyInfo() {
+    public PenaltyInfo() {
     }
 
     public Double getAmount() {
@@ -41,8 +41,8 @@ public class WorkorderPenaltyInfo {
         return _chargeType;
     }
 
-    public Integer getCharged() {
-        return _charged;
+    public boolean isCharged() {
+        return _charged == 1;
     }
 
     public Integer getCompanyId() {
@@ -77,7 +77,7 @@ public class WorkorderPenaltyInfo {
         return toJson(this);
     }
 
-    public static JsonObject toJson(WorkorderPenaltyInfo workorderPenaltyInfo) {
+    public static JsonObject toJson(PenaltyInfo workorderPenaltyInfo) {
         try {
             return Serializer.serializeObject(workorderPenaltyInfo);
         } catch (Exception ex) {
@@ -86,9 +86,9 @@ public class WorkorderPenaltyInfo {
         }
     }
 
-    public static WorkorderPenaltyInfo fromJson(JsonObject json) {
+    public static PenaltyInfo fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(WorkorderPenaltyInfo.class, json);
+            return Unserializer.unserializeObject(PenaltyInfo.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
