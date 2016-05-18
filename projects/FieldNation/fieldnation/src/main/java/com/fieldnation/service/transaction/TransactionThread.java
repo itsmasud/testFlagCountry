@@ -21,6 +21,7 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -123,6 +124,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         }
         if (request == null) {
             // should never happen!
+            if (trans.isTracked())
+                UploadTrackerClient.uploadFailed(App.get(), 0);
             WebTransaction.delete(trans.getId());
             return false;
         }
@@ -143,7 +146,6 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
                     AuthTopicClient.invalidateCommand(App.get());
-                    return false;
                 }
 
                 if (!_service.isAuthenticated()) {
@@ -209,10 +211,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                     return true;
                 } else if (result.getResponseMessage().contains("Bad Request")) {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
+                    if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                     return true;
                 } else {
                     Log.v(TAG, "1");
@@ -234,6 +238,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                     WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
+                    if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                     return true;
                 }
 
@@ -242,6 +247,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
+                if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                 return true;
 
             } else if (result.getResponseCode() == 413) {
@@ -249,6 +255,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
+                if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                 return true;
 
                 // usually means code is being updated on the server
@@ -263,6 +270,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
+                if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                 return true;
             }
 
@@ -279,10 +287,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                         generateNotification(notifId, notifFailed);
                         WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
                         WebTransaction.delete(trans.getId());
+                        if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
                         break;
                     case CONTINUE:
                         generateNotification(notifId, notifSuccess);
                         WebTransaction.delete(trans.getId());
+                        if (trans.isTracked()) UploadTrackerClient.uploadSuccess(App.get());
                         break;
                     case REQUEUE:
                         Log.v(TAG, "3");
@@ -295,12 +305,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
+            if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
 
         } catch (SecurityException ex) {
             Log.v(TAG, "4b");
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
+            if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
 
         } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
             Log.v(TAG, "5");
@@ -314,6 +326,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
+                if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
             } else {
                 Log.v(TAG, "7");
                 transRequeueNetworkDown(trans, notifId, notifRetry);
@@ -334,6 +347,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
+                if (trans.isTracked()) UploadTrackerClient.uploadFailed(App.get(), 0);
             }
         }
         Log.v(TAG, "10");

@@ -42,6 +42,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.security.SecureRandom;
 import java.util.Calendar;
 
 /**
@@ -84,6 +85,8 @@ public class App extends Application {
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
+
+    public static final SecureRandom secureRandom = new SecureRandom();
 
     @Override
     protected void attachBaseContext(Context base) {

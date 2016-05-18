@@ -12,6 +12,7 @@ import com.fieldnation.ThreadManager;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 
 import java.util.List;
 
@@ -173,6 +174,10 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getBoolean(PARAM_TRACK),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
+
+                if (extras.getBoolean(PARAM_TRACK)) {
+                    UploadTrackerClient.uploadQueued(App.get());
+                }
 
                 Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
