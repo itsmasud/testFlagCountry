@@ -12,12 +12,12 @@ import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -660,6 +660,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderClient.get(context, workorderId, false);
 
+        UploadTrackerClient.uploadSuccess(context);
+
         return Result.CONTINUE;
     }
 
@@ -701,6 +703,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
                     break;
                 case "pUploadDeliverable":
+                    UploadTrackerClient.uploadFailed(context, params.getLong("workorderId"));
                     if (throwable != null && throwable instanceof SecurityException) {
                         ToastClient.toast(context, "Failed to upload file. " + params.getString("filename") + " Read permission denied. Please try again", Toast.LENGTH_LONG);
                     } else {

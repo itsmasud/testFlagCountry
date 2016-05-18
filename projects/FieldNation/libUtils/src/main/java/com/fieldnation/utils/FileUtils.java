@@ -66,6 +66,47 @@ public class FileUtils {
         }
     }
 
+    public static boolean writeStream(InputStream in, File dest) throws IOException {
+        OutputStream outFile = null;
+        InputStream inFile = null;
+
+        int read = 0;
+        byte[] packet = null;
+        try {
+            packet = DataUtils.allocPacket();
+
+            try {
+                inFile = new BufferedInputStream(in);
+                outFile = new BufferedOutputStream(new FileOutputStream(dest));
+                while (true) {
+                    read = inFile.read(packet);
+                    if (read > 0) {
+                        outFile.write(packet, 0, read);
+                    } else if (read == 0) {
+                        try {
+                            Thread.sleep(100);
+                        } catch (InterruptedException e) {
+                        }
+                    } else if (read == -1) {
+                        break;
+                    }
+                }
+            } finally {
+                try {
+                    inFile.close();
+                } catch (IOException e) {
+                }
+                try {
+                    outFile.close();
+                } catch (IOException e) {
+                }
+            }
+            return true;
+        } finally {
+            DataUtils.freePacket(packet);
+        }
+    }
+
     public static boolean copyFile(File src, File dest) throws IOException {
         OutputStream outFile = null;
         InputStream inFile = null;

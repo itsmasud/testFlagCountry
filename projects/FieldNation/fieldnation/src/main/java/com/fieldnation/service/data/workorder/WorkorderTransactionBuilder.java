@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.location.Location;
-import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
@@ -23,6 +22,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -696,6 +696,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 //    }
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
         Resources res = context.getResources();
         try {
@@ -750,7 +751,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, InputStream inputStream, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
         try {
             Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder()
@@ -758,7 +761,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .method("POST")
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, uri)
+                    .multipartFile("file", filename, upFile)
 //                    .notify(new NotificationDefinition(
 //                                    R.drawable.ic_anim_upload_start,
 //                                    res.getString(R.string.app_name),

@@ -1,6 +1,7 @@
 package com.fieldnation.service.tracker;
 
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
@@ -8,6 +9,7 @@ import android.support.v4.app.NotificationCompat;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.MSService;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael on 5/18/2016.
@@ -133,14 +135,18 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
             }
 
             {
+                Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
+                PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, workorderIntent, 0);
                 // failed
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                NotificationCompat.Builder
+                        builder = new NotificationCompat.Builder(App.get())
                         .setLargeIcon(null)
                         .setSmallIcon(R.drawable.ic_notif_fail)
                         .setContentTitle("Failed")
-                        .setTicker("WO file upload has failed")
-                        .setContentText("WO file upload has failed")
-                        .setColor(getResources().getColor(R.color.fn_red));
+                        .setTicker("WO " + workorderId + " file upload has failed")
+                        .setContentText("WO " + workorderId + " file upload has failed")
+                        .setColor(getResources().getColor(R.color.fn_red))
+                        .setContentIntent(pendingIntent);
 
                 NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
                 manager.notify(App.secureRandom.nextInt(), builder.build());
