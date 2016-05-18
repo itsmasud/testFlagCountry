@@ -146,6 +146,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
                     AuthTopicClient.invalidateCommand(App.get());
+                    trans.requeue();
+                    return false;
                 }
 
                 if (!_service.isAuthenticated()) {
