@@ -678,115 +678,28 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    //    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-//        try {
-//            WebTransactionBuilder.builder(context)
-//                    .priority(Priority.HIGH)
-//                    .handler(DeliverableTransactionHandler.class)
-//                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
-//                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
-//                    .isSyncCall(isSync)
-//                    .request(new HttpJsonBuilder()
-//                            .method("GET")
-//                            .path(url))
-//                    .send();
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
-//    }
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-        Resources res = context.getResources();
-        try {
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, upFile)
-//                    .notify(new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_start,
-//                                    res.getString(R.string.app_name),
-//                                    res.getString(R.string.notification_start_body_uploading, filename),
-//                                    res.getString(R.string.notification_start_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_success,
-//                                    res.getString(R.string.notification_success_title),
-//                                    res.getString(R.string.notification_success_body_uploading, filename),
-//                                    res.getString(R.string.notification_success_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_failed,
-//                                    res.getString(R.string.notification_failed_title),
-//                                    res.getString(R.string.notification_failed_body_uploading, filename),
-//                                    res.getString(R.string.notification_failed_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_retry,
-//                                    res.getString(R.string.notification_retry_title),
-//                                    res.getString(R.string.notification_retry_body_uploading, filename),
-//                                    res.getString(R.string.notification_retry_body_uploading, filename)
-//                            )
-//                    )
-                    .doNotRead();
-
-            if (uploadSlotId != 0) {
-                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
-                    .useAuth(true)
-                    .request(builder)
-                    .setWifiRequired(App.get().onlyUploadWithWifi())
-                    .setTrack(true)
-                    .send();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
+        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
     }
 
     public static void uploadDeliverable(Context context, InputStream inputStream, String filename, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
+        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
+    }
+
+    public static void uploadDeliverable(Context context, StoredObject upFile, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
         try {
-            Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
-//                    .notify(new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_start,
-//                                    res.getString(R.string.app_name),
-//                                    res.getString(R.string.notification_start_body_uploading, filename),
-//                                    res.getString(R.string.notification_start_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_success,
-//                                    res.getString(R.string.notification_success_title),
-//                                    res.getString(R.string.notification_success_body_uploading, filename),
-//                                    res.getString(R.string.notification_success_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_failed,
-//                                    res.getString(R.string.notification_failed_title),
-//                                    res.getString(R.string.notification_failed_body_uploading, filename),
-//                                    res.getString(R.string.notification_failed_body_uploading, filename)
-//                            ),
-//                            new NotificationDefinition(
-//                                    R.drawable.ic_anim_upload_retry,
-//                                    res.getString(R.string.notification_retry_title),
-//                                    res.getString(R.string.notification_retry_body_uploading, filename),
-//                                    res.getString(R.string.notification_retry_body_uploading, filename)
-//                            )
-//                    )
                     .doNotRead();
 
             if (uploadSlotId != 0) {

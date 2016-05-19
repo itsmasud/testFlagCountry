@@ -76,7 +76,7 @@ public class FileUtils {
             packet = DataUtils.allocPacket();
 
             try {
-                inFile = new BufferedInputStream(in);
+                inFile = in;
                 outFile = new BufferedOutputStream(new FileOutputStream(dest));
                 while (true) {
                     read = inFile.read(packet);

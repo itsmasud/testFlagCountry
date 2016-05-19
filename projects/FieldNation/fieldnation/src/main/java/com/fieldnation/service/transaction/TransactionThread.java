@@ -21,6 +21,8 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.tracker.UploadTracker;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -295,12 +297,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
         } catch (MalformedURLException | FileNotFoundException ex) {
             Log.v(TAG, "4");
+            Log.v(TAG, ex);
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
         } catch (SecurityException ex) {
             Log.v(TAG, "4b");
+            Log.v(TAG, ex);
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
@@ -311,12 +315,10 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             transRequeueNetworkDown(trans, notifId, notifRetry);
 
         } catch (SSLException ex) {
+            Log.v(TAG, ex);
             if (ex.getMessage().contains("Broken pipe")) {
                 Log.v(TAG, "6");
-                ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
+                transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {
                 Log.v(TAG, "7");
                 transRequeueNetworkDown(trans, notifId, notifRetry);
@@ -324,10 +326,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         } catch (IOException ex) {
             Log.v(TAG, "8");
+            Log.v(TAG, ex);
             transRequeueNetworkDown(trans, notifId, notifRetry);
 
         } catch (Exception ex) {
             Log.v(TAG, "9");
+            Log.v(TAG, ex);
             if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                 transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {

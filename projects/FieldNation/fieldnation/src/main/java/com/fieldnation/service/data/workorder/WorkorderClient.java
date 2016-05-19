@@ -25,11 +25,9 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.util.LinkedList;
@@ -531,6 +529,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
+    public static void cacheDeliverableUpload(Context context, Uri uri) {
+        Log.v(STAG, "cacheDeliverableUpload");
+
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_CACHE_DELIVERABLE);
+        intent.putExtra(PARAM_URI, uri);
+        context.startService(intent);
+    }
+
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
 

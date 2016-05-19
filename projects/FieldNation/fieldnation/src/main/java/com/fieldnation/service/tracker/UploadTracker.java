@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.MSService;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -15,17 +16,14 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
  * Created by Michael on 5/18/2016.
  */
 public class UploadTracker extends MSService implements UploadTrackerConstants {
+    private static final String TAG = "UploadTracker";
 
-    private static final int _notifcationId = App.secureRandom.nextInt();
-
-    private int _uploadCount = 0;
-    private int _completeCount = 0;
-    private int _successCount = 0;
-
-    private boolean _isUploading;
-
-    private long _lastUpload = 0;
-
+    private int _notifcationId = App.secureRandom.nextInt();
+    private int _uploadQueued = 0;
+    private int _uploadRunning = 0;
+    private int _uploadSuccess = 0;
+    private int _uploadFailed = 0;
+    private long _resetTimer = 0;
 
     @Override
     public int getMaxWorkerCount() {
@@ -34,124 +32,110 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
 
     @Override
     public void processIntent(Intent intent) {
+        if (_resetTimer <= System.currentTimeMillis() && _resetTimer > 0) {
+            _uploadQueued = 0;
+            _uploadRunning = 0;
+            _uploadFailed = 0;
+            _uploadSuccess = 0;
+            _notifcationId = App.secureRandom.nextInt();
+            _resetTimer = 0;
+        }
+
         String action = intent.getAction();
         switch (action) {
-            case ACTION_UPLOAD:
-                actionUpload();
+            case ACTION_QUEUED:
+                _uploadQueued++;
+                break;
+            case ACTION_STARTED:
+                _uploadRunning++;
+                _uploadQueued--;
+                break;
+            case ACTION_REQUEUED:
+                _uploadRunning--;
+                _uploadQueued++;
                 break;
             case ACTION_SUCCESS:
-                actionSuccess();
+                _uploadRunning--;
+                _uploadSuccess++;
                 break;
             case ACTION_FAILED:
-                actionFailed(intent.getLongExtra(PARAM_WORKORDER_ID, 0));
+                _uploadFailed++;
+                _uploadRunning--;
+                createFailedNotification(intent.getLongExtra(PARAM_WORKORDER_ID, 0));
                 break;
             default:
                 break;
         }
+        Log.v(TAG, "_uploadQueued: " + _uploadQueued + ", _uploadRunning: " + _uploadRunning
+                + ", _uploadSuccess: " + _uploadSuccess + ", _uploadFailed: " + _uploadFailed);
+
+        populateNotification();
     }
 
-    private void actionUpload() {
-
-        // if not uploading, then start it up
-        if (!_isUploading) {
-            _uploadCount = 1;
-            _completeCount = 0;
-            _successCount = 0;
-            _isUploading = true;
-            _lastUpload = System.currentTimeMillis();
-        } else {
-            // if uploading then continue
-            _uploadCount++;
-        }
-
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                .setLargeIcon(null)
-                .setSmallIcon(R.drawable.ic_notif_queued)
-                .setContentTitle((_uploadCount - _completeCount) + " Deliverables to Upload")
-                .setTicker(_completeCount + " uploads complete")
-                .setContentText(_completeCount + " uploads complete")
-                .setColor(getResources().getColor(R.color.fn_clickable_text));
-
-        NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-        manager.notify(_notifcationId, builder.build());
+    @Override
+    public boolean isStillWorking() {
+        return _uploadQueued > 0 || _uploadRunning > 0 || _uploadFailed > 0 || _uploadSuccess > 0;
     }
 
-    private void actionSuccess() {
-        _completeCount++;
-        _successCount++;
+    private void populateNotification() {
+        // running
+        if (_uploadRunning > 0) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                    .setLargeIcon(null)
+                    .setSmallIcon(R.drawable.ic_anim_upload_start)
+                    .setContentTitle(_uploadRunning + " Deliverables uploading")
+                    .setTicker(_uploadQueued + " Uploads queued")
+                    .setContentText(_uploadQueued + " Uploads queued")
+                    .setColor(getResources().getColor(R.color.fn_clickable_text));
 
-        if (_completeCount == _uploadCount) {
-            _isUploading = false;
-            // switch to success
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.notify(_notifcationId, builder.build());
+
+            // queued
+        } else if (_uploadQueued > 0) {
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
+                    .setLargeIcon(null)
+                    .setSmallIcon(R.drawable.ic_notif_queued)
+                    .setContentTitle(_uploadQueued + " Deliverables to Upload")
+                    .setTicker(_uploadQueued + " Uploads queued")
+                    .setContentText(_uploadQueued + " Uploads queued")
+                    .setColor(getResources().getColor(R.color.fn_clickable_text));
+
+            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+            manager.notify(_notifcationId, builder.build());
+
+            // complete
+        } else if (_uploadQueued == 0 && _uploadRunning == 0) {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_success)
-                    .setContentTitle("Success")
-                    .setTicker(_successCount + " deliverables have been uploaded")
-                    .setContentText(_successCount + " deliverables have been uploaded")
+                    .setContentTitle(_uploadSuccess + " Deliverables uploaded")
+                    .setTicker(_uploadFailed + " Uploads failed")
+                    .setContentText(_uploadFailed + " Uploads failed")
                     .setColor(getResources().getColor(R.color.fn_accent_color));
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
             manager.notify(_notifcationId, builder.build());
-        } else {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_notif_queued)
-                    .setContentTitle((_uploadCount - _completeCount) + " Deliverables to Upload")
-                    .setTicker(_completeCount + " uploads complete")
-                    .setContentText(_completeCount + " uploads complete")
-                    .setColor(getResources().getColor(R.color.fn_clickable_text));
 
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(_notifcationId, builder.build());
+            _resetTimer = System.currentTimeMillis() + 10000;
         }
     }
 
-    private void actionFailed(long workorderId) {
-        _completeCount++;
-        if (_completeCount == _uploadCount) {
-            NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                    .setLargeIcon(null)
-                    .setSmallIcon(R.drawable.ic_notif_queued)
-                    .setContentTitle((_uploadCount - _completeCount) + " Deliverables to Upload")
-                    .setTicker(_completeCount + " uploads complete")
-                    .setContentText(_completeCount + " uploads complete")
-                    .setColor(getResources().getColor(R.color.fn_clickable_text));
+    private void createFailedNotification(long workorderId) {
+        Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
+        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, workorderIntent, 0);
 
-            NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-            manager.notify(_notifcationId, builder.build());
-        } else {
-            {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
-                        .setLargeIcon(null)
-                        .setSmallIcon(R.drawable.ic_notif_queued)
-                        .setContentTitle((_uploadCount - _completeCount) + " Deliverables to Upload")
-                        .setTicker(_completeCount + " uploads complete")
-                        .setContentText(_completeCount + " uploads complete")
-                        .setColor(getResources().getColor(R.color.fn_clickable_text));
+        NotificationCompat.Builder
+                builder = new NotificationCompat.Builder(App.get())
+                .setLargeIcon(null)
+                .setSmallIcon(R.drawable.ic_notif_fail)
+                .setContentTitle("Failed")
+                .setTicker("WO " + workorderId + " file upload has failed")
+                .setContentText("WO " + workorderId + " file upload has failed")
+                .setColor(getResources().getColor(R.color.fn_red))
+                .setContentIntent(pendingIntent);
 
-                NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-                manager.notify(_notifcationId, builder.build());
-            }
-
-            {
-                Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, workorderIntent, 0);
-                // failed
-                NotificationCompat.Builder
-                        builder = new NotificationCompat.Builder(App.get())
-                        .setLargeIcon(null)
-                        .setSmallIcon(R.drawable.ic_notif_fail)
-                        .setContentTitle("Failed")
-                        .setTicker("WO " + workorderId + " file upload has failed")
-                        .setContentText("WO " + workorderId + " file upload has failed")
-                        .setColor(getResources().getColor(R.color.fn_red))
-                        .setContentIntent(pendingIntent);
-
-                NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
-                manager.notify(App.secureRandom.nextInt(), builder.build());
-            }
-        }
+        NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+        manager.notify(App.secureRandom.nextInt(), builder.build());
     }
-
 }

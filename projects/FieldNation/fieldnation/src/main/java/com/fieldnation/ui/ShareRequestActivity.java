@@ -244,6 +244,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         if (fileUri != null) {
             final String fileName = getFileNameFromUri(fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, fileUri);
+            WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
         }
     }
 
@@ -261,6 +262,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = getFileNameFromUri(fileUris.get(i));
                 _uploadingDocumentList[i] = new UploadingDocument(fileName, fileUris.get(i));
+                WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
         }
     }

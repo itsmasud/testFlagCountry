@@ -306,8 +306,37 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
+        UploadTrackerClient.uploadStarted(context);
+
         return Result.CONTINUE;
     }
+
+    /*-**********************************-*/
+    /*-             Requeue              -*/
+    /*-**********************************-*/
+
+/*
+    @Override
+    public Result handleRequeued(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadDeliverable":
+                    return handleRequeueUploadDeliverable(context, transaction, params);
+
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return Result.CONTINUE;
+    }
+
+    private Result handleRequeueUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        UploadTrackerClient.uploadRequeued(context);
+        return Result.CONTINUE;
+    }
+*/
 
     /*-**********************************-*/
     /*-             Result               -*/
