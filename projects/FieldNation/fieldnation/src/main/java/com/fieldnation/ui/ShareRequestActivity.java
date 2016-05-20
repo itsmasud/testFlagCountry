@@ -297,10 +297,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 }
 
                 final Uri filePathUri = Uri.parse(cursor.getString(column_index));
-                fileName = filePathUri.getLastPathSegment().toString();
+                fileName = filePathUri.getLastPathSegment();
                 Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
             }
-        } else if (uri.getScheme().toString().compareTo("file") == 0) {
+        } else if (uri.getScheme().compareTo("file") == 0) {
             fileName = new File(uri.getPath()).getName();
         }
 

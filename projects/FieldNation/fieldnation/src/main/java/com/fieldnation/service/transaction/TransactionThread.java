@@ -73,12 +73,10 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
     @Override
     public boolean doWork() {
-/*
-        if (_isFirstThread) {
-            Log.v(TAG, "Trans Count: " + WebTransaction.count());
-            Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
-        }
-*/
+        //if (_isFirstThread) {
+        //    Log.v(TAG, "Trans Count: " + WebTransaction.count());
+        //    Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
+        //}
 
         // try to get a transaction
         if (!App.get().isConnected()) {
@@ -97,8 +95,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 return false;
             }
         }
-        WebTransaction trans = null;
 
+        WebTransaction trans = null;
         try {
             trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(), _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {

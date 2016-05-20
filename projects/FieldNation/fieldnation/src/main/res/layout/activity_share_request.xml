@@ -95,7 +95,6 @@
             </LinearLayout>
         </com.fieldnation.ui.OverScrollView>
 
-
         <com.fieldnation.ui.UnavailableCardView
             android:id="@+id/empty_view"
             android:layout_width="match_parent"

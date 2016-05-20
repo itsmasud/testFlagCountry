@@ -7,7 +7,7 @@ import java.util.List;
  * Created by Michael on 3/10/2016.
  */
 public class DataUtils {
-    private static final int PACKET_SIZE = 1048576;
+    private static final int PACKET_SIZE = 10240; // 10K buffer
     private static final List<byte[]> PACKET_QUEUE = new LinkedList<>();
 
     static {
