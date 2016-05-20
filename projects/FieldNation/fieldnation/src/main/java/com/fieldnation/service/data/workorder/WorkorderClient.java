@@ -529,6 +529,11 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
+    public boolean subDeliverableCache() {
+        return register(TOPIC_ID_CACHE_DELIVERABLE_START, TAG)
+                && register(TOPIC_ID_CACHE_DELIVERABLE_END, TAG);
+    }
+
     public static void cacheDeliverableUpload(Context context, Uri uri) {
         Log.v(STAG, "cacheDeliverableUpload");
 
@@ -669,7 +674,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preAction((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
                 preUploadDeliverable((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
+                onDeliveraleCacheStart();
+            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
+                onDeliveraleCacheEnd();
             }
+        }
+
+        public void onDeliveraleCacheStart() {
+        }
+
+        public void onDeliveraleCacheEnd() {
         }
 
         private void preUploadDeliverable(Bundle payload) {
