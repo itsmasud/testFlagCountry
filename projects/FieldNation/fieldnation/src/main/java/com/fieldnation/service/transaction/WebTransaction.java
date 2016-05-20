@@ -270,7 +270,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String[] GET_NEXT_PARAMS = new String[]{State.IDLE.ordinal() + ""};
     private static final String GET_NEXT_SORT = Column.QUEUE_TIME + " ASC, " + Column.PRIORITY + " DESC, " + Column.ID + " ASC";
 
-    public static WebTransaction getNext(boolean allowSync, boolean allowAuth) {
+    public static WebTransaction getNext(boolean allowSync, boolean allowAuth, Priority minPriority) {
 //        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
@@ -280,6 +280,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     WebTransactionSqlHelper.TABLE_NAME,
                     WebTransactionSqlHelper.getColumnNames(),
                     Column.STATE + "=?"
+                            + " AND priority >= " + minPriority.ordinal()
                             + (allowSync ? "" : " AND is_sync = 0")
                             + (allowAuth ? "" : " AND use_auth = 0")
                             + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),

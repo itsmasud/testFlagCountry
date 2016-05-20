@@ -2,7 +2,6 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.location.Location;
 
 import com.fieldnation.App;
@@ -707,7 +706,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             }
 
             WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
+                    .priority(Priority.LOW)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)

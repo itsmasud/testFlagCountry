@@ -1,20 +1,13 @@
 package com.fieldnation.service.data.workorder;
 
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 
-import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael Carver on 4/20/2015.
@@ -221,6 +214,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         topicId += "/" + workorderId + "/" + slotId;
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
+    }
+
+    public static void cacheDeliverableStart(Context context) {
+        Log.v(TAG, "cacheDeliverableStart");
+        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_START, null, Sticky.NONE);
+    }
+
+    public static void cacheDeliverableEnd(Context context) {
+        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_END, null, Sticky.NONE);
     }
 
     public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean failed, boolean isSync) {

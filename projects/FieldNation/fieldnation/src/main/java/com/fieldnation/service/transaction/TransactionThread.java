@@ -21,8 +21,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.tracker.UploadTracker;
-import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -102,7 +100,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         WebTransaction trans = null;
 
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated());
+            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(), _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
