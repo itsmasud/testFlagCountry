@@ -11,8 +11,10 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -24,8 +26,6 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -128,11 +128,8 @@ public class ConfirmDialog extends DialogFragmentBase {
         _tacCheckBox = (CheckBox) v.findViewById(R.id.tac_checkbox);
         _tacCheckBox.setOnCheckedChangeListener(_tacCheck_change);
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
 
@@ -225,18 +222,19 @@ public class ConfirmDialog extends DialogFragmentBase {
     /*-*****************************-*/
     /*-				Events			-*/
     /*-*****************************-*/
+
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _startCalendar.set(year, month, day);
-            _timePicker.show(_fm, datePickerDialog.getTag());
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _startCalendar.set(year, monthOfYear, dayOfMonth);
+            _timePicker.show();
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             try {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
                         _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
@@ -256,6 +254,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 Log.v(TAG, ex);
             }
         }
+
     };
 
     private final CompoundButton.OnCheckedChangeListener _tacCheck_change = new CompoundButton.OnCheckedChangeListener() {
@@ -284,9 +283,9 @@ public class ConfirmDialog extends DialogFragmentBase {
 
                     if (start.get(Calendar.YEAR) == stop.get(Calendar.YEAR)
                             && start.get(Calendar.DAY_OF_YEAR) == stop.get(Calendar.DAY_OF_YEAR)) {
-                        _timePicker.show(_fm, TAG);
+                        _timePicker.show();
                     } else {
-                        _datePicker.show(_fm, TAG);
+                        _datePicker.show();
                     }
                 }
             } catch (Exception ex) {
@@ -327,7 +326,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
         @Override
         public void onOk(long timeMilliseconds) {
-            if(timeMilliseconds < MIN_JOB_DURATION){
+            if (timeMilliseconds < MIN_JOB_DURATION) {
                 setDuration(MIN_JOB_DURATION);
                 ToastClient.toast(App.get(), getString(R.string.toast_minimum_job_duration), Toast.LENGTH_LONG);
                 return;
