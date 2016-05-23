@@ -14,9 +14,11 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -24,8 +26,6 @@ import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.ui.FnSpinner;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -420,32 +420,31 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
+        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
 
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _pickerCal.set(year, month, day);
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _pickerCal.set(year, monthOfYear, dayOfMonth);
             _expirationDate = (Calendar) _pickerCal.clone();
             switch (_customField.getFieldType()) {
                 case DATE:
                     _textEditText.setText(DateUtils.formatDateForCF(_expirationDate));
                     break;
                 case DATETIME:
-                    _timePicker.show(_fm, datePickerDialog.getTag());
+                    _timePicker.setTag(_datePicker.getTag());
+                    _timePicker.show();
                     break;
             }
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
-
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
@@ -467,14 +466,13 @@ public class CustomFieldDialog extends DialogFragmentBase {
         public void onClick(View v) {
             switch (_customField.getFieldType()) {
                 case DATETIME:
-                    _datePicker.show(_fm, TAG);
+                    _datePicker.show();
                     break;
                 case DATE:
-                    _datePicker.setCloseOnSingleTapDay(false);
-                    _datePicker.show(_fm, TAG);
+                    _datePicker.show();
                     break;
                 case TIME:
-                    _timePicker.show(_fm, TAG);
+                    _timePicker.show();
                     break;
             }
         }

@@ -193,6 +193,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean displayCounterOffer() {
+        if (_displayCounterOffer == null)
+            return true;
+
         return _displayCounterOffer == 1;
     }
 

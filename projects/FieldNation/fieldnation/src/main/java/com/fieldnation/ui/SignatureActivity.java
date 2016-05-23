@@ -7,17 +7,19 @@ import android.support.v4.app.FragmentActivity;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.EditTextAlertDialog;
+import com.fieldnation.ui.dialog.TimePickerDialog;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -108,11 +110,8 @@ public class SignatureActivity extends FragmentActivity {
         }
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _datePicker = new DatePickerDialog(this, _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(this, _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
 
 //    @Override
@@ -197,23 +196,24 @@ public class SignatureActivity extends FragmentActivity {
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            String tag = datePickerDialog.getTag();
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            String tag = (String) _datePicker.getTag();
             if (tag.equals("arrive")) {
-                _arriveCal.set(year, month, day);
+                _arriveCal.set(year, monthOfYear, dayOfMonth);
             } else if (tag.equals("depart")) {
-                _departCal.set(year, month, day);
+                _departCal.set(year, monthOfYear, dayOfMonth);
             }
 
-            _timePicker.show(getSupportFragmentManager(), datePickerDialog.getTag());
+            _timePicker.setTag(_datePicker.getTag());
+            _timePicker.show();
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            String tag = (String) _timePicker.getTag();
             if (tag.equals("arrive")) {
                 _arriveCal.set(_arriveCal.get(Calendar.YEAR), _arriveCal.get(Calendar.MONTH),
                         _arriveCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
@@ -229,7 +229,8 @@ public class SignatureActivity extends FragmentActivity {
     private final View.OnClickListener _arrival_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _datePicker.show(getSupportFragmentManager(), "arrive");
+            _datePicker.setTag("arrive");
+            _datePicker.show();
         }
     };
 
@@ -237,7 +238,8 @@ public class SignatureActivity extends FragmentActivity {
 
         @Override
         public void onClick(View v) {
-            _datePicker.show(getSupportFragmentManager(), "depart");
+            _datePicker.setTag("depart");
+            _datePicker.show();
         }
     };
 
