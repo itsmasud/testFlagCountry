@@ -1,5 +1,7 @@
 package com.fieldnation.ui.dialog;
 
+import android.app.DatePickerDialog;
+import android.app.TimePickerDialog;
 import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.util.AttributeSet;
@@ -7,16 +9,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TimePicker;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -84,11 +85,8 @@ public class ReasonCoView extends RelativeLayout {
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _datePicker = new DatePickerDialog(getContext(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getContext(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         populateUi();
     }
@@ -159,14 +157,14 @@ public class ReasonCoView extends RelativeLayout {
     private final View.OnClickListener _expires_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_datePicker.isAdded())
+            if (_datePicker.isShowing())
                 return;
 
             _expires = _expiresCheckBox.isChecked();
 
             if (_expires) {
                 _expiresCheckBox.setChecked(false);
-                _datePicker.show(_fm, TAG);
+                _datePicker.show();
             } else if (_listener != null) {
                 _listener.onExpirationChange(false, null);
             }
@@ -185,11 +183,11 @@ public class ReasonCoView extends RelativeLayout {
     private final View.OnClickListener _expiresButton_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_datePicker.isAdded())
+            if (_datePicker.isShowing())
                 return;
 
             if (_listener != null)
-                _datePicker.show(_fm, TAG);
+                _datePicker.show();
         }
     };
 
@@ -203,19 +201,18 @@ public class ReasonCoView extends RelativeLayout {
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _pickerCal.set(year, month, day);
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _pickerCal.set(year, monthOfYear, dayOfMonth);
 
-            if (!_timePicker.isAdded())
-                _timePicker.show(_fm, datePickerDialog.getTag());
+            if (!_timePicker.isShowing())
+                _timePicker.show();
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 

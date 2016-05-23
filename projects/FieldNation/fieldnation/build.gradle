@@ -27,8 +27,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 82
-        versionName "2.3.82_beta1"
+        versionCode 83
+        versionName "2.3.82"
         multiDexEnabled true
     }
 
@@ -92,7 +92,6 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     compile project(':libJson')
     compile project(':libUtils')
-    compile project(':libDateTimePicker')
     compile 'com.android.support:multidex:1.0.1'
     compile('com.mapbox.mapboxsdk:mapbox-android-sdk:0.7.4@aar') { transitive = true }
     compile 'com.google.android.gms:play-services:7.8.0'
