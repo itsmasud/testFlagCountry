@@ -12,6 +12,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
@@ -35,6 +36,7 @@ public class NotificationFragment extends WorkorderFragment {
     private List<Notification> _notes = new LinkedList<>();
     private NotificationListAdapter _adapter;
     private boolean _isSubbed = false;
+    private boolean _isMarkedRead =false;
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -146,6 +148,12 @@ public class NotificationFragment extends WorkorderFragment {
             _emptyTextView.setVisibility(View.VISIBLE);
         } else {
             _emptyTextView.setVisibility(View.GONE);
+        }
+
+        if(!_isMarkedRead){
+            _isMarkedRead = true;
+            WorkorderClient.actionMarkNotificationRead(App.get(), _workorder.getWorkorderId());
+            ProfileClient.get(App.get());
         }
 
         _refreshView.refreshComplete();

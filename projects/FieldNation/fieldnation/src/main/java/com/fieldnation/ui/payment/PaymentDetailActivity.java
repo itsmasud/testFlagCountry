@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -114,7 +115,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
                 String when = "";
                 Calendar cal = ISO8601.toCalendar(_paid.getDatePaid());
 
-                when = misc.formatDate(cal);
+                when = DateUtils.formatDate(cal);
 
                 _timeTextView.setVisibility(View.VISIBLE);
                 _timeTextView.setText(_paid.getPayMethod() + " on " + when);

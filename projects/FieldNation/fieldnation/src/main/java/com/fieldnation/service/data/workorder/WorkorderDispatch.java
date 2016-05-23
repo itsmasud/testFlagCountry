@@ -1,13 +1,20 @@
 package com.fieldnation.service.data.workorder;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael Carver on 4/20/2015.
@@ -237,6 +244,7 @@ public class WorkorderDispatch implements WorkorderConstants {
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
+
 
     public static void action(Context context, long workorderId, String action, boolean failed) {
         Bundle bundle = new Bundle();

@@ -332,7 +332,7 @@ public class App extends Application {
             _isConnected = true;
             Log.v(TAG, "onNetworkConnected");
             AuthTopicClient.requestCommand(App.this);
-            ToastClient.dismissSnackbar(App.this);
+            ToastClient.dismissSnackbar(App.this, 1);
         }
 
         @Override
@@ -352,7 +352,7 @@ public class App extends Application {
             Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
             if (intent != null) {
                 PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
-                ToastClient.snackbar(App.this, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+                ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
             }
         }
     };
@@ -702,7 +702,7 @@ public class App extends Application {
 
     public String getDownloadsFolder() {
         File externalPath = Environment.getExternalStorageDirectory();
-        File temppath = new File(externalPath.getAbsolutePath() + "/Download");
+        File temppath = new File(externalPath.getAbsolutePath() + "/Download/FieldNation");
         temppath.mkdirs();
         return temppath.getAbsolutePath();
     }

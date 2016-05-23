@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class CompletionStep {
@@ -57,7 +58,7 @@ public class CompletionStep {
 
     public static CompletionStep fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(CompletionStep.class, json);
+            return Unserializer.unserializeObject(CompletionStep.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

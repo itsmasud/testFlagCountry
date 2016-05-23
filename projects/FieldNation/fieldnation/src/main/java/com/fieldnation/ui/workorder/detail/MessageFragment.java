@@ -208,6 +208,9 @@ public class MessageFragment extends WorkorderFragment {
         }
     };
 
+    /*-*****************************-*/
+    /*-				Web				-*/
+    /*-*****************************-*/
     private void subscribeData() {
         if (_workorder == null)
             return;
@@ -222,13 +225,9 @@ public class MessageFragment extends WorkorderFragment {
             return;
 
         _workorderClient.subListMessages(_workorder.getWorkorderId(), false);
-        _workorderClient.subActions(_workorder.getWorkorderId());
         _isSubbed = true;
     }
 
-    /*-*****************************-*/
-    /*-				Web				-*/
-    /*-*****************************-*/
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -242,11 +241,6 @@ public class MessageFragment extends WorkorderFragment {
 
             _messages = messages;
             rebuildList();
-        }
-
-        @Override
-        public void onAction(long workorderId, String action, boolean failed) {
-            getMessages();
         }
     };
 }

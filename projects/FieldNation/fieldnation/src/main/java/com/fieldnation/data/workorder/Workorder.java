@@ -4,8 +4,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 import com.fieldnation.utils.misc;
 
@@ -15,16 +17,22 @@ import java.util.Set;
 
 public class Workorder implements Parcelable {
 
+    @Json(name = "_action")
+    private JsonArray _action;
     @Json(name = "additionalExpenses")
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
     private Integer _alertCount;
+    @Json(name = "approvalGrade")
+    private ApprovalGrade _approvalGrade;
     @Json(name = "bundleCount")
     private Integer _bundleCount;
     @Json(name = "bundleId")
     private Long _bundleId;
     @Json(name = "buyerRatingInfo")
     private BuyerRating _buyerRatingInfo;
+    @Json(name = "keyEvents")
+    private KeyEvents _keyEvents;
     @Json(name = "closingNotes")
     private String _closingNotes;
     @Json(name = "collectedSignature")
@@ -45,6 +53,8 @@ public class Workorder implements Parcelable {
     private String _customerPoliciesProcedures;
     @Json(name = "discounts")
     private Discount[] _discounts;
+    @Json(name = "displayCounterOffer")
+    private Integer _displayCounterOffer;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
@@ -107,12 +117,20 @@ public class Workorder implements Parcelable {
     public Workorder() {
     }
 
+    public JsonArray getActions() {
+        return _action;
+    }
+
     public Expense[] getAdditionalExpenses() {
         return _additionalExpenses;
     }
 
     public Integer getAlertCount() {
         return _alertCount;
+    }
+
+    public ApprovalGrade getApprovalGrade() {
+        return _approvalGrade;
     }
 
     public Integer getBundleCount() {
@@ -125,6 +143,10 @@ public class Workorder implements Parcelable {
 
     public BuyerRating getBuyerRatingInfo() {
         return _buyerRatingInfo;
+    }
+
+    public KeyEvents getKeyEvents() {
+        return _keyEvents;
     }
 
     public String getClosingNotes() {
@@ -168,6 +190,10 @@ public class Workorder implements Parcelable {
 
     public Discount[] getDiscounts() {
         return _discounts;
+    }
+
+    public Boolean displayCounterOffer() {
+        return _displayCounterOffer == 1;
     }
 
     public Document[] getDocuments() {
@@ -308,7 +334,7 @@ public class Workorder implements Parcelable {
 
     public static Workorder fromJson(JsonObject json) {
         try {
-            Workorder wo = Serializer.unserializeObject(Workorder.class, json);
+            Workorder wo = Unserializer.unserializeObject(Workorder.class, json);
             wo.buildStatus();
             return wo;
         } catch (Exception ex) {
@@ -401,7 +427,8 @@ public class Workorder implements Parcelable {
                 && getStatus().getWorkorderSubstatus() != WorkorderSubstatus.REQUESTED
                 && !isBundle()
                 && getPay() != null
-                && !getPay().hidePay();
+                && !getPay().hidePay()
+                && displayCounterOffer();
     }
 
     public boolean canComplete() {

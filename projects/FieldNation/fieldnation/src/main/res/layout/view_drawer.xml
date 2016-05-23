@@ -244,7 +244,7 @@
                 <!-- Feedback -->
 
                 <LinearLayout
-                    android:id="@+id/feedback_view"
+                    android:id="@+id/contactUs_view"
                     style="@style/DrawerSubitem"
                     android:orientation="horizontal">
 
@@ -254,7 +254,7 @@
 
                     <TextView
                         style="@style/DrawerSubitemTitle"
-                        android:text="@string/feedback" />
+                        android:text="@string/contact_us" />
                 </LinearLayout>
 
                 <!-- Debug Log -->
@@ -271,22 +271,6 @@
                     <TextView
                         style="@style/DrawerSubitemTitle"
                         android:text="@string/debug_log" />
-                </LinearLayout>
-
-                <!-- Help -->
-
-                <LinearLayout
-                    android:id="@+id/help_view"
-                    style="@style/DrawerSubitem"
-                    android:orientation="horizontal">
-
-                    <com.fieldnation.ui.IconFontTextView
-                        style="@style/DrawerItemTextFont"
-                        android:text="@string/icon_tooltip" />
-
-                    <TextView
-                        style="@style/DrawerSubitemTitle"
-                        android:text="@string/help" />
                 </LinearLayout>
 
                 <!-- Logout -->

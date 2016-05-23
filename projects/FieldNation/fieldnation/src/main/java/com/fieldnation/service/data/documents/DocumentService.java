@@ -7,6 +7,7 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
@@ -57,7 +58,7 @@ public class DocumentService extends MSService implements DocumentConstants {
                 name = name.substring(name.indexOf("_") + 1);
                 File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
                 if (!dlFolder.exists())
-                    misc.copyFile(obj.getFile(), dlFolder);
+                    FileUtils.copyFile(obj.getFile(), dlFolder);
 
                 DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH, isSync);
             } catch (Exception ex) {

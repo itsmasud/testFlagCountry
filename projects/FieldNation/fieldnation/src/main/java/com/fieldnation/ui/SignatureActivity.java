@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.dialog.EditTextAlertDialog;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -84,7 +85,7 @@ public class SignatureActivity extends FragmentActivity {
                     } catch (Exception ex) {
                         _arriveCal = Calendar.getInstance();
                     }
-                    _arrivalTextView.setText(misc.formatDateLong(_arriveCal) + " " + misc.formatTime(_arriveCal, false));
+                    _arrivalTextView.setText(DateUtils.formatDateLong(_arriveCal) + " " + DateUtils.formatTime(_arriveCal, false));
                 }
             }
             if (bundle.containsKey(INTENT_KEY_DEPARTURE)) {
@@ -97,7 +98,7 @@ public class SignatureActivity extends FragmentActivity {
                         _departCal = Calendar.getInstance();
                     }
                 }
-                _departureTextView.setText(misc.formatDateLong(_departCal) + " " + misc.formatTime(_departCal, false));
+                _departureTextView.setText(DateUtils.formatDateLong(_departCal) + " " + DateUtils.formatTime(_departCal, false));
             }
             if (bundle.containsKey(INTENT_KEY_NAME)) {
                 _name = bundle.getString(INTENT_KEY_NAME);
@@ -216,11 +217,11 @@ public class SignatureActivity extends FragmentActivity {
             if (tag.equals("arrive")) {
                 _arriveCal.set(_arriveCal.get(Calendar.YEAR), _arriveCal.get(Calendar.MONTH),
                         _arriveCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                _arrivalTextView.setText(misc.formatDateLong(_arriveCal) + " " + misc.formatTime(_arriveCal, false));
+                _arrivalTextView.setText(DateUtils.formatDateLong(_arriveCal) + " " + DateUtils.formatTime(_arriveCal, false));
             } else if (tag.equals("depart")) {
                 _departCal.set(_departCal.get(Calendar.YEAR), _departCal.get(Calendar.MONTH),
                         _departCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-                _departureTextView.setText(misc.formatDateLong(_departCal) + " " + misc.formatTime(_departCal, false));
+                _departureTextView.setText(DateUtils.formatDateLong(_departCal) + " " + DateUtils.formatTime(_departCal, false));
             }
         }
     };

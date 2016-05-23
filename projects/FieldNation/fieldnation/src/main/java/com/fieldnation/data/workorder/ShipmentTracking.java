@@ -3,6 +3,7 @@ package com.fieldnation.data.workorder;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
+import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 public class ShipmentTracking {
@@ -31,7 +32,7 @@ public class ShipmentTracking {
     @Json(name = "trackingId")
     private String _trackingId;
     @Json(name = "userId")
-    private Integer _userId;
+    private Long _userId;
     @Json(name = "workorderId")
     private Integer _workorderId;
     @Json(name = "workorderShipmentId")
@@ -84,7 +85,7 @@ public class ShipmentTracking {
         return _trackingId;
     }
 
-    public Integer getUserId() {
+    public Long getUserId() {
         return _userId;
     }
 
@@ -111,7 +112,7 @@ public class ShipmentTracking {
 
     public static ShipmentTracking fromJson(JsonObject json) {
         try {
-            return Serializer.unserializeObject(ShipmentTracking.class, json);
+            return Unserializer.unserializeObject(ShipmentTracking.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;

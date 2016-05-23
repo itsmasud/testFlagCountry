@@ -27,8 +27,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.dialog.FeedbackDialog;
-import com.fieldnation.ui.dialog.HelpDialog;
+import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -54,9 +53,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
-    private FeedbackDialog _feedbackDialog;
-    private HelpDialog _helpDialog;
-    private Snackbar _snackbar;
+    private ContactUsDialog _contactUsDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -106,8 +103,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _coiWarningDialog.setCancelable(false);
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
-        _feedbackDialog = FeedbackDialog.getInstance(getSupportFragmentManager(), TAG);
-        _helpDialog = HelpDialog.getInstance(getSupportFragmentManager(), TAG);
+        _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
     }
@@ -351,8 +347,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _globalClient.subGotProfile();
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
-            _globalClient.subShowFeedbackDialog();
-            _globalClient.subShowHelpDialog();
+            _globalClient.subShowContactUsDialog();
             //_globalClient.subNetworkState();
         }
 
@@ -377,18 +372,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onShowFeedbackDialog(String source) {
+        public void onShowContactUsDialog(String source) {
             try {
-                _feedbackDialog.show(source);
-            } catch (Exception ex) {
-                Debug.logException(ex);
-            }
-        }
-
-        @Override
-        public void onShowHelpDialog() {
-            try {
-                _helpDialog.show();
+                _contactUsDialog.show(source);
             } catch (Exception ex) {
                 Debug.logException(ex);
             }
@@ -405,6 +391,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+        private Snackbar _snackbar = null;
+        private long _lastId = 0;
+
         @Override
         public void onConnected() {
             Log.v(TAG, "onConnected");
@@ -413,8 +402,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void showSnackBar(String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+        public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
             Log.v(TAG, "showSnackBar(" + title + ")");
+
+            if (id > 0 && id == _lastId)
+                return;
+
             if (findViewById(android.R.id.content) == null) {
                 Log.v(TAG, "showSnackBar.findViewById() == null");
                 return;
@@ -425,23 +418,31 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             tv.setTextColor(getResources().getColor(R.color.fn_white_text));
             snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
 
-            if (buttonText != null) {
-                snackbar.setAction(buttonText, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        if (buttonIntent != null) {
-                            try {
-                                buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
-                            } catch (PendingIntent.CanceledException e) {
-                                Log.v(TAG, e);
-                            }
+            if (buttonText == null)
+                buttonText = "DISMISS";
+
+            snackbar.setAction(buttonText, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_snackbar != null) {
+                        _snackbar.dismiss();
+                        _snackbar = null;
+                        _lastId = 0;
+                    }
+
+                    if (buttonIntent != null) {
+                        try {
+                            buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
+                        } catch (PendingIntent.CanceledException e) {
+                            Log.v(TAG, e);
                         }
                     }
-                });
-            }
+                }
+            });
+
             snackbar.show();
             _snackbar = snackbar;
-
+            _lastId = id;
             Log.v(TAG, "snackbar.show()");
         }
 
@@ -452,8 +453,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
 
         @Override
-        public void dismissSnackBar() {
+        public void dismissSnackBar(long id) {
+            Log.v(TAG, "dismissSnackBar");
             if (_snackbar == null)
+                return;
+
+            if (_lastId != id)
                 return;
 
             try {
@@ -461,6 +466,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+            _snackbar = null;
+            _lastId = 0;
         }
     };
 }

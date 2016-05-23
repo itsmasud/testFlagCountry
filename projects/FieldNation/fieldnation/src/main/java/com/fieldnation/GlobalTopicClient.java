@@ -87,32 +87,19 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         return register(TOPIC_ID_SHUTDOWN, TAG);
     }
 
-    // feedback dialog
-    public static void showFeedbackDialog(Context context, String source) {
+    // ContactUs dialog
+    public static void showContactUsDialog(Context context, String source) {
         if (context == null)
             return;
 
         Bundle bundle = new Bundle();
-        bundle.putString(PARAM_FEEDBACK_SOURCE, source);
+        bundle.putString(PARAM_CONTACT_US_SOURCE, source);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_FEEDBACK, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_CONTACT_US, bundle, Sticky.NONE);
     }
 
-    public boolean subShowFeedbackDialog() {
-        return register(TOPIC_ID_SHOW_FEEDBACK, TAG);
-    }
-
-
-    // help dialog
-    public static void showHelpDialog(Context context) {
-        if (context == null)
-            return;
-
-        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_HELP_DIALOG, null, Sticky.NONE);
-    }
-
-    public boolean subShowHelpDialog() {
-        return register(TOPIC_ID_SHOW_HELP_DIALOG, TAG);
+    public boolean subShowContactUsDialog() {
+        return register(TOPIC_ID_SHOW_CONTACT_US, TAG);
     }
 
     // NETWORK STATE
@@ -219,11 +206,8 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_ID_SHUTDOWN:
                     onShutdown();
                     break;
-                case TOPIC_ID_SHOW_FEEDBACK:
-                    onShowFeedbackDialog(((Bundle) payload).getString(PARAM_FEEDBACK_SOURCE));
-                    break;
-                case TOPIC_ID_SHOW_HELP_DIALOG:
-                    onShowHelpDialog();
+                case TOPIC_ID_SHOW_CONTACT_US:
+                    onShowContactUsDialog(((Bundle) payload).getString(PARAM_CONTACT_US_SOURCE));
                     break;
                 case TOPIC_ID_SHOW_LOADING:
                     setLoading(((Bundle) payload).getBoolean(PARAM_IS_LOADING));
@@ -266,10 +250,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         public void onShutdown() {
         }
 
-        public void onShowFeedbackDialog(String source) {
-        }
-
-        public void onShowHelpDialog() {
+        public void onShowContactUsDialog(String source) {
         }
 
         public void onNetworkDisconnected() {

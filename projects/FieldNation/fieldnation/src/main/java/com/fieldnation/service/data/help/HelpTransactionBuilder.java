@@ -14,14 +14,15 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 public class HelpTransactionBuilder {
     private static final String TAG = "HelpTransactionBuilder";
 
-    public static Intent actionPostFeedbackIntent(Context context, String message, String uri,
-                                                  String extraData, String extraType) {
+    public static Intent actionPostContactUsIntent(Context context, String message, String internalTeam, String uri,
+                                                   String extraData, String extraType) {
         try {
             String body = "";
 
             // parameterized body
             body += "topic=android";
             body += "&message=" + message;
+            body += "&internal_team=" + internalTeam;
             body += "&uri=" + uri;
             body += "&extra_data=" + extraData;
             body += "&extra_type=" + extraType;
@@ -30,18 +31,16 @@ public class HelpTransactionBuilder {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
+                    .timingKey("POST/api/rest/v1/help/feedback")
                     .path("/api/rest/v1/help/feedback");
 
-            if (body != null) {
-                http.body(body);
-
-                http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
-            }
+            http.body(body);
+            http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
             return WebTransactionBuilder.builder(context)
                     .priority(Priority.LOW)
                     .handler(HelpTransactionHandler.class)
-                    .handlerParams(HelpTransactionHandler.pFeedback(message, uri, extraData, extraType))
+                    .handlerParams(HelpTransactionHandler.pContactUs(message, internalTeam, uri, extraData, extraType))
                     .useAuth(true)
                     .request(http)
                     .makeIntent();

@@ -60,7 +60,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
             Log.v(TAG, ex);
             return Result.REQUEUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     @Override
@@ -83,7 +83,7 @@ public class RestTransactionHandler extends WebTransactionHandler {
         // slow
         StoredObject.put(App.getProfileId(), objectType, id, resultData.getByteArray());
 
-        return Result.FINISH;
+        return Result.CONTINUE;
 
     }
 
@@ -118,6 +118,6 @@ public class RestTransactionHandler extends WebTransactionHandler {
 
         StoredObject.put(App.getProfileId(), objectType + "List", envelope.getLong("page"), envelope.toByteArray());
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

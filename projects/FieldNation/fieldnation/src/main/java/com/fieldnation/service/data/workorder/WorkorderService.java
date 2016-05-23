@@ -5,6 +5,7 @@ import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
+import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
@@ -84,6 +85,17 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     Transform.applyTransform(workorder, PSO_WORKORDER, workorderId);
 
                     WorkorderDispatch.get(this, workorder, workorderId, false, isSync, true);
+
+                    if (workorder.has("_action")) {
+                        Log.v(TAG, "get._action=" + workorder.get("_action"));
+
+                        try {
+                            Log.v(TAG, "_action=" + Workorder.fromJson(workorder).getActions());
+                        } catch (Exception ex) {
+                            ex.printStackTrace();
+                        }
+                    }
+
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }

@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -37,6 +38,7 @@ public class ConfirmDialog extends DialogFragmentBase {
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_TAC_ACCEPT = "STATE_TAC_ACCEPT";
 
+    private final static int MIN_JOB_DURATION = 900000;
     // Ui
     private LinearLayout _startDateLayout;
     private Button _startDateButton;
@@ -197,12 +199,12 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         String display = _schedule.getDisplayString(false);
         _scheduleTextView.setText(display);
-        setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : 3600000);
+        setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
         if (_schedule.isExact()) {
             try {
                 _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
                 _startDateLayout.setVisibility(View.GONE);
-                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : 3600000);
+                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -211,7 +213,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                 Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
                 _startCalendar = cal;
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
                 _startDateLayout.setVisibility(View.VISIBLE);
                 setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
             } catch (Exception ex) {
@@ -249,7 +251,7 @@ public class ConfirmDialog extends DialogFragmentBase {
                     _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
                 }
 
-                _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
+                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -325,6 +327,11 @@ public class ConfirmDialog extends DialogFragmentBase {
     private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
         @Override
         public void onOk(long timeMilliseconds) {
+            if(timeMilliseconds < MIN_JOB_DURATION){
+                setDuration(MIN_JOB_DURATION);
+                ToastClient.toast(App.get(), getString(R.string.toast_minimum_job_duration), Toast.LENGTH_LONG);
+                return;
+            }
             _durationMilliseconds = timeMilliseconds;
             _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
         }

@@ -14,6 +14,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 import com.fourmob.datetimepicker.date.DatePickerDialog;
@@ -176,7 +177,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         try {
             String startDate = _loggedWork.getStartDate();
             _startCalendar = ISO8601.toCalendar(startDate);
-            _startButton.setText(misc.formatDateTime(_startCalendar, false));
+            _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
         } catch (ParseException ex) {
             Log.v(TAG, ex);
         }
@@ -184,7 +185,7 @@ public class WorkLogDialog extends DialogFragmentBase {
         try {
             String endDate = _loggedWork.getEndDate();
             _endCalendar = ISO8601.toCalendar(endDate);
-            _endButton.setText(misc.formatDateTime(_endCalendar, false));
+            _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -236,12 +237,12 @@ public class WorkLogDialog extends DialogFragmentBase {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
                         _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
                 _startIsSet = true;
-                _startButton.setText(misc.formatDateTime(_startCalendar, false));
+                _startButton.setText(DateUtils.formatDateTime(_startCalendar, false));
             } else if (tag.equals("end")) {
                 _endCalendar.set(_endCalendar.get(Calendar.YEAR), _endCalendar.get(Calendar.MONTH),
                         _endCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
                 _endIsSet = true;
-                _endButton.setText(misc.formatDateTime(_endCalendar, false));
+                _endButton.setText(DateUtils.formatDateTime(_endCalendar, false));
             }
         }
     };

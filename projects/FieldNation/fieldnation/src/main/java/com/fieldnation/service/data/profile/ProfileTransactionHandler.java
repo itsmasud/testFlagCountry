@@ -7,9 +7,11 @@ import com.fieldnation.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.text.ParseException;
 
@@ -98,7 +100,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             Log.v(TAG, ex);
             return Result.REQUEUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     @Override
@@ -123,9 +125,9 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.FINISH;
+            return Result.CONTINUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -139,7 +141,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put((int) profileId, PSO_PROFILE, profileId, data);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -152,7 +154,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -165,7 +167,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         StoredObject.put(App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -176,7 +178,7 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         ProfileDispatch.action(context, profileId, action, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     private Result handleSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -184,8 +186,17 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
 
         long userId = params.getLong("userId");
 
+        ProfileClient.get(context, false);
+        ProfileClient.listMessages(context, 0, false, false);
+        ProfileClient.listNotifications(context, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
+
         ProfileDispatch.switchUser(context, userId, false);
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

@@ -50,8 +50,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     private SorryFragment _sorryFrag;
 
     // Data
-    private WorkorderClient _workorderClient;
-
     private int _displayMode = DISPLAY_SUMMARY;
     private String _name;
     private String _signatureSvg;
@@ -163,20 +161,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-    }
-
-    @Override
-    protected void onPause() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-        super.onPause();
-    }
-
-    @Override
     protected void onSaveInstanceState(Bundle outState) {
         Stopwatch stopwatch = new Stopwatch();
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
@@ -221,13 +205,6 @@ public class SignOffActivity extends AuthFragmentActivity {
     /*-*********************************-*/
     /*-             Events              -*/
     /*-*********************************-*/
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-
-        }
-    };
-
     private final SignOffFragment.Listener _signOff_listener = new SignOffFragment.Listener() {
         @Override
         public void signOffOnClick() {

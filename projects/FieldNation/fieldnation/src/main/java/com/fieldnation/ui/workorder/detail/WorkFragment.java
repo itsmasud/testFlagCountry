@@ -396,7 +396,7 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-//        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
+        _reportProblemDialog.setListener(_reportProblem_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -426,7 +426,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
-        _reportProblemDialog.setListener(_reportProblem_listener, _workorder);
         subscribeData();
         requestTasks();
         populateUi();
@@ -780,7 +779,7 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCareerName(content));
+                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierName(content));
 
             }
         }
@@ -876,7 +875,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                File temppath = new File(App.get().getDownloadsFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
@@ -1094,11 +1093,13 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
             if (_scannedImagePath != null) {
                 final UploadSlot[] slots = _workorder.getUploadSlots();
+                if (slots == null) return;
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
                         WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                        _scannedImagePath = null;
                     }
                 }
             }
@@ -1124,7 +1125,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onScan() {
             IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt("Scan a barcode");
+            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
             integrator.setCameraId(0);
             integrator.setBeepEnabled(false);
             integrator.setBarcodeImageEnabled(true);
@@ -1134,8 +1135,8 @@ public class WorkFragment extends WorkorderFragment {
 
     private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
         @Override
-        public void onDelete(Workorder workorder, int shipmentId) {
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipmentId);
+        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
             setLoading(true);
         }
 
@@ -1277,7 +1278,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
-            _reportProblemDialog.show();
+            _reportProblemDialog.show(_workorder);
         }
 
         @Override
@@ -1404,8 +1405,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void expenseLongClick(final Expense expense) {
-            _yesNoDialog.setData("Delete Expense",
-                    "Are you sure you want to delete this expense?", "YES", "NO",
+            _yesNoDialog.setData(getString(R.string.dialog_delete_expense_title),
+                    getString(R.string.dialog_delete_expense_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
@@ -1428,7 +1429,7 @@ public class WorkFragment extends WorkorderFragment {
     private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
         public void addDiscount() {
-            _discountDialog.show("Add Discount");
+            _discountDialog.show(getString(R.string.dialog_add_discount_title));
         }
 
         @Override
@@ -1438,8 +1439,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void discountLongClick(final Discount discount) {
-            _yesNoDialog.setData("Delete Discount",
-                    "Are you sure you want to delete this discount?", "YES", "NO",
+            _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
+                    getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
@@ -1470,18 +1471,23 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show("Add Shipment", 0);
+            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
         }
 
         @Override
-        public void onDelete(Workorder workorder, final int shipmentId) {
-            _yesNoDialog.setData("Delete Shipment",
-                    "Are you sure you want to delete this shipment?", "YES", "NO",
+        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
+            if ((long) shipment.getUserId() != App.getProfileId()) {
+                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
+                return;
+            }
+
+            _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
+                    getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
                             WorkorderClient.deleteShipment(App.get(),
-                                    _workorder.getWorkorderId(), shipmentId);
+                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
                         }
 
                         @Override
@@ -1496,7 +1502,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAssign(Workorder workorder, int shipmentId) {
+        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
             // TODO STUB .onAssign()
             Log.v(TAG, "STUB .onAssign()");
             // TODO present a picker of the tasks that this can be assigned too
@@ -1518,8 +1524,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            _yesNoDialog.setData("Delete Signature",
-                    "Are you sure you want to delete this signature?", "YES", "NO",
+            _yesNoDialog.setData(getString(R.string.dialog_delete_signature_title),
+                    getString(R.string.dialog_delete_signature_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
@@ -1558,17 +1564,17 @@ public class WorkFragment extends WorkorderFragment {
     private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
-            _termsScrollingDialog.show("Confidential Information", body);
+            _termsScrollingDialog.show(getString(R.string.dialog_confidential_information_title), body);
         }
 
         @Override
         public void showCustomerPolicies(String body) {
-            _termsScrollingDialog.show("Policies And Procedures", body);
+            _termsScrollingDialog.show(getString(R.string.dialog_policy_title), body);
         }
 
         @Override
         public void showStandardInstructions(String body) {
-            _termsDialog.show("Standard Instructions", body);
+            _termsDialog.show(getString(R.string.dialog_standard_instruction_title), body);
         }
     };
 
@@ -1687,7 +1693,7 @@ public class WorkFragment extends WorkorderFragment {
             if (shipments == null) {
                 _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task.getTaskId());
             } else {
-                _taskShipmentAddDialog.show("Assign/Add New", _workorder, task.getTaskId());
+                _taskShipmentAddDialog.show(getString(R.string.dialog_task_shipment_title), _workorder, task.getTaskId());
             }
         }
 
@@ -1723,12 +1729,12 @@ public class WorkFragment extends WorkorderFragment {
     private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
-            _worklogDialog.show("Add Worklog", null, showdevice);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
         }
 
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            _worklogDialog.show("Add Worklog", loggedWork, showDeviceCount);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
         }
 
         @Override
@@ -1736,11 +1742,12 @@ public class WorkFragment extends WorkorderFragment {
 //            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
 //                    loggedWork.getLoggedHoursId());
 //            setLoading(true);
+
             final long workorderID = workorder.getWorkorderId();
             final long loggedHoursID = loggedWork.getLoggedHoursId();
 
-            _yesNoDialog.setData("Delete Worklog",
-                    "Are you sure you want to delete this work log?", "YES", "NO",
+            _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
+                    getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {

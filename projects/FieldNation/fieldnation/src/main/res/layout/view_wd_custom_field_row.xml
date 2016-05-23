@@ -3,7 +3,22 @@
     style="?attr/cardContainerStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@drawable/card_bg"
     android:padding="0dp">
+
+
+    <TextView
+        android:id="@+id/optional_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_margin="8dp"
+        android:text="OPTIONAL"
+        android:textScaleX="0.75"
+        android:visibility="visible" />
+
 
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/icon_view"
@@ -24,22 +39,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
+        android:layout_marginBottom="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
+        android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/icon_view"
-        android:paddingBottom="16dp"
-        android:paddingTop="16dp"
-        android:text="@string/placeholder_phrase" />
-
-    <TextView
-        android:id="@+id/optional_textview"
-        style="@style/Text_Caption"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="8dp"
-        android:text="OPTIONAL"
-        android:textScaleX="0.75"
-        android:visibility="visible" />
+        android:text="@string/placeholder_paragraph" />
 </RelativeLayout>

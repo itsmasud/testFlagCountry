@@ -56,6 +56,7 @@
             </RelativeLayout>
 
             <LinearLayout
+                android:id="@+id/careerSpinner_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -72,7 +73,8 @@
                     android:id="@+id/carrier_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="What is the carrier?"
+                    android:text="@string/dialog_shipment_career_spinner_default_text"
+                    android:editable="false"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -106,6 +108,7 @@
             </android.support.design.widget.TextInputLayout>
 
             <LinearLayout
+                android:id="@+id/directionSpinner_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
@@ -122,8 +125,9 @@
                     android:id="@+id/direction_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="What is the direction?"
-                    android:visibility="visible" />
+                    android:text="@string/dialog_shipment_direction_spinner_default_text"
+                    android:visibility="visible"
+                    android:editable="false"/>
 
             </LinearLayout>
 

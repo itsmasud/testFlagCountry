@@ -81,7 +81,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
     // Data
     private Workorder _workorder;
-    private WorkorderClient _workorderClient;
     private GlobalTopicClient _globalClient;
     private Profile _profile = null;
     //private Bundle _delayedAction = null;
@@ -183,9 +182,6 @@ public class DeliverableFragment extends WorkorderFragment {
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
@@ -198,9 +194,6 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onDetach() {
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
-
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
 
         if (_docClient != null && _docClient.isConnected())
             _docClient.disconnect(App.get());
@@ -486,7 +479,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                File temppath = new File(App.get().getDownloadsFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
@@ -511,20 +504,6 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onGotProfile(Profile profile) {
             _profile = profile;
             populateUi();
-        }
-    };
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_workorderClient_listener.onConnected");
-            _workorderClient.subDeliverableUpload();
-        }
-
-        @Override
-        public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            Log.v(TAG, "_workorderClient_listener.onUploadDeliverable");
-            WorkorderClient.get(App.get(), workorderId, false);
         }
     };
 

@@ -11,6 +11,7 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.utils.ImageUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.ByteArrayOutputStream;
@@ -50,9 +51,9 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             // generate the bitmaps
             byte[] imageData = resultData.getByteArray();
             Bitmap sourceBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-            Bitmap imageBitmap = misc.resizeBitmap(sourceBitmap, 95, 95);
+            Bitmap imageBitmap = ImageUtils.resizeBitmap(sourceBitmap, 95, 95);
             sourceBitmap.recycle();
-            Bitmap circleBitmap = misc.extractCircle(imageBitmap);
+            Bitmap circleBitmap = ImageUtils.extractCircle(imageBitmap);
 
             // find the paths
             String storagePath = App.get().getStoragePath() + "/temp";
@@ -79,11 +80,11 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
                 PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
             }
             Log.v(TAG, "handleResult");
-            return Result.FINISH;
+            return Result.CONTINUE;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             Log.v(TAG, "handleResult");
-            return Result.ERROR;
+            return Result.DELETE;
         }
 
     }
@@ -99,6 +100,6 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 }

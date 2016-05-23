@@ -71,13 +71,13 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
             Log.v(TAG, ex);
             return Result.REQUEUE;
         }
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     @Override
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO implement fail
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
     public Result handleChange(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -85,7 +85,9 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         WorkorderTransactionBuilder.get(context, workorderId, false);
 
-        return Result.FINISH;
+        WorkorderClient.get(context, workorderId, false, false);
+
+        return Result.CONTINUE;
     }
 
     public Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
@@ -97,7 +99,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 
         WorkorderDispatch.getDeliverable(context, new JsonObject(data), workorderId, deliverableId, false, transaction.isSync());
 
-        return Result.FINISH;
+        return Result.CONTINUE;
     }
 
 //    public Result handleDownload(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException, IOException {

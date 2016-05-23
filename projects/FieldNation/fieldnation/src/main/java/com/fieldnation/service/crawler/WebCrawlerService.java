@@ -28,6 +28,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -124,7 +125,7 @@ public class WebCrawlerService extends Service {
             @Override
             protected Object doInBackground(Object... params) {
                 Log.v(TAG, "Flushing logs");
-                misc.flushLogs(WebCrawlerService.this, 86400000); // 1 day
+                DebugUtils.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
                 StoredObject.flush(604800000); // 1 week
                 //StoredObject.flush(1000); // 1 week
