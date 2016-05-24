@@ -100,6 +100,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         }
 
         _actionButton.setVisibility(VISIBLE);
+        _actionButton.setEnabled(true);
         if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
             _actionButton.setText("COUNTER OFFER");
         } else if (_workorder.canRequestPayIncrease()) {
@@ -107,6 +108,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         } else if (!_workorder.canCounterOffer() &&
                 (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
                         || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED)) {
+            _actionButton.setEnabled(false);
             _actionButton.setText("COUNTER DISABLED");
         } else {
             _actionButton.setVisibility(GONE);

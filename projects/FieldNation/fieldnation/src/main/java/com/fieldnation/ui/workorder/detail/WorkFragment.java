@@ -141,7 +141,6 @@ public class WorkFragment extends WorkorderFragment {
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
     private RefreshView _refreshView;
-    private PayDialog _payDialog;
 
     // Dialogs
     private AcceptBundleDialog _acceptBundleWOConfirmDialog;
@@ -164,6 +163,7 @@ public class WorkFragment extends WorkorderFragment {
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
+    private PayDialog _payDialog;
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
