@@ -12,6 +12,7 @@ import com.fieldnation.ThreadManager;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 
 import java.util.List;
 
@@ -51,7 +52,11 @@ public class WebTransactionService extends MSService implements WebTransactionCo
         _globalTopicClient.connect(App.get());
 
         _manager = new ThreadManager();
-        _manager.addThread(new TransactionThread(_manager, this, false)); // 0
+        TransactionThread t = new TransactionThread(_manager, this, false);
+        t._isFirstThread = true;
+        _manager.addThread(t); // 0
+
+        //_manager.addThread(new TransactionThread(_manager, this, false)); // 0
         _manager.addThread(new TransactionThread(_manager, this, true)); // 1
         for (int i = 2; i < threadCount; i++) {
             // every other can do sync
@@ -165,14 +170,20 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getBoolean(PARAM_USE_AUTH),
                         extras.getBoolean(PARAM_IS_SYNC),
                         extras.getByteArray(PARAM_REQUEST),
+                        extras.getBoolean(PARAM_WIFI_REQUIRED),
+                        extras.getBoolean(PARAM_TRACK),
                         extras.getString(PARAM_HANDLER_NAME),
                         extras.getByteArray(PARAM_HANDLER_PARAMS));
+
+                if (extras.getBoolean(PARAM_TRACK)) {
+                    UploadTrackerClient.uploadQueued(App.get());
+                }
 
                 Log.v(TAG, "processIntent building transforms");
                 if (extras.containsKey(PARAM_TRANSFORM_LIST) && extras.get(PARAM_TRANSFORM_LIST) != null) {
                     Parcelable[] transforms = extras.getParcelableArray(PARAM_TRANSFORM_LIST);
-                    for (int i = 0; i < transforms.length; i++) {
-                        Bundle transform = (Bundle) transforms[i];
+                    for (Parcelable parcel : transforms) {
+                        Bundle transform = (Bundle) parcel;
                         Transform.put(transaction.getId(), transform);
                     }
                 }
@@ -188,7 +199,6 @@ public class WebTransactionService extends MSService implements WebTransactionCo
 
         Log.v(TAG, "processIntent end");
     }
-
 
     public boolean isAuthenticated() {
         return _auth != null;

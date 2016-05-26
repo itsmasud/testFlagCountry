@@ -49,6 +49,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                 case PARAM_ACTION_GET_BUNDLE:
                     getBundle(intent);
                     break;
+                case PARAM_ACTION_CACHE_DELIVERABLE:
+                    cacheDeliverable(intent);
+                    break;
                 case PARAM_ACTION_UPLOAD_DELIVERABLE:
                     uploadDeliverable(intent);
                     break;
@@ -229,6 +232,19 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         WorkorderTransactionBuilder.getBundle(this, bundleId, isSync);
     }
 
+    private void cacheDeliverable(Intent intent) {
+        WorkorderDispatch.cacheDeliverableStart(App.get());
+        Uri uri = intent.getParcelableExtra(PARAM_URI);
+        try {
+            StoredObject upFile = StoredObject.put(App.getProfileId(), "CacheFile", uri.toString(),
+                    this.getContentResolver().openInputStream(uri), "uploadTemp.dat");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        } finally {
+            WorkorderDispatch.cacheDeliverableEnd(App.get());
+        }
+    }
+
     private void uploadDeliverable(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
@@ -236,9 +252,18 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
-        if (uri != null)
-            WorkorderTransactionBuilder.uploadDeliverable(this, uri, filename, workorderId, uploadSlotId);
-        else
+        if (uri != null) {
+            try {
+                StoredObject cache = StoredObject.get(App.getProfileId(), "CacheFile", uri.toString());
+                if (cache != null) {
+                    WorkorderTransactionBuilder.uploadDeliverable(this, cache, filename, workorderId, uploadSlotId);
+                } else {
+                    WorkorderTransactionBuilder.uploadDeliverable(this, this.getContentResolver().openInputStream(uri), filename, workorderId, uploadSlotId);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else
             WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, workorderId, uploadSlotId);
     }
 

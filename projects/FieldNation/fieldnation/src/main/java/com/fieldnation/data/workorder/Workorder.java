@@ -54,7 +54,7 @@ public class Workorder implements Parcelable {
     @Json(name = "discounts")
     private Discount[] _discounts;
     @Json(name = "displayCounterOffer")
-    private Integer _displayCounterOffer;
+    private Boolean _displayCounterOffer;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
@@ -193,7 +193,10 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean displayCounterOffer() {
-        return _displayCounterOffer == 1;
+        if (_displayCounterOffer == null)
+            return true;
+        
+        return _displayCounterOffer;
     }
 
     public Document[] getDocuments() {

@@ -15,6 +15,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -67,11 +69,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private ActionBarDrawerView _actionBarView;
     private Toolbar _toolbar;
 
+    private RelativeLayout _loadingLayout;
+    private ProgressBar _loadingProgress;
+
     // Data
     private WorkorderClient _workorderClient;
     private GpsLocationService _gpsLocationService;
     private ActionMenuItemView _sendMenuItem;
     private WorkorderCardView _currentWorkOrderCardView = null;
+    private int _cachedValuesleft = 0;
 
     // Data that Needs to be saved
     private LayoutType layoutType;
@@ -145,6 +151,9 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _maxFilesNumberTextView = (TextView) findViewById(R.id.maxFilesNumber_textview);
 
         _emptyView = (UnavailableCardView) findViewById(R.id.empty_view);
+
+        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
+        _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
@@ -241,9 +250,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private void handleRequestSingleFile(Intent intent) {
         Uri fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
         _uploadingDocumentList = new UploadingDocument[1];
+        _cachedValuesleft = 1;
         if (fileUri != null) {
             final String fileName = getFileNameFromUri(fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, fileUri);
+            WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
         }
     }
 
@@ -251,6 +262,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         Log.v(TAG, intent.getExtras() + "");
 
         ArrayList<Uri> fileUris = intent.getParcelableArrayListExtra(Intent.EXTRA_STREAM);
+        _cachedValuesleft = fileUris.size();
         if (fileUris != null) {
             _uploadingDocumentList = new UploadingDocument[fileUris.size()];
 
@@ -261,6 +273,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = getFileNameFromUri(fileUris.get(i));
                 _uploadingDocumentList[i] = new UploadingDocument(fileName, fileUris.get(i));
+                WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
         }
     }
@@ -295,10 +308,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                 }
 
                 final Uri filePathUri = Uri.parse(cursor.getString(column_index));
-                fileName = filePathUri.getLastPathSegment().toString();
+                fileName = filePathUri.getLastPathSegment();
                 Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
             }
-        } else if (uri.getScheme().toString().compareTo("file") == 0) {
+        } else if (uri.getScheme().compareTo("file") == 0) {
             fileName = new File(uri.getPath()).getName();
         }
 
@@ -410,6 +423,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             Log.v(TAG, "_workorderData_listener.onConnected");
             _workorderClient.subList(_displayView);
             _workorderClient.subActions();
+            _workorderClient.subDeliverableCache();
             _adapter.refreshPages();
         }
 
@@ -427,6 +441,15 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         public void onAction(long workorderId, String action, boolean failed) {
             Log.v(TAG, "_workorderData_listener.onAction " + workorderId + "/" + action);
             _adapter.refreshPages();
+        }
+
+        @Override
+        public void onDeliveraleCacheEnd() {
+            _cachedValuesleft--;
+
+            if (_cachedValuesleft == 0) {
+                _loadingLayout.setVisibility(View.GONE);
+            }
         }
     };
 
