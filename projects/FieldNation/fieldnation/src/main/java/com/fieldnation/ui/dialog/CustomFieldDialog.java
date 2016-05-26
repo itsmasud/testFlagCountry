@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -24,6 +23,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.misc;
 
@@ -232,12 +232,13 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
         _spinner = (FnSpinner) v.findViewById(R.id.spinner);
-        _spinner.setOnItemClickListener(_spinner_selected);
+        _spinner.setOnItemSelectedListener(_spinner_selected);
 
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
+        _okButton.setEnabled(false);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -259,7 +260,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         super.onResume();
 
         if (_clear) {
-            _spinner.setText(getString(R.string.spinner_custom_field_default));
+            _spinner.clearSelection();
         }
 
         populateUi();
@@ -396,11 +397,14 @@ public class CustomFieldDialog extends DialogFragmentBase {
                             _customField.getPredefinedValues()[i] = "";
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                            R.layout.view_spinner_item,
-                            _customField.getPredefinedValues());
+                    HintArrayAdapter adapter = HintArrayAdapter.createFromArray(
+                            getActivity(),
+                            _customField.getPredefinedValues(),
+                            R.layout.view_spinner_item);
 
-                    adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+                    adapter.setDropDownViewResource(
+                            android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
                     _spinner.setAdapter(adapter);
                     if (!misc.isEmptyOrNull(_customField.getValue())) {
                         String val = _customField.getValue();
@@ -408,7 +412,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner.setSelectedItem(i);
+                                _spinner.setSelection(i);
                                 _itemSelectedPosition = i;
                                 break;
                             }
@@ -515,10 +519,20 @@ public class CustomFieldDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemSelectedListener _spinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
+            Log.v(TAG, "onItemSelected");
+            if (_okButton != null)
+                _okButton.setEnabled(true);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            Log.v(TAG, "onNothingSelected");
+            if (_okButton != null)
+                _okButton.setEnabled(false);
         }
     };
 

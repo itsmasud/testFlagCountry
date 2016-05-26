@@ -36,9 +36,10 @@
 
                 <com.fieldnation.ui.FnSpinner
                     android:id="@+id/type_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="What type of schedule?"
+                    android:hint="What type of schedule?"
                     android:visibility="visible" />
 
             </LinearLayout>

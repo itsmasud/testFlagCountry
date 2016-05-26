@@ -44,10 +44,10 @@
 
                     <com.fieldnation.ui.FnSpinner
                         android:id="@+id/block_spinner"
+                        style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Select first"
-                        android:editable="false"
+                        android:hint="Block Reason..."
                         android:visibility="visible" />
                 </LinearLayout>
 
@@ -56,7 +56,7 @@
                     style="@style/EditText"
                     android:layout_width="match_parent"
                     android:hint="@string/dialog_block_details"
-                    android:visibility="visible"/>
+                    android:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
 

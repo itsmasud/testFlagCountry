@@ -13,7 +13,6 @@ import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -27,6 +26,7 @@ import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
@@ -46,7 +46,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private ExpenseCategory[] _categories;
-    private ArrayAdapter<ExpenseCategory> _adapter;
+    private HintArrayAdapter _adapter;
     private InputMethodManager _imm;
     private boolean _reset = false;
     private boolean _showCategories = true;
@@ -89,7 +89,7 @@ public class ExpenseDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
 
         _categorySpinner = (FnSpinner) v.findViewById(R.id.category_spinner);
-        _categorySpinner.setOnItemClickListener(_spinner_selected);
+        _categorySpinner.setOnItemSelectedListener(_spinner_selected);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
@@ -116,13 +116,13 @@ public class ExpenseDialog extends DialogFragmentBase {
     private void setCategories(ExpenseCategory[] categories) {
         try {
             _categories = categories;
-            _adapter = new ArrayAdapter<>(getActivity(),
-                    R.layout.view_spinner_item,
-                    categories);
+            _adapter = HintArrayAdapter.createFromArray(
+                    getActivity(), categories, R.layout.view_spinner_item);
+
             _adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
             _categorySpinner.setAdapter(_adapter);
-            _categorySpinner.setSelectedItem(0);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -139,7 +139,7 @@ public class ExpenseDialog extends DialogFragmentBase {
             _amountEditText.setText("");
 
         if (_categorySpinner != null)
-            _categorySpinner.setSelectedItem(0);
+            _categorySpinner.clearSelection();
 
         if (_showCategories) {
             _categoryLayout.setVisibility(View.VISIBLE);
@@ -174,7 +174,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     public ExpenseCategory getCategory() {
         try {
             if (_showCategories)
-                return _adapter.getItem(_itemSelectedPosition);
+                return (ExpenseCategory) _adapter.getItem(_itemSelectedPosition);
             else
                 return null;
         } catch (Exception ex) {
@@ -230,13 +230,15 @@ public class ExpenseDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
-
+    private final AdapterView.OnItemSelectedListener _spinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
         }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     };
 
     public interface Listener {

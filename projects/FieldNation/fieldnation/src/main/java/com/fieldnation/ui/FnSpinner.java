@@ -1,119 +1,121 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.graphics.Rect;
-import android.graphics.drawable.Drawable;
-import android.support.v4.content.ContextCompat;
+import android.content.res.TypedArray;
+import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView;
+import android.widget.SpinnerAdapter;
 
-import com.rengwuxian.materialedittext.MaterialAutoCompleteTextView;
-
-import java.util.Calendar;
+import com.fieldnation.Log;
 
 /**
  * Created by Michael Carver on 1/25/2016.
  * <p/>
  * This class was created to add some sanity to the setSelection method call
  */
-public class FnSpinner extends MaterialAutoCompleteTextView implements AdapterView.OnItemClickListener {
-    private static final int MAX_CLICK_DURATION = 200;
-    private long startClickTime;
-    private boolean isPopup;
+public class FnSpinner extends AppCompatSpinner {
+    private static final String TAG = "FnSpinner";
+
+    private String _hint = null;
+    private OnItemSelectedListener _listener = null;
+
 
     public FnSpinner(Context context) {
         super(context);
-        setOnItemClickListener(this);
+        super.setOnItemSelectedListener(_itemSelectedListener);
     }
 
-    public FnSpinner(Context arg0, AttributeSet arg1) {
-        super(arg0, arg1);
-        setOnItemClickListener(this);
+    public FnSpinner(Context context, AttributeSet attributeSet) {
+        super(context, attributeSet);
+        handleAttribues(attributeSet);
+        super.setOnItemSelectedListener(_itemSelectedListener);
     }
 
-    public FnSpinner(Context arg0, AttributeSet arg1, int arg2) {
-        super(arg0, arg1, arg2);
-        setOnItemClickListener(this);
+    public FnSpinner(Context context, AttributeSet attributeSet, int arg2) {
+        super(context, attributeSet, arg2);
+        handleAttribues(attributeSet);
+        super.setOnItemSelectedListener(_itemSelectedListener);
     }
 
-    @Override
-    public boolean enoughToFilter() {
-        return true;
-    }
-
-    @Override
-    protected void onFocusChanged(boolean focused, int direction,
-                                  Rect previouslyFocusedRect) {
-        super.onFocusChanged(focused, direction, previouslyFocusedRect);
-        if (focused && getAdapter() != null) {
-            performFiltering("", 0);
-            InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(getWindowToken(), 0);
-            setKeyListener(null);
-            dismissDropDown();
-        } else {
-            isPopup = false;
+    private void handleAttribues(AttributeSet attributeSet) {
+        TypedArray ta = getContext().obtainStyledAttributes(attributeSet, new int[]{android.R.attr.hint});
+        try {
+            setHint(ta.getString(0));
+            Log.v(TAG, "handleAttribues: " + ta.getString(0));
+        } finally {
+            ta.recycle();
         }
     }
 
-    @Override
-    public void setListSelection(int position) {
-        super.setListSelection(position);
-        if (getAdapter() != null && getAdapter().getCount() > position && getAdapter().getItem(position) != null) {
-            setText(getAdapter().getItem(position).toString());
-        }
-        clearFocus();
+    public void setHint(int resId) {
+        setHint(getContext().getString(resId));
     }
 
-    public void setSelectedItem(int index) {
-        if (getAdapter() != null && getAdapter().getCount() > index && getAdapter().getItem(index) != null) {
-            replaceText(getAdapter().getItem(index).toString());
+    public void setHint(String hint) {
+        _hint = hint;
+
+        if (getAdapter() != null && getAdapter() instanceof HintArrayAdapter) {
+            ((HintArrayAdapter) getAdapter()).setHint(hint);
         }
-        clearFocus();
     }
 
+    public String getHint() {
+        return _hint;
+    }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event) {
+    public void setAdapter(SpinnerAdapter adapter) {
+        super.setAdapter(adapter);
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN: {
-                startClickTime = Calendar.getInstance().getTimeInMillis();
-                break;
+        if (adapter instanceof HintArrayAdapter) {
+            ((HintArrayAdapter) adapter).setHint(_hint);
+        }
+
+        clearSelection();
+    }
+
+    public void clearSelection() {
+        super.setSelection(getCount() - 1);
+    }
+
+    @Override
+    public void setOnItemSelectedListener(OnItemSelectedListener listener) {
+        _listener = listener;
+    }
+
+    private final OnItemSelectedListener _itemSelectedListener = new OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (_listener != null) {
+                if (position < getCount() - 1)
+                    _listener.onItemSelected(parent, view, position, id);
+                else
+                    _listener.onNothingSelected(parent);
             }
-            case MotionEvent.ACTION_UP: {
-                long clickDuration = Calendar.getInstance().getTimeInMillis() - startClickTime;
-                if (clickDuration < MAX_CLICK_DURATION) {
-                    if (isPopup) {
-                        dismissDropDown();
-                        isPopup = false;
-                    } else {
-                        requestFocus();
-                        showDropDown();
-                        isPopup = true;
-                    }
-                }
-            }
         }
 
-        return super.onTouchEvent(event);
-    }
-
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-        isPopup = false;
-    }
-
-    @Override
-    public void setCompoundDrawablesWithIntrinsicBounds(Drawable left, Drawable top, Drawable right, Drawable bottom) {
-        Drawable dropdownIcon = ContextCompat.getDrawable(getContext(), com.weiwangcn.betterspinner.library.material.R.drawable.ic_expand_more_black_18dp);
-        if (dropdownIcon != null) {
-            right = dropdownIcon;
-            right.mutate().setAlpha(66);
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            if (_listener != null)
+                _listener.onNothingSelected(parent);
         }
-        super.setCompoundDrawablesWithIntrinsicBounds(left, top, right, bottom);
+    };
+
+/*
+    public void setText(int resId) {
     }
+
+    public void setText(String text) {
+    }
+
+    public String getText() {
+        return "";
+    }
+
+    public void dismissDropDown() {
+    }
+*/
+
 }

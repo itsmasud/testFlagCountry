@@ -128,8 +128,8 @@
     <string name="toast_missing_traking_number">Missing tracking number</string>
     <string name="toast_missing_description">Missing description</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
-    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
-    <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name</string>
+    <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
@@ -256,8 +256,6 @@
     <string name="dialog_delete_expense_title">Delete Expense</string>
     <string name="dialog_delete_expense_body">Are you sure you want to delete this expense?</string>
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
-
-
 
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
@@ -800,7 +798,7 @@
         <item>Download a File</item>
     </string-array>
 
-	<!-- If you change any of these, make sure you update
+    <!-- If you change any of these, make sure you update
         com.fieldnation.service.data.workorder.ReportProblemType -->
     <string name="i_cant_make_my_assignment">I can\'t make my assignment</string>
     <string name="im_going_to_be_late">I\'m going to be late</string>

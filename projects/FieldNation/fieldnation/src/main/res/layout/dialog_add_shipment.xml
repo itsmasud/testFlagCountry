@@ -71,10 +71,10 @@
 
                 <com.fieldnation.ui.FnSpinner
                     android:id="@+id/carrier_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialog_shipment_career_spinner_default_text"
-                    android:editable="false"
+                    android:hint="@string/dialog_shipment_career_spinner_default_text"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -123,11 +123,11 @@
 
                 <com.fieldnation.ui.FnSpinner
                     android:id="@+id/direction_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialog_shipment_direction_spinner_default_text"
-                    android:visibility="visible"
-                    android:editable="false"/>
+                    android:hint="@string/dialog_shipment_direction_spinner_default_text"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
