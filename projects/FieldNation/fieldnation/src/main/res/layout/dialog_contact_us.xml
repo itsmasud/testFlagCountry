@@ -20,7 +20,7 @@
         android:layout_marginRight="3dp"
         android:text="@string/dialog_introduction_text" />
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/reason_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"

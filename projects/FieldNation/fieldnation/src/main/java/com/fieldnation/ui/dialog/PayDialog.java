@@ -19,7 +19,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
@@ -53,7 +53,7 @@ public class PayDialog extends DialogFragmentBase {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private FnSpinner _typeSpinner;
+    private HintSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
     private EditText _fixedEditText;
@@ -184,7 +184,7 @@ public class PayDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_pay, container, false);
 
-        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemSelectedListener(_type_selected);
 
         // fixed
@@ -228,7 +228,7 @@ public class PayDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    private FnSpinner getTypeSpinner() {
+    private HintSpinner getTypeSpinner() {
         if (_typeSpinner != null && _typeSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     _typeSpinner.getContext(),

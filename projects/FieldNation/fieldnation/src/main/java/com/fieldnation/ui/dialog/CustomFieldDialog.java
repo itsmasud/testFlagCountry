@@ -22,7 +22,7 @@ import android.widget.TimePicker;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.misc;
@@ -49,7 +49,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private EditText _textEditText;
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
-    private FnSpinner _spinner;
+    private HintSpinner _spinner;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
@@ -231,7 +231,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-        _spinner = (FnSpinner) v.findViewById(R.id.spinner);
+        _spinner = (HintSpinner) v.findViewById(R.id.spinner);
         _spinner.setOnItemSelectedListener(_spinner_selected);
 
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);

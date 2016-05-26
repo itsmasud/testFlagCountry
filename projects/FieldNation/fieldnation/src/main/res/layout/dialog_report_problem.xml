@@ -10,7 +10,7 @@
         style="?attr/dialogTitleStyle"
         android:text="There's a problem" />
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/primary_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
@@ -20,7 +20,7 @@
         android:hint="@string/dialog_report_problem_spinner_1" />
 
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/secondary_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"

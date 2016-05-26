@@ -20,7 +20,7 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
@@ -43,7 +43,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private static final int MODE_EXACT = 1;
 
     // UI
-    private FnSpinner _typeSpinner;
+    private HintSpinner _typeSpinner;
 
     private LinearLayout _rangeLayout;
 
@@ -140,7 +140,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_schedule, container, false);
 
-        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
         _typeSpinner.setOnItemSelectedListener(_type_selected);
 
         _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
@@ -215,7 +215,7 @@ public class ScheduleDialog extends DialogFragmentBase {
 
         adapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        
+
         _typeSpinner.setAdapter(adapter);
 
         try {

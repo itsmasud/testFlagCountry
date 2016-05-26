@@ -24,7 +24,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.ReportProblemListFactory;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
@@ -42,8 +42,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
     // Ui
-    private FnSpinner _primarySpinner1;
-    private FnSpinner _secondarySpinner1;
+    private HintSpinner _primarySpinner1;
+    private HintSpinner _secondarySpinner1;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
     private TextView _noteTextView;
@@ -82,10 +82,10 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _primarySpinner1 = (FnSpinner) v.findViewById(R.id.primary_spinner);
+        _primarySpinner1 = (HintSpinner) v.findViewById(R.id.primary_spinner);
         _primarySpinner1.setOnItemSelectedListener(_problem1_onItemClick);
 
-        _secondarySpinner1 = (FnSpinner) v.findViewById(R.id.secondary_spinner);
+        _secondarySpinner1 = (HintSpinner) v.findViewById(R.id.secondary_spinner);
         _secondarySpinner1.setOnItemSelectedListener(_problem2_onItemClick);
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
@@ -158,7 +158,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    private FnSpinner getPrimarySpinner() {
+    private HintSpinner getPrimarySpinner() {
         if (_primarySpinner1 != null && _primarySpinner1.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
@@ -174,13 +174,13 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return (HintArrayAdapter) getPrimarySpinner().getAdapter();
     }
 
-    private FnSpinner getSecondarySpinner() {
+    private HintSpinner getSecondarySpinner() {
         if (_secondarySpinner1 != null && _secondarySpinner1.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
-            
+
             _secondarySpinner1.setAdapter(adapter);
         }
         return _secondarySpinner1;

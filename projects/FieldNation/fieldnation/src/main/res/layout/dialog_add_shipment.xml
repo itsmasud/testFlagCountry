@@ -69,7 +69,7 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/carrier" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/carrier_spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
@@ -121,7 +121,7 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/direction" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/direction_spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"

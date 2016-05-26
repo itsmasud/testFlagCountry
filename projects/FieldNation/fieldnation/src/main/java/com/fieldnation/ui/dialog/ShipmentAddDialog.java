@@ -23,7 +23,7 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
@@ -42,11 +42,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private TextView _titleTextView;
     private EditText _trackingIdEditText;
     private Button _scanButton;
-    private FnSpinner _carrierSpinner;
+    private HintSpinner _carrierSpinner;
     private EditText _carrierEditText;
     private TextInputLayout _carrierLayout;
     private EditText _descriptionEditText;
-    private FnSpinner _directionSpinner;
+    private HintSpinner _directionSpinner;
     private Button _okButton;
     private Button _cancelButton;
 
@@ -123,7 +123,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
         _scanButton.setOnClickListener(_scan_onClick);
 
-        _carrierSpinner = (FnSpinner) v.findViewById(R.id.carrier_spinner);
+        _carrierSpinner = (HintSpinner) v.findViewById(R.id.carrier_spinner);
         _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
@@ -134,7 +134,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
 
-        _directionSpinner = (FnSpinner) v.findViewById(R.id.direction_spinner);
+        _directionSpinner = (HintSpinner) v.findViewById(R.id.direction_spinner);
         _directionSpinner.setOnItemSelectedListener(_direction_selected);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -237,7 +237,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    public FnSpinner getCarrierSpinner() {
+    public HintSpinner getCarrierSpinner() {
         if (_carrierSpinner != null && _carrierSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     getActivity(),
@@ -252,7 +252,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         return _carrierSpinner;
     }
 
-    public FnSpinner getDirectionSpinner() {
+    public HintSpinner getDirectionSpinner() {
         if (_directionSpinner != null && _directionSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     getActivity(),
@@ -385,8 +385,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                     return;
                 }
             } else {
-                ToastClient.toast(App.get(), getString(R.string.toast_missing_carrier_name), Toast.LENGTH_SHORT);
-                return;
+                if (_carrierPosition == CARRIER_OTHER && misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
+                    ToastClient.toast(App.get(), getString(R.string.toast_missing_carrier_name), Toast.LENGTH_SHORT);
+                    return;
+                }
             }
 
             if (_listener != null) {

@@ -116,5 +116,4 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
         parent.setVerticalScrollBarEnabled(false);
         return v;
     }
-
 }

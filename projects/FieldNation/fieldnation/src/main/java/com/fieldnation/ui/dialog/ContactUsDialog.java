@@ -24,7 +24,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
@@ -45,7 +45,7 @@ public class ContactUsDialog extends DialogFragmentBase {
     private final static int ITEM_ACCOUNT_ISSUE = 2;
 
     // Ui
-    private FnSpinner _reasonSpinner;
+    private HintSpinner _reasonSpinner;
     private EditText _explanationEditText;
     private TextView _additionalHelpTextView;
     private Button _sendButton;
@@ -118,7 +118,7 @@ public class ContactUsDialog extends DialogFragmentBase {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_contact_us, container, false);
 
-        _reasonSpinner = (FnSpinner) v.findViewById(R.id.reason_spinner);
+        _reasonSpinner = (HintSpinner) v.findViewById(R.id.reason_spinner);
         _reasonSpinner.setOnItemSelectedListener(_reasonSpinner_onItemClick);
 
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
@@ -203,7 +203,7 @@ public class ContactUsDialog extends DialogFragmentBase {
                 _explanationEditText.getText().toString().length());
     }
 
-    private FnSpinner populateSpinners() {
+    private HintSpinner populateSpinners() {
         if (_reasonSpinner != null && _reasonSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     getActivity(),

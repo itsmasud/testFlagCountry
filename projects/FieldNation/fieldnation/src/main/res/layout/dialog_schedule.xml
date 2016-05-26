@@ -34,7 +34,7 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/arrival_period_colon" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/type_spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"

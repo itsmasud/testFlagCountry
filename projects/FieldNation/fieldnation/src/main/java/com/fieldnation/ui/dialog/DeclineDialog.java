@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 
 /**
@@ -29,7 +29,7 @@ public class DeclineDialog extends DialogFragmentBase {
     // Ui
     private CheckBox _blockCheckBox;
     private LinearLayout _blockLayout;
-    private FnSpinner _blockSpinner;
+    private HintSpinner _blockSpinner;
     private EditText _blockEditText;
     private Button _okButton;
     private Button _cancelButton;
@@ -63,7 +63,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
         _blockLayout = (LinearLayout) v.findViewById(R.id.block_layout);
 
-        _blockSpinner = (FnSpinner) v.findViewById(R.id.block_spinner);
+        _blockSpinner = (HintSpinner) v.findViewById(R.id.block_spinner);
         _blockSpinner.setOnItemSelectedListener(_spinner_selected);
 
         _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);

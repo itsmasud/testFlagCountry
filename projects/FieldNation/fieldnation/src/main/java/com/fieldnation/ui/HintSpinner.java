@@ -15,25 +15,24 @@ import com.fieldnation.Log;
  * <p/>
  * This class was created to add some sanity to the setSelection method call
  */
-public class FnSpinner extends AppCompatSpinner {
-    private static final String TAG = "FnSpinner";
+public class HintSpinner extends AppCompatSpinner {
+    private static final String TAG = "HintSpinner";
 
     private String _hint = null;
     private OnItemSelectedListener _listener = null;
 
-
-    public FnSpinner(Context context) {
+    public HintSpinner(Context context) {
         super(context);
         super.setOnItemSelectedListener(_itemSelectedListener);
     }
 
-    public FnSpinner(Context context, AttributeSet attributeSet) {
+    public HintSpinner(Context context, AttributeSet attributeSet) {
         super(context, attributeSet);
         handleAttribues(attributeSet);
         super.setOnItemSelectedListener(_itemSelectedListener);
     }
 
-    public FnSpinner(Context context, AttributeSet attributeSet, int arg2) {
+    public HintSpinner(Context context, AttributeSet attributeSet, int arg2) {
         super(context, attributeSet, arg2);
         handleAttribues(attributeSet);
         super.setOnItemSelectedListener(_itemSelectedListener);
@@ -102,20 +101,4 @@ public class FnSpinner extends AppCompatSpinner {
                 _listener.onNothingSelected(parent);
         }
     };
-
-/*
-    public void setText(int resId) {
-    }
-
-    public void setText(String text) {
-    }
-
-    public String getText() {
-        return "";
-    }
-
-    public void dismissDropDown() {
-    }
-*/
-
 }

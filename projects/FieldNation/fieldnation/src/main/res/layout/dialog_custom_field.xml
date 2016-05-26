@@ -61,7 +61,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"

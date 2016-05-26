@@ -61,7 +61,7 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/category" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/category_spinner"
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
