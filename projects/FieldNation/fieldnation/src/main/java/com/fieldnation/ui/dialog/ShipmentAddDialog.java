@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.Window;
 import android.view.inputmethod.EditorInfo;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,7 +23,8 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
@@ -34,7 +33,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     // State
     private static final String STATE_TASKID = "STATE_TASKID";
     private static final String STATE_TITLE = "STATE_TITLE";
-    private static final String STATE_CAREER_SELECTION = "STATE_CAREER_SELECTION";
+    private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
     private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
 
     private static final int RESULT_CODE_BARCODE_SCAN = 0;
@@ -43,27 +42,29 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private TextView _titleTextView;
     private EditText _trackingIdEditText;
     private Button _scanButton;
-    private FnSpinner _carrierSpinner;
+    private HintSpinner _carrierSpinner;
     private EditText _carrierEditText;
     private TextInputLayout _carrierLayout;
     private EditText _descriptionEditText;
-    private FnSpinner _directionSpinner;
+    private HintSpinner _directionSpinner;
     private Button _okButton;
     private Button _cancelButton;
 
     // Data
     private Listener _listener;
-    private long _taskId = 0;
-    private String _title;
+    private String _title = null;
+    private long _taskId = -1;
     private boolean _clear = false;
-    private int _selectedPosition_careerSpinner = -1;
-    private int _selectedPosition_directionSpinner = -1;
+    private int _carrierPosition = -1;
+    private int _directionPosition = -1;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
     private static final int CARRIER_UPS = 1;
     private static final int CARRIER_USPS = 2;
     private static final int CARRIER_OTHER = 3;
+
+    private CharSequence[] _carriers = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -72,6 +73,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         return getInstance(fm, tag, ShipmentAddDialog.class);
     }
 
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
+    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -83,43 +90,21 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
-
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TASKID))
-                _taskId = savedInstanceState.getLong(STATE_TASKID);
-
-            if (savedInstanceState.containsKey(STATE_TITLE))
-                _title = savedInstanceState.getString(STATE_TITLE);
-
-            if (savedInstanceState.containsKey(STATE_CAREER_SELECTION))
-                _selectedPosition_careerSpinner = savedInstanceState.getInt(STATE_CAREER_SELECTION);
-
-            if (savedInstanceState.containsKey(STATE_DIRECTION_SELECTION))
-                _selectedPosition_directionSpinner = savedInstanceState.getInt(STATE_DIRECTION_SELECTION);
-
-        }
-        super.onCreate(savedInstanceState);
-
-        setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        if (_title != null)
-            outState.putString(STATE_TITLE, _title);
+        if (_titleTextView != null && !misc.isEmptyOrNull(_titleTextView.getText().toString()))
+            outState.putString(STATE_TITLE, _titleTextView.getText().toString());
 
-        if (_taskId != 0)
+        if (_taskId != -1)
             outState.putLong(STATE_TASKID, _taskId);
 
-        if (_selectedPosition_careerSpinner != -1)
-            outState.putInt(STATE_CAREER_SELECTION, _selectedPosition_careerSpinner);
+        if (_carrierPosition != -1)
+            outState.putInt(STATE_CARRIER_SELECTION, _carrierPosition);
 
-        if (_selectedPosition_directionSpinner != -1)
-            outState.putInt(STATE_DIRECTION_SELECTION, _selectedPosition_directionSpinner);
+        if (_directionPosition != -1)
+            outState.putInt(STATE_DIRECTION_SELECTION, _directionPosition);
 
         super.onSaveInstanceState(outState);
     }
@@ -138,8 +123,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _scanButton = (Button) v.findViewById(R.id.scanBarcode_button);
         _scanButton.setOnClickListener(_scan_onClick);
 
-        _carrierSpinner = (FnSpinner) v.findViewById(R.id.carrier_spinner);
-        _carrierSpinner.setOnItemClickListener(_carrier_selected);
+        _carrierSpinner = (HintSpinner) v.findViewById(R.id.carrier_spinner);
+        _carrierSpinner.setOnItemSelectedListener(_carrier_selected);
 
         _carrierEditText = (EditText) v.findViewById(R.id.carrier_edittext);
         _carrierEditText.setOnEditorActionListener(_onEditor);
@@ -149,8 +134,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
         _descriptionEditText.setOnEditorActionListener(_onEditor);
 
-        _directionSpinner = (FnSpinner) v.findViewById(R.id.direction_spinner);
-        _directionSpinner.setOnItemClickListener(_direction_selected);
+        _directionSpinner = (HintSpinner) v.findViewById(R.id.direction_spinner);
+        _directionSpinner.setOnItemSelectedListener(_direction_selected);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
@@ -158,37 +143,104 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
+        _carriers = getResources().getTextArray(R.array.carrier_list);
+
         return v;
     }
 
-    private void setCarieerSelection(final int selectedCarrier) {
-        _selectedPosition_careerSpinner = selectedCarrier;
-        _carrierSpinner.setListSelection(_selectedPosition_careerSpinner);
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TASKID))
+                _taskId = savedInstanceState.getLong(STATE_TASKID);
 
-        switch (selectedCarrier) {
-            case CARRIER_FEDEX:
-                _carrierLayout.setVisibility(View.GONE);
-                break;
-            case CARRIER_UPS:
-                _carrierLayout.setVisibility(View.GONE);
-                break;
-            case CARRIER_USPS:
-                _carrierLayout.setVisibility(View.GONE);
-                break;
-            case CARRIER_OTHER:
-                _carrierLayout.setVisibility(View.VISIBLE);
-                break;
+            if (savedInstanceState.containsKey(STATE_TITLE)) {
+                _title = savedInstanceState.getString(STATE_TITLE);
+                _titleTextView.setText(_title);
+            }
+
+            if (savedInstanceState.containsKey(STATE_CARRIER_SELECTION)) {
+                _carrierPosition = savedInstanceState.getInt(STATE_CARRIER_SELECTION);
+                getCarrierSpinner().setSelection(_carrierPosition);
+                switchCarrierTextEdit();
+            } else {
+                getCarrierSpinner().clearSelection();
+            }
+
+            if (savedInstanceState.containsKey(STATE_DIRECTION_SELECTION)) {
+                _directionPosition = savedInstanceState.getInt(STATE_DIRECTION_SELECTION);
+                getDirectionSpinner().setSelection(_directionPosition);
+            } else {
+                getDirectionSpinner().clearSelection();
+            }
         }
     }
 
-    private void populateSpinners() {
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        if (_title != null) {
+            _titleTextView.setText(_title);
+        }
+
+        if (_clear) {
+            _clear = false;
+            getCarrierSpinner().setHint(getResources().getString(R.string.dialog_shipment_career_spinner_default_text));
+            getCarrierSpinner().clearSelection();
+            getDirectionSpinner().setHint(getResources().getString(R.string.dialog_shipment_direction_spinner_default_text));
+            getDirectionSpinner().clearSelection();
+            _directionPosition = -1;
+            _carrierPosition = -1;
+            _carrierEditText.setText("");
+            _descriptionEditText.setText("");
+            _trackingIdEditText.setText("");
+        }
+
+        populateUi();
+    }
+
+    public void show(CharSequence title, long taskId) {
+        _title = (String) title;
+        _taskId = taskId;
+        _clear = true;
+        show();
+    }
+
+    private void populateUi() {
+        if (_cancelButton == null)
+            return;
+
+        switchCarrierTextEdit();
+
         getCarrierSpinner();
         getDirectionSpinner();
     }
 
-    public FnSpinner getCarrierSpinner() {
+    private void switchCarrierTextEdit() {
+        switch (_carrierPosition) {
+            case CARRIER_OTHER:
+                _carrierLayout.setVisibility(View.VISIBLE);
+                break;
+            case CARRIER_FEDEX:
+            case CARRIER_UPS:
+            case CARRIER_USPS:
+            default:
+                _carrierLayout.setVisibility(View.GONE);
+                break;
+        }
+    }
+
+    public void setSelectedCarrier(final int carrierId) {
+        _carrierPosition = carrierId;
+        populateUi();
+    }
+
+    public HintSpinner getCarrierSpinner() {
         if (_carrierSpinner != null && _carrierSpinner.getAdapter() == null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+            HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                    getActivity(),
                     R.array.carrier_list,
                     R.layout.view_spinner_item);
 
@@ -200,9 +252,10 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         return _carrierSpinner;
     }
 
-    public FnSpinner getDirectionSpinner() {
+    public HintSpinner getDirectionSpinner() {
         if (_directionSpinner != null && _directionSpinner.getAdapter() == null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+            HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                    getActivity(),
                     R.array.direction_list,
                     R.layout.view_spinner_item);
 
@@ -211,48 +264,23 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             _directionSpinner.setAdapter(adapter);
         }
-
         return _directionSpinner;
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-
-        populateSpinners();
-
-        if (_title != null)
-            _titleTextView.setText(_title);
-
-        if (_clear) {
-            _clear = false;
-            _carrierSpinner.setText(getResources().getString(R.string.dialog_shipment_career_spinner_default_text));
-            _directionSpinner.setText(getResources().getString(R.string.dialog_shipment_direction_spinner_default_text));
-            _carrierEditText.setText("");
-            _descriptionEditText.setText("");
-            _trackingIdEditText.setText("");
-        } else if (_selectedPosition_careerSpinner != -1) {
-            _carrier_selected.onItemClick(null, null, _selectedPosition_careerSpinner, 0);
-        }
-        }
-
-    @Override
     public void onDestroy() {
         super.onDestroy();
-//        Log.v(TAG, "onDestroy");
         _clear = true;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-//        Log.v(TAG, "onDismiss");
         _clear = true;
     }
 
     @Override
     public void dismiss() {
-//        Log.v(TAG, "dismiss");
         _clear = true;
         super.dismiss();
     }
@@ -264,31 +292,6 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
     public void setTrackingId(String trackingId) {
         _trackingIdEditText.setText(trackingId);
-    }
-
-    public void setSelectedCarrier(final String carrierName) {
-        try {
-            for (int i = 0; i < getCarrierSpinner().getAdapter().getCount(); i++) {
-                if (getCarrierSpinner().getAdapter().getItem(i).equals(carrierName)) {
-                    _carrier_selected.onItemClick(null, null, i, 0);
-                    break;
-                }
-            }
-        } catch (Exception ex) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    setSelectedCarrier(carrierName);
-                }
-            }, 100);
-        }
-    }
-
-    public void show(CharSequence title, long taskId) {
-        _title = (String) title;
-        _taskId = taskId;
-        _clear = true;
-        show();
     }
 
     /*-*********************************-*/
@@ -318,18 +321,29 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemClickListener _carrier_selected = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemSelectedListener _carrier_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            setCarieerSelection(position);
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _carrierPosition = position;
+            switchCarrierTextEdit();
         }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            _carrierPosition = -1;
+            switchCarrierTextEdit();
+        }
     };
 
-    private final AdapterView.OnItemClickListener _direction_selected = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemSelectedListener _direction_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            _selectedPosition_directionSpinner = position;
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _directionPosition = position;
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            _directionPosition = -1;
         }
     };
 
@@ -341,7 +355,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (getString(R.string.dialog_shipment_career_spinner_default_text).equals(_carrierSpinner.getText().toString())) {
+            if (_carrierPosition == -1) {
                 ToastClient.toast(App.get(), getString(R.string.toast_carrier_not_selected), Toast.LENGTH_SHORT);
                 return;
             }
@@ -351,28 +365,27 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (getString(R.string.dialog_shipment_direction_spinner_default_text).equals(_directionSpinner.getText().toString())) {
+            if (_directionPosition == -1) {
                 ToastClient.toast(App.get(), getString(R.string.toast_direction_not_selected), Toast.LENGTH_SHORT);
                 return;
             }
 
-            if (!"Other".equals(getCarrierSpinner().getText().toString())) {
-                final String carrier = _carrierSpinner.getText().toString();
-                if ("UPS".equals(carrier) && !"UPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
+            if (_carrierPosition != CARRIER_OTHER && _carrierPosition != -1) {
+                if (_carrierPosition == CARRIER_UPS && misc.getCarrierId(_trackingIdEditText.getText().toString()) != CARRIER_UPS) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), _carriers[_carrierPosition]), Toast.LENGTH_SHORT);
                     return;
                 }
-                if ("Fedex".equals(carrier) && !"Fedex".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
+                if (_carrierPosition == CARRIER_FEDEX && misc.getCarrierId(_trackingIdEditText.getText().toString()) != CARRIER_FEDEX) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), _carriers[_carrierPosition]), Toast.LENGTH_SHORT);
                     return;
                 }
 
-                if ("USPS".equals(carrier) && !"USPS".equals(misc.getCarrierName(_trackingIdEditText.getText().toString()))) {
-                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), carrier), Toast.LENGTH_SHORT);
+                if (_carrierPosition == CARRIER_USPS && misc.getCarrierId(_trackingIdEditText.getText().toString()) != CARRIER_USPS) {
+                    ToastClient.toast(App.get(), String.format(getString(R.string.toast_invalid_tracking_number), _carriers[_carrierPosition]), Toast.LENGTH_SHORT);
                     return;
                 }
             } else {
-                if (misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
+                if (_carrierPosition == CARRIER_OTHER && misc.isEmptyOrNull(_carrierEditText.getText().toString())) {
                     ToastClient.toast(App.get(), getString(R.string.toast_missing_carrier_name), Toast.LENGTH_SHORT);
                     return;
                 }
@@ -380,39 +393,39 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
             if (_listener != null) {
                 if (_taskId != 0) {
-                    if ("Other".equals(getCarrierSpinner().getText().toString())) {
+                    if (_carrierPosition == CARRIER_OTHER) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
                                 _carrierEditText.getText().toString(),
                                 _descriptionEditText.getText().toString(),
-                                _selectedPosition_directionSpinner == 0,
+                                _directionPosition == 0,
                                 _taskId);
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                getCarrierSpinner().getText().toString(),
+                                _carriers[_carrierPosition].toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
-                                _selectedPosition_directionSpinner == 0,
+                                _directionPosition == 0,
                                 _taskId);
                     }
 
                 } else {
-                    if ("Other".equals(getCarrierSpinner().getText().toString())) {
+                    if (_carrierPosition == CARRIER_OTHER) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
                                 "Other",
                                 _carrierEditText.getText().toString(),
                                 _descriptionEditText.getText().toString(),
-                                _selectedPosition_directionSpinner == 0);
+                                _directionPosition == 0);
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
-                                getCarrierSpinner().getText().toString(),
+                                _carriers[_carrierPosition].toString(),
                                 null,
                                 _descriptionEditText.getText().toString(),
-                                _selectedPosition_directionSpinner == 0);
+                                _directionPosition == 0);
                     }
                 }
             }

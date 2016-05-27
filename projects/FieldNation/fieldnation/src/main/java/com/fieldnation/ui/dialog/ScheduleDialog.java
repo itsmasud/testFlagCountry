@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
@@ -21,7 +20,8 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -43,7 +43,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private static final int MODE_EXACT = 1;
 
     // UI
-    private FnSpinner _typeSpinner;
+    private HintSpinner _typeSpinner;
 
     private LinearLayout _rangeLayout;
 
@@ -113,10 +113,8 @@ public class ScheduleDialog extends DialogFragmentBase {
             outState.putString(STATE_RANGE_DATETIME_END, _endDateButton.getText().toString());
         }
 
-
         super.onSaveInstanceState(outState);
     }
-
 
     @Override
     public void onViewStateRestored(Bundle savedInstanceState) {
@@ -142,8 +140,8 @@ public class ScheduleDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_schedule, container, false);
 
-        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemClickListener(_type_selected);
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner.setOnItemSelectedListener(_type_selected);
 
         _rangeLayout = (LinearLayout) v.findViewById(R.id.range_layout);
         _exactLayout = (LinearLayout) v.findViewById(R.id.exact_layout);
@@ -210,10 +208,14 @@ public class ScheduleDialog extends DialogFragmentBase {
         if (_typeSpinner == null)
             return;
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(_typeSpinner.getContext(), R.array.schedule_types,
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                _typeSpinner.getContext(),
+                R.array.schedule_types,
                 R.layout.view_spinner_item);
+
         adapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
         _typeSpinner.setAdapter(adapter);
 
         try {
@@ -241,7 +243,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private void setMode(int mode) {
         _mode = mode;
 
-        _typeSpinner.setSelectedItem(_mode);
+        _typeSpinner.setSelection(_mode);
 
         switch (_mode) {
             case MODE_EXACT:
@@ -365,13 +367,15 @@ public class ScheduleDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemClickListener _type_selected = new AdapterView.OnItemClickListener() {
-
+    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
         }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     };
 
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {

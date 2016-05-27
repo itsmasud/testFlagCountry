@@ -572,20 +572,25 @@ public class misc {
         return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
     }
 
-    public static String getCarrierName(final String trackingId) {
+
+    /**
+     * @param trackingId
+     * @return 0 = Fedex, 1 = UPS, 2 = USPS, 3 = Other/unknown
+     */
+    public static int getCarrierId(final String trackingId) {
         if (Pattern.compile("^E\\D{1}\\d{9}\\D{2}$|^9\\d{15,21}$").matcher(trackingId).matches()) {
             Log.e("ShipmentAddDialog", "tracking id: " + trackingId);
-            return "USPS";
+            return 2;
         } else if (Pattern.compile("(\\b96\\d{20}\\b)|(\\b\\d{15}\\b)|(\\b\\d{12}\\b)").matcher(trackingId).matches()
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
-            return "Fedex"; // test with any 12 digit
+            return 0; // test with any 12 digit
         } else if (Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
                 || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
                 || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
-            return "UPS"; // test with any 11 digit
+            return 1; // test with any 11 digit
         }
-        return "Other";
+        return 3;
 
     }
 }
