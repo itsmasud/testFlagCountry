@@ -131,6 +131,8 @@
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
+    <string name="toast_must_select_category">Please select a category</string>
+    <string name="toast_must_enter_description">Please enter a description</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
 

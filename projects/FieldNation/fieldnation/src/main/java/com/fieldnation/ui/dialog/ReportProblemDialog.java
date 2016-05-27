@@ -24,8 +24,8 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.ReportProblemListFactory;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 /**
@@ -42,8 +42,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
     // Ui
-    private HintSpinner _primarySpinner1;
-    private HintSpinner _secondarySpinner1;
+    private HintSpinner _primarySpinner;
+    private HintSpinner _secondarySpinner;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
     private TextView _noteTextView;
@@ -82,11 +82,11 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _primarySpinner1 = (HintSpinner) v.findViewById(R.id.primary_spinner);
-        _primarySpinner1.setOnItemSelectedListener(_problem1_onItemClick);
+        _primarySpinner = (HintSpinner) v.findViewById(R.id.primary_spinner);
+        _primarySpinner.setOnItemSelectedListener(_problem1_onItemClick);
 
-        _secondarySpinner1 = (HintSpinner) v.findViewById(R.id.secondary_spinner);
-        _secondarySpinner1.setOnItemSelectedListener(_problem2_onItemClick);
+        _secondarySpinner = (HintSpinner) v.findViewById(R.id.secondary_spinner);
+        _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
@@ -139,7 +139,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     if (_secondaryList != null) {
                         getSecondaryAdapter().clear();
                         getSecondaryAdapter().addAll(_secondaryList);
-
                     }
                     if (_secondaryPosition != -1 && _secondaryList != null) {
                         getSecondarySpinner().setSelection(_secondaryPosition);
@@ -159,15 +158,15 @@ public class ReportProblemDialog extends DialogFragmentBase {
     }
 
     private HintSpinner getPrimarySpinner() {
-        if (_primarySpinner1 != null && _primarySpinner1.getAdapter() == null) {
+        if (_primarySpinner != null && _primarySpinner.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
-            _primarySpinner1.setAdapter(adapter);
+            _primarySpinner.setAdapter(adapter);
         }
-        return _primarySpinner1;
+        return _primarySpinner;
     }
 
     private HintArrayAdapter getPrimaryAdapter() {
@@ -175,15 +174,15 @@ public class ReportProblemDialog extends DialogFragmentBase {
     }
 
     private HintSpinner getSecondarySpinner() {
-        if (_secondarySpinner1 != null && _secondarySpinner1.getAdapter() == null) {
+        if (_secondarySpinner != null && _secondarySpinner.getAdapter() == null) {
             HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
-            _secondarySpinner1.setAdapter(adapter);
+            _secondarySpinner.setAdapter(adapter);
         }
-        return _secondarySpinner1;
+        return _secondarySpinner;
     }
 
     private HintArrayAdapter getSecondaryAdapter() {
@@ -253,10 +252,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
             if (pList == null) {
                 _primaryList = null;
                 getPrimaryAdapter().clear();
+                getPrimarySpinner().clearSelection();
             } else if (pList != _primaryList) {
                 _primaryList = pList;
                 getPrimaryAdapter().clear();
                 getPrimaryAdapter().addAll(_primaryList);
+                getPrimarySpinner().clearSelection();
             }
         }
 
@@ -277,6 +278,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
                 _secondaryList = sList;
                 getSecondaryAdapter().clear();
                 getSecondaryAdapter().addAll(_secondaryList);
+                getSecondarySpinner().clearSelection();
             }
         }
 

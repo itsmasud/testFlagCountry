@@ -24,8 +24,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 /**
@@ -70,32 +70,8 @@ public class ContactUsDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MESSAGE))
-                _message = savedInstanceState.getString(STATE_MESSAGE);
-            if (savedInstanceState.containsKey(STATE_SOURCE))
-                _source = savedInstanceState.getString(STATE_SOURCE);
-            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION))
-                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
-        }
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.v(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MESSAGE))
-                _message = savedInstanceState.getString(STATE_MESSAGE);
-            if (savedInstanceState.containsKey(STATE_SOURCE))
-                _source = savedInstanceState.getString(STATE_SOURCE);
-            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION))
-                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
-        } else {
-            _clear = true;
-        }
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -107,6 +83,7 @@ public class ContactUsDialog extends DialogFragmentBase {
         }
         if (!misc.isEmptyOrNull(_source))
             outState.putString(STATE_SOURCE, _source);
+
         if (_spinnerPosition != -1)
             outState.putInt(STATE_SPINNER_SELECTION, _spinnerPosition);
 
@@ -135,6 +112,26 @@ public class ContactUsDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
+    }
+
+    @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_MESSAGE))
+                _message = savedInstanceState.getString(STATE_MESSAGE);
+            if (savedInstanceState.containsKey(STATE_SOURCE))
+                _source = savedInstanceState.getString(STATE_SOURCE);
+            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION)) {
+                populateSpinners();
+                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
+                _reasonSpinner.setSelection(_spinnerPosition);
+                onSpinnerSelection(_spinnerPosition);
+            }
+        } else {
+            _clear = true;
+        }
     }
 
     @Override

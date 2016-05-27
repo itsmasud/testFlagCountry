@@ -17,14 +17,16 @@ import android.widget.LinearLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 
 /**
  * Created by Michael Carver on 1/15/2015.
  */
 public class DeclineDialog extends DialogFragmentBase {
     private final String TAG = UniqueTag.makeTag("DeclineDialog");
+
+    private static final String STATE_BLOCK_SPINNER = "STATE_BLOCK_SPINNER";
 
     // Ui
     private CheckBox _blockCheckBox;
@@ -37,7 +39,7 @@ public class DeclineDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private int[] _reasonIds;
-    private int _itemSelectedPosition;
+    private int _itemSelectedPosition = -1;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -65,6 +67,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
         _blockSpinner = (HintSpinner) v.findViewById(R.id.block_spinner);
         _blockSpinner.setOnItemSelectedListener(_spinner_selected);
+        getSpinner();
 
         _reasonIds = v.getContext().getResources().getIntArray(R.array.dialog_block_reason_ids);
 
@@ -80,10 +83,33 @@ public class DeclineDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        if (_itemSelectedPosition != -1) {
+            outState.putInt(STATE_BLOCK_SPINNER, _itemSelectedPosition);
+        }
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_BLOCK_SPINNER)) {
+                _itemSelectedPosition = savedInstanceState.getInt(STATE_BLOCK_SPINNER);
+                getSpinner().setSelection(_itemSelectedPosition);
+            }
+        }
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
+        getSpinner();
+    }
 
-        if (_blockSpinner != null) {
+    private HintSpinner getSpinner() {
+        if (_blockSpinner != null && _blockSpinner.getAdapter() == null) {
             HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     _blockSpinner.getContext(),
                     R.array.dialog_block_reasons,
@@ -94,11 +120,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
             _blockSpinner.setAdapter(adapter);
         }
-    }
-
-    @Override
-    public void reset() {
-        super.reset();
+        return _blockSpinner;
     }
 
     public void setListener(Listener listener) {

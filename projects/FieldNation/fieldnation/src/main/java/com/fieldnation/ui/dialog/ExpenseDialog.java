@@ -25,8 +25,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
@@ -34,6 +34,7 @@ public class ExpenseDialog extends DialogFragmentBase {
 
     // State
     private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";
+    private static final String STATE_CATEGORY_SELECTION = "STATE_CATEGORY_SELECTION";
 
     // Ui
     private Button _okButton;
@@ -50,7 +51,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     private InputMethodManager _imm;
     private boolean _reset = false;
     private boolean _showCategories = true;
-    private int _itemSelectedPosition;
+    private int _itemSelectedPosition = -1;
 
 
     /*-*************************************-*/
@@ -62,10 +63,6 @@ public class ExpenseDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_SHOW_CATEGORIES))
-                _showCategories = savedInstanceState.getBoolean(STATE_SHOW_CATEGORIES);
-        }
         super.onCreate(savedInstanceState);
 
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
@@ -74,6 +71,9 @@ public class ExpenseDialog extends DialogFragmentBase {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         outState.putBoolean(STATE_SHOW_CATEGORIES, _showCategories);
+        if (_itemSelectedPosition != -1)
+            outState.putInt(STATE_CATEGORY_SELECTION, _itemSelectedPosition);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -105,6 +105,21 @@ public class ExpenseDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_SHOW_CATEGORIES))
+                _showCategories = savedInstanceState.getBoolean(STATE_SHOW_CATEGORIES);
+
+            if (savedInstanceState.containsKey(STATE_CATEGORY_SELECTION)) {
+                _itemSelectedPosition = savedInstanceState.getInt(STATE_CATEGORY_SELECTION);
+            }
+        }
+
+        populateUi();
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
 
@@ -123,6 +138,9 @@ public class ExpenseDialog extends DialogFragmentBase {
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
             _categorySpinner.setAdapter(_adapter);
+
+            if (_itemSelectedPosition != -1)
+                _categorySpinner.setSelection(_itemSelectedPosition);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -214,15 +232,21 @@ public class ExpenseDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            if (misc.isEmptyOrNull(_amountEditText.getText().toString())
-                    || misc.isEmptyOrNull(_descriptionEditText.getText().toString()))
-                return;
-
-            if (getAmount() < 0.1) {
-                ToastClient.toast(App.get(), getResources().getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
+            if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())) {
+                ToastClient.toast(App.get(), R.string.toast_must_enter_description, Toast.LENGTH_LONG);
                 return;
             }
+
+            if (misc.isEmptyOrNull(_amountEditText.getText().toString()) || getAmount() < 0.1) {
+                ToastClient.toast(App.get(), R.string.toast_minimum_payable_amount, Toast.LENGTH_SHORT);
+                return;
+            }
+
+            if (_showCategories && _itemSelectedPosition == -1) {
+                ToastClient.toast(App.get(), R.string.toast_must_select_category, Toast.LENGTH_LONG);
+                return;
+            }
+
             if (_listener != null)
                 _listener.onOk(getDescription(), getAmount(), getCategory());
 
@@ -238,6 +262,7 @@ public class ExpenseDialog extends DialogFragmentBase {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+            _itemSelectedPosition = -1;
         }
     };
 
