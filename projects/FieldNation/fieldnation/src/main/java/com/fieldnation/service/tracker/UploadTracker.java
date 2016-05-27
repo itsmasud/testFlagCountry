@@ -49,18 +49,22 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
             case ACTION_STARTED:
                 _uploadRunning++;
                 _uploadQueued--;
+                if (_uploadQueued < 0) _uploadQueued = 0;
                 break;
             case ACTION_REQUEUED:
                 _uploadRunning--;
+                if (_uploadRunning < 0) _uploadRunning = 0;
                 _uploadQueued++;
                 break;
             case ACTION_SUCCESS:
                 _uploadRunning--;
+                if (_uploadRunning < 0) _uploadRunning = 0;
                 _uploadSuccess++;
                 break;
             case ACTION_FAILED:
                 _uploadFailed++;
                 _uploadRunning--;
+                if (_uploadRunning < 0) _uploadRunning = 0;
                 createFailedNotification(intent.getLongExtra(PARAM_WORKORDER_ID, 0));
                 break;
             default:
@@ -84,7 +88,7 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_anim_upload_start)
                     .setContentTitle(_uploadRunning + " Deliverables uploading")
-                    .setTicker(_uploadQueued + " Uploads queued")
+                    //.setTicker(_uploadQueued + " Uploads queued")
                     .setContentText(_uploadQueued + " Uploads queued")
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
 
@@ -97,9 +101,17 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_queued)
                     .setContentTitle(_uploadQueued + " Deliverables to Upload")
-                    .setTicker(_uploadQueued + " Uploads queued")
+                    //.setTicker(_uploadQueued + " Uploads queued")
                     .setContentText(_uploadQueued + " Uploads queued")
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
+
+            if (_uploadSuccess > 0) {
+                builder //.setTicker(_uploadSuccess + " Uploads complete")
+                        .setContentText(_uploadSuccess + " Uploads completed");
+            } else if (_uploadFailed > 0) {
+                builder //.setTicker(_uploadFailed + " Uploads failed")
+                        .setContentText(_uploadFailed + " failed");
+            }
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
             manager.notify(_notifcationId, builder.build());
@@ -110,7 +122,7 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_success)
                     .setContentTitle(_uploadSuccess + " Deliverables uploaded")
-                    .setTicker(_uploadFailed + " Uploads failed")
+                    //.setTicker(_uploadFailed + " Uploads failed")
                     .setContentText(_uploadFailed + " Uploads failed")
                     .setColor(getResources().getColor(R.color.fn_accent_color));
 
@@ -130,7 +142,7 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
                 .setLargeIcon(null)
                 .setSmallIcon(R.drawable.ic_notif_fail)
                 .setContentTitle("Failed")
-                .setTicker("WO " + workorderId + " file upload has failed")
+                //.setTicker("WO " + workorderId + " file upload has failed")
                 .setContentText("WO " + workorderId + " file upload has failed")
                 .setColor(getResources().getColor(R.color.fn_red))
                 .setContentIntent(pendingIntent);
