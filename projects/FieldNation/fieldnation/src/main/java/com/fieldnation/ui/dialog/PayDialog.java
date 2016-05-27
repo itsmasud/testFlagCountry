@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -20,7 +19,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.misc;
 
 public class PayDialog extends DialogFragmentBase {
@@ -53,7 +53,7 @@ public class PayDialog extends DialogFragmentBase {
     private static final int MODE_BLENDED = 3;
 
     // UI
-    private FnSpinner _typeSpinner;
+    private HintSpinner _typeSpinner;
 
     private LinearLayout _fixedLayout;
     private EditText _fixedEditText;
@@ -184,8 +184,8 @@ public class PayDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_pay, container, false);
 
-        _typeSpinner = (FnSpinner) v.findViewById(R.id.type_spinner);
-        _typeSpinner.setOnItemClickListener(_type_selected);
+        _typeSpinner = (HintSpinner) v.findViewById(R.id.type_spinner);
+        _typeSpinner.setOnItemSelectedListener(_type_selected);
 
         // fixed
         _fixedLayout = (LinearLayout) v.findViewById(R.id.fixed_layout);
@@ -228,16 +228,16 @@ public class PayDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    @Override
-    public void reset() {
-        super.reset();
-    }
-
-    private FnSpinner getTypeSpinner() {
+    private HintSpinner getTypeSpinner() {
         if (_typeSpinner != null && _typeSpinner.getAdapter() == null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(
-                    _typeSpinner.getContext(), R.array.pay_types, R.layout.view_spinner_item);
-            adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+            HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                    _typeSpinner.getContext(),
+                    R.array.pay_types,
+                    R.layout.view_spinner_item);
+
+            adapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
             _typeSpinner.setAdapter(adapter);
         }
         return _typeSpinner;
@@ -338,7 +338,7 @@ public class PayDialog extends DialogFragmentBase {
     }
 
     private void setMode(int mode) {
-        getTypeSpinner().setListSelection(mode);
+        getTypeSpinner().setSelection(mode);
         _mode = mode;
         switch (mode) {
             case MODE_FIXED:
@@ -418,14 +418,15 @@ public class PayDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-
-    private final AdapterView.OnItemClickListener _type_selected = new AdapterView.OnItemClickListener() {
-
+    private final AdapterView.OnItemSelectedListener _type_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             setMode(position);
         }
 
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {

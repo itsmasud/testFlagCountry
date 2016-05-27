@@ -779,7 +779,7 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierName(content));
+                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
 
             }
         }
