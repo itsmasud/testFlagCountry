@@ -87,9 +87,11 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_anim_upload_start)
-                    .setContentTitle(getResources().getQuantityString(R.plurals.num_deliverables_uploading, _uploadRunning))
+                    .setContentTitle(getResources().getQuantityString(
+                            R.plurals.num_deliverables_uploading, _uploadRunning, _uploadRunning))
                     //.setTicker(_uploadQueued + " Uploads queued")
-                    .setContentText(getResources().getQuantityString(R.plurals.num_deliverables_uploading, _uploadQueued))
+                    .setContentText(getResources().getQuantityString(
+                            R.plurals.num_deliverables_uploading, _uploadQueued, _uploadQueued))
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
@@ -100,14 +102,17 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_queued)
-                    .setContentTitle(getResources().getQuantityString(R.plurals.num_deliverables_to_upload, _uploadQueued))
+                    .setContentTitle(getResources().getQuantityString(
+                            R.plurals.num_deliverables_to_upload, _uploadQueued, _uploadQueued))
                     //.setTicker(_uploadQueued + " Uploads queued")
-                    .setContentText(getResources().getQuantityString(R.plurals.num_uploads_queued, _uploadQueued))
+                    .setContentText(getResources().getQuantityString(
+                            R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
 
             if (_uploadSuccess > 0) {
                 builder //.setTicker(_uploadSuccess + " Uploads complete")
-                        .setContentText(getResources().getQuantityString(R.plurals.num_uploads_completed, _uploadSuccess));
+                        .setContentText(getResources().getQuantityString(
+                                R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess));
             } else if (_uploadFailed > 0) {
                 builder //.setTicker(_uploadFailed + " Uploads failed")
                         .setContentText(getString(R.string.num_failed, _uploadFailed));
@@ -121,9 +126,11 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
             NotificationCompat.Builder builder = new NotificationCompat.Builder(App.get())
                     .setLargeIcon(null)
                     .setSmallIcon(R.drawable.ic_notif_success)
-                    .setContentTitle(getResources().getQuantityString(R.plurals.num_deliverables_uploaded, _uploadSuccess))
+                    .setContentTitle(getResources().getQuantityString(
+                            R.plurals.num_deliverables_uploaded, _uploadSuccess, _uploadSuccess))
                     //.setTicker(_uploadFailed + " Uploads failed")
-                    .setContentText(getResources().getQuantityString(R.plurals.num_uploads_failed, _uploadFailed))
+                    .setContentText(getResources().getQuantityString(
+                            R.plurals.num_uploads_failed, _uploadFailed, _uploadFailed))
                     .setColor(getResources().getColor(R.color.fn_accent_color));
 
             NotificationManager manager = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
