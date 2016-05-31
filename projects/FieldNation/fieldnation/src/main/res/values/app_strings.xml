@@ -399,8 +399,8 @@
     </plurals>
 
     <plurals name="num_uploads_failed">
-        <item quantity="one">%1$d upload uploaded</item>
-        <item quantity="other">%1$d uploads uploaded</item>
+        <item quantity="one">%1$d upload failed</item>
+        <item quantity="other">%1$d uploads failed</item>
     </plurals>
 
     <string name="num_workorders_and_payments">%1$s %2$s</string>
