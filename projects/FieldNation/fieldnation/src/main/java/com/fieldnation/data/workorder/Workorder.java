@@ -537,7 +537,11 @@ public class Workorder implements Parcelable {
 
     public boolean canViewConfidentialInfo() {
         return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                || getWorkorderStatus() == WorkorderStatus.APPROVED
+                || getWorkorderStatus() == WorkorderStatus.COMPLETED
+                || getWorkorderStatus() == WorkorderStatus.CANCELED
+                || getWorkorderStatus() == WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {
