@@ -34,6 +34,7 @@ public class CustomFieldListView extends RelativeLayout {
     private List<Object> _fields;
     private CustomFieldRowView.Listener _listener;
     private ForLoopRunnable _forLoop = null;
+    private List<View> _views = new LinkedList<>();
 
     public CustomFieldListView(Context context) {
         super(context);
@@ -78,7 +79,7 @@ public class CustomFieldListView extends RelativeLayout {
 //            _fieldsList.removeViews(_fields.size() - 1, _fieldsList.getChildCount() - _fields.size());
 //        }
 
-        _fieldsList.removeAllViews();
+        _views.clear();
 
         _forLoop = new ForLoopRunnable(_fields.size(), new Handler()) {
             @Override
@@ -87,10 +88,21 @@ public class CustomFieldListView extends RelativeLayout {
                 if (obj instanceof String) {
                     View v = LayoutInflater.from(getContext()).inflate(R.layout.view_customfield_header, null);
                     ((TextView) v.findViewById(R.id.customFieldHeader)).setText((String) obj);
-                    _fieldsList.addView(v);
+                    if (i == 0) {
+                        v.findViewById(R.id.spacer).setVisibility(GONE);
+                    }
+                    _views.add(v);
                 } else {
                     CustomFieldRowView v = new CustomFieldRowView(getContext());
                     v.setData(_workorder, (CustomField) obj, _listener);
+                    _views.add(v);
+                }
+            }
+
+            @Override
+            public void finish(int count) throws Exception {
+                _fieldsList.removeAllViews();
+                for (View v : _views) {
                     _fieldsList.addView(v);
                 }
             }
