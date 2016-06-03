@@ -104,13 +104,10 @@ public class UploadTracker extends MSService implements UploadTrackerConstants {
                     .setContentTitle(getResources().getQuantityString(
                             R.plurals.num_deliverables_to_upload, _uploadQueued, _uploadQueued))
                     .setContentText(getResources().getQuantityString(
-                            R.plurals.num_uploads_queued, _uploadQueued, _uploadQueued))
+                            R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess))
                     .setColor(getResources().getColor(R.color.fn_clickable_text));
 
-            if (_uploadSuccess > 0) {
-                builder.setContentText(getResources().getQuantityString(
-                        R.plurals.num_uploads_completed, _uploadSuccess, _uploadSuccess));
-            } else if (_uploadFailed > 0) {
+            if (_uploadFailed > 0) {
                 builder.setContentText(getString(R.string.num_failed, _uploadFailed));
             }
 
