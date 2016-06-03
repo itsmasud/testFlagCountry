@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="16dp">
+
+    <RelativeLayout
+        style="?attr/tileContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Requestsed New Pay" />
+
+        <TextView
+            android:id="@+id/requestPayStatus_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="PENDING APPROVAL" />
+
+    </RelativeLayout>
+
+    <View style="@style/DividerFull" />
+
+
+    <RelativeLayout
+        style="?attr/tileContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/requestPayIcon_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="8dp"
+            android:text="@string/icon_circle_pending"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/requestPayBasis_textview"
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/requestPayIcon_textview"
+            android:text="Hourly Rate" />
+
+        <TextView
+            android:id="@+id/requestPayCaption_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/requestPayBasis_textview"
+            android:layout_toRightOf="@+id/requestPayIcon_textview"
+            android:text="For up to 4 hours" />
+
+        <TextView
+            android:id="@+id/requestPayAmount_textview"
+            style="@style/Text_Body_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:text="$62.00" />
+
+    </RelativeLayout>
+
+    <View style="@style/DividerFull" />
+</LinearLayout>

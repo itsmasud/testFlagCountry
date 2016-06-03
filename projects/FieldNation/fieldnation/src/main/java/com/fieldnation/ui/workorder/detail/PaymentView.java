@@ -22,6 +22,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private TextView _payTextView;
     private TextView _termsTextView;
     private Button _actionButton;
+    private RequestNewPayTile _requestNewPayTile;
 
     // Data
     private Workorder _workorder;
@@ -47,6 +48,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         if (isInEditMode())
             return;
 
+        _requestNewPayTile = (RequestNewPayTile) findViewById(R.id.requestNewPayTile);
+
         _payTextView = (TextView) findViewById(R.id.pay_textview);
         _termsTextView = (TextView) findViewById(R.id.terms_textview);
         _termsTextView.setOnClickListener(_terms_onClick);
@@ -71,6 +74,16 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void refresh() {
+        if (_requestNewPayTile == null)
+            return;
+
+        if (_workorder.getIncreaseRequestInfo() != null) {
+            _requestNewPayTile.setVisibility(VISIBLE);
+            _requestNewPayTile.setData(_workorder);
+        } else {
+            _requestNewPayTile.setVisibility(GONE);
+        }
+
         Pay pay = _workorder.getPay();
         if (pay != null && !pay.hidePay()) {
             _termsTextView.setVisibility(VISIBLE);
