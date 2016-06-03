@@ -28,10 +28,14 @@ public class CustomField implements Parcelable {
     private Boolean _isMatched;
     @Json(name = "label")
     private String _label;
+    @Json(name = "order")
+    private Integer _order;
     @Json(name = "predefinedValues")
     private String[] _predefinedValues;
     @Json(name = "required")
     private Integer _required;
+    @Json(name = "section")
+    private String _section;
     @Json(name = "tip")
     private String _tip;
     @Json(name = "value")
@@ -76,12 +80,20 @@ public class CustomField implements Parcelable {
         return _label;
     }
 
+    public Integer getOrder() {
+        return _order == null ? 0 : _order;
+    }
+
     public String[] getPredefinedValues() {
         return _predefinedValues;
     }
 
     public Boolean getRequired() {
         return _required == 1;
+    }
+
+    public String getSection() {
+        return _section;
     }
 
     public String getTip() {
