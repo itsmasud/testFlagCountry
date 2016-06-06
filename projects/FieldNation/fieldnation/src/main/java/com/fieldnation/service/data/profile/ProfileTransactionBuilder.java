@@ -151,7 +151,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
-        action(context, profileId, "POST/api/rest/v1/profile/[profileId]/block", "block/" + companyId, null,
+        action(context, profileId, "POST/api/rest/v1/profile/[profileId]/block/[CompanyId]", "block/" + companyId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "eventReasonId=" + eventReasonId
                         + "&explanation=" + misc.escapeForURL(explanation));
