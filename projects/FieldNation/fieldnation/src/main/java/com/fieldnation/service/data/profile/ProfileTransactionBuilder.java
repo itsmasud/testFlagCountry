@@ -108,11 +108,16 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
     public static void action(Context context, long profileId, String action, String params,
                               String contentType, String body) {
+        action(context, profileId, "POST/api/rest/v1/profile/[profileId]/" + action, action, params, contentType, body);
+    }
+
+    public static void action(Context context, long profileId, String timingKey, String action, String params,
+                              String contentType, String body) {
         try {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey("POST/api/rest/v1/profile/[profileId]/" + action)
+                    .timingKey(timingKey)
                     .path("/api/rest/v1/profile/" + profileId + "/" + action);
 
             if (params != null) {
@@ -146,7 +151,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     public static void actionBlockCompany(Context context, long profileId, long companyId, int eventReasonId, String explanation) {
-        action(context, profileId, "block/" + companyId, null,
+        action(context, profileId, "POST/api/rest/v1/profile/[profileId]/block", "block/" + companyId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "eventReasonId=" + eventReasonId
                         + "&explanation=" + misc.escapeForURL(explanation));
