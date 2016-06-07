@@ -83,26 +83,26 @@ public class RequestNewPayTile extends RelativeLayout {
             _basisTextView.setText("Blended Rate");
             _captionTextView.setVisibility(VISIBLE);
             _captionTextView.setText(
-                    misc.toCurrencyTrim(pay.getBlendedStartRate()) + " fixed for first " + ((int) (double) pay.getBlendedFirstHours()) + " hours\n"
-                            + misc.toCurrencyTrim(pay.getBlendedAdditionalRate()) + " per hour after for up to " + ((int) (double) pay.getBlendedAdditionalHours()) + " hours");
-            _payTextView.setText(misc.toCurrencyTrim(pay.getBlendedStartRate() + pay.getBlendedAdditionalRate() * pay.getBlendedAdditionalHours()));
+                    misc.toCurrency(pay.getBlendedStartRate()) + " fixed for first " + ((int) (double) pay.getBlendedFirstHours()) + " hours\n"
+                            + misc.toCurrency(pay.getBlendedAdditionalRate()) + " per hour after for up to " + ((int) (double) pay.getBlendedAdditionalHours()) + " hours");
+            _payTextView.setText(misc.toCurrency(pay.getBlendedStartRate() + pay.getBlendedAdditionalRate() * pay.getBlendedAdditionalHours()));
 
         } else if (pay.isFixedRate()) {
             _basisTextView.setText("Fixed Rate");
             _captionTextView.setVisibility(GONE);
-            _payTextView.setText(misc.toCurrencyTrim(pay.getFixedAmount()));
+            _payTextView.setText(misc.toCurrency(pay.getFixedAmount()));
 
         } else if (pay.isHourlyRate()) {
             _basisTextView.setText("Hourly Rate");
             _captionTextView.setVisibility(VISIBLE);
             _captionTextView.setText("For up to " + ((int) (double) pay.getMaxHour()) + " hours");
-            _payTextView.setText(misc.toCurrencyTrim(pay.getPerHour() * pay.getMaxHour()));
+            _payTextView.setText(misc.toCurrency(pay.getPerHour() * pay.getMaxHour()));
 
         } else if (pay.isPerDeviceRate()) {
             _basisTextView.setText("Per Device");
             _captionTextView.setVisibility(VISIBLE);
             _captionTextView.setText("For up to " + ((int) (double) pay.getMaxDevice()) + " devices");
-            _payTextView.setText(misc.toCurrencyTrim(pay.getPerDevice() * pay.getMaxDevice()));
+            _payTextView.setText(misc.toCurrency(pay.getPerDevice() * pay.getMaxDevice()));
         }
 
         switch (info.getStatus()) {
@@ -119,7 +119,7 @@ public class RequestNewPayTile extends RelativeLayout {
                 break;
             case 2: // denied
                 setVisibility(VISIBLE);
-                _statusTextView.setText("DENIED");
+                _statusTextView.setText("DECLINED");
                 _statusTextView.setTextColor(getResources().getColor(R.color.fn_red));
 
                 _iconTextView.setText(R.string.icon_circle_delete);
