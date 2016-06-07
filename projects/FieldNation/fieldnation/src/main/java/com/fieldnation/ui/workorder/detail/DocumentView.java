@@ -14,12 +14,10 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Document;
-import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -34,7 +32,7 @@ public class DocumentView extends RelativeLayout {
 
     // UI
     private IconFontTextView _fileTypeIconFont;
-    private ProfilePicView _picView;
+    private ImageView _picView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -84,7 +82,7 @@ public class DocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _picView = (ImageView) findViewById(R.id.pic_view);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -123,10 +121,10 @@ public class DocumentView extends RelativeLayout {
 
     private void setPhoto(Drawable photo) {
         if (photo == null) {
-            _picView.setProfilePic(R.drawable.missing_circle);
+            _picView.setImageDrawable(getResources().getDrawable(R.drawable.missing_circle));
             return;
         }
-        _picView.setProfilePic(photo);
+        _picView.setImageDrawable(photo);
     }
 
     public void setLoading(boolean isloading, int messageResId) {
@@ -162,46 +160,40 @@ public class DocumentView extends RelativeLayout {
             String ext = _document.getFileName();
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
-                if (_ICFN_FILES.containsKey(ext)) {
-                    switch (ext) {
-                        case "png":
-                        case "jpg":
-                        case "jpeg":
-                            _picView.setVisibility(GONE);
-                            _fileTypeIconFont.setVisibility(VISIBLE);
-                            _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                switch (ext) {
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                        _picView.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
 
-                            if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
-                                Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
-                                if (result == null) {
-                                    postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            populateUi();
-                                        }
-                                    }, 2000);
-                                } else {
-                                    setPhoto(result);
-                                }
+                        if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
+                            Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
+                            if (result == null) {
+                                postDelayed(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        populateUi();
+                                    }
+                                }, 2000);
                             } else {
-                                _picView.setVisibility(GONE);
-                                _fileTypeIconFont.setVisibility(VISIBLE);
-                                _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+                                setPhoto(result);
                             }
-                            break;
-
-                        default:
+                        } else {
                             _picView.setVisibility(GONE);
                             _fileTypeIconFont.setVisibility(VISIBLE);
-                            _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
-                            break;
-                    }
+                            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+                        }
+                        break;
 
-                } else {
-                    _picView.setVisibility(GONE);
-                    _fileTypeIconFont.setVisibility(VISIBLE);
-                    _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+                    default:
+                        _picView.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                        break;
                 }
+
             } else {
                 _picView.setVisibility(GONE);
                 _fileTypeIconFont.setVisibility(VISIBLE);

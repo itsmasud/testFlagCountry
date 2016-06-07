@@ -23,14 +23,13 @@
             android:textSize="48sp"
             android:visibility="gone" />
 
-        <com.fieldnation.ui.ProfilePicView
+        <ImageView
             android:id="@+id/pic_view"
             android:layout_width="48dp"
             android:layout_height="48dp"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="16dp"
-            android:src="@drawable/fn_logo"
             android:visibility="visible" />
 
 

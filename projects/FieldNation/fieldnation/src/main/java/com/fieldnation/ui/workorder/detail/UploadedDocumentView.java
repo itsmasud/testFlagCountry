@@ -5,6 +5,7 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -18,7 +19,6 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -33,7 +33,7 @@ public class UploadedDocumentView extends RelativeLayout {
 
     // UI
     private IconFontTextView _fileTypeIconFont;
-    private ProfilePicView _picView;
+    private ImageView _picView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -84,7 +84,7 @@ public class UploadedDocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
-        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _picView = (ImageView) findViewById(R.id.pic_view);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -164,10 +164,10 @@ public class UploadedDocumentView extends RelativeLayout {
 
     private void setPhoto(Drawable photo) {
         if (photo == null) {
-            _picView.setProfilePic(R.drawable.missing_circle);
+            _picView.setImageDrawable(getResources().getDrawable(R.drawable.missing_circle));
             return;
         }
-        _picView.setProfilePic(photo);
+        _picView.setImageDrawable(photo);
     }
 
     private void populateUi() {
