@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -28,7 +29,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-public class UploadSlotView extends RelativeLayout {
+public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private final String TAG = UniqueTag.makeTag("UploadSlotView");
 
     // Ui
@@ -40,7 +41,6 @@ public class UploadSlotView extends RelativeLayout {
     // Data
     private Workorder _workorder;
     private UploadSlot _slot;
-    private Listener _listener;
     private Set<String> _uploadingFiles = new HashSet<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
@@ -90,10 +90,6 @@ public class UploadSlotView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
-    }
-
     public void setData(Workorder workorder, long profileId, UploadSlot slot, UploadedDocumentView.Listener listener) {
         _workorder = workorder;
         _slot = slot;
@@ -102,6 +98,17 @@ public class UploadSlotView extends RelativeLayout {
 
         subscribe();
         populateUi();
+    }
+
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        for (int i = 0; i < _docsList.getChildCount(); i++) {
+            View v = _docsList.getChildAt(i);
+            if (v instanceof PhotoReceiver) {
+                ((PhotoReceiver) v).setPhoto(url, photo);
+            }
+        }
     }
 
     private void populateUi() {
@@ -148,8 +155,8 @@ public class UploadSlotView extends RelativeLayout {
                 public void next(int i) throws Exception {
                     UploadedDocumentView v = new UploadedDocumentView(getContext());
                     UploadedDocument doc = _docs[i];
-                    v.setData(_workorder, _profileId, doc);
                     v.setListener(_docListener);
+                    v.setData(_workorder, _profileId, doc);
                     _views.add(v);
                 }
 
@@ -252,8 +259,4 @@ public class UploadSlotView extends RelativeLayout {
             }
         }
     };
-
-    public interface Listener {
-        void onUploadClick(UploadSlotView view, UploadSlot slot);
-    }
 }

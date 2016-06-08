@@ -26,7 +26,7 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.util.Hashtable;
 
-public class UploadedDocumentView extends RelativeLayout {
+public class UploadedDocumentView extends RelativeLayout implements PhotoReceiver {
     private static final String TAG = "UploadedDocumentView";
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
@@ -134,6 +134,16 @@ public class UploadedDocumentView extends RelativeLayout {
         }
     }
 
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        if (_doc != null && _doc.getDownloadThumbLink() != null && url.equals(_doc.getDownloadThumbLink())) {
+            _picView.setImageDrawable(photo);
+            _fileTypeIconFont.setVisibility(GONE);
+            _picView.setVisibility(VISIBLE);
+        }
+    }
+
     public void setUploading(String filename) {
         setLoading(true, R.string.uploading);
         _doc = null;
@@ -162,14 +172,6 @@ public class UploadedDocumentView extends RelativeLayout {
         _listener = listener;
     }
 
-    private void setPhoto(Drawable photo) {
-        if (photo == null) {
-            _picView.setImageDrawable(getResources().getDrawable(R.drawable.missing_circle));
-            return;
-        }
-        _picView.setImageDrawable(photo);
-    }
-
     private void populateUi() {
         if (_doc == null)
             return;
@@ -195,18 +197,12 @@ public class UploadedDocumentView extends RelativeLayout {
                         _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                         if (_listener != null && !misc.isEmptyOrNull(_doc.getDownloadThumbLink())) {
                             Drawable result = _listener.getPhoto(this, _doc.getDownloadThumbLink(), true);
-                            if (result == null) {
-
-                                postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        populateUi();
-                                    }
-                                }, 2000);
+                            if (result != null) {
+                                setPhoto(_doc.getDownloadThumbLink(), result);
                             } else {
-                                setPhoto(result);
-                                _fileTypeIconFont.setVisibility(GONE);
-                                _picView.setVisibility(VISIBLE);
+                                _picView.setVisibility(GONE);
+                                _fileTypeIconFont.setVisibility(VISIBLE);
+                                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                             }
                         } else {
                             _picView.setVisibility(GONE);

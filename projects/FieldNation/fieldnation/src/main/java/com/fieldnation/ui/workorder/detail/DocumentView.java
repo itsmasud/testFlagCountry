@@ -25,7 +25,7 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.util.Hashtable;
 
-public class DocumentView extends RelativeLayout {
+public class DocumentView extends RelativeLayout implements PhotoReceiver {
     private static final String TAG = "DocumentView";
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
@@ -119,12 +119,13 @@ public class DocumentView extends RelativeLayout {
         _listener = listener;
     }
 
-    private void setPhoto(Drawable photo) {
-        if (photo == null) {
-            _picView.setImageDrawable(getResources().getDrawable(R.drawable.missing_circle));
-            return;
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        if (_document != null && _document.getThumbNail() != null && url.equals(_document.getThumbNail())) {
+            _picView.setImageDrawable(photo);
+            _fileTypeIconFont.setVisibility(GONE);
         }
-        _picView.setImageDrawable(photo);
     }
 
     public void setLoading(boolean isloading, int messageResId) {
@@ -145,6 +146,7 @@ public class DocumentView extends RelativeLayout {
             _byTextView.setVisibility(VISIBLE);
             _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
+            _fileTypeIconFont.setVisibility(GONE);
         }
     }
 
@@ -172,15 +174,12 @@ public class DocumentView extends RelativeLayout {
 
                         if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
                             Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
-                            if (result == null) {
-                                postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        populateUi();
-                                    }
-                                }, 2000);
+                            if (result != null) {
+                                setPhoto(_document.getThumbNail(), result);
                             } else {
-                                setPhoto(result);
+                                _picView.setVisibility(GONE);
+                                _fileTypeIconFont.setVisibility(VISIBLE);
+                                _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
                             }
                         } else {
                             _picView.setVisibility(GONE);

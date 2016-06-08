@@ -56,7 +56,6 @@ import java.security.SecureRandom;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
     private final String TAG = UniqueTag.makeTag("DeliverableFragment");
@@ -77,7 +76,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-    private Button _navigateButton;
+    private Button _actionButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
 
@@ -97,7 +96,6 @@ public class DeliverableFragment extends WorkorderFragment {
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
     private ForLoopRunnable _reviewRunnable = null;
-
 
     // Temporary storage
     private List<Runnable> _untilAdded = new LinkedList<>();
@@ -144,8 +142,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
 
-        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
-        _navigateButton.setOnClickListener(_navigationButton_onClick);
+        _actionButton = (Button) view.findViewById(R.id.action_button);
+        _actionButton.setOnClickListener(_actionButton_onClick);
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
@@ -167,8 +165,7 @@ public class DeliverableFragment extends WorkorderFragment {
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
 
-        if (getActivity().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
+        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
@@ -254,7 +251,6 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
-
         misc.hideKeyboard(getView());
 
         if (_workorder == null)
@@ -267,9 +263,9 @@ public class DeliverableFragment extends WorkorderFragment {
             return;
 
         if (_workorder.canChangeDeliverables()) {
-            _navigateButton.setVisibility(View.VISIBLE);
+            _actionButton.setVisibility(View.VISIBLE);
         } else {
-            _navigateButton.setVisibility(View.GONE);
+            _actionButton.setVisibility(View.GONE);
         }
 
         Stopwatch stopwatch = new Stopwatch(true);
@@ -286,8 +282,8 @@ public class DeliverableFragment extends WorkorderFragment {
                 public void next(int i) throws Exception {
                     DocumentView v = new DocumentView(getActivity());
                     Document doc = _docs[i];
-                    v.setData(_workorder, doc);
                     v.setListener(_document_listener);
+                    v.setData(_workorder, doc);
                     _views.add(v);
                 }
 
@@ -295,11 +291,11 @@ public class DeliverableFragment extends WorkorderFragment {
                 public void finish(int count) throws Exception {
                     _reviewList.removeAllViews();
                     for (DocumentView v : _views) {
-                        _views.add(v);
+                        _reviewList.addView(v);
                     }
                 }
             };
-            _reviewList.postDelayed(_reviewRunnable, new Random().nextInt(1000));
+            _reviewList.postDelayed(_reviewRunnable, 100);
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _reviewList.removeAllViews();
@@ -325,7 +321,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     UploadSlotView v = new UploadSlotView(getActivity());
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
-                    v.setListener(_uploadSlot_listener);
                     _views.add(v);
                 }
 
@@ -337,7 +332,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                 }
             };
-            _filesLayout.postDelayed(_filesRunnable, new Random().nextInt(1000));
+            _filesLayout.postDelayed(_filesRunnable, 100);
         } else {
             _filesLayout.removeAllViews();
         }
@@ -392,7 +387,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
@@ -408,8 +403,7 @@ public class DeliverableFragment extends WorkorderFragment {
                             _uploadingSlotId = slot.getSlotId();
                             _appPickerDialog.show();
                         } else if (getActivity() != null) {
-                            Toast.makeText(
-                                    getActivity(),
+                            Toast.makeText(getActivity(),
                                     "Need External Storage, please insert storage device before continuing",
                                     Toast.LENGTH_LONG).show();
                         }
@@ -424,8 +418,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _uploadingSlotId = slot.getSlotId();
                     _appPickerDialog.show();
                 } else if (getActivity() != null) {
-                    Toast.makeText(
-                            getActivity(),
+                    Toast.makeText(getActivity(),
                             "Need External Storage, please insert storage device before continuing",
                             Toast.LENGTH_LONG).show();
                 }
@@ -446,8 +439,7 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             final int documentId = document.getId();
-            _yesNoDialog.setData("Delete File",
-                    "Are you sure you want to delete this file?", "YES", "NO",
+            _yesNoDialog.setData("Delete File", "Are you sure you want to delete this file?", "YES", "NO",
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
@@ -472,7 +464,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 return _picCache.get(url).get();
             } else {
                 _photoClient.subGet(url, circle, false);
-                PhotoClient.get(getActivity(), url, circle, false);
+                PhotoClient.get(App.get(), url, circle, false);
             }
             return null;
         }
@@ -485,31 +477,14 @@ public class DeliverableFragment extends WorkorderFragment {
                 return _picCache.get(url).get();
             } else {
                 _photoClient.subGet(url, circle, false);
-                PhotoClient.get(getActivity(), url, circle, false);
-
+                PhotoClient.get(App.get(), url, circle, false);
             }
             return null;
         }
     };
 
 
-    // step 1, user taps on the add button
-    private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
-        @Override
-        public void onUploadClick(UploadSlotView view, UploadSlot slot) {
-            if (checkMedia()) {
-                // start of the upload process
-                _uploadingSlotId = slot.getSlotId();
-                _appPickerDialog.show();
-            } else if (getActivity() != null) {
-                Toast.makeText(
-                        getActivity(),
-                        "Need External Storage, please insert storage device before continuing",
-                        Toast.LENGTH_LONG).show();
-            }
-        }
-    };
-
+    // step 1, user clicks on a upload - done elseware?
     // step 2, user selects an app to load the file with
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
@@ -603,11 +578,22 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
             if (drawable == null || url == null || failed)
                 return;
+            _picCache.put(url, new WeakReference<>((Drawable) drawable));
 
-            Drawable pic = drawable;
-            _picCache.put(url, new WeakReference<>(pic));
+            Log.v(TAG, "PhotoClient.Listener.onGet");
+            for (int i = 0; i < _reviewList.getChildCount(); i++) {
+                View v = _reviewList.getChildAt(i);
+                if (v instanceof PhotoReceiver) {
+                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                }
+            }
+
+            for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+                View v = _filesLayout.getChildAt(i);
+                if (v instanceof PhotoReceiver) {
+                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                }
+            }
         }
     };
-
-
 }
