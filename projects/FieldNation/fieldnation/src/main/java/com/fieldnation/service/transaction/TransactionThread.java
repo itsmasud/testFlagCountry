@@ -1,13 +1,10 @@
 package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
@@ -25,8 +22,6 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.DebugUtils;
 import com.fieldnation.utils.misc;
 
@@ -142,9 +137,17 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             // apply authentication if needed
             if (trans.useAuth()) {
                 OAuth auth = _service.getAuth();
+
+                if (auth == null) {
+                    AuthTopicClient.requestCommand(App.get());
+                    trans.requeue();
+                    return false;
+                }
+
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
                     AuthTopicClient.invalidateCommand(App.get());
+                    trans.requeue();
                     return false;
                 }
 

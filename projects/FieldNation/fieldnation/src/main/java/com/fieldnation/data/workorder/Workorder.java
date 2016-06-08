@@ -65,6 +65,8 @@ public class Workorder implements Parcelable {
     private String _fullWorkDescription;
     @Json(name = "hasClosingNotes ")
     private Boolean _hasClosingNotes;
+    @Json(name = "increaseRequestInfo")
+    private IncreaseRequestInfo _increaseRequestInfo;
     @Json(name = "isCounter")
     private Boolean _isCounter;
     @Json(name = "isGpsRequired")
@@ -109,10 +111,14 @@ public class Workorder implements Parcelable {
     private UploadSlot[] _uploadSlots;
     @Json(name = "w2")
     private Integer _w2;
+    //    @Json(name = "workorderBonusInfo")
+//    private BonusInfo[] _workorderBonusInfo;
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
+//    @Json(name = "workorderPenaltyInfo")
+//    private PenaltyInfo[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -193,6 +199,9 @@ public class Workorder implements Parcelable {
     }
 
     public Boolean displayCounterOffer() {
+        if (_displayCounterOffer == null)
+            return true;
+
         return _displayCounterOffer == 1;
     }
 
@@ -214,6 +223,10 @@ public class Workorder implements Parcelable {
 
     public Boolean hasClosingNotes() {
         return _hasClosingNotes;
+    }
+
+    public IncreaseRequestInfo getIncreaseRequestInfo() {
+        return _increaseRequestInfo;
     }
 
     public Boolean getIsCounter() {
@@ -311,6 +324,10 @@ public class Workorder implements Parcelable {
         return _w2;
     }
 
+//    public BonusInfo[] getBounsInfo() {
+//        return _workorderBonusInfo;
+//    }
+
     public Long getWorkorderId() {
         return _workorderId;
     }
@@ -318,6 +335,10 @@ public class Workorder implements Parcelable {
     public User getWorkorderManagerInfo() {
         return _workorderManagerInfo;
     }
+
+//    public PenaltyInfo[] getPenaltyInfo() {
+//        return _workorderPenaltyInfo;
+//    }
 
     public JsonObject toJson() {
         return toJson(this);
@@ -522,7 +543,11 @@ public class Workorder implements Parcelable {
 
     public boolean canViewConfidentialInfo() {
         return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                || getWorkorderStatus() == WorkorderStatus.APPROVED
+                || getWorkorderStatus() == WorkorderStatus.COMPLETED
+                || getWorkorderStatus() == WorkorderStatus.CANCELED
+                || getWorkorderStatus() == WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {

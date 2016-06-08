@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -17,9 +19,6 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -81,11 +80,8 @@ public class ExpiresDialog extends DialogFragmentBase {
         _okButton.setOnClickListener(_ok_onClick);
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH),
-                c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE),
-                false, false);
+        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _calendar = Calendar.getInstance();
 
@@ -113,18 +109,18 @@ public class ExpiresDialog extends DialogFragmentBase {
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _calendar.set(year, month, day);
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _calendar.set(year, monthOfYear, dayOfMonth);
             if (DateUtils.isBeforeToday(_calendar)) {
                 ToastClient.toast(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        _datePicker.show(_fm, null);
+                        _datePicker.show();
                     }
                 }, 100);
             } else {
-                _timePicker.show(_fm, null);
+                _timePicker.show();
             }
         }
     };
@@ -132,7 +128,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
                     _calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
@@ -142,7 +138,7 @@ public class ExpiresDialog extends DialogFragmentBase {
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        _timePicker.show(_fm, null);
+                        _timePicker.show();
                     }
                 }, 100);
                 return;
@@ -156,7 +152,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     private final View.OnClickListener _expiration_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _datePicker.show(_fm, null);
+            _datePicker.show();
         }
     };
 

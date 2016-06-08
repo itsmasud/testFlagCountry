@@ -12,6 +12,13 @@
         android:gravity="center"
         android:text="PAYMENT" />
 
+    <ViewStub
+        android:id="@+id/requestNewPayTile_viewstub"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout="@layout/stub_request_new_pay"
+        android:visibility="gone" />
+
     <LinearLayout
         style="?attr/tileContainerStyle"
         android:layout_width="match_parent"
