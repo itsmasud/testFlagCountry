@@ -40,7 +40,6 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
-import com.fieldnation.ui.MessageTileView;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.AppPickerDialog;
@@ -94,8 +93,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private int _uploadingSlotId = -1;
     private File _tempFile;
     private DocumentClient _docClient;
-    private PhotoClient _photos;
+    private PhotoClient _photoClient;
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private ForLoopRunnable _filesRunnable = null;
 
 
     // Temporary storage
@@ -148,7 +148,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
 
-
         checkMedia();
 
         populateUi();
@@ -164,8 +163,8 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         Log.e(TAG, "onResume");
-        _photos = new PhotoClient(_photoClient_listener);
-        _photos.connect(App.get());
+        _photoClient = new PhotoClient(_photoClient_listener);
+        _photoClient.connect(App.get());
 
         if (getActivity().getPackageManager().hasSystemFeature(
                 PackageManager.FEATURE_CAMERA)) {
@@ -176,8 +175,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        if (_photos != null && _photos.isConnected())
-            _photos.disconnect(App.get());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
         super.onPause();
     }
 
@@ -309,25 +308,26 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
-            if (_filesLayout.getChildCount() > slots.length) {
-                _filesLayout.removeViews(slots.length - 1, _filesLayout.getChildCount() - slots.length);
-            }
 
-            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
+            ForLoopRunnable _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
+                private List<UploadSlotView> _views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    UploadSlotView v = null;
-                    if (i < _filesLayout.getChildCount()) {
-                        v = (UploadSlotView) _filesLayout.getChildAt(i);
-                    } else {
-                        v = new UploadSlotView(getActivity());
-                        _filesLayout.addView(v);
-                    }
+                    UploadSlotView v = new UploadSlotView(getActivity());
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                     v.setListener(_uploadSlot_listener);
+                    _views.add(v);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _filesLayout.removeAllViews();
+                    for (UploadSlotView v : _views) {
+                        _filesLayout.addView(v);
+                    }
                 }
             };
             _filesLayout.postDelayed(r, new Random().nextInt(1000));
@@ -444,8 +444,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                                    documentId);
+                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(), documentId);
                             setLoading(true);
                         }
 
@@ -458,7 +457,6 @@ public class DeliverableFragment extends WorkorderFragment {
                         }
                     });
             _yesNoDialog.show();
-
         }
 
         @Override
@@ -466,7 +464,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photos.subGet(url, circle, false);
+                _photoClient.subGet(url, circle, false);
                 PhotoClient.get(getActivity(), url, circle, false);
             }
             return null;
@@ -479,7 +477,7 @@ public class DeliverableFragment extends WorkorderFragment {
             if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
                 return _picCache.get(url).get();
             } else {
-                _photos.subGet(url, circle, false);
+                _photoClient.subGet(url, circle, false);
                 PhotoClient.get(getActivity(), url, circle, false);
 
             }
