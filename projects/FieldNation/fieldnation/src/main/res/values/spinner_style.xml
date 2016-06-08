@@ -8,13 +8,14 @@
         <item name="android:textColorHint">@color/fn_light_text</item>
     </style>
 
-    <style name="SpinnerButton" parent="Widget.AppCompat.Spinner">
+    <style name="SpinnerButton" parent="Widget.AppCompat.Spinner.Underlined">
         <item name="android:layout_height">36dp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:paddingLeft">4dp</item>
         <item name="android:textSize">16sp</item>
         <item name="android:background">@color/fn_light_text_0</item>
         <item name="android:drawableRight">@drawable/ic_expand_more_black_18dp</item>
+
     </style>
 
 </resources>

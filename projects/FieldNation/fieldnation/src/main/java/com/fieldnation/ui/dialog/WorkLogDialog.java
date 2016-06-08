@@ -8,8 +8,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TimePicker;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
@@ -17,8 +19,6 @@ import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -132,9 +132,8 @@ public class WorkLogDialog extends DialogFragmentBase {
         _cancelButton.setOnClickListener(_cancel_onClick);
 
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
+        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
         _endCalendar = Calendar.getInstance();
@@ -203,36 +202,39 @@ public class WorkLogDialog extends DialogFragmentBase {
     private final View.OnClickListener _start_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _datePicker.show(_fm, "start");
+            _datePicker.setTag("start");
+            _datePicker.show();
         }
     };
 
     private final View.OnClickListener _end_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _datePicker.show(_fm, "end");
+            _datePicker.setTag("end");
+            _datePicker.show();
         }
     };
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            String tag = datePickerDialog.getTag();
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            String tag = (String) _datePicker.getTag();
             if (tag.equals("start")) {
-                _startCalendar.set(year, month, day);
+                _startCalendar.set(year, monthOfYear, dayOfMonth);
             } else if (tag.equals("end")) {
-                _endCalendar.set(year, month, day);
+                _endCalendar.set(year, monthOfYear, dayOfMonth);
             }
 
-            _timePicker.show(_fm, datePickerDialog.getTag());
+            _timePicker.setTag(_datePicker.getTag());
+            _timePicker.show();
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
 
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
-            String tag = view.getTag();
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            String tag = (String) _timePicker.getTag();
             if (tag.equals("start")) {
                 _startCalendar.set(_startCalendar.get(Calendar.YEAR), _startCalendar.get(Calendar.MONTH),
                         _startCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);

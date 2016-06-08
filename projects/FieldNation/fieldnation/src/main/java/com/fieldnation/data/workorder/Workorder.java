@@ -65,6 +65,8 @@ public class Workorder implements Parcelable {
     private String _fullWorkDescription;
     @Json(name = "hasClosingNotes ")
     private Boolean _hasClosingNotes;
+    @Json(name = "increaseRequestInfo")
+    private IncreaseRequestInfo _increaseRequestInfo;
     @Json(name = "isCounter")
     private Boolean _isCounter;
     @Json(name = "isGpsRequired")
@@ -217,6 +219,10 @@ public class Workorder implements Parcelable {
 
     public Boolean hasClosingNotes() {
         return _hasClosingNotes;
+    }
+
+    public IncreaseRequestInfo getIncreaseRequestInfo() {
+        return _increaseRequestInfo;
     }
 
     public Boolean getIsCounter() {
@@ -525,7 +531,11 @@ public class Workorder implements Parcelable {
 
     public boolean canViewConfidentialInfo() {
         return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                || getWorkorderStatus() == WorkorderStatus.APPROVED
+                || getWorkorderStatus() == WorkorderStatus.COMPLETED
+                || getWorkorderStatus() == WorkorderStatus.CANCELED
+                || getWorkorderStatus() == WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {

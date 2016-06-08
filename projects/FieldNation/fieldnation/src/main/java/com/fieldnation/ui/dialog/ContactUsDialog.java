@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,7 +24,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 /**
@@ -45,7 +45,7 @@ public class ContactUsDialog extends DialogFragmentBase {
     private final static int ITEM_ACCOUNT_ISSUE = 2;
 
     // Ui
-    private FnSpinner _reasonSpinnre;
+    private HintSpinner _reasonSpinner;
     private EditText _explanationEditText;
     private TextView _additionalHelpTextView;
     private Button _sendButton;
@@ -70,32 +70,8 @@ public class ContactUsDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MESSAGE))
-                _message = savedInstanceState.getString(STATE_MESSAGE);
-            if (savedInstanceState.containsKey(STATE_SOURCE))
-                _source = savedInstanceState.getString(STATE_SOURCE);
-            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION))
-                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
-        }
         super.onCreate(savedInstanceState);
         setStyle(DialogFragment.STYLE_NO_TITLE, 0);
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        Log.v(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_MESSAGE))
-                _message = savedInstanceState.getString(STATE_MESSAGE);
-            if (savedInstanceState.containsKey(STATE_SOURCE))
-                _source = savedInstanceState.getString(STATE_SOURCE);
-            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION))
-                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
-        }else{
-            _clear = true;
-        }
-        super.onViewStateRestored(savedInstanceState);
     }
 
     @Override
@@ -107,6 +83,7 @@ public class ContactUsDialog extends DialogFragmentBase {
         }
         if (!misc.isEmptyOrNull(_source))
             outState.putString(STATE_SOURCE, _source);
+
         if (_spinnerPosition != -1)
             outState.putInt(STATE_SPINNER_SELECTION, _spinnerPosition);
 
@@ -118,13 +95,17 @@ public class ContactUsDialog extends DialogFragmentBase {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_contact_us, container, false);
 
-        _reasonSpinnre = (FnSpinner) v.findViewById(R.id.reason_spinner);
-        _reasonSpinnre.setOnItemClickListener(_reasonSpinner_onItemClick);
+        _reasonSpinner = (HintSpinner) v.findViewById(R.id.reason_spinner);
+        _reasonSpinner.setOnItemSelectedListener(_reasonSpinner_onItemClick);
+
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
         _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
+
         _additionalHelpTextView = (TextView) v.findViewById(R.id.additionalHelp_textview);
+
         _sendButton = (Button) v.findViewById(R.id.send_button);
         _sendButton.setOnClickListener(_send_onClick);
+
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
@@ -134,15 +115,35 @@ public class ContactUsDialog extends DialogFragmentBase {
     }
 
     @Override
+    public void onViewStateRestored(Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        Log.v(TAG, "onViewStateRestored");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_MESSAGE))
+                _message = savedInstanceState.getString(STATE_MESSAGE);
+            if (savedInstanceState.containsKey(STATE_SOURCE))
+                _source = savedInstanceState.getString(STATE_SOURCE);
+            if (savedInstanceState.containsKey(STATE_SPINNER_SELECTION)) {
+                populateSpinners();
+                _spinnerPosition = savedInstanceState.getInt(STATE_SPINNER_SELECTION);
+                _reasonSpinner.setSelection(_spinnerPosition);
+                onSpinnerSelection(_spinnerPosition);
+            }
+        } else {
+            _clear = true;
+        }
+    }
+
+    @Override
     public void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
         populateSpinners();
         if (_clear) {
-            _reasonSpinnre.setText("");
+            _reasonSpinner.clearSelection();
             _explanationEditText.setText("");
             _explanationEditText.setHint(getString(R.string.dialog_explanation_default));
-            _reasonSpinner_onItemClick.onItemClick(null, null, -1, 0);
+            _reasonSpinner_onItemClick.onItemSelected(null, null, -1, 0);
             _clear = false;
             return;
         }
@@ -157,7 +158,7 @@ public class ContactUsDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogFragment){
+    public void onDismiss(DialogInterface dialogFragment) {
 //        Log.e(TAG, "onDismiss");
         super.onDismiss(dialogFragment);
     }
@@ -199,18 +200,19 @@ public class ContactUsDialog extends DialogFragmentBase {
                 _explanationEditText.getText().toString().length());
     }
 
-    private FnSpinner populateSpinners() {
-        if (_reasonSpinnre != null && _reasonSpinnre.getAdapter() == null) {
-            ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(getActivity(),
+    private HintSpinner populateSpinners() {
+        if (_reasonSpinner != null && _reasonSpinner.getAdapter() == null) {
+            HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                    getActivity(),
                     R.array.reason_list,
                     R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
-            _reasonSpinnre.setAdapter(adapter);
+            _reasonSpinner.setAdapter(adapter);
         }
-        return _reasonSpinnre;
+        return _reasonSpinner;
     }
 
     private final TextWatcher _textEditText_watcherListener = new TextWatcher() {
@@ -229,11 +231,14 @@ public class ContactUsDialog extends DialogFragmentBase {
         public void afterTextChanged(Editable s) {
         }
     };
-
-    private final AdapterView.OnItemClickListener _reasonSpinner_onItemClick = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemSelectedListener _reasonSpinner_onItemClick = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             onSpinnerSelection(position);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 
@@ -266,7 +271,7 @@ public class ContactUsDialog extends DialogFragmentBase {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-           dismiss();
+            dismiss();
             if (_listener != null) {
                 _listener.onCancel();
             }

@@ -128,11 +128,11 @@
     <string name="toast_missing_traking_number">Missing tracking number</string>
     <string name="toast_missing_description">Missing description</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
-    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
-    <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name</string>
+    <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
-    <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing.</string>
-    <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection.</string>
+    <string name="toast_must_select_category">Please select a category</string>
+    <string name="toast_must_enter_description">Please enter a description</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
 

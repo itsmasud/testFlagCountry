@@ -141,7 +141,6 @@ public class WorkFragment extends WorkorderFragment {
     private ExpenseListLayout _expenseListView;
     private DiscountListLayout _discountListView;
     private RefreshView _refreshView;
-    private PayDialog _payDialog;
 
     // Dialogs
     private AcceptBundleDialog _acceptBundleWOConfirmDialog;
@@ -164,6 +163,7 @@ public class WorkFragment extends WorkorderFragment {
     private WorkLogDialog _worklogDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
+    private PayDialog _payDialog;
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
@@ -779,7 +779,7 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
-                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierName(content));
+                _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
 
             }
         }
@@ -875,7 +875,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                File temppath = new File(App.get().getDownloadsFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
@@ -1375,7 +1375,13 @@ public class WorkFragment extends WorkorderFragment {
         public void onRequestNewPay(Workorder workorder) {
             // TODO show request new pay dialog
             Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-            _payDialog.show(_workorder.getPay(), true);
+
+            if (workorder.getIncreaseRequestInfo() != null && workorder.getIncreaseRequestInfo().getPay() != null) {
+                _payDialog.show(workorder.getIncreaseRequestInfo().getPay(), true);
+            } else {
+                _payDialog.show(workorder.getPay(), true);
+            }
+
         }
 
         @Override
