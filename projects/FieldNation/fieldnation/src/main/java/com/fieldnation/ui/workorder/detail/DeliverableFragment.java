@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -9,6 +10,7 @@ import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -392,12 +394,12 @@ public class DeliverableFragment extends WorkorderFragment {
                             WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
                                     _uploadingSlotId, data);
                         }
-                } else {
+                    } else {
                         Log.v(TAG, "Android version is pre-4.3");
-                    WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
-                            _uploadingSlotId, data);
+                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                _uploadingSlotId, data);
+                    }
                 }
-            }
             }
         } catch (Exception ex) {
             Debug.logException(ex);
