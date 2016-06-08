@@ -107,7 +107,7 @@ public class CustomFieldListView extends RelativeLayout {
                 }
             }
         };
-        postDelayed(_forLoop, new Random().nextInt(100));
+        postDelayed(_forLoop, 100);
     }
 
     public void setListener(CustomFieldRowView.Listener listener) {

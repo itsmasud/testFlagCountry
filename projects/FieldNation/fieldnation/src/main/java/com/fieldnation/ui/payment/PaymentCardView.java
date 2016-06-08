@@ -90,18 +90,18 @@ public class PaymentCardView extends RelativeLayout {
         try {
             // TODO create string resources.
             if (_paymentInfo.getFees() != null && _paymentInfo.getFees().length > 0) {
-                _subTitleTextView.setText(getResources().getString(R.string.number_workorders_and_payments,
+                _subTitleTextView.setText(getResources().getString(R.string.num_workorders_and_payments,
                         getResources().getQuantityString(
-                                R.plurals.number_workorders,
+                                R.plurals.num_workorders,
                                 _paymentInfo.getWorkorders().length,
                                 _paymentInfo.getWorkorders().length),
                         getResources().getQuantityString(
-                                R.plurals.number_other_payments,
+                                R.plurals.num_other_payments,
                                 _paymentInfo.getFees().length,
                                 _paymentInfo.getFees().length)));
             } else {
                 _subTitleTextView.setText(getResources().getQuantityString(
-                        R.plurals.number_workorders,
+                        R.plurals.num_workorders,
                         _paymentInfo.getWorkorders().length,
                         _paymentInfo.getWorkorders().length));
             }

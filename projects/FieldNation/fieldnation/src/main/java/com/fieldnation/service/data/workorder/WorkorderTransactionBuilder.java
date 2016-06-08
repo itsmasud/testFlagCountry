@@ -2,13 +2,11 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.location.Location;
-import android.net.Uri;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -16,7 +14,7 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.NotificationDefinition;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -25,6 +23,7 @@ import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -694,26 +693,33 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    //    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-//        try {
-//            WebTransactionBuilder.builder(context)
-//                    .priority(Priority.HIGH)
-//                    .handler(DeliverableTransactionHandler.class)
-//                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
-//                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
-//                    .isSyncCall(isSync)
-//                    .request(new HttpJsonBuilder()
-//                            .method("GET")
-//                            .path(url))
-//                    .send();
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
-//    }
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-        Resources res = context.getResources();
+        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
+    }
+
+    public static void uploadDeliverable(Context context, InputStream inputStream, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
+        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
+    }
+
+    public static void uploadDeliverable(Context context, StoredObject upFile, String filename, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
+
+         boolean wifiOnly = false;
+        if (upFile.isFile() && upFile.getFile() != null) {
+            if (upFile.getFile().length() > 100000000) { // 100 MB?
+                StoredObject.delete(upFile);
+                ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
+                return;
+            } else if (upFile.getFile().length() > 2097152) { // 2MB
+                wifiOnly = true;
+            }
+        }
+
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -721,93 +727,20 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
-                    .notify(new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_start,
-                                    res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_start_body_uploading, filename),
-                                    res.getString(R.string.notification_start_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_success,
-                                    res.getString(R.string.notification_success_title),
-                                    res.getString(R.string.notification_success_body_uploading, filename),
-                                    res.getString(R.string.notification_success_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_failed,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_uploading, filename),
-                                    res.getString(R.string.notification_failed_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_retry,
-                                    res.getString(R.string.notification_retry_title),
-                                    res.getString(R.string.notification_retry_body_uploading, filename),
-                                    res.getString(R.string.notification_retry_body_uploading, filename)
-                            )
-                    ).doNotRead();
+                    .doNotRead();
 
             if (uploadSlotId != 0) {
                 builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
             }
 
             WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
+                    .priority(Priority.LOW)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
-                    .send();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
-        try {
-            Resources res = context.getResources();
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, uri)
-                    .notify(new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_start,
-                                    res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_start_body_uploading, filename),
-                                    res.getString(R.string.notification_start_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_success,
-                                    res.getString(R.string.notification_success_title),
-                                    res.getString(R.string.notification_success_body_uploading, filename),
-                                    res.getString(R.string.notification_success_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_failed,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_uploading, filename),
-                                    res.getString(R.string.notification_failed_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_retry,
-                                    res.getString(R.string.notification_retry_title),
-                                    res.getString(R.string.notification_retry_body_uploading, filename),
-                                    res.getString(R.string.notification_retry_body_uploading, filename)
-                            )
-                    ).doNotRead();
-
-            if (uploadSlotId != 0) {
-                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
-                    .useAuth(true)
-                    .request(builder)
+                    .setWifiRequired(App.get().onlyUploadWithWifi() || wifiOnly)
+                    .setTrack(true)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);

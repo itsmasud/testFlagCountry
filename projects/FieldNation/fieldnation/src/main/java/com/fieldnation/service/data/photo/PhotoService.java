@@ -1,6 +1,5 @@
 package com.fieldnation.service.data.photo;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -25,8 +24,7 @@ public class PhotoService extends MSService implements PhotoConstants {
     public void onCreate() {
         super.onCreate();
 
-        SharedPreferences settings = getSharedPreferences(getPackageName() + "_preferences",
-                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+        SharedPreferences settings = App.get().getSharedPreferences();
 
         _imageDaysToLive = Integer.parseInt(settings.getString(getString(R.string.pref_key_remove_rate), "-1")) * 2;
         _requireWifi = settings.getBoolean(getString(R.string.pref_key_profile_photo_wifi_only), false);

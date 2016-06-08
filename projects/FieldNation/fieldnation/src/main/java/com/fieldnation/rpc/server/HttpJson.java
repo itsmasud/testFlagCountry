@@ -13,6 +13,7 @@ import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -133,7 +134,12 @@ public class HttpJson {
                             File sourceFile = so.getFile();
                             Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
                             if (so.isFile()) {
-                                util.addFilePart(key, filename, new FileInputStream(sourceFile), (int) sourceFile.length());
+                                InputStream fin = new FileInputStream(sourceFile);
+                                try {
+                                    util.addFilePart(key, filename, fin, (int) sourceFile.length());
+                                } finally {
+                                    fin.close();
+                                }
                             } else {
                                 util.addFilePart(key, filename, so.getData(), contentType);
                             }
