@@ -45,6 +45,8 @@ public class UploadSlotView extends RelativeLayout {
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
     private WorkorderClient _workorderClient;
+    private ForLoopRunnable _docsRunnable = null;
+    private ForLoopRunnable _uploadingRunnable = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -135,7 +137,10 @@ public class UploadSlotView extends RelativeLayout {
                 }
             });
 
-            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
+            if (_docsRunnable != null)
+                _docsRunnable.cancel();
+
+            _docsRunnable = new ForLoopRunnable(docs.length, new Handler()) {
                 private UploadedDocument[] _docs = docs;
                 private List<UploadedDocumentView> _views = new LinkedList<>();
 
@@ -156,7 +161,7 @@ public class UploadSlotView extends RelativeLayout {
                     }
                 }
             };
-            postDelayed(r, 100);
+            postDelayed(_docsRunnable, 100);
         } else {
             _docsList.removeAllViews();
         }
@@ -166,7 +171,10 @@ public class UploadSlotView extends RelativeLayout {
             Log.v(TAG, "UF: " + _uploadingFiles.size() + " " + _uploadList.getChildCount());
             _uploadList.setVisibility(View.VISIBLE);
 
-            ForLoopRunnable r = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
+            if (_uploadingRunnable != null)
+                _uploadingRunnable.cancel();
+
+            _uploadingRunnable = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
                 private List<UploadedDocumentView> _view = new LinkedList<>();
 
                 @Override
@@ -186,18 +194,11 @@ public class UploadSlotView extends RelativeLayout {
                     }
                 }
             };
-            postDelayed(r, 100);
+            postDelayed(_uploadingRunnable, 100);
         } else {
             _uploadList.removeAllViews();
             _uploadList.setVisibility(View.GONE);
         }
-
-
-//        if (_slot.getMaxFiles() > 0 && docs.length >= _slot.getMaxFiles() || !_workorder.canChangeDeliverables()) {
-////            _uploadTextView.setVisibility(GONE);
-//        } else {
-////            _uploadTextView.setVisibility(VISIBLE);
-//        }
 
         if (docs.length == 0 && _uploadingFiles.size() == 0) {
             _noDocsTextView.setVisibility(VISIBLE);

@@ -136,6 +136,8 @@ public class DocumentView extends RelativeLayout {
             _byTextView.setVisibility(GONE);
             _usernameTextView.setVisibility(GONE);
             _statusTextView.setText(messageResId);
+            _fileTypeIconFont.setVisibility(VISIBLE);
+            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);

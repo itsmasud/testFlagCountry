@@ -96,6 +96,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private PhotoClient _photoClient;
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
+    private ForLoopRunnable _reviewRunnable = null;
 
 
     // Temporary storage
@@ -274,28 +275,31 @@ public class DeliverableFragment extends WorkorderFragment {
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            if (_reviewList.getChildCount() > docs.length) {
-                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
-            }
+            if (_reviewRunnable != null)
+                _reviewRunnable.cancel();
 
-            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
+            _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
                 private final Document[] _docs = docs;
+                private List<DocumentView> _views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    DocumentView v = null;
-                    if (i < _reviewList.getChildCount()) {
-                        v = (DocumentView) _reviewList.getChildAt(i);
-                    } else {
-                        v = new DocumentView(getActivity());
-                        _reviewList.addView(v);
-                    }
+                    DocumentView v = new DocumentView(getActivity());
                     Document doc = _docs[i];
                     v.setData(_workorder, doc);
                     v.setListener(_document_listener);
+                    _views.add(v);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _reviewList.removeAllViews();
+                    for (DocumentView v : _views) {
+                        _views.add(v);
+                    }
                 }
             };
-            _reviewList.postDelayed(r, new Random().nextInt(1000));
+            _reviewList.postDelayed(_reviewRunnable, new Random().nextInt(1000));
             _noDocsTextView.setVisibility(View.GONE);
         } else {
             _reviewList.removeAllViews();
@@ -309,7 +313,10 @@ public class DeliverableFragment extends WorkorderFragment {
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
 
-            ForLoopRunnable _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
+            if (_filesRunnable != null)
+                _filesRunnable.cancel();
+
+            _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
                 private List<UploadSlotView> _views = new LinkedList<>();
 
@@ -330,7 +337,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                 }
             };
-            _filesLayout.postDelayed(r, new Random().nextInt(1000));
+            _filesLayout.postDelayed(_filesRunnable, new Random().nextInt(1000));
         } else {
             _filesLayout.removeAllViews();
         }
