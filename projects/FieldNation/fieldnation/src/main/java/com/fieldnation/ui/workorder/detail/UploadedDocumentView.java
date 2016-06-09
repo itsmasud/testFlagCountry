@@ -124,6 +124,9 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _usernameTextView.setVisibility(GONE);
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
+            _picView.setVisibility(GONE);
+            _fileTypeIconFont.setVisibility(VISIBLE);
+            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
@@ -131,6 +134,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _byTextView.setVisibility(VISIBLE);
             _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
+            populateUi();
         }
     }
 

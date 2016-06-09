@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -19,11 +20,8 @@ import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.utils.ISO8601;
 
-import java.text.ParseException;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,8 +33,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     // Ui
     private TextView _titleTextView;
     private LinearLayout _docsList;
-    private LinearLayout _uploadList;
     private TextView _noDocsTextView;
+    private ProgressBar _loadingProgressBar;
 
     // Data
     private Workorder _workorder;
@@ -46,7 +44,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private long _profileId;
     private WorkorderClient _workorderClient;
     private ForLoopRunnable _docsRunnable = null;
-    private ForLoopRunnable _uploadingRunnable = null;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -74,8 +71,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _docsList = (LinearLayout) findViewById(R.id.docs_list);
-        _uploadList = (LinearLayout) findViewById(R.id.upload_list);
         _noDocsTextView = (TextView) findViewById(R.id.nodocs_textview);
+        _loadingProgressBar = (ProgressBar) findViewById(R.id.loading_progressbar);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -111,6 +108,105 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         }
     }
 
+    private void populateDocs() {
+        final List<Object> files = new LinkedList<>();
+
+        Object[] uploadingFiles = _uploadingFiles.toArray();
+        for (Object obj : uploadingFiles) {
+            files.add(obj);
+        }
+
+        UploadedDocument[] d = _slot.getUploadedDocuments();
+        if (d != null && d.length > 0) {
+            Arrays.sort(d, new UploadedDocument.DateTimeComparator());
+            for (UploadedDocument doc : d) {
+                files.add(doc);
+            }
+        }
+
+        if (files.size() > 0) {
+            Log.v(TAG, "docs: " + files.size() + " " + _docsList.getChildCount());
+
+            if (_docsRunnable != null)
+                _docsRunnable.cancel();
+
+            if (_docsList.getChildCount() == 0) {
+                _loadingProgressBar.setVisibility(VISIBLE);
+                _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
+                    private List<Object> _docs = files;
+                    private List<UploadedDocumentView> _views = new LinkedList<>();
+
+                    @Override
+                    public void next(int i) throws Exception {
+                        UploadedDocumentView v = new UploadedDocumentView(getContext());
+                        if (_docs.get(i) instanceof UploadedDocument) {
+                            UploadedDocument doc = (UploadedDocument) _docs.get(i);
+                            v.setListener(_docListener);
+                            v.setData(_workorder, _profileId, doc);
+                        } else {
+                            v.setUploading((String) (_uploadingFiles.toArray()[i]));
+                            v.setListener(null);
+                        }
+                        _views.add(v);
+                    }
+
+                    @Override
+                    public void finish(int count) throws Exception {
+                        _loadingProgressBar.setVisibility(GONE);
+                        _docsList.removeAllViews();
+                        for (UploadedDocumentView v : _views) {
+                            _docsList.addView(v);
+                        }
+                    }
+                };
+                postDelayed(_docsRunnable, 50);
+            } else {
+                if (files.size() < _docsList.getChildCount()) {
+                    _docsList.removeViews(files.size(), _docsList.getChildCount() - files.size());
+                }
+
+                _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
+                    private List<Object> _docs = files;
+
+                    @Override
+                    public void next(int i) throws Exception {
+                        UploadedDocumentView v = null;
+                        if (i < _docsList.getChildCount()) {
+                            v = (UploadedDocumentView) _docsList.getChildAt(i);
+                        } else {
+                            v = new UploadedDocumentView(getContext());
+                            _docsList.addView(v);
+                        }
+                        if (_docs.get(i) instanceof UploadedDocument) {
+                            UploadedDocument doc = (UploadedDocument) _docs.get(i);
+                            v.setListener(_docListener);
+                            v.setData(_workorder, _profileId, doc);
+                        } else {
+                            v.setUploading((String) (_uploadingFiles.toArray()[i]));
+                            v.setListener(null);
+                        }
+                    }
+                };
+                postDelayed(_docsRunnable, 50);
+            }
+        } else {
+            _docsList.removeAllViews();
+        }
+
+        if (files.size() == 0 && _uploadingFiles.size() == 0) {
+            _noDocsTextView.setVisibility(VISIBLE);
+            _loadingProgressBar.setVisibility(GONE);
+        } else {
+            _noDocsTextView.setVisibility(GONE);
+        }
+
+        if (files.size() == 0 && !_workorder.canChangeDeliverables()) {
+            setVisibility(View.GONE);
+        } else {
+            setVisibility(View.VISIBLE);
+        }
+    }
+
     private void populateUi() {
         if (_titleTextView == null)
             return;
@@ -120,105 +216,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
         _titleTextView.setText(_slot.getSlotName().toUpperCase());
 
-        final UploadedDocument[] docs = _slot.getUploadedDocuments();
-        if (docs != null && docs.length > 0) {
-            Log.v(TAG, "docs: " + docs.length + " " + _docsList.getChildCount());
-
-            Arrays.sort(docs, new Comparator<UploadedDocument>() {
-                @Override
-                public int compare(UploadedDocument lhs, UploadedDocument rhs) {
-                    try {
-                        long l = ISO8601.toUtc(lhs.getUploadedTime());
-                        long r = ISO8601.toUtc(rhs.getUploadedTime());
-
-                        if (l > r)
-                            return -1;
-                        else if (l < r)
-                            return 1;
-                        else
-                            return 0;
-                    } catch (ParseException e) {
-                        Log.v(TAG, e);
-                    }
-                    return 0;
-                }
-            });
-
-            if (_docsRunnable != null)
-                _docsRunnable.cancel();
-
-            _docsRunnable = new ForLoopRunnable(docs.length, new Handler()) {
-                private UploadedDocument[] _docs = docs;
-                private List<UploadedDocumentView> _views = new LinkedList<>();
-
-                @Override
-                public void next(int i) throws Exception {
-                    UploadedDocumentView v = new UploadedDocumentView(getContext());
-                    UploadedDocument doc = _docs[i];
-                    v.setListener(_docListener);
-                    v.setData(_workorder, _profileId, doc);
-                    _views.add(v);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    _docsList.removeAllViews();
-                    for (UploadedDocumentView v : _views) {
-                        _docsList.addView(v);
-                    }
-                }
-            };
-            postDelayed(_docsRunnable, 100);
-        } else {
-            _docsList.removeAllViews();
-        }
-
-        // uploading placeholders
-        if (_uploadingFiles.size() > 0) {
-            Log.v(TAG, "UF: " + _uploadingFiles.size() + " " + _uploadList.getChildCount());
-            _uploadList.setVisibility(View.VISIBLE);
-
-            if (_uploadingRunnable != null)
-                _uploadingRunnable.cancel();
-
-            _uploadingRunnable = new ForLoopRunnable(_uploadingFiles.size(), new Handler()) {
-                private List<UploadedDocumentView> _view = new LinkedList<>();
-
-                @Override
-                public void next(int i) throws Exception {
-                    Log.v(TAG, "UF: new view " + i);
-                    UploadedDocumentView v = new UploadedDocumentView(getContext());
-                    v.setUploading((String) (_uploadingFiles.toArray()[i]));
-                    v.setListener(null);
-                    _view.add(v);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    _uploadList.removeAllViews();
-                    for (UploadedDocumentView v : _view) {
-                        _uploadList.addView(v);
-                    }
-                }
-            };
-            postDelayed(_uploadingRunnable, 100);
-        } else {
-            _uploadList.removeAllViews();
-            _uploadList.setVisibility(View.GONE);
-        }
-
-        if (docs.length == 0 && _uploadingFiles.size() == 0) {
-            _noDocsTextView.setVisibility(VISIBLE);
-        } else {
-            _noDocsTextView.setVisibility(GONE);
-        }
-
-        if (docs.length == 0 && !_workorder.canChangeDeliverables()) {
-            setVisibility(View.GONE);
-        } else {
-            setVisibility(View.VISIBLE);
-        }
-
+        populateDocs();
     }
 
     /*-*************************-*/
@@ -255,7 +253,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                     _uploadingFiles.add(filename);
                 }
 
-                populateUi();
+                //populateUi();
             }
         }
     };

@@ -276,32 +276,34 @@ public class DeliverableFragment extends WorkorderFragment {
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            if (_reviewRunnable != null)
-                _reviewRunnable.cancel();
+            if (_reviewList.getChildCount() != docs.length) {
+                if (_reviewRunnable != null)
+                    _reviewRunnable.cancel();
 
-            _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
-                private final Document[] _docs = docs;
-                private List<DocumentView> _views = new LinkedList<>();
+                _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
+                    private final Document[] _docs = docs;
+                    private List<DocumentView> _views = new LinkedList<>();
 
-                @Override
-                public void next(int i) throws Exception {
-                    DocumentView v = new DocumentView(getActivity());
-                    Document doc = _docs[i];
-                    v.setListener(_document_listener);
-                    v.setData(_workorder, doc);
-                    _views.add(v);
-                }
-
-                @Override
-                public void finish(int count) throws Exception {
-                    _reviewList.removeAllViews();
-                    for (DocumentView v : _views) {
-                        _reviewList.addView(v);
+                    @Override
+                    public void next(int i) throws Exception {
+                        DocumentView v = new DocumentView(getActivity());
+                        Document doc = _docs[i];
+                        v.setListener(_document_listener);
+                        v.setData(_workorder, doc);
+                        _views.add(v);
                     }
-                }
-            };
-            _reviewList.postDelayed(_reviewRunnable, 100);
-            _noDocsTextView.setVisibility(View.GONE);
+
+                    @Override
+                    public void finish(int count) throws Exception {
+                        _reviewList.removeAllViews();
+                        for (DocumentView v : _views) {
+                            _reviewList.addView(v);
+                        }
+                    }
+                };
+                _reviewList.postDelayed(_reviewRunnable, 100);
+                _noDocsTextView.setVisibility(View.GONE);
+            }
         } else {
             _reviewList.removeAllViews();
             _noDocsTextView.setVisibility(View.VISIBLE);
@@ -319,22 +321,19 @@ public class DeliverableFragment extends WorkorderFragment {
 
             _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
-                private List<UploadSlotView> _views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    UploadSlotView v = new UploadSlotView(getActivity());
-                    UploadSlot slot = _slots[i];
-                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
-                    _views.add(v);
-                }
+                    UploadSlotView v = null;
 
-                @Override
-                public void finish(int count) throws Exception {
-                    _filesLayout.removeAllViews();
-                    for (UploadSlotView v : _views) {
+                    if (_filesLayout.getChildCount() > i) {
+                        v = (UploadSlotView) _filesLayout.getChildAt(i);
+                    } else {
+                        v = new UploadSlotView(getActivity());
                         _filesLayout.addView(v);
                     }
+                    UploadSlot slot = _slots[i];
+                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
                 }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);

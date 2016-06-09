@@ -20,7 +20,7 @@
             android:layout_marginRight="16dp"
             android:text="@string/icon_file_generic"
             android:textColor="@color/fn_light_text"
-            android:textSize="48sp"
+            android:textSize="47sp"
             android:visibility="gone" />
 
         <ImageView

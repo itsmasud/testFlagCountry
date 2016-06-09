@@ -8,6 +8,10 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
+
+import java.text.ParseException;
+import java.util.Comparator;
 
 public class UploadedDocument implements Parcelable {
     private static final String TAG = "UploadedDocument";
@@ -89,6 +93,27 @@ public class UploadedDocument implements Parcelable {
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
+        }
+    }
+
+
+    public static class DateTimeComparator implements Comparator<UploadedDocument> {
+        @Override
+        public int compare(UploadedDocument lhs, UploadedDocument rhs) {
+            try {
+                long l = ISO8601.toUtc(lhs.getUploadedTime());
+                long r = ISO8601.toUtc(rhs.getUploadedTime());
+
+                if (l > r)
+                    return -1;
+                else if (l < r)
+                    return 1;
+                else
+                    return 0;
+            } catch (ParseException e) {
+                Log.v(TAG, e);
+            }
+            return 0;
         }
     }
 
