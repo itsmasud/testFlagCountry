@@ -48,6 +48,8 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     private Listener _listener;
     private boolean _isLoading = false;
     private DocumentClient _docClient;
+    private boolean _hasImage = false;
+    private String _lastPhotoUrl = null;
 
     static {
         _ICFN_FILES.put("png", R.string.icon_file_png);
@@ -124,9 +126,8 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _usernameTextView.setVisibility(GONE);
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
-            _picView.setVisibility(GONE);
-            _fileTypeIconFont.setVisibility(VISIBLE);
             _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+            updateThumb();
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
@@ -134,6 +135,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _byTextView.setVisibility(VISIBLE);
             _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
+            updateThumb();
             populateUi();
         }
     }
@@ -141,10 +143,10 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     @Override
     public void setPhoto(String url, Drawable photo) {
         Log.v(TAG, "setPhoto");
-        if (_doc != null && _doc.getDownloadThumbLink() != null && url.equals(_doc.getDownloadThumbLink())) {
+        if (_doc != null && _doc.getDownloadThumbLink() != null && _doc.getDownloadThumbLink().startsWith(url)) {
             _picView.setImageDrawable(photo);
-            _fileTypeIconFont.setVisibility(GONE);
-            _picView.setVisibility(VISIBLE);
+            _hasImage = true;
+            updateThumb();
         }
     }
 
@@ -192,47 +194,46 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             String ext = _doc.getFileName();
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
+                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                 switch (ext) {
                     case "png":
                     case "jpg":
                     case "jpeg":
-                        _picView.setVisibility(GONE);
-                        _fileTypeIconFont.setVisibility(VISIBLE);
-                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
                         if (_listener != null && !misc.isEmptyOrNull(_doc.getDownloadThumbLink())) {
                             Drawable result = _listener.getPhoto(this, _doc.getDownloadThumbLink(), true);
                             if (result != null) {
                                 setPhoto(_doc.getDownloadThumbLink(), result);
                             } else {
-                                _picView.setVisibility(GONE);
-                                _fileTypeIconFont.setVisibility(VISIBLE);
-                                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                                _hasImage = false;
                             }
                         } else {
-                            _picView.setVisibility(GONE);
-                            _fileTypeIconFont.setVisibility(VISIBLE);
-                            _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                            _hasImage = false;
                         }
                         break;
-
                     default:
-                        _picView.setVisibility(GONE);
-                        _fileTypeIconFont.setVisibility(VISIBLE);
-                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                        _hasImage = false;
                         break;
                 }
-
             } else {
-                _picView.setVisibility(GONE);
-                _fileTypeIconFont.setVisibility(VISIBLE);
+                _hasImage = false;
                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         }
 
+        updateThumb();
         setClickable(_workorder.canViewDeliverables());
+    }
+
+    private void updateThumb() {
+        if (_hasImage) {
+            _picView.setVisibility(VISIBLE);
+            _fileTypeIconFont.setVisibility(GONE);
+        } else {
+            _picView.setVisibility(GONE);
+            _fileTypeIconFont.setVisibility(VISIBLE);
+        }
     }
 
     /*-*************************-*/
@@ -273,12 +274,10 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
                 return;
             }
 
-
             if (_isLoading)
                 return;
             setDownloading(_doc.getFileName());
-            DocumentClient.downloadDocument(getContext(), _doc.getId(),
-                    _doc.getDownloadLink(), _doc.getFileName(), false);
+            DocumentClient.downloadDocument(getContext(), _doc.getId(), _doc.getDownloadLink(), _doc.getFileName(), false);
         }
     };
 

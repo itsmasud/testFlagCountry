@@ -491,26 +491,32 @@ public class DeliverableFragment extends WorkorderFragment {
 
         @Override
         public Drawable getPhoto(UploadedDocumentView view, String url, boolean circle) {
-            if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
-                return _picCache.get(url).get();
-            } else {
-                _photoClient.subGet(url, circle, false);
-                PhotoClient.get(App.get(), url, circle, false);
+            synchronized (_picCache) {
+                String turl = url.substring(0, url.lastIndexOf('?'));
+                if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
+                    return _picCache.get(turl).get();
+                } else {
+                    _photoClient.subGet(url, circle, false);
+                    PhotoClient.get(App.get(), url, circle, false);
+                }
+                return null;
             }
-            return null;
         }
     };
 
     private final DocumentView.Listener _document_listener = new DocumentView.Listener() {
         @Override
         public Drawable getPhoto(DocumentView view, String url, boolean circle) {
-            if (_picCache.containsKey(url) && _picCache.get(url).get() != null) {
-                return _picCache.get(url).get();
-            } else {
-                _photoClient.subGet(url, circle, false);
-                PhotoClient.get(App.get(), url, circle, false);
+            synchronized (_picCache) {
+                String turl = url.substring(0, url.lastIndexOf('?'));
+                if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
+                    return _picCache.get(turl).get();
+                } else {
+                    _photoClient.subGet(url, circle, false);
+                    PhotoClient.get(App.get(), url, circle, false);
+                }
+                return null;
             }
-            return null;
         }
     };
 
@@ -613,7 +619,13 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
             if (drawable == null || url == null || failed)
                 return;
-            _picCache.put(url, new WeakReference<>((Drawable) drawable));
+
+            if (url.contains("?"))
+                url = url.substring(0, url.lastIndexOf('?'));
+
+            synchronized (_picCache) {
+                _picCache.put(url, new WeakReference<>((Drawable) drawable));
+            }
 
             Log.v(TAG, "PhotoClient.Listener.onGet");
             for (int i = 0; i < _reviewList.getChildCount(); i++) {

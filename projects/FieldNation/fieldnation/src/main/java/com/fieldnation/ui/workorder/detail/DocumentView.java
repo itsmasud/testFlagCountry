@@ -122,7 +122,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     @Override
     public void setPhoto(String url, Drawable photo) {
         Log.v(TAG, "setPhoto");
-        if (_document != null && _document.getThumbNail() != null && url.equals(_document.getThumbNail())) {
+        if (_document != null && _document.getThumbNail() != null && _document.getThumbNail().startsWith(url)) {
             _picView.setImageDrawable(photo);
             _fileTypeIconFont.setVisibility(GONE);
         }
