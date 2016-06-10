@@ -680,22 +680,22 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns the deliverable details
-    public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, String filePath, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
+        uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
-    public static void uploadDeliverable(Context context, InputStream inputStream, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, InputStream inputStream, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
-        uploadDeliverable(context, upFile, filename, workorderId, uploadSlotId);
+        uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
-    public static void uploadDeliverable(Context context, StoredObject upFile, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, StoredObject upFile, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
 
-         boolean wifiOnly = false;
+        boolean wifiOnly = false;
         if (upFile.isFile() && upFile.getFile() != null) {
             if (upFile.getFile().length() > 100000000) { // 100 MB?
                 StoredObject.delete(upFile);
@@ -713,6 +713,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
+                    .multipartField("note" , (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
+//                    .body("note=" + (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
                     .doNotRead();
 
             if (uploadSlotId != 0) {

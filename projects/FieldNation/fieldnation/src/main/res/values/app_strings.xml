@@ -134,6 +134,7 @@
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing.</string>
     <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection.</string>
+    <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
 
@@ -264,6 +265,9 @@
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
 
     <string name="dialog_photo_upload_title">Photo Upload</string>
+    <string name="dialog_insert_file_name">Please insert file name.</string>
+    <string name="dialog_invalid_file_name">Invalid file name. Remove invalid characters.</string>
+    <string name="dialog_insert_filename_before_extension">Insert file name before extension.</string>
 
 
 

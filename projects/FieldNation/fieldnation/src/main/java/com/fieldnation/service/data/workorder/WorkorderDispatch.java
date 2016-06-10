@@ -216,6 +216,24 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 
+    public static void uploadDeliverable(Context context, long workorderId, long slotId, String filename, String photoDescription, boolean isComplete, boolean failed) {
+        Log.v(TAG, "uploadDeliverable");
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putLong(PARAM_UPLOAD_SLOT_ID, slotId);
+        bundle.putString(PARAM_FILE_NAME, filename);
+        bundle.putString(PARAM_FILE_DESCRIPTION, photoDescription);
+        bundle.putBoolean(PARAM_IS_COMPLETE, isComplete);
+        bundle.putBoolean(PARAM_ERROR, failed);
+
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE;
+        topicId += "/" + workorderId + "/" + slotId;
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
+    }
+
     public static void cacheDeliverableStart(Context context) {
         Log.v(TAG, "cacheDeliverableStart");
         TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_START, null, Sticky.NONE);

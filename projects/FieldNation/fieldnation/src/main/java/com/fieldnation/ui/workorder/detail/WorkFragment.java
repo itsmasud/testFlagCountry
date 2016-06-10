@@ -45,6 +45,7 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
+import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
@@ -75,6 +76,7 @@ import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -87,6 +89,7 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
@@ -167,6 +170,7 @@ public class WorkFragment extends WorkorderFragment {
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
+    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -373,6 +377,7 @@ public class WorkFragment extends WorkorderFragment {
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
+        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -397,6 +402,7 @@ public class WorkFragment extends WorkorderFragment {
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _reportProblemDialog.setListener(_reportProblem_listener);
+        _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -806,12 +812,32 @@ public class WorkFragment extends WorkorderFragment {
                 setLoading(true);
 
                 if (data == null) {
-                    WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                            _currentTask.getSlotId(), _tempFile.getName(), _tempFile.getAbsolutePath());
+                    Log.e(TAG, "uploading an image using camera");
+                    _photoUploadDialog.show("Photo Upload", _currentTask.getTaskId());
+                    _photoUploadDialog.setData(_tempFile);
 
                 } else {
-                    WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                            _currentTask.getSlotId(), data);
+                    Log.e(TAG, "uploading an file");
+                    final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
+
+                    if (_currentTask != null && !misc.isEmptyOrNull(mimeType)
+                            && _currentTask.getTaskType().equals(TaskType.UPLOAD_PICTURE)) {
+                        if (!mimeType.contains("image")) {
+                            // TODO toast is not shown, need to fix it
+                            ToastClient.toast(App.get(), getString(R.string.toast_not_an_image), Toast.LENGTH_LONG);
+                            return;
+                        }
+                    }
+
+                    if (!misc.isEmptyOrNull(mimeType)) {
+                        if (mimeType.contains("image")) {
+                            _photoUploadDialog.show("Photo Upload", _currentTask.getTaskId());
+                            _photoUploadDialog.setData(data);
+                        } else {
+                            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                                    _currentTask.getSlotId(), data);
+                        }
+                    }
                 }
 
             } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
@@ -875,7 +901,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getStoragePath() + "/temp/IMAGE-"
+                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
@@ -1824,5 +1850,29 @@ public class WorkFragment extends WorkorderFragment {
             Log.v(TAG, "_profileClient_listener.onAction");
         }
     };
+
+    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
+        @Override
+        public void onOk(long taskId, File file, String photoDescription) {
+            Log.e(TAG, "uploading an image using camera");
+            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                    _currentTask.getSlotId(), file.getName(), file.getAbsolutePath(), photoDescription);
+
+        }
+
+        @Override
+        public void onOk(long taskId, Intent data, String photoDescription) {
+            Log.e(TAG, "uploading an file");
+            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                    _currentTask.getSlotId(), data, photoDescription);
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+
+    };
+
 }
 

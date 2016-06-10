@@ -557,6 +557,22 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath, String photoDescription) {
+        Log.v(STAG, "requestUploadDeliverable");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, photoDescription, false, false);
+
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_LOCAL_PATH, filePath);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        intent.putExtra(PARAM_FILE_DESCRIPTION, photoDescription);
+        context.startService(intent);
+    }
+
+
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -571,6 +587,21 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         context.startService(intent);
     }
 
+    public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, Uri uri, String photoDescription) {
+        Log.v(STAG, "requestUploadDeliverable");
+
+        WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, false);
+
+        Intent intent = new Intent(context, WorkorderService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_UPLOAD_DELIVERABLE);
+        intent.putExtra(PARAM_WORKORDER_ID, workorderId);
+        intent.putExtra(PARAM_UPLOAD_SLOT_ID, uploadSlotId);
+        intent.putExtra(PARAM_URI, uri);
+        intent.putExtra(PARAM_FILE_NAME, filename);
+        intent.putExtra(PARAM_FILE_DESCRIPTION, photoDescription);
+        context.startService(intent);
+    }
+
     public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data) {
         FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
             @Override
@@ -581,6 +612,26 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             @Override
             public void fromUri(String filename, Uri uri) {
                 uploadDeliverable(context, workorderId, uploadSlotId, filename, uri);
+            }
+
+            @Override
+            public void fail(String reason) {
+                Log.v("WorkorderDataClient.requestUploadDeliverable", reason);
+                ToastClient.toast(context, "Could not upload file", Toast.LENGTH_LONG);
+            }
+        });
+    }
+
+    public static void uploadDeliverable(final Context context, final long workorderId, final long uploadSlotId, Intent data, final String photoDescription) {
+        FileHelper.getFileFromActivityResult(context, data, new FileHelper.Listener() {
+            @Override
+            public void fileReady(String filename, File file) {
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, file.getPath(), photoDescription);
+            }
+
+            @Override
+            public void fromUri(String filename, Uri uri) {
+                uploadDeliverable(context, workorderId, uploadSlotId, filename, uri, photoDescription);
             }
 
             @Override
