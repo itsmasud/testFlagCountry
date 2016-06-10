@@ -57,7 +57,6 @@ public class App extends Application {
 
     public static final String PREF_NAME = "GlobalPreferences";
     public static final String PREF_INTERACTED_WORKORDER = "PREF_HAS_INTERACTED_WORKORDER";
-    public static final String PREF_SHOWN_REVIEW_DIALOG = "PREF_SHOWN_REVIEW_DIALOG";
     public static final String PREF_TOS_TIMEOUT = "PREF_TOS_TIMEOUT";
     public static final String PREF_COI_TIMEOUT = "PREF_COI_TIMEOUT";
     public static final String PREF_COI_NEVER = "PREF_COI_NEVER";
@@ -560,22 +559,6 @@ public class App extends Application {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_TOS_TIMEOUT, System.currentTimeMillis() + 172800000); // two days
-        edit.apply();
-    }
-
-    public boolean shouldShowReviewDialog() {
-        return !hasShownReviewDialog() && hasInteractedWorkorder() && BuildConfig.FLAVOR.equals("prod");
-    }
-
-    public boolean hasShownReviewDialog() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return settings.contains(PREF_SHOWN_REVIEW_DIALOG);
-    }
-
-    public void setShownReviewDialog() {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        SharedPreferences.Editor edit = settings.edit();
-        edit.putBoolean(PREF_SHOWN_REVIEW_DIALOG, true);
         edit.apply();
     }
 

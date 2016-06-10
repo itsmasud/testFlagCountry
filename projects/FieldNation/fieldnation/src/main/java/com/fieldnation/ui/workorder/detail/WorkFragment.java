@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
@@ -632,21 +631,6 @@ public class WorkFragment extends WorkorderFragment {
             _closingDialog.show(_workorder.getClosingNotes());
     }
 
-    private void showReviewDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage(R.string.dialog_review_message);
-        builder.setTitle(R.string.dialog_review_title);
-        builder.setPositiveButton(R.string.btn_ok, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
-                startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
-            }
-        });
-        builder.setNegativeButton(R.string.btn_no_thanks, null);
-        builder.create().show();
-    }
-
     private void startCheckin() {
         Log.v(TAG, "startCheckin");
         // everything is awsome. checkin
@@ -815,13 +799,7 @@ public class WorkFragment extends WorkorderFragment {
                 }
 
             } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-                App gs = App.get();
-
-                if (gs.shouldShowReviewDialog()) {
-                    showReviewDialog();
-                    gs.setShownReviewDialog();
-                    requestWorkorder();
-                }
+                requestWorkorder();
             } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
             } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
