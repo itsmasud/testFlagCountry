@@ -127,6 +127,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
             _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+            _hasImage = false;
             updateThumb();
         } else {
             _progressBar.setVisibility(View.GONE);
