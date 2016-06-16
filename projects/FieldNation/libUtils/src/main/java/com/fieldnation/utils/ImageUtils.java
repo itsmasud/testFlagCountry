@@ -1,6 +1,7 @@
 package com.fieldnation.utils;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.RectF;
@@ -81,5 +82,37 @@ public class ImageUtils {
         }
 
         return Bitmap.createBitmap(destpix, size, size, Bitmap.Config.ARGB_8888);
+    }
+
+    public static float getDeviceDensity(Context context) {
+        Resources res = context.getResources();
+        if (res != null) {
+            final DisplayMetrics metrics = res.getDisplayMetrics();
+            if (metrics != null) {
+                return metrics.density;
+            } else {
+                return 1;
+            }
+        }
+        return 1;
+    }
+
+    public static Bitmap scaleDownBitmapBasedOnRequestedHeight(Bitmap bitmap, int requestedHeight) {
+
+        float aspectRatio = 0f;
+
+        if (bitmap.getWidth() <= bitmap.getHeight()) {
+            aspectRatio = bitmap.getWidth() /
+                    (float) bitmap.getHeight();
+        } else {
+            aspectRatio = bitmap.getHeight() /
+                    (float) bitmap.getWidth();
+        }
+
+        int requestedWidth = Math.round(requestedHeight / aspectRatio);
+
+        return Bitmap.createScaledBitmap(
+                bitmap, requestedWidth, requestedHeight, false);
+
     }
 }

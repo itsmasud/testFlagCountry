@@ -8,6 +8,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.provider.OpenableColumns;
+import android.webkit.MimeTypeMap;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -188,40 +189,8 @@ public class FileUtils {
                 return false;
             }
         }
-
         return true;
     }
-
-    private static String getFileNameFromContentUri(Context context, Uri contentUri) {
-
-        final String fileName;
-
-        if (contentUri.getScheme().equals("content")) {
-//            Log.v(TAG, "Works for gallery app, google photos");
-            Cursor cursor = context.getContentResolver().query(contentUri, null, null, null, null);
-            int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-            cursor.moveToFirst();
-            fileName = cursor.getString(nameIndex);
-            cursor.close();
-            return fileName;
-        }
-        return null;
-    }
-
-
-    public static String getFileNameFromUri(Context context, Uri uri) {
-
-        if (uri.getScheme().equals("file")) {
-//            Log.v(TAG, "Uri from dropbox, onedrive. ");
-            return uri.getLastPathSegment();
-
-        } else if (uri.getScheme().equals("content")) {
-//                Log.v(TAG, "For gallery app, google photos");
-            return getFileNameFromContentUri(context, uri);
-        }
-        return null;
-    }
-
 
     public static String getFilePathFromUri(Context context, Uri uri) {
         final String filePath;
@@ -249,16 +218,52 @@ public class FileUtils {
         return null;
     }
 
-    public static String getMimeTypeFromIntent(Context context, Intent intent){
+    public static String getMimeTypeFromIntent(Context context, Intent intent) {
 
-        if(misc.isEmptyOrNull(intent.getType())){
+        if (misc.isEmptyOrNull(intent.getType())) {
             ContentResolver cr = context.getContentResolver();
             return cr.getType(intent.getData());
         }
         return intent.getType();
+    }
+
+    public static String getMimeTypeFromFile(File file) {
+        if (file != null) {
+            String fileName = file.getName();
+            return MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.substring(fileName.lastIndexOf('.') + 1));
+        }
+        return null;
+    }
 
 
+    public static String getFileNameFromUri(Context context, final Uri uri) {
+        String fileName = "";
 
+        if (uri.getScheme().compareTo("content") == 0) {
+            //                Log.v(TAG, "For gallery app, google photos");
+            final Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+            if (cursor == null) {
+            } else if (cursor.moveToFirst()) {
+
+                int nameIndex = -1;
+                try {
+                    nameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
+                } catch (Exception ex) {
+                    try {
+                        nameIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+                    } catch (Exception ex2) {
+                        ex2.printStackTrace();
+                    }
+                }
+
+                final Uri filePathUri = Uri.parse(cursor.getString(nameIndex));
+                fileName = filePathUri.getLastPathSegment();
+            }
+        } else if (uri.getScheme().compareTo("file") == 0) {
+            fileName = new File(uri.getPath()).getName();
+        }
+
+        return fileName;
     }
 
 

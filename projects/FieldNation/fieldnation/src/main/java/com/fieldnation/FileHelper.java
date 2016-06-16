@@ -11,6 +11,7 @@ import android.provider.MediaStore;
 import android.provider.OpenableColumns;
 import android.widget.Toast;
 
+import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.ISO8601;
 
 import java.io.File;
@@ -59,16 +60,7 @@ public class FileHelper {
                 return;
             } else if (data.getData() != null) {
                 Uri uri = data.getData();
-
-                if (uri.getScheme().equals("file")) {
-                    filename = uri.getLastPathSegment();
-                } else {
-                    Cursor c = context.getContentResolver().query(uri, null, null, null, null);
-                    int nameIndex = c.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-                    c.moveToFirst();
-                    filename = c.getString(nameIndex);
-                    c.close();
-                }
+                filename = FileUtils.getFileNameFromUri(App.get(), uri);
 
                 listener.fromUri(filename, uri);
                 return;

@@ -34,6 +34,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.FileUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -252,7 +253,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         _uploadingDocumentList = new UploadingDocument[1];
         _cachedValuesleft = 1;
         if (fileUri != null) {
-            final String fileName = getFileNameFromUri(fileUri);
+            final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _uploadingDocumentList[0] = new UploadingDocument(fileName, fileUri);
             WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
         }
@@ -271,51 +272,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             }
 
             for (int i = 0; i < fileUris.size(); i++) {
-                final String fileName = getFileNameFromUri(fileUris.get(i));
+                final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
                 _uploadingDocumentList[i] = new UploadingDocument(fileName, fileUris.get(i));
                 WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
         }
-    }
-
-    private String getFileNameFromUri(final Uri uri) {
-        String fileName = "";
-
-        if (uri.getScheme().compareTo("content") == 0) {
-            final Cursor cursor = getContentResolver().query(uri, null, null, null, null);
-            if (cursor == null) {
-                try {
-                    Log.v(TAG, new Exception("Couldn't create cursor from uri: " + uri.toString()));
-                } catch (Exception ex) {
-                }
-            } else if (cursor.moveToFirst()) {
-
-                Log.v(TAG, "Columns");
-                for (int i = 0; i < cursor.getColumnCount(); i++) {
-                    Log.v(TAG, i + "\\" + cursor.getColumnName(i) + "\\" + cursor.getString(i));
-                }
-
-                int column_index = -1;
-                try {
-                    column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME);
-
-                } catch (Exception ex) {
-                    try {
-                        column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-                    } catch (Exception ex2) {
-                        ex2.printStackTrace();
-                    }
-                }
-
-                final Uri filePathUri = Uri.parse(cursor.getString(column_index));
-                fileName = filePathUri.getLastPathSegment();
-                Log.e(TAG, "getFilePathFromIntent: fileName: " + fileName);
-            }
-        } else if (uri.getScheme().compareTo("file") == 0) {
-            fileName = new File(uri.getPath()).getName();
-        }
-
-        return fileName;
     }
 
     @Override

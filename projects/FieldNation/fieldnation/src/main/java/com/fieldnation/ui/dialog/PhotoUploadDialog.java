@@ -20,6 +20,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
+import com.fieldnation.utils.ImageUtils;
 import com.fieldnation.utils.misc;
 
 import java.io.BufferedOutputStream;
@@ -54,11 +56,15 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
 
     // UI
+    private RelativeLayout _parentLayout;
+    private TextView _titleTextView;
     private ImageView _photoImageView;
     private EditText _fileNameEditText;
     private EditText _photoDescriptionEditText;
     private Button _okButton;
     private Button _cancelButton;
+    private RelativeLayout _loadingLayout;
+
 
     // Data
     private Listener _listener;
@@ -72,6 +78,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private String _newFileName;
     private Bitmap _bitmap;
     private String _photoDescription;
+    private boolean isDeliverableAnImage = false;
 
 
     /*-*************************************-*/
@@ -135,9 +142,14 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_photo_upload, container, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
+        _parentLayout = (RelativeLayout) v.findViewById(R.id.parentLayout);
+
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
         _photoImageView = (ImageView) v.findViewById(R.id.photo_imageview);
         _photoImageView.setOnClickListener(_photoImageView_onClick);
@@ -156,6 +168,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
+        _loadingLayout = (RelativeLayout) v.findViewById(R.id.loading_layout);
+
         return v;
     }
 
@@ -163,10 +177,11 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     @Override
     public void onResume() {
         super.onResume();
-//        Log.v(TAG, "onResume");
+        Log.v(TAG, "onResume");
 
         if (_clear) {
             _clear = false;
+            _photoImageView.setVisibility(View.GONE);
             _photoImageView.setImageDrawable(null);
             _fileNameEditText.setText("");
             _photoDescriptionEditText.setText("");
@@ -181,6 +196,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             }
         }
 
+        populateFileInfo(_data.getData());
         populateUi();
     }
 
@@ -211,28 +227,66 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     }
 
     public void setData(Intent data) {
+//        Log.v(TAG, "from intent");
+
         _file = null;
         _data = data;
 
-        populateFileInfo(data.getData());
-        populateUi();
+        final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
+
+        if (mimeType.contains("image")) {
+            isDeliverableAnImage = true;
+        } else {
+            isDeliverableAnImage = false;
+        }
+
+//        populateFileInfo(data.getData());
+//        populateUi();
     }
 
     public void setData(File file) {
+//        Log.e(TAG, "setData");
         _data = null;
+        isDeliverableAnImage = true;
         _file = file;
         _filePath = file.getAbsolutePath();
         _originalFileName = file.getName();
 
+        final String mimeType = FileUtils.getMimeTypeFromFile(file);
+
+        if (!misc.isEmptyOrNull(mimeType) && mimeType.contains("image")) {
+            isDeliverableAnImage = true;
+        } else {
+            isDeliverableAnImage = false;
+        }
         populateUi();
     }
 
     public void show(CharSequence title, long taskId) {
-        Log.e(TAG, "show");
+//        Log.v(TAG, "show");
         _title = (String) title;
         _taskId = taskId;
         _clear = true;
         show();
+    }
+
+
+    public void showProgressBar() {
+        _parentLayout.setBackgroundColor(getResources().getColor(R.color.fn_black_25));
+        _loadingLayout.setVisibility(View.VISIBLE);
+        _titleTextView.setVisibility(View.GONE);
+        _photoImageView.setVisibility(View.GONE);
+        _fileNameEditText.setVisibility(View.GONE);
+        _photoDescriptionEditText.setVisibility(View.GONE);
+    }
+
+    public void hideProgressBar() {
+        _parentLayout.setBackgroundColor(0);
+        _loadingLayout.setVisibility(View.GONE);
+        _titleTextView.setVisibility(View.VISIBLE);
+        _photoImageView.setVisibility(View.VISIBLE);
+        _fileNameEditText.setVisibility(View.VISIBLE);
+        _photoDescriptionEditText.setVisibility(View.VISIBLE);
     }
 
     private void populateUi() {
@@ -242,8 +296,10 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         if (_photoImageView == null)
             return;
 
+        if (isDeliverableAnImage)
+            _photoImageView.setVisibility(View.VISIBLE);
+
         if (_file != null) {
-            Log.e(TAG, "populateUi _file");
             _photoImageView.setImageBitmap(BitmapFactory.decodeFile(_file.getAbsolutePath()));
         } else if (_data != null && _data.getData().getAuthority() != null) {
             _photoImageView.setImageBitmap(_bitmap);
@@ -259,13 +315,15 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         _filePath = FileUtils.getFilePathFromUri(App.get(), uri);
 
-        if (misc.isEmptyOrNull(_filePath)) {
+        if (isDeliverableAnImage && misc.isEmptyOrNull(_filePath)) {
             InputStream is = null;
             try {
                 is = App.get().getContentResolver().openInputStream(uri);
+                final int requestedHeight = _photoImageView.getLayoutParams().height;
+
                 _bitmap = BitmapFactory.decodeStream(is);
-                // TODO tried to use FileUtils.writeStream to created file but it didn't work
                 createBitmapInTemp(_bitmap);
+                _bitmap = ImageUtils.scaleDownBitmapBasedOnRequestedHeight(_bitmap, requestedHeight);
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -279,7 +337,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         } else {
             _file = new File(_filePath);
         }
-
     }
 
     private void createBitmapInTemp(final Bitmap bitmap) {
@@ -289,12 +346,11 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 //                Log.v(TAG, "inside handler");
 
                 _file = new File(App.get().getTempFolder() + File.separator + _originalFileName);
-                OutputStream os = null;
+                OutputStream outputStream = null;
                 try {
-                    os = new BufferedOutputStream(new FileOutputStream(_file));
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, os);
-                    os.close();
-//                    bitmap.recycle();
+                    outputStream = new BufferedOutputStream(new FileOutputStream(_file));
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
+                    outputStream.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
