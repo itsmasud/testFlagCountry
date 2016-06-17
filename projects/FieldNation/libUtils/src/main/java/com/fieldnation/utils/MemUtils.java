@@ -9,6 +9,8 @@ import android.graphics.BitmapFactory;
 import android.os.Debug;
 import android.util.Log;
 
+import java.io.File;
+
 public class MemUtils {
     private static final String TAG = "MemUtils";
 
@@ -18,8 +20,6 @@ public class MemUtils {
     private static final double MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE = 0.15;
 
     public static Bitmap getMemoryEfficientBitmap(Context context, int sourceImage, int reqHeight) {
-//        Log.v(TAG, "getDeviceFreeMemory:" + getDeviceFreeMemory());
-//        Log.v(TAG, "getDeviceAvailableMemory:" + getDeviceAvailableMemory());
         Resources res = context.getResources();
 
         if (getAppFreeHeapMemory(context) < getAllocatedBitmapMemory(sourceImage, res)) {
@@ -29,11 +29,21 @@ public class MemUtils {
         return subSampleImage(0, res, sourceImage);
     }
 
+    public static Bitmap getMemoryEfficientBitmap(File source, int destWidth) {
+        BitmapFactory.Options srcOptions = new BitmapFactory.Options();
+        srcOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(source.toString(), srcOptions);
+
+        BitmapFactory.Options dstOption = new BitmapFactory.Options();
+        dstOption.inSampleSize = calculateInSampleSize(srcOptions.outWidth, destWidth);
+
+        return BitmapFactory.decodeFile(source.toString(), dstOption);
+    }
 
     private static Bitmap subSampleImage(int reqHeight, Resources res, int sourceImage) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
-        options.inSampleSize = calculateInSampleSize(options, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options.outHeight, reqHeight);
         return BitmapFactory.decodeResource(res, sourceImage, options);
     }
 
@@ -193,18 +203,17 @@ public class MemUtils {
     }
 
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqHeight) {
-        if (reqHeight == 0)
+    public static int calculateInSampleSize(int srcDim, int destDim) {
+        if (destDim == 0)
             return 0;
 
-        final int height = options.outHeight;
         int inSampleSize = 1;
 
-        if (height > reqHeight) {
+        if (srcDim > destDim) {
 
-            final int halfHeight = height / 2;
+            final int halfDim = srcDim / 2;
 
-            while ((halfHeight / inSampleSize) > reqHeight) {
+            while ((halfDim / inSampleSize) > destDim) {
                 inSampleSize *= 2;
             }
         }

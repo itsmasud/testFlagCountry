@@ -1,12 +1,9 @@
 package com.fieldnation.ui.dialog;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
 import android.text.Editable;
@@ -20,7 +17,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,15 +26,9 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.ImageUtils;
 import com.fieldnation.utils.misc;
 
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 
 /**
@@ -47,37 +38,29 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private static final String TAG = "PhotoUploadDialog";
 
     // State
-    private static final String STATE_TASKID = "STATE_TASKID";
-    private static final String STATE_FILE_PATH = "STATE_FILE_PATH";
     private static final String STATE_ORIGINAL_FILE_NAME = "STATE_ORIGINAL_FILE_NAME";
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
     private static final String STATE_PHOTO_DESCRIPTION = "STATE_PHOTO_DESCRIPTION";
-    private static final String STATE_INTENT = "STATE_INTENT";
-
 
     // UI
-    private RelativeLayout _parentLayout;
     private TextView _titleTextView;
     private ImageView _photoImageView;
     private EditText _fileNameEditText;
     private EditText _photoDescriptionEditText;
     private Button _okButton;
     private Button _cancelButton;
-    private RelativeLayout _loadingLayout;
+    private ProgressBar _progressBar;
 
 
-    // Data
+    // Data user entered
+    private String _newFileName;
+    private String _photoDescription;
+
+    // Supplied
     private Listener _listener;
     private String _title;
-    private long _taskId = 0;
-    private boolean _clear = false;
     private String _originalFileName;
-    private File _file;
-    private String _filePath;
-    private Intent _data;
-    private String _newFileName;
     private Bitmap _bitmap;
-    private String _photoDescription;
     private boolean isDeliverableAnImage = false;
 
 
@@ -92,12 +75,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     public void onCreate(Bundle savedInstanceState) {
 //        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TASKID))
-                _taskId = savedInstanceState.getLong(STATE_TASKID);
-
-            if (savedInstanceState.containsKey(STATE_FILE_PATH))
-                _filePath = savedInstanceState.getString(STATE_FILE_PATH);
-
             if (savedInstanceState.containsKey(STATE_ORIGINAL_FILE_NAME))
                 _originalFileName = savedInstanceState.getString(STATE_ORIGINAL_FILE_NAME);
 
@@ -106,10 +83,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_PHOTO_DESCRIPTION))
                 _photoDescription = savedInstanceState.getString(STATE_PHOTO_DESCRIPTION);
-
-            if (savedInstanceState.containsKey(STATE_INTENT))
-                _data = savedInstanceState.getParcelable(STATE_INTENT);
-
         }
         super.onCreate(savedInstanceState);
 
@@ -119,9 +92,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     @Override
     public void onSaveInstanceState(Bundle outState) {
 //        Log.v(TAG, "onSaveInstanceState");
-        if (_taskId != 0)
-            outState.putLong(STATE_TASKID, _taskId);
-
         if (!misc.isEmptyOrNull(_originalFileName))
             outState.putString(STATE_ORIGINAL_FILE_NAME, _originalFileName);
 
@@ -130,12 +100,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         if (!misc.isEmptyOrNull(_photoDescription))
             outState.putString(STATE_PHOTO_DESCRIPTION, _photoDescription);
-
-        if (_data != null)
-            outState.putParcelable(STATE_INTENT, _data);
-
-        if (_filePath != null)
-            outState.putString(STATE_FILE_PATH, _filePath);
 
         super.onSaveInstanceState(outState);
     }
@@ -146,8 +110,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         View v = inflater.inflate(R.layout.dialog_photo_upload, container, false);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        _parentLayout = (RelativeLayout) v.findViewById(R.id.parentLayout);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
@@ -168,196 +130,53 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
 
-        _loadingLayout = (RelativeLayout) v.findViewById(R.id.loading_layout);
+        _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
         return v;
     }
-
 
     @Override
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
 
-        if (_clear) {
-            _clear = false;
-            _photoImageView.setVisibility(View.GONE);
-            _photoImageView.setImageDrawable(null);
-            _fileNameEditText.setText("");
-            _photoDescriptionEditText.setText("");
-        } else {
-            if (_data != null) {
-                setData(_data);
-                return;
-            } else if (!misc.isEmptyOrNull(_filePath)) {
-                _file = new File(_filePath);
-                setData(_file);
-                return;
-            }
-        }
-
-        populateFileInfo(_data.getData());
         populateUi();
     }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-//        Log.v(TAG, "onDestroy");
-        _clear = true;
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-        super.onDismiss(dialog);
-//        Log.v(TAG, "onDismiss");
-        _clear = true;
-    }
-
-    @Override
-    public void dismiss() {
-//        Log.v(TAG, "dismiss");
-        _clear = true;
-        super.dismiss();
-    }
-
 
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void setData(Intent data) {
-//        Log.v(TAG, "from intent");
-
-        _file = null;
-        _data = data;
-
-        final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
-
-        if (mimeType.contains("image")) {
-            isDeliverableAnImage = true;
-        } else {
-            isDeliverableAnImage = false;
-        }
-
-//        populateFileInfo(data.getData());
-//        populateUi();
-    }
-
-    public void setData(File file) {
-//        Log.e(TAG, "setData");
-        _data = null;
-        isDeliverableAnImage = true;
-        _file = file;
-        _filePath = file.getAbsolutePath();
-        _originalFileName = file.getName();
-
-        final String mimeType = FileUtils.getMimeTypeFromFile(file);
-
-        if (!misc.isEmptyOrNull(mimeType) && mimeType.contains("image")) {
-            isDeliverableAnImage = true;
-        } else {
-            isDeliverableAnImage = false;
-        }
-        populateUi();
-    }
-
-    public void show(CharSequence title, long taskId) {
-//        Log.v(TAG, "show");
+    public void show(CharSequence title, String filename) {
         _title = (String) title;
-        _taskId = taskId;
-        _clear = true;
         show();
     }
 
-
-    public void showProgressBar() {
-        _parentLayout.setBackgroundColor(getResources().getColor(R.color.fn_black_25));
-        _loadingLayout.setVisibility(View.VISIBLE);
-        _titleTextView.setVisibility(View.GONE);
-        _photoImageView.setVisibility(View.GONE);
-        _fileNameEditText.setVisibility(View.GONE);
-        _photoDescriptionEditText.setVisibility(View.GONE);
-    }
-
-    public void hideProgressBar() {
-        _parentLayout.setBackgroundColor(0);
-        _loadingLayout.setVisibility(View.GONE);
-        _titleTextView.setVisibility(View.VISIBLE);
-        _photoImageView.setVisibility(View.VISIBLE);
-        _fileNameEditText.setVisibility(View.VISIBLE);
-        _photoDescriptionEditText.setVisibility(View.VISIBLE);
+    public void setPhoto(Bitmap bitmap) {
+        Log.v(TAG, "setPhoto");
+        _bitmap = bitmap;
+        populateUi();
     }
 
     private void populateUi() {
-        if (_taskId == 0)
+        if (getActivity() == null)
             return;
 
         if (_photoImageView == null)
             return;
 
-        if (isDeliverableAnImage)
+        if (_bitmap != null) {
+            _progressBar.setVisibility(View.GONE);
             _photoImageView.setVisibility(View.VISIBLE);
-
-        if (_file != null) {
-            _photoImageView.setImageBitmap(BitmapFactory.decodeFile(_file.getAbsolutePath()));
-        } else if (_data != null && _data.getData().getAuthority() != null) {
-            _photoImageView.setImageBitmap(_bitmap);
+            _photoImageView.setImageDrawable(new BitmapDrawable(getActivity().getResources(), _bitmap));
+        } else {
+//            _progressBar.setVisibility(View.VISIBLE);
+//            _photoImageView.setVisibility(View.INVISIBLE);
         }
 
         _photoDescriptionEditText.setText(misc.isEmptyOrNull(_photoDescription) ? "" : _photoDescription);
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
     }
-
-    private void populateFileInfo(Uri uri) {
-
-        _originalFileName = FileUtils.getFileNameFromUri(App.get(), uri);
-
-        _filePath = FileUtils.getFilePathFromUri(App.get(), uri);
-
-        if (isDeliverableAnImage && misc.isEmptyOrNull(_filePath)) {
-            InputStream is = null;
-            try {
-                is = App.get().getContentResolver().openInputStream(uri);
-                final int requestedHeight = _photoImageView.getLayoutParams().height;
-
-                _bitmap = BitmapFactory.decodeStream(is);
-                createBitmapInTemp(_bitmap);
-                _bitmap = ImageUtils.scaleDownBitmapBasedOnRequestedHeight(_bitmap, requestedHeight);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        } else {
-            _file = new File(_filePath);
-        }
-    }
-
-    private void createBitmapInTemp(final Bitmap bitmap) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-//                Log.v(TAG, "inside handler");
-
-                _file = new File(App.get().getTempFolder() + File.separator + _originalFileName);
-                OutputStream outputStream = null;
-                try {
-                    outputStream = new BufferedOutputStream(new FileOutputStream(_file));
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 80, outputStream);
-                    outputStream.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }, 100);
-    }
-
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -381,22 +200,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             return handled;
         }
     };
-
-    private File renameFileAndSaveToTempFolder(String newFileName) {
-        File newFile = new File(FileUtils.getFileAbsolutePathWithOriginalExtension(App.get().getTempFolder(), newFileName, _originalFileName));
-
-        if (newFile.exists())
-            return newFile;
-
-        try {
-            FileUtils.copyFile(_file, newFile);
-            return newFile;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
-
-    }
 
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
@@ -425,16 +228,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (_file != null) {
-                File newFileName = renameFileAndSaveToTempFolder(_fileNameEditText.getText().toString().trim());
-                _listener.onOk(_taskId, newFileName, _photoDescription);
-            }
-
-            if (_data == null) {
-                File newFileName = renameFileAndSaveToTempFolder(_fileNameEditText.getText().toString().trim());
-                _listener.onOk(_taskId, newFileName, _photoDescription);
-            }
-
             PhotoUploadDialog.this.dismiss();
         }
     };
@@ -449,23 +242,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent;
-            if (_data == null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(_file), "image/*");
-
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _data.getData());
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            try {
-                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
         }
     };
 
@@ -506,11 +282,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        void onOk(long taskId, File file, String photoDescription);
-
-        void onOk(long taskId, Intent data, String photoDescription);
+        void onOk(Uri uri, File file, String filename, String photoDescription);
 
         void onCancel();
     }
-
 }

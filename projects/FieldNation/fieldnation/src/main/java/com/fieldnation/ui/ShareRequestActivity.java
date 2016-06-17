@@ -1,13 +1,11 @@
 package com.fieldnation.ui;
 
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.provider.MediaStore;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -405,7 +403,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onDeliveraleCacheEnd() {
+        public void onDeliveraleCacheEnd(Uri uri, File file) {
             _cachedValuesleft--;
 
             if (_cachedValuesleft == 0) {

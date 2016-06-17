@@ -233,15 +233,17 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     }
 
     private void cacheDeliverable(Intent intent) {
-        WorkorderDispatch.cacheDeliverableStart(App.get());
         Uri uri = intent.getParcelableExtra(PARAM_URI);
+        WorkorderDispatch.cacheDeliverableStart(App.get(), uri);
+        StoredObject upFile = null;
         try {
-            StoredObject upFile = StoredObject.put(App.getProfileId(), "CacheFile", uri.toString(),
+            upFile = StoredObject.put(App.getProfileId(), "CacheFile", uri.toString(),
                     this.getContentResolver().openInputStream(uri), "uploadTemp.dat");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         } finally {
-            WorkorderDispatch.cacheDeliverableEnd(App.get());
+            if (upFile != null)
+            WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, upFile.getFile());
         }
     }
 
