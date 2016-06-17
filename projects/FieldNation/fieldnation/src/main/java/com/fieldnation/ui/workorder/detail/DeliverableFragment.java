@@ -7,6 +7,8 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -36,6 +38,7 @@ import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
@@ -50,10 +53,11 @@ import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.security.SecureRandom;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
     private final String TAG = UniqueTag.makeTag("DeliverableFragment");
@@ -74,7 +78,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private LinearLayout _filesLayout;
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
-    private Button _navigateButton;
+    private Button _actionButton;
     private AppPickerDialog _appPickerDialog;
     private UploadSlotDialog _uploadSlotDialog;
 
@@ -90,7 +94,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private int _uploadingSlotId = -1;
     private File _tempFile;
     private DocumentClient _docClient;
-
+    private PhotoClient _photoClient;
+    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private ForLoopRunnable _filesRunnable = null;
+    private ForLoopRunnable _reviewRunnable = null;
 
     // Temporary storage
     private List<Runnable> _untilAdded = new LinkedList<>();
@@ -106,10 +113,8 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE))
                 _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
-                Log.e(TAG, "_tempFile: " + _tempFile.getName());
-            }
 
             if (savedInstanceState.containsKey(STATE_UPLOAD_SLOTID))
                 _uploadingSlotId = savedInstanceState.getInt(STATE_UPLOAD_SLOTID);
@@ -139,11 +144,10 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
 
-        _navigateButton = (Button) view.findViewById(R.id.navigate_button);
-        _navigateButton.setOnClickListener(_navigationButton_onClick);
+        _actionButton = (Button) view.findViewById(R.id.action_button);
+        _actionButton.setOnClickListener(_actionButton_onClick);
 
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-
 
         checkMedia();
 
@@ -163,13 +167,20 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         Log.e(TAG, "onResume");
+        _photoClient = new PhotoClient(_photoClient_listener);
+        _photoClient.connect(App.get());
 
-
-        if (getActivity().getPackageManager().hasSystemFeature(
-                PackageManager.FEATURE_CAMERA)) {
+        if (getActivity().getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
+    }
+
+    @Override
+    public void onPause() {
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
+        super.onPause();
     }
 
     @Override
@@ -245,7 +256,6 @@ public class DeliverableFragment extends WorkorderFragment {
     }
 
     private void populateUi() {
-
         misc.hideKeyboard(getView());
 
         if (_workorder == null)
@@ -258,36 +268,42 @@ public class DeliverableFragment extends WorkorderFragment {
             return;
 
         if (_workorder.canChangeDeliverables()) {
-            _navigateButton.setVisibility(View.VISIBLE);
+            _actionButton.setVisibility(View.VISIBLE);
         } else {
-            _navigateButton.setVisibility(View.GONE);
+            _actionButton.setVisibility(View.GONE);
         }
 
         Stopwatch stopwatch = new Stopwatch(true);
         final Document[] docs = _workorder.getDocuments();
         if (docs != null && docs.length > 0) {
-            if (_reviewList.getChildCount() > docs.length) {
-                _reviewList.removeViews(docs.length - 1, _reviewList.getChildCount() - docs.length);
-            }
+            if (_reviewList.getChildCount() != docs.length) {
+                if (_reviewRunnable != null)
+                    _reviewRunnable.cancel();
 
-            ForLoopRunnable r = new ForLoopRunnable(docs.length, new Handler()) {
-                private final Document[] _docs = docs;
+                _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
+                    private final Document[] _docs = docs;
+                    private List<DocumentView> _views = new LinkedList<>();
 
-                @Override
-                public void next(int i) throws Exception {
-                    DocumentView v = null;
-                    if (i < _reviewList.getChildCount()) {
-                        v = (DocumentView) _reviewList.getChildAt(i);
-                    } else {
-                        v = new DocumentView(getActivity());
-                        _reviewList.addView(v);
+                    @Override
+                    public void next(int i) throws Exception {
+                        DocumentView v = new DocumentView(getActivity());
+                        Document doc = _docs[i];
+                        v.setListener(_document_listener);
+                        v.setData(_workorder, doc);
+                        _views.add(v);
                     }
-                    Document doc = _docs[i];
-                    v.setData(_workorder, doc);
-                }
-            };
-            _reviewList.postDelayed(r, new Random().nextInt(1000));
-            _noDocsTextView.setVisibility(View.GONE);
+
+                    @Override
+                    public void finish(int count) throws Exception {
+                        _reviewList.removeAllViews();
+                        for (DocumentView v : _views) {
+                            _reviewList.addView(v);
+                        }
+                    }
+                };
+                _reviewList.postDelayed(_reviewRunnable, 100);
+                _noDocsTextView.setVisibility(View.GONE);
+            }
         } else {
             _reviewList.removeAllViews();
             _noDocsTextView.setVisibility(View.VISIBLE);
@@ -299,17 +315,18 @@ public class DeliverableFragment extends WorkorderFragment {
         final UploadSlot[] slots = _workorder.getUploadSlots();
         if (slots != null && slots.length > 0) {
             Log.v(TAG, "US count: " + slots.length);
-            if (_filesLayout.getChildCount() > slots.length) {
-                _filesLayout.removeViews(slots.length - 1, _filesLayout.getChildCount() - slots.length);
-            }
 
-            ForLoopRunnable r = new ForLoopRunnable(slots.length, new Handler()) {
+            if (_filesRunnable != null)
+                _filesRunnable.cancel();
+
+            _filesRunnable = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
 
                 @Override
                 public void next(int i) throws Exception {
                     UploadSlotView v = null;
-                    if (i < _filesLayout.getChildCount()) {
+
+                    if (_filesLayout.getChildCount() > i) {
                         v = (UploadSlotView) _filesLayout.getChildAt(i);
                     } else {
                         v = new UploadSlotView(getActivity());
@@ -317,10 +334,9 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                     UploadSlot slot = _slots[i];
                     v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
-                    v.setListener(_uploadSlot_listener);
                 }
             };
-            _filesLayout.postDelayed(r, new Random().nextInt(1000));
+            _filesLayout.postDelayed(_filesRunnable, 100);
         } else {
             _filesLayout.removeAllViews();
         }
@@ -399,7 +415,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final View.OnClickListener _navigationButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _actionButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "slots: " + _workorder.getUploadSlots().length);
@@ -458,8 +474,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
-                                    documentId);
+                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(), documentId);
                             setLoading(true);
                         }
 
@@ -472,27 +487,41 @@ public class DeliverableFragment extends WorkorderFragment {
                         }
                     });
             _yesNoDialog.show();
-
         }
-    };
 
-    // step 1, user taps on the add button
-    private final UploadSlotView.Listener _uploadSlot_listener = new UploadSlotView.Listener() {
         @Override
-        public void onUploadClick(UploadSlotView view, UploadSlot slot) {
-            if (checkMedia()) {
-                // start of the upload process
-                _uploadingSlotId = slot.getSlotId();
-                _appPickerDialog.show();
-            } else if (getActivity() != null) {
-                Toast.makeText(
-                        getActivity(),
-                        getString(R.string.toast_external_storage_needed),
-                        Toast.LENGTH_LONG).show();
+        public Drawable getPhoto(UploadedDocumentView view, String url, boolean circle) {
+            synchronized (_picCache) {
+                String turl = url.substring(0, url.lastIndexOf('?'));
+                if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
+                    return _picCache.get(turl).get();
+                } else {
+                    _photoClient.subGet(url, circle, false);
+                    PhotoClient.get(App.get(), url, circle, false);
+                }
+                return null;
             }
         }
     };
 
+    private final DocumentView.Listener _document_listener = new DocumentView.Listener() {
+        @Override
+        public Drawable getPhoto(DocumentView view, String url, boolean circle) {
+            synchronized (_picCache) {
+                String turl = url.substring(0, url.lastIndexOf('?'));
+                if (_picCache.containsKey(turl) && _picCache.get(turl).get() != null) {
+                    return _picCache.get(turl).get();
+                } else {
+                    _photoClient.subGet(url, circle, false);
+                    PhotoClient.get(App.get(), url, circle, false);
+                }
+                return null;
+            }
+        }
+    };
+
+
+    // step 1, user clicks on a upload - done elseware?
     // step 2, user selects an app to load the file with
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
@@ -577,6 +606,40 @@ public class DeliverableFragment extends WorkorderFragment {
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
+            }
+        }
+    };
+
+    private final PhotoClient.Listener _photoClient_listener = new PhotoClient.Listener() {
+        @Override
+        public void onConnected() {
+        }
+
+        @Override
+        public void onGet(String url, BitmapDrawable drawable, boolean isCircle, boolean failed) {
+            if (drawable == null || url == null || failed)
+                return;
+
+            if (url.contains("?"))
+                url = url.substring(0, url.lastIndexOf('?'));
+
+            synchronized (_picCache) {
+                _picCache.put(url, new WeakReference<>((Drawable) drawable));
+            }
+
+            Log.v(TAG, "PhotoClient.Listener.onGet");
+            for (int i = 0; i < _reviewList.getChildCount(); i++) {
+                View v = _reviewList.getChildAt(i);
+                if (v instanceof PhotoReceiver) {
+                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                }
+            }
+
+            for (int i = 0; i < _filesLayout.getChildCount(); i++) {
+                View v = _filesLayout.getChildAt(i);
+                if (v instanceof PhotoReceiver) {
+                    ((PhotoReceiver) v).setPhoto(url, drawable);
+                }
             }
         }
     };
