@@ -1,7 +1,6 @@
 package com.fieldnation.ui.dialog;
 
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -168,10 +167,10 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         if (_bitmap != null) {
             _progressBar.setVisibility(View.GONE);
             _photoImageView.setVisibility(View.VISIBLE);
-            _photoImageView.setImageDrawable(new BitmapDrawable(getActivity().getResources(), _bitmap));
+            _photoImageView.setImageBitmap(_bitmap);
         } else {
-//            _progressBar.setVisibility(View.VISIBLE);
-//            _photoImageView.setVisibility(View.INVISIBLE);
+            _progressBar.setVisibility(View.VISIBLE);
+            _photoImageView.setVisibility(View.INVISIBLE);
         }
 
         _photoDescriptionEditText.setText(misc.isEmptyOrNull(_photoDescription) ? "" : _photoDescription);
