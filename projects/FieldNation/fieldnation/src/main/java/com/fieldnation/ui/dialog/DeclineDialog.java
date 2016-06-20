@@ -138,6 +138,7 @@ public class DeclineDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
+                    if (_itemSelectedPosition == -1) return;
                     _listener.onOk(true, _reasonIds[_itemSelectedPosition], _blockEditText.getText().toString());
                 } else {
                     _listener.onOk(false, 0, null);
