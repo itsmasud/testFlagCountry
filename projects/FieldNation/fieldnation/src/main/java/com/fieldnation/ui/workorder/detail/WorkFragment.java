@@ -2,7 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
 import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
@@ -31,6 +30,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
@@ -92,6 +92,7 @@ import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -626,17 +627,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_DETAILS);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-                _workorder.getWorkorderId());
-
-        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
-    }
-
     private void showClosingNotesDialog() {
         if (_workorder.canChangeClosingNotes())
             _closingDialog.show(_workorder.getClosingNotes());
@@ -816,11 +806,9 @@ public class WorkFragment extends WorkorderFragment {
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
-                    _photoUploadDialog.show("Photo Upload", _tempFile.getName());
-                    // todo spin up thumbnail generation
+                    _photoUploadDialog.show(_tempFile.getName());
+                    _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
-                    Log.e(TAG, "uploading an file");
-
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();
 
@@ -831,16 +819,7 @@ public class WorkFragment extends WorkorderFragment {
                             Uri uri = null;
 
                             if (count == 1) {
-//                                final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
-//                                if (_currentTask != null && !misc.isEmptyOrNull(mimeType)
-//                                        && _currentTask.getTaskType().equals(TaskType.UPLOAD_PICTURE)) {
-//                                    if (!mimeType.contains("image")) {
-//                                        // TODO toast is not shown, need to fix it
-//                                        ToastClient.toast(App.get(), getString(R.string.toast_not_an_image), Toast.LENGTH_LONG);
-//                                        return;
-//                                    }
-//                                }
-                                _photoUploadDialog.show("Photo Upload", FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
@@ -853,35 +832,14 @@ public class WorkFragment extends WorkorderFragment {
                             }
                         } else {
                             Log.v(TAG, "Single local/ non-local file upload");
-//                            final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
-//                            if (_currentTask != null && !misc.isEmptyOrNull(mimeType)
-//                                    && _currentTask.getTaskType().equals(TaskType.UPLOAD_PICTURE)) {
-//                                if (!mimeType.contains("image")) {
-//                                    // TODO toast is not shown, need to fix it
-//                                    ToastClient.toast(App.get(), getString(R.string.toast_not_an_image), Toast.LENGTH_LONG);
-//                                    return;
-//                                }
-//                            }
                             _cachedValuesleft = 1;
-                            _photoUploadDialog.show("Photo Upload", FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                            _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                             WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
-/*
-                        final String mimeType = FileUtils.getMimeTypeFromIntent(App.get(), data);
-                        if (_currentTask != null && !misc.isEmptyOrNull(mimeType)
-                                && _currentTask.getTaskType().equals(TaskType.UPLOAD_PICTURE)) {
-                            if (!mimeType.contains("image")) {
-                                // TODO toast is not shown, need to fix it
-                                ToastClient.toast(App.get(), getString(R.string.toast_not_an_image), Toast.LENGTH_LONG);
-                                return;
-                            }
-                        }
-*/
-
                         _cachedValuesleft = 1;
-                        _photoUploadDialog.show("Photo Upload", FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                        _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                         WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
@@ -900,9 +858,7 @@ public class WorkFragment extends WorkorderFragment {
                 startCheckOut();
             }
         } catch (Exception ex) {
-            //Debug.logException(ex);
-            Log.v(TAG, ex);
-            // Todo this could cause an infinite loop, revisit later
+            Debug.logException(ex);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1884,6 +1840,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onDeliveraleCacheEnd(Uri uri, String filename) {
             _cachedValuesleft--;
+            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
         }
     };
 
@@ -1903,18 +1860,11 @@ public class WorkFragment extends WorkorderFragment {
 
     private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
-        public void onOk(Uri uri, File file, String filename, String photoDescription) {
+        public void onOk(String filename, String photoDescription) {
             Log.e(TAG, "uploading an image using camera");
-            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                    _currentTask.getSlotId(), file.getName(), file.getAbsolutePath(), photoDescription);
-        }
-
-//        @Override
-//        public void onOk(long taskId, Intent data, String photoDescription) {
-//            Log.e(TAG, "uploading an file");
 //            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-//                    _currentTask.getSlotId(), data, photoDescription);
-//        }
+//                    _currentTask.getSlotId(), file.getName(), file.getAbsolutePath(), photoDescription);
+        }
 
         @Override
         public void onCancel() {

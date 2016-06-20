@@ -1,7 +1,6 @@
 package com.fieldnation.ui.dialog;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -28,9 +27,6 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.misc;
 
-import java.io.File;
-
-
 /**
  * @author shoaib.ahmed
  */
@@ -40,6 +36,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     // State
     private static final String STATE_ORIGINAL_FILE_NAME = "STATE_ORIGINAL_FILE_NAME";
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
+    private static final String STATE_FILE_EXTENSION = "STATE_FILE_EXTENSION";
     private static final String STATE_PHOTO_DESCRIPTION = "STATE_PHOTO_DESCRIPTION";
     private static final String STATE_PHOTO = "STATE_PHOTO";
 
@@ -52,18 +49,16 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private Button _cancelButton;
     private ProgressBar _progressBar;
 
-
     // Data user entered
     private String _newFileName;
     private String _photoDescription;
+    private String _extension;
 
     // Supplied
     private Listener _listener;
-    private String _title;
     private String _originalFileName;
     private Bitmap _bitmap;
-    private boolean isDeliverableAnImage = false;
-
+    private boolean _hideImageView = false;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -87,6 +82,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_PHOTO))
                 _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
+
+            if (savedInstanceState.containsKey(STATE_FILE_EXTENSION))
+                _extension = savedInstanceState.getString(STATE_FILE_EXTENSION);
         }
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_TITLE, 0);
@@ -106,6 +104,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         if (_bitmap != null)
             outState.putParcelable(STATE_PHOTO, _bitmap);
+
+        if (!misc.isEmptyOrNull(_extension))
+            outState.putString(STATE_FILE_EXTENSION, _extension);
 
         super.onSaveInstanceState(outState);
     }
@@ -157,6 +158,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_PHOTO))
                 _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
+
+            if (savedInstanceState.containsKey(STATE_FILE_EXTENSION))
+                _extension = savedInstanceState.getString(STATE_FILE_EXTENSION);
         }
         populateUi();
     }
@@ -173,8 +177,13 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(CharSequence title, String filename) {
-        _title = (String) title;
+    public void show(String filename) {
+        _originalFileName = filename;
+
+        if (filename.contains(".")) {
+            _extension = filename.substring(filename.lastIndexOf("."));
+        }
+
         super.show();
         populateUi();
     }
@@ -182,6 +191,11 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     public void setPhoto(Bitmap bitmap) {
         Log.v(TAG, "setPhoto");
         _bitmap = bitmap;
+        if (_bitmap == null) {
+            _hideImageView = true;
+        } else {
+            _hideImageView = false;
+        }
         populateUi();
     }
 
@@ -197,8 +211,11 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             _progressBar.setVisibility(View.GONE);
             _photoImageView.setVisibility(View.VISIBLE);
             _photoImageView.setImageBitmap(_bitmap);
-        } else {
+        } else if (_hideImageView) {
             Log.v(TAG, "I no has bitmap");
+            _progressBar.setVisibility(View.GONE);
+            _photoImageView.setVisibility(View.GONE);
+        } else {
             _progressBar.setVisibility(View.VISIBLE);
             _photoImageView.setVisibility(View.INVISIBLE);
         }
@@ -241,11 +258,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (misc.isEmptyOrNull(_newFileName.substring(0, _newFileName.lastIndexOf('.')))) {
-                ToastClient.toast(App.get(), getString(R.string.dialog_insert_filename_before_extension), Toast.LENGTH_LONG);
-                return;
-            }
-
             if (!FileUtils.isValidFileName(_newFileName)) {
                 ToastClient.toast(App.get(), getString(R.string.dialog_invalid_file_name), Toast.LENGTH_LONG);
                 return;
@@ -257,7 +269,15 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                 return;
             }
 
+            if (!_newFileName.endsWith(_extension)) {
+                _newFileName += _extension;
+            }
+
             PhotoUploadDialog.this.dismiss();
+
+            if (_listener != null) {
+                _listener.onOk(_newFileName, _photoDescription);
+            }
         }
     };
 
@@ -311,7 +331,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        void onOk(Uri uri, File file, String filename, String photoDescription);
+        void onOk(String filename, String photoDescription);
 
         void onCancel();
     }

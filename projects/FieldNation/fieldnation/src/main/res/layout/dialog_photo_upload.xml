@@ -13,7 +13,7 @@
             android:id="@+id/title_textview"
             style="?attr/dialogTitleStyle"
             android:layout_centerHorizontal="true"
-            android:text="@string/dialog_photo_upload_title" />
+            android:text="@string/dialog_file_upload_title" />
 
         <ProgressBar
             android:id="@+id/progressBar"
