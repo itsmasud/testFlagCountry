@@ -349,6 +349,10 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
+    private void _photoUploadDialog_setPhoto(Bitmap bitmap) {
+        _photoUploadDialog.setPhoto(bitmap);
+    }
+
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         if (!isAdded()) {
@@ -374,23 +378,22 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 if (data == null) {
                     Log.v(TAG, "Image uploading taken by camera");
-                    _photoUploadDialog.show("Photo Upload", _tempFile.getName());
+
                     // todo spin up thumbnail generation
                     new AsyncTaskEx<File, Object, Bitmap>() {
                         @Override
                         protected Bitmap doInBackground(File... params) {
-                            try {
-                                Thread.sleep(5000);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            File file = params[0];
-                            return MemUtils.getMemoryEfficientBitmap(file, 200);
+                            return MemUtils.getMemoryEfficientBitmap(params[0], 400);
                         }
 
                         @Override
                         protected void onPostExecute(Bitmap bitmap) {
-                            _photoUploadDialog.setPhoto(bitmap);
+                            try {
+                                _photoUploadDialog_setPhoto(bitmap);
+                                _photoUploadDialog.show("Photo Upload", _tempFile.getName());
+                            } catch (Exception ex) {
+                                ex.printStackTrace();
+                            }
                         }
                     }.executeEx(_tempFile);
 
@@ -668,12 +671,17 @@ public class DeliverableFragment extends WorkorderFragment {
             new AsyncTaskEx<File, Object, Bitmap>() {
                 @Override
                 protected Bitmap doInBackground(File... params) {
-                    return MemUtils.getMemoryEfficientBitmap(params[0], 200);
+                    return MemUtils.getMemoryEfficientBitmap(params[0], 400);
                 }
 
                 @Override
                 protected void onPostExecute(Bitmap bitmap) {
-                    _photoUploadDialog.setPhoto(bitmap);
+                    try {
+                        _photoUploadDialog_setPhoto(bitmap);
+                        _photoUploadDialog.show("Photo upload", null);
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                    }
                 }
             }.executeEx(file);
         }

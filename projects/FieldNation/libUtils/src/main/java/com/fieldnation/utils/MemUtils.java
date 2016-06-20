@@ -35,8 +35,10 @@ public class MemUtils {
         BitmapFactory.decodeFile(source.toString(), srcOptions);
 
         BitmapFactory.Options dstOption = new BitmapFactory.Options();
+        dstOption.inJustDecodeBounds = false;
         dstOption.inSampleSize = calculateInSampleSize(srcOptions.outWidth, destWidth);
-        srcOptions.inJustDecodeBounds = false;
+
+        Log.v("MemUtils", "inSampleSize: " + dstOption.inSampleSize);
 
         return BitmapFactory.decodeFile(source.toString(), dstOption);
     }

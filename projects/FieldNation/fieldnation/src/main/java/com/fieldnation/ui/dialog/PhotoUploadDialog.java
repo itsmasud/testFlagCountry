@@ -23,6 +23,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.misc;
@@ -34,12 +35,13 @@ import java.io.File;
  * @author shoaib.ahmed
  */
 public class PhotoUploadDialog extends DialogFragmentBase {
-    private static final String TAG = "PhotoUploadDialog";
+    private static final String TAG = UniqueTag.makeTag("PhotoUploadDialog");
 
     // State
     private static final String STATE_ORIGINAL_FILE_NAME = "STATE_ORIGINAL_FILE_NAME";
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
     private static final String STATE_PHOTO_DESCRIPTION = "STATE_PHOTO_DESCRIPTION";
+    private static final String STATE_PHOTO = "STATE_PHOTO";
 
     // UI
     private TextView _titleTextView;
@@ -72,7 +74,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-//        Log.v(TAG, "onCreate");
+        Log.v(TAG, "onCreate");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_ORIGINAL_FILE_NAME))
                 _originalFileName = savedInstanceState.getString(STATE_ORIGINAL_FILE_NAME);
@@ -82,15 +84,17 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_PHOTO_DESCRIPTION))
                 _photoDescription = savedInstanceState.getString(STATE_PHOTO_DESCRIPTION);
+
+            if (savedInstanceState.containsKey(STATE_PHOTO))
+                _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
         }
         super.onCreate(savedInstanceState);
-
         setStyle(STYLE_NO_TITLE, 0);
     }
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-//        Log.v(TAG, "onSaveInstanceState");
+        Log.v(TAG, "onSaveInstanceState");
         if (!misc.isEmptyOrNull(_originalFileName))
             outState.putString(STATE_ORIGINAL_FILE_NAME, _originalFileName);
 
@@ -100,6 +104,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         if (!misc.isEmptyOrNull(_photoDescription))
             outState.putString(STATE_PHOTO_DESCRIPTION, _photoDescription);
 
+        if (_bitmap != null)
+            outState.putParcelable(STATE_PHOTO, _bitmap);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -107,8 +114,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
         View v = inflater.inflate(R.layout.dialog_photo_upload, container, false);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
 
@@ -131,7 +136,29 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
 
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+
         return v;
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onViewStateRestored");
+        super.onViewStateRestored(savedInstanceState);
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_ORIGINAL_FILE_NAME))
+                _originalFileName = savedInstanceState.getString(STATE_ORIGINAL_FILE_NAME);
+
+            if (savedInstanceState.containsKey(STATE_NEW_FILE_NAME))
+                _newFileName = savedInstanceState.getString(STATE_NEW_FILE_NAME);
+
+            if (savedInstanceState.containsKey(STATE_PHOTO_DESCRIPTION))
+                _photoDescription = savedInstanceState.getString(STATE_PHOTO_DESCRIPTION);
+
+            if (savedInstanceState.containsKey(STATE_PHOTO))
+                _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
+        }
+        populateUi();
     }
 
     @Override
@@ -148,7 +175,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
     public void show(CharSequence title, String filename) {
         _title = (String) title;
-        show();
+        super.show();
+        populateUi();
     }
 
     public void setPhoto(Bitmap bitmap) {
@@ -158,17 +186,19 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     }
 
     private void populateUi() {
-        if (getActivity() == null)
-            return;
-
+        Log.v(TAG, "I populating");
         if (_photoImageView == null)
             return;
 
+        Log.v(TAG, "I has UI");
+
         if (_bitmap != null) {
+            Log.v(TAG, "I has bitmap");
             _progressBar.setVisibility(View.GONE);
             _photoImageView.setVisibility(View.VISIBLE);
             _photoImageView.setImageBitmap(_bitmap);
         } else {
+            Log.v(TAG, "I no has bitmap");
             _progressBar.setVisibility(View.VISIBLE);
             _photoImageView.setVisibility(View.INVISIBLE);
         }

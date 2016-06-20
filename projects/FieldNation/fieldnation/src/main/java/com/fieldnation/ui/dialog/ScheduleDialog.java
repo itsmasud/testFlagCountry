@@ -134,7 +134,6 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_END)) {
                 _stateRangeEndDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_END);
             }
-
         }
     }
 
