@@ -14,9 +14,12 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 
@@ -138,7 +141,10 @@ public class DeclineDialog extends DialogFragmentBase {
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    if (_itemSelectedPosition == -1) return;
+                    if (_itemSelectedPosition == -1) {
+                        ToastClient.toast(App.get(), "Please select a block reason.", Toast.LENGTH_SHORT);
+                        return;
+                    }
                     _listener.onOk(true, _reasonIds[_itemSelectedPosition], _blockEditText.getText().toString());
                 } else {
                     _listener.onOk(false, 0, null);
