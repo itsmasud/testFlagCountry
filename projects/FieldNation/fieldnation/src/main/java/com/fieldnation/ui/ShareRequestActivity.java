@@ -34,7 +34,6 @@ import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.FileUtils;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -403,7 +402,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, File file) {
+        public void onDeliveraleCacheEnd(Uri uri, String filename) {
             _cachedValuesleft--;
 
             if (_cachedValuesleft == 0) {

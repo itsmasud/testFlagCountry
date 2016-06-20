@@ -243,7 +243,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
             Log.v(TAG, ex);
         } finally {
             if (upFile != null)
-            WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, upFile.getFile());
+                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, upFile.getFile().toString());
+            else
+                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, null);
         }
     }
 

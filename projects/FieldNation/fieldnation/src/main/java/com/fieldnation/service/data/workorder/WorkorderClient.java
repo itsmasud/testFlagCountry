@@ -728,16 +728,20 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
                 onDeliveraleCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
-                onDeliveraleCacheEnd(
-                        (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
-                        new File(((Bundle) payload).getString(PARAM_FILE)));
+                try {
+                    onDeliveraleCacheEnd(
+                            (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
+                            ((Bundle) payload).getString(PARAM_FILE));
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                }
             }
         }
 
         public void onDeliveraleCacheStart(Uri uri) {
         }
 
-        public void onDeliveraleCacheEnd(Uri uri, File file) {
+        public void onDeliveraleCacheEnd(Uri uri, String filename) {
         }
 
         private void preUploadDeliverable(Bundle payload) {

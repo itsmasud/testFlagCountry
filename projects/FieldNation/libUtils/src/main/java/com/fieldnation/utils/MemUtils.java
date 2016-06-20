@@ -9,8 +9,6 @@ import android.graphics.BitmapFactory;
 import android.os.Debug;
 import android.util.Log;
 
-import java.io.File;
-
 public class MemUtils {
     private static final String TAG = "MemUtils";
 
@@ -29,10 +27,10 @@ public class MemUtils {
         return subSampleImage(0, res, sourceImage);
     }
 
-    public static Bitmap getMemoryEfficientBitmap(File source, int destWidth) {
+    public static Bitmap getMemoryEfficientBitmap(String filename, int destWidth) {
         BitmapFactory.Options srcOptions = new BitmapFactory.Options();
         srcOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(source.toString(), srcOptions);
+        BitmapFactory.decodeFile(filename, srcOptions);
 
         BitmapFactory.Options dstOption = new BitmapFactory.Options();
         dstOption.inJustDecodeBounds = false;
@@ -40,7 +38,7 @@ public class MemUtils {
 
         Log.v("MemUtils", "inSampleSize: " + dstOption.inSampleSize);
 
-        return BitmapFactory.decodeFile(source.toString(), dstOption);
+        return BitmapFactory.decodeFile(filename, dstOption);
     }
 
     private static Bitmap subSampleImage(int reqHeight, Resources res, int sourceImage) {

@@ -258,10 +258,6 @@ public class WorkFragment extends WorkorderFragment {
         _signatureView = (SignatureListView) view.findViewById(R.id.signature_view);
         _signatureView.setListener(_signaturelist_listener);
 
-        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-        _payDialog.setListener(_payDialog_listener);
-
-
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER)) {
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -384,6 +380,7 @@ public class WorkFragment extends WorkorderFragment {
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
+        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -409,6 +406,7 @@ public class WorkFragment extends WorkorderFragment {
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _reportProblemDialog.setListener(_reportProblem_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
+        _payDialog.setListener(_payDialog_listener);
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -1884,7 +1882,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, File file) {
+        public void onDeliveraleCacheEnd(Uri uri, String filename) {
             _cachedValuesleft--;
         }
     };

@@ -10,8 +10,6 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
-import java.io.File;
-
 /**
  * Created by Michael Carver on 4/20/2015.
  */
@@ -242,15 +240,15 @@ public class WorkorderDispatch implements WorkorderConstants {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_START, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_START, bundle, Sticky.TEMP);
     }
 
-    public static void cacheDeliverableEnd(Context context, Uri uri, File file) {
+    public static void cacheDeliverableEnd(Context context, Uri uri, String file) {
         Bundle bundle = new Bundle();
         bundle.putParcelable(PARAM_URI, uri);
-        bundle.putString(PARAM_FILE, file.toString());
+        bundle.putString(PARAM_FILE, file);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_END, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_END, bundle, Sticky.TEMP);
     }
 
     public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean failed, boolean isSync) {
