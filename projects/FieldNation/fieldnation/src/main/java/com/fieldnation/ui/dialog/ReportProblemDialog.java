@@ -62,6 +62,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private int _primaryPosition = -1;
     private int _secondaryPosition = -1;
     private ReportProblemType _selectedProblem = null;
+    private boolean _clear = false;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -206,16 +207,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
-        _primaryPosition = -1;
-        _secondaryPosition = -1;
-        _selectedProblem = null;
-        _explanationEditText.setText(null);
-        _secondaryList = null;
-        _primaryList = null;
-        getPrimarySpinner().setHint(R.string.dialog_report_problem_spinner_1);
-        getPrimarySpinner().clearSelection();
-        getSecondarySpinner().setHint(R.string.dialog_report_problem_spinner_1);
-        getSecondarySpinner().clearSelection();
+        _clear = true;
         super.onDismiss(dialog);
     }
 
@@ -223,6 +215,21 @@ public class ReportProblemDialog extends DialogFragmentBase {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
+
+        if (_clear) {
+            _clear = false;
+            _primaryPosition = -1;
+            _secondaryPosition = -1;
+            _selectedProblem = null;
+            _explanationEditText.setText(null);
+            _secondaryList = null;
+            _primaryList = null;
+            getPrimarySpinner().setHint(R.string.dialog_report_problem_spinner_1);
+            getPrimarySpinner().clearSelection();
+            getSecondarySpinner().setHint(R.string.dialog_report_problem_spinner_1);
+            getSecondarySpinner().clearSelection();
+        }
+
         populateUi();
         _textEditText_watcherListener.onTextChanged(
                 _explanationEditText.getText().toString(),
