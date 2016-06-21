@@ -12,20 +12,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.ui.FnSpinner;
+import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.misc;
-import com.fourmob.datetimepicker.date.DatePickerDialog;
-import com.sleepbot.datetimepicker.time.TimePickerDialog;
 
 import java.util.Calendar;
 
@@ -49,7 +49,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     private EditText _textEditText;
     private Button _dateTimeButton;
     private LinearLayout _spinnerLayout;
-    private FnSpinner _spinner;
+    private HintSpinner _spinner;
     private TextView _tipTextView;
     private Button _okButton;
     private Button _cancelButton;
@@ -231,13 +231,14 @@ public class CustomFieldDialog extends DialogFragmentBase {
         _dateTimeButton.setOnClickListener(_dateTime_onClick);
 
         _spinnerLayout = (LinearLayout) v.findViewById(R.id.spinner_layout);
-        _spinner = (FnSpinner) v.findViewById(R.id.spinner);
-        _spinner.setOnItemClickListener(_spinner_selected);
+        _spinner = (HintSpinner) v.findViewById(R.id.spinner);
+        _spinner.setOnItemSelectedListener(_spinner_selected);
 
         _tipTextView = (TextView) v.findViewById(R.id.tip_textview);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
+        _okButton.setEnabled(false);
 
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
@@ -259,7 +260,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
         super.onResume();
 
         if (_clear) {
-            _spinner.setText(getString(R.string.spinner_custom_field_default));
+            _spinner.clearSelection();
         }
 
         populateUi();
@@ -396,11 +397,14 @@ public class CustomFieldDialog extends DialogFragmentBase {
                             _customField.getPredefinedValues()[i] = "";
                     }
 
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),
-                            R.layout.view_spinner_item,
-                            _customField.getPredefinedValues());
+                    HintArrayAdapter adapter = HintArrayAdapter.createFromArray(
+                            getActivity(),
+                            _customField.getPredefinedValues(),
+                            R.layout.view_spinner_item);
 
-                    adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+                    adapter.setDropDownViewResource(
+                            android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
                     _spinner.setAdapter(adapter);
                     if (!misc.isEmptyOrNull(_customField.getValue())) {
                         String val = _customField.getValue();
@@ -408,7 +412,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
                         for (int i = 0; i < values.length; i++) {
                             if (val.equals(values[i])) {
-                                _spinner.setSelectedItem(i);
+                                _spinner.setSelection(i);
                                 _itemSelectedPosition = i;
                                 break;
                             }
@@ -420,32 +424,31 @@ public class CustomFieldDialog extends DialogFragmentBase {
 
         _pickerCal = Calendar.getInstance();
         final Calendar c = Calendar.getInstance();
-        _datePicker = DatePickerDialog.newInstance(_date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _datePicker.setCloseOnSingleTapDay(true);
-        _timePicker = TimePickerDialog.newInstance(_time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false, false);
+        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        _timePicker = new TimePickerDialog(getActivity(), _time_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
     }
 
 
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
-        public void onDateSet(DatePickerDialog datePickerDialog, int year, int month, int day) {
-            _pickerCal.set(year, month, day);
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _pickerCal.set(year, monthOfYear, dayOfMonth);
             _expirationDate = (Calendar) _pickerCal.clone();
             switch (_customField.getFieldType()) {
                 case DATE:
                     _textEditText.setText(DateUtils.formatDateForCF(_expirationDate));
                     break;
                 case DATETIME:
-                    _timePicker.show(_fm, datePickerDialog.getTag());
+                    _timePicker.setTag(_datePicker.getTag());
+                    _timePicker.show();
                     break;
             }
         }
     };
 
     private final TimePickerDialog.OnTimeSetListener _time_onSet = new TimePickerDialog.OnTimeSetListener() {
-
         @Override
-        public void onTimeSet(TimePickerDialog view, int hourOfDay, int minute) {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
@@ -467,14 +470,13 @@ public class CustomFieldDialog extends DialogFragmentBase {
         public void onClick(View v) {
             switch (_customField.getFieldType()) {
                 case DATETIME:
-                    _datePicker.show(_fm, TAG);
+                    _datePicker.show();
                     break;
                 case DATE:
-                    _datePicker.setCloseOnSingleTapDay(false);
-                    _datePicker.show(_fm, TAG);
+                    _datePicker.show();
                     break;
                 case TIME:
-                    _timePicker.show(_fm, TAG);
+                    _timePicker.show();
                     break;
             }
         }
@@ -517,10 +519,20 @@ public class CustomFieldDialog extends DialogFragmentBase {
         }
     };
 
-    private final AdapterView.OnItemClickListener _spinner_selected = new AdapterView.OnItemClickListener() {
+    private final AdapterView.OnItemSelectedListener _spinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
+            Log.v(TAG, "onItemSelected");
+            if (_okButton != null)
+                _okButton.setEnabled(true);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+            Log.v(TAG, "onNothingSelected");
+            if (_okButton != null)
+                _okButton.setEnabled(false);
         }
     };
 

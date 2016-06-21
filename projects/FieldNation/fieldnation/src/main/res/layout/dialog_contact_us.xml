@@ -20,14 +20,12 @@
         android:layout_marginRight="3dp"
         android:text="@string/dialog_introduction_text" />
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/reason_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/introduction_textview"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="3dp"
-        android:editable="false"
         android:focusable="true"
         android:hint="@string/dialog_reason_spinner_default" />
 

@@ -10,25 +10,23 @@
         style="?attr/dialogTitleStyle"
         android:text="There's a problem" />
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/primary_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/title_textview"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="4dp"
         android:focusable="true"
-        android:text="@string/dialog_report_problem_spinner_1" />
+        android:hint="@string/dialog_report_problem_spinner_1" />
 
 
-    <com.fieldnation.ui.FnSpinner
+    <com.fieldnation.ui.HintSpinner
         android:id="@+id/secondary_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/primary_spinner"
-        android:layout_marginLeft="2dp"
-        android:layout_marginRight="4dp"
-        android:text="@string/dialog_report_problem_spinner_1"
+        android:hint="@string/dialog_report_problem_spinner_1"
         android:visibility="gone" />
 
     <android.support.design.widget.TextInputLayout

@@ -74,7 +74,7 @@
         android:layout_marginTop="-50dp" />
 
     <Button
-        android:id="@+id/navigate_button"
+        android:id="@+id/action_button"
         style="@style/Material.Button.Circle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"

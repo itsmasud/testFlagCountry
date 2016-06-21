@@ -2,6 +2,7 @@ package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
 import android.app.Service;
+import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
 import android.support.v4.app.NotificationCompat;
@@ -140,6 +141,13 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             // apply authentication if needed
             if (trans.useAuth()) {
                 OAuth auth = _service.getAuth();
+
+                if (auth == null) {
+                    AuthTopicClient.requestCommand(App.get());
+                    trans.requeue();
+                    return false;
+                }
+
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
                     AuthTopicClient.invalidateCommand(App.get());

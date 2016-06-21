@@ -129,12 +129,16 @@
     <string name="toast_missing_traking_number">Missing tracking number</string>
     <string name="toast_missing_description">Missing description</string>
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
-    <string name="toast_missing_carrier_name">Please provide a carrier name.</string>
-    <string name="toast_minimum_job_duration">Please insert at least 15 min.</string>
+    <string name="toast_missing_carrier_name">Please provide a carrier name</string>
+    <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing.</string>
     <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
+    <string name="toast_must_select_category">Please select a category</string>
+    <string name="toast_must_enter_description">Please enter a description</string>
+    <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
+    <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
 
@@ -344,6 +348,7 @@
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
+	<string name="failed">Failed</string>
     <string name="file_name">File name</string>
     <string name="file_description">File Description</string>
     <string name="first_time_hours">First %1$s hrs</string>
@@ -386,14 +391,45 @@
     <string name="no_work_available">No work available</string>
     <string name="nothing_to_worry_about">Nothing to worry about</string>
     <string name="number_of_devices">Number of Devices</string>
+    <string name="num_failed">%1$d failed</string>
 
-    <string name="number_workorders_and_payments">%1$s %2$s</string>
+    <plurals name="num_deliverables_uploading">
+        <item quantity="one">%1$d deliverable uploading</item>
+        <item quantity="other">%1$d deliverables uploading</item>
+    </plurals>
 
-    <plurals name="number_other_payments">
+    <plurals name="num_uploads_queued">
+        <item quantity="one">%1$d upload queued</item>
+        <item quantity="other">%1$d uploads queued</item>
+    </plurals>
+
+    <plurals name="num_deliverables_to_upload">
+        <item quantity="one">%1$d deliverable to upload</item>
+        <item quantity="other">%1$d deliverables to upload</item>
+    </plurals>
+
+    <plurals name="num_uploads_completed">
+        <item quantity="one">%1$d upload completed</item>
+        <item quantity="other">%1$d uploads completed</item>
+    </plurals>
+
+    <plurals name="num_deliverables_uploaded">
+        <item quantity="one">%1$d deliverable uploaded</item>
+        <item quantity="other">%1$d deliverables uploaded</item>
+    </plurals>
+
+    <plurals name="num_uploads_failed">
+        <item quantity="one">%1$d upload failed</item>
+        <item quantity="other">%1$d uploads failed</item>
+    </plurals>
+
+    <string name="num_workorders_and_payments">%1$s %2$s</string>
+
+    <plurals name="num_other_payments">
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
     </plurals>
-    <plurals name="number_workorders">
+    <plurals name="num_workorders">
         <item quantity="one">1 Work Order</item>
         <item quantity="other">%1$s Work Orders</item>
     </plurals>
@@ -479,6 +515,7 @@
     <string name="you_currently_have_no_requested_work_orders">You currently have no requested work orders</string>
     <string name="your_account_is_pending_verification">Your account is pending verification. Try again later</string>
     <string name="you_are_currently_suspended">You are currently suspended</string>
+    <string name="wo_num_file_upload_has_failed">WO %1$d file upload has failed</string>
     <!-- /general strings -->
 
     <!-- symbols -->

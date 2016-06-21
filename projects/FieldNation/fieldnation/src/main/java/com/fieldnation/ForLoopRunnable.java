@@ -15,6 +15,7 @@ public abstract class ForLoopRunnable implements Runnable {
     private final int count;
     private final long delay;
     private final Handler handler;
+    private boolean _run = true;
 
     public ForLoopRunnable(int count, Handler handler, long delay) {
         this.count = count;
@@ -27,8 +28,15 @@ public abstract class ForLoopRunnable implements Runnable {
         this(count, handler, 100);
     }
 
+    public void cancel() {
+        _run = false;
+    }
+
     @Override
     public void run() {
+        if (!_run) {
+            return;
+        }
         try {
             if (i < count) {
                 next(i);

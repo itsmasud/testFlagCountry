@@ -69,12 +69,12 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/carrier" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/carrier_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialog_shipment_career_spinner_default_text"
-                    android:editable="false"
+                    android:hint="@string/dialog_shipment_career_spinner_default_text"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -121,13 +121,13 @@
                     android:layout_marginLeft="4dp"
                     android:text="@string/direction" />
 
-                <com.fieldnation.ui.FnSpinner
+                <com.fieldnation.ui.HintSpinner
                     android:id="@+id/direction_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/dialog_shipment_direction_spinner_default_text"
-                    android:visibility="visible"
-                    android:editable="false"/>
+                    android:hint="@string/dialog_shipment_direction_spinner_default_text"
+                    android:visibility="visible" />
 
             </LinearLayout>
 
