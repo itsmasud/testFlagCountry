@@ -28,7 +28,6 @@ import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
@@ -57,7 +56,7 @@ import java.util.List;
 import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
-    private final String TAG = UniqueTag.makeTag("DeliverableFragment");
+    private static final String TAG = "DeliverableFragment";
 
     // activity result codes
     private static final int RESULT_CODE_BASE = 100;
@@ -76,12 +75,12 @@ public class DeliverableFragment extends WorkorderFragment {
     private TextView _noDocsTextView;
     private RefreshView _refreshView;
     private Button _navigateButton;
-    private AppPickerDialog _appPickerDialog;
-    private UploadSlotDialog _uploadSlotDialog;
-    private PhotoUploadDialog _photoUploadDialog;
 
     // Dialog
     private TwoButtonDialog _yesNoDialog;
+    private AppPickerDialog _appPickerDialog;
+    private UploadSlotDialog _uploadSlotDialog;
+    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private int _uploadingSlotId = -1;
@@ -101,6 +100,7 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*************************************-*/
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
                 _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
@@ -116,6 +116,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
@@ -143,6 +144,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
         if (_uploadingSlotId > 0)
             outState.putInt(STATE_UPLOAD_SLOTID, _uploadingSlotId);
 
@@ -154,6 +156,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach");
         super.onAttach(activity);
         _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
@@ -169,10 +172,15 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
         _workorderClient.connect(App.get());
+
+        while (_untilAdded.size() > 0) {
+            _untilAdded.remove(0).run();
+        }
     }
 
     @Override
     public void onDetach() {
+        Log.v(TAG, "onDetach");
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
 
@@ -186,8 +194,8 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onResume() {
-        super.onResume();
         Log.v(TAG, "onResume");
+        super.onResume();
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
@@ -201,10 +209,6 @@ public class DeliverableFragment extends WorkorderFragment {
                 PackageManager.FEATURE_CAMERA)) {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
-        }
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
         }
     }
 
@@ -322,6 +326,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
+        Log.v(TAG, "onActivityResult");
         if (!isAdded()) {
             _untilAdded.add(new Runnable() {
                 @Override
@@ -420,7 +425,7 @@ public class DeliverableFragment extends WorkorderFragment {
                             _appPickerDialog.show();
                         } else if (getActivity() != null) {
                             Toast.makeText(
-                                    getActivity(),
+                                    App.get(),
                                     getString(R.string.toast_external_storage_needed),
                                     Toast.LENGTH_LONG).show();
                         }
@@ -436,7 +441,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     _appPickerDialog.show();
                 } else if (getActivity() != null) {
                     Toast.makeText(
-                            getActivity(),
+                            App.get(),
                             getString(R.string.toast_external_storage_needed),
                             Toast.LENGTH_LONG).show();
                 }
@@ -457,12 +462,12 @@ public class DeliverableFragment extends WorkorderFragment {
         @Override
         public void onDelete(UploadedDocumentView v, UploadedDocument document) {
             final int documentId = document.getId();
-            _yesNoDialog.setData("Delete File",
+            _yesNoDialog.setData(getString(R.string.delete_file),
                     getString(R.string.dialog_delete_message), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkorderClient.deleteDeliverable(getActivity(), _workorder.getWorkorderId(),
+                            WorkorderClient.deleteDeliverable(App.get(), _workorder.getWorkorderId(),
                                     documentId);
                             setLoading(true);
                         }
@@ -489,7 +494,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 _appPickerDialog.show();
             } else if (getActivity() != null) {
                 Toast.makeText(
-                        getActivity(),
+                        App.get(),
                         getString(R.string.toast_external_storage_needed),
                         Toast.LENGTH_LONG).show();
             }
@@ -556,7 +561,7 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDownload(long documentId, final File file, int state) {
             if (file == null || state == DocumentConstants.PARAM_STATE_START) {
                 if (state == DocumentConstants.PARAM_STATE_FINISH)
-                    ToastClient.toast(App.get(), "Couldn't download file", Toast.LENGTH_SHORT);
+                    ToastClient.toast(App.get(), R.string.could_not_download_file, Toast.LENGTH_SHORT);
                 return;
             }
 
@@ -590,16 +595,12 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onOk(String filename, String photoDescription) {
             Log.v(TAG, "uploading an image using camera");
             if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
                         _uploadingSlotId, filename, _tempFile.getAbsolutePath(), photoDescription);
             } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
                         _uploadingSlotId, filename, _tempUri, photoDescription);
             }
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
@@ -614,7 +615,6 @@ public class DeliverableFragment extends WorkorderFragment {
         public void onDeliveraleCacheEnd(Uri uri, String filename) {
             Log.v(TAG, "onDeliveraleCacheEnd");
 
-            // TODO need to trigger on the single upload
             _tempUri = uri;
             _tempFile = null;
             _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));

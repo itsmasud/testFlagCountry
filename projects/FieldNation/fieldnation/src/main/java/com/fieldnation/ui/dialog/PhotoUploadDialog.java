@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -37,21 +38,20 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private static final String STATE_ORIGINAL_FILE_NAME = "STATE_ORIGINAL_FILE_NAME";
     private static final String STATE_NEW_FILE_NAME = "STATE_NEW_FILE_NAME";
     private static final String STATE_FILE_EXTENSION = "STATE_FILE_EXTENSION";
-    private static final String STATE_PHOTO_DESCRIPTION = "STATE_PHOTO_DESCRIPTION";
+    private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
     private static final String STATE_PHOTO = "STATE_PHOTO";
 
     // UI
-    private TextView _titleTextView;
-    private ImageView _photoImageView;
+    private ImageView _imageView;
     private EditText _fileNameEditText;
-    private EditText _photoDescriptionEditText;
+    private EditText _descriptionEditText;
     private Button _okButton;
     private Button _cancelButton;
     private ProgressBar _progressBar;
 
     // Data user entered
     private String _newFileName;
-    private String _photoDescription;
+    private String _description;
     private String _extension;
 
     // Supplied
@@ -77,8 +77,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_NEW_FILE_NAME))
                 _newFileName = savedInstanceState.getString(STATE_NEW_FILE_NAME);
 
-            if (savedInstanceState.containsKey(STATE_PHOTO_DESCRIPTION))
-                _photoDescription = savedInstanceState.getString(STATE_PHOTO_DESCRIPTION);
+            if (savedInstanceState.containsKey(STATE_DESCRIPTION))
+                _description = savedInstanceState.getString(STATE_DESCRIPTION);
 
             if (savedInstanceState.containsKey(STATE_PHOTO))
                 _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
@@ -99,8 +99,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         if (!misc.isEmptyOrNull(_newFileName))
             outState.putString(STATE_NEW_FILE_NAME, _newFileName);
 
-        if (!misc.isEmptyOrNull(_photoDescription))
-            outState.putString(STATE_PHOTO_DESCRIPTION, _photoDescription);
+        if (!misc.isEmptyOrNull(_description))
+            outState.putString(STATE_DESCRIPTION, _description);
 
         if (_bitmap != null)
             outState.putParcelable(STATE_PHOTO, _bitmap);
@@ -114,20 +114,20 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_photo_upload, container, false);
+        View v = inflater.inflate(R.layout.dialog_photo_upload, container);
 
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
-        _photoImageView = (ImageView) v.findViewById(R.id.photo_imageview);
-        _photoImageView.setOnClickListener(_photoImageView_onClick);
+        _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
+        _imageView.setOnClickListener(_photoImageView_onClick);
 
         _fileNameEditText = (EditText) v.findViewById(R.id.filename_edittext);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
         _fileNameEditText.addTextChangedListener(_fileName_textWatcher);
 
-        _photoDescriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
-        _photoDescriptionEditText.setOnEditorActionListener(_onEditor);
-        _photoDescriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
+        _descriptionEditText = (EditText) v.findViewById(R.id.description_edittext);
+        _descriptionEditText.setOnEditorActionListener(_onEditor);
+        _descriptionEditText.addTextChangedListener(_photoDescription_textWatcher);
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_okButton_onClick);
@@ -136,8 +136,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _cancelButton.setOnClickListener(_cancel_onClick);
 
         _progressBar = (ProgressBar) v.findViewById(R.id.progressBar);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
     }
@@ -153,8 +151,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_NEW_FILE_NAME))
                 _newFileName = savedInstanceState.getString(STATE_NEW_FILE_NAME);
 
-            if (savedInstanceState.containsKey(STATE_PHOTO_DESCRIPTION))
-                _photoDescription = savedInstanceState.getString(STATE_PHOTO_DESCRIPTION);
+            if (savedInstanceState.containsKey(STATE_DESCRIPTION))
+                _description = savedInstanceState.getString(STATE_DESCRIPTION);
 
             if (savedInstanceState.containsKey(STATE_PHOTO))
                 _bitmap = savedInstanceState.getParcelable(STATE_PHOTO);
@@ -171,6 +169,14 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         Log.v(TAG, "onResume");
 
         populateUi();
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        _bitmap = null;
+        _hideImageView = false;
+        _description = null;
     }
 
     public void setListener(Listener listener) {
@@ -200,27 +206,22 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     }
 
     private void populateUi() {
-        Log.v(TAG, "I populating");
-        if (_photoImageView == null)
+        if (_imageView == null)
             return;
 
-        Log.v(TAG, "I has UI");
-
         if (_bitmap != null) {
-            Log.v(TAG, "I has bitmap");
             _progressBar.setVisibility(View.GONE);
-            _photoImageView.setVisibility(View.VISIBLE);
-            _photoImageView.setImageBitmap(_bitmap);
+            _imageView.setVisibility(View.VISIBLE);
+            _imageView.setImageBitmap(_bitmap);
         } else if (_hideImageView) {
-            Log.v(TAG, "I no has bitmap");
             _progressBar.setVisibility(View.GONE);
-            _photoImageView.setVisibility(View.GONE);
+            _imageView.setVisibility(View.GONE);
         } else {
             _progressBar.setVisibility(View.VISIBLE);
-            _photoImageView.setVisibility(View.INVISIBLE);
+            _imageView.setVisibility(View.INVISIBLE);
         }
 
-        _photoDescriptionEditText.setText(misc.isEmptyOrNull(_photoDescription) ? "" : _photoDescription);
+        _descriptionEditText.setText(misc.isEmptyOrNull(_description) ? "" : _description);
         _fileNameEditText.setText(misc.isEmptyOrNull(_newFileName) ? _originalFileName : _newFileName);
     }
 
@@ -237,8 +238,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                     _fileNameEditText.requestFocus();
                     handled = true;
 
-                } else if (v == _photoDescriptionEditText) {
-                    _photoDescriptionEditText.requestFocus();
+                } else if (v == _descriptionEditText) {
+                    _descriptionEditText.requestFocus();
                     handled = true;
                 }
             }
@@ -250,8 +251,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener == null) return;
-
             if (misc.isEmptyOrNull(_newFileName)) {
                 _fileNameEditText.setText(_originalFileName);
                 ToastClient.toast(App.get(), getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
@@ -263,20 +262,13 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (misc.isEmptyOrNull(_newFileName)) {
-                _fileNameEditText.setText(_originalFileName);
-                ToastClient.toast(App.get(), getString(R.string.dialog_insert_file_name), Toast.LENGTH_LONG);
-                return;
-            }
-
             if (!_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
 
-            PhotoUploadDialog.this.dismiss();
-
             if (_listener != null) {
-                _listener.onOk(_newFileName, _photoDescription);
+                _listener.onOk(_newFileName, _description);
+                dismiss();
             }
         }
     };
@@ -322,7 +314,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            _photoDescription = _photoDescriptionEditText.getText().toString().trim();
+            _description = _descriptionEditText.getText().toString().trim();
         }
 
         @Override
@@ -332,7 +324,5 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
     public interface Listener {
         void onOk(String filename, String photoDescription);
-
-        void onCancel();
     }
 }

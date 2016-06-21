@@ -99,7 +99,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -124,6 +123,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
+    private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
 
     // UI
     private OverScrollView _scrollView;
@@ -176,20 +176,17 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkorderClient _workorderClient;
-    private ProfileClient _profileClient;
     private File _tempFile;
+    private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
     private List<Signature> _signatures = null;
     private List<Task> _tasks = null;
-    private SecureRandom _rand = new SecureRandom();
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
     private String _scannedImagePath;
-    private int _cachedValuesleft = 0;
 
     private List<Runnable> _untilAdded = new LinkedList<>();
-
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -197,6 +194,11 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
+                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
+            }
+        }
         return inflater.inflate(R.layout.fragment_workorder_work, container, false);
     }
 
@@ -311,17 +313,17 @@ public class WorkFragment extends WorkorderFragment {
             }
             outState.putParcelableArray(STATE_SIGNATURES, sigs);
         }
-        if (_deviceCount > -1) {
+        if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
-        }
 
-        if (_currentTask != null) {
+        if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-        }
 
-        if (_scannedImagePath != null) {
+        if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
-        }
+
+        if (_tempFile != null)
+            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
 
         super.onSaveInstanceState(outState);
     }
@@ -343,20 +345,11 @@ public class WorkFragment extends WorkorderFragment {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
-
     }
-
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
-
-        _gpsLocationService = new GpsLocationService(getActivity());
-
         _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
         _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
@@ -409,6 +402,11 @@ public class WorkFragment extends WorkorderFragment {
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
         _payDialog.setListener(_payDialog_listener);
 
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(App.get());
+
+        _gpsLocationService = new GpsLocationService(getActivity());
+
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
         }
@@ -416,13 +414,10 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
-        _workorderClient.disconnect(App.get());
-        _workorderClient = null;
-        _profileClient.disconnect(App.get());
-        _profileClient = null;
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
         super.onDetach();
     }
-
 
     @Override
     public void onPause() {
@@ -594,7 +589,6 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
-
     }
 
     private void requestWorkorder() {
@@ -613,7 +607,7 @@ public class WorkFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
-        WorkorderClient.listTasks(getActivity(), _workorder.getWorkorderId(), false);
+        WorkorderClient.listTasks(App.get(), _workorder.getWorkorderId(), false);
     }
 
     @Override
@@ -767,7 +761,16 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
-        _workorderClient.subDeliverableCache();
+        if (!isAdded()) {
+            Log.v(TAG, "onActivityResult -> try later");
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
@@ -784,17 +787,6 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        if (!isAdded()) {
-            Log.v(TAG, "onActivityResult -> try later");
-            _untilAdded.add(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
-                }
-            });
-            return;
-        }
-
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
@@ -802,10 +794,13 @@ public class WorkFragment extends WorkorderFragment {
                     || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
+                _workorderClient.subDeliverableCache();
+
                 setLoading(true);
 
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
+                    _tempUri = null;
                     _photoUploadDialog.show(_tempFile.getName());
                     _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
@@ -814,31 +809,34 @@ public class WorkFragment extends WorkorderFragment {
 
                         if (clipData != null) {
                             int count = clipData.getItemCount();
-                            _cachedValuesleft = count;
                             Intent intent = new Intent();
                             Uri uri = null;
 
                             if (count == 1) {
+                                _tempUri = uri;
+                                _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
                                     if (uri != null) {
-                                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
                                                 _currentTask.getTaskId(), intent.setData(uri));
                                     }
                                 }
                             }
                         } else {
                             Log.v(TAG, "Single local/ non-local file upload");
-                            _cachedValuesleft = 1;
+                            _tempUri = data.getData();
+                            _tempFile = null;
                             _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                             WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
-                        _cachedValuesleft = 1;
+                        _tempUri = data.getData();
+                        _tempFile = null;
                         _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                         WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
@@ -858,6 +856,7 @@ public class WorkFragment extends WorkorderFragment {
                 startCheckOut();
             }
         } catch (Exception ex) {
+            ex.printStackTrace();
             Debug.logException(ex);
             new Handler().postDelayed(new Runnable() {
                 @Override
@@ -1125,7 +1124,7 @@ public class WorkFragment extends WorkorderFragment {
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
                         _scannedImagePath = null;
                     }
@@ -1839,22 +1838,9 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDeliveraleCacheEnd(Uri uri, String filename) {
-            _cachedValuesleft--;
+            _tempUri = uri;
+            _tempFile = null;
             _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
-        }
-    };
-
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subActions();
-        }
-
-        @Override
-        public void onAction(long profileId, String action, boolean failed) {
-            //TODO _profileClient_listener.onAction
-            // TODO ... do something!
-            Log.v(TAG, "_profileClient_listener.onAction");
         }
     };
 
@@ -1862,13 +1848,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(String filename, String photoDescription) {
             Log.e(TAG, "uploading an image using camera");
-//            WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-//                    _currentTask.getSlotId(), file.getName(), file.getAbsolutePath(), photoDescription);
-        }
-
-        @Override
-        public void onCancel() {
-
+            if (_tempFile != null) {
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        _currentTask.getSlotId(), filename, _tempFile.getAbsolutePath(), photoDescription);
+            } else if (_tempUri != null) {
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        _currentTask.getSlotId(), filename, _tempUri, photoDescription);
+            }
         }
     };
 }

@@ -10,7 +10,6 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/title_textview"
             style="?attr/dialogTitleStyle"
             android:layout_centerHorizontal="true"
             android:text="@string/dialog_file_upload_title" />
@@ -41,16 +40,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/photo_imageview"
-            android:layout_marginBottom="16dp"
-            android:layout_toLeftOf="@+id/scanBarcode_button"
-            android:layout_weight="3">
+            android:layout_marginBottom="16dp">
 
             <EditText
                 android:id="@+id/filename_edittext"
                 style="@style/EditText"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:hint="File name"
+                android:hint="@string/file_name"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:singleLine="true" />
@@ -62,16 +59,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/filename_textInputLayout"
-            android:layout_marginBottom="16dp"
-            android:layout_toLeftOf="@+id/scanBarcode_button"
-            android:layout_weight="3">
+            android:layout_marginBottom="16dp">
 
             <EditText
                 android:id="@+id/description_edittext"
                 style="@style/EditText"
                 android:focusable="true"
                 android:focusableInTouchMode="true"
-                android:hint="Photo Description"
+                android:hint="@string/file_description"
                 android:imeOptions="actionDone"
                 android:inputType="text"
                 android:singleLine="true" />
