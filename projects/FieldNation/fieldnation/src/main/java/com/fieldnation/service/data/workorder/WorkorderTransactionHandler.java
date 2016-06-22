@@ -45,7 +45,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     }
 
     public static byte[] pList(int page, String selector) {
-
         try {
             JsonObject obj = new JsonObject("action", "pList");
             obj.put("page", page);
@@ -396,9 +395,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
 
         WorkorderDispatch.action(context, workorderId, "counter_offer", false);
-
         ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
-
         WorkorderClient.get(context, workorderId, false);
 
         return Result.CONTINUE;

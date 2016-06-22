@@ -25,11 +25,11 @@ import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
 
 /**
  * Displays the summary of a workorder to the user. Will also allow some simple
@@ -546,11 +546,9 @@ public class WorkorderCardView extends RelativeLayout {
                         _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
                     } else {
                         _leftButton.setVisibility(VISIBLE);
-                        try {
-                            LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
-                            LatLng myLoc = new LatLng(_gpsLocation);
 
-                            _leftButton.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                        try {
+                            //_leftButton.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
                         } catch (Exception ex) {
                             //Log.v(TAG, ex);
                             _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());

@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -22,10 +23,6 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
-import com.mapbox.mapboxsdk.geometry.BoundingBox;
-import com.mapbox.mapboxsdk.geometry.LatLng;
-import com.mapbox.mapboxsdk.overlay.Marker;
-import com.mapbox.mapboxsdk.views.MapView;
 
 import java.util.HashSet;
 import java.util.List;
@@ -36,7 +33,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
 
     // UI
-    private MapView _mapView;
+    private ImageView _mapView;
     private View _clickOverlay;
     private TextView _siteTitleTextView;
     private TextView _addressTextView;
@@ -71,7 +68,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (isInEditMode())
             return;
 
-        _mapView = (MapView) findViewById(R.id.mapview);
+        _mapView = (ImageView) findViewById(R.id.mapview);
 
         _clickOverlay = findViewById(R.id.click_overlay);
         _clickOverlay.setOnClickListener(_map_onClick);
@@ -212,6 +209,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _navigateButton.setVisibility(VISIBLE);
         }
 
+/*
         new AsyncTaskEx<Object, Object, LatLng>() {
             @Override
             protected LatLng doInBackground(Object... params) {
@@ -284,6 +282,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Log.v(TAG, "onPostExecute time: " + watch.finish());
             }
         }.executeEx(getContext());
+*/
         Log.v(TAG, "populateUi time: " + stopwatch.finish());
     }
 

@@ -847,5 +847,4 @@ public class Workorder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
-
 }
