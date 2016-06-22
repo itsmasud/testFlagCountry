@@ -22,8 +22,7 @@ public class CustomFieldRowView extends RelativeLayout {
 
     // Ui
     private IconFontTextView _iconView;
-    private TextView _customFieldNameWithBottmMarginTextView;
-    private TextView _customFieldNameWithoutBottmMarginTextView;
+    private TextView _customFieldNameTextView;
     private TextView _descriptionTextView;
     private TextView _optionalTextView;
 
@@ -31,6 +30,7 @@ public class CustomFieldRowView extends RelativeLayout {
     private Listener _listener;
     private Workorder _workorder;
     private CustomField _customField;
+    private LayoutParams layoutParams;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -57,10 +57,12 @@ public class CustomFieldRowView extends RelativeLayout {
             return;
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
-        _customFieldNameWithBottmMarginTextView = (TextView) findViewById(R.id.customFieldNameWithBottomMargin_textview);
-        _customFieldNameWithoutBottmMarginTextView = (TextView) findViewById(R.id.customFieldNameWithoutBottomMargin_textview);
+        _customFieldNameTextView = (TextView) findViewById(R.id.customFieldName_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _optionalTextView = (TextView) findViewById(R.id.optional_textview);
+
+        layoutParams = (RelativeLayout.LayoutParams) _customFieldNameTextView.getLayoutParams();
+
 
         setOnClickListener(_check_listener);
 
@@ -84,35 +86,34 @@ public class CustomFieldRowView extends RelativeLayout {
         if (_customField == null)
             return;
 
+
         setEnabled(_workorder.canChangeCustomFields());
         if (_workorder.canChangeCustomFields()) {
-            _customFieldNameWithBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-            _customFieldNameWithoutBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         } else {
-            _customFieldNameWithBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
-            _customFieldNameWithoutBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
         if (misc.isEmptyOrNull(_customField.getValue())) {
-            _customFieldNameWithBottmMarginTextView.setText(_customField.getLabel());
-            _customFieldNameWithoutBottmMarginTextView.setText(_customField.getLabel());
+            _customFieldNameTextView.setText(_customField.getLabel());
         } else {
-            _customFieldNameWithBottmMarginTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
-            _customFieldNameWithoutBottmMarginTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
+            _customFieldNameTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
         }
 
         if (misc.isEmptyOrNull(_customField.getTip())) {
             _descriptionTextView.setVisibility(GONE);
-            _customFieldNameWithBottmMarginTextView.setVisibility(VISIBLE);
-            _customFieldNameWithoutBottmMarginTextView.setVisibility(GONE);
+
+            layoutParams.setMargins(
+                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).leftMargin,
+                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).topMargin,
+                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).rightMargin,
+                    ((LayoutParams)_descriptionTextView.getLayoutParams()).bottomMargin);
         } else {
             _descriptionTextView.setText(_customField.getTip());
-            _customFieldNameWithBottmMarginTextView.setVisibility(GONE);
-            _customFieldNameWithoutBottmMarginTextView.setVisibility(VISIBLE);
+            _descriptionTextView.setVisibility(VISIBLE);
         }
-
 
 
         if (_customField.getRequired()) {
