@@ -34,15 +34,42 @@
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/description_textview"
+        android:id="@+id/customFieldNameWithBottomMargin_textview"
         style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
         android:layout_marginBottom="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/icon_view"
+        android:text="@string/placeholder_paragraph"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/customFieldNameWithoutBottomMargin_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/customFieldNameWithBottomMargin_textview"
+        android:layout_toRightOf="@+id/icon_view"
         android:text="@string/placeholder_paragraph" />
+
+    <TextView
+        android:id="@+id/description_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/customFieldNameWithoutBottomMargin_textview"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_toRightOf="@+id/icon_view"
+        android:text="@string/placeholder_paragraph" />
+
+
 </RelativeLayout>

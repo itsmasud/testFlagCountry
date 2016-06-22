@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
@@ -21,6 +22,8 @@ public class CustomFieldRowView extends RelativeLayout {
 
     // Ui
     private IconFontTextView _iconView;
+    private TextView _customFieldNameWithBottmMarginTextView;
+    private TextView _customFieldNameWithoutBottmMarginTextView;
     private TextView _descriptionTextView;
     private TextView _optionalTextView;
 
@@ -54,6 +57,8 @@ public class CustomFieldRowView extends RelativeLayout {
             return;
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _customFieldNameWithBottmMarginTextView = (TextView) findViewById(R.id.customFieldNameWithBottomMargin_textview);
+        _customFieldNameWithoutBottmMarginTextView = (TextView) findViewById(R.id.customFieldNameWithoutBottomMargin_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _optionalTextView = (TextView) findViewById(R.id.optional_textview);
 
@@ -81,16 +86,34 @@ public class CustomFieldRowView extends RelativeLayout {
 
         setEnabled(_workorder.canChangeCustomFields());
         if (_workorder.canChangeCustomFields()) {
+            _customFieldNameWithBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+            _customFieldNameWithoutBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         } else {
+            _customFieldNameWithBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
+            _customFieldNameWithoutBottmMarginTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
         if (misc.isEmptyOrNull(_customField.getValue())) {
-            _descriptionTextView.setText(_customField.getLabel());
+            _customFieldNameWithBottmMarginTextView.setText(_customField.getLabel());
+            _customFieldNameWithoutBottmMarginTextView.setText(_customField.getLabel());
         } else {
-            _descriptionTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
+            _customFieldNameWithBottmMarginTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
+            _customFieldNameWithoutBottmMarginTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
         }
+
+        if (misc.isEmptyOrNull(_customField.getTip())) {
+            _descriptionTextView.setVisibility(GONE);
+            _customFieldNameWithBottmMarginTextView.setVisibility(VISIBLE);
+            _customFieldNameWithoutBottmMarginTextView.setVisibility(GONE);
+        } else {
+            _descriptionTextView.setText(_customField.getTip());
+            _customFieldNameWithBottmMarginTextView.setVisibility(GONE);
+            _customFieldNameWithoutBottmMarginTextView.setVisibility(VISIBLE);
+        }
+
+
 
         if (_customField.getRequired()) {
             _optionalTextView.setVisibility(View.GONE);
