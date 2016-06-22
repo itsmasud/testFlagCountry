@@ -47,6 +47,7 @@ public interface WorkorderConstants {
     String PARAM_LOCAL_PATH = "PARAM_LOCAL_PATH";
     String PARAM_URI = "PARAM_URI";
     String PARAM_FILE_NAME = "PARAM_FILE_NAME";
+    String PARAM_FILE_DESCRIPTION = "PARAM_FILE_DESCRIPTION";
     String PARAM_IS_SYNC = "PARAM_IS_SYNC";
     String PARAM_IS_CACHED = "PARAM_IS_CACHED";
     String PARAM_FILE = "PARAM_FILE";
@@ -54,6 +55,7 @@ public interface WorkorderConstants {
     String PARAM_IS_COMPLETE = "PARAM_IS_COMPLETE";
     String PARAM_ALLOW_CACHE = "PARAM_ALLOW_CACHE";
     String PARAM_ERROR = "PARAM_ERROR";
+    String PARAM_STORED_OBJECT = "PARAM_STORED_OBJECT";
 
     String PARAM_DATA_PARCELABLE = "PARAM_DATA_PARCELABLE";
 

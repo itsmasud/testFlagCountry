@@ -50,8 +50,7 @@ public class HttpResult {
         _baResults = StreamUtils.readAllFromStreamUntil(in, -1, 102400, 1000);
         if (_baResults != null && _baResults.length >= 102400) {
             // temp file
-            File tempFolder = new File(App.get().getStoragePath() + "/temp");
-            tempFolder.mkdirs();
+            File tempFolder = new File(App.get().getTempFolder());
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
             fout.write(_baResults);

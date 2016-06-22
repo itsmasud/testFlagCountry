@@ -113,6 +113,7 @@
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
+    <string name="btn_upload">UPLOAD</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -131,6 +132,7 @@
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
+    <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
     <string name="toast_must_select_category">Please select a category</string>
     <string name="toast_must_enter_description">Please enter a description</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
@@ -264,6 +266,11 @@
     <string name="dialog_delete_expense_body">Are you sure you want to delete this expense?</string>
     <string name="dialog_scan_barcode_title">Scan a barcode</string>
 
+    <string name="dialog_file_upload_title">File Upload</string>
+    <string name="dialog_insert_file_name">Please insert file name.</string>
+    <string name="dialog_invalid_file_name">Invalid file name. Remove invalid characters.</string>
+    <string name="dialog_insert_filename_before_extension">Insert file name before extension.</string>
+
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -307,6 +314,7 @@
     <string name="company_name_hidden">Company Name Hidden</string>
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
+    <string name="could_not_download_file">Could not download file</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="counter_offer_caps">COUNTER OFFER</string>
     <string name="contacts">CONTACTS</string>
@@ -315,6 +323,7 @@
     <string name="custom_field">Custom Field</string>
     <string name="date_and_time">Date and Time</string>
     <string name="debug_log">Debug log</string>
+    <string name="delete_file">Delete File</string>
     <string name="departure_date_and_time_colon">Departure Date and Time:</string>
     <string name="description">Description</string>
     <string name="devices">Devices</string>
@@ -338,6 +347,8 @@
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
     <string name="failed">Failed</string>
+    <string name="file_name">File name</string>
+    <string name="file_description">File Description</string>
     <string name="first_time_hours">First %1$s hrs</string>
     <string name="fixed">Fixed</string>
     <string name="fixed_pay_amount">Fixed Pay Amount</string>

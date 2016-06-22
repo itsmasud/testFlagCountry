@@ -2,7 +2,7 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.PendingIntent;
+import android.content.ClipData;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -11,6 +11,7 @@ import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
 import android.location.Location;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
@@ -29,6 +30,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.GpsLocationService;
@@ -75,6 +77,7 @@ import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
+import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -87,14 +90,15 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
+import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.ISO8601;
+import com.fieldnation.utils.MemUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
-import java.security.SecureRandom;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -119,6 +123,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_SIGNATURES = "WorkFragment:STATE_SIGNATURES";
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
+    private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
 
     // UI
     private OverScrollView _scrollView;
@@ -167,15 +172,15 @@ public class WorkFragment extends WorkorderFragment {
     private TwoButtonDialog _yesNoDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
+    private PhotoUploadDialog _photoUploadDialog;
 
     // Data
     private WorkorderClient _workorderClient;
-    private ProfileClient _profileClient;
     private File _tempFile;
+    private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
     private List<Signature> _signatures = null;
     private List<Task> _tasks = null;
-    private SecureRandom _rand = new SecureRandom();
     private Task _currentTask;
     private Workorder _workorder;
     private int _deviceCount = -1;
@@ -183,13 +188,17 @@ public class WorkFragment extends WorkorderFragment {
 
     private List<Runnable> _untilAdded = new LinkedList<>();
 
-
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
     /*-*************************************-*/
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
+                _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
+            }
+        }
         return inflater.inflate(R.layout.fragment_workorder_work, container, false);
     }
 
@@ -308,17 +317,17 @@ public class WorkFragment extends WorkorderFragment {
             }
             outState.putParcelableArray(STATE_SIGNATURES, sigs);
         }
-        if (_deviceCount > -1) {
+        if (_deviceCount > -1)
             outState.putInt(STATE_DEVICE_COUNT, _deviceCount);
-        }
 
-        if (_currentTask != null) {
+        if (_currentTask != null)
             outState.putParcelable(STATE_CURRENT_TASK, _currentTask);
-        }
 
-        if (_scannedImagePath != null) {
+        if (_scannedImagePath != null)
             outState.putString(STATE_SCANNED_IMAGE_PATH, _scannedImagePath);
-        }
+
+        if (_tempFile != null)
+            outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
 
         super.onSaveInstanceState(outState);
     }
@@ -330,6 +339,9 @@ public class WorkFragment extends WorkorderFragment {
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
         _appDialog.addIntent(getActivity().getPackageManager(), intent, "Get Content");
 
         if (getActivity().getPackageManager().hasSystemFeature(
@@ -339,17 +351,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
-
-        _gpsLocationService = new GpsLocationService(getActivity());
-
         _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
         _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
@@ -373,6 +377,8 @@ public class WorkFragment extends WorkorderFragment {
         _termsScrollingDialog = TermsScrollingDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
+        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
+        _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -397,6 +403,13 @@ public class WorkFragment extends WorkorderFragment {
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _reportProblemDialog.setListener(_reportProblem_listener);
+        _photoUploadDialog.setListener(_photoUploadDialog_listener);
+        _payDialog.setListener(_payDialog_listener);
+
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(App.get());
+
+        _gpsLocationService = new GpsLocationService(getActivity());
 
         while (_untilAdded.size() > 0) {
             _untilAdded.remove(0).run();
@@ -405,13 +418,11 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
-        _workorderClient.disconnect(App.get());
-        _workorderClient = null;
-        _profileClient.disconnect(App.get());
-        _profileClient = null;
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
+
         super.onDetach();
     }
-
 
     @Override
     public void onPause() {
@@ -583,7 +594,6 @@ public class WorkFragment extends WorkorderFragment {
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
-
     }
 
     private void requestWorkorder() {
@@ -602,7 +612,7 @@ public class WorkFragment extends WorkorderFragment {
         if (getActivity() == null)
             return;
 
-        WorkorderClient.listTasks(getActivity(), _workorder.getWorkorderId(), false);
+        WorkorderClient.listTasks(App.get(), _workorder.getWorkorderId(), false);
     }
 
     @Override
@@ -614,17 +624,6 @@ public class WorkFragment extends WorkorderFragment {
                 _refreshView.refreshComplete();
             }
         }
-    }
-
-    private PendingIntent getNotificationIntent() {
-        Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB,
-                WorkorderActivity.TAB_DETAILS);
-        intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID,
-                _workorder.getWorkorderId());
-
-        return PendingIntent.getActivity(getActivity(), _rand.nextInt(), intent,
-                PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     private void showClosingNotesDialog() {
@@ -767,6 +766,16 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
+        if (!isAdded()) {
+            Log.v(TAG, "onActivityResult -> try later");
+            _untilAdded.add(new Runnable() {
+                @Override
+                public void run() {
+                    onActivityResult(requestCode, resultCode, data);
+                }
+            });
+            return;
+        }
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
 
@@ -780,20 +789,7 @@ public class WorkFragment extends WorkorderFragment {
                 _scannedImagePath = result.getBarcodeImagePath();
                 _shipmentAddDialog.setTrackingId(content);
                 _shipmentAddDialog.setSelectedCarrier(misc.getCarrierId(content));
-
             }
-        }
-
-
-        if (!isAdded()) {
-            Log.v(TAG, "onActivityResult -> try later");
-            _untilAdded.add(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
-                }
-            });
-            return;
         }
 
         try {
@@ -803,15 +799,52 @@ public class WorkFragment extends WorkorderFragment {
                     || requestCode == RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
+                _workorderClient.subDeliverableCache();
+
                 setLoading(true);
 
                 if (data == null) {
-                    WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                            _currentTask.getSlotId(), _tempFile.getName(), _tempFile.getAbsolutePath());
-
+                    Log.e(TAG, "uploading an image using camera");
+                    _tempUri = null;
+                    _photoUploadDialog.show(_tempFile.getName());
+                    _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
-                    WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                            _currentTask.getSlotId(), data);
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        ClipData clipData = data.getClipData();
+
+                        if (clipData != null) {
+                            int count = clipData.getItemCount();
+                            Intent intent = new Intent();
+                            Uri uri = null;
+
+                            if (count == 1) {
+                                _tempUri = uri;
+                                _tempFile = null;
+                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                                WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                            } else {
+                                for (int i = 0; i < count; ++i) {
+                                    uri = clipData.getItemAt(i).getUri();
+                                    if (uri != null) {
+                                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                                                _currentTask.getTaskId(), intent.setData(uri));
+                                    }
+                                }
+                            }
+                        } else {
+                            Log.v(TAG, "Single local/ non-local file upload");
+                            _tempUri = data.getData();
+                            _tempFile = null;
+                            _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                            WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                        }
+                    } else {
+                        Log.v(TAG, "Android version is pre-4.3");
+                        _tempUri = data.getData();
+                        _tempFile = null;
+                        _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                        WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                    }
                 }
 
             } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
@@ -828,9 +861,8 @@ public class WorkFragment extends WorkorderFragment {
                 startCheckOut();
             }
         } catch (Exception ex) {
-            //Debug.logException(ex);
-            Log.v(TAG, ex);
-            // Todo this could cause an infinite loop, revisit later
+            ex.printStackTrace();
+            Debug.logException(ex);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -875,7 +907,7 @@ public class WorkFragment extends WorkorderFragment {
                 Log.v(TAG, "onClick: " + src.toString());
                 startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
             } else {
-                File temppath = new File(App.get().getDownloadsFolder() + "/IMAGE-"
+                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
@@ -1097,7 +1129,7 @@ public class WorkFragment extends WorkorderFragment {
                 for (UploadSlot uploadSlot : slots) {
                     if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
                         String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(getActivity(), _workorder.getWorkorderId(),
+                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
                                 uploadSlot.getSlotId(), fileName, _scannedImagePath);
                         _scannedImagePath = null;
                     }
@@ -1808,26 +1840,32 @@ public class WorkFragment extends WorkorderFragment {
         public void onConnected() {
             subscribeData();
             _workorderClient.subDeliverableUpload();
-
         }
 
         @Override
         public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
             setTasks(tasks);
         }
+
+        @Override
+        public void onDeliveraleCacheEnd(Uri uri, String filename) {
+            _tempUri = uri;
+            _tempFile = null;
+            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+        }
     };
 
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
+    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
-        public void onConnected() {
-            _profileClient.subActions();
-        }
-
-        @Override
-        public void onAction(long profileId, String action, boolean failed) {
-            //TODO _profileClient_listener.onAction
-            // TODO ... do something!
-            Log.v(TAG, "_profileClient_listener.onAction");
+        public void onOk(String filename, String photoDescription) {
+            Log.e(TAG, "uploading an image using camera");
+            if (_tempFile != null) {
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        _currentTask.getSlotId(), filename, _tempFile.getAbsolutePath(), photoDescription);
+            } else if (_tempUri != null) {
+                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                        _currentTask.getSlotId(), filename, _tempUri, photoDescription);
+            }
         }
     };
 }

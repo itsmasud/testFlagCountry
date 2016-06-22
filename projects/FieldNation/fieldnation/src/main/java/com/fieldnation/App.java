@@ -728,6 +728,12 @@ public class App extends Application {
         return temppath.getAbsolutePath();
     }
 
+    public String getTempFolder() {
+        File tempFolder = new File(getStoragePath() + "/temp");
+        if(!tempFolder.exists()) tempFolder.mkdirs();
+        return tempFolder.getAbsolutePath();
+    }
+
     private boolean _haveWifi = false;
     private long _haveWifiLast = 0;
     private static final long HAVE_WIFI_TIMEOUT = 1000;
