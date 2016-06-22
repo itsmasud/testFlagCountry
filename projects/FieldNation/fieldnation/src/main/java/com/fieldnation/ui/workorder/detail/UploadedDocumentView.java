@@ -159,7 +159,14 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     }
 
     public void setDownloading(String filename) {
-        setLoading(true, R.string.downloading);
+        _isLoading = true;
+        _progressBar.setVisibility(View.VISIBLE);
+        _statusTextView.setVisibility(View.VISIBLE);
+        _dateTextView.setVisibility(View.GONE);
+        _byTextView.setVisibility(GONE);
+        _usernameTextView.setVisibility(GONE);
+        _dateTextView.setVisibility(View.GONE);
+        _statusTextView.setText(R.string.downloading);
         _filenameTextView.setText(filename);
     }
 
