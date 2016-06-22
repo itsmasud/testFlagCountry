@@ -42,6 +42,7 @@ import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.net.URLConnection;
+import java.security.SecureRandom;
 import java.util.Calendar;
 
 /**
@@ -83,6 +84,8 @@ public class App extends Application {
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
+
+    public static final SecureRandom secureRandom = new SecureRandom();
 
     @Override
     protected void attachBaseContext(Context base) {
@@ -229,9 +232,15 @@ public class App extends Application {
         }
     };
 
+    private SharedPreferences _userPreferences = null;
+
     public SharedPreferences getSharedPreferences() {
-        return getSharedPreferences(getPackageName() + "_preferences",
-                Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+        if (_userPreferences == null) {
+            _userPreferences = getSharedPreferences(getPackageName() + "_preferences",
+                    Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+        }
+
+        return _userPreferences;
     }
 
     public static void anrReport() {
@@ -647,6 +656,18 @@ public class App extends Application {
         return settings.getLong(PREF_RATE_SHOWN, 0);
     }
 
+    public boolean onlyUploadWithWifi() {
+        Stopwatch stopwatch = new Stopwatch(true);
+        try {
+            boolean flag = getSharedPreferences().getBoolean(getString(R.string.pref_key_use_wifi_to_upload), false);
+            Log.v(TAG, "onlyUploadWithWifi " + flag);
+            return flag;
+        } finally {
+            Log.v(TAG, "onlyUploadWithWifi time:" + stopwatch.finish());
+        }
+    }
+
+
     public boolean showRateMe() {
         // if hasn't completed a work order, then no
         if (!hasInteractedWorkorder()) {
@@ -690,10 +711,25 @@ public class App extends Application {
         return temppath.getAbsolutePath();
     }
 
+    public String getTempFolder() {
+        File tempFolder = new File(getStoragePath() + "/temp");
+        if(!tempFolder.exists()) tempFolder.mkdirs();
+        return tempFolder.getAbsolutePath();
+    }
+
+    private boolean _haveWifi = false;
+    private long _haveWifiLast = 0;
+    private static final long HAVE_WIFI_TIMEOUT = 1000;
+
     public boolean haveWifi() {
-        ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return wifi.isConnected();
+        if (_haveWifiLast < System.currentTimeMillis()) {
+            ConnectivityManager connManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo wifi = connManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+            _haveWifi = wifi.isConnected();
+            _haveWifiLast = System.currentTimeMillis() + HAVE_WIFI_TIMEOUT;
+        }
+
+        return _haveWifi;
     }
 
     public boolean isCharging() {

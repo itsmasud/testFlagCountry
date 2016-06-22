@@ -1,9 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -24,13 +26,14 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.util.Hashtable;
 
-public class UploadedDocumentView extends RelativeLayout {
+public class UploadedDocumentView extends RelativeLayout implements PhotoReceiver {
     private static final String TAG = "UploadedDocumentView";
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
 
     // UI
     private IconFontTextView _fileTypeIconFont;
+    private ImageView _picView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -45,6 +48,8 @@ public class UploadedDocumentView extends RelativeLayout {
     private Listener _listener;
     private boolean _isLoading = false;
     private DocumentClient _docClient;
+    private boolean _hasImage = false;
+    private String _lastPhotoUrl = null;
 
     static {
         _ICFN_FILES.put("png", R.string.icon_file_png);
@@ -81,6 +86,7 @@ public class UploadedDocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
+        _picView = (ImageView) findViewById(R.id.pic_view);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -120,6 +126,9 @@ public class UploadedDocumentView extends RelativeLayout {
             _usernameTextView.setVisibility(GONE);
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
+            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+            _hasImage = false;
+            updateThumb();
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
@@ -127,6 +136,18 @@ public class UploadedDocumentView extends RelativeLayout {
             _byTextView.setVisibility(VISIBLE);
             _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
+            updateThumb();
+            populateUi();
+        }
+    }
+
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        if (_doc != null && _doc.getDownloadThumbLink() != null && _doc.getDownloadThumbLink().startsWith(url)) {
+            _picView.setImageDrawable(photo);
+            _hasImage = true;
+            updateThumb();
         }
     }
 
@@ -138,7 +159,14 @@ public class UploadedDocumentView extends RelativeLayout {
     }
 
     public void setDownloading(String filename) {
-        setLoading(true, R.string.downloading);
+        _isLoading = true;
+        _progressBar.setVisibility(View.VISIBLE);
+        _statusTextView.setVisibility(View.VISIBLE);
+        _dateTextView.setVisibility(View.GONE);
+        _byTextView.setVisibility(GONE);
+        _usernameTextView.setVisibility(GONE);
+        _dateTextView.setVisibility(View.GONE);
+        _statusTextView.setText(R.string.downloading);
         _filenameTextView.setText(filename);
     }
 
@@ -175,15 +203,45 @@ public class UploadedDocumentView extends RelativeLayout {
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
                 _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                switch (ext) {
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                        if (_listener != null && !misc.isEmptyOrNull(_doc.getDownloadThumbLink())) {
+                            Drawable result = _listener.getPhoto(this, _doc.getDownloadThumbLink(), true);
+                            if (result != null) {
+                                setPhoto(_doc.getDownloadThumbLink(), result);
+                            } else {
+                                _hasImage = false;
+                            }
+                        } else {
+                            _hasImage = false;
+                        }
+                        break;
+                    default:
+                        _hasImage = false;
+                        break;
+                }
             } else {
+                _hasImage = false;
                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         }
 
+        updateThumb();
         setClickable(_workorder.canViewDeliverables());
+    }
+
+    private void updateThumb() {
+        if (_hasImage) {
+            _picView.setVisibility(VISIBLE);
+            _fileTypeIconFont.setVisibility(GONE);
+        } else {
+            _picView.setVisibility(GONE);
+            _fileTypeIconFont.setVisibility(VISIBLE);
+        }
     }
 
     /*-*************************-*/
@@ -224,12 +282,10 @@ public class UploadedDocumentView extends RelativeLayout {
                 return;
             }
 
-
             if (_isLoading)
                 return;
             setDownloading(_doc.getFileName());
-            DocumentClient.downloadDocument(getContext(), _doc.getId(),
-                    _doc.getDownloadLink(), _doc.getFileName(), false);
+            DocumentClient.downloadDocument(getContext(), _doc.getId(), _doc.getDownloadLink(), _doc.getFileName(), false);
         }
     };
 
@@ -254,5 +310,8 @@ public class UploadedDocumentView extends RelativeLayout {
 
     public interface Listener {
         void onDelete(UploadedDocumentView v, UploadedDocument document);
+
+        Drawable getPhoto(UploadedDocumentView view, String url, boolean circle);
+
     }
 }

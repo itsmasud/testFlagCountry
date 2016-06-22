@@ -54,7 +54,7 @@ public class Workorder implements Parcelable {
     @Json(name = "discounts")
     private Discount[] _discounts;
     @Json(name = "displayCounterOffer")
-    private Integer _displayCounterOffer;
+    private Boolean _displayCounterOffer;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
@@ -111,14 +111,10 @@ public class Workorder implements Parcelable {
     private UploadSlot[] _uploadSlots;
     @Json(name = "w2")
     private Integer _w2;
-    //    @Json(name = "workorderBonusInfo")
-//    private BonusInfo[] _workorderBonusInfo;
     @Json(name = "workorderId")
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
-//    @Json(name = "workorderPenaltyInfo")
-//    private PenaltyInfo[] _workorderPenaltyInfo;
 
     public Workorder() {
     }
@@ -201,8 +197,8 @@ public class Workorder implements Parcelable {
     public Boolean displayCounterOffer() {
         if (_displayCounterOffer == null)
             return true;
-
-        return _displayCounterOffer == 1;
+        
+        return _displayCounterOffer;
     }
 
     public Document[] getDocuments() {
@@ -324,10 +320,6 @@ public class Workorder implements Parcelable {
         return _w2;
     }
 
-//    public BonusInfo[] getBounsInfo() {
-//        return _workorderBonusInfo;
-//    }
-
     public Long getWorkorderId() {
         return _workorderId;
     }
@@ -335,10 +327,6 @@ public class Workorder implements Parcelable {
     public User getWorkorderManagerInfo() {
         return _workorderManagerInfo;
     }
-
-//    public PenaltyInfo[] getPenaltyInfo() {
-//        return _workorderPenaltyInfo;
-//    }
 
     public JsonObject toJson() {
         return toJson(this);

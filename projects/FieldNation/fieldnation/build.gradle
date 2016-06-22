@@ -84,6 +84,12 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.beta"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        brew {
+            applicationId "com.fieldnation.android.brew"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Brew"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.brew"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
     }
 }
 

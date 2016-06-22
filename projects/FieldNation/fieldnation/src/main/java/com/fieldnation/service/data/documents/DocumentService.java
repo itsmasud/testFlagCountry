@@ -8,7 +8,6 @@ import com.fieldnation.Log;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 
@@ -26,7 +25,7 @@ public class DocumentService extends MSService implements DocumentConstants {
     @Override
     public void processIntent(Intent intent) {
         Log.v(TAG, "processIntent");
-        if (this != null && intent.hasExtra(PARAM_ACTION)) {
+        if (intent != null && intent.hasExtra(PARAM_ACTION)) {
             String action = intent.getStringExtra(PARAM_ACTION);
             switch (action) {
                 case PARAM_ACTION_DOWNLOAD_DOCUMENT:

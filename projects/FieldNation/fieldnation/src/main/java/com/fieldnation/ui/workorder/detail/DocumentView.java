@@ -1,9 +1,11 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -23,13 +25,14 @@ import com.fieldnation.utils.misc;
 import java.io.File;
 import java.util.Hashtable;
 
-public class DocumentView extends RelativeLayout {
+public class DocumentView extends RelativeLayout implements PhotoReceiver {
     private static final String TAG = "DocumentView";
 
     private static final Hashtable<String, Integer> _ICFN_FILES = new Hashtable<>();
 
     // UI
     private IconFontTextView _fileTypeIconFont;
+    private ImageView _picView;
     private TextView _filenameTextView;
     private TextView _dateTextView;
     private TextView _byTextView;
@@ -42,6 +45,7 @@ public class DocumentView extends RelativeLayout {
     private Document _document;
     private DocumentClient _docClient;
     private boolean _isLoading = false;
+    private Listener _listener;
 
     static {
         _ICFN_FILES.put("png", R.string.icon_file_png);
@@ -78,6 +82,7 @@ public class DocumentView extends RelativeLayout {
             return;
 
         _fileTypeIconFont = (IconFontTextView) findViewById(R.id.filetype_imageview);
+        _picView = (ImageView) findViewById(R.id.pic_view);
         _filenameTextView = (TextView) findViewById(R.id.filename_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
         _byTextView = (TextView) findViewById(R.id.by_textview);
@@ -110,6 +115,19 @@ public class DocumentView extends RelativeLayout {
         populateUi();
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        if (_document != null && _document.getThumbNail() != null && _document.getThumbNail().startsWith(url)) {
+            _picView.setImageDrawable(photo);
+            _fileTypeIconFont.setVisibility(GONE);
+        }
+    }
+
     public void setLoading(boolean isloading, int messageResId) {
         _isLoading = isloading;
         if (isloading) {
@@ -119,6 +137,8 @@ public class DocumentView extends RelativeLayout {
             _byTextView.setVisibility(GONE);
             _usernameTextView.setVisibility(GONE);
             _statusTextView.setText(messageResId);
+            _fileTypeIconFont.setVisibility(VISIBLE);
+            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
         } else {
             _progressBar.setVisibility(View.GONE);
             _statusTextView.setVisibility(View.GONE);
@@ -126,6 +146,7 @@ public class DocumentView extends RelativeLayout {
             _byTextView.setVisibility(VISIBLE);
             _usernameTextView.setVisibility(VISIBLE);
             _dateTextView.setVisibility(View.VISIBLE);
+            _fileTypeIconFont.setVisibility(GONE);
         }
     }
 
@@ -143,8 +164,40 @@ public class DocumentView extends RelativeLayout {
             String ext = _document.getFileName();
             ext = ext.substring(ext.lastIndexOf(".") + 1).trim().toLowerCase();
             if (_ICFN_FILES.containsKey(ext)) {
-                _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                switch (ext) {
+                    case "png":
+                    case "jpg":
+                    case "jpeg":
+                        _picView.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+
+                        if (_listener != null && !misc.isEmptyOrNull(_document.getThumbNail())) {
+                            Drawable result = _listener.getPhoto(this, _document.getThumbNail(), true);
+                            if (result != null) {
+                                setPhoto(_document.getThumbNail(), result);
+                            } else {
+                                _picView.setVisibility(GONE);
+                                _fileTypeIconFont.setVisibility(VISIBLE);
+                                _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+                            }
+                        } else {
+                            _picView.setVisibility(GONE);
+                            _fileTypeIconFont.setVisibility(VISIBLE);
+                            _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
+                        }
+                        break;
+
+                    default:
+                        _picView.setVisibility(GONE);
+                        _fileTypeIconFont.setVisibility(VISIBLE);
+                        _fileTypeIconFont.setText(getContext().getString(_ICFN_FILES.get(ext)));
+                        break;
+                }
+
             } else {
+                _picView.setVisibility(GONE);
+                _fileTypeIconFont.setVisibility(VISIBLE);
                 _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             }
         } catch (Exception ex) {
@@ -216,4 +269,8 @@ public class DocumentView extends RelativeLayout {
                     _document.getFilePath(), _document.getFileName(), false);
         }
     };
+
+    public interface Listener {
+        Drawable getPhoto(DocumentView view, String url, boolean circle);
+    }
 }
