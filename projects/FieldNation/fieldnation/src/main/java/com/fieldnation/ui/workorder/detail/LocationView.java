@@ -267,8 +267,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         if (end != null) {
-            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
-                    _mapImageView.getWidth(), _mapImageView.getHeight());
+            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end, 400, 200);
         } else {
             _mapUnavailable = true;
             populateUi();
@@ -335,6 +334,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
         public void onLocation(android.location.Location location) {
+            Log.v(TAG, "_gpsListener");
             _userLocation = location;
             SimpleGps.with(getContext()).stop();
             lookupMap();
@@ -352,6 +352,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         @Override
         public void onStaticMapClassic(long workorderId, Bitmap bitmap) {
+            Log.v(TAG, "onStaticMapClassic");
             _map = bitmap;
             _mapUnavailable = false;
             populateUi();

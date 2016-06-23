@@ -9,6 +9,7 @@ import java.util.Hashtable;
  * Created by Michael on 6/23/2016.
  */
 public class SimpleGps {
+    private static final String TAG = "SimpleGps";
     private static final Hashtable<String, SimpleGps> _clients = new Hashtable<>();
 
     private GpsLocationService _gpsLocationService = null;
@@ -16,6 +17,7 @@ public class SimpleGps {
     private String _key = null;
 
     private SimpleGps(Context context) {
+        Log.v(TAG, "SimpleGps - constucted");
         _gpsLocationService = new GpsLocationService(context);
         _gpsLocationService.setListener(_gpsListener);
         _key = context.getApplicationContext().toString();
@@ -46,6 +48,7 @@ public class SimpleGps {
     private final GpsLocationService.Listener _gpsListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
+            Log.v(TAG, "SimpleGps - _gpsListener");
             if (_listener != null)
                 _listener.onLocation(location);
         }

@@ -50,13 +50,10 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
     public static abstract class Listener extends TopicClient.Listener {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            switch (topicId) {
-                case TOPIC_ID_DIRECTIONS:
-                    preOnDirections((Bundle) payload);
-                    break;
-                case TOPIC_ID_STATIC_MAP_CLASSIC:
-                    preOnStaticMapClassic((Bundle) payload);
-                    break;
+            if (topicId.equals(TOPIC_ID_DIRECTIONS)) {
+                preOnDirections((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_STATIC_MAP_CLASSIC)) {
+                preOnStaticMapClassic((Bundle) payload);
             }
         }
 
@@ -91,10 +88,15 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
 
                 @Override
                 protected Bitmap doInBackground(Bundle... params) {
-                    Bundle bundle = params[0];
-                    _workorderId = bundle.getLong(PARAM_WORKORDER_ID);
-                    byte[] imageData = bundle.getByteArray(PARAM_IMAGE_DATA);
-                    return BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                    try {
+                        Bundle bundle = params[0];
+                        _workorderId = bundle.getLong(PARAM_WORKORDER_ID);
+                        byte[] imageData = bundle.getByteArray(PARAM_IMAGE_DATA);
+                        return BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                    } catch (Exception ex) {
+                        Log.v(STAG, ex);
+                    }
+                    return null;
                 }
 
                 @Override

@@ -29,7 +29,7 @@ public class MapboxTransactionBuilder implements MapboxConstants {
                     .timingKey("GET/mapbox/directions")
                     .host("api.mapbox.com")
                     .path(path)
-                    .urlParams("access_token=" + context.getString(R.string.mapbox_accessToken));
+                    .urlParams("?access_token=" + context.getString(R.string.mapbox_accessToken));
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -65,12 +65,12 @@ public class MapboxTransactionBuilder implements MapboxConstants {
                     .timingKey("GET/mapbox/staticMapClassic")
                     .host("api.mapbox.com")
                     .path(path)
-                    .urlParams("access_token=" + context.getString(R.string.mapbox_accessToken));
+                    .urlParams("?access_token=" + context.getString(R.string.mapbox_accessToken));
 
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(MapboxTransactionHandler.class)
-                    .handlerParams(null)
+                    .handlerParams(MapboxTransactionHandler.pStaticMapClassic(workorderId))
                     .useAuth(false)
                     .isSyncCall(false)
                     .request(builder)
