@@ -20,6 +20,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
@@ -28,6 +29,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+
+import io.nlopez.smartlocation.OnLocationUpdatedListener;
+import io.nlopez.smartlocation.SmartLocation;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
@@ -102,8 +106,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         _noMapLayout = (RelativeLayout) findViewById(R.id.noMap_layout);
 
+        SmartLocation.with(getContext()).location().oneFix().start(_locationListener);
+
         setVisibility(View.GONE);
     }
+
+    private final OnLocationUpdatedListener _locationListener = new OnLocationUpdatedListener() {
+        @Override
+        public void onLocationUpdated(android.location.Location location) {
+
+            SmartLocation.with(getContext()).location().stop();
+
+        }
+    };
 
     @Override
     public void setWorkorder(Workorder workorder) {
@@ -209,10 +224,10 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _navigateButton.setVisibility(VISIBLE);
         }
 
-/*
-        new AsyncTaskEx<Object, Object, LatLng>() {
+
+        new AsyncTaskEx<Object, Object, Position>() {
             @Override
-            protected LatLng doInBackground(Object... params) {
+            protected Position doInBackground(Object... params) {
                 Context context = (Context) params[0];
                 try {
                     if (_isDrawn)
@@ -233,7 +248,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     }
 
                     Log.v(TAG, "inBackground time: " + stopwatch.finish());
-                    return new LatLng(addrs.get(0).getLatitude(), addrs.get(0).getLongitude());
+                    return new Position(addrs.get(0).getLongitude(), addrs.get(0).getLatitude());
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
                 }
@@ -241,7 +256,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             }
 
             @Override
-            protected void onPostExecute(LatLng destination) {
+            protected void onPostExecute(Position destination) {
                 Stopwatch watch = new Stopwatch(true);
                 _mapView.clear();
 
@@ -249,7 +264,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     if (destination != null) {
                         Log.v(TAG, "Getting user location");
                         _mapView.setUserLocationEnabled(true);
-                        LatLng user = _mapView.getUserLocation();
+                        Position user = _mapView.getUserLocation();
                         _mapView.setUserLocationEnabled(false);
                         Log.v(TAG, "Getting user location done");
 
@@ -282,7 +297,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Log.v(TAG, "onPostExecute time: " + watch.finish());
             }
         }.executeEx(getContext());
-*/
+
         Log.v(TAG, "populateUi time: " + stopwatch.finish());
     }
 

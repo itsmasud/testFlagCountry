@@ -34,6 +34,8 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
         return register(TOPIC_ID_DIRECTIONS, TAG);
     }
 
+    //public static void getStaticMapClassic(Context context, )
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/

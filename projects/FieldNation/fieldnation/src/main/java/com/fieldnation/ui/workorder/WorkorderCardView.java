@@ -21,6 +21,7 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
@@ -548,7 +549,9 @@ public class WorkorderCardView extends RelativeLayout {
                         _leftButton.setVisibility(VISIBLE);
 
                         try {
-                            //_leftButton.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                            Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
+                            Position myLoc = new Position(_gpsLocation.getLongitude(), _gpsLocation.getLatitude());
+                            _leftButton.setText(myLoc.distanceTo(siteLoc) + " mi");
                         } catch (Exception ex) {
                             //Log.v(TAG, ex);
                             _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());

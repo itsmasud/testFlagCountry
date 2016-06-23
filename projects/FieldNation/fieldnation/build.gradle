@@ -114,4 +114,8 @@ dependencies {
     // ZXing - barcode scanning
     compile 'com.journeyapps:zxing-android-embedded:3.0.3@aar'
     compile 'com.google.zxing:core:3.2.1'
+    // Little wrapper around gps stuff -- https://github.com/mrmans0n/smart-location-lib
+    compile('io.nlopez.smartlocation:library:3.2.4') {
+        transitive = false;
+    }
 }
