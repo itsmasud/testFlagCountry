@@ -18,6 +18,7 @@ import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.SimpleGps;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
@@ -26,9 +27,6 @@ import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
-
-import io.nlopez.smartlocation.OnLocationUpdatedListener;
-import io.nlopez.smartlocation.SmartLocation;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
@@ -103,6 +101,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
 
+        SimpleGps.with(getContext()).start(_gpsListener);
+
         setVisibility(View.GONE);
     }
 
@@ -112,12 +112,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _mapboxClient.disconnect(App.get());
         }
         super.onDetachedFromWindow();
-    }
-
-    public void setLocation(android.location.Location location) {
-        _userLocation = location;
-        lookupMap();
-        populateUi();
     }
 
     @Override
@@ -338,11 +332,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final OnLocationUpdatedListener _locationListener = new OnLocationUpdatedListener() {
+    private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
-        public void onLocationUpdated(android.location.Location location) {
+        public void onLocation(android.location.Location location) {
             _userLocation = location;
-            SmartLocation.with(getContext()).location().stop();
+            SimpleGps.with(getContext()).stop();
             lookupMap();
         }
     };

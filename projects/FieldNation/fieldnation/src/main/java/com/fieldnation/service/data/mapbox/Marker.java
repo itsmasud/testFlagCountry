@@ -6,11 +6,12 @@ import com.fieldnation.utils.misc;
  * Created by Michael on 6/23/2016.
  */
 public class Marker extends Position {
+
     private String _url;
 
     public Marker(double longitude, double latitude, String url) {
         super(longitude, latitude);
-        _url = url;
+        this._url = url;
     }
 
     @Override
