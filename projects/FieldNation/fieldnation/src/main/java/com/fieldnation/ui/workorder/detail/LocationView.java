@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -104,7 +105,18 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         SimpleGps.with(getContext()).start(_gpsListener);
 
         setVisibility(View.GONE);
+
+        getViewTreeObserver().addOnGlobalLayoutListener(_layoutObserver);
     }
+
+    private final ViewTreeObserver.OnGlobalLayoutListener _layoutObserver = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            lookupMap();
+            getViewTreeObserver().removeGlobalOnLayoutListener(_layoutObserver);
+        }
+    };
+
 
     @Override
     protected void onDetachedFromWindow() {
@@ -245,6 +257,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         if (_userLocation == null)
+            return;
+
+        if (_mapImageView == null)
+            return;
+
+        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
             return;
 
         Marker start = new Marker(_userLocation.getLongitude(), _userLocation.getLatitude(),
