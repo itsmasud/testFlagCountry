@@ -242,7 +242,7 @@
     <string name="dialog_introduction_text">We\'re actively trying to improve the Field Nation App to better cater to your needs.</string>
     <string name="dialog_reason_spinner_default">Reason for contacting</string>
     <string name="dialog_explanation_default">How can we help</string>
-    <string name="dialog_additional_help_text">Would you rather talk with someone? Feel free to call us at (877) 373-7558</string>
+    <string name="dialog_additional_help_text">Would you rather talk with someone? Feel free to call us at 877-373-7558</string>
 
     <string name="dialog_delete_file_title">Delete File</string>
     <string name="dialog_delete_message">Are you sure you want to delete this file?</string>
@@ -942,7 +942,6 @@
 
     <string-array name="reason_list">
         <item>App Feedback</item>
-        <item>Work Order Issue</item>
-        <item>Account Issue</item>
+        <item>Help/Support</item>
     </string-array>
 </resources>

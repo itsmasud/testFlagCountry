@@ -709,14 +709,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void uploadDeliverable(Context context, StoredObject upFile, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
 
-        boolean wifiOnly = false;
         if (upFile.isFile() && upFile.getFile() != null) {
             if (upFile.getFile().length() > 100000000) { // 100 MB?
                 StoredObject.delete(upFile);
                 ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
                 return;
-            } else if (upFile.getFile().length() > 2097152) { // 2MB
-                wifiOnly = true;
             }
         }
 
@@ -727,7 +724,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
-                    .multipartField("note" , (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
+                    .multipartField("note", (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
 //                    .body("note=" + (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
                     .doNotRead();
 
@@ -741,7 +738,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
-                    .setWifiRequired(App.get().onlyUploadWithWifi() || wifiOnly)
+                    .setWifiRequired(App.get().onlyUploadWithWifi())
                     .setTrack(true)
                     .send();
         } catch (Exception ex) {
