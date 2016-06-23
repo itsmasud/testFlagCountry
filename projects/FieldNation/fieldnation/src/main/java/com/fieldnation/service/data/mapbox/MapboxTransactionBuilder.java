@@ -44,4 +44,41 @@ public class MapboxTransactionBuilder implements MapboxConstants {
             Log.v(TAG, ex);
         }
     }
+
+    // https://api.mapbox.com/v4/mapbox.dark/url-https%3A%2F%2Fmapbox.com%2Fimg%2Frocket.png(-76.9,38.9)/-76.9,38.9,15/1000x1000.png
+    public static void getStaticMapClassic(Context context, long workorderId, int width, int height, Marker start, Marker end) {
+        try {
+            // https://api.mapbox.com/v4/jacobbeasley.ggg811om/
+            // url-https%3A%2F%2Fmapbox.com%2Fimg%2Frocket.png(-76.9,38.9),
+            // url-https%3A%2F%2Fmapbox.com%2Fimg%2Frocket.png(-76.9,38.5)
+            // /auto/800x250.png?access_token=pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA
+
+            String path = "/v4/mapbox.streets/";
+
+            path += start.toString() + ",";
+            path += end.toString();
+            path += "/auto/" + width + "x" + height + ".png";
+
+            HttpJsonBuilder builder = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("GET")
+                    .timingKey("GET/mapbox/staticMapClassic")
+                    .host("api.mapbox.com")
+                    .path(path)
+                    .urlParams("access_token=" + context.getString(R.string.mapbox_accessToken));
+
+            WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(MapboxTransactionHandler.class)
+                    .handlerParams(null)
+                    .useAuth(false)
+                    .isSyncCall(false)
+                    .request(builder)
+                    .send();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+
+    }
 }

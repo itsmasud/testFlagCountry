@@ -17,4 +17,12 @@ public class MapboxDispatch implements MapboxConstants {
 
         TopicService.dispatchEvent(context, TOPIC_ID_DIRECTIONS, bundle, Sticky.NONE);
     }
+
+    public static void staticMapClassic(Context context, long workorderId, byte[] imageData) {
+        Bundle bundle = new Bundle();
+        bundle.putByteArray(PARAM_IMAGE_DATA, imageData);
+        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+
+        TopicService.dispatchEvent(context, TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId, bundle, Sticky.NONE);
+    }
 }

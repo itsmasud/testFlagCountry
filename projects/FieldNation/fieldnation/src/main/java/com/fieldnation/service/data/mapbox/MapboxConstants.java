@@ -5,7 +5,9 @@ package com.fieldnation.service.data.mapbox;
  */
 public interface MapboxConstants {
     String TOPIC_ID_DIRECTIONS = "TOPIC_ID_DIRECTIONS";
-    String TOPIC_ID_STATIC_MAP_OLD = "TOPIC_ID_STATIC_MAP_OLD";
+    String TOPIC_ID_STATIC_MAP_CLASSIC = "TOPIC_ID_STATIC_MAP_CLASSIC";
 
     String PARAM_DIRECTIONS = "PARAM_DIRECTIONS";
+    String PARAM_WORKORDER_ID = "PARAM_WORKORDER_ID";
+    String PARAM_IMAGE_DATA = "PARAM_IMAGE_DATA";
 }
