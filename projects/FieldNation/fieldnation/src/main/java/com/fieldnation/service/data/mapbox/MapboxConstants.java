@@ -10,4 +10,5 @@ public interface MapboxConstants {
     String PARAM_DIRECTIONS = "PARAM_DIRECTIONS";
     String PARAM_WORKORDER_ID = "PARAM_WORKORDER_ID";
     String PARAM_IMAGE_DATA = "PARAM_IMAGE_DATA";
+    String PARAM_FAILED = "PARAM_FAILED";
 }

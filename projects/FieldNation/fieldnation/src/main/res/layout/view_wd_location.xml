@@ -61,6 +61,7 @@
                 android:visibility="gone">
 
                 <TextView
+                    android:id="@+id/gpsError1_textview"
                     style="@style/Text_Subhead"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -69,6 +70,7 @@
                     android:textColor="@color/fn_white_text" />
 
                 <TextView
+                    android:id="@+id/gpsError2_textview"
                     style="@style/Text_Body_1"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -103,6 +105,7 @@
                 android:text="@string/placeholder_one_line_address" />
 
             <LinearLayout
+                android:id="@+id/locationType_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
@@ -138,7 +141,8 @@
                 style="@style/Text_Body_1"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp" />
+                android:layout_marginTop="8dp"
+                android:text="@string/placeholder_paragraph" />
 
         </LinearLayout>
 

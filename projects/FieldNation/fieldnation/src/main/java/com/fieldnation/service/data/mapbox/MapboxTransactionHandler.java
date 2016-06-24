@@ -16,9 +16,10 @@ import java.text.ParseException;
 public class MapboxTransactionHandler extends WebTransactionHandler implements MapboxConstants {
     private static final String TAG = "MapboxTransactionHandler";
 
-    public static byte[] pDirections() {
+    public static byte[] pDirections(long workorderid) {
         try {
             JsonObject obj = new JsonObject("action", "pDirections");
+            obj.put("workorderid", workorderid);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -66,12 +67,29 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
     }
 
     private Result handleStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray());
+        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
         return Result.CONTINUE;
     }
 
     @Override
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
-        return null;
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pStaticMapClassic":
+                    return handleStaticMapClassicFail(context, transaction, params, resultData);
+            }
+
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return Result.CONTINUE;
     }
+
+    private Result handleStaticMapClassicFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
+        return Result.CONTINUE;
+    }
+
 }

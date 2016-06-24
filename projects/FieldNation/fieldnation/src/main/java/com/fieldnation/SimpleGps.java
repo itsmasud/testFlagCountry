@@ -32,6 +32,10 @@ public class SimpleGps {
         return _clients.get(context.getApplicationContext().toString());
     }
 
+    public boolean isLocationEnabled() {
+        return _gpsLocationService.isLocationServicesEnabled();
+    }
+
     public SimpleGps start(Listener listener) {
         _listener = listener;
         _gpsLocationService.startLocation();

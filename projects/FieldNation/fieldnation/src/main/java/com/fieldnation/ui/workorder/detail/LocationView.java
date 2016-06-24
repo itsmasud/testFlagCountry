@@ -20,13 +20,14 @@ import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.SimpleGps;
+import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
+import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
@@ -40,10 +41,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private ProgressBar _loadingProgress;
 
     private LinearLayout _noMapLayout;
+    private TextView _gpsError1TextView;
+    private TextView _gpsError2TextView;
 
     private LinearLayout _addressLayout;
     private TextView _siteTitleTextView;
     private TextView _addressTextView;
+
+    private LinearLayout _locationTypeLayout;
     private IconFontTextView _locationIconTextView;
     private TextView _locationTypeTextView;
 
@@ -54,7 +59,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     // Data
     private Workorder _workorder;
-    private boolean _isDrawn = false;
     private android.location.Location _userLocation = null;
     private Bitmap _map = null;
     private boolean _mapUnavailable = false;
@@ -84,12 +88,16 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
 
         _noMapLayout = (LinearLayout) findViewById(R.id.noMap_layout);
+        _gpsError1TextView = (TextView) findViewById(R.id.gpsError1_textview);
+        _gpsError2TextView = (TextView) findViewById(R.id.gpsError2_textview);
 
         _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
         _addressLayout.setOnClickListener(_map_onClick);
 
         _siteTitleTextView = (TextView) findViewById(R.id.siteTitle_textview);
         _addressTextView = (TextView) findViewById(R.id.address_textview);
+
+        _locationTypeLayout = (LinearLayout) findViewById(R.id.locationType_layout);
         _locationIconTextView = (IconFontTextView) findViewById(R.id.locationIcon_textview);
         _locationTypeTextView = (TextView) findViewById(R.id.locationType_textview);
 
@@ -102,7 +110,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
 
-        SimpleGps.with(getContext()).start(_gpsListener);
+        SimpleGps.with(App.get()).start(_gpsListener);
 
         setVisibility(View.GONE);
 
@@ -112,30 +120,23 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private final ViewTreeObserver.OnGlobalLayoutListener _layoutObserver = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
+            Log.v(TAG, "layoutComplete");
             lookupMap();
             getViewTreeObserver().removeGlobalOnLayoutListener(_layoutObserver);
         }
     };
-
 
     @Override
     protected void onDetachedFromWindow() {
         if (_mapboxClient != null && _mapboxClient.isConnected()) {
             _mapboxClient.disconnect(App.get());
         }
+        SimpleGps.with(App.get()).stop();
         super.onDetachedFromWindow();
     }
 
     @Override
     public void setWorkorder(Workorder workorder) {
-        try {
-            if (_workorder == null || workorder == null)
-                _isDrawn = false;
-        } catch (Exception ex) {
-            _isDrawn = false;
-            Log.v(TAG, ex);
-        }
-
         _workorder = workorder;
 
         if (_mapboxClient != null && _mapboxClient.isConnected()) {
@@ -146,7 +147,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateUi() {
-        Stopwatch stopwatch = new Stopwatch(true);
         if (_workorder == null)
             return;
 
@@ -155,116 +155,183 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         setVisibility(VISIBLE);
 
-        // Map Stuff
-        // Map not avilable
-        if (_mapUnavailable) {
+        populateAddressTile();
+        populateMap();
+        calculateAddressTileVisibility();
+
+    }
+
+    private void calculateAddressTileVisibility() {
+        _navigateButton.setVisibility(VISIBLE);
+        if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
+            _navigateButton.setVisibility(GONE);
+
+        // hide stuff that shouldn't be seen
+        if (_workorder.getIsRemoteWork()) {
+            _mapLayout.setVisibility(GONE);
+            _noLocationTextView.setVisibility(VISIBLE);
+            _distanceTextView.setVisibility(GONE);
+            _addressLayout.setVisibility(GONE);
+        }
+    }
+
+    private void populateAddressTile() {
+        // Address info
+        Location loc = _workorder.getLocation();
+        if (loc == null)
+            return;
+
+        // set site title
+        String title = "";
+        if (!misc.isEmptyOrNull(loc.getGroupName())) {
+            title = loc.getGroupName().trim() + "/";
+        }
+        if (!misc.isEmptyOrNull(loc.getName())) {
+            title += loc.getName();
+        }
+        if (!misc.isEmptyOrNull(title)) {
+            _siteTitleTextView.setText(title);
+            _siteTitleTextView.setVisibility(VISIBLE);
+        } else {
+            _siteTitleTextView.setVisibility(GONE);
+        }
+
+        // set address line
+        if (!misc.isEmptyOrNull(loc.getFullAddressOneLine())) {
+            _addressTextView.setVisibility(VISIBLE);
+            _addressTextView.setText(loc.getFullAddressOneLine());
+        } else {
+            _addressTextView.setVisibility(GONE);
+        }
+
+        // set location type
+        if (loc.getType() == null) {
+            _locationTypeLayout.setVisibility(GONE);
+        } else {
+            _locationTypeLayout.setVisibility(VISIBLE);
+            switch (loc.getType()) {
+                case "Commercial":
+                    _locationIconTextView.setText(R.string.icon_commercial);
+                    _locationTypeTextView.setText(R.string.commercial);
+                    break;
+                case "Government":
+                    _locationIconTextView.setText(R.string.icon_government);
+                    _locationTypeTextView.setText(R.string.government);
+                    break;
+                case "Residential":
+                    _locationIconTextView.setText(R.string.icon_house);
+                    _locationTypeTextView.setText(R.string.residential);
+                    break;
+                case "Educational":
+                    _locationIconTextView.setText(R.string.icon_educational);
+                    _locationTypeTextView.setText(R.string.educational);
+                    break;
+                default:
+                    _locationTypeLayout.setVisibility(GONE);
+                    break;
+            }
+        }
+
+        // distance
+        _distanceTextView.setVisibility(VISIBLE);
+        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+            _distanceTextView.setText("GPS disabled, can't calculate distance");
+        } else if (_userLocation != null && loc.getGeo() != null) {
+            try {
+                Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
+                Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
+                _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi (straight line)");
+            } catch (Exception ex) {
+                _distanceTextView.setText("Cannot display distance");
+            }
+        } else if (loc.getGeo() == null) {
+            _distanceTextView.setText("Cannot display distance");
+        } else {
+            _distanceTextView.setText("Getting distance...");
+        }
+
+        // display location notes
+        if (misc.isEmptyOrNull(loc.getNotes())) {
+            _noteTextView.setVisibility(GONE);
+        } else {
+            _noteTextView.setVisibility(VISIBLE);
+            _noteTextView.setText(loc.getNotes());
+        }
+    }
+
+    private void populateMap() {
+        //        no gps - !isLocationEnabled()
+        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
+            _gpsError1TextView.setText(R.string.map_not_available);
+            _gpsError2TextView.setText("GPS is currently disabled");
 
-            // loading
-        } else if (_map == null) {
-            _loadingProgress.setVisibility(VISIBLE);
-            _mapImageView.setImageResource(R.drawable.no_map);
-            _noMapLayout.setVisibility(GONE);
-
-            // have all the things
-        } else {
-            _loadingProgress.setVisibility(GONE);
-            _mapImageView.setImageBitmap(_map);
-            _noMapLayout.setVisibility(GONE);
-        }
-
-        // Address info
-        Location loc = _workorder.getLocation();
-        if (loc != null) {
-
-            // set site title
-            String title = "";
-            if (!misc.isEmptyOrNull(loc.getGroupName())) {
-                title = loc.getGroupName().trim() + "/";
-            }
-            if (!misc.isEmptyOrNull(loc.getName())) {
-                title += loc.getName();
-            }
-            if (!misc.isEmptyOrNull(title)) {
-                _siteTitleTextView.setText(title);
-                _siteTitleTextView.setVisibility(VISIBLE);
-            } else {
-                _siteTitleTextView.setVisibility(GONE);
-            }
-
-            // set address line
-            _addressTextView.setText(loc.getFullAddressOneLine());
-
-
-            // set locatoin type
-            if (loc.getType() != null) {
-                _locationTypeTextView.setVisibility(VISIBLE);
-                _locationIconTextView.setVisibility(VISIBLE);
-                switch (loc.getType()) {
-                    case "Commercial":
-                        _locationIconTextView.setText(R.string.icon_commercial);
-                        _locationTypeTextView.setText(R.string.commercial);
-                        break;
-                    case "Government":
-                        _locationIconTextView.setText(R.string.icon_government);
-                        _locationTypeTextView.setText(R.string.government);
-                        break;
-                    case "Residential":
-                        _locationIconTextView.setText(R.string.icon_house);
-                        _locationTypeTextView.setText(R.string.residential);
-                        break;
-                    case "Educational":
-                        _locationIconTextView.setText(R.string.icon_educational);
-                        _locationTypeTextView.setText(R.string.educational);
-                        break;
-                    default:
-                        _locationTypeTextView.setVisibility(GONE);
-                        _locationIconTextView.setVisibility(GONE);
-                        break;
-                }
-            } else {
-                _locationTypeTextView.setVisibility(GONE);
-                _locationIconTextView.setVisibility(GONE);
-            }
-
-            // display location notes
-            if (misc.isEmptyOrNull(loc.getNotes())) {
-                _noteTextView.setVisibility(GONE);
-            } else {
-                _noteTextView.setVisibility(VISIBLE);
-                _noteTextView.setText(loc.getNotes());
-            }
-            // location == null
         } else if (_workorder.getIsRemoteWork()) {
-            _mapImageView.setVisibility(GONE);
-            _mapLayout.setVisibility(GONE);
-            _noLocationTextView.setVisibility(VISIBLE);
-            _addressLayout.setVisibility(GONE);
-            _navigateButton.setVisibility(GONE);
-            Log.v(TAG, "no location time: " + stopwatch.finish());
-        }
+//        remote work
+            _noMapLayout.setVisibility(GONE);
 
-        Log.v(TAG, "populateUi time: " + stopwatch.finish());
+        } else if (_workorder.getLocation() == null || _workorder.getLocation().getGeo() == null) {
+//        no geo data - ie bad address - _workorder.getLocation() == null || _workord
+            _loadingProgress.setVisibility(GONE);
+            _mapImageView.setImageResource(R.drawable.no_map);
+            _noMapLayout.setVisibility(VISIBLE);
+            _gpsError1TextView.setText(R.string.map_not_available);
+            _gpsError2TextView.setText("No location provided by buyer");
+
+        } else {
+            if (_mapUnavailable) {
+                _loadingProgress.setVisibility(GONE);
+                _mapImageView.setImageResource(R.drawable.no_map);
+                _noMapLayout.setVisibility(VISIBLE);
+                _gpsError1TextView.setText(R.string.map_not_available);
+                _gpsError2TextView.setText("Error looking up the map");
+
+                // loading
+            } else if (_map == null) { //  !_mapUnavailable
+                _loadingProgress.setVisibility(VISIBLE);
+                _mapImageView.setImageResource(R.drawable.no_map);
+                _noMapLayout.setVisibility(GONE);
+
+                // have all the things
+            } else {
+                _loadingProgress.setVisibility(GONE);
+                _mapImageView.setImageBitmap(_map);
+                _noMapLayout.setVisibility(GONE);
+            }
+        }
     }
 
     private void lookupMap() {
+        Log.v(TAG, "lookupMap");
         if (_mapboxClient == null || !_mapboxClient.isConnected())
             return;
 
+        Log.v(TAG, "lookupMap - 1");
         if (_workorder == null)
             return;
 
+        Log.v(TAG, "lookupMap - 2");
         if (_userLocation == null)
             return;
 
+        Log.v(TAG, "lookupMap - 3");
         if (_mapImageView == null)
             return;
 
-        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0)
+        Log.v(TAG, "lookupMap - 4");
+        if (_mapImageView.getWidth() == 0 || _mapImageView.getHeight() == 0) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    lookupMap();
+                }
+            }, 100);
             return;
+        }
 
+        Log.v(TAG, "lookupMap - 5");
         Marker start = new Marker(_userLocation.getLongitude(), _userLocation.getLatitude(),
                 getContext().getString(R.string.mapbox_startMarkerUrl));
 
@@ -285,7 +352,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         if (end != null) {
-            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end, 400, 200);
+            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
+                    _mapImageView.getWidth() / 3, _mapImageView.getHeight() / 3);
         } else {
             _mapUnavailable = true;
             populateUi();
@@ -354,7 +422,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            SimpleGps.with(getContext()).stop();
             lookupMap();
         }
     };
@@ -364,16 +431,26 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onConnected() {
             if (_workorder != null) {
                 _mapboxClient.subStaticMapClassic(_workorder.getWorkorderId());
+                _mapboxClient.subDirections(_workorder.getWorkorderId());
                 lookupMap();
             }
         }
 
         @Override
-        public void onStaticMapClassic(long workorderId, Bitmap bitmap) {
+        public void onStaticMapClassic(long workorderId, Bitmap bitmap, boolean failed) {
             Log.v(TAG, "onStaticMapClassic");
-            _map = bitmap;
-            _mapUnavailable = false;
+            if (bitmap == null || failed) {
+                _map = null;
+                _mapUnavailable = true;
+            } else {
+                _map = bitmap;
+                _mapUnavailable = false;
+            }
             populateUi();
+        }
+
+        @Override
+        public void onDirections(MapboxDirections directions) {
         }
     };
 }

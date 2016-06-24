@@ -28,12 +28,12 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
         super.disconnect(context, TAG);
     }
 
-    public static void getDirections(Context context, Position start, Position end) {
-        MapboxTransactionBuilder.getDirections(context, new Position[]{start, end});
+    public static void getDirections(Context context, long workorderid, Position start, Position end) {
+        MapboxTransactionBuilder.getDirections(context, workorderid, new Position[]{start, end});
     }
 
-    public boolean subDirections() {
-        return register(TOPIC_ID_DIRECTIONS, TAG);
+    public boolean subDirections(long workorderId) {
+        return register(TOPIC_ID_DIRECTIONS + "/" + workorderId, TAG);
     }
 
     public static void getStaticMapClassic(Context context, long workorderId, Marker start, Marker end, int width, int height) {
@@ -85,14 +85,21 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
         private void preOnStaticMapClassic(Bundle bundle) {
             new AsyncTaskEx<Bundle, Object, Bitmap>() {
                 private long _workorderId = 0;
+                private boolean _failed = false;
 
                 @Override
                 protected Bitmap doInBackground(Bundle... params) {
                     try {
                         Bundle bundle = params[0];
                         _workorderId = bundle.getLong(PARAM_WORKORDER_ID);
-                        byte[] imageData = bundle.getByteArray(PARAM_IMAGE_DATA);
-                        return BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                        _failed = bundle.containsKey(PARAM_FAILED) && bundle.getBoolean(PARAM_FAILED);
+
+                        if (bundle.containsKey(PARAM_IMAGE_DATA)) {
+                            byte[] imageData = bundle.getByteArray(PARAM_IMAGE_DATA);
+                            return BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                        } else {
+                            return null;
+                        }
                     } catch (Exception ex) {
                         Log.v(STAG, ex);
                     }
@@ -101,12 +108,12 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
 
                 @Override
                 protected void onPostExecute(Bitmap bitmap) {
-                    onStaticMapClassic(_workorderId, bitmap);
+                    onStaticMapClassic(_workorderId, bitmap, _failed);
                 }
             }.executeEx(bundle);
         }
 
-        public void onStaticMapClassic(long workorderId, Bitmap bitmap) {
+        public void onStaticMapClassic(long workorderId, Bitmap bitmap, boolean failed) {
         }
     }
 }

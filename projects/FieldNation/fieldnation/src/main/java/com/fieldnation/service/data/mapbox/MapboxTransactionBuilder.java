@@ -14,7 +14,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 public class MapboxTransactionBuilder implements MapboxConstants {
     private static final String TAG = "MapboxTransactionBuilder";
 
-    public static void getDirections(Context context, Position[] positions) {
+    public static void getDirections(Context context, long workorderid, Position... positions) {
         try {
             String path = "/directions/v5/mapbox/driving/";
             for (int i = 0; i < positions.length; i++) {
