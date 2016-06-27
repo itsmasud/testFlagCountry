@@ -1625,7 +1625,14 @@ public class WorkFragment extends WorkorderFragment {
         public void onCustomField(Task task) {
             if (task.getCompleted())
                 return;
-            // TODO, get custom field info, preset dialog
+
+            for (CustomField cf : _workorder.getCustomFields()) {
+                // do not remove the casting here!
+                if ((long) cf.getCustomLabelId() == (long) task.getCustomField()) {
+                    _customFieldDialog.show(cf);
+                    break;
+                }
+            }
         }
 
         @Override
