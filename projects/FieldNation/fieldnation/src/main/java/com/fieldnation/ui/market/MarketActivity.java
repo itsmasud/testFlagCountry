@@ -5,6 +5,7 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
+import com.fieldnation.ui.workorder.AvailableWorkorderListFragment;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.ui.workorder.WorkorderListFragment;
 
@@ -34,11 +35,12 @@ public class MarketActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void loadFragments() {
-        _fragments = new WorkorderListFragment[2];
-        _fragments[0] = getFragment(WorkorderDataSelector.AVAILABLE);
-        _fragments[1] = getFragment(WorkorderDataSelector.REQUESTED);
+        _fragments = new WorkorderListFragment[3];
+        _fragments[0] = getRoutedFragment(WorkorderDataSelector.ROUTED);
+        _fragments[1] = getAvailableFragment(WorkorderDataSelector.AVAILABLE);
+        _fragments[2] = getFragment(WorkorderDataSelector.REQUESTED);
 
-        _titles = new String[]{getString(R.string.tab_available), getString(R.string.tab_requested), getString(R.string.tab_canceled)};
+        _titles = new String[]{getString(R.string.tab_routed), getString(R.string.tab_available), getString(R.string.tab_requested)};
     }
 
     private WorkorderListFragment getFragment(WorkorderDataSelector selector) {
@@ -61,6 +63,19 @@ public class MarketActivity extends TabActionBarFragmentActivity {
         }
         return (WorkorderListFragment) fragment;
     }
+
+
+    private RoutedWorkorderListFragment getRoutedFragment(WorkorderDataSelector selector) {
+        Fragment fragment = new RoutedWorkorderListFragment().setDisplayType(selector);
+        return (RoutedWorkorderListFragment) fragment;
+    }
+
+
+    private AvailableWorkorderListFragment getAvailableFragment(WorkorderDataSelector selector) {
+        Fragment fragment = new AvailableWorkorderListFragment().setDisplayType(selector);
+        return (AvailableWorkorderListFragment) fragment;
+    }
+
 
     @Override
     public int getFragmentCount() {

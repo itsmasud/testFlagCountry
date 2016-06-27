@@ -13,7 +13,8 @@ public enum WorkorderDataSelector {
     ASSIGNED("assigned", true),
     //    IN_PROGRESS("assigned", true),
     COMPLETED("completed"),
-    CANCELED("canceled");
+    CANCELED("canceled"),
+    ROUTED("routed");
 
     private String _call;
     private boolean _allowCache = false;

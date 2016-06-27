@@ -92,6 +92,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
     private Workorder _currentWorkorder;
     private int _deviceCount = -1;
+    private WorkorderDataSelectorListener workorderDataSelectorListener;
+    private boolean isRoutedSelector = false;
+    private boolean isAvailableSelector = false;
+
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -213,9 +217,17 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onSaveInstanceState(outState);
     }
 
+
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
-        Log.v(TAG, "setDisplayType");
-        _displayView = displayView;
+        if (displayView.equals(WorkorderDataSelector.ROUTED)) {
+            isRoutedSelector = true;
+            _displayView = WorkorderDataSelector.AVAILABLE;
+        } else if (displayView.equals(WorkorderDataSelector.AVAILABLE)) {
+            isAvailableSelector = true;
+            _displayView = WorkorderDataSelector.AVAILABLE;
+        } else {
+            _displayView = displayView;
+        }
         return this;
     }
 
@@ -340,6 +352,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         WorkorderClient.list(App.get(), _displayView, page, false, allowCache);
     }
 
+
+    public void setListener(WorkorderDataSelectorListener listener) {
+        workorderDataSelectorListener = listener;
+    }
+
     private void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
         if (page == 0 && (list == null || list.size() == 0)) {
@@ -352,6 +369,29 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (list != null && list.size() == 0) {
             _adapter.setNoMorePages();
         }
+
+        if (isRoutedSelector && workorderDataSelectorListener != null) {
+            workorderDataSelectorListener.onRouted(this, page, list);
+        } else if (isAvailableSelector && workorderDataSelectorListener != null) {
+            workorderDataSelectorListener.onAvailable(this, page, list);
+        } else {
+            _adapter.setPage(page, list);
+        }
+    }
+
+    public void setPageAtAdapter(int page, List<Workorder> list) {
+
+        if (page == 0 && (list == null || list.size() == 0)) {
+            _emptyView.setData(_displayView);
+            _emptyView.setVisibility(View.VISIBLE);
+        } else {
+            _emptyView.setVisibility(View.GONE);
+        }
+
+        if (list != null && list.size() == 0) {
+            _adapter.setNoMorePages();
+        }
+
         _adapter.setPage(page, list);
     }
 
@@ -971,5 +1011,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _adapter.refreshPages();
         }
     };
+
 }
 

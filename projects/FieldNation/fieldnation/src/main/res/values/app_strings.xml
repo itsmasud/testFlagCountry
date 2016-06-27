@@ -279,6 +279,7 @@
     <string name="tab_canceled">CANCELED</string>
     <string name="tab_available">AVAILABLE</string>
     <string name="tab_requested">REQUESTED</string>
+    <string name="tab_routed">ROUTED</string>
 
 
     <string name="aborted">Aborted</string>
