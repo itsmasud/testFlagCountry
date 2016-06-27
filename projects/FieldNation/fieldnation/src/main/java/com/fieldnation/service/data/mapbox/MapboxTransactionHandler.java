@@ -16,10 +16,10 @@ import java.text.ParseException;
 public class MapboxTransactionHandler extends WebTransactionHandler implements MapboxConstants {
     private static final String TAG = "MapboxTransactionHandler";
 
-    public static byte[] pDirections(long workorderid) {
+    public static byte[] pDirections(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pDirections");
-            obj.put("workorderid", workorderid);
+            obj.put("workorderId", workorderId);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -61,8 +61,9 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
         return Result.CONTINUE;
     }
 
-    private Result handleDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) {
-        MapboxDispatch.directions(context, resultData.getByteArray());
+    private Result handleDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "handleDirections");
+        MapboxDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
         return Result.CONTINUE;
     }
 

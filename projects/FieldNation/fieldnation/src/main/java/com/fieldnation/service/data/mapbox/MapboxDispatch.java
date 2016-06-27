@@ -3,6 +3,7 @@ package com.fieldnation.service.data.mapbox;
 import android.content.Context;
 import android.os.Bundle;
 
+import com.fieldnation.Log;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 
@@ -10,12 +11,15 @@ import com.fieldnation.service.topics.TopicService;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxDispatch implements MapboxConstants {
+    private static final String TAG = "MapboxDispatch";
 
-    public static void directions(Context context, byte[] directions) {
+    public static void directions(Context context, long workorderId, byte[] directions) {
+        Log.v(TAG, "directions");
         Bundle bundle = new Bundle();
         bundle.putByteArray(PARAM_DIRECTIONS, directions);
+        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_DIRECTIONS, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_DIRECTIONS + "/" + workorderId, bundle, Sticky.TEMP);
     }
 
     public static void staticMapClassic(Context context, long workorderId, byte[] imageData, boolean failed) {
@@ -27,6 +31,6 @@ public class MapboxDispatch implements MapboxConstants {
             bundle.putBoolean(PARAM_FAILED, failed);
         bundle.putLong(PARAM_WORKORDER_ID, workorderId);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId, bundle, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId, bundle, Sticky.TEMP);
     }
 }

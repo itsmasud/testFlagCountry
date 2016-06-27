@@ -14,7 +14,8 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 public class MapboxTransactionBuilder implements MapboxConstants {
     private static final String TAG = "MapboxTransactionBuilder";
 
-    public static void getDirections(Context context, long workorderid, Position... positions) {
+    public static void getDirections(Context context, long workorderId, Position... positions) {
+        Log.v(TAG, "getDirections");
         try {
             String path = "/directions/v5/mapbox/driving/";
             for (int i = 0; i < positions.length; i++) {
@@ -34,7 +35,7 @@ public class MapboxTransactionBuilder implements MapboxConstants {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(MapboxTransactionHandler.class)
-                    .handlerParams(MapboxTransactionHandler.pDirections())
+                    .handlerParams(MapboxTransactionHandler.pDirections(workorderId))
                     .useAuth(false)
                     .isSyncCall(false)
                     .request(builder)
@@ -47,6 +48,7 @@ public class MapboxTransactionBuilder implements MapboxConstants {
 
     // https://api.mapbox.com/v4/mapbox.dark/url-https%3A%2F%2Fmapbox.com%2Fimg%2Frocket.png(-76.9,38.9)/-76.9,38.9,15/1000x1000.png
     public static void getStaticMapClassic(Context context, long workorderId, int width, int height, Marker start, Marker end) {
+        Log.v(TAG, "getStaticMapClassic");
         try {
             // https://api.mapbox.com/v4/jacobbeasley.ggg811om/
             // url-https%3A%2F%2Fmapbox.com%2Fimg%2Frocket.png(-76.9,38.9),
@@ -78,7 +80,5 @@ public class MapboxTransactionBuilder implements MapboxConstants {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-
-
     }
 }

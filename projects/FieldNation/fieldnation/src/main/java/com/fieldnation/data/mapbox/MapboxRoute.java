@@ -31,6 +31,13 @@ public class MapboxRoute implements Parcelable {
         return _distance;
     }
 
+    public double getDistanceMi() {
+        if (_distance == null)
+            return 0;
+
+        return _distance * 0.000621371;
+    }
+
     public double getDuration() {
         if (_duration == null)
             return 0;

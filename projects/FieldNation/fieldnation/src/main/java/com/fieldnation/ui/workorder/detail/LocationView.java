@@ -21,6 +21,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.SimpleGps;
 import com.fieldnation.data.mapbox.MapboxDirections;
+import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
@@ -62,6 +63,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private android.location.Location _userLocation = null;
     private Bitmap _map = null;
     private boolean _mapUnavailable = false;
+    private MapboxDirections _directions = null;
 
     // Services
     private MapboxClient _mapboxClient = null;
@@ -141,6 +143,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         if (_mapboxClient != null && _mapboxClient.isConnected()) {
             _mapboxClient.subStaticMapClassic(_workorder.getWorkorderId());
+            _mapboxClient.subDirections(_workorder.getWorkorderId());
             lookupMap();
         }
         populateUi();
@@ -158,7 +161,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         populateAddressTile();
         populateMap();
         calculateAddressTileVisibility();
-
     }
 
     private void calculateAddressTileVisibility() {
@@ -236,12 +238,21 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _distanceTextView.setVisibility(VISIBLE);
         if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             _distanceTextView.setText("GPS disabled, can't calculate distance");
+        } else if (_directions != null) {
+            double miles = 0.0;
+            MapboxRoute[] routes = _directions.getRoutes();
+            for (MapboxRoute route : routes) {
+                miles += route.getDistanceMi();
+            }
+            _distanceTextView.setText(misc.to2Decimal(miles) + "mi (driving)");
         } else if (_userLocation != null && loc.getGeo() != null) {
             try {
                 Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
                 Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
-                _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi (straight line)");
+
+                _distanceTextView.setText(misc.to2Decimal(myLoc.distanceTo(siteLoc)) + " mi (straight line)");
             } catch (Exception ex) {
+                Log.v(TAG, ex);
                 _distanceTextView.setText("Cannot display distance");
             }
         } else if (loc.getGeo() == null) {
@@ -334,17 +345,20 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         Log.v(TAG, "lookupMap - 5");
         Marker start = new Marker(_userLocation.getLongitude(), _userLocation.getLatitude(),
                 getContext().getString(R.string.mapbox_startMarkerUrl));
+        Position startPos = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
 
         Marker end = null;
+        Position endPos = null;
         Location loc = _workorder.getLocation();
         if (loc != null) {
             Geo geo = loc.getGeo();
-
             if (geo != null) {
+                endPos = new Position(geo.getLongitude(), geo.getLatitude());
                 if (geo.getObfuscated() || !geo.getPrecise()) {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_inpreciseMarkerUrl));
                 } else {
+                    MapboxClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_endMarkerUrl));
                 }
@@ -450,7 +464,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void onDirections(MapboxDirections directions) {
+        public void onDirections(long workorderId, MapboxDirections directions) {
+            Log.v(TAG, "onDirections");
+
+            if (directions != null && directions.getCode().equals("Ok")) {
+                _directions = directions;
+                populateUi();
+            }
         }
     };
 }
