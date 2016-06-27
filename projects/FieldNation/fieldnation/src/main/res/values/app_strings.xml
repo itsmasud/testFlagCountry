@@ -308,6 +308,7 @@
     <string name="buyers_suggestion">Buyer\'s Suggestion</string>
     <string name="by">by</string>
     <string name="by_signing_this_work_order_notice">By signing this work order you acknowledge that the work has been satisfactorily completed</string>
+    <string name="cannot_display_distance">Cannot display distance</string>
     <string name="cant_upload_to_work_order_no_slots">Can\'t upload to this work order (no available upload slots)</string>
     <string name="category">Category</string>
     <string name="carrier">Carrier</string>
@@ -348,6 +349,7 @@
     <string name="enter_closing_notes_here">Enter closing notes here…</string>
     <string name="enter_feedback_here">Enter feedback here</string>
     <string name="enter_your_name">Enter your name</string>
+    <string name="error_looking_up_map">Error looking up the map</string>
     <string name="estimated">Estimated</string>
     <string name="everything_is_good_to_go">Everything is good to go.\nSign off is complete.</string>
     <string name="expense">Expense</string>
@@ -357,6 +359,7 @@
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
     <string name="failed">Failed</string>
+    <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
     <string name="file_description">File Description</string>
     <string name="first_time_hours">First %1$s hrs</string>
@@ -367,6 +370,8 @@
     <string name="for_up_to">for up to</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="government">Government</string>
+    <string name="gps_disabled_cant_calc_dist">GPS disabled, can\'t calculate distance</string>
+    <string name="gps_is_currently_disabled">GPS is currently disabled</string>
     <string name="help">Help</string>
     <string name="hourly">Hourly</string>
     <string name="hourly_after">Hourly after</string>
@@ -398,11 +403,14 @@
     <string name="no_documents_headline">No documents</string>
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
+    <string name="no_location_provided_by_buyer">No location provided by buyer</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="no_work_available">No work available</string>
     <string name="nothing_to_worry_about">Nothing to worry about</string>
     <string name="number_of_devices">Number of Devices</string>
     <string name="num_failed">%1$d failed</string>
+    <string name="num_mi_driving">%1$smi (driving)</string>
+    <string name="num_mi_straight_line">%1$smi (straight line)</string>
 
     <plurals name="num_deliverables_uploading">
         <item quantity="one">%1$d deliverable uploading</item>

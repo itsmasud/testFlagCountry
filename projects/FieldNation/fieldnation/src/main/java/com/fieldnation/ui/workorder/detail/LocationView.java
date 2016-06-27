@@ -237,28 +237,28 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         // distance
         _distanceTextView.setVisibility(VISIBLE);
         if (!SimpleGps.with(App.get()).isLocationEnabled()) {
-            _distanceTextView.setText("GPS disabled, can't calculate distance");
+            _distanceTextView.setText(R.string.gps_disabled_cant_calc_dist);
         } else if (_directions != null) {
             double miles = 0.0;
             MapboxRoute[] routes = _directions.getRoutes();
             for (MapboxRoute route : routes) {
                 miles += route.getDistanceMi();
             }
-            _distanceTextView.setText(misc.to2Decimal(miles) + "mi (driving)");
+            _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
         } else if (_userLocation != null && loc.getGeo() != null) {
             try {
                 Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
                 Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
 
-                _distanceTextView.setText(misc.to2Decimal(myLoc.distanceTo(siteLoc)) + " mi (straight line)");
+                _distanceTextView.setText(getResources().getString(R.string.num_mi_straight_line, misc.to2Decimal(myLoc.distanceTo(siteLoc))));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
-                _distanceTextView.setText("Cannot display distance");
+                _distanceTextView.setText(R.string.cannot_display_distance);
             }
         } else if (loc.getGeo() == null) {
-            _distanceTextView.setText("Cannot display distance");
+            _distanceTextView.setText(R.string.cannot_display_distance);
         } else {
-            _distanceTextView.setText("Getting distance...");
+            _distanceTextView.setText(R.string.fetching_distance);
         }
 
         // display location notes
@@ -277,7 +277,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
             _gpsError1TextView.setText(R.string.map_not_available);
-            _gpsError2TextView.setText("GPS is currently disabled");
+            _gpsError2TextView.setText(R.string.gps_is_currently_disabled);
 
         } else if (_workorder.getIsRemoteWork()) {
 //        remote work
@@ -289,7 +289,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
             _gpsError1TextView.setText(R.string.map_not_available);
-            _gpsError2TextView.setText("No location provided by buyer");
+            _gpsError2TextView.setText(R.string.no_location_provided_by_buyer);
 
         } else {
             if (_mapUnavailable) {
@@ -297,7 +297,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _mapImageView.setImageResource(R.drawable.no_map);
                 _noMapLayout.setVisibility(VISIBLE);
                 _gpsError1TextView.setText(R.string.map_not_available);
-                _gpsError2TextView.setText("Error looking up the map");
+                _gpsError2TextView.setText(R.string.error_looking_up_map);
 
                 // loading
             } else if (_map == null) { //  !_mapUnavailable
