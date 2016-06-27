@@ -10,6 +10,7 @@
         android:layout_height="wrap_content">
 
         <TextView
+            android:id="@+id/title_textview"
             style="?attr/dialogTitleStyle"
             android:layout_centerHorizontal="true"
             android:text="@string/dialog_file_upload_title" />
@@ -50,6 +51,7 @@
                 android:hint="@string/file_name"
                 android:imeOptions="actionNext"
                 android:inputType="text"
+                android:selectAllOnFocus="true"
                 android:singleLine="true" />
         </android.support.design.widget.TextInputLayout>
 

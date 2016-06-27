@@ -119,7 +119,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
-        _imageView.setOnClickListener(_photoImageView_onClick);
 
         _fileNameEditText = (EditText) v.findViewById(R.id.filename_edittext);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
@@ -173,6 +172,10 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
     @Override
     public void onDismiss(DialogInterface dialog) {
+        _extension = null;
+        _newFileName = null;
+        _fileNameEditText.setText("");
+        _descriptionEditText.setText("");
         super.onDismiss(dialog);
         _bitmap = null;
         _hideImageView = false;
@@ -197,11 +200,11 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     public void setPhoto(Bitmap bitmap) {
         Log.v(TAG, "setPhoto");
         _bitmap = bitmap;
-        if (_bitmap == null) {
+        if (_bitmap == null)
             _hideImageView = true;
-        } else {
+        else
             _hideImageView = false;
-        }
+
         populateUi();
     }
 
@@ -234,14 +237,10 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             boolean handled = false;
 
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
-                if (v == _fileNameEditText) {
-                    _fileNameEditText.requestFocus();
-                    handled = true;
-
-                } else if (v == _descriptionEditText) {
-                    _descriptionEditText.requestFocus();
-                    handled = true;
-                }
+                _descriptionEditText.requestFocus();
+                handled = true;
+            } else if (actionId == EditorInfo.IME_ACTION_DONE) {
+                _okButton_onClick.onClick(v);
             }
 
             return handled;
@@ -277,12 +276,6 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
-        }
-    };
-
-    private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
         }
     };
 

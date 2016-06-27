@@ -6,7 +6,6 @@
     android:background="@drawable/card_bg"
     android:padding="0dp">
 
-
     <TextView
         android:id="@+id/optional_textview"
         style="@style/Text_Caption"
@@ -34,15 +33,30 @@
         android:textSize="32sp" />
 
     <TextView
-        android:id="@+id/description_textview"
+        android:id="@+id/customFieldName_textview"
         style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginBottom="20dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="20dp"
         android:layout_toRightOf="@+id/icon_view"
+        android:text="@string/placeholder_paragraph"
+        android:visibility="visible" />
+
+    <TextView
+        android:id="@+id/description_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/customFieldName_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="20dp"
+        android:layout_toRightOf="@+id/icon_view"
+        android:visibility="gone"
         android:text="@string/placeholder_paragraph" />
+
+
 </RelativeLayout>
