@@ -123,6 +123,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_DEVICE_COUNT = "WorkFragment:STATE_DEVICE_COUNT";
     private static final String STATE_SCANNED_IMAGE_PATH = "WorkFragment:STATE_SCANNED_IMAGE_PATH";
     private static final String STATE_TEMP_FILE = "WorkFragment:STATE_TEMP_FILE";
+    private static final String STATE_TEMP_URI = "WorkFragment:STATE_TEMP_URI";
 
     // UI
     private OverScrollView _scrollView;
@@ -196,6 +197,10 @@ public class WorkFragment extends WorkorderFragment {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
                 _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
+            }
+
+            if (savedInstanceState.containsKey(STATE_TEMP_URI)) {
+                _tempUri = savedInstanceState.getParcelable(STATE_TEMP_URI);
             }
         }
         return inflater.inflate(R.layout.fragment_workorder_work, container, false);
@@ -327,6 +332,9 @@ public class WorkFragment extends WorkorderFragment {
 
         if (_tempFile != null)
             outState.putString(STATE_TEMP_FILE, _tempFile.getAbsolutePath());
+
+        if (_tempUri != null)
+            outState.putParcelable(STATE_TEMP_URI, _tempUri);
 
         super.onSaveInstanceState(outState);
     }

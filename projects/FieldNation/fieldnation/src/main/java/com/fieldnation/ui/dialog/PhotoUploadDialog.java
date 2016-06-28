@@ -40,6 +40,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private static final String STATE_FILE_EXTENSION = "STATE_FILE_EXTENSION";
     private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
     private static final String STATE_PHOTO = "STATE_PHOTO";
+    private static final String STATE_HIDE_PHOTO = "STATE_HIDE_PHOTO";
 
     // UI
     private ImageView _imageView;
@@ -85,6 +86,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_FILE_EXTENSION))
                 _extension = savedInstanceState.getString(STATE_FILE_EXTENSION);
+
+            if (savedInstanceState.containsKey(STATE_HIDE_PHOTO))
+                _hideImageView = savedInstanceState.getBoolean(STATE_HIDE_PHOTO);
         }
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_TITLE, 0);
@@ -107,6 +111,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         if (!misc.isEmptyOrNull(_extension))
             outState.putString(STATE_FILE_EXTENSION, _extension);
+
+        if (_hideImageView)
+            outState.putBoolean(STATE_HIDE_PHOTO, _hideImageView);
 
         super.onSaveInstanceState(outState);
     }
