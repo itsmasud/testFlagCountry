@@ -22,8 +22,8 @@ import android.widget.TimePicker;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.misc;
 
@@ -269,6 +269,7 @@ public class CustomFieldDialog extends DialogFragmentBase {
     @Override
     public void dismiss() {
 //        Log.e(TAG, "dismiss");
+        misc.hideKeyboard(_cancelButton);
         _clear = true;
         super.dismiss();
     }
