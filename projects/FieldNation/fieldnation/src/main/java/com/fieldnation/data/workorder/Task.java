@@ -25,7 +25,7 @@ public class Task implements Parcelable {
     @Json(name = "completedAtDate")
     private String _completedAtDate;
     @Json(name = "customField")
-    private Integer _customField;
+    private Long _customField;
     @Json(name = "description")
     private String _description;
     @Json(name = "emailAddress")
@@ -96,7 +96,7 @@ public class Task implements Parcelable {
         return _completedAtDate;
     }
 
-    public Integer getCustomField() {
+    public Long getCustomField() {
         return _customField;
     }
 
