@@ -5,7 +5,6 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.R;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
-import com.fieldnation.ui.workorder.AvailableWorkorderListFragment;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.ui.workorder.WorkorderListFragment;
 
@@ -44,8 +43,8 @@ public class MarketActivity extends TabActionBarFragmentActivity {
         _titles = new String[]{getString(R.string.tab_routed), getString(R.string.tab_available), getString(R.string.tab_requested)};
     }
 
-    private <T extends WorkorderListFragment> T getFragment(WorkorderDataSelector selector) {
-        Fragment fragment = null;
+    private WorkorderListFragment getFragment(WorkorderDataSelector selector) {
+        WorkorderListFragment fragment = null;
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
             for (int i = 0; i < fragments.size(); i++) {
@@ -56,34 +55,19 @@ public class MarketActivity extends TabActionBarFragmentActivity {
                         break;
                     }
                 }
-                if (fragments.get(i) instanceof RoutedWorkorderListFragment) {
-                    RoutedWorkorderListFragment frag = (RoutedWorkorderListFragment) fragments.get(i);
-                    if (frag.getDisplayType() == selector) {
-                        fragment = frag;
-                        break;
-                    }
-                }
-                if (fragments.get(i) instanceof AvailableWorkorderListFragment) {
-                    AvailableWorkorderListFragment frag = (AvailableWorkorderListFragment) fragments.get(i);
-                    if (frag.getDisplayType() == selector) {
-                        fragment = frag;
-                        break;
-                    }
-                }
             }
         }
 
         if (fragment == null) {
-            if (selector.equals(WorkorderDataSelector.AVAILABLE))
+            if (selector.equals(WorkorderDataSelector.AVAILABLE)) {
                 fragment = new AvailableWorkorderListFragment().setDisplayType(selector);
-
-            else if (selector.equals(WorkorderDataSelector.ROUTED))
+            } else if (selector.equals(WorkorderDataSelector.ROUTED)) {
                 fragment = new RoutedWorkorderListFragment().setDisplayType(selector);
-
-            else
+            } else {
                 fragment = new WorkorderListFragment().setDisplayType(selector);
+            }
         }
-        return (T) fragment;
+        return fragment;
     }
 
     @Override
