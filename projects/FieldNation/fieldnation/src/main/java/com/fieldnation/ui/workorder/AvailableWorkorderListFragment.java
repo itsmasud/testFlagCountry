@@ -14,42 +14,25 @@ import java.util.List;
 public class AvailableWorkorderListFragment extends WorkorderListFragment {
     private static final String TAG = "AvailableWorkorderListFragment";
 
-
     @Override
-    public void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume");
-        super.setListener(_listener);
-    }
+    public void addPage(int page, List<Workorder> list) {
+        List<Workorder> availableWorkorderWithoutRoutedList = new ArrayList<>();
 
+        WorkorderStatus status;
+        WorkorderSubstatus substatus;
 
-    private WorkorderDataSelectorListener _listener = new WorkorderDataSelectorListener() {
-        @Override
-        public void onRouted(WorkorderListFragment fragment, int page, List<Workorder> list) {
-        }
+        for (Workorder workorder : list) {
+            status = workorder.getWorkorderStatus();
+            substatus = workorder.getWorkorderSubstatus();
 
-        @Override
-        public void onAvailable(WorkorderListFragment fragment, int page, List<Workorder> list) {
-
-            List<Workorder> availableWorkorderWithoutRoutedList = new ArrayList<>();
-
-            WorkorderStatus status;
-            WorkorderSubstatus substatus;
-
-            for (Workorder workorder : list) {
-                status = workorder.getWorkorderStatus();
-                substatus = workorder.getWorkorderSubstatus();
-
-                if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
-                    availableWorkorderWithoutRoutedList.add(workorder);
-                }
+            if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
+                availableWorkorderWithoutRoutedList.add(workorder);
             }
-            
-            if (availableWorkorderWithoutRoutedList != null)
-                fragment.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
-
         }
-    };
 
+        if (availableWorkorderWithoutRoutedList != null)
+            super.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
+
+    }
 
 }

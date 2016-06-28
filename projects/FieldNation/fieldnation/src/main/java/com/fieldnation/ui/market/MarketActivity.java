@@ -36,14 +36,15 @@ public class MarketActivity extends TabActionBarFragmentActivity {
     @Override
     public void loadFragments() {
         _fragments = new WorkorderListFragment[3];
-        _fragments[0] = getRoutedFragment(WorkorderDataSelector.ROUTED);
-        _fragments[1] = getAvailableFragment(WorkorderDataSelector.AVAILABLE);
+
+        _fragments[0] = getFragment(WorkorderDataSelector.ROUTED);
+        _fragments[1] = getFragment(WorkorderDataSelector.AVAILABLE);
         _fragments[2] = getFragment(WorkorderDataSelector.REQUESTED);
 
         _titles = new String[]{getString(R.string.tab_routed), getString(R.string.tab_available), getString(R.string.tab_requested)};
     }
 
-    private WorkorderListFragment getFragment(WorkorderDataSelector selector) {
+    private <T extends WorkorderListFragment> T getFragment(WorkorderDataSelector selector) {
         Fragment fragment = null;
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
@@ -55,27 +56,35 @@ public class MarketActivity extends TabActionBarFragmentActivity {
                         break;
                     }
                 }
+                if (fragments.get(i) instanceof RoutedWorkorderListFragment) {
+                    RoutedWorkorderListFragment frag = (RoutedWorkorderListFragment) fragments.get(i);
+                    if (frag.getDisplayType() == selector) {
+                        fragment = frag;
+                        break;
+                    }
+                }
+                if (fragments.get(i) instanceof AvailableWorkorderListFragment) {
+                    AvailableWorkorderListFragment frag = (AvailableWorkorderListFragment) fragments.get(i);
+                    if (frag.getDisplayType() == selector) {
+                        fragment = frag;
+                        break;
+                    }
+                }
             }
         }
 
         if (fragment == null) {
-            fragment = new WorkorderListFragment().setDisplayType(selector);
+            if (selector.equals(WorkorderDataSelector.AVAILABLE))
+                fragment = new AvailableWorkorderListFragment().setDisplayType(selector);
+
+            else if (selector.equals(WorkorderDataSelector.ROUTED))
+                fragment = new RoutedWorkorderListFragment().setDisplayType(selector);
+
+            else
+                fragment = new WorkorderListFragment().setDisplayType(selector);
         }
-        return (WorkorderListFragment) fragment;
+        return (T) fragment;
     }
-
-
-    private RoutedWorkorderListFragment getRoutedFragment(WorkorderDataSelector selector) {
-        Fragment fragment = new RoutedWorkorderListFragment().setDisplayType(selector);
-        return (RoutedWorkorderListFragment) fragment;
-    }
-
-
-    private AvailableWorkorderListFragment getAvailableFragment(WorkorderDataSelector selector) {
-        Fragment fragment = new AvailableWorkorderListFragment().setDisplayType(selector);
-        return (AvailableWorkorderListFragment) fragment;
-    }
-
 
     @Override
     public int getFragmentCount() {
