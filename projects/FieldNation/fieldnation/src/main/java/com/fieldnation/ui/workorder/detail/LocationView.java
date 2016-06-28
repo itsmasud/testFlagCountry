@@ -329,7 +329,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             return;
 
         Log.v(TAG, "lookupMap - 3");
-        if (_mapImageView == null)
+        if (_mapImageView == null || _mapLayout.getVisibility() == GONE)
             return;
 
         Log.v(TAG, "lookupMap - 4");
