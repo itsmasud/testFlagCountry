@@ -294,9 +294,16 @@ public class ReportProblemDialog extends DialogFragmentBase {
             getSecondarySpinner().clearFocus();
         }
 
+        if (misc.isEmptyOrNull(_explanationEditText.getText().toString()) || _selectedProblem == null) {
+            _okButton.setEnabled(false);
+        } else {
+            _okButton.setEnabled(true);
+        }
+
         if (_selectedProblem == null) {
             return;
         }
+
 
         switch (_selectedProblem) {
             case CANNOT_MAKE_ASSIGNMENT:
