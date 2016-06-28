@@ -19,5 +19,10 @@
     <string name="placeholder_paragraph"></string>
     <string name="placeholder_date_long"></string>
     <string name="placeholder_date_short"></string>
+    <string name="placeholder_money_short"></string>
+    <string name="placeholder_money_long"></string>
+    <string name="placeholder_company_name"></string>
+    <string name="placeholder_one_line_address"></string>
+    <string name="placeholder_distance"></string>
 
 </resources>
