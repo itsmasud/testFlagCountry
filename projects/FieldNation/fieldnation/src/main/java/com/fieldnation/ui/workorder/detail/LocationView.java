@@ -87,6 +87,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         _mapLayout = (RelativeLayout) findViewById(R.id.map_layout);
         _mapImageView = (ImageView) findViewById(R.id.mapview);
+        _mapImageView.setOnClickListener(_map_onClick);
         _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
 
         _noMapLayout = (LinearLayout) findViewById(R.id.noMap_layout);
