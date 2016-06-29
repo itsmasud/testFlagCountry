@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
@@ -63,7 +62,6 @@ public class CustomFieldRowView extends RelativeLayout {
 
         layoutParams = (RelativeLayout.LayoutParams) _customFieldNameTextView.getLayoutParams();
 
-
         setOnClickListener(_check_listener);
 
         populateUi();
@@ -109,12 +107,11 @@ public class CustomFieldRowView extends RelativeLayout {
                     ((LayoutParams) _customFieldNameTextView.getLayoutParams()).leftMargin,
                     ((LayoutParams) _customFieldNameTextView.getLayoutParams()).topMargin,
                     ((LayoutParams) _customFieldNameTextView.getLayoutParams()).rightMargin,
-                    ((LayoutParams)_descriptionTextView.getLayoutParams()).bottomMargin);
+                    ((LayoutParams) _descriptionTextView.getLayoutParams()).bottomMargin);
         } else {
             _descriptionTextView.setText(_customField.getTip());
             _descriptionTextView.setVisibility(VISIBLE);
         }
-
 
         if (_customField.getRequired()) {
             _optionalTextView.setVisibility(View.GONE);
