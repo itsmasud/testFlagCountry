@@ -58,14 +58,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pList(page, selector))
-                    .key((isSync ? "Sync/" : "") + "WorkorderList/" + selector + "/" + page)
+                    .key((isSync ? "Sync/" : "") + "WorkorderList/" + selector.ordinal() + "_" + selector.getCall() + "/" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/" + selector)
-                            .path("/api/rest/v1/workorder/" + selector)
+                            .timingKey("GET/api/rest/v1/workorder/" + selector.getCall())
+                            .path("/api/rest/v1/workorder/" + selector.getCall())
                             .urlParams("?page=" + page))
                     .send();
         } catch (Exception ex) {
