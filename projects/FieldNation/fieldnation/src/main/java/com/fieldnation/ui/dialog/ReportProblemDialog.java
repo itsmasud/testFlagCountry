@@ -228,6 +228,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             getPrimarySpinner().clearSelection();
             getSecondarySpinner().setHint(R.string.dialog_report_problem_spinner_1);
             getSecondarySpinner().clearSelection();
+            getSecondarySpinner().setVisibility(View.GONE);
         }
 
         populateUi();
