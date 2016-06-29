@@ -22,6 +22,7 @@ import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
@@ -44,11 +45,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pList(int page, String selector) {
+    public static byte[] pList(int page, WorkorderDataSelector selector) {
         try {
             JsonObject obj = new JsonObject("action", "pList");
             obj.put("page", page);
-            obj.put("selector", selector);
+            obj.put("selector", selector.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -548,11 +549,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleList");
         // get the basics, send out the event
         int page = 0;
-        String selector = "";
+        WorkorderDataSelector selector = null;
 
         try {
             page = params.getInt("page");
-            selector = params.getString("selector");
+            selector = WorkorderDataSelector.values()[params.getInt("selector")];
             byte[] bdata = resultData.getByteArray();
             Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
@@ -704,7 +705,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync(), false);
                     break;
                 case "pList":
-                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync(), false);
+                    WorkorderDispatch.list(context, null, params.getInt("page"), WorkorderDataSelector.values()[params.getInt("selector")], true, transaction.isSync(), false);
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());

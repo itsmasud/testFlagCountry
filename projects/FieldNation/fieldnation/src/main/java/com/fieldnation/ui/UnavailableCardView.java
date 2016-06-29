@@ -63,7 +63,7 @@ public class UnavailableCardView extends FrameLayout {
                 _actionButton.setVisibility(VISIBLE);
                 _actionButton.setOnClickListener(_viewMarketplace_onClick);
                 break;
-            case AVAILABLE:
+            case AVAILABLE: {
                 Profile profile = App.get().getProfile();
 
                 if (profile.getMarketplaceStatusOn()) {
@@ -101,6 +101,46 @@ public class UnavailableCardView extends FrameLayout {
                     }
                 }
                 break;
+            }
+            case ROUTED: {
+                Profile profile = App.get().getProfile();
+
+                if (profile.getMarketplaceStatusOn()) {
+                    _titleTextView.setText(R.string.no_routed_work);
+                    _captionTexView.setText(R.string.try_adding_to_your_profile);
+                    _actionButton.setText(R.string.btn_edit_profile);
+                    _actionButton.setVisibility(VISIBLE);
+                    _actionButton.setOnClickListener(_editProfile_onClick);
+                } else {
+                    String reason = profile.getMarketplaceStatusReason();
+                    if (misc.isEmptyOrNull(reason)) {
+                        _titleTextView.setText(R.string.no_routed_work);
+                        _captionTexView.setText(R.string.try_adding_to_your_profile);
+                        _actionButton.setText(R.string.btn_edit_profile);
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_editProfile_onClick);
+                    } else if ("KEEP_PRIVATE".equals(reason)) {
+                        _titleTextView.setText(R.string.marketplace_access);
+                        _captionTexView.setText(R.string.looks_like_you_need_to_finish_setup);
+                        _actionButton.setText(R.string.btn_setup_account);
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_setupAccount_onClick);
+                    } else if ("PENDING_VERIFICATION".equals(reason)) {
+                        _titleTextView.setText(R.string.marketplace_access);
+                        _captionTexView.setText(R.string.your_account_is_pending_verification);
+                        _actionButton.setText(R.string.btn_contact_support);
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_contactSupport_onClick);
+                    } else if ("SUSPENDED".equals(reason)) {
+                        _titleTextView.setText(R.string.marketplace_suspension);
+                        _captionTexView.setText(R.string.you_are_currently_suspended);
+                        _actionButton.setText(R.string.btn_contact_support);
+                        _actionButton.setVisibility(VISIBLE);
+                        _actionButton.setOnClickListener(_contactSupport_onClick);
+                    }
+                }
+                break;
+            }
             case CANCELED:
                 _titleTextView.setText(R.string.no_canceled_work);
                 _captionTexView.setText(R.string.nothing_to_worry_about);

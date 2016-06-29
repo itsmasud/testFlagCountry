@@ -405,6 +405,7 @@
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_location_provided_by_buyer">No location provided by buyer</string>
+    <string name="no_routed_work">No routed work</string>
     <string name="no_work_to_show">No work to show\n Tap to find work in the marketplace</string>
     <string name="no_work_available">No work available</string>
     <string name="nothing_to_worry_about">Nothing to worry about</string>

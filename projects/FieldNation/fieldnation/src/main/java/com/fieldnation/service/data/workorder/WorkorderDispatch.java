@@ -9,6 +9,7 @@ import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 /**
  * Created by Michael Carver on 4/20/2015.
@@ -40,11 +41,11 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
     }
 
-    public static void list(Context context, JsonArray workorders, int page, String selector, boolean failed, boolean isSync, boolean isCached) {
+    public static void list(Context context, JsonArray workorders, int page, WorkorderDataSelector selector, boolean failed, boolean isSync, boolean isCached) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_LIST);
         bundle.putInt(PARAM_PAGE, page);
-        bundle.putString(PARAM_LIST_SELECTOR, selector);
+        bundle.putInt(PARAM_LIST_SELECTOR, selector.ordinal());
         bundle.putBoolean(PARAM_IS_SYNC, isSync);
         bundle.putBoolean(PARAM_ERROR, failed);
         bundle.putBoolean(PARAM_IS_CACHED, isCached);
@@ -59,7 +60,7 @@ public class WorkorderDispatch implements WorkorderConstants {
         }
 
         if (selector != null) {
-            topicId += "/" + selector;
+            topicId += "/" + selector.ordinal() + "_" + selector.getCall();
         }
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);

@@ -19,6 +19,7 @@ import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
@@ -51,7 +52,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void list(Context context, String selector, int page, boolean isSync) {
+    public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)

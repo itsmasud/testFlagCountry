@@ -11,6 +11,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 
 /**
@@ -109,7 +110,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     }
 
     private void list(Intent intent) {
-        String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
+        WorkorderDataSelector selector = WorkorderDataSelector.values()[intent.getIntExtra(PARAM_LIST_SELECTOR, 0)];
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
