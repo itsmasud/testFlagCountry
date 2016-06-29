@@ -384,7 +384,7 @@ public class DeliverableFragment extends WorkorderFragment {
                             Uri uri = null;
 
                             if (count == 1) {
-                                _tempUri = uri;
+                                _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), clipData.getItemAt(0).getUri()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());

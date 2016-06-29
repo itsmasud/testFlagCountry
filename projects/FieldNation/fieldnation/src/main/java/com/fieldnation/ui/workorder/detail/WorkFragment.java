@@ -810,7 +810,7 @@ public class WorkFragment extends WorkorderFragment {
                             Uri uri = null;
 
                             if (count == 1) {
-                                _tempUri = uri;
+                                _tempUri = data.getData();
                                 _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
