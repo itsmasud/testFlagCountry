@@ -5,6 +5,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.misc;
 
 public class BuyerRating {
     private static final String TAG = "BuyerRating";
@@ -76,7 +77,7 @@ public class BuyerRating {
     }
 
     public Integer getTimeToApproval() {
-        return _timeToApproval;
+        return _timeToApproval == null ? 0 : _timeToApproval;
     }
 
     public Integer getTotalRating() {
