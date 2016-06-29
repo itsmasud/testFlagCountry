@@ -11,10 +11,9 @@ public enum WorkorderDataSelector {
     AVAILABLE("available"),
     REQUESTED("requested"),
     ASSIGNED("assigned", true),
-    //    IN_PROGRESS("assigned", true),
     COMPLETED("completed"),
     CANCELED("canceled"),
-    ROUTED("routed");
+    ROUTED("available");
 
     private String _call;
     private boolean _allowCache = false;
@@ -37,23 +36,13 @@ public enum WorkorderDataSelector {
     }
 
     public boolean shouldShowGoToMarketplace() {
-        return this == ASSIGNED /*|| this == IN_PROGRESS*/ || this == COMPLETED || this == CANCELED;
+        return this == ASSIGNED || this == COMPLETED || this == CANCELED;
     }
 
     public static WorkorderDataSelector fromName(String name) {
         WorkorderDataSelector[] vs = values();
         for (int i = 0; i < vs.length; i++) {
             if (vs[i].name().equals(name)) {
-                return vs[i];
-            }
-        }
-        return null;
-    }
-
-    public static WorkorderDataSelector fromCall(String call) {
-        WorkorderDataSelector[] vs = values();
-        for (int i = 0; i < vs.length; i++) {
-            if (vs[i].getCall().equals(call)) {
                 return vs[i];
             }
         }

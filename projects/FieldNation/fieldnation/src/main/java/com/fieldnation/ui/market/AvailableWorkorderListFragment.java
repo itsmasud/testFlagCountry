@@ -1,6 +1,5 @@
 package com.fieldnation.ui.market;
 
-import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
@@ -19,21 +18,19 @@ public class AvailableWorkorderListFragment extends WorkorderListFragment {
     public void addPage(int page, List<Workorder> list) {
         List<Workorder> availableWorkorderWithoutRoutedList = new ArrayList<>();
 
-        WorkorderStatus status;
-        WorkorderSubstatus substatus;
+        if (list != null && list.size() > 0) {
+            WorkorderStatus status;
+            WorkorderSubstatus substatus;
 
-        for (Workorder workorder : list) {
-            status = workorder.getWorkorderStatus();
-            substatus = workorder.getWorkorderSubstatus();
+            for (Workorder workorder : list) {
+                status = workorder.getWorkorderStatus();
+                substatus = workorder.getWorkorderSubstatus();
 
-            if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
-                availableWorkorderWithoutRoutedList.add(workorder);
+                if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
+                    availableWorkorderWithoutRoutedList.add(workorder);
+                }
             }
         }
-
-        if (availableWorkorderWithoutRoutedList != null)
-            super.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
-
+        super.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
     }
-
 }
