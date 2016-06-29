@@ -819,7 +819,7 @@ public class WorkFragment extends WorkorderFragment {
                                     uri = clipData.getItemAt(i).getUri();
                                     if (uri != null) {
                                         WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                                                _currentTask.getTaskId(), intent.setData(uri));
+                                                _currentTask.getSlotId(), intent.setData(uri));
                                     }
                                 }
                             }
