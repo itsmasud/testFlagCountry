@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.utils.misc;
 
 public class DiscountDialog extends DialogFragmentBase {
     private static String TAG = "DiscountDialog";
@@ -129,6 +130,11 @@ public class DiscountDialog extends DialogFragmentBase {
     private final View.OnClickListener _okButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+
+            if (misc.isEmptyOrNull(_descriptionEditText.getText().toString())){
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_description), Toast.LENGTH_SHORT);
+                return;
+            }
             // convert to penies
             if ((int) (getAmount() * 100) < 10) {
                 ToastClient.toast(App.get(), getString(R.string.toast_minimum_payable_amount), Toast.LENGTH_SHORT);
