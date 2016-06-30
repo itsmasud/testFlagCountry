@@ -1,7 +1,9 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -267,8 +269,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
             if (_document == null || _document.getDocumentId() == null) {
                 return;
             }
-            DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
-                    _document.getFilePath(), _document.getFileName(), false);
+
+            if (_document.getFileType().equals("url")) {
+                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
+                getContext().startActivity(intent);
+            } else {
+                DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
+                        _document.getFilePath(), _document.getFileName(), false);
+            }
         }
     };
 
