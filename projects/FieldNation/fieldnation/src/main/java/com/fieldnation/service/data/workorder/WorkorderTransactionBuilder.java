@@ -306,7 +306,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         } else {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "explanation=" + explanation + "&type=" + type.value);
+                    "explanation=" + misc.escapeForURL(explanation) + "&type=" + type.value);
         }
     }
 
