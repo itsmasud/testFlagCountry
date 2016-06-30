@@ -367,8 +367,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         if (end != null) {
+            // clamping the height to make the image look nice on all phone screens
+            int width = (_mapImageView.getWidth() * 180) / _mapImageView.getHeight();
+            int height = 180;
+
             MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
-                    _mapImageView.getWidth() / 3, _mapImageView.getHeight() / 3);
+                    width, height);
         } else {
             _mapUnavailable = true;
             populateUi();
