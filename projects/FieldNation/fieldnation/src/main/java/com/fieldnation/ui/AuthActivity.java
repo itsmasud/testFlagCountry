@@ -91,7 +91,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
         _passwordEditText.setOnEditorActionListener(_onEditorPassword);
 
-
         _loginButton = (Button) findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
 
