@@ -106,12 +106,15 @@ public class TaskRowView extends RelativeLayout {
 
         if (misc.isEmptyOrNull(_task.getDescription())) {
             boolean isDescriptionSet = false;
-            for (CustomField cf : _workorder.getCustomFields()) {
-                // do not remove the casting here!
-                if (_task.getCustomField() != null && (long) cf.getCustomLabelId() == (long) _task.getCustomField()) {
-                    _descriptionTextView.setText(type.getDisplay(getContext()) + ": " + cf.getLabel());
-                    isDescriptionSet = true;
-                    break;
+
+            if (_workorder.getCustomFields() != null) {
+                for (CustomField cf : _workorder.getCustomFields()) {
+                    // do not remove the casting here!
+                    if (_task.getCustomField() != null && (long) cf.getCustomLabelId() == (long) _task.getCustomField()) {
+                        _descriptionTextView.setText(type.getDisplay(getContext()) + ": " + cf.getLabel());
+                        isDescriptionSet = true;
+                        break;
+                    }
                 }
             }
             if (!isDescriptionSet) {
