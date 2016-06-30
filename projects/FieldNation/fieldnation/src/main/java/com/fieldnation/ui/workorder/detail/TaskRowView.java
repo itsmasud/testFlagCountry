@@ -8,7 +8,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.CustomField;
@@ -106,20 +105,18 @@ public class TaskRowView extends RelativeLayout {
         TaskType type = _task.getTaskType();
 
         if (misc.isEmptyOrNull(_task.getDescription())) {
-
             boolean isDescriptionSet = false;
             for (CustomField cf : _workorder.getCustomFields()) {
-                    // do not remove the casting here!
-                    if (_task.getCustomField()!= null && (long) cf.getCustomLabelId() == (long) _task.getCustomField()) {
-                    _descriptionTextView.setText(cf.getLabel());
-                        isDescriptionSet = true;
-                        break;
-                    }
+                // do not remove the casting here!
+                if (_task.getCustomField() != null && (long) cf.getCustomLabelId() == (long) _task.getCustomField()) {
+                    _descriptionTextView.setText(type.getDisplay(getContext()) + ": " + cf.getLabel());
+                    isDescriptionSet = true;
+                    break;
+                }
             }
             if (!isDescriptionSet) {
                 _descriptionTextView.setText(type.getDisplay(getContext()));
             }
-
         } else {
             _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
         }
