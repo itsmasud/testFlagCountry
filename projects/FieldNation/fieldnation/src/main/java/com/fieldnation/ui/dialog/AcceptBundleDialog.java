@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class AcceptBundleDialog extends DialogFragmentBase {
@@ -23,6 +24,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
 
     // UI
+    private TextView _titleTextView;
     private TextView _acceptWOText;
     private Button _okButton;
     private Button _cancelButton;
@@ -62,6 +64,8 @@ public class AcceptBundleDialog extends DialogFragmentBase {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.dialog_accept_bundle_workorder, container, false);
 
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+
         _acceptWOText = (TextView) v.findViewById(R.id.accept_description);
 
         _bundleButton = (Button) v.findViewById(R.id.bundle_button);
@@ -96,6 +100,12 @@ public class AcceptBundleDialog extends DialogFragmentBase {
 
         if (_acceptWOText == null)
             return;
+
+        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+            _titleTextView.setText(R.string.accept_bundle);
+        } else {
+            _titleTextView.setText(R.string.request_bundle);
+        }
 
         _acceptWOText.setText(String.format(getString(R.string.workorder_bundle_warning), _workorder.getBundleCount()));
     }
