@@ -1,7 +1,9 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +29,8 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.misc;
+
+import java.io.File;
 
 /**
  * @author shoaib.ahmed
@@ -60,6 +64,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private String _originalFileName;
     private Bitmap _bitmap;
     private boolean _hideImageView = false;
+    File _file;
+    Intent _data;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -126,6 +132,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
+        _imageView.setOnClickListener(_photoImageView_onClick);
 
         _fileNameEditText = (EditText) v.findViewById(R.id.filename_edittext);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
@@ -193,11 +200,27 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(String filename) {
-        _originalFileName = filename;
+    public void show(File file) {
+        _originalFileName = file.getName();
+        _file = file;
+        _data = null;
 
-        if (filename.contains(".")) {
-            _extension = filename.substring(filename.lastIndexOf("."));
+        if (file.getName().contains(".")) {
+            _extension = file.getName().substring(file.getName().lastIndexOf("."));
+        }
+
+
+        super.show();
+        populateUi();
+    }
+
+    public void show(Intent data) {
+        _originalFileName = FileUtils.getFileNameFromUri(App.get(), data.getData());
+        _data = data;
+        _file = null;
+
+        if (_originalFileName.contains(".")) {
+            _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
         }
 
         super.show();
@@ -319,6 +342,29 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         @Override
         public void afterTextChanged(Editable s) {
+        }
+    };
+
+    private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Intent intent;
+            if (_data == null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_file), "image/*");
+
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, _data.getData());
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
