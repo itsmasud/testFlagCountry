@@ -75,6 +75,8 @@
     <string name="btn_continue">CONTINUE</string>
     <string name="btn_contact_support">CONTACT SUPPORT</string>
     <string name="btn_counter">COUNTER</string>
+    <string name="btn_counter_disabled">COUNTER DISABLED</string>
+    <string name="btn_counter_offer">COUNTER OFFER</string>
     <string name="btn_done">DONE</string>
     <string name="btn_edit_profile">EDIT PROFILE</string>
     <string name="btn_email">EMAIL US</string>
@@ -106,6 +108,7 @@
     <string name="btn_report_a_problem">REPORT A PROBLEM</string>
     <string name="btn_report_problem">REPORT PROBLEM</string>
     <string name="btn_request">REQUEST</string>
+    <string name="btn_request_new_pay">REQUEST NEW PAY</string>
     <string name="btn_reset">RESET</string>
     <string name="btn_save">SAVE</string>
     <string name="btn_send">SEND</string>
