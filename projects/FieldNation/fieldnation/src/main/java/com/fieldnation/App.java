@@ -683,7 +683,7 @@ public class App extends Application {
         }
 
         // if shown before, check time.
-        if (System.currentTimeMillis() - getRateMeShown() < DAY * 10) {
+        if (System.currentTimeMillis() - getRateMeShown() < DAY * 14) {
             Log.v(TAG, "showRateMe:  shown before check failed");
             return false;
         }
@@ -713,7 +713,7 @@ public class App extends Application {
 
     public String getTempFolder() {
         File tempFolder = new File(getStoragePath() + "/temp");
-        if(!tempFolder.exists()) tempFolder.mkdirs();
+        if (!tempFolder.exists()) tempFolder.mkdirs();
         return tempFolder.getAbsolutePath();
     }
 

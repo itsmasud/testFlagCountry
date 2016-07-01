@@ -36,6 +36,7 @@
         style="@style/Text_Body_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="20dp"
@@ -49,11 +50,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/customFieldName_textview"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="0dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/icon_view"
         android:text="@string/placeholder_paragraph"
-        android:visibility="gone" />
+        android:visibility="visible" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:layout_below="@+id/description_textview"
+        android:visibility="invisible" />
 </RelativeLayout>
