@@ -1631,9 +1631,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCustomField(Task task) {
-            if (task.getCompleted())
-                return;
-
             for (CustomField cf : _workorder.getCustomFields()) {
                 // do not remove the casting here!
                 if ((long) cf.getCustomLabelId() == (long) task.getCustomField()) {
