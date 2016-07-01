@@ -17,6 +17,7 @@ import io.fabric.sdk.android.Fabric;
  * Created by Michael Carver on 8/31/2015.
  */
 public class Debug {
+    private static final String TAG = "Debug";
     //private static final boolean USE_CRASHLYTICS = !BuildConfig.DEBUG;
     private static final boolean USE_CRASHLYTICS = true;
     private static boolean _started = false;
@@ -71,14 +72,16 @@ public class Debug {
     }
 
     private static void dumpTodo() {
-        if (_crashlytics != null && _todo.size() > 0) {
-            // we do a for loop just in case the runnable adds items to the list
-            // we don't want to get stuck here forever
-            int count = _todo.size();
-            for (int i = 0; i < count; i++) {
-                Runnable r = _todo.remove(0);
-                if (r != null)
-                    r.run();
+        synchronized (TAG) {
+            if (_crashlytics != null && _todo.size() > 0) {
+                // we do a for loop just in case the runnable adds items to the list
+                // we don't want to get stuck here forever
+                int count = _todo.size();
+                for (int i = 0; i < count; i++) {
+                    Runnable r = _todo.remove(0);
+                    if (r != null)
+                        r.run();
+                }
             }
         }
     }
