@@ -200,32 +200,17 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(File file) {
-        _originalFileName = file.getName();
-        _file = file;
-        _data = null;
+    public void show(String fileName) {
+        _originalFileName = fileName;
 
-        if (file.getName().contains(".")) {
-            _extension = file.getName().substring(file.getName().lastIndexOf("."));
-        }
-
-
-        super.show();
-        populateUi();
-    }
-
-    public void show(Intent data) {
-        _originalFileName = FileUtils.getFileNameFromUri(App.get(), data.getData());
-        _data = data;
-        _file = null;
-
-        if (_originalFileName.contains(".")) {
-            _extension = _originalFileName.substring(_originalFileName.lastIndexOf("."));
+        if (fileName.contains(".")) {
+            _extension = fileName.substring(fileName.lastIndexOf("."));
         }
 
         super.show();
         populateUi();
     }
+
 
     public void setPhoto(Bitmap bitmap) {
         Log.v(TAG, "setPhoto");
@@ -348,27 +333,14 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent;
-            if (_data == null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(_file), "image/*");
-
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _data.getData());
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            try {
-                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            if (_listener == null) return;
+            _listener.onImageClick();
         }
     };
 
     public interface Listener {
         void onOk(String filename, String photoDescription);
+
+        void onImageClick();
     }
 }

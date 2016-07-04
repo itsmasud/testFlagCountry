@@ -798,7 +798,7 @@ public class WorkFragment extends WorkorderFragment {
                 if (data == null) {
                     Log.e(TAG, "uploading an image using camera");
                     _tempUri = null;
-                    _photoUploadDialog.show(_tempFile);
+                    _photoUploadDialog.show(_tempFile.getName());
                     _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -812,7 +812,7 @@ public class WorkFragment extends WorkorderFragment {
                             if (count == 1) {
                                 _tempUri = data.getData();
                                 _tempFile = null;
-                                _photoUploadDialog.show(data);
+                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
@@ -827,14 +827,14 @@ public class WorkFragment extends WorkorderFragment {
                             Log.v(TAG, "Single local/ non-local file upload");
                             _tempUri = data.getData();
                             _tempFile = null;
-                            _photoUploadDialog.show(data);
+                            _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                             WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
-                        _photoUploadDialog.show(data);
+                        _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                         WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
@@ -1860,6 +1860,28 @@ public class WorkFragment extends WorkorderFragment {
                         _currentTask.getSlotId(), filename, _tempUri, photoDescription);
             }
         }
+
+        @Override
+        public void onImageClick() {
+            Intent intent;
+            if (_tempUri == null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
+
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     };
 }
+
 
