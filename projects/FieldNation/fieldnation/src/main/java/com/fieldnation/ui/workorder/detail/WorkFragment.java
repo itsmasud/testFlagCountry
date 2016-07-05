@@ -810,7 +810,7 @@ public class WorkFragment extends WorkorderFragment {
                             Uri uri = null;
 
                             if (count == 1) {
-                                _tempUri = uri;
+                                _tempUri = data.getData();
                                 _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
@@ -819,7 +819,7 @@ public class WorkFragment extends WorkorderFragment {
                                     uri = clipData.getItemAt(i).getUri();
                                     if (uri != null) {
                                         WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                                                _currentTask.getTaskId(), intent.setData(uri));
+                                                _currentTask.getSlotId(), intent.setData(uri));
                                     }
                                 }
                             }
@@ -1860,6 +1860,28 @@ public class WorkFragment extends WorkorderFragment {
                         _currentTask.getSlotId(), filename, _tempUri, photoDescription);
             }
         }
+
+        @Override
+        public void onImageClick() {
+            Intent intent;
+            if (_tempUri == null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
+
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     };
 }
+
 

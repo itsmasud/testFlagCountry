@@ -96,7 +96,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private DocumentClient _docClient;
     private GlobalTopicClient _globalClient;
     private WorkorderClient _workorderClient;
-	private PhotoClient _photoClient;
+    private PhotoClient _photoClient;
 
     private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -144,7 +144,7 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appPickerDialog.setListener(_appdialog_listener);
 
-		_actionButton = (Button) view.findViewById(R.id.action_button);
+        _actionButton = (Button) view.findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
@@ -203,8 +203,8 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
-		if (_photoClient != null && _photoClient.isConnected())
-			_photoClient.disconnect(App.get());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -384,9 +384,9 @@ public class DeliverableFragment extends WorkorderFragment {
                             Uri uri = null;
 
                             if (count == 1) {
-                                _tempUri = uri;
+                                _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
-                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), clipData.getItemAt(0).getUri()));
+                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
                             } else {
                                 for (int i = 0; i < count; ++i) {
@@ -672,7 +672,31 @@ public class DeliverableFragment extends WorkorderFragment {
                         _uploadingSlotId, filename, _tempUri, photoDescription);
             }
         }
+
+        @Override
+        public void onImageClick() {
+            Intent intent;
+            if (_tempUri == null) {
+                Log.e(TAG, "_tempUri is null");
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
+
+            } else {
+                Log.e(TAG, "_tempFile is null");
+                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     };
+
 
     private final WorkorderClient.Listener _workorderData_listener = new WorkorderClient.Listener() {
         @Override

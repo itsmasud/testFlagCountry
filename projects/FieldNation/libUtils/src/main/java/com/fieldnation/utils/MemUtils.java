@@ -29,10 +29,10 @@ public class MemUtils {
         return subSampleImage(0, res, sourceImage);
     }
 
-    public static Bitmap getMemoryEfficientBitmap(String filename, int destWidth) {
+    public static Bitmap getMemoryEfficientBitmap(String pathName, int destWidth) {
         BitmapFactory.Options srcOptions = new BitmapFactory.Options();
         srcOptions.inJustDecodeBounds = true;
-        BitmapFactory.decodeFile(filename, srcOptions);
+        BitmapFactory.decodeFile(pathName, srcOptions);
 
         BitmapFactory.Options dstOption = new BitmapFactory.Options();
         dstOption.inJustDecodeBounds = false;
@@ -40,7 +40,7 @@ public class MemUtils {
 
         Log.v("MemUtils", "inSampleSize: " + dstOption.inSampleSize);
 
-        return rotateImageIfRequired(BitmapFactory.decodeFile(filename, dstOption), filename);
+        return rotateImageIfRequired(BitmapFactory.decodeFile(pathName, dstOption), pathName);
     }
 
     /**

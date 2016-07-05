@@ -1,7 +1,9 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -27,6 +29,8 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.misc;
+
+import java.io.File;
 
 /**
  * @author shoaib.ahmed
@@ -60,6 +64,8 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private String _originalFileName;
     private Bitmap _bitmap;
     private boolean _hideImageView = false;
+    File _file;
+    Intent _data;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -126,6 +132,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         _imageView = (ImageView) v.findViewById(R.id.photo_imageview);
+        _imageView.setOnClickListener(_photoImageView_onClick);
 
         _fileNameEditText = (EditText) v.findViewById(R.id.filename_edittext);
         _fileNameEditText.setOnEditorActionListener(_onEditor);
@@ -193,16 +200,17 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(String filename) {
-        _originalFileName = filename;
+    public void show(String fileName) {
+        _originalFileName = fileName;
 
-        if (filename.contains(".")) {
-            _extension = filename.substring(filename.lastIndexOf("."));
+        if (fileName.contains(".")) {
+            _extension = fileName.substring(fileName.lastIndexOf("."));
         }
 
         super.show();
         populateUi();
     }
+
 
     public void setPhoto(Bitmap bitmap) {
         Log.v(TAG, "setPhoto");
@@ -322,7 +330,17 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         }
     };
 
+    private final View.OnClickListener _photoImageView_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener == null) return;
+            _listener.onImageClick();
+        }
+    };
+
     public interface Listener {
         void onOk(String filename, String photoDescription);
+
+        void onImageClick();
     }
 }
