@@ -13,7 +13,7 @@ import android.widget.TextView;
  */
 public class SlideTextView extends TextView {
 
-    private static int ANIMATION_DELAY = 175;
+    private static final int ANIMATION_DELAY = 175;
 
     private float _left = 0f;
     private float _right = 0f;

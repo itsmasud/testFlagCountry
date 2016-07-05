@@ -21,7 +21,7 @@ public enum WorkorderSubstatus {
     CANCELED_LATEFEEPAID("SUBSTATUS_CANCELLED_LATEFEEPAID"), // 7 + has feed, paid
     NA("NA");
 
-    private String _value;
+    private final String _value;
 
     WorkorderSubstatus(String value) {
         _value = value;

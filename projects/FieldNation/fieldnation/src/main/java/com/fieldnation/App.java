@@ -75,7 +75,7 @@ public class App extends Application {
     private AuthTopicClient _authTopicClient;
     private int _memoryClass;
     private Typeface _iconFont;
-    private Handler _handler = new Handler();
+    private final Handler _handler = new Handler();
     private boolean _switchingUser = false;
     public String deviceToken = null;
     private boolean _isConnected = false;

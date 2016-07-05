@@ -58,7 +58,6 @@ import java.lang.ref.WeakReference;
 import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "DeliverableFragment";
@@ -98,12 +97,12 @@ public class DeliverableFragment extends WorkorderFragment {
     private WorkorderClient _workorderClient;
 	private PhotoClient _photoClient;
 
-    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
     private ForLoopRunnable _reviewRunnable = null;
 
     // Temporary storage
-    private List<Runnable> _untilAdded = new LinkedList<>();
+    private final List<Runnable> _untilAdded = new LinkedList<>();
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -284,7 +283,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 _reviewRunnable = new ForLoopRunnable(docs.length, new Handler()) {
                     private final Document[] _docs = docs;
-                    private List<DocumentView> _views = new LinkedList<>();
+                    private final List<DocumentView> _views = new LinkedList<>();
 
                     @Override
                     public void next(int i) throws Exception {

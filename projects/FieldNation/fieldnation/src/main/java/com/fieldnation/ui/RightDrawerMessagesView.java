@@ -41,7 +41,7 @@ public class RightDrawerMessagesView extends FrameLayout {
     // Data
     private ProfileClient _profileClient;
     private PhotoClient _photoClient;
-    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
     public RightDrawerMessagesView(Context context) {
         super(context);
@@ -110,7 +110,7 @@ public class RightDrawerMessagesView extends FrameLayout {
     };
 
     private static class MyPagingAdapter extends PagingAdapter<Message> {
-        private MessageTileView.Listener _listener;
+        private final MessageTileView.Listener _listener;
 
         public MyPagingAdapter(MessageTileView.Listener listener) {
             super();
@@ -164,7 +164,7 @@ public class RightDrawerMessagesView extends FrameLayout {
         }
     };
 
-    private MyPagingAdapter _adapter = new MyPagingAdapter(_messageCard_listener);
+    private final MyPagingAdapter _adapter = new MyPagingAdapter(_messageCard_listener);
 
     /*-*****************************************-*/
     /*-                Data Events              -*/

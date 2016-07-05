@@ -43,7 +43,7 @@ public class UploadingDocument implements Parcelable {
         @Override
         public UploadingDocument createFromParcel(Parcel source) {
             try {
-                Bundle bundle = source.readBundle();
+                Bundle bundle = source.readBundle(getClass().getClassLoader());
                 return new UploadingDocument(bundle.getString("fileName"), (Uri) bundle.getParcelable("uri"));
             } catch (Exception ex) {
                 Log.v(TAG, ex);

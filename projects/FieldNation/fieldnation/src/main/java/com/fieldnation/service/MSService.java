@@ -24,8 +24,8 @@ public abstract class MSService extends Service {
 
     private final Object LOCK = new Object();
 
-    private ThreadManager _manager = new ThreadManager();
-    private List<Intent> _intents = new LinkedList<>();
+    private final ThreadManager _manager = new ThreadManager();
+    private final List<Intent> _intents = new LinkedList<>();
 
     private long _lastRequestTime = 0;
     private int _workersWorking = 0;
@@ -128,7 +128,7 @@ public abstract class MSService extends Service {
      * A worker thread that runs through all the intents.
      */
     class WorkerThread extends ThreadManager.ManagedThread {
-        private List<Intent> _intents;
+        private final List<Intent> _intents;
 
         public WorkerThread(ThreadManager manager, List<Intent> intents) {
             super(manager);

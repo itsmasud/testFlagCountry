@@ -313,9 +313,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
                 Expense[] exp = info.getExpense();
 
                 _expenses.clear();
-                for (int i = 0; i < exp.length; i++) {
-                    _expenses.add(exp[i]);
-                }
+                Collections.addAll(_expenses, exp);
             }
 
             _counterReason = info.getExplanation();

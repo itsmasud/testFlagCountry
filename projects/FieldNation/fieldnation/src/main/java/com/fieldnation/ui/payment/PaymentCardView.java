@@ -62,7 +62,7 @@ public class PaymentCardView extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentDetailActivity.class);

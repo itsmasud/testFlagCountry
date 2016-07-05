@@ -45,7 +45,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:gravity="center"
-                        android:text="TASKS" />
+                        android:text="@string/tasks_caps" />
 
                     <LinearLayout
                         android:id="@+id/uploadSlot_layout"
@@ -88,7 +88,7 @@
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
                         android:gravity="center"
-                        android:text="Select upto 5 files" />
+                        android:text="Select up to 5 files" />
 
                     <LinearLayout
                         android:id="@+id/filesList_layout"
@@ -137,7 +137,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="32dp"
                 android:gravity="center_vertical"
-                android:text="Preparing files..." />
+                android:text="@string/preparing_files" />
 
             <ProgressBar
                 android:id="@+id/loading_progress"

@@ -21,11 +21,11 @@ class TopicUser {
     /**
      * A tag that identifies the user
      */
-    public String userTag;
+    public final String userTag;
     /**
      * The topics that this user is listening to
      */
-    public Set<String> topics = new HashSet<>();
+    public final Set<String> topics = new HashSet<>();
 
     /**
      * All of the registered users indexed by their userTag

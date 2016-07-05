@@ -198,7 +198,7 @@ public class TopicClient implements TopicConstants {
     };
 
     private static class IncomeHandler extends Handler {
-        private WeakReference<TopicClient> _client;
+        private final WeakReference<TopicClient> _client;
 
         public IncomeHandler(TopicClient client) {
             _client = new WeakReference<>(client);

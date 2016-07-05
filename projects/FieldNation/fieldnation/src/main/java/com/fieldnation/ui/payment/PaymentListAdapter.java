@@ -4,10 +4,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.fieldnation.Log;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -19,7 +16,7 @@ class PaymentListAdapter extends BaseAdapter {
     private final static String TAG = "PaymentListAdapter";
 
     private List<Object> _items = new LinkedList<>();
-    private Listener _listener;
+    private final Listener _listener;
 
     public PaymentListAdapter(List<Object> items, Listener listener) {
         _items = items;

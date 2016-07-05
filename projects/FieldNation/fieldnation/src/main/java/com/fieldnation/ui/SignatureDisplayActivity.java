@@ -245,7 +245,7 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
 
             _timeLinearLayout.removeAllViews();
             ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-                private LoggedWork[] _logs = logs;
+                private final LoggedWork[] _logs = logs;
 
                 @Override
                 public void next(int i) throws Exception {

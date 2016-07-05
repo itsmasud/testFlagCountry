@@ -26,7 +26,7 @@ public class MessageListActivity extends ItemListActivity<Message> {
     // Data
     private ProfileClient _profiles;
     private PhotoClient _photos;
-    private static Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
+    private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/

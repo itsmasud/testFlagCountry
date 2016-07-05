@@ -9,7 +9,7 @@ import java.util.Hashtable;
 public class UniqueTag {
     private static final Object LOCK = new Object();
 
-    private static Hashtable<String, Integer> _tags = new Hashtable<>();
+    private static final Hashtable<String, Integer> _tags = new Hashtable<>();
 
     public static String makeTag(String root) {
         return android.os.Process.myPid() + "/" + root + "/" + getTagNumber(root);

@@ -443,7 +443,7 @@ public class WebCrawlerService extends Service {
     };
 
     public class WorkorderDetailWorker extends ThreadManager.ManagedThread {
-        private String TAG = UniqueTag.makeTag("WorkorderDetailWorkerThread");
+        private final String TAG = UniqueTag.makeTag("WorkorderDetailWorkerThread");
         private final List<Workorder> _work;
         private final Context _context;
 

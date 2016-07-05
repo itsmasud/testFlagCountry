@@ -228,7 +228,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private OnLongClickListener _editMode_listener = new OnLongClickListener() {
+    private final OnLongClickListener _editMode_listener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             _descriptionTextView.setVisibility(GONE);

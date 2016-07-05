@@ -111,7 +111,7 @@ public class DiscountListLayout extends RelativeLayout implements WorkorderRende
         }
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
-            private Discount[] _list = list;
+            private final Discount[] _list = list;
 
             @Override
             public void next(int i) throws Exception {

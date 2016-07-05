@@ -52,8 +52,8 @@ public enum ReportProblemType {
     MISSING("", R.string.i_dont_have_what_i_need),
     APPROVAL("", R.string.approval);
 
-    public String value;
-    public int stringResId;
+    public final String value;
+    public final int stringResId;
 
     ReportProblemType(String value, int resId) {
         this.value = value;

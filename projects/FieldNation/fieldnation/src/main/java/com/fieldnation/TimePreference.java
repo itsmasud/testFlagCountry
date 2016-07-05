@@ -15,7 +15,7 @@ import java.util.Date;
  * Created by Michael Carver on 5/8/2015.
  */
 public class TimePreference extends DialogPreference {
-    private Calendar calendar;
+    private final Calendar calendar;
     private TimePicker picker = null;
 
     public TimePreference(Context context) {

@@ -186,7 +186,7 @@ public class WorkFragment extends WorkorderFragment {
     private int _deviceCount = -1;
     private String _scannedImagePath;
 
-    private List<Runnable> _untilAdded = new LinkedList<>();
+    private final List<Runnable> _untilAdded = new LinkedList<>();
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/

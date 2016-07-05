@@ -197,7 +197,7 @@ public class SignOffFragment extends FragmentBase {
 
             _timeLinearLayout.removeAllViews();
             ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-                private LoggedWork[] _logs = logs;
+                private final LoggedWork[] _logs = logs;
 
                 @Override
                 public void next(int i) {
@@ -238,7 +238,7 @@ public class SignOffFragment extends FragmentBase {
             _tasksLinearLayout.removeAllViews();
 
             ForLoopRunnable r = new ForLoopRunnable(tasks.length, new Handler()) {
-                private Task[] _tasks = tasks;
+                private final Task[] _tasks = tasks;
 
                 @Override
                 public void next(int i) {

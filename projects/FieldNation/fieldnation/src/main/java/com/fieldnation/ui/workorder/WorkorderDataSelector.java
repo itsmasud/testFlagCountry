@@ -15,7 +15,7 @@ public enum WorkorderDataSelector {
     CANCELED("canceled"),
     ROUTED("available");
 
-    private String _call;
+    private final String _call;
     private boolean _allowCache = false;
 
     WorkorderDataSelector(String call) {

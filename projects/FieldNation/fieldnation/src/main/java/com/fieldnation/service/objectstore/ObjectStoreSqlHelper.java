@@ -16,7 +16,7 @@ class ObjectStoreSqlHelper extends SQLiteOpenHelper {
     // changed.
     private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "object_store";
-    private static WeakHashMap<Context, ObjectStoreSqlHelper> _instances = new WeakHashMap<>();
+    private static final WeakHashMap<Context, ObjectStoreSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),

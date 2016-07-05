@@ -37,7 +37,7 @@ public class MessagesAdapter extends BaseAdapter {
         return v;
     }
 
-    private Comparator<Message> _messageComparator = new Comparator<Message>() {
+    private final Comparator<Message> _messageComparator = new Comparator<Message>() {
 
         @Override
         public int compare(Message lhs, Message rhs) {

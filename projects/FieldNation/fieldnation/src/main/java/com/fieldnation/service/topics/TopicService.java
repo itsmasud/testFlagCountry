@@ -23,7 +23,7 @@ import java.util.Set;
 public class TopicService extends MSService implements TopicConstants {
     private static final String TAG = "TopicService";
 
-    private Messenger _me = new Messenger(new IncomeHandler(this));
+    private final Messenger _me = new Messenger(new IncomeHandler(this));
     private Hashtable<String, StickyContainer> _stickies;
     private int _bindCount = 0;
 
@@ -285,7 +285,7 @@ public class TopicService extends MSService implements TopicConstants {
     /*-**********************************-*/
     // accepts messages from clients
     private static class IncomeHandler extends Handler {
-        private WeakReference<TopicService> _wr;
+        private final WeakReference<TopicService> _wr;
 
         public IncomeHandler(TopicService oss) {
             _wr = new WeakReference<>(oss);

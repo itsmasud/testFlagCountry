@@ -140,7 +140,7 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private PaymentClient.Listener _paymentClient_listener = new PaymentClient.Listener() {
+    private final PaymentClient.Listener _paymentClient_listener = new PaymentClient.Listener() {
         @Override
         public void onConnected() {
             _paymentClient.subGet(-1, false);

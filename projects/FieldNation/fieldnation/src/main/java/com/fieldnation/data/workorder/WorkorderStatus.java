@@ -10,7 +10,7 @@ public enum WorkorderStatus {
     CANCELED("STATUS_CANCELLED"), // 7
     NA("NA");
 
-    private String _value;
+    private final String _value;
 
     WorkorderStatus(String value) {
         _value = value;

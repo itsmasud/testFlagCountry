@@ -1,12 +1,11 @@
 package com.fieldnation.json;
 
-import java.nio.charset.Charset;
 import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
 public class JsonTokenizer {
-    private String _source;
+    private final String _source;
     private int _index = 0;
 
     public JsonTokenizer(String jsonData) {

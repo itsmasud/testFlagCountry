@@ -23,7 +23,7 @@ import java.util.List;
  */
 public class ProfileClient extends TopicClient implements ProfileConstants {
     private static final String STAG = "ProfileDataClient";
-    private String TAG = UniqueTag.makeTag(STAG);
+    private final String TAG = UniqueTag.makeTag(STAG);
 
     public ProfileClient(Listener listener) {
         super(listener);

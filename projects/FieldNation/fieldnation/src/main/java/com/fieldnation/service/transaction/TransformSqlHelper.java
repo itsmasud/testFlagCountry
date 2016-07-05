@@ -17,7 +17,7 @@ class TransformSqlHelper extends SQLiteOpenHelper {
     private static final int TABLE_VER = 2;
     public static final String TABLE_NAME = "transforms";
 
-    private static WeakHashMap<Context, TransformSqlHelper> _instances = new WeakHashMap<>();
+    private static final WeakHashMap<Context, TransformSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
@@ -28,9 +28,9 @@ class TransformSqlHelper extends SQLiteOpenHelper {
         ACTION(5, "action", "text not null"),
         DATA(6, "data", "blob not null");
 
-        private int _index;
-        private String _name;
-        private String _declaration;
+        private final int _index;
+        private final String _name;
+        private final String _declaration;
         private boolean _doIndex = false;
 
         private static String[] _names = null;

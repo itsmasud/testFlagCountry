@@ -16,7 +16,7 @@ public class JsonObject implements Parcelable {
 
     private Bundle _fieldsB = new Bundle();
 
-    public static JsonObject JsonNULL = new JsonObject(true);
+    public static final JsonObject JsonNULL = new JsonObject(true);
 
     public JsonObject() {
         _isNullObject = false;

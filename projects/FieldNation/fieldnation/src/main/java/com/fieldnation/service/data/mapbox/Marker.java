@@ -7,7 +7,7 @@ import com.fieldnation.utils.misc;
  */
 public class Marker extends Position {
 
-    private String _url;
+    private final String _url;
 
     public Marker(double longitude, double latitude, String url) {
         super(longitude, latitude);

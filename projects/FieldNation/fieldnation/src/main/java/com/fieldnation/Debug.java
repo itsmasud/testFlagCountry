@@ -23,7 +23,7 @@ public class Debug {
     private static boolean _started = false;
     private static ANRWatchDog _anrWatchDog;
     private static Crashlytics _crashlytics = null;
-    private static List<Runnable> _todo = new LinkedList<>();
+    private static final List<Runnable> _todo = new LinkedList<>();
 
     public static void init() {
         if (_started)

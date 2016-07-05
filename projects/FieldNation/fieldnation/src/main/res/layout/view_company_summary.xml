@@ -45,7 +45,7 @@
                     android:layout_alignParentLeft="true"
                     android:layout_centerVertical="true"
                     android:layout_toLeftOf="@+id/star_rating"
-                    android:text="Company Name" />
+                    android:text="@string/placeholder_company_name" />
 
                 <com.fieldnation.ui.StarView
                     android:id="@+id/star_rating"

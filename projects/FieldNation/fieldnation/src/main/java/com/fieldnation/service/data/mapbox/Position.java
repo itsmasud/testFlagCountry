@@ -5,8 +5,8 @@ package com.fieldnation.service.data.mapbox;
  */
 public class Position {
 
-    public double longitude;
-    public double latitude;
+    public final double longitude;
+    public final double latitude;
 
     public Position(double longitude, double latitude) {
         this.longitude = longitude;

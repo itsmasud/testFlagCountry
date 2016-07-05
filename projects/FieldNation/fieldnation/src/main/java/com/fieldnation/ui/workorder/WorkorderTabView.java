@@ -89,7 +89,7 @@ public class WorkorderTabView extends RelativeLayout {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private View.OnClickListener _detailLayout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _detailLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setSelected(0);
@@ -109,7 +109,7 @@ public class WorkorderTabView extends RelativeLayout {
     };
 */
 
-    private View.OnClickListener _messagesLayout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _messagesLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setSelected(1);
@@ -118,7 +118,7 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _attachmentsLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setSelected(2);
@@ -127,7 +127,7 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
-    private View.OnClickListener _alertLayout_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _alertLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setSelected(3);
