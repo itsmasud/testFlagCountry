@@ -84,7 +84,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private UploadingDocument[] _uploadingDocumentList;
 
     // State data
-    private WorkorderDataSelector _displayView = WorkorderDataSelector.ASSIGNED;
+    private final WorkorderDataSelector _displayView = WorkorderDataSelector.ASSIGNED;
 
     public ShareRequestActivity() {
         super();
@@ -333,7 +333,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
     }
 
-    private Toolbar.OnMenuItemClickListener _sendMenuItem_listener = new Toolbar.OnMenuItemClickListener() {
+    private final Toolbar.OnMenuItemClickListener _sendMenuItem_listener = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem menuItem) {
             if (menuItem.getItemId() == R.id.send_menuitem) {
@@ -358,7 +358,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
     };
 
-    private View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onBackPressed();
@@ -555,7 +555,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
     };
 
-    private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+    private final Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
             Log.v(TAG, "_workorder_listener");
@@ -622,7 +622,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
     }
 
-    private ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
+    private final ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
         public void onClick(ShareUploadSlotView view, UploadSlot slot) {
             Log.e(TAG, "_shareUploadSlotView_listener.onClick" + slot.getSlotName());
 
@@ -694,7 +694,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
     }
 
-    private ShareRequestedFileRowView.Listener _shareRequestedFileRowView_listener = new ShareRequestedFileRowView.Listener() {
+    private final ShareRequestedFileRowView.Listener _shareRequestedFileRowView_listener = new ShareRequestedFileRowView.Listener() {
         @Override
         public void onClick(ShareRequestedFileRowView view, UploadingDocument uploadingDocument) {
             Log.v(TAG, "_shareRequestedFileRowView_listener.onClick");

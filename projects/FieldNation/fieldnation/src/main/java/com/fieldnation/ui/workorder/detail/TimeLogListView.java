@@ -97,7 +97,7 @@ public class TimeLogListView extends RelativeLayout implements WorkorderRenderer
 
         if (logs != null && logs.length > 0) {
             ForLoopRunnable r = new ForLoopRunnable(logs.length, new Handler()) {
-                private LoggedWork[] _logs = logs;
+                private final LoggedWork[] _logs = logs;
 
                 @Override
                 public void next(int i) throws Exception {

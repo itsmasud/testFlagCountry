@@ -19,7 +19,7 @@ public enum TaskType {
     SHIPMENT_TRACKING(12),
     DOWNLOAD(13);
 
-    private int _id;
+    private final int _id;
 
     TaskType(int id) {
         _id = id;

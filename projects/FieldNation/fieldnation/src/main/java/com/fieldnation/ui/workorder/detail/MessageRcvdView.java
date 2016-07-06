@@ -112,7 +112,7 @@ public class MessageRcvdView extends RelativeLayout {
         }
     }
 
-    private PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
+    private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
             populateUi();

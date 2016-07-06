@@ -110,7 +110,7 @@ public class ExpenseListLayout extends RelativeLayout implements WorkorderRender
         }
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
-            private Expense[] _list = list;
+            private final Expense[] _list = list;
 
             @Override
             public void next(int i) throws Exception {

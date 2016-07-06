@@ -2,9 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -17,7 +15,6 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.ImageUtils;
 import com.fieldnation.utils.MemUtils;
 
 /**

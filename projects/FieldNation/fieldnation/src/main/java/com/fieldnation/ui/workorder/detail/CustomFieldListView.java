@@ -17,7 +17,6 @@ import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by michael.carver on 10/30/2014.
@@ -34,7 +33,7 @@ public class CustomFieldListView extends RelativeLayout {
     private List<Object> _fields;
     private CustomFieldRowView.Listener _listener;
     private ForLoopRunnable _forLoop = null;
-    private List<View> _views = new LinkedList<>();
+    private final List<View> _views = new LinkedList<>();
 
     public CustomFieldListView(Context context) {
         super(context);
@@ -86,7 +85,7 @@ public class CustomFieldListView extends RelativeLayout {
             public void next(int i) throws Exception {
                 Object obj = _fields.get(i);
                 if (obj instanceof String) {
-                    View v = LayoutInflater.from(getContext()).inflate(R.layout.view_customfield_header, null);
+                    View v = LayoutInflater.from(getContext()).inflate(R.layout.view_customfield_header, null); // null since we will be adding it later
                     ((TextView) v.findViewById(R.id.customFieldHeader)).setText((String) obj);
                     if (i == 0) {
                         v.findViewById(R.id.spacer).setVisibility(GONE);

@@ -47,7 +47,7 @@
                         style="@style/Widget.AppCompat.Spinner.Underlined"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Block Reason..."
+                        android:hint="@string/block_reason"
                         android:visibility="visible" />
                 </LinearLayout>
 

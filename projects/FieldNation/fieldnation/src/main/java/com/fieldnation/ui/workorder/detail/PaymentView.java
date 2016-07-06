@@ -125,14 +125,15 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         _actionButton.setVisibility(VISIBLE);
         _actionButton.setEnabled(true);
         if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
-            _actionButton.setText("COUNTER OFFER");
+            _actionButton.setText(R.string.btn_counter_offer);
         } else if (_workorder.canRequestPayIncrease()) {
-            _actionButton.setText("REQUEST NEW PAY");
+            _actionButton.setText(R.string.btn_request_new_pay);
         } else if (!_workorder.canCounterOffer() &&
                 (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED)) {
+                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED
+                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE)) {
             _actionButton.setEnabled(false);
-            _actionButton.setText("COUNTER DISABLED");
+            _actionButton.setText(R.string.btn_counter_disabled);
         } else {
             _actionButton.setVisibility(GONE);
         }

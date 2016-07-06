@@ -11,10 +11,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.text.ParseException;
 import java.util.Calendar;
@@ -145,7 +143,7 @@ public class TimeLogRowView extends RelativeLayout {
     /*-             Events           -*/
     /*-******************************-*/
 
-    private View.OnClickListener _edit_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _edit_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             boolean showdevices = false;
@@ -159,7 +157,7 @@ public class TimeLogRowView extends RelativeLayout {
         }
     };
 
-    private OnLongClickListener _delete_onClick = new OnLongClickListener() {
+    private final OnLongClickListener _delete_onClick = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
             if (_listener != null) {

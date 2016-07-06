@@ -76,7 +76,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
+    private final TimeLogRowView.Listener _scheduleDetailView_listener = new TimeLogRowView.Listener() {
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
             if (_listener != null)
@@ -90,7 +90,7 @@ public class ScheduleView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private View.OnClickListener _add_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             boolean showdevices = false;

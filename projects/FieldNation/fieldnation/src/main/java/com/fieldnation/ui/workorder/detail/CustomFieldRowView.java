@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
@@ -30,7 +29,6 @@ public class CustomFieldRowView extends RelativeLayout {
     private Listener _listener;
     private Workorder _workorder;
     private CustomField _customField;
-    private LayoutParams layoutParams;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -60,9 +58,6 @@ public class CustomFieldRowView extends RelativeLayout {
         _customFieldNameTextView = (TextView) findViewById(R.id.customFieldName_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _optionalTextView = (TextView) findViewById(R.id.optional_textview);
-
-        layoutParams = (RelativeLayout.LayoutParams) _customFieldNameTextView.getLayoutParams();
-
 
         setOnClickListener(_check_listener);
 
@@ -97,24 +92,17 @@ public class CustomFieldRowView extends RelativeLayout {
         }
 
         if (misc.isEmptyOrNull(_customField.getValue())) {
-            _customFieldNameTextView.setText(_customField.getLabel());
+            _customFieldNameTextView.setText(_customField.getLabel().trim());
         } else {
-            _customFieldNameTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
+            _customFieldNameTextView.setText((_customField.getLabel() + "\n" + _customField.getValue()).trim());
         }
 
         if (misc.isEmptyOrNull(_customField.getTip())) {
             _descriptionTextView.setVisibility(GONE);
-
-            layoutParams.setMargins(
-                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).leftMargin,
-                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).topMargin,
-                    ((LayoutParams) _customFieldNameTextView.getLayoutParams()).rightMargin,
-                    ((LayoutParams)_descriptionTextView.getLayoutParams()).bottomMargin);
         } else {
             _descriptionTextView.setText(_customField.getTip());
             _descriptionTextView.setVisibility(VISIBLE);
         }
-
 
         if (_customField.getRequired()) {
             _optionalTextView.setVisibility(View.GONE);

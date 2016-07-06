@@ -20,7 +20,7 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final int TABLE_VER = 3;
     public static final String TABLE_NAME = "transactions";
 
-    private static WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
+    private static final WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),

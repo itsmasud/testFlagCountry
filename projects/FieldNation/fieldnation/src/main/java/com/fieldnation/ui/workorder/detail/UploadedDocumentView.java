@@ -44,12 +44,13 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     // Data
     private Workorder _workorder;
     private UploadedDocument _doc;
-    private long _profileId;
-    private Listener _listener;
-    private boolean _isLoading = false;
     private DocumentClient _docClient;
+
+    private boolean _isLoading = false;
+    private Listener _listener;
+
+    private long _profileId;
     private boolean _hasImage = false;
-    private String _lastPhotoUrl = null;
 
     static {
         _ICFN_FILES.put("png", R.string.icon_file_png);
@@ -115,6 +116,27 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
     /*-*************************-*/
     /*-			Methods			-*/
     /*-*************************-*/
+    @Override
+    public void setPhoto(String url, Drawable photo) {
+        Log.v(TAG, "setPhoto");
+        if (_doc != null && _doc.getDownloadThumbLink() != null && _doc.getDownloadThumbLink().startsWith(url)) {
+            _picView.setImageDrawable(photo);
+            _hasImage = true;
+            updateThumb();
+        }
+    }
+
+    public void setData(Workorder workorder, long profileId, UploadedDocument deliverable) {
+        setLoading(false, R.string.uploading);
+        _doc = deliverable;
+        _profileId = profileId;
+        _workorder = workorder;
+        populateUi();
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
 
     public void setLoading(boolean isloading, int messageResId) {
         _isLoading = isloading;
@@ -126,6 +148,7 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             _usernameTextView.setVisibility(GONE);
             _dateTextView.setVisibility(View.GONE);
             _statusTextView.setText(messageResId);
+            _fileTypeIconFont.setVisibility(VISIBLE);
             _fileTypeIconFont.setText(getContext().getString(R.string.icon_file_generic));
             _hasImage = false;
             updateThumb();
@@ -141,23 +164,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         }
     }
 
-    @Override
-    public void setPhoto(String url, Drawable photo) {
-        Log.v(TAG, "setPhoto");
-        if (_doc != null && _doc.getDownloadThumbLink() != null && _doc.getDownloadThumbLink().startsWith(url)) {
-            _picView.setImageDrawable(photo);
-            _hasImage = true;
-            updateThumb();
-        }
-    }
-
-    public void setUploading(String filename) {
-        setLoading(true, R.string.uploading);
-        _doc = null;
-        _workorder = null;
-        _filenameTextView.setText(filename);
-    }
-
     public void setDownloading(String filename) {
         _isLoading = true;
         _progressBar.setVisibility(View.VISIBLE);
@@ -170,20 +176,11 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         _filenameTextView.setText(filename);
     }
 
-    public void setData(Workorder workorder, long profileId, UploadedDocument deliverable) {
-        setLoading(false, R.string.uploading);
-        _doc = deliverable;
-        _profileId = profileId;
-        _workorder = workorder;
-        populateUi();
-    }
-
-    public UploadedDocument getUploadedDocument() {
-        return _doc;
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
+    public void setUploading(String filename) {
+        setLoading(true, R.string.uploading);
+        _doc = null;
+        _workorder = null;
+        _filenameTextView.setText(filename);
     }
 
     private void populateUi() {

@@ -7,7 +7,7 @@ public enum StatusIntent {
     WAITING("waiting"), // gray/3
     UNKNOWN("unknown");
 
-    private String _value;
+    private final String _value;
 
     StatusIntent(String value) {
         _value = value;

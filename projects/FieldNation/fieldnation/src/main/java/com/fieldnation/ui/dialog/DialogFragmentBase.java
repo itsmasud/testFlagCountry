@@ -10,7 +10,6 @@ import android.support.v4.app.FragmentTransaction;
 import com.fieldnation.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.utils.DebugUtils;
-import com.fieldnation.utils.misc;
 
 import java.util.List;
 

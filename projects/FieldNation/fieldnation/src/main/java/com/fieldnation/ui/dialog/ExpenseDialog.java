@@ -30,7 +30,7 @@ import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
-    private static String TAG = "ExpenseDialog";
+    private static final String TAG = "ExpenseDialog";
 
     // State
     private static final String STATE_SHOW_CATEGORIES = "STATE_SHOW_CATEGORIES";

@@ -2,7 +2,6 @@ package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
 import android.support.v4.app.NotificationCompat;
@@ -43,10 +42,10 @@ import javax.net.ssl.SSLProtocolException;
  * This class executes requests that are stored in the transaction queue
  */
 public class TransactionThread extends ThreadManager.ManagedThread {
-    private String TAG = UniqueTag.makeTag("TransactionThread");
+    private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 
-    private WebTransactionService _service;
+    private final WebTransactionService _service;
 
     private boolean _syncThread = false;
     private boolean _allowSync = true;

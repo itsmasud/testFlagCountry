@@ -1,19 +1,11 @@
 package com.fieldnation.json;
 
-import com.fieldnation.json.annotations.CollectionParameterType;
 import com.fieldnation.json.annotations.Json;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Set;
 
 public class Serializer {
 

@@ -92,8 +92,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private WorkorderDataSelector _displayView = WorkorderDataSelector.AVAILABLE;
     private Workorder _currentWorkorder;
     private int _deviceCount = -1;
-    private boolean isRoutedSelector = false;
-    private boolean isAvailableSelector = false;
 
 
     /*-*************************************-*/
@@ -118,7 +116,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
-                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+                _displayView = WorkorderDataSelector.values()[savedInstanceState.getInt(STATE_DISPLAY)];
             }
 
             if (savedInstanceState.containsKey(STATE_CURRENT_WORKORDER))
@@ -184,7 +182,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
-                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+                _displayView = WorkorderDataSelector.values()[savedInstanceState.getInt(STATE_DISPLAY)];
             }
 
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
@@ -203,7 +201,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
-        outState.putString(STATE_DISPLAY, _displayView.name());
+        outState.putInt(STATE_DISPLAY, _displayView.ordinal());
         outState.putString(STATE_TAG, TAG);
 
         if (_currentWorkorder != null)
@@ -218,15 +216,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
 
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
-        if (displayView.equals(WorkorderDataSelector.ROUTED)) {
-            isRoutedSelector = true;
-            _displayView = WorkorderDataSelector.AVAILABLE;
-        } else if (displayView.equals(WorkorderDataSelector.AVAILABLE)) {
-            isAvailableSelector = true;
-            _displayView = WorkorderDataSelector.AVAILABLE;
-        } else {
-            _displayView = displayView;
-        }
+        _displayView = displayView;
         return this;
     }
 
@@ -301,7 +291,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
+            _displayView = WorkorderDataSelector.values()[bundle.getInt(STATE_DISPLAY)];
         }
 
         _workorderClient = new WorkorderClient(_workorderData_listener);

@@ -1,12 +1,13 @@
 package com.fieldnation.ui.market;
 
-import com.fieldnation.Log;
+import com.fieldnation.App;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderListFragment;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -17,23 +18,25 @@ public class AvailableWorkorderListFragment extends WorkorderListFragment {
 
     @Override
     public void addPage(int page, List<Workorder> list) {
-        List<Workorder> availableWorkorderWithoutRoutedList = new ArrayList<>();
+        List<Workorder> availableWorkorderWithoutRoutedList = new LinkedList<>();
 
-        WorkorderStatus status;
-        WorkorderSubstatus substatus;
+        if (list != null && list.size() > 0) {
+            WorkorderStatus status;
+            WorkorderSubstatus substatus;
 
-        for (Workorder workorder : list) {
-            status = workorder.getWorkorderStatus();
-            substatus = workorder.getWorkorderSubstatus();
+            for (Workorder workorder : list) {
+                status = workorder.getWorkorderStatus();
+                substatus = workorder.getWorkorderSubstatus();
 
-            if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
-                availableWorkorderWithoutRoutedList.add(workorder);
+                if (status == WorkorderStatus.AVAILABLE && substatus != WorkorderSubstatus.ROUTED) {
+                    availableWorkorderWithoutRoutedList.add(workorder);
+                }
             }
         }
 
-        if (availableWorkorderWithoutRoutedList != null)
-            super.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
-
+        if (list != null && list.size() > 0 && availableWorkorderWithoutRoutedList.size() < list.size()) {
+            WorkorderClient.list(App.get(), getDisplayType(), page + 1, false, false);
+        }
+        super.setPageAtAdapter(page, availableWorkorderWithoutRoutedList);
     }
-
 }

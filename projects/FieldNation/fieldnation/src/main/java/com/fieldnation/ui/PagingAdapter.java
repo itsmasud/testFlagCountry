@@ -23,8 +23,8 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
 
     private RateMeView _rateMeView = null;
 
-    private Hashtable<Integer, List<T>> _pages = new Hashtable<>();
-    private Set<Integer> _loadingPages = new HashSet<>();
+    private final Hashtable<Integer, List<T>> _pages = new Hashtable<>();
+    private final Set<Integer> _loadingPages = new HashSet<>();
 
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;

@@ -40,7 +40,7 @@ public class ExpiresDialog extends DialogFragmentBase {
     private boolean _isDateSet;
     private Listener _listener;
     private Workorder _workorder;
-    private Handler _handler = new Handler();
+    private final Handler _handler = new Handler();
 
     /*-*************************************-*/
     /*-             Life Cycle              -*/

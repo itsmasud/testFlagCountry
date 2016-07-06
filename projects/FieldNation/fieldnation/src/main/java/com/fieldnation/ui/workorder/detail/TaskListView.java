@@ -190,7 +190,7 @@ public class TaskListView extends RelativeLayout {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private TaskRowView.Listener _task_onClick = new TaskRowView.Listener() {
+    private final TaskRowView.Listener _task_onClick = new TaskRowView.Listener() {
         @Override
         public void onTaskClick(Task task) {
             if (_listener != null) {

@@ -22,6 +22,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     // Data
     private Workorder _workorder;
     private UploadSlot _slot;
-    private Set<String> _uploadingFiles = new HashSet<>();
+    private final Set<String> _uploadingFiles = new HashSet<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
     private WorkorderClient _workorderClient;
@@ -111,17 +112,12 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     private void populateDocs() {
         final List<Object> files = new LinkedList<>();
 
-        Object[] uploadingFiles = _uploadingFiles.toArray();
-        for (Object obj : uploadingFiles) {
-            files.add(obj);
-        }
+        Collections.addAll(files, _uploadingFiles.toArray());
 
         UploadedDocument[] d = _slot.getUploadedDocuments();
         if (d != null && d.length > 0) {
             Arrays.sort(d, new UploadedDocument.DateTimeComparator());
-            for (UploadedDocument doc : d) {
-                files.add(doc);
-            }
+            Collections.addAll(files, d);
         }
 
         if (files.size() > 0) {
@@ -133,8 +129,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             if (_docsList.getChildCount() == 0) {
                 _loadingProgressBar.setVisibility(VISIBLE);
                 _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
-                    private List<Object> _docs = files;
-                    private List<UploadedDocumentView> _views = new LinkedList<>();
+                    private final List<Object> _docs = files;
+                    private final List<UploadedDocumentView> _views = new LinkedList<>();
 
                     @Override
                     public void next(int i) throws Exception {
@@ -166,7 +162,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                 }
 
                 _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
-                    private List<Object> _docs = files;
+                    private final List<Object> _docs = files;
 
                     @Override
                     public void next(int i) throws Exception {

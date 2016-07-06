@@ -12,10 +12,8 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.ImageUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 /**
  * Created by Michael Carver on 3/12/2015.

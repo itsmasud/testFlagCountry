@@ -39,7 +39,7 @@
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="What is the type?"
+                    android:text="@string/what_type"
                     android:visibility="visible" />
 
             </LinearLayout>
@@ -99,7 +99,7 @@
                         style="@style/EditText"
                         android:focusableInTouchMode="true"
                         android:hint="@string/max_hours"
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>
@@ -138,7 +138,7 @@
                         style="@style/EditText"
                         android:focusableInTouchMode="true"
                         android:hint="@string/max_devices"
-                        android:imeOptions="actionNext"
+                        android:imeOptions="actionDone"
                         android:inputType="numberDecimal" />
                 </android.support.design.widget.TextInputLayout>
             </LinearLayout>

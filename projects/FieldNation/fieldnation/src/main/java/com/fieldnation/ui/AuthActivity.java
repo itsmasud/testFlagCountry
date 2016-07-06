@@ -91,7 +91,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _passwordEditText = (EditText) findViewById(R.id.password_edittext);
         _passwordEditText.setOnEditorActionListener(_onEditorPassword);
 
-
         _loginButton = (Button) findViewById(R.id.login_button);
         _loginButton.setOnClickListener(_loginButton_onClick);
 
@@ -108,7 +107,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         _fader = findViewById(R.id.fader);
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
-
         _versionTextView.setText("Version " +
                 (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
@@ -139,9 +137,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
-//        _shutdownService = new TopicShutdownReciever(this, new Handler(), TAG);
-//        TopicService.registerListener(this, 0, TAG + ":NEED_UPDATE", Topics.TOPIC_NEED_UPDATE, _topicReceiver);
-//        AuthTopicService.dispatchGettingUsernameAndPassword(this);
     }
 
     @Override

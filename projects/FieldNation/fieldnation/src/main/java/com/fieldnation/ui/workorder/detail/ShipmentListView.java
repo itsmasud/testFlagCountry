@@ -89,7 +89,7 @@ public class ShipmentListView extends LinearLayout implements WorkorderRenderer 
         }
 
         ForLoopRunnable r = new ForLoopRunnable(shipments.length, new Handler()) {
-            private ShipmentTracking[] _shipments = shipments;
+            private final ShipmentTracking[] _shipments = shipments;
 
             @Override
             public void next(int i) throws Exception {

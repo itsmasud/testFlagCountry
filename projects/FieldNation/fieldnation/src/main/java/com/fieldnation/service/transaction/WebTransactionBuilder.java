@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class WebTransactionBuilder implements WebTransactionConstants {
 
-    private Context context;
-    private Intent intent;
+    private final Context context;
+    private final Intent intent;
     private List<Bundle> transforms;
 
     private JsonObject request;

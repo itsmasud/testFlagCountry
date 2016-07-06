@@ -186,7 +186,7 @@ public class WorkFragment extends WorkorderFragment {
     private int _deviceCount = -1;
     private String _scannedImagePath;
 
-    private List<Runnable> _untilAdded = new LinkedList<>();
+    private final List<Runnable> _untilAdded = new LinkedList<>();
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -1631,9 +1631,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCustomField(Task task) {
-            if (task.getCompleted())
-                return;
-
             for (CustomField cf : _workorder.getCustomFields()) {
                 // do not remove the casting here!
                 if ((long) cf.getCustomLabelId() == (long) task.getCustomField()) {

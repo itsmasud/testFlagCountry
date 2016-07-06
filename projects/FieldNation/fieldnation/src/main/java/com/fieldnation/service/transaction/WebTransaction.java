@@ -18,11 +18,11 @@ import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
-    private long _id;
+    private final long _id;
     private String _handlerName;
     private byte[] _handlerParams;
-    private boolean _useAuth;
-    private boolean _isSync;
+    private final boolean _useAuth;
+    private final boolean _isSync;
     private State _state;
     private Priority _priority;
     private String _requestString;
@@ -450,7 +450,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static final Creator<WebTransaction> CREATOR = new Creator<WebTransaction>() {
         @Override
         public WebTransaction createFromParcel(Parcel source) {
-            return new WebTransaction(source.readBundle());
+            return new WebTransaction(source.readBundle(getClass().getClassLoader()));
         }
 
         @Override

@@ -770,7 +770,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public static final Parcelable.Creator<StoredObject> CREATOR = new Creator<StoredObject>() {
         @Override
         public StoredObject createFromParcel(Parcel source) {
-            return new StoredObject(source.readBundle());
+            return new StoredObject(source.readBundle(getClass().getClassLoader()));
         }
 
         @Override

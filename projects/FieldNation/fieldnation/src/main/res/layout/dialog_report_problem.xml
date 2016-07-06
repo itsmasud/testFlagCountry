@@ -8,7 +8,7 @@
     <TextView
         android:id="@+id/title_textview"
         style="?attr/dialogTitleStyle"
-        android:text="There's a problem" />
+        android:text="@string/there_is_a_problem" />
 
     <com.fieldnation.ui.HintSpinner
         android:id="@+id/primary_spinner"
@@ -40,7 +40,7 @@
         <EditText
             android:id="@+id/explanation_edittext"
             style="@style/EditText"
-            android:hint="Provide an explanation"
+            android:hint="@string/provide_an_explanation"
             android:imeOptions="actionNext"
             android:inputType="text" />
     </android.support.design.widget.TextInputLayout>
@@ -57,7 +57,7 @@
         style="?attr/dialogCancelButtonStyle"
         android:layout_below="@+id/note_textview"
         android:layout_toLeftOf="@+id/ok_button"
-        android:text="CANCEL" />
+        android:text="@string/btn_cancel" />
 
     <Button
         android:id="@+id/ok_button"
@@ -65,5 +65,5 @@
         android:layout_alignParentRight="true"
         android:layout_below="@id/note_textview"
         android:enabled="false"
-        android:text="CONTINUE" />
+        android:text="@string/btn_continue" />
 </RelativeLayout>

@@ -56,7 +56,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_LIST);
-        intent.putExtra(PARAM_LIST_SELECTOR, selector.getCall());
+        intent.putExtra(PARAM_LIST_SELECTOR, selector.ordinal());
         intent.putExtra(PARAM_PAGE, page);
         intent.putExtra(PARAM_IS_SYNC, isSync);
         intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
@@ -79,7 +79,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         if (selector != null) {
-            topicId += "/" + selector.getCall();
+            topicId += "/" + selector.ordinal() + "_" + selector.getCall();
         }
 
         return register(topicId, TAG);
@@ -878,7 +878,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         // list
         protected void preList(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onList(null, WorkorderDataSelector.fromCall(payload.getString(PARAM_LIST_SELECTOR)),
+                onList(null, WorkorderDataSelector.values()[payload.getInt(PARAM_LIST_SELECTOR)],
                         payload.getInt(PARAM_PAGE), true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, List<Workorder>>() {
@@ -890,8 +890,8 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                     protected List<Workorder> doInBackground(Bundle... params) {
                         Bundle bundle = params[0];
                         try {
-                            selector = WorkorderDataSelector.fromCall(bundle.getString(PARAM_LIST_SELECTOR));
-                            Log.v(STAG, "Selector " + bundle.getString(PARAM_LIST_SELECTOR));
+                            selector = WorkorderDataSelector.values()[bundle.getInt(PARAM_LIST_SELECTOR)];
+                            Log.v(STAG, "Selector " + selector);
                             page = bundle.getInt(PARAM_PAGE);
                             isCached = bundle.getBoolean(PARAM_IS_CACHED);
                             List<Workorder> list = new LinkedList<>();
