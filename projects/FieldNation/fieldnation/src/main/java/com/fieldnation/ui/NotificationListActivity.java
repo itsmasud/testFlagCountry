@@ -1,13 +1,11 @@
 package com.fieldnation.ui;
 
-import android.support.v4.view.MenuItemCompat;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.workorder.detail.NotificationView;
@@ -62,9 +60,9 @@ public class NotificationListActivity extends ItemListActivity<Notification> {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.notifications, menu);
-
-        _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
+//        getMenuInflater().inflate(R.menu.notifications, menu);
+//
+//        _messagesView = (SearchActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
 
         return true;
     }

@@ -69,6 +69,11 @@
             android:label="@string/activity_login_title"
             android:process=":frontside" />
         <activity
+            android:name=".ui.inbox.InboxActivity"
+            android:exported="false"
+            android:label="@string/inbox"
+            android:process=":frontside" />
+        <activity
             android:name=".ui.workorder.WorkorderActivity"
             android:exported="true"
             android:label="@string/work_order_detail_title"

@@ -15,12 +15,14 @@ import com.fieldnation.utils.misc;
 
 public class MessageTileView extends RelativeLayout {
     private static final String TAG = "MessageTileView";
-    private TextView _titleTextView;
-    private TextView _messageBodyTextView;
+
     private ProfilePicView _picView;
+    private TextView _titleTextView;
+    private TextView _timeTextView;
+    private TextView _workorderTextView;
+    private TextView _messageBodyTextView;
 
     private Message _message;
-    private String[] _substatus;
     private Listener _listener;
     private boolean _imageRetried = false;
 
@@ -48,11 +50,11 @@ public class MessageTileView extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _substatus = getResources().getStringArray(R.array.workorder_substatus);
-
-        _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
         _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _titleTextView = (TextView) findViewById(R.id.title_textview);
+        _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _workorderTextView = (TextView) findViewById(R.id.workorder_textview);
+        _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
 
         populateUi();
     }
@@ -83,16 +85,26 @@ public class MessageTileView extends RelativeLayout {
 
         _picView.setAlertOn(!_message.isRead());
 
-//        _viewId = _message.getMessageId() % Integer.MAX_VALUE;
         try {
-            _titleTextView.setText(_message.getWorkorderTitle() + "");
+            _titleTextView.setText(_message.getFromUser().getFullName());
         } catch (Exception e) {
             Log.v(TAG, e);
         }
+
         try {
-            _messageBodyTextView.setText(
-                    misc.htmlify(
-                            "<b>" + _message.getFromUser().getFullName() + "</b> - " + _message.getMessage()));
+            _timeTextView.setText(_message.getDate());
+        } catch (Exception e) {
+            Log.v(TAG, e);
+        }
+
+        try {
+            _workorderTextView.setText("WO " + _message.getWorkorderId());
+        } catch (Exception e) {
+            Log.v(TAG, e);
+        }
+
+        try {
+            _messageBodyTextView.setText(misc.htmlify(_message.getMessage()));
         } catch (Exception e) {
             Log.v(TAG, e);
         }

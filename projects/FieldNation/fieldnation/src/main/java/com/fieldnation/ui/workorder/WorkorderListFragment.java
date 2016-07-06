@@ -132,7 +132,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_list, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     private GpsLocationService getLocationService() {
@@ -153,7 +153,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _adapter.setOnLoadingCompleteListener(_adapterListener);
 
-        _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
+        _listView = (OverScrollListView) view.findViewById(R.id.listview);
         _listView.setDivider(null);
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);

@@ -39,8 +39,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    NotificationActionBarView _notificationsView;
-    MessagesActionBarView _messagesView;
+    InboxActionBarButton _inboxButton;
+    SearchActionBarButton _searchButton;
 
     private UpdateDialog _updateDialog;
     private OneButtonDialog _notProviderDialog;
@@ -87,8 +87,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
+        _inboxButton = (InboxActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.inbox_menuitem));
+        _searchButton = (SearchActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.search_menuitem));
 
         return true;
     }

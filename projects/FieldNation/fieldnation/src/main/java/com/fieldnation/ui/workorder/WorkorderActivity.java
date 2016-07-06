@@ -58,7 +58,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private ActionBarDrawerView _actionBarView;
     private Toolbar _toolbar;
 
-
     // Data
     private WorkorderClient _workorderClient;
     private long _workorderId = 0;

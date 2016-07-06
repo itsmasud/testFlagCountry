@@ -31,6 +31,7 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.ui.inbox.InboxActivity;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -45,8 +46,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    NotificationActionBarView _notificationsView;
-    MessagesActionBarView _messagesView;
+    InboxActionBarButton _inboxButton;
+    SearchActionBarButton _searchButton;
     private ActionBarDrawerView _actionBarView;
 
     private UpdateDialog _updateDialog;
@@ -116,23 +117,23 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
 
-        _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        _notificationsView.setOnClickListener(_notifications_onClick);
+        _inboxButton = (InboxActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.inbox_menuitem));
+        _inboxButton.setOnClickListener(_inbox_onClick);
 
-        _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
-        _messagesView.setOnClickListener(_messages_onClick);
+        _searchButton = (SearchActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.search_menuitem));
+        _searchButton.setOnClickListener(_search_onClick);
 
         return true;
     }
 
-    private final View.OnClickListener _notifications_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _inbox_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _actionBarView.showNotificationNav();
+            InboxActivity.startNew(AuthActionBarActivity.this);
         }
     };
 
-    private final View.OnClickListener _messages_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _search_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             _actionBarView.showMessageNav();
