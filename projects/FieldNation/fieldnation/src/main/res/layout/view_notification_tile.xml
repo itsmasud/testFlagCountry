@@ -65,7 +65,8 @@
         android:layout_marginRight="16dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/placeholder_paragraph" />
+        android:text="@string/placeholder_paragraph"
+        android:textColorLink="@color/fn_clickable_text" />
 
     <View
         style="?attr/tileDividerStyle"
@@ -73,10 +74,13 @@
         android:layout_below="@+id/messagebody_textview"
         android:layout_marginLeft="16dp" />
 
-    <!--    <View
-            android:id="@+id/click_overlay"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="#FF000000"
-            android:clickable="true" />-->
+    <View
+        android:id="@+id/click_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/messagebody_textview"
+        android:layout_alignLeft="@+id/title_textview"
+        android:layout_alignRight="@+id/time_textview"
+        android:layout_alignTop="@+id/title_textview"
+        android:clickable="true" />
 </RelativeLayout>

@@ -37,8 +37,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/date_textview"
             android:text="Message Content" />
-
-
     </RelativeLayout>
 
     <View

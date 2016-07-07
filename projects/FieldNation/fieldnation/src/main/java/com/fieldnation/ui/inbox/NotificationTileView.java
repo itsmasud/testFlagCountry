@@ -66,8 +66,8 @@ public class NotificationTileView extends RelativeLayout {
         _workorderTextView = (TextView) findViewById(R.id.workorder_textview);
         _messageBodyTextView = (TextView) findViewById(R.id.messagebody_textview);
 
-        //_overlayView = findViewById(R.id.click_overlay);
-        setOnClickListener(_this_onClick);
+        _overlayView = findViewById(R.id.click_overlay);
+        _overlayView.setOnClickListener(_this_onClick);
 
         populateUi();
     }
@@ -125,8 +125,7 @@ public class NotificationTileView extends RelativeLayout {
                     _span = spans[0];
                 }
             }
-
-            _messageBodyTextView.setText(misc.htmlify(_notification.getMessage()));
+            _messageBodyTextView.setText(msg);
         } catch (Exception e) {
             Log.v(TAG, e);
             if (misc.isEmptyOrNull(_notification.getMessage())) {
