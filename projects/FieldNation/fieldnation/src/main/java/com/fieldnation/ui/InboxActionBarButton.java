@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,8 +13,8 @@ import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 
-public class NotificationActionBarView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("NotificationActionBarView");
+public class InboxActionBarButton extends RelativeLayout {
+    private final String TAG = UniqueTag.makeTag("InboxActionBarView");
 
     // UI
     private TextView _countTextView;
@@ -28,23 +27,23 @@ public class NotificationActionBarView extends RelativeLayout {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
-    public NotificationActionBarView(Context context) {
+    public InboxActionBarButton(Context context) {
         super(context);
         init();
     }
 
-    public NotificationActionBarView(Context context, AttributeSet attrs) {
+    public InboxActionBarButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public NotificationActionBarView(Context context, AttributeSet attrs, int defStyle) {
+    public InboxActionBarButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_notification_action_bar, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_inbox_action_bar, this);
 
         _countTextView = (TextView) findViewById(R.id.count_textview);
 
@@ -68,8 +67,7 @@ public class NotificationActionBarView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), NotificationListActivity.class);
-            getContext().startActivity(intent);
+
         }
     };
 
@@ -90,7 +88,7 @@ public class NotificationActionBarView extends RelativeLayout {
         if (_profile == null)
             return;
 
-        int count = _profile.getNewNotificationCount();
+        int count = _profile.getNewNotificationCount() + _profile.getUnreadMessageCount();
 
         if (count == 0) {
             _countTextView.setVisibility(GONE);
@@ -102,7 +100,6 @@ public class NotificationActionBarView extends RelativeLayout {
                 _countTextView.setText(count + "");
             }
         }
-
         //TODO if is cached consider requesting a new version
     }
 }

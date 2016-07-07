@@ -54,6 +54,18 @@ public class UnavailableCardView extends FrameLayout {
         _actionButton = (Button) findViewById(R.id.action_button);
     }
 
+    public void setNoMesages() {
+        _titleTextView.setText(R.string.no_messages);
+        _captionTexView.setText(R.string.nothing_to_worry_about);
+        _actionButton.setVisibility(GONE);
+    }
+
+    public void setNoNotifications(){
+        _titleTextView.setText(R.string.no_notifications);
+        _captionTexView.setText(R.string.nothing_to_worry_about);
+        _actionButton.setVisibility(GONE);
+    }
+
     public void setData(WorkorderDataSelector displayView) {
         switch (displayView) {
             case ASSIGNED:

@@ -10,13 +10,13 @@
         <!--android:title="Note"-->
         <!--app:actionViewClass="com.fieldnation.ui.NotificationActionBarView"-->
         <!--app:showAsAction="always"/>-->
-    <item
-        android:id="@+id/messages_menuitem"
-        android:enabled="true"
-        android:orderInCategory="200"
-        android:title="Messages"
-        app:actionViewClass="com.fieldnation.ui.MessagesActionBarView"
-        app:showAsAction="always"/>
+    <!--<item-->
+        <!--android:id="@+id/messages_menuitem"-->
+        <!--android:enabled="true"-->
+        <!--android:orderInCategory="200"-->
+        <!--android:title="Messages"-->
+        <!--app:actionViewClass="com.fieldnation.ui.MessagesActionBarView"-->
+        <!--app:showAsAction="always"/>-->
     <!--<item-->
         <!--android:id="@+id/action_settings"-->
         <!--android:orderInCategory="100"-->

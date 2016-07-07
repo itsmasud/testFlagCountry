@@ -263,9 +263,8 @@ public class DrawerView extends RelativeLayout {
     private void attachAnimations() {
         Context context = getContext();
         if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in, 0);
+            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
         }
-
     }
 
     private void subPhoto() {
