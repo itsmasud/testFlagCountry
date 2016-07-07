@@ -19,7 +19,6 @@ import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
-import com.fieldnation.ui.workorder.detail.NotificationView;
 
 import java.util.List;
 
@@ -153,13 +152,13 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         if (page == 0)
             setLoading(true);
 
-        ProfileClient.listMessages(App.get(), page, false, allowCache);
+        ProfileClient.listNotifications(App.get(), page, false, allowCache);
     }
 
     public void addPage(int page, List<Notification> list) {
         Log.v(TAG, "addPage: page:" + page);
         if (page == 0 && (list == null || list.size() == 0)) {
-            _emptyView.setNoMesages();
+            _emptyView.setNoNotifications();
             _emptyView.setVisibility(View.VISIBLE);
         } else {
             _emptyView.setVisibility(View.GONE);
@@ -186,15 +185,15 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     private final PagingAdapter<Notification> _adapter = new PagingAdapter<Notification>() {
         @Override
         public View getView(Notification object, View convertView, ViewGroup parent) {
-            NotificationView v = null;
+            NotificationTileView v = null;
             if (convertView == null) {
-                v = new NotificationView(parent.getContext());
-            } else if (convertView instanceof NotificationView) {
-                v = (NotificationView) convertView;
+                v = new NotificationTileView(parent.getContext());
+            } else if (convertView instanceof NotificationTileView) {
+                v = (NotificationTileView) convertView;
             } else {
-                v = new NotificationView(parent.getContext());
+                v = new NotificationTileView(parent.getContext());
             }
-            v.setNotification(object);
+            v.setData(object);
             return v;
         }
 

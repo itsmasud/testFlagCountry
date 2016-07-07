@@ -8,6 +8,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.ActionBarDrawerView;
@@ -74,6 +75,12 @@ public class InboxActivity extends TabActionBarFragmentActivity {
 
     @Override
     public String getFragmentTitle(int index) {
+        if (App.get().getProfile() != null) {
+            if (index == 0 && App.get().getProfile().getUnreadMessageCount() > 0)
+                return _titles[0] + " (" + App.get().getProfile().getUnreadMessageCount() + ")";
+            if (index == 1 && App.get().getProfile().getNewNotificationCount() > 0)
+                return _titles[1] + " (" + App.get().getProfile().getNewNotificationCount() + ")";
+        }
         return _titles[index];
     }
 

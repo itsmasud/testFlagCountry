@@ -12,6 +12,7 @@ import com.fieldnation.Log;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.ui.inbox.MessageTileView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.lang.ref.WeakReference;

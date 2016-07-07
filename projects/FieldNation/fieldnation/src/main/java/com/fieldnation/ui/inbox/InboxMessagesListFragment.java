@@ -1,6 +1,7 @@
 package com.fieldnation.ui.inbox;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -8,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
@@ -17,12 +19,12 @@ import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.MessageTileView;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
