@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -68,8 +67,7 @@ public class InboxActionBarButton extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), NotificationListActivity.class);
-            getContext().startActivity(intent);
+
         }
     };
 

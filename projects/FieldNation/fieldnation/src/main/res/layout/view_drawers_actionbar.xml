@@ -21,17 +21,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_below="@+id/toolbar" />
-
-
-            <com.fieldnation.ui.RightDrawerMessagesView
-                android:id="@+id/rightDrawerMessages_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-            <com.fieldnation.ui.RightDrawerNotificationsView
-                android:id="@+id/rightDrawerNotifications_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
         </RelativeLayout>
 
         <!-- The navigation drawer -->

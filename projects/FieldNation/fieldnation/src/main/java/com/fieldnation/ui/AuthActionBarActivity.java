@@ -136,7 +136,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final View.OnClickListener _search_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _actionBarView.showMessageNav();
         }
     };
 

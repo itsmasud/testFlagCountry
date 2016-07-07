@@ -12,7 +12,6 @@ import android.view.ViewStub;
 import android.widget.FrameLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 6/10/2015.
@@ -23,8 +22,6 @@ public class ActionBarDrawerView extends FrameLayout {
     // Ui
     private Toolbar _toolbar;
     private FrameLayout _body;
-    private RightDrawerMessagesView _messageDrawerView;
-    private RightDrawerNotificationsView _notificationDrawerView;
     private DrawerLayout _drawerLayout;
     private DrawerView _drawerView;
     private ViewStub _switchUserOverlayViewStub;
@@ -53,8 +50,6 @@ public class ActionBarDrawerView extends FrameLayout {
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _body = (FrameLayout) findViewById(R.id.body_container);
-        _messageDrawerView = (RightDrawerMessagesView) findViewById(R.id.rightDrawerMessages_view);
-        _notificationDrawerView = (RightDrawerNotificationsView) findViewById(R.id.rightDrawerNotifications_view);
         _drawerLayout = (DrawerLayout) findViewById(R.id.drawer_content);
         _drawerView = (DrawerView) findViewById(R.id.leftDrawerView);
         _drawerView.setListener(_drawerView_lsitener);
@@ -67,16 +62,6 @@ public class ActionBarDrawerView extends FrameLayout {
             _body = (FrameLayout) findViewById(R.id.body_container);
 
         return _body;
-    }
-
-    public void showMessageNav() {
-        misc.hideKeyboard(this);
-        _messageDrawerView.animateShow();
-    }
-
-    public void showNotificationNav() {
-        misc.hideKeyboard(this);
-        _notificationDrawerView.animateShow();
     }
 
     public Toolbar getToolbar() {
@@ -95,16 +80,6 @@ public class ActionBarDrawerView extends FrameLayout {
 
         if (_drawerLayout.isDrawerOpen(GravityCompat.START)) {
             _drawerLayout.closeDrawer(GravityCompat.START);
-            handled = true;
-        }
-
-        if (_messageDrawerView.isOpen()) {
-            _messageDrawerView.animateHide();
-            handled = true;
-        }
-
-        if (_notificationDrawerView.isOpen()) {
-            _notificationDrawerView.animateHide();
             handled = true;
         }
 
