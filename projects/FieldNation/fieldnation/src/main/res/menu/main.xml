@@ -16,9 +16,6 @@
         android:enabled="true"
         android:orderInCategory="300"
         android:title="Search"
-        android:visible="false"
         app:actionViewClass="com.fieldnation.ui.SearchActionBarButton"
         app:showAsAction="always" />
-
-
 </menu>

@@ -28,6 +28,8 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.search.EditSearchActivity;
 
 /**
  * Created by michael.carver on 12/5/2014.
@@ -88,10 +90,27 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         getMenuInflater().inflate(R.menu.main, menu);
 
         _inboxButton = (InboxActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.inbox_menuitem));
+        _inboxButton.setOnClickListener(_inbox_onClick);
+
         _searchButton = (SearchActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.search_menuitem));
+        _searchButton.setOnClickListener(_search_onClick);
 
         return true;
     }
+
+    private final View.OnClickListener _inbox_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            InboxActivity.startNew(AuthFragmentActivity.this);
+        }
+    };
+
+    private final View.OnClickListener _search_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EditSearchActivity.startNew(AuthFragmentActivity.this);
+        }
+    };
 
     @Override
     protected void onResume() {

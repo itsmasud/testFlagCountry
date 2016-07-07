@@ -32,6 +32,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.search.EditSearchActivity;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -136,6 +137,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private final View.OnClickListener _search_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            EditSearchActivity.startNew(AuthActionBarActivity.this);
         }
     };
 
