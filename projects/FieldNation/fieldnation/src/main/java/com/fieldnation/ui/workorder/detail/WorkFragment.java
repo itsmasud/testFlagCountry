@@ -49,6 +49,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -105,15 +106,6 @@ import java.util.List;
 
 public class WorkFragment extends WorkorderFragment {
     private static final String TAG = "WorkFragment";
-
-    // Activity result codes
-    private static final int RESULT_CODE_BASE = 200;
-    private static final int RESULT_CODE_SEND_EMAIL = RESULT_CODE_BASE + 1;
-    private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 3;
-    private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 4;
-    private static final int RESULT_CODE_GET_SIGNATURE = RESULT_CODE_BASE + 5;
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = RESULT_CODE_BASE + 6;
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = RESULT_CODE_BASE + 7;
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -787,8 +779,8 @@ public class WorkFragment extends WorkorderFragment {
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
                 _workorderClient.subDeliverableCache();
@@ -839,11 +831,11 @@ public class WorkFragment extends WorkorderFragment {
                     }
                 }
 
-            } else if (requestCode == RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+            } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
-            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
-            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
                 startCheckOut();
             }
         } catch (Exception ex) {
@@ -891,13 +883,13 @@ public class WorkFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
             }
             setLoading(true);
         }
@@ -1054,7 +1046,7 @@ public class WorkFragment extends WorkorderFragment {
                         Intent intent = new Intent(context, SignOffActivity.class);
                         intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
                         intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, RESULT_CODE_GET_SIGNATURE);
+                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
                         return null;
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
@@ -1218,7 +1210,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
         }
 
         @Override
@@ -1237,7 +1229,7 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKOUT);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
         }
 
         @Override
@@ -1668,7 +1660,7 @@ public class WorkFragment extends WorkorderFragment {
             String email = task.getEmailAddress();
             Intent intent = new Intent(Intent.ACTION_SENDTO);
             intent.setData(Uri.parse("mailto:" + email));
-            startActivityForResult(intent, RESULT_CODE_SEND_EMAIL);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_SEND_EMAIL);
 
             if (!task.getCompleted()) {
                 WorkorderClient.actionCompleteTask(App.get(),

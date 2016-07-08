@@ -22,6 +22,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
@@ -53,6 +54,7 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private GlobalTopicClient _globalTopicClient;
     private AuthTopicClient _authTopicClient;
     private ToastClient _toastClient;
+    private ActivityResultClient _activityResultClient;
 
     // Data
     private Profile _profile;
@@ -121,6 +123,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _authTopicClient.connect(App.get());
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(App.get());
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
 
         _notProviderDialog.setData("User Not Supported",
                 "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
@@ -137,6 +141,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
 
         if (_toastClient != null && _toastClient.isConnected())
             _toastClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
 
         super.onPause();
     }
@@ -208,9 +215,42 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     public void onProfile(Profile profile) {
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+        @Override
+        public void onConnected() {
+            _activityResultClient.subStartActivityForResult();
+            _activityResultClient.subStartActivity();
+        }
+
+        @Override
+        public void startActivity(Intent intent) {
+            AuthFragmentActivity.this.startActivity(intent);
+        }
+
+        @Override
+        public void startActivityForResult(Intent intent, int requestCode) {
+            AuthFragmentActivity.this.startActivityForResult(intent, requestCode);
+        }
+    };
 
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
@@ -341,17 +381,6 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         }
 
     };
-
-    // Menu
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 
     private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
         private Snackbar _snackbar = null;

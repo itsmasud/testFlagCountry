@@ -4,46 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <RelativeLayout
-        style="@style/CardContainer"
+    <com.fieldnation.ui.search.SearchEditText
+        android:id="@+id/searchedittext"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="8dp">
-
-        <com.fieldnation.ui.IconFontTextView
-            android:id="@+id/left_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="40dp"
-            android:layout_height="38dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="@string/icon_search"
-            android:textSize="16dp" />
-
-        <EditText
-            style="@style/Text_Body_1"
-            android:layout_width="match_parent"
-            android:layout_height="38dp"
-            android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/right_textview"
-            android:layout_toRightOf="@+id/left_textview"
-            android:background="@null"
-            android:hint="Search by work order id"
-            android:inputType="number" />
-
-        <com.fieldnation.ui.IconFontTextView
-            android:id="@+id/right_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="40dp"
-            android:layout_height="38dp"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:gravity="center"
-            android:text="@string/icon_missing"
-            android:textSize="16dp" />
-
-
-    </RelativeLayout>
+        android:layout_height="wrap_content" />
 
 </com.fieldnation.ui.ActionBarDrawerView>

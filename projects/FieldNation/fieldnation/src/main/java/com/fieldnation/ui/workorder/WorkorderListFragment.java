@@ -24,6 +24,7 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
@@ -61,9 +62,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
-
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
 
     // UI
     private OverScrollListView _listView;
@@ -486,9 +484,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onActivityResult(requestCode, resultCode, data);
 
         try {
-            if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+            if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
-            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
                 startCheckOut();
             }
         } catch (Exception ex) {
@@ -561,7 +559,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onOk() {
             try {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+                startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
             } catch (Exception ex) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -597,7 +595,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKOUT);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
         }
 
         @Override
