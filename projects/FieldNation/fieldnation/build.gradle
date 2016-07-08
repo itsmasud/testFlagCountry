@@ -28,7 +28,8 @@ android {
         minSdkVersion 14
         targetSdkVersion 22
         versionCode 87
-        versionName "2.4.0"        multiDexEnabled true
+        versionName "2.4.0"
+        multiDexEnabled true
     }
 
     dexOptions {
@@ -88,7 +89,7 @@ android {
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Brew"'
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.brew"'
             buildConfigField "boolean", "USE_HTTPS", "true"
-    }
+        }
     }
 }
 
