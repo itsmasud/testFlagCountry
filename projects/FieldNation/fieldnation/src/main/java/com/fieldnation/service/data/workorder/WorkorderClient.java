@@ -107,8 +107,16 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return subGet(0, isSync);
     }
 
+    public boolean unsubGet(boolean isSync) {
+        return unsubGet(0, isSync);
+    }
+
     public boolean subGet(long workorderId) {
         return subGet(workorderId, false);
+    }
+
+    public boolean unsubGet(long workorderId) {
+        return unsubGet(workorderId, false);
     }
 
     public boolean subGet(long workorderId, boolean isSync) {
@@ -123,6 +131,20 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         }
 
         return register(topicId, TAG);
+    }
+
+    public boolean unsubGet(long workorderId, boolean isSync) {
+        String topicId = TOPIC_ID_GET;
+
+        if (isSync) {
+            topicId += "_SYNC";
+        }
+
+        if (workorderId > 0) {
+            topicId += "/" + workorderId;
+        }
+
+        return unregister(topicId, TAG);
     }
 
     public static void listAlerts(Context context, long workorderId, boolean isSync) {

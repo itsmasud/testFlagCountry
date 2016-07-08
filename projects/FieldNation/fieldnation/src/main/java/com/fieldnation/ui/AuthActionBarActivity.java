@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -48,8 +47,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    InboxActionBarButton _inboxButton;
-    SearchActionBarButton _searchButton;
     private ActionBarDrawerView _actionBarView;
 
     private UpdateDialog _updateDialog;
@@ -119,29 +116,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
-        _inboxButton = (InboxActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.inbox_menuitem));
-        _inboxButton.setOnClickListener(_inbox_onClick);
-
-        _searchButton = (SearchActionBarButton) MenuItemCompat.getActionView(menu.findItem(R.id.search_menuitem));
-        _searchButton.setOnClickListener(_search_onClick);
-
         return true;
     }
-
-    private final View.OnClickListener _inbox_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            InboxActivity.startNew(AuthActionBarActivity.this);
-        }
-    };
-
-    private final View.OnClickListener _search_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            EditSearchActivity.startNew(AuthActionBarActivity.this);
-        }
-    };
 
     @Override
     protected void onResume() {

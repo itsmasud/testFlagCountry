@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 
 import com.fieldnation.App;
@@ -13,14 +14,17 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
+import com.fieldnation.ui.search.EditSearchActivity;
 
 import java.util.List;
 
 public class InboxActivity extends TabActionBarFragmentActivity {
     private static final String TAG = "InboxActivity";
 
-    // Data
+    // UI
     private TabFragment[] _fragments;
+
+    // Data
     private String[] _titles;
 
     /*-*************************************-*/
@@ -95,6 +99,12 @@ public class InboxActivity extends TabActionBarFragmentActivity {
             onBackPressed();
         }
     };
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.inbox, menu);
+        return true;
+    }
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");

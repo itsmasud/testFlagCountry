@@ -18,4 +18,5 @@ public interface ActivityResultConstants {
     int RESULT_CODE_GET_CAMERA_PIC = 4;
     int RESULT_CODE_SEND_EMAIL = 5;
     int RESULT_CODE_GET_SIGNATURE = 6;
+    int RESULT_CODE_VOICE_REQUEST = 7;
 }

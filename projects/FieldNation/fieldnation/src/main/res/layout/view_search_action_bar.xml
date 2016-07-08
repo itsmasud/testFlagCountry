@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:text="@string/icon_search"
+        android:text="@string/icon_search2"
         android:textColor="@color/fn_clickable_bg"
         android:textSize="20sp"
         android:textStyle="normal" />

@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:gravity="center"
         android:text="@string/icon_search"
-        android:textSize="16dp" />
+        android:textSize="16sp" />
 
     <EditText
         android:id="@+id/search_edittext"
@@ -26,6 +26,7 @@
         android:layout_toRightOf="@+id/left_textview"
         android:background="@null"
         android:hint="Search by work order id"
+        android:imeOptions="actionSearch"
         android:inputType="number" />
 
     <com.fieldnation.ui.IconFontTextView
@@ -36,7 +37,7 @@
         android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:text="@string/icon_missing"
-        android:textSize="16dp" />
+        android:text="@string/icon_google_microphone"
+        android:textSize="24sp" />
 
 </RelativeLayout>
