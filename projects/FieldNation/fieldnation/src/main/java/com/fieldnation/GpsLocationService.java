@@ -19,12 +19,11 @@ public class GpsLocationService {
     private static final long INTERVAL = 1000 * 30; // 30 seconds
     private static final long FASTEST_INTERVAL = 1000 * 5; // 5 seconds
 
-    private Context _context;
-    private LocationRequest _locationRequest;
-    private GoogleApiClient _googleApiClient;
+    private final LocationRequest _locationRequest;
+    private final GoogleApiClient _googleApiClient;
+    private final FusedLocationProviderApi _fusedLocationProviderApi = LocationServices.FusedLocationApi;
+    private final LocationManager _locationManager;
     private Location _location;
-    private FusedLocationProviderApi _fusedLocationProviderApi = LocationServices.FusedLocationApi;
-    private LocationManager _locationManager;
     private boolean _isRunning = false;
     private Listener _listener;
 
@@ -34,9 +33,8 @@ public class GpsLocationService {
         _locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
         _locationRequest.setInterval(INTERVAL);
         _locationRequest.setFastestInterval(FASTEST_INTERVAL);
-        _context = context;
 
-        _locationManager = (LocationManager) _context.getSystemService(Context.LOCATION_SERVICE);
+        _locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
 
         _googleApiClient = new GoogleApiClient.Builder(context)
                 .addApi(LocationServices.API)

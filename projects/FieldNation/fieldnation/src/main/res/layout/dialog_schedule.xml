@@ -39,7 +39,7 @@
                     style="@style/Widget.AppCompat.Spinner.Underlined"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="What type of schedule?"
+                    android:hint="@string/what_type_of_schedule"
                     android:visibility="visible" />
 
             </LinearLayout>

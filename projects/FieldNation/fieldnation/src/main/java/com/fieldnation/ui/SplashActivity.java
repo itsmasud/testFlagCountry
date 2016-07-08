@@ -2,9 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.view.Window;
 import android.widget.ImageView;
 
@@ -55,21 +53,8 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
-        Resources res = App.get().getResources();
-        if (res != null) {
-            final DisplayMetrics metrics = res.getDisplayMetrics();
-            final float density;
-            if (metrics != null) {
-                density = metrics.density;
-            } else {
-                density = 1;
-            }
-            final int reqHeight = (int) (res.getDimension(R.dimen.imageview_height_fnlogo) / density);
+            final int reqHeight = fnLogo.getLayoutParams().height;
             fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
-        } else {
-            fnLogo.setImageResource(R.drawable.fn_logo);
-        }
-
         Log.v(TAG, "onCreate");
     }
 

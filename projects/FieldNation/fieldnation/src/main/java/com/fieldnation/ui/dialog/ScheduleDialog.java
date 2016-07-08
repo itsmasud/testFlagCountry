@@ -70,7 +70,7 @@ public class ScheduleDialog extends DialogFragmentBase {
     private String _stateFixedDateTime;
     private String _stateRangeStartDateTime;
     private String _stateRangeEndDateTime;
-    private Handler _handler = new Handler();
+    private final Handler _handler = new Handler();
 
 
     /*-*****************************-*/
@@ -132,7 +132,6 @@ public class ScheduleDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_RANGE_DATETIME_END)) {
                 _stateRangeEndDateTime = savedInstanceState.getString(STATE_RANGE_DATETIME_END);
             }
-
         }
     }
 

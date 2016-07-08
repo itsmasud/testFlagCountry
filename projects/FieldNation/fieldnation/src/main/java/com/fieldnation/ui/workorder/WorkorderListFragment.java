@@ -93,6 +93,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private Workorder _currentWorkorder;
     private int _deviceCount = -1;
 
+
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -115,7 +116,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
-                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+                _displayView = WorkorderDataSelector.values()[savedInstanceState.getInt(STATE_DISPLAY)];
             }
 
             if (savedInstanceState.containsKey(STATE_CURRENT_WORKORDER))
@@ -181,7 +182,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_DISPLAY)) {
                 Log.v(TAG, "Restoring state");
-                _displayView = WorkorderDataSelector.fromName(savedInstanceState.getString(STATE_DISPLAY));
+                _displayView = WorkorderDataSelector.values()[savedInstanceState.getInt(STATE_DISPLAY)];
             }
 
             if (savedInstanceState.containsKey(STATE_DEVICE_COUNT)) {
@@ -200,7 +201,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void onSaveInstanceState(Bundle outState) {
         Log.v(TAG, "onSaveInstanceState");
-        outState.putString(STATE_DISPLAY, _displayView.name());
+        outState.putInt(STATE_DISPLAY, _displayView.ordinal());
         outState.putString(STATE_TAG, TAG);
 
         if (_currentWorkorder != null)
@@ -213,8 +214,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onSaveInstanceState(outState);
     }
 
+
     public WorkorderListFragment setDisplayType(WorkorderDataSelector displayView) {
-        Log.v(TAG, "setDisplayType");
         _displayView = displayView;
         return this;
     }
@@ -290,7 +291,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getArguments() != null) {
             Bundle bundle = getArguments();
-            _displayView = WorkorderDataSelector.fromName(bundle.getString(STATE_DISPLAY));
+            _displayView = WorkorderDataSelector.values()[bundle.getInt(STATE_DISPLAY)];
         }
 
         _workorderClient = new WorkorderClient(_workorderData_listener);
@@ -340,7 +341,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         WorkorderClient.list(App.get(), _displayView, page, false, allowCache);
     }
 
-    private void addPage(int page, List<Workorder> list) {
+    public void addPage(int page, List<Workorder> list) {
         Log.v(TAG, "addPage: page:" + page + " view:" + _displayView.getCall());
         if (page == 0 && (list == null || list.size() == 0)) {
             _emptyView.setData(_displayView);
@@ -352,6 +353,22 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (list != null && list.size() == 0) {
             _adapter.setNoMorePages();
         }
+        _adapter.setPage(page, list);
+    }
+
+    public void setPageAtAdapter(int page, List<Workorder> list) {
+
+        if (page == 0 && (list == null || list.size() == 0)) {
+            _emptyView.setData(_displayView);
+            _emptyView.setVisibility(View.VISIBLE);
+        } else {
+            _emptyView.setVisibility(View.GONE);
+        }
+
+        if (list != null && list.size() == 0) {
+            _adapter.setNoMorePages();
+        }
+
         _adapter.setPage(page, list);
     }
 
@@ -971,5 +988,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _adapter.refreshPages();
         }
     };
+
 }
 

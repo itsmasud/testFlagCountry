@@ -2,13 +2,11 @@ package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.location.Location;
-import android.net.Uri;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.R;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -16,15 +14,17 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.transaction.NotificationDefinition;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -52,20 +52,20 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    public static void list(Context context, String selector, int page, boolean isSync) {
+    public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pList(page, selector))
-                    .key((isSync ? "Sync/" : "") + "WorkorderList/" + selector + "/" + page)
+                    .key((isSync ? "Sync/" : "") + "WorkorderList/" + selector.ordinal() + "_" + selector.getCall() + "/" + page)
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/" + selector)
-                            .path("/api/rest/v1/workorder/" + selector)
+                            .timingKey("GET/api/rest/v1/workorder/" + selector.getCall())
+                            .path("/api/rest/v1/workorder/" + selector.getCall())
                             .urlParams("?page=" + page))
                     .send();
         } catch (Exception ex) {
@@ -150,20 +150,20 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     private static void action(Context context, long workorderId, String action, String params,
                                String contentType, String body, boolean useKey) {
         context.startService(
-                action(context, workorderId, action, params, contentType, body,
+                action(context, workorderId, "POST", action, params, contentType, body,
                         "POST/api/rest/v1/workorder/[workorderId]/" + action,
                         WorkorderTransactionHandler.class,
                         WorkorderTransactionHandler.pAction(workorderId, action), useKey));
     }
 
-    private static Intent action(Context context, long workorderId, String action, String params,
+    private static Intent action(Context context, long workorderId, String method, String action, String params,
                                  String contentType, String body, Class<? extends WebTransactionHandler> clazz,
                                  byte[] handlerParams) {
-        return action(context, workorderId, action, params, contentType, body,
-                "POST/api/rest/v1/workorder/[workorderId]/" + action, clazz, handlerParams, true);
+        return action(context, workorderId, method, action, params, contentType, body,
+                method + "/api/rest/v1/workorder/[workorderId]/" + action, clazz, handlerParams, true);
     }
 
-    private static Intent action(Context context, long workorderId, String action, String params,
+    private static Intent action(Context context, long workorderId, String method, String action, String params,
                                  String contentType, String body, String timingKey, Class<? extends WebTransactionHandler> clazz,
                                  byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
@@ -173,7 +173,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
-                    .method("POST")
+                    .method(method)
                     .timingKey(timingKey)
                     .path("/api/rest/v1/workorder/" + workorderId + "/" + action);
 
@@ -269,7 +269,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the custom field value
     public static void actionCustomField(Context context, long workorderId, long customFieldId, String value) {
         context.startService(
-                action(context, workorderId, "custom-fields/" + customFieldId, null,
+                action(context, workorderId, "POST", "custom-fields/" + customFieldId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         (misc.isEmptyOrNull(value) ? "" : "value=" + misc.escapeForURL(value)),
                         "POST/api/rest/v1/workorder/[workorderId]/custom-fields/[customFieldId]",
@@ -280,7 +280,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the modified task, not the work order details or task list
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
         context.startService(
-                action(context, workorderId, "tasks/complete/" + taskId, null,
+                action(context, workorderId, "POST", "tasks/complete/" + taskId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
                         "POST/api/rest/v1/workorder/[workorderId]/tasks/complete/[taskId]",
                         WorkorderTransactionHandler.class,
@@ -306,14 +306,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         } else {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "explanation=" + explanation + "&type=" + type.value);
+                    "explanation=" + misc.escapeForURL(explanation) + "&type=" + type.value);
         }
     }
 
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId) {
         context.startService(action(
-                context, workorderId, "checkin", null,
+                context, workorderId, "POST", "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkin_time=" + ISO8601.now(),
                 WorkorderTransactionHandler.class,
@@ -323,7 +323,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the entire work order details
     public static void actionCheckin(Context context, long workorderId, Location location) {
         context.startService(action(
-                context, workorderId, "checkin", null,
+                context, workorderId, "POST", "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkin_time=" + ISO8601.now()
                         + "&gps_lat=" + location.getLatitude()
@@ -335,7 +335,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId) {
         context.startService(action(
-                context, workorderId, "checkout", null,
+                context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkout_time=" + ISO8601.now(),
                 WorkorderTransactionHandler.class,
@@ -345,7 +345,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, Location location) {
         context.startService(action(
-                context, workorderId, "checkout", null,
+                context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "checkout_time=" + ISO8601.now()
                         + "&gps_lat=" + location.getLatitude()
@@ -357,7 +357,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
         context.startService(action(
-                context, workorderId, "checkout", null,
+                context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "device_count=" + deviceCount
                         + "&checkout_time=" + ISO8601.now(),
@@ -368,7 +368,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the entire work order details
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
         context.startService(action(
-                context, workorderId, "checkout", null,
+                context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "device_count=" + deviceCount
                         + "&checkout_time=" + ISO8601.now()
@@ -387,7 +387,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns work order details
     public static void actionAcknowledgeHold(Context context, long workorderId) {
-        action(context, workorderId, "acknowledge-hold", null, null, null);
+        context.startService(
+                action(context, workorderId, "GET", "acknowledge-hold", null, null, null,
+                        "GET/api/rest/v1/workorder/[workorderId]/acknowledge-hold",
+                        WorkorderTransactionHandler.class,
+                        WorkorderTransactionHandler.pAction(workorderId, "acknowledge-hold"), true));
     }
 
     // returns error/success state
@@ -464,7 +468,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             payload += "&expenses=" + json.toString();
         }
 
-        return action(context, workorderId, "counter_offer", null,
+        return action(context, workorderId, "POST", "counter_offer", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, payload,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCounterOffer(
@@ -484,7 +488,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             body = "expiration=" + expireInSeconds;
         }
 
-        return action(context, workorderId, "request", null,
+        return action(context, workorderId, "POST", "request", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds));
@@ -498,7 +502,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        return action(context, workorderId, "assignment", null,
+        return action(context, workorderId, "POST", "assignment", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601,
                 WorkorderTransactionHandler.class,
@@ -517,7 +521,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // return the details
     public static Intent actionReadyIntent(Context context, long workorderId) {
-        return action(context, workorderId, "ready", null,
+        return action(context, workorderId, "POST", "ready", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "",
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pAction(workorderId, "ready")
@@ -663,7 +667,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // TODO make sure this works
     public static void addSignatureSvgTask(Context context, long workorderId, long taskId, String name, String svg) {
         context.startService(
-                action(context, workorderId, "tasks/complete/" + taskId, null,
+                action(context, workorderId, "POST", "tasks/complete/" + taskId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "print_name=" + misc.escapeForURL(name) + "&signature_svg=" + svg,
                         "POST/api/rest/v1/workorder/[workorderId]/tasks/complete/[taskId]",
@@ -694,26 +698,30 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
         }
     }
 
-    //    public static void downloadDeliverable(Context context, long workorderId, long deliverableId, String url, boolean isSync) {
-//        try {
-//            WebTransactionBuilder.builder(context)
-//                    .priority(Priority.HIGH)
-//                    .handler(DeliverableTransactionHandler.class)
-//                    .handlerParams(DeliverableTransactionHandler.pDownload(workorderId, deliverableId, url))
-//                    .key((isSync ? "Sync/" : "") + "DeliverableDownload/" + workorderId + "/" + deliverableId)
-//                    .isSyncCall(isSync)
-//                    .request(new HttpJsonBuilder()
-//                            .method("GET")
-//                            .path(url))
-//                    .send();
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
-//    }
     // returns the deliverable details
-    public static void uploadDeliverable(Context context, String filePath, String filename, long workorderId, long uploadSlotId) {
+    public static void uploadDeliverable(Context context, String filePath, String filename, String photoDescription, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable file");
         StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
-        Resources res = context.getResources();
+        uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
+    }
+
+    public static void uploadDeliverable(Context context, InputStream inputStream, String filename, String photoDescription, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
+        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
+        uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
+    }
+
+    public static void uploadDeliverable(Context context, StoredObject upFile, String filename, String photoDescription, long workorderId, long uploadSlotId) {
+        Log.v(TAG, "uploadDeliverable uri");
+
+        if (upFile.isFile() && upFile.getFile() != null) {
+            if (upFile.getFile().length() > 100000000) { // 100 MB?
+                StoredObject.delete(upFile);
+                ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
+                return;
+            }
+        }
+
         try {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
@@ -721,93 +729,22 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
-                    .notify(new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_start,
-                                    res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_start_body_uploading, filename),
-                                    res.getString(R.string.notification_start_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_success,
-                                    res.getString(R.string.notification_success_title),
-                                    res.getString(R.string.notification_success_body_uploading, filename),
-                                    res.getString(R.string.notification_success_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_failed,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_uploading, filename),
-                                    res.getString(R.string.notification_failed_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_retry,
-                                    res.getString(R.string.notification_retry_title),
-                                    res.getString(R.string.notification_retry_body_uploading, filename),
-                                    res.getString(R.string.notification_retry_body_uploading, filename)
-                            )
-                    ).doNotRead();
+                    .multipartField("note", (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
+//                    .body("note=" + (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
+                    .doNotRead();
 
             if (uploadSlotId != 0) {
                 builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
             }
 
             WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
+                    .priority(Priority.LOW)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
                     .useAuth(true)
                     .request(builder)
-                    .send();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    public static void uploadDeliverable(Context context, Uri uri, String filename, long workorderId, long uploadSlotId) {
-        try {
-            Resources res = context.getResources();
-            HttpJsonBuilder builder = new HttpJsonBuilder()
-                    .protocol("https")
-                    .method("POST")
-                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/deliverables")
-                    .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
-                    .multipartFile("file", filename, uri)
-                    .notify(new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_start,
-                                    res.getString(R.string.app_name),
-                                    res.getString(R.string.notification_start_body_uploading, filename),
-                                    res.getString(R.string.notification_start_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_success,
-                                    res.getString(R.string.notification_success_title),
-                                    res.getString(R.string.notification_success_body_uploading, filename),
-                                    res.getString(R.string.notification_success_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_failed,
-                                    res.getString(R.string.notification_failed_title),
-                                    res.getString(R.string.notification_failed_body_uploading, filename),
-                                    res.getString(R.string.notification_failed_body_uploading, filename)
-                            ),
-                            new NotificationDefinition(
-                                    R.drawable.ic_anim_upload_retry,
-                                    res.getString(R.string.notification_retry_title),
-                                    res.getString(R.string.notification_retry_body_uploading, filename),
-                                    res.getString(R.string.notification_retry_body_uploading, filename)
-                            )
-                    ).doNotRead();
-
-            if (uploadSlotId != 0) {
-                builder.path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + uploadSlotId);
-            }
-
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(WorkorderTransactionHandler.class)
-                    .handlerParams(WorkorderTransactionHandler.pUploadDeliverable(workorderId, uploadSlotId, filename))
-                    .useAuth(true)
-                    .request(builder)
+                    .setWifiRequired(App.get().onlyUploadWithWifi())
+                    .setTrack(true)
                     .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -961,7 +898,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate) {
         context.startService(
-                action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                action(context, workorderId, "POST", "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate),
                         "POST/api/rest/v1/workorder/[workorderId]/log",
@@ -972,7 +909,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns details
     public static void postTimeLog(Context context, long workorderId, long startDate, long endDate, int numberOfDevices) {
         context.startService(
-                action(context, workorderId, "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                action(context, workorderId, "POST", "log", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
                                 + "&noOfDevices=" + numberOfDevices,
@@ -984,7 +921,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate) {
         context.startService(
-                action(context, workorderId, "log/" + loggedHoursId, null,
+                action(context, workorderId, "POST", "log/" + loggedHoursId, null,
                         HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate),
@@ -996,7 +933,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns details
     public static void postTimeLog(Context context, long workorderId, long loggedHoursId, long startDate, long endDate, int numberOfDevices) {
         context.startService(
-                action(context, workorderId, "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                action(context, workorderId, "POST", "log/" + loggedHoursId, null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                         "startDate=" + ISO8601.fromUTC(startDate)
                                 + "&endDate=" + ISO8601.fromUTC(endDate)
                                 + "&noOfDevices=" + numberOfDevices,
@@ -1037,7 +974,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the shipment data
     public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
                                             String carrier, String carrierName, String trackingNumber) {
-        return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        return action(context, workorderId, "POST", "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
                         + "&carrier=" + carrier
@@ -1058,7 +995,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the shipment data
     public static Intent postShipmentIntent(Context context, long workorderId, String description, boolean isToSite,
                                             String carrier, String carrierName, String trackingNumber, long taskId) {
-        return action(context, workorderId, "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+        return action(context, workorderId, "POST", "shipments", null, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "description=" + misc.escapeForURL(description)
                         + "&direction=" + (isToSite ? "to_site" : "from_site")
                         + "&carrier=" + carrier
@@ -1077,7 +1014,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the task list
     public static Intent actionCompleteShipmentTaskIntent(Context context, long workorderId, long shipmentId, long taskId) {
-        return action(context, workorderId, "tasks/complete/" + taskId, null,
+        return action(context, workorderId, "POST", "tasks/complete/" + taskId, null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, "shipment_id=" + shipmentId,
                 "POST/api/rest/v1/workorder/[workorderId]/tasks/complete/[taskId]",
                 WorkorderTransactionHandler.class,

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.fieldnation">
 
     <uses-permission android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
@@ -35,7 +36,8 @@
 
         <meta-data
             android:name="com.google.android.gms.version"
-            android:value="@integer/google_play_services_version" />
+            android:value="@integer/google_play_services_version"
+            tools:replace="android:value" />
 
         <activity
             android:name=".ui.workorder.MyWorkActivity"
@@ -72,7 +74,7 @@
             android:label="@string/work_order_detail_title"
             android:process=":frontside">
             <intent-filter>
-                
+
                 <!-- red -->
                 <data
                     android:host="red.fieldnation.com"
@@ -293,8 +295,14 @@
             </intent-filter>
         </service>
 
+
         <service
             android:name=".gcm.RegistrationIntentService"
+            android:exported="false"
+            android:process=":frontside" />
+
+        <service
+            android:name=".service.tracker.UploadTracker"
             android:exported="false"
             android:process=":frontside" />
 

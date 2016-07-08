@@ -76,7 +76,7 @@ public class BuyerRating {
     }
 
     public Integer getTimeToApproval() {
-        return _timeToApproval;
+        return _timeToApproval == null ? 0 : _timeToApproval;
     }
 
     public Integer getTotalRating() {

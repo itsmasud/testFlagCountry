@@ -11,7 +11,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 12/5/2014.

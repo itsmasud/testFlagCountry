@@ -15,7 +15,7 @@ import com.fieldnation.service.topics.TopicService;
  */
 public class GlobalTopicClient extends TopicClient implements GlobalTopicConstants {
     private static final String STAG = "GlobalTopicClient";
-    private String TAG = UniqueTag.makeTag("GlobalTopicClient");
+    private final String TAG = UniqueTag.makeTag("GlobalTopicClient");
 
     public GlobalTopicClient(Listener listener) {
         super(listener);

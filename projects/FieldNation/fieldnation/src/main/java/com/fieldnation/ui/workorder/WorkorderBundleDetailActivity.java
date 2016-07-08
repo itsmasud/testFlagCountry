@@ -17,7 +17,6 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.text.NumberFormat;
 
@@ -144,7 +143,7 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         }
     };
 
-    private WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
+    private final WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);

@@ -13,10 +13,10 @@ import com.fieldnation.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -322,6 +322,77 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             boolean copySuccess = false;
             try {
                 copySuccess = FileUtils.copyFile(file, dest);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            if (!copySuccess) {
+//                Log.v(TAG, "put2, copy failed");
+                delete(id);
+                dest.delete();
+            } else {
+//                Log.v(TAG, "put2, copy success");
+                result = get(id);
+                result.setFile(dest);
+                result = result.save();
+                return result;
+            }
+        }
+
+        return null;
+    }
+
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, InputStream inputStream, String filename) {
+        return put(profileId, objectTypeName, objectKey + "", inputStream, filename, true);
+    }
+
+    public static StoredObject put(long profileId, String objectTypeName, long objectKey, InputStream inputStream, String filename, boolean expires) {
+        return put(profileId, objectTypeName, objectKey + "", inputStream, filename, expires);
+    }
+
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, InputStream inputStream, String filename) {
+        return put(profileId, objectTypeName, objectKey, inputStream, filename, true);
+    }
+
+    public static StoredObject put(long profileId, String objectTypeName, String objectKey, InputStream inputStream, String filename, boolean expires) {
+        Log.v(TAG, "put(" + profileId + ", " + objectTypeName + ", " + objectKey + ", InputStream, " + filename + ", " + expires + ")");
+        // Log.v(TAG, "put2(" + objectTypeName + "/" + objectKey + ", " + file.getAbsolutePath() + ")");
+        StoredObject result = get(profileId, objectTypeName, objectKey);
+        if (result != null) {
+            delete(result);
+        }
+
+        ContentValues v = new ContentValues();
+        v.put(Column.PROFILE_ID.getName(), profileId);
+        v.put(Column.OBJ_NAME.getName(), objectTypeName);
+        v.put(Column.OBJ_KEY.getName(), objectKey);
+        v.put(Column.LAST_UPDATED.getName(), System.currentTimeMillis());
+        v.put(Column.IS_FILE.getName(), true);
+        v.put(Column.EXPIRES.getName(), expires ? 1 : 0);
+
+        long id = -1;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(App.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
+            } finally {
+                //db.close();
+            }
+        }
+        if (id != -1) {
+//            Log.v(TAG, "put2, copy file, " + id);
+            // copy the file to the file store
+            String appFileStore = App.get().getStoragePath() + "/FileStore";
+            new File(appFileStore).mkdirs();
+            File dest = new File(appFileStore + "/" + id + "_" + filename);
+
+            if (dest.exists())
+                dest.delete();
+
+            boolean copySuccess = false;
+            try {
+                copySuccess = FileUtils.writeStream(inputStream, dest);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -699,7 +770,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
     public static final Parcelable.Creator<StoredObject> CREATOR = new Creator<StoredObject>() {
         @Override
         public StoredObject createFromParcel(Parcel source) {
-            return new StoredObject(source.readBundle());
+            return new StoredObject(source.readBundle(getClass().getClassLoader()));
         }
 
         @Override

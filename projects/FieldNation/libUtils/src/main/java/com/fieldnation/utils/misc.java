@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 
 public class misc {
     private static final String HEXES = "0123456789ABCDEF";
-    private static NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
-    private static NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
+    private static final NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
+    private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
 
 
     public static Location locationFromCoordinates(double lat, double lon) {

@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/layoutCardView"
+    style="?attr/cardContainerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp">
+
+    <RelativeLayout
+        android:id="@+id/layoutImageThumbnail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/filetype_imageview"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:gravity="center"
+            android:text="@string/icon_file_generic"
+            android:textColor="@color/fn_light_text"
+            android:textSize="40sp"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/pic_view"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="16dp"
+            android:visibility="visible" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/filename_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/layoutImageThumbnail"
+        android:layout_marginTop="4dp"
+        android:layout_toRightOf="@id/layoutImageThumbnail"
+        android:ellipsize="middle"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="File Name.ext"
+        android:textColor="@color/fn_dark_text" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/filename_textview"
+        android:layout_toRightOf="@id/layoutImageThumbnail"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/date_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:layout_toRightOf="@id/layoutImageThumbnail"
+        android:text="Dec 25, 2014 at 12:00 am" />
+
+    <TextView
+        android:id="@+id/by_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@id/date_textview"
+        android:layout_marginLeft="2dp"
+        android:layout_marginRight="2dp"
+        android:layout_toRightOf="@id/date_textview"
+        android:text="@string/by" />
+
+    <TextView
+        android:id="@+id/username_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/by_textview"
+        android:layout_toRightOf="@+id/by_textview"
+        android:text="Kevin Mccalister" />
+
+    <TextView
+        android:id="@+id/status_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_textview"
+        android:layout_toRightOf="@+id/layoutImageThumbnail"
+        android:text="Uploading..."
+        android:visibility="gone" />
+</RelativeLayout>

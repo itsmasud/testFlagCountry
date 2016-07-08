@@ -21,14 +21,14 @@ import java.util.List;
 public class Transform implements Parcelable, TransformConstants {
     private static final String TAG = "Transform";
 
-    private long _id;
-    private long _transactionId;
+    private final long _id;
+    private final long _transactionId;
 
-    private String _objectNameKey;
-    private String _objectName;
-    private String _objectKey;
-    private String _action;
-    private byte[] _data;
+    private final String _objectNameKey;
+    private final String _objectName;
+    private final String _objectKey;
+    private final String _action;
+    private final byte[] _data;
 
     Transform(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
@@ -271,7 +271,7 @@ public class Transform implements Parcelable, TransformConstants {
     public static final Creator<Transform> CREATOR = new Creator<Transform>() {
         @Override
         public Transform createFromParcel(Parcel source) {
-            return new Transform(source.readBundle());
+            return new Transform(source.readBundle(getClass().getClassLoader()));
         }
 
         @Override

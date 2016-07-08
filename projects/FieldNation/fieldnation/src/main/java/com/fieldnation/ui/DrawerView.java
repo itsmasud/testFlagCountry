@@ -344,7 +344,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -354,7 +354,7 @@ public class DrawerView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
-//            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }

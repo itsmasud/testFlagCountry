@@ -165,7 +165,7 @@ public class OneButtonScrollingDialog extends DialogFragmentBase {
         return list;
     }
 
-    private BaseAdapter _adapter = new BaseAdapter() {
+    private final BaseAdapter _adapter = new BaseAdapter() {
         @Override
         public int getCount() {
             if (_sections == null)

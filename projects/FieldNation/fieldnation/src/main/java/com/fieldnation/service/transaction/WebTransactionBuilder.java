@@ -16,8 +16,8 @@ import java.util.List;
  */
 public class WebTransactionBuilder implements WebTransactionConstants {
 
-    private Context context;
-    private Intent intent;
+    private final Context context;
+    private final Intent intent;
     private List<Bundle> transforms;
 
     private JsonObject request;
@@ -27,6 +27,8 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent = new Intent(context, WebTransactionService.class);
         intent.putExtra(PARAM_PRIORITY, Priority.NORMAL);
         intent.putExtra(PARAM_IS_SYNC, false);
+        intent.putExtra(PARAM_WIFI_REQUIRED, false);
+        intent.putExtra(PARAM_TRACK, false);
     }
 
     public static WebTransactionBuilder builder(Context context) {
@@ -53,6 +55,16 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent.putExtra(PARAM_IS_SYNC, sync);
         if (sync)
             intent.putExtra(PARAM_PRIORITY, Priority.LOW);
+        return this;
+    }
+
+    public WebTransactionBuilder setWifiRequired(boolean required) {
+        intent.putExtra(PARAM_WIFI_REQUIRED, required);
+        return this;
+    }
+
+    public WebTransactionBuilder setTrack(boolean track) {
+        intent.putExtra(PARAM_TRACK, track);
         return this;
     }
 

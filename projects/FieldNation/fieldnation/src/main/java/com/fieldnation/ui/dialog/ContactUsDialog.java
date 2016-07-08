@@ -41,8 +41,7 @@ public class ContactUsDialog extends DialogFragmentBase {
 
     // Spinner-case
     private final static int ITEM_APP_FEEDBACK = 0;
-    private final static int ITEM_WORK_ORDER_ISSUES = 1;
-    private final static int ITEM_ACCOUNT_ISSUE = 2;
+    private final static int ITEM_HELP_SUPPORT = 1;
 
     // Ui
     private HintSpinner _reasonSpinner;
@@ -177,18 +176,13 @@ public class ContactUsDialog extends DialogFragmentBase {
         _spinnerPosition = position;
         switch (position) {
             case ITEM_APP_FEEDBACK:
-                _internalTeamParam = "usability";
+                _internalTeamParam = "feedback";
                 _additionalHelpTextView.setVisibility(View.GONE);
                 break;
 
-            case ITEM_WORK_ORDER_ISSUES:
+            case ITEM_HELP_SUPPORT:
                 _internalTeamParam = "support";
                 _additionalHelpTextView.setVisibility(View.VISIBLE);
-                break;
-
-            case ITEM_ACCOUNT_ISSUE:
-                _internalTeamParam = "csd";
-                _additionalHelpTextView.setVisibility(View.GONE);
                 break;
         }
         if (position != -1)
@@ -255,8 +249,7 @@ public class ContactUsDialog extends DialogFragmentBase {
                 _listener.onOk(_explanationEditText.getText().toString());
             }
 
-            Debug.logCustom(new CustomEvent("ContactUsDialog")
-                    .putCustomAttribute("Source", _source));
+            Debug.logCustom(new CustomEvent("ContactUsDialog").putCustomAttribute("Source", _source));
 
             try {
                 HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +

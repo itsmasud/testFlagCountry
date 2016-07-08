@@ -110,7 +110,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
 
         ForLoopRunnable r = new ForLoopRunnable(list.length, new Handler()) {
-            private Signature[] _list = list;
+            private final Signature[] _list = list;
 
             @Override
             public void next(int i) throws Exception {

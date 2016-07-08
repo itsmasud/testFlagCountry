@@ -111,7 +111,7 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 //            resultData.getFile().delete();
 //            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
 //        } else {
-//            File tempFolder = new File(GlobalState.getContext().getStoragePath() + "/temp");
+//            File tempFolder = new File(App.get().getTempFolder());
 //            tempFolder.mkdirs();
 //            File tempFile = File.createTempFile("tmp", "dat", tempFolder);
 //            FileOutputStream fout = new FileOutputStream(tempFile, false);

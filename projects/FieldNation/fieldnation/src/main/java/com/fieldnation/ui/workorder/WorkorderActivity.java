@@ -1,7 +1,6 @@
 
 package com.fieldnation.ui.workorder;
 
-import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
@@ -326,7 +325,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private PageRequestListener _pageRequestListener = new PageRequestListener() {
+    private final PageRequestListener _pageRequestListener = new PageRequestListener() {
         @Override
         public void requestPage(Class<? extends WorkorderFragment> clazz) {
             for (int i = 0; i < _fragments.length; i++) {
@@ -366,7 +365,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     }
 
-    private ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
+    private final ViewPager.SimpleOnPageChangeListener _viewPager_onChange = new ViewPager.SimpleOnPageChangeListener() {
         @Override
         public void onPageSelected(int position) {
             try {
@@ -380,7 +379,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     };
 
-    private WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
+    private final WorkorderTabView.Listener _tabview_onChange = new WorkorderTabView.Listener() {
         @Override
         public void onChange(int index) {
             if (index != _currentFragment) {
@@ -392,7 +391,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     };
 
-    private Workorder.Listener _workorder_listener = new Workorder.Listener() {
+    private final Workorder.Listener _workorder_listener = new Workorder.Listener() {
         @Override
         public void onChange(Workorder workorder) {
             Log.v(TAG, "_workorder_listener");
@@ -400,7 +399,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     };
 
-    private WorkorderFragment.LoadingListener _workorderFrag_loadingListener = new WorkorderFragment.LoadingListener() {
+    private final WorkorderFragment.LoadingListener _workorderFrag_loadingListener = new WorkorderFragment.LoadingListener() {
         @Override
         public void setLoading(boolean isLoading) {
             WorkorderActivity.this.setLoading(isLoading);
@@ -457,7 +456,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
     };
 
-    private View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             onBackPressed();

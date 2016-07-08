@@ -34,15 +34,17 @@ public class MarketActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void loadFragments() {
-        _fragments = new WorkorderListFragment[2];
-        _fragments[0] = getFragment(WorkorderDataSelector.AVAILABLE);
-        _fragments[1] = getFragment(WorkorderDataSelector.REQUESTED);
+        _fragments = new WorkorderListFragment[3];
 
-        _titles = new String[]{getString(R.string.tab_available), getString(R.string.tab_requested), getString(R.string.tab_canceled)};
+        _fragments[0] = getFragment(WorkorderDataSelector.ROUTED);
+        _fragments[1] = getFragment(WorkorderDataSelector.AVAILABLE);
+        _fragments[2] = getFragment(WorkorderDataSelector.REQUESTED);
+
+        _titles = new String[]{getString(R.string.tab_routed), getString(R.string.tab_available), getString(R.string.tab_requested)};
     }
 
     private WorkorderListFragment getFragment(WorkorderDataSelector selector) {
-        Fragment fragment = null;
+        WorkorderListFragment fragment = null;
         List<Fragment> fragments = getSupportFragmentManager().getFragments();
         if (fragments != null) {
             for (int i = 0; i < fragments.size(); i++) {
@@ -57,9 +59,15 @@ public class MarketActivity extends TabActionBarFragmentActivity {
         }
 
         if (fragment == null) {
-            fragment = new WorkorderListFragment().setDisplayType(selector);
+            if (selector.equals(WorkorderDataSelector.AVAILABLE)) {
+                fragment = new AvailableWorkorderListFragment().setDisplayType(selector);
+            } else if (selector.equals(WorkorderDataSelector.ROUTED)) {
+                fragment = new RoutedWorkorderListFragment().setDisplayType(selector);
+            } else {
+                fragment = new WorkorderListFragment().setDisplayType(selector);
+            }
         }
-        return (WorkorderListFragment) fragment;
+        return fragment;
     }
 
     @Override

@@ -12,7 +12,6 @@ import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.utils.Stopwatch;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -10,7 +10,6 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.io.IOException;

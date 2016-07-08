@@ -16,10 +16,10 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/title_textview"
                 style="?attr/dialogTitleStyle"
                 android:layout_marginBottom="@dimen/dialogContentPadding"
                 android:text="@string/accept_bundle" />
-
 
             <TextView
                 android:id="@+id/accept_description"

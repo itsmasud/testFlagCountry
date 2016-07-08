@@ -6,6 +6,8 @@ import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
 import android.os.Debug;
 import android.util.Log;
 
@@ -18,8 +20,6 @@ public class MemUtils {
     private static final double MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE = 0.15;
 
     public static Bitmap getMemoryEfficientBitmap(Context context, int sourceImage, int reqHeight) {
-//        Log.v(TAG, "getDeviceFreeMemory:" + getDeviceFreeMemory());
-//        Log.v(TAG, "getDeviceAvailableMemory:" + getDeviceAvailableMemory());
         Resources res = context.getResources();
 
         if (getAppFreeHeapMemory(context) < getAllocatedBitmapMemory(sourceImage, res)) {
@@ -29,11 +29,60 @@ public class MemUtils {
         return subSampleImage(0, res, sourceImage);
     }
 
+    public static Bitmap getMemoryEfficientBitmap(String filename, int destWidth) {
+        BitmapFactory.Options srcOptions = new BitmapFactory.Options();
+        srcOptions.inJustDecodeBounds = true;
+        BitmapFactory.decodeFile(filename, srcOptions);
+
+        BitmapFactory.Options dstOption = new BitmapFactory.Options();
+        dstOption.inJustDecodeBounds = false;
+        dstOption.inSampleSize = calculateInSampleSize(srcOptions.outWidth, destWidth);
+
+        Log.v("MemUtils", "inSampleSize: " + dstOption.inSampleSize);
+
+        return rotateImageIfRequired(BitmapFactory.decodeFile(filename, dstOption), filename);
+    }
+
+    /**
+     * Rotate an image if required.
+     *
+     * @param img           The image bitmap
+     * @param selectedImage Image URI
+     * @return The resulted Bitmap after manipulation
+     */
+    private static Bitmap rotateImageIfRequired(Bitmap img, String selectedImage) {
+
+        try {
+            ExifInterface ei = new ExifInterface(selectedImage);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
+
+            switch (orientation) {
+                case ExifInterface.ORIENTATION_ROTATE_90:
+                    return rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180:
+                    return rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270:
+                    return rotateImage(img, 270);
+                default:
+                    return img;
+            }
+        } catch (Exception ex) {
+            return img;
+        }
+    }
+
+    private static Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
+        matrix.postRotate(degree);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        img.recycle();
+        return rotatedImg;
+    }
 
     private static Bitmap subSampleImage(int reqHeight, Resources res, int sourceImage) {
         final BitmapFactory.Options options = new BitmapFactory.Options();
         options.inJustDecodeBounds = false;
-        options.inSampleSize = calculateInSampleSize(options, reqHeight);
+        options.inSampleSize = calculateInSampleSize(options.outHeight, reqHeight);
         return BitmapFactory.decodeResource(res, sourceImage, options);
     }
 
@@ -193,18 +242,17 @@ public class MemUtils {
     }
 
 
-    public static int calculateInSampleSize(BitmapFactory.Options options, int reqHeight) {
-        if (reqHeight == 0)
+    public static int calculateInSampleSize(int srcDim, int destDim) {
+        if (destDim == 0)
             return 0;
 
-        final int height = options.outHeight;
         int inSampleSize = 1;
 
-        if (height > reqHeight) {
+        if (srcDim > destDim) {
 
-            final int halfHeight = height / 2;
+            final int halfDim = srcDim / 2;
 
-            while ((halfHeight / inSampleSize) > reqHeight) {
+            while ((halfDim / inSampleSize) > destDim) {
                 inSampleSize *= 2;
             }
         }

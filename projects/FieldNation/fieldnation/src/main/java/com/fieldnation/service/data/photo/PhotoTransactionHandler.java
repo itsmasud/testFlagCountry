@@ -12,10 +12,8 @@ import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.utils.ImageUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 
 /**
  * Created by Michael Carver on 3/12/2015.
@@ -55,10 +53,8 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             sourceBitmap.recycle();
             Bitmap circleBitmap = ImageUtils.extractCircle(imageBitmap);
 
-            // find the paths
-            String storagePath = App.get().getStoragePath() + "/temp";
-            File tempFolder = new File(storagePath);
-            tempFolder.mkdirs();
+            // Calling temp folder. Will be created if doesn't exist
+            App.get().getTempFolder();
 
             ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);

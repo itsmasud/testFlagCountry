@@ -22,7 +22,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
 
     // Data
     private Workorder _workorder;
-    private Integer[] woStatus = {5, 6, 7}; //work order status approved, paid, canceled
     private Listener _listener;
 
 	/*-*************************************-*/

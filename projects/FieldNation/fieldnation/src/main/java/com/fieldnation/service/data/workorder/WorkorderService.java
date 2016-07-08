@@ -11,6 +11,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 
 /**
@@ -48,6 +49,9 @@ public class WorkorderService extends MSService implements WorkorderConstants {
                     break;
                 case PARAM_ACTION_GET_BUNDLE:
                     getBundle(intent);
+                    break;
+                case PARAM_ACTION_CACHE_DELIVERABLE:
+                    cacheDeliverable(intent);
                     break;
                 case PARAM_ACTION_UPLOAD_DELIVERABLE:
                     uploadDeliverable(intent);
@@ -106,7 +110,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
     }
 
     private void list(Intent intent) {
-        String selector = intent.getStringExtra(PARAM_LIST_SELECTOR);
+        WorkorderDataSelector selector = WorkorderDataSelector.values()[intent.getIntExtra(PARAM_LIST_SELECTOR, 0)];
         int page = intent.getIntExtra(PARAM_PAGE, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
@@ -229,17 +233,44 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         WorkorderTransactionBuilder.getBundle(this, bundleId, isSync);
     }
 
+    private void cacheDeliverable(Intent intent) {
+        Uri uri = intent.getParcelableExtra(PARAM_URI);
+        WorkorderDispatch.cacheDeliverableStart(App.get(), uri);
+        StoredObject upFile = null;
+        try {
+            upFile = StoredObject.put(App.getProfileId(), "CacheFile", uri.toString(),
+                    this.getContentResolver().openInputStream(uri), "uploadTemp.dat");
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        } finally {
+            if (upFile != null)
+                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, upFile.getFile().toString());
+            else
+                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, null);
+        }
+    }
+
     private void uploadDeliverable(Intent intent) {
         long workorderId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         long uploadSlotId = intent.getLongExtra(PARAM_UPLOAD_SLOT_ID, 0);
         String filePath = intent.getStringExtra(PARAM_LOCAL_PATH);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
+        String photoDescription = intent.getStringExtra(PARAM_FILE_DESCRIPTION);
         Uri uri = intent.getParcelableExtra(PARAM_URI);
 
-        if (uri != null)
-            WorkorderTransactionBuilder.uploadDeliverable(this, uri, filename, workorderId, uploadSlotId);
-        else
-            WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, workorderId, uploadSlotId);
+        if (uri != null) {
+            try {
+                StoredObject cache = StoredObject.get(App.getProfileId(), "CacheFile", uri.toString());
+                if (cache != null) {
+                    WorkorderTransactionBuilder.uploadDeliverable(this, cache, filename, photoDescription, workorderId, uploadSlotId);
+                } else {
+                    WorkorderTransactionBuilder.uploadDeliverable(this, this.getContentResolver().openInputStream(uri), filename, photoDescription, workorderId, uploadSlotId);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else
+            WorkorderTransactionBuilder.uploadDeliverable(this, filePath, filename, photoDescription, workorderId, uploadSlotId);
     }
 
     private void getDeliverable(Intent intent) {

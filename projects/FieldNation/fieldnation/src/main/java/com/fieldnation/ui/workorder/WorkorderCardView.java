@@ -21,15 +21,16 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
-import com.mapbox.mapboxsdk.geometry.LatLng;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
+
 
 /**
  * Displays the summary of a workorder to the user. Will also allow some simple
@@ -221,71 +222,47 @@ public class WorkorderCardView extends RelativeLayout {
     };
 
     private void handleButtonClick(int action) {
+        if (_listener == null) return;
+
         switch (action) {
             case Workorder.BUTTON_ACTION_CHECKIN:
-                if (_listener != null) {
-                    _listener.actionCheckin(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionCheckin(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_CHECKOUT:
-                if (_listener != null) {
-                    _listener.actionCheckout(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionCheckout(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_ACCEPT:
-                if (_listener != null) {
-                    _listener.actionAssignment(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionAssignment(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_REQUEST:
-                if (_listener != null) {
-                    _listener.actionRequest(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionRequest(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_RECOGNIZE_HOLD:
-                if (_listener != null) {
-                    _listener.actionAcknowledgeHold(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionAcknowledgeHold(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_VIEW_COUNTER:
-                if (_listener != null) {
-                    _listener.viewCounter(WorkorderCardView.this, _workorder);
-                }
+                _listener.viewCounter(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_VIEW_PAYMENT:
-                if (_listener != null) {
-                    _listener.onViewPayments(WorkorderCardView.this, _workorder);
-                }
+                _listener.onViewPayments(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
-                if (_listener != null) {
-                    _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionWithdrawRequest(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_READY_TO_GO:
-                if (_listener != null) {
-                    _listener.actionReadyToGo(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionReadyToGo(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_CONFIRM:
-                if (_listener != null) {
-                    _listener.actionConfirm(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionConfirm(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_MAP:
-                if (_listener != null) {
-                    _listener.actionMap(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionMap(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_REPORT_PROBLEM:
-                if (_listener != null) {
-                    _listener.actionReportProblem(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionReportProblem(WorkorderCardView.this, _workorder);
                 break;
             case Workorder.BUTTON_ACTION_MARK_INCOMPLETE:
-                if (_listener != null) {
-                    _listener.actionMarkIncomplete(WorkorderCardView.this, _workorder);
-                }
+                _listener.actionMarkIncomplete(WorkorderCardView.this, _workorder);
                 break;
         }
     }
@@ -363,7 +340,11 @@ public class WorkorderCardView extends RelativeLayout {
                                 )
                         );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
-
+                        if (System.currentTimeMillis() - startTime > 86400000L) {
+                            _extraTextView.setText(schedule.getFormatedDate());
+                        } else {
+                            _extraTextView.setText(schedule.getFormatedTime());
+                        }
                     } else if (startTime - System.currentTimeMillis() <= 3600000
                             && startTime - System.currentTimeMillis() > 0
                             && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
@@ -379,6 +360,7 @@ public class WorkorderCardView extends RelativeLayout {
                                 )
                         );
                         _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
+                        _extraTextView.setText(schedule.getFormatedTime());
 
                     } else if (startTime < System.currentTimeMillis()) {
                         _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
@@ -408,10 +390,6 @@ public class WorkorderCardView extends RelativeLayout {
                         if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
                                 || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
                             if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-                                //_timeTextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                //_time2TextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(eCal.getTime()));
-                                //_extraTextView.setText(misc.formatTime(sCal, false));
-                                //_extra2TextView.setText(misc.formatTime(eCal, false));
                                 _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
                                 _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
@@ -426,9 +404,6 @@ public class WorkorderCardView extends RelativeLayout {
                             _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
                             _extraTextView.setText(schedule.getFormatedTime());
                         }
-
-                        //_timeTextView.setText(schedule.getFormatedTime());
-                        //_extraTextView.setText(schedule.getFormatedDate());
 
                     } else if ((endTime - System.currentTimeMillis()) / 86400000L < 6) {
                         String sDay = new SimpleDateFormat("c", Locale.getDefault()).format(sCal.getTime());
@@ -463,11 +438,6 @@ public class WorkorderCardView extends RelativeLayout {
                         if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
                                 || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
                             if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-//                                _timeTextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(sCal.getTime()) + " - ");
-//                                _time2TextView.setText(new SimpleDateFormat("MMM d, yyyy", Locale.getDefault()).format(eCal.getTime()));
-//                                _extraTextView.setText(misc.formatTime(sCal, false));
-//                                _extra2TextView.setText(misc.formatTime(eCal, false));
-
                                 _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
                                 _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
                                 _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
@@ -546,11 +516,11 @@ public class WorkorderCardView extends RelativeLayout {
                         _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
                     } else {
                         _leftButton.setVisibility(VISIBLE);
-                        try {
-                            LatLng siteLoc = new LatLng(location.getGeo().getLatitude(), location.getGeo().getLongitude());
-                            LatLng myLoc = new LatLng(_gpsLocation);
 
-                            _leftButton.setText(((int) ((myLoc.distanceTo(siteLoc) * 0.000621371) + 0.5)) + " mi");
+                        try {
+                            Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
+                            Position myLoc = new Position(_gpsLocation.getLongitude(), _gpsLocation.getLatitude());
+                            _leftButton.setText(myLoc.distanceTo(siteLoc) + " mi");
                         } catch (Exception ex) {
                             //Log.v(TAG, ex);
                             _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());

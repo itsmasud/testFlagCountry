@@ -3,8 +3,6 @@ package com.fieldnation.ui.payment;
 import android.os.Bundle;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.service.data.payment.PaymentClient;
@@ -13,7 +11,6 @@ import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.payment.MonthHeaderView.Header;
 import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.Stopwatch;
 
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -29,8 +26,8 @@ public class PaymentListActivity extends AuthActionBarActivity {
 
     // Data
     private PaymentClient _paymentClient;
-    private Hashtable<Integer, List<Payment>> _pages = new Hashtable<>();
-    private List<Object> _paymentList = new LinkedList<>();
+    private final Hashtable<Integer, List<Payment>> _pages = new Hashtable<>();
+    private final List<Object> _paymentList = new LinkedList<>();
     private PaymentListAdapter _adapter;
     private int _nextPage = 0;
 

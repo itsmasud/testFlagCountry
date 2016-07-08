@@ -2,7 +2,6 @@ package com.fieldnation.service.transaction;
 
 import android.app.NotificationManager;
 import android.app.Service;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteFullException;
 import android.support.v4.app.NotificationCompat;
@@ -43,14 +42,16 @@ import javax.net.ssl.SSLProtocolException;
  * This class executes requests that are stored in the transaction queue
  */
 public class TransactionThread extends ThreadManager.ManagedThread {
-    private String TAG = UniqueTag.makeTag("TransactionThread");
+    private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 
-    private WebTransactionService _service;
+    private final WebTransactionService _service;
 
     private boolean _syncThread = false;
     private boolean _allowSync = true;
     private long _syncCheckCoolDown = 0;
+
+    public boolean _isFirstThread = false;
 
     private static JsonObject TEST_QUERY;
 
@@ -72,8 +73,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
     @Override
     public boolean doWork() {
-        // try to get a transaction
+        //if (_isFirstThread) {
+        //    Log.v(TAG, "Trans Count: " + WebTransaction.count());
+        //    Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
+        //}
 
+        // try to get a transaction
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
             try {
@@ -91,11 +96,9 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
         }
 
-        //Log.v(TAG, "Trans Count: " + WebTransaction.count(_service));
         WebTransaction trans = null;
-
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated());
+            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(), _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -297,12 +300,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
         } catch (MalformedURLException | FileNotFoundException ex) {
             Log.v(TAG, "4");
+            Log.v(TAG, ex);
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
         } catch (SecurityException ex) {
             Log.v(TAG, "4b");
+            Log.v(TAG, ex);
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
@@ -313,12 +318,10 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             transRequeueNetworkDown(trans, notifId, notifRetry);
 
         } catch (SSLException ex) {
+            Log.v(TAG, ex);
             if (ex.getMessage().contains("Broken pipe")) {
                 Log.v(TAG, "6");
-                ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
+                transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {
                 Log.v(TAG, "7");
                 transRequeueNetworkDown(trans, notifId, notifRetry);
@@ -326,10 +329,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         } catch (IOException ex) {
             Log.v(TAG, "8");
+            Log.v(TAG, ex);
             transRequeueNetworkDown(trans, notifId, notifRetry);
 
         } catch (Exception ex) {
             Log.v(TAG, "9");
+            Log.v(TAG, ex);
             if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
                 transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {
@@ -382,8 +387,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 Log.v(TAG, "Running allowSync");
                 _allowSync = true;
 
-                SharedPreferences settings = App.get().getSharedPreferences(App.get().getPackageName() + "_preferences",
-                        Context.MODE_MULTI_PROCESS | Context.MODE_PRIVATE);
+                SharedPreferences settings = App.get().getSharedPreferences();
 
                 boolean requireWifi = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_wifi), true);
                 boolean requirePower = settings.getBoolean(App.get().getString(R.string.pref_key_sync_require_power), true);

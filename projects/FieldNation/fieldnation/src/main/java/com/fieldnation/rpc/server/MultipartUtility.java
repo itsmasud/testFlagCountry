@@ -6,7 +6,6 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.StreamUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,8 +25,8 @@ public class MultipartUtility {
 
     private final String boundary;
     private static final String LINE_FEED = "\r\n";
-    private HttpURLConnection httpConn;
-    private String charset;
+    private final HttpURLConnection httpConn;
+    private final String charset;
     private OutputStream outputStream;
     private PrintWriter writer;
 

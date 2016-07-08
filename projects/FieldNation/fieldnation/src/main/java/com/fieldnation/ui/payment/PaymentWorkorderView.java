@@ -75,7 +75,7 @@ public class PaymentWorkorderView extends RelativeLayout {
         _payTypeTextView.setText(getResources().getString(R.string.wo_x, wo.getWorkorderId()));
     }
 
-    private View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), WorkorderActivity.class);

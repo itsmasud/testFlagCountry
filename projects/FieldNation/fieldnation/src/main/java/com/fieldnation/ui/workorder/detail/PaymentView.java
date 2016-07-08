@@ -4,6 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewStub;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -22,6 +23,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private TextView _payTextView;
     private TextView _termsTextView;
     private Button _actionButton;
+    private ViewStub _requestNewPayStub;
+    private RequestNewPayTile _requestNewPayTile = null;
 
     // Data
     private Workorder _workorder;
@@ -47,6 +50,8 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         if (isInEditMode())
             return;
 
+        _requestNewPayStub = (ViewStub) findViewById(R.id.requestNewPayTile_viewstub);
+
         _payTextView = (TextView) findViewById(R.id.pay_textview);
         _termsTextView = (TextView) findViewById(R.id.terms_textview);
         _termsTextView.setOnClickListener(_terms_onClick);
@@ -70,7 +75,25 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         refresh();
     }
 
+    private RequestNewPayTile getRequestNewPayTile() {
+        if (_requestNewPayTile == null) {
+            _requestNewPayTile = (RequestNewPayTile) _requestNewPayStub.inflate();
+            _requestNewPayTile.setOnClickListener(_requestNewPay_onClick);
+        }
+        return _requestNewPayTile;
+    }
+
     private void refresh() {
+        if (_actionButton == null)
+            return;
+
+        if (_workorder.getIncreaseRequestInfo() != null) {
+            getRequestNewPayTile().setVisibility(VISIBLE);
+            getRequestNewPayTile().setData(_workorder);
+        } else if (_requestNewPayTile != null) {
+            _requestNewPayTile.setVisibility(GONE);
+        }
+
         Pay pay = _workorder.getPay();
         if (pay != null && !pay.hidePay()) {
             _termsTextView.setVisibility(VISIBLE);
@@ -100,14 +123,17 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         }
 
         _actionButton.setVisibility(VISIBLE);
+        _actionButton.setEnabled(true);
         if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
-            _actionButton.setText("COUNTER OFFER");
+            _actionButton.setText(R.string.btn_counter_offer);
         } else if (_workorder.canRequestPayIncrease()) {
-            _actionButton.setText("REQUEST NEW PAY");
+            _actionButton.setText(R.string.btn_request_new_pay);
         } else if (!_workorder.canCounterOffer() &&
                 (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
-                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED)) {
-            _actionButton.setText("COUNTER DISABLED");
+                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED
+                        || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE)) {
+            _actionButton.setEnabled(false);
+            _actionButton.setText(R.string.btn_counter_disabled);
         } else {
             _actionButton.setVisibility(GONE);
         }
@@ -134,6 +160,15 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         public void onClick(View v) {
             if (_listener != null)
                 _listener.onShowTerms(_workorder);
+        }
+    };
+
+    private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onRequestNewPay(_workorder);
+            }
         }
     };
 

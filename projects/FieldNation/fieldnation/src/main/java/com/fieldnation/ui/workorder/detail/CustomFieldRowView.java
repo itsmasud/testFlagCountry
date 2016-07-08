@@ -21,6 +21,7 @@ public class CustomFieldRowView extends RelativeLayout {
 
     // Ui
     private IconFontTextView _iconView;
+    private TextView _customFieldNameTextView;
     private TextView _descriptionTextView;
     private TextView _optionalTextView;
 
@@ -54,6 +55,7 @@ public class CustomFieldRowView extends RelativeLayout {
             return;
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
+        _customFieldNameTextView = (TextView) findViewById(R.id.customFieldName_textview);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
         _optionalTextView = (TextView) findViewById(R.id.optional_textview);
 
@@ -79,17 +81,27 @@ public class CustomFieldRowView extends RelativeLayout {
         if (_customField == null)
             return;
 
+
         setEnabled(_workorder.canChangeCustomFields());
         if (_workorder.canChangeCustomFields()) {
+            _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
         } else {
+            _customFieldNameTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
             _descriptionTextView.setTextColor(getResources().getColor(R.color.fn_light_text_50));
         }
 
         if (misc.isEmptyOrNull(_customField.getValue())) {
-            _descriptionTextView.setText(_customField.getLabel());
+            _customFieldNameTextView.setText(_customField.getLabel().trim());
         } else {
-            _descriptionTextView.setText(_customField.getLabel() + "\n" + _customField.getValue());
+            _customFieldNameTextView.setText((_customField.getLabel() + "\n" + _customField.getValue()).trim());
+        }
+
+        if (misc.isEmptyOrNull(_customField.getTip())) {
+            _descriptionTextView.setVisibility(GONE);
+        } else {
+            _descriptionTextView.setText(_customField.getTip());
+            _descriptionTextView.setVisibility(VISIBLE);
         }
 
         if (_customField.getRequired()) {

@@ -12,16 +12,17 @@ import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
@@ -44,12 +45,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pList(int page, String selector) {
-
+    public static byte[] pList(int page, WorkorderDataSelector selector) {
         try {
             JsonObject obj = new JsonObject("action", "pList");
             obj.put("page", page);
-            obj.put("selector", selector);
+            obj.put("selector", selector.ordinal());
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -306,8 +306,37 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
+        UploadTrackerClient.uploadStarted(context);
+
         return Result.CONTINUE;
     }
+
+    /*-**********************************-*/
+    /*-             Requeue              -*/
+    /*-**********************************-*/
+
+/*
+    @Override
+    public Result handleRequeued(Context context, WebTransaction transaction) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadDeliverable":
+                    return handleRequeueUploadDeliverable(context, transaction, params);
+
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return Result.CONTINUE;
+    }
+
+    private Result handleRequeueUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+        UploadTrackerClient.uploadRequeued(context);
+        return Result.CONTINUE;
+    }
+*/
 
     /*-**********************************-*/
     /*-             Result               -*/
@@ -367,9 +396,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
 
         WorkorderDispatch.action(context, workorderId, "counter_offer", false);
-
         ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
-
         WorkorderClient.get(context, workorderId, false);
 
         return Result.CONTINUE;
@@ -522,11 +549,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "handleList");
         // get the basics, send out the event
         int page = 0;
-        String selector = "";
+        WorkorderDataSelector selector = null;
 
         try {
             page = params.getInt("page");
-            selector = params.getString("selector");
+            selector = WorkorderDataSelector.values()[params.getInt("selector")];
             byte[] bdata = resultData.getByteArray();
             Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
@@ -660,6 +687,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderClient.get(context, workorderId, false);
 
+        UploadTrackerClient.uploadSuccess(context);
+
         return Result.CONTINUE;
     }
 
@@ -676,7 +705,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.get(context, null, params.getLong("workorderId"), true, transaction.isSync(), false);
                     break;
                 case "pList":
-                    WorkorderDispatch.list(context, null, params.getInt("page"), params.getString("selector"), true, transaction.isSync(), false);
+                    WorkorderDispatch.list(context, null, params.getInt("page"), WorkorderDataSelector.values()[params.getInt("selector")], true, transaction.isSync(), false);
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
@@ -701,6 +730,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
                     break;
                 case "pUploadDeliverable":
+                    UploadTrackerClient.uploadFailed(context, params.getLong("workorderId"));
                     if (throwable != null && throwable instanceof SecurityException) {
                         ToastClient.toast(context, "Failed to upload file. " + params.getString("filename") + " Read permission denied. Please try again", Toast.LENGTH_LONG);
                     } else {

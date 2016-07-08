@@ -10,9 +10,9 @@ import com.fieldnation.data.accounting.Workorder;
 
 public class PaymentDetailAdapter extends BaseAdapter {
     private static final String TAG = "PaymentDetailAdapter";
-    private Payment _payment;
-    private Workorder[] _workorders;
-    private Fee[] _fees;
+    private final Payment _payment;
+    private final Workorder[] _workorders;
+    private final Fee[] _fees;
 
     public PaymentDetailAdapter(Payment payment) {
         super();

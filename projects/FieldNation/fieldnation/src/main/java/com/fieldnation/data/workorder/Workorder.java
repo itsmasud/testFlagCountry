@@ -54,7 +54,7 @@ public class Workorder implements Parcelable {
     @Json(name = "discounts")
     private Discount[] _discounts;
     @Json(name = "displayCounterOffer")
-    private Integer _displayCounterOffer;
+    private Boolean _displayCounterOffer;
     @Json(name = "documents")
     private Document[] _documents;
     @Json(name = "estimatedSchedule")
@@ -65,6 +65,8 @@ public class Workorder implements Parcelable {
     private String _fullWorkDescription;
     @Json(name = "hasClosingNotes ")
     private Boolean _hasClosingNotes;
+    @Json(name = "increaseRequestInfo")
+    private IncreaseRequestInfo _increaseRequestInfo;
     @Json(name = "isCounter")
     private Boolean _isCounter;
     @Json(name = "isGpsRequired")
@@ -195,8 +197,8 @@ public class Workorder implements Parcelable {
     public Boolean displayCounterOffer() {
         if (_displayCounterOffer == null)
             return true;
-
-        return _displayCounterOffer == 1;
+        
+        return _displayCounterOffer;
     }
 
     public Document[] getDocuments() {
@@ -217,6 +219,10 @@ public class Workorder implements Parcelable {
 
     public Boolean hasClosingNotes() {
         return _hasClosingNotes;
+    }
+
+    public IncreaseRequestInfo getIncreaseRequestInfo() {
+        return _increaseRequestInfo;
     }
 
     public Boolean getIsCounter() {
@@ -525,7 +531,11 @@ public class Workorder implements Parcelable {
 
     public boolean canViewConfidentialInfo() {
         return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS;
+                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                || getWorkorderStatus() == WorkorderStatus.APPROVED
+                || getWorkorderStatus() == WorkorderStatus.COMPLETED
+                || getWorkorderStatus() == WorkorderStatus.CANCELED
+                || getWorkorderStatus() == WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {
@@ -837,5 +847,4 @@ public class Workorder implements Parcelable {
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
     }
-
 }
