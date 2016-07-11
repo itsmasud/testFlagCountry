@@ -12,6 +12,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.ui.inbox.InboxActivity;
 
 public class InboxActionBarButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("InboxActionBarView");
@@ -50,7 +51,7 @@ public class InboxActionBarButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-//        setOnClickListener(_this_onClick);
+        setOnClickListener(_this_onClick);
 
         _client = new GlobalTopicClient(_topicClient_listener);
         _client.connect(App.get());
@@ -67,7 +68,7 @@ public class InboxActionBarButton extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            InboxActivity.startNew(getContext());
         }
     };
 

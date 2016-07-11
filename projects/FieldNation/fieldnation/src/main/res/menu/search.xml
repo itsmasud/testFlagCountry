@@ -10,12 +10,5 @@
         android:title="Inbox"
         app:actionViewClass="com.fieldnation.ui.InboxActionBarButton"
         app:showAsAction="always" />
-
-    <item
-        android:id="@+id/search_menuitem"
-        android:enabled="true"
-        android:orderInCategory="300"
-        android:title="Search"
-        app:actionViewClass="com.fieldnation.ui.SearchActionBarButton"
-        app:showAsAction="always" />
+    
 </menu>
