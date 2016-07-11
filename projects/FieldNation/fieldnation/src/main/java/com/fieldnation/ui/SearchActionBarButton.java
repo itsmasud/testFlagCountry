@@ -3,10 +3,12 @@ package com.fieldnation.ui;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.ui.search.EditSearchActivity;
 
 public class SearchActionBarButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("SearchActionBarView");
@@ -32,5 +34,17 @@ public class SearchActionBarButton extends RelativeLayout {
 
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_search_action_bar, this);
+
+        if (isInEditMode())
+            return;
+
+        setOnClickListener(_this_onClick);
     }
+
+    private final View.OnClickListener _this_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EditSearchActivity.startNew(getContext());
+        }
+    };
 }

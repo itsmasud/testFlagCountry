@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 
 import com.fieldnation.App;
@@ -19,8 +20,10 @@ import java.util.List;
 public class InboxActivity extends TabActionBarFragmentActivity {
     private static final String TAG = "InboxActivity";
 
-    // Data
+    // UI
     private TabFragment[] _fragments;
+
+    // Data
     private String[] _titles;
 
     /*-*************************************-*/
@@ -96,9 +99,16 @@ public class InboxActivity extends TabActionBarFragmentActivity {
         }
     };
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.inbox, menu);
+        return true;
+    }
+
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, InboxActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);

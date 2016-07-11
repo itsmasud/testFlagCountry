@@ -35,6 +35,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -61,12 +62,6 @@ import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "DeliverableFragment";
-
-    // activity result codes
-    private static final int RESULT_CODE_BASE = 100;
-    private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
-    private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
-
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -362,8 +357,8 @@ public class DeliverableFragment extends WorkorderFragment {
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
                 setLoading(true);
@@ -555,7 +550,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
@@ -564,7 +559,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 // removed because this doesn't work on my motorola
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
             }
         }
     };
