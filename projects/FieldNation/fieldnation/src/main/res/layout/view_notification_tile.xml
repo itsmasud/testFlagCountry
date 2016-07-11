@@ -17,7 +17,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="@string/placeholder_phrase" />
+        android:text="@string/placeholder_paragraph" />
 
     <TextView
         android:id="@+id/timebold_textview"

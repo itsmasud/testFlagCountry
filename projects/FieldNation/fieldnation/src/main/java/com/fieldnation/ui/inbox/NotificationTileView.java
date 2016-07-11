@@ -99,10 +99,10 @@ public class NotificationTileView extends RelativeLayout {
             if (_notification.getViewed() == 1) {
                 _timeTextView.setText(DateUtils.humanReadableAge(ISO8601.toCalendar(_notification.getDate())));
                 _timeTextView.setVisibility(VISIBLE);
-                _timeBoldTextView.setVisibility(GONE);
+                _timeBoldTextView.setVisibility(INVISIBLE);
             } else {
                 _timeBoldTextView.setText(DateUtils.humanReadableAge(ISO8601.toCalendar(_notification.getDate())));
-                _timeTextView.setVisibility(GONE);
+                _timeTextView.setVisibility(INVISIBLE);
                 _timeBoldTextView.setVisibility(VISIBLE);
             }
         } catch (Exception e) {
@@ -110,9 +110,18 @@ public class NotificationTileView extends RelativeLayout {
         }
 
         try {
-            _workorderTextView.setText("WO " + _notification.getWorkorderId());
+            if (_notification.getWorkorderId() != null) {
+                _workorderTextView.setText("WO " + _notification.getWorkorderId());
+                _workorderTextView.setVisibility(VISIBLE);
+            } else if (_notification.getWorkorder() != null && _notification.getWorkorder().getWorkorderId() != null) {
+                _workorderTextView.setText("WO " + _notification.getWorkorder().getWorkorderId());
+                _workorderTextView.setVisibility(VISIBLE);
+            } else {
+                _workorderTextView.setVisibility(GONE);
+            }
         } catch (Exception e) {
             Log.v(TAG, e);
+            _workorderTextView.setVisibility(GONE);
         }
 
         try {
@@ -140,14 +149,14 @@ public class NotificationTileView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_notification.getWorkorder() != null) {
+            if (_notification.getWorkorder() != null && _notification.getWorkorder().getWorkorderId() != null) {
                 Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorder().getWorkorderId());
                 getContext().startActivity(intent);
             } else if (_notification.getWorkorderId() != null) {
                 Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_NOTIFICATIONS);
+                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorderId());
                 getContext().startActivity(intent);
             } else if (_span != null) {
