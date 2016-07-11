@@ -4,17 +4,19 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.widget.Toast;
+import android.view.View;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
@@ -27,8 +29,20 @@ public class EditSearchActivity extends AuthActionBarActivity {
     private SearchEditText _searchEditText;
     private RefreshView _loadingView;
 
+    // Dialog
+    private OneButtonDialog _notAvailableDialog;
+
     // Services
     private WorkorderClient _workorderClient;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ActionBarDrawerView actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
+        Toolbar toolbar = actionBarView.getToolbar();
+        toolbar.setNavigationIcon(R.drawable.back_arrow);
+        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+    }
 
     @Override
     public int getLayoutResource() {
@@ -37,10 +51,13 @@ public class EditSearchActivity extends AuthActionBarActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+        setTitle(R.string.work_order_search);
         _searchEditText = (SearchEditText) findViewById(R.id.searchedittext);
         _searchEditText.setListener(_searchEditText_listener);
 
         _loadingView = (RefreshView) findViewById(R.id.loading_view);
+
+        _notAvailableDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":notAvailableDialog");
     }
 
     @Override
@@ -55,6 +72,10 @@ public class EditSearchActivity extends AuthActionBarActivity {
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+
+        _notAvailableDialog.setData(getString(R.string.not_available),
+                getString(R.string.workorder_not_found),
+                getString(R.string.btn_close), null);
     }
 
     @Override
@@ -74,6 +95,13 @@ public class EditSearchActivity extends AuthActionBarActivity {
         }
     };
 
+    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
+
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -83,7 +111,7 @@ public class EditSearchActivity extends AuthActionBarActivity {
         public void onGet(Workorder workorder, boolean failed, boolean isCached) {
             _loadingView.refreshComplete();
             if (workorder == null || failed) {
-                ToastClient.toast(App.get(), "Couldn't find work order, please try again.", Toast.LENGTH_SHORT);
+                _notAvailableDialog.show();
             } else {
                 _workorderClient.unsubGet(workorder.getWorkorderId());
                 startActivity(
@@ -95,6 +123,7 @@ public class EditSearchActivity extends AuthActionBarActivity {
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, EditSearchActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);

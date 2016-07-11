@@ -31,8 +31,6 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
-import com.fieldnation.ui.inbox.InboxActivity;
-import com.fieldnation.ui.search.EditSearchActivity;
 
 /**
  * This is the base of all the activities in this project. It provides
@@ -132,9 +130,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
-        _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
-                "OK", _notProvider_listener);
+        _notProviderDialog.setData(getString(R.string.user_not_supported),
+                getString(R.string.buyer_not_supported),
+                getString(R.string.btn_ok), _notProvider_listener);
     }
 
     @Override

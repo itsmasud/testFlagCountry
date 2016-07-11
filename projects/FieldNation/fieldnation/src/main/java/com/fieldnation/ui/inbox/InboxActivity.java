@@ -14,7 +14,6 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
-import com.fieldnation.ui.search.EditSearchActivity;
 
 import java.util.List;
 
@@ -109,6 +108,7 @@ public class InboxActivity extends TabActionBarFragmentActivity {
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, InboxActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
