@@ -103,10 +103,10 @@ public class MessageTileView extends RelativeLayout {
             if (_message.isRead()) {
                 _timeTextView.setText(DateUtils.humanReadableAge(ISO8601.toCalendar(_message.getDate())));
                 _timeTextView.setVisibility(VISIBLE);
-                _timeBoldTextView.setVisibility(GONE);
+                _timeBoldTextView.setVisibility(INVISIBLE);
             } else {
                 _timeBoldTextView.setText(DateUtils.humanReadableAge(ISO8601.toCalendar(_message.getDate())));
-                _timeTextView.setVisibility(GONE);
+                _timeTextView.setVisibility(INVISIBLE);
                 _timeBoldTextView.setVisibility(VISIBLE);
             }
         } catch (Exception e) {
@@ -114,9 +114,15 @@ public class MessageTileView extends RelativeLayout {
         }
 
         try {
-            _workorderTextView.setText("WO " + _message.getWorkorderId());
+            if (_message.getWorkorderId() != null) {
+                _workorderTextView.setText("WO " + _message.getWorkorderId());
+                _workorderTextView.setVisibility(VISIBLE);
+            } else {
+                _workorderTextView.setVisibility(GONE);
+            }
         } catch (Exception e) {
             Log.v(TAG, e);
+            _workorderTextView.setVisibility(GONE);
         }
 
         try {
