@@ -28,6 +28,7 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.LeavingActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -755,6 +756,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
             _markIncompleteDialog.show(workorder);
+        }
+
+        @Override
+        public void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder) {
+            LeavingActivity.start(getActivity(), R.string.update_payment_info, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 

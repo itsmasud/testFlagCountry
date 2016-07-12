@@ -124,6 +124,7 @@
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
+    <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
@@ -526,6 +527,7 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="tracking_number">Tracking number</string>
     <string name="try_adding_to_your_profile">Try adding to your profile</string>
+    <string name="update_payment_info">Update your payment info</string>
     <string name="uploading">Uploading…</string>
     <string name="user_not_supported">User Not Supported</string>
     <string name="valid_until">Valid until</string>
