@@ -500,8 +500,9 @@ public class WorkorderCardView extends RelativeLayout {
 
         } else if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.PAID) {
             _priceTextView.setTextColor(getResources().getColor(R.color.fn_accent_color));
-            _stateTextView.setText("Paid");
+            _stateTextView.setText(R.string.paid);
             _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
+
         } else {
             if (pay.isBlendedRate()) {
                 _price2TextView.setText(misc.toCurrency(pay.getBlendedStartRate()));
