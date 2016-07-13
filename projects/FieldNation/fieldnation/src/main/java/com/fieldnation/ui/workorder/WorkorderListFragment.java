@@ -726,10 +726,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             com.fieldnation.data.workorder.Location location = workorder.getLocation();
             if (location != null) {
                 try {
-                    GoogleAnalyticsTopicClient
-                            .dispatchEvent(App.get(), getGaLabel(),
-                                    GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                    "WorkFragment", 1);
+                    GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                            GoogleAnalyticsTopicClient.EventAction.START_MAP, "WorkFragment", 1);
                     String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                     String _uriString = "geo:0,0?q=" + _fullAddress;
                     Uri _uri = Uri.parse(_uriString);
@@ -743,7 +741,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     e.printStackTrace();
                 }
             }
-
         }
 
         @Override
@@ -760,7 +757,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder) {
-            LeavingActivity.start(getActivity(), R.string.update_payment_info, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
+            LeavingActivity.start(getActivity(), R.string.update_your_payment_info, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 

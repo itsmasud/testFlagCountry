@@ -315,6 +315,27 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     private void populateSchedule() {
+        try {
+            if (_workorder.getWorkorderStatus() == WorkorderStatus.PAID
+                    || _workorder.getWorkorderStatus() == WorkorderStatus.COMPLETED
+                    || _workorder.getWorkorderStatus() == WorkorderStatus.APPROVED) {
+                if (!misc.isEmptyOrNull(_workorder.getCompleteTime())) {
+                    Calendar completeCal = ISO8601.toCalendar(_workorder.getCompleteTime());
+                    long completeTime = completeCal.getTimeInMillis();
+
+                    if ((completeTime - System.currentTimeMillis()) / 3600000L <= 24) {
+                        _timeTextView.setText(DateUtils.formatTime(completeCal, false));
+                        _extraTextView.setText(R.string.work_complete);
+                    } else {
+                        _timeTextView.setText(DateUtils.formatDate(completeCal));
+                        _extraTextView.setText(R.string.work_complete);
+                    }
+                    return;
+                }
+            }
+        } catch (Exception ex) {
+        }
+
         // date/time rules.
         // if date/time is <= now, then red text, display hour/min late #a21623
         // if date/time is within 1 hr of now, show min counter fn_orange color
@@ -483,19 +504,19 @@ public class WorkorderCardView extends RelativeLayout {
         Pay pay = _workorder.getPay();
         if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.INREVIEW
                 || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.PENDINGREVIEW) {
-            _stateTextView.setText("Waiting for Approval");
+            _stateTextView.setText(R.string.waiting_for_approval);
             _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
             if (!_workorder.hasValidPaymentInfo()) {
                 _priceTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                _stateTextView.setText("Update Payment Info");
+                _stateTextView.setText(R.string.update_payment_info);
             }
 
         } else if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.APPROVED_PROCESSINGPAYMENT) {
-            _stateTextView.setText("Payment Pending");
+            _stateTextView.setText(R.string.payment_pending);
             _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
             if (!_workorder.hasValidPaymentInfo()) {
                 _priceTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                _stateTextView.setText("Update Payment Info");
+                _stateTextView.setText(R.string.update_payment_info);
             }
 
         } else if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.PAID) {
