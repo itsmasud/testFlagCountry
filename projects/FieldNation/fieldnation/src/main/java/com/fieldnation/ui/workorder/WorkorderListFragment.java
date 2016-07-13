@@ -28,6 +28,7 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.LeavingActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -725,10 +726,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             com.fieldnation.data.workorder.Location location = workorder.getLocation();
             if (location != null) {
                 try {
-                    GoogleAnalyticsTopicClient
-                            .dispatchEvent(App.get(), getGaLabel(),
-                                    GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                    "WorkFragment", 1);
+                    GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                            GoogleAnalyticsTopicClient.EventAction.START_MAP, "WorkFragment", 1);
                     String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                     String _uriString = "geo:0,0?q=" + _fullAddress;
                     Uri _uri = Uri.parse(_uriString);
@@ -742,7 +741,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     e.printStackTrace();
                 }
             }
-
         }
 
         @Override
@@ -755,6 +753,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
             _markIncompleteDialog.show(workorder);
+        }
+
+        @Override
+        public void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder) {
+            LeavingActivity.start(getActivity(), R.string.update_your_payment_info, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 

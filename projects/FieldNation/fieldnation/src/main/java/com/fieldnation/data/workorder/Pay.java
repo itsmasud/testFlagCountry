@@ -45,6 +45,8 @@ public class Pay implements Parcelable {
     private Double _perDevice;
     @Json(name = "perHour")
     private Double _perHour;
+    @Json(name = "totalPayment")
+    private Double _totalPayment;
 
     public Pay() {
     }
@@ -227,6 +229,10 @@ public class Pay implements Parcelable {
 
     public boolean isPerDeviceRate() {
         return "Per Device".equals(getPayRateBasis());
+    }
+
+    public Double getTotalPayment() {
+        return _totalPayment;
     }
 
     /*-*********************************************-*/
