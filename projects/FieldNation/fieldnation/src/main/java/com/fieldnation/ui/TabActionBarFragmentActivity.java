@@ -84,8 +84,7 @@ public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity
     };
 
     public void switchFragment(int position) {
-        _tabListView.setSelected(position);
-        getFragment(position).isShowing();
+        _viewPager.setCurrentItem(position);
     }
 
     public interface TabFragment {
