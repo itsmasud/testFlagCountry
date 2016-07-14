@@ -645,6 +645,23 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
         delete(list);
     }
 
+    public static boolean flushAllOfType(String objectTypeName) {
+        boolean success = false;
+        synchronized (TAG) {
+            ObjectStoreSqlHelper helper = ObjectStoreSqlHelper.getInstance(App.get());
+            SQLiteDatabase db = helper.getWritableDatabase();
+            try {
+                success = db.delete(
+                        ObjectStoreSqlHelper.TABLE_NAME,
+                        Column.OBJ_NAME + " = ?",
+                        new String[]{objectTypeName}) > 0;
+            } finally {
+                //db.close();
+            }
+        }
+        return success;
+    }
+
     public static boolean delete(long profileId, String objectTypeName, long objkey) {
         return delete(profileId, objectTypeName, objkey + "");
     }

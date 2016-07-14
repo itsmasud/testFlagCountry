@@ -157,6 +157,10 @@ public class OAuth implements Parcelable {
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
     }
 
+    public static void flushAll() {
+        StoredObject.flushAllOfType("OAuthToken");
+    }
+
     public static OAuth lookup(String username) {
         try {
             StoredObject obj = StoredObject.get(0, "OAuthToken", username);
