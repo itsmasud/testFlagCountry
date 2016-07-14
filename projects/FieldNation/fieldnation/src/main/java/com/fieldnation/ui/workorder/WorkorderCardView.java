@@ -323,7 +323,7 @@ public class WorkorderCardView extends RelativeLayout {
                     Calendar completeCal = ISO8601.toCalendar(_workorder.getCompleteTime());
                     long completeTime = completeCal.getTimeInMillis();
 
-                    if ((completeTime - System.currentTimeMillis()) / 3600000L <= 24) {
+                    if ((System.currentTimeMillis() - completeTime) / 3600000L <= 24) {
                         _timeTextView.setText(DateUtils.formatTime(completeCal, false));
                         _extraTextView.setText(R.string.work_complete);
                     } else {
