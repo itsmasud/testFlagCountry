@@ -330,10 +330,6 @@ public class WorkorderCardView extends RelativeLayout {
                         _timeTextView.setText(DateUtils.formatDate(completeCal));
                         _extraTextView.setText(R.string.marked_complete);
                     }
-
-                    if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.PENDINGREVIEW) {
-                        _extraTextView.setText(R.string.waiting_for_approval);
-                    }
                     return;
                 }
             }
