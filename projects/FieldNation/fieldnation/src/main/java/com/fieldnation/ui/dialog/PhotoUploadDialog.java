@@ -3,7 +3,6 @@ package com.fieldnation.ui.dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -276,7 +275,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
                 return;
             }
 
-            if (!_newFileName.endsWith(_extension)) {
+            if (!misc.isEmptyOrNull(_extension) && !_newFileName.endsWith(_extension)) {
                 _newFileName += _extension;
             }
 
