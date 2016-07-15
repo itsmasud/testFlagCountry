@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -19,11 +19,10 @@
             style="@style/Text_Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="4dp"
             android:text="Status" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <com.fieldnation.ui.HintSpinner
             android:id="@+id/status_spinner"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
@@ -35,11 +34,10 @@
             style="@style/Text_Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="4dp"
             android:text="Location" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <com.fieldnation.ui.HintSpinner
             android:id="@+id/location_spinner"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"
@@ -47,15 +45,24 @@
             android:layout_below="@+id/status_spinner"
             android:layout_marginBottom="16dp" />
 
+        <EditText
+            android:id="@+id/otherLocation_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:hint="Enter City, State or zip code"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:visibility="gone" />
+
         <TextView
             style="@style/Text_Caption"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
             android:layout_marginLeft="4dp"
             android:text="Distance" />
 
-        <android.support.v7.widget.AppCompatSpinner
+        <com.fieldnation.ui.HintSpinner
             android:id="@+id/distance_spinner"
             style="@style/Widget.AppCompat.Spinner.Underlined"
             android:layout_width="match_parent"

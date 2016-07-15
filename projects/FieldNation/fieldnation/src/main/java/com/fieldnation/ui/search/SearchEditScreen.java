@@ -1,13 +1,12 @@
 package com.fieldnation.ui.search;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatSpinner;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
@@ -16,8 +15,11 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 /**
  * Created by Michael on 7/14/2016.
@@ -25,19 +27,37 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 public class SearchEditScreen extends RelativeLayout {
     private static final String TAG = "SearchEditScreen";
 
+    private static final Integer[] DISTANCES = new Integer[]{
+            10, 20, 40, 60, 100, 150, 200, 300, 500
+    };
+
+    private static final WorkorderDataSelector[] SELECTORS = new WorkorderDataSelector[]{
+            WorkorderDataSelector.ASSIGNED,
+            WorkorderDataSelector.AVAILABLE,
+            WorkorderDataSelector.CANCELED,
+            WorkorderDataSelector.COMPLETED,
+            WorkorderDataSelector.REQUESTED,
+            WorkorderDataSelector.ROUTED
+    };
+
     // UI
     private RefreshView _loadingView;
     private SearchEditText _searchEditText;
-    private AppCompatSpinner _statusSpinner;
+    private HintSpinner _statusSpinner;
+    private HintSpinner _locationSpinner;
+    private EditText _otherLocationEditText;
+    private HintSpinner _distanceSpinner;
     private Button _actionButton;
 
     // Services
     private WorkorderClient _workorderClient;
 
-    // Crap
+    // Data
     private Listener _listener;
 
-
+    /*-**********************************************-*/
+    /*-                  Life Cycle                  -*/
+    /*-**********************************************-*/
     public SearchEditScreen(Context context) {
         super(context);
         init();
@@ -58,18 +78,34 @@ public class SearchEditScreen extends RelativeLayout {
 
         if (isInEditMode())
             return;
+
         _loadingView = (RefreshView) findViewById(R.id.loading_view);
 
         _searchEditText = (SearchEditText) findViewById(R.id.searchedittext);
         _searchEditText.setListener(_searchEditText_listener);
 
-        _statusSpinner = (AppCompatSpinner) findViewById(R.id.status_spinner);
+        _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
-        ArrayAdapter adapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.dialog_block_reasons, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
+        _statusSpinner.setSelection(0);
+
+        _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
+        _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _locationSpinner.setAdapter(adapter);
+        _locationSpinner.setSelection(0);
+
+        _otherLocationEditText = (EditText) findViewById(R.id.otherLocation_edittext);
+
+        _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
+        _distanceSpinner.setOnItemSelectedListener(_distanceSpinner_onItemSelected);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        _distanceSpinner.setAdapter(adapter);
+        _distanceSpinner.setSelection(0);
 
         _actionButton = (Button) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
@@ -128,7 +164,30 @@ public class SearchEditScreen extends RelativeLayout {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
 
+    private final AdapterView.OnItemSelectedListener _locationSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            if (position == 2)
+                _otherLocationEditText.setVisibility(VISIBLE);
+            else
+                _otherLocationEditText.setVisibility(GONE);
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final AdapterView.OnItemSelectedListener _distanceSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
         }
     };
 

@@ -708,18 +708,6 @@
         <item>Ship From Site</item>
     </string-array>
 
-    <!-- workorder status list -->
-    <string-array name="workorder_status">
-        <item>Available</item>
-        <item>Assigned</item>
-        <item>In Progress</item>
-        <item>Completed</item>
-        <item>Canceled</item>
-        <item>Paid</item>
-        <item>Approved</item>
-    </string-array>
-
-
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
@@ -783,4 +771,32 @@
         <item>App Feedback</item>
         <item>Help/Support</item>
     </string-array>
+
+    <string-array name="search_status">
+        <item>Assigned</item>
+        <item>Available</item>
+        <item>Canceled</item>
+        <item>Completed</item>
+        <item>Requested</item>
+        <item>Routed</item>
+    </string-array>
+
+    <string-array name="search_location">
+        <item>Profile</item>
+        <item>Current</item>
+        <item>Other</item>
+    </string-array>
+
+    <string-array name="search_distances">
+        <item>10 miles</item>
+        <item>20 miles</item>
+        <item>40 miles</item>
+        <item>60 miles</item>
+        <item>100 miles</item>
+        <item>150 miles</item>
+        <item>200 miles</item>
+        <item>300 miles</item>
+        <item>500 miles</item>
+    </string-array>
+
 </resources>
