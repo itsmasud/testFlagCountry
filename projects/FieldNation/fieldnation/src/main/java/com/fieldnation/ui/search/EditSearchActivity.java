@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Button;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
@@ -28,6 +29,7 @@ public class EditSearchActivity extends AuthActionBarActivity {
     // UI
     private SearchEditText _searchEditText;
     private RefreshView _loadingView;
+    private Button _actionButton;
 
     // Dialog
     private OneButtonDialog _notAvailableDialog;
@@ -57,6 +59,9 @@ public class EditSearchActivity extends AuthActionBarActivity {
 
         _loadingView = (RefreshView) findViewById(R.id.loading_view);
 
+        _actionButton = (Button) findViewById(R.id.action_button);
+        _actionButton.setOnClickListener(_action_onClick);
+
         _notAvailableDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":notAvailableDialog");
     }
 
@@ -64,6 +69,13 @@ public class EditSearchActivity extends AuthActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.search, menu);
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+
+        _searchEditText.setText("");
     }
 
     @Override
@@ -86,12 +98,29 @@ public class EditSearchActivity extends AuthActionBarActivity {
             _workorderClient.disconnect(App.get());
     }
 
+    private final View.OnClickListener _action_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                _workorderClient.subGet(Long.parseLong(_searchEditText.getText()));
+                WorkorderClient.get(App.get(), Long.parseLong(_searchEditText.getText()), false);
+                _loadingView.startRefreshing();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
     private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
         @Override
         public void startSearch(String searchString) {
-            _loadingView.startRefreshing();
-            _workorderClient.subGet(Long.parseLong(searchString));
-            WorkorderClient.get(App.get(), Long.parseLong(searchString), false);
+            try {
+                _workorderClient.subGet(Long.parseLong(searchString));
+                WorkorderClient.get(App.get(), Long.parseLong(searchString), false);
+                _loadingView.startRefreshing();
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 

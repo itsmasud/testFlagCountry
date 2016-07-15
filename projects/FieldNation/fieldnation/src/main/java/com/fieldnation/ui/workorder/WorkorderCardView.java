@@ -156,11 +156,11 @@ public class WorkorderCardView extends RelativeLayout {
     }
 
     public void setIsBundle(boolean isBundle) {
-        if (isBundle) {
+        if (isBundle)
             _bundleIconFontView.setVisibility(VISIBLE);
-        } else {
+        else
             _bundleIconFontView.setVisibility(GONE);
-        }
+
         _isBundle = isBundle;
     }
 
@@ -264,6 +264,9 @@ public class WorkorderCardView extends RelativeLayout {
             case Workorder.BUTTON_ACTION_MARK_INCOMPLETE:
                 _listener.actionMarkIncomplete(WorkorderCardView.this, _workorder);
                 break;
+            case Workorder.BUTTON_ACTION_UPDATE_PAYMENT_INFO:
+                _listener.actionUpdatePaymentInfo(WorkorderCardView.this, _workorder);
+                break;
         }
     }
 
@@ -273,16 +276,14 @@ public class WorkorderCardView extends RelativeLayout {
     private void populateUi() {
         if (_workorder == null)
             return;
-        refreshNormal();
-    }
 
-    private void refreshNormal() {
         _time2TextView.setText("");
         _extra2TextView.setText("");
         _price2TextView.setText("");
         _state2TextView.setText("");
         _price_layout.setGravity(Gravity.RIGHT);
 
+        // Bundle stuffs
         if (_workorder.isBundle()) {
             _bundleIconFontView.setVisibility(VISIBLE);
         } else {
@@ -295,6 +296,7 @@ public class WorkorderCardView extends RelativeLayout {
             _titleTextView.setText(title);
         }
 
+        // Company name
         if (!misc.isEmptyOrNull(_workorder.getCompanyName())) {
             _companyNameTextView.setText(_workorder.getCompanyName());
         } else if (_workorder.getLocation() != null
@@ -305,7 +307,34 @@ public class WorkorderCardView extends RelativeLayout {
         }
 
         _workorderIdTextView.setText(getResources().getString(R.string.wo_id_x, _workorder.getWorkorderId()));
-        _extraTextView.setVisibility(INVISIBLE);
+
+        populateSchedule();
+        populatePay();
+        populateLeftActionButton();
+        populateRightActionButton();
+    }
+
+    private void populateSchedule() {
+        try {
+            if (_workorder.getWorkorderStatus() == WorkorderStatus.PAID
+                    || _workorder.getWorkorderStatus() == WorkorderStatus.COMPLETED
+                    || _workorder.getWorkorderStatus() == WorkorderStatus.APPROVED) {
+                if (!misc.isEmptyOrNull(_workorder.getCompleteTime())) {
+                    Calendar completeCal = ISO8601.toCalendar(_workorder.getCompleteTime());
+                    long completeTime = completeCal.getTimeInMillis();
+
+                    if ((System.currentTimeMillis() - completeTime) / 3600000L <= 24) {
+                        _timeTextView.setText(DateUtils.formatTimeForCF(completeCal).toUpperCase());
+                        _extraTextView.setText(R.string.marked_complete);
+                    } else {
+                        _timeTextView.setText(DateUtils.formatDate(completeCal));
+                        _extraTextView.setText(R.string.marked_complete);
+                    }
+                    return;
+                }
+            }
+        } catch (Exception ex) {
+        }
 
         // date/time rules.
         // if date/time is <= now, then red text, display hour/min late #a21623
@@ -319,157 +348,183 @@ public class WorkorderCardView extends RelativeLayout {
 
         _extraTextView.setVisibility(INVISIBLE);
         try {
-            if (schedule != null) {
-                long startTime = ISO8601.toUtc(schedule.getStartTime());
-                _timeTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-
-                if (schedule.isExact()) {
-                    Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
-                    _timeTextView.setVisibility(VISIBLE);
-                    _extraTextView.setVisibility(VISIBLE);
-
-                    if (startTime - System.currentTimeMillis() <= 0
-                            && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED)
-                            && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
-                            && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
-                        _timeTextView.setVisibility(VISIBLE);
-                        _timeTextView.setText(
-                                getResources().getString(
-                                        R.string.time_late,
-                                        DateUtils.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))
-                                )
-                        );
-                        _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
-                        if (System.currentTimeMillis() - startTime > 86400000L) {
-                            _extraTextView.setText(schedule.getFormatedDate());
-                        } else {
-                            _extraTextView.setText(schedule.getFormatedTime());
-                        }
-                    } else if (startTime - System.currentTimeMillis() <= 3600000
-                            && startTime - System.currentTimeMillis() > 0
-                            && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
-                            && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
-                            && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                            || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
-                            || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
-                        _timeTextView.setVisibility(VISIBLE);
-                        _timeTextView.setText(
-                                getResources().getString(
-                                        R.string.in_time,
-                                        DateUtils.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))
-                                )
-                        );
-                        _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
-                        _extraTextView.setText(schedule.getFormatedTime());
-
-                    } else if (startTime < System.currentTimeMillis()) {
-                        _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
-                        _extraTextView.setText(schedule.getFormatedTime());
-
-                    } else if ((startTime - System.currentTimeMillis()) / 3600000L <= 24) {
-                        _timeTextView.setText(schedule.getFormatedTime());
-                        _extraTextView.setText(schedule.getFormatedDate());
-
-                    } else if ((startTime - System.currentTimeMillis()) / 86400000L < 6) {
-                        _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
-                        _extraTextView.setText(schedule.getFormatedTime());
-
-                    } else {
-                        _extraTextView.setText(schedule.getFormatedTime());
-                        _timeTextView.setText(new SimpleDateFormat("MMMM d", Locale.getDefault()).format(sCal.getTime()));
-                    }
-
-                } else {
-                    long endTime = ISO8601.toUtc(schedule.getEndTime());
-                    Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
-                    Calendar eCal = ISO8601.toCalendar(schedule.getEndTime());
-                    _timeTextView.setVisibility(VISIBLE);
-                    _extraTextView.setVisibility(VISIBLE);
-
-                    if (endTime < System.currentTimeMillis()) {
-                        if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
-                                || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
-                            if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
-                                _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
-                            } else {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
-                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
-                            }
-                        } else {
-                            _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
-                            _extraTextView.setText(schedule.getFormatedTime());
-                        }
-
-                    } else if ((endTime - System.currentTimeMillis()) / 86400000L < 6) {
-                        String sDay = new SimpleDateFormat("c", Locale.getDefault()).format(sCal.getTime());
-                        String eDay = new SimpleDateFormat("c", Locale.getDefault()).format(eCal.getTime());
-
-                        if (sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
-                            if (eDay.equals(sDay)) {
-                                _timeTextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
-                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
-
-                            } else {
-                                _timeTextView.setText(sDay + " - ");
-                                _time2TextView.setText(eDay);
-                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
-                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
-                            }
-                        } else {
-                            if (DateUtils.isToday(sCal)) {
-                                _timeTextView.setText(R.string.today);
-                                _extraTextView.setText(schedule.getFormatedTime());
-                            } else if (DateUtils.isTomorrow(sCal)) {
-                                _timeTextView.setText(R.string.tomorrow);
-                                _extraTextView.setText(schedule.getFormatedTime());
-                            } else {
-                                _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
-                                _extraTextView.setText(schedule.getFormatedTime());
-                            }
-                        }
-                    } else {
-                        if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
-                                || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
-                            if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
-                                _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
-
-                            } else {
-                                _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
-                                _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
-                                _extraTextView.setText(DateUtils.formatTime(sCal, false));
-                                _extra2TextView.setText(DateUtils.formatTime(eCal, false));
-                            }
-
-                        } else {
-                            _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
-                            _extraTextView.setText(schedule.getFormatedTime());
-                        }
-                    }
-                }
-            } else {
+            if (schedule == null) {
                 _timeTextView.setVisibility(INVISIBLE);
                 _extraTextView.setVisibility(INVISIBLE);
+                return;
+            }
+
+            long startTime = ISO8601.toUtc(schedule.getStartTime());
+            _timeTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+
+            if (schedule.isExact()) {
+                Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
+                _timeTextView.setVisibility(VISIBLE);
+                _extraTextView.setVisibility(VISIBLE);
+
+                if (startTime - System.currentTimeMillis() <= 0
+                        && _workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                        && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
+                        && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
+                    _timeTextView.setVisibility(VISIBLE);
+                    _timeTextView.setText(getResources().getString(R.string.time_late,
+                            DateUtils.toRoundDuration(Math.abs(System.currentTimeMillis() - startTime))));
+                    _timeTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                    if (System.currentTimeMillis() - startTime > 86400000L)
+                        _extraTextView.setText(schedule.getFormatedDate());
+                    else
+                        _extraTextView.setText(schedule.getFormatedTime());
+
+                } else if (startTime - System.currentTimeMillis() <= 3600000
+                        && startTime - System.currentTimeMillis() > 0
+                        && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_UNACKNOWLEDGED
+                        && _workorder.getWorkorderSubstatus() != WorkorderSubstatus.ONHOLD_ACKNOWLEDGED
+                        && (_workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.INPROGRESS
+                        || _workorder.getWorkorderStatus() == WorkorderStatus.AVAILABLE)) {
+                    _timeTextView.setVisibility(VISIBLE);
+                    _timeTextView.setText(getResources().getString(R.string.in_time,
+                            DateUtils.toRoundDuration(Math.abs(startTime - System.currentTimeMillis()))));
+                    _timeTextView.setTextColor(getResources().getColor(R.color.fn_brandcolor));
+                    _extraTextView.setText(schedule.getFormatedTime());
+
+                } else if (startTime < System.currentTimeMillis()) {
+                    _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
+                    _extraTextView.setText(schedule.getFormatedTime());
+
+                } else if ((startTime - System.currentTimeMillis()) / 3600000L <= 24) {
+                    _timeTextView.setText(schedule.getFormatedTime());
+                    _extraTextView.setText(schedule.getFormatedDate());
+
+                } else if ((startTime - System.currentTimeMillis()) / 86400000L < 6) {
+                    _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
+                    _extraTextView.setText(schedule.getFormatedTime());
+
+                } else {
+                    _extraTextView.setText(schedule.getFormatedTime());
+                    _timeTextView.setText(new SimpleDateFormat("MMMM d", Locale.getDefault()).format(sCal.getTime()));
+                }
+            } else {
+                long endTime = ISO8601.toUtc(schedule.getEndTime());
+                Calendar sCal = ISO8601.toCalendar(schedule.getStartTime());
+                Calendar eCal = ISO8601.toCalendar(schedule.getEndTime());
+                _timeTextView.setVisibility(VISIBLE);
+                _extraTextView.setVisibility(VISIBLE);
+
+                if (endTime < System.currentTimeMillis()) {
+                    if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
+                            || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
+                        if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                            _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
+                            _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
+                            _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
+
+                        } else {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                            _time2TextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(eCal.getTime()));
+                            _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                            _extra2TextView.setText(DateUtils.formatTime(eCal, false));
+                        }
+                    } else {
+                        _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
+                        _extraTextView.setText(schedule.getFormatedTime());
+                    }
+
+                } else if ((endTime - System.currentTimeMillis()) / 86400000L < 6) {
+                    String sDay = new SimpleDateFormat("c", Locale.getDefault()).format(sCal.getTime());
+                    String eDay = new SimpleDateFormat("c", Locale.getDefault()).format(eCal.getTime());
+
+                    if (sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
+                        if (eDay.equals(sDay)) {
+                            _timeTextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                            _time2TextView.setText(new SimpleDateFormat("c d", Locale.getDefault()).format(eCal.getTime()));
+                            _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                            _extra2TextView.setText(DateUtils.formatTime(eCal, false));
+
+                        } else {
+                            _timeTextView.setText(sDay + " - ");
+                            _time2TextView.setText(eDay);
+                            _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                            _extra2TextView.setText(DateUtils.formatTime(eCal, false));
+                        }
+                    } else {
+                        if (DateUtils.isToday(sCal)) {
+                            _timeTextView.setText(R.string.today);
+                            _extraTextView.setText(schedule.getFormatedTime());
+
+                        } else if (DateUtils.isTomorrow(sCal)) {
+                            _timeTextView.setText(R.string.tomorrow);
+                            _extraTextView.setText(schedule.getFormatedTime());
+
+                        } else {
+                            _timeTextView.setText(new SimpleDateFormat("EEEE", Locale.getDefault()).format(sCal.getTime()));
+                            _extraTextView.setText(schedule.getFormatedTime());
+                        }
+                    }
+                } else {
+                    if (sCal.get(Calendar.MONTH) != eCal.get(Calendar.MONTH)
+                            || sCal.get(Calendar.DAY_OF_MONTH) != eCal.get(Calendar.DAY_OF_MONTH)) {
+                        if (sCal.get(Calendar.YEAR) != eCal.get(Calendar.YEAR)) {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                            _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
+                            _extraTextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(sCal.getTime()).toLowerCase());
+                            _extra2TextView.setText(new SimpleDateFormat("h:mma y", Locale.getDefault()).format(eCal.getTime()).toLowerCase());
+
+                        } else {
+                            _timeTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(sCal.getTime()) + " - ");
+                            _time2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(eCal.getTime()));
+                            _extraTextView.setText(DateUtils.formatTime(sCal, false));
+                            _extra2TextView.setText(DateUtils.formatTime(eCal, false));
+                        }
+                    } else {
+                        _timeTextView.setText(new SimpleDateFormat("MMM d, y", Locale.getDefault()).format(sCal.getTime()));
+                        _extraTextView.setText(schedule.getFormatedTime());
+                    }
+                }
             }
         } catch (Exception ex) {
             _timeTextView.setVisibility(INVISIBLE);
             _extraTextView.setVisibility(INVISIBLE);
         }
+    }
 
-        // formatting
+    private void populatePay() {
+        // formatting PAY
         // once paid, should be green (accent color)
         // if > 1000, then $1.xxK
-        if (_workorder.getPay() != null && !_workorder.getPay().hidePay()) {
-            Pay pay = _workorder.getPay();
+        if (_workorder.getPay() == null || _workorder.getPay().hidePay()) {
+            _priceTextView.setVisibility(INVISIBLE);
+            _stateTextView.setVisibility(INVISIBLE);
+            return;
+        }
+
+        _priceTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+
+        Pay pay = _workorder.getPay();
+        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.INREVIEW
+                || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.PENDINGREVIEW) {
+            _stateTextView.setText(R.string.waiting_for_approval);
+            _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
+            if (!_workorder.hasValidPaymentInfo()) {
+                _priceTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                _stateTextView.setText(R.string.update_payment_info);
+            }
+
+        } else if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.APPROVED_PROCESSINGPAYMENT) {
+            _stateTextView.setText(R.string.payment_pending);
+            _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
+            if (!_workorder.hasValidPaymentInfo()) {
+                _priceTextView.setTextColor(getResources().getColor(R.color.fn_red));
+                _stateTextView.setText(R.string.update_payment_info);
+            }
+
+        } else if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.PAID) {
+            _priceTextView.setTextColor(getResources().getColor(R.color.fn_accent_color));
+            _stateTextView.setText(R.string.paid);
+            _priceTextView.setText(misc.toCurrency(pay.getTotalPayment()));
+
+        } else {
             if (pay.isBlendedRate()) {
                 _price2TextView.setText(misc.toCurrency(pay.getBlendedStartRate()));
                 _priceTextView.setText(misc.toCurrency(pay.getBlendedAdditionalRate()));
@@ -486,13 +541,13 @@ public class WorkorderCardView extends RelativeLayout {
                 _priceTextView.setText(misc.toCurrency(pay.getPerDevice()));
                 _stateTextView.setText(R.string.per_device);
             }
-            _priceTextView.setVisibility(VISIBLE);
-            _stateTextView.setVisibility(VISIBLE);
-        } else {
-            _priceTextView.setVisibility(INVISIBLE);
-            _stateTextView.setVisibility(INVISIBLE);
         }
+        _priceTextView.setVisibility(VISIBLE);
+        _stateTextView.setVisibility(VISIBLE);
+    }
 
+    private void populateLeftActionButton() {
+        // Left action button
         _remoteWorkTextView.setVisibility(GONE);
         switch (_workorder.getLeftButtonAction()) {
             case Workorder.BUTTON_ACTION_NONE:
@@ -504,16 +559,19 @@ public class WorkorderCardView extends RelativeLayout {
                     _leftButton.setVisibility(GONE);
                     _remoteWorkTextView.setVisibility(VISIBLE);
                     _remoteWorkTextView.setText(R.string.btn_no_location);
+
                 } else if (_workorder.getIsRemoteWork()) {
                     _leftButton.setVisibility(GONE);
                     _remoteWorkTextView.setVisibility(VISIBLE);
                     _remoteWorkTextView.setText(R.string.btn_remote_work);
+
                 } else {
                     SharedPreferences settings = App.get().getSharedPreferences();
                     if (settings.getString(getResources().getString(R.string.pref_key_workorder_card_location), "city_state").equals("city_state")
                             || (location.getGeo() == null || _gpsLocation == null)) {
                         _leftButton.setVisibility(VISIBLE);
                         _leftButton.setText((location.getCity() + ", " + location.getState()).toUpperCase());
+
                     } else {
                         _leftButton.setVisibility(VISIBLE);
 
@@ -535,12 +593,20 @@ public class WorkorderCardView extends RelativeLayout {
             default:
                 break;
         }
+    }
 
+    private void populateRightActionButton() {
+        // Right action button
         _rightWhiteButton.setVisibility(GONE);
         _rightGreenButton.setVisibility(GONE);
         _rightOrangeButton.setVisibility(GONE);
 
         switch (_workorder.getRightButtonAction()) {
+            case Workorder.BUTTON_ACTION_UPDATE_PAYMENT_INFO:
+                _rightWhiteButton.setVisibility(VISIBLE);
+                _rightWhiteButton.setText(R.string.btn_update_payment_info);
+                _rightWhiteButton.setEnabled(true);
+                break;
             case Workorder.BUTTON_ACTION_NONE:
                 if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
                     _rightWhiteButton.setText(R.string.btn_on_hold);
@@ -555,11 +621,10 @@ public class WorkorderCardView extends RelativeLayout {
                 break;
             case Workorder.BUTTON_ACTION_ACCEPT:
                 _rightOrangeButton.setVisibility(VISIBLE);
-                if (_workorder.isBundle()) {
+                if (_workorder.isBundle())
                     _rightOrangeButton.setText(R.string.btn_accept_bundle);
-                } else {
+                else
                     _rightOrangeButton.setText(R.string.btn_accept);
-                }
                 break;
             case Workorder.BUTTON_ACTION_WITHDRAW_REQUEST:
                 _rightWhiteButton.setVisibility(VISIBLE);
@@ -630,6 +695,8 @@ public class WorkorderCardView extends RelativeLayout {
         void actionReportProblem(WorkorderCardView view, Workorder workorder);
 
         void actionMarkIncomplete(WorkorderCardView view, Workorder workorder);
+
+        void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder);
     }
 
     public static class DefaultListener implements Listener {
@@ -687,6 +754,10 @@ public class WorkorderCardView extends RelativeLayout {
 
         @Override
         public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
+        }
+
+        @Override
+        public void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder) {
         }
     }
 }

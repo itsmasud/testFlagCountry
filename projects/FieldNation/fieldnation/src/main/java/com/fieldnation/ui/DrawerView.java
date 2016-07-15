@@ -442,7 +442,7 @@ public class DrawerView extends RelativeLayout {
 
         @Override
         public void onGotProfile(Profile profile) {
-            if (_profile == null || (long) profile.getUserId() != (long) _profile.getUserId()) {
+            if (profile != null) {
                 _profilePic = null;
                 _profile = profile;
 

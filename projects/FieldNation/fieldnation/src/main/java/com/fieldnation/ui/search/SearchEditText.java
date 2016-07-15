@@ -75,6 +75,14 @@ public class SearchEditText extends RelativeLayout {
         _listener = listener;
     }
 
+    public void setText(CharSequence charSequence) {
+        _searchTermEditText.setText(charSequence);
+    }
+
+    public String getText() {
+        return _searchTermEditText.getText().toString();
+    }
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();

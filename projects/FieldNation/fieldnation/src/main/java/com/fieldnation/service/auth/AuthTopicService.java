@@ -18,6 +18,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.profile.ProfileConstants;
+import com.fieldnation.service.objectstore.StoredObject;
 
 import java.util.List;
 
@@ -193,15 +195,18 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
         Log.v(TAG, "removeAccount");
         if (_account == null)
             return;
+        Log.v(TAG, "removeAccount 2");
+        OAuth.flushAll();
+        StoredObject.flushAllOfType(ProfileConstants.PSO_PROFILE);
 
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
             new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
             _account = null;
+            _authToken = null;
         } else if (_state == AuthState.NOT_AUTHENTICATED) {
             Log.v(TAG, "removeAccount do nothing");
-
         } else if (_state == AuthState.AUTHENTICATING) {
             // retry later if authenticating
             Log.v(TAG, "removeAccount retry later");
@@ -209,6 +214,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
             new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
             _account = null;
+            _authToken = null;
         }
     }
 

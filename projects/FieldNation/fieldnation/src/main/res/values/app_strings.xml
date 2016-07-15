@@ -123,6 +123,7 @@
     <string name="btn_view_payment">VIEW PAYMENT</string>
     <string name="btn_withdraw_request">WITHDRAW</string>
     <string name="btn_yes">YES</string>
+    <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
@@ -404,6 +405,7 @@
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
+    <string name="marked_complete">Marked Complete</string>
     <string name="marketplace_access">Marketplace access</string>
     <string name="marketplace_suspension">Marketplace suspension</string>
     <string name="max_devices">Max Devices</string>
@@ -479,6 +481,7 @@
     <string name="payment">Payment</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
+    <string name="payment_pending">Payment Pending</string>
     <string name="pay_rate_basis">Pay Rate Basis</string>
     <string name="pending">Pending</string>
     <string name="per_device">Per Device</string>
@@ -530,6 +533,8 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="tracking_number">Tracking number</string>
     <string name="try_adding_to_your_profile">Try adding to your profile</string>
+    <string name="update_your_payment_info">Update your payment info</string>
+    <string name="update_payment_info">Update Payment Info</string>
     <string name="uploading">Uploading…</string>
     <string name="user_not_supported">User Not Supported</string>
     <string name="valid_until">Valid until</string>
@@ -538,6 +543,7 @@
     <string name="view_standard_instructions">View Standard Instructions</string>
     <string name="view_customer_policies_and_procedures">View Customer Policies and Procedures</string>
     <string name="view_field_nation_terms">View Field Nation Terms</string>
+    <string name="waiting_for_approval">Waiting for Approval</string>
     <string name="were_there_clear_expectations">Were there clear expectations?</string>
     <string name="were_they_professional">Were they professional?</string>
     <string name="what_are_you_missing">What are you missing?</string>
@@ -555,6 +561,7 @@
     <string name="write_your_message">Write your message…</string>
     <string name="wo_id_x">WO ID: %1$s</string>
     <string name="wo_x">WO %1$s</string>
+    <string name="work_complete">Work Complete</string>
     <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
     <string name="workorder_not_found">The work order you are looking for has been assigned to another provider, canceled, or does not exist.</string>
     <string name="work_order_search">Work Order Search</string>

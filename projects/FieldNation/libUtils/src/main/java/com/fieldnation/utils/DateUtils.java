@@ -25,7 +25,7 @@ public class DateUtils {
         }
         // else show date
         else {
-            return new SimpleDateFormat("M/d/yy", Locale.getDefault()).format(past.getTime());
+            return new SimpleDateFormat("M/dd/yy", Locale.getDefault()).format(past.getTime());
         }
     }
 

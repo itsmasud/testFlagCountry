@@ -387,7 +387,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         Location loc = _workorder.getLocation();
         if (loc != null) {
             Geo geo = loc.getGeo();
-            if (geo != null && geo.getLongitude() != null) {
+            if (geo != null && geo.getLongitude() != null && geo.getLatitude() != null) {
                 endPos = new Position(geo.getLongitude(), geo.getLatitude());
                 if (geo.getObfuscated() || !geo.getPrecise()) {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),

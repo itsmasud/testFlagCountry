@@ -33,6 +33,7 @@ public class InboxActivity extends TabActionBarFragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
         ActionBarDrawerView actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
         Toolbar toolbar = actionBarView.getToolbar();
         toolbar.setNavigationIcon(R.drawable.back_arrow);
@@ -41,8 +42,17 @@ public class InboxActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+        Log.v(TAG, "onFinishCreate");
         setTitle(R.string.inbox);
         super.onFinishCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        Log.v(TAG, "onRestart");
+
+        switchFragment(0);
     }
 
     @Override
