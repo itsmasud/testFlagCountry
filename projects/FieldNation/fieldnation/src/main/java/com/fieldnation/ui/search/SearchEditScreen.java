@@ -20,6 +20,7 @@ import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 7/14/2016.
@@ -86,15 +87,19 @@ public class SearchEditScreen extends RelativeLayout {
 
         _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+                getContext(), R.array.search_status, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
         _statusSpinner.setSelection(0);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter = HintArrayAdapter.createFromResources(
+                getContext(), R.array.search_location, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _locationSpinner.setAdapter(adapter);
         _locationSpinner.setSelection(0);
 
@@ -102,8 +107,10 @@ public class SearchEditScreen extends RelativeLayout {
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
         _distanceSpinner.setOnItemSelectedListener(_distanceSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter = HintArrayAdapter.createFromResources(
+                getContext(), R.array.search_distances, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(
+                android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(0);
 
@@ -154,12 +161,26 @@ public class SearchEditScreen extends RelativeLayout {
                 Log.v(TAG, ex);
             }
         }
+
+        @Override
+        public void onTextChanged(CharSequence s) {
+            if (misc.isEmptyOrNull(s.toString())) {
+                _distanceSpinner.setEnabled(true);
+                _locationSpinner.setEnabled(true);
+                _statusSpinner.setEnabled(true);
+                _otherLocationEditText.setEnabled(true);
+            } else {
+                _distanceSpinner.setEnabled(false);
+                _locationSpinner.setEnabled(false);
+                _statusSpinner.setEnabled(false);
+                _otherLocationEditText.setEnabled(false);
+            }
+        }
     };
 
     private final AdapterView.OnItemSelectedListener _statusSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-
         }
 
         @Override
