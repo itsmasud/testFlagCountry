@@ -185,7 +185,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateAddressTile() {
-        if(_isMapHidden) return;
+        if (_isMapHidden) return;
         // Address info
         Location loc = _workorder.getLocation();
         if (loc == null)
@@ -253,7 +253,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 miles += route.getDistanceMi();
             }
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
-        } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude()!=null) {
+        } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude() != null && loc.getGeo().getLatitude() != null) {
             try {
                 Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
                 Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
@@ -265,10 +265,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             }
         } else if (loc.getGeo() == null) {
             _distanceTextView.setText(R.string.cannot_display_distance);
-        } else if(_isMapHidden){
+        } else if (_isMapHidden) {
             _distanceTextView.setText(getResources().getString(R.string.cant_calc_miles));
-        }
-        else {
+        } else {
             _distanceTextView.setText(R.string.fetching_distance);
         }
 
@@ -300,12 +299,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _distanceTextView.setVisibility(GONE);
             _noteTextView.setVisibility(GONE);
 
-           _mapImageView.setOnClickListener(null);
-           _addressLayout.setOnClickListener(null);
+            _mapImageView.setOnClickListener(null);
+            _addressLayout.setOnClickListener(null);
 
             return;
-        }
-        else if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+        } else if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -400,7 +398,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_endMarkerUrl));
                 }
-            }else {
+            } else {
                 // invalid location
                 _isMapHidden = true;
                 _loadingProgress.setVisibility(GONE);
@@ -445,7 +443,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onClick(View v) {
             Log.v(TAG, "_navigate_onClick");
 
-            if(((Button)v).getText().equals(getResources().getString(R.string.icon_gear))){
+            if (((Button) v).getText().equals(getResources().getString(R.string.icon_gear))) {
                 final Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -453,11 +451,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 return;
             }
 
-            if(((Button)v).getText().equals(getResources().getString(R.string.icon_messages_solid))){
+            if (((Button) v).getText().equals(getResources().getString(R.string.icon_messages_solid))) {
                 Intent intent = new Intent(getContext(), WorkorderActivity.class);
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK );
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 App.get().startActivity(intent);
                 return;
             }
