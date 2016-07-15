@@ -185,6 +185,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateAddressTile() {
+        if(_isMapHidden) return;
         // Address info
         Location loc = _workorder.getLocation();
         if (loc == null)
@@ -252,7 +253,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 miles += route.getDistanceMi();
             }
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
-        } else if (_userLocation != null && loc.getGeo().getLongitude()!=null) {
+        } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude()!=null) {
             try {
                 Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
                 Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
@@ -285,6 +286,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_workorder.getWorkorderStatus().equals(WorkorderStatus.AVAILABLE) ||
                 _workorder.getWorkorderStatus().equals(WorkorderStatus.CANCELED)) {
             // hiding map till wo is assigned
+            Log.e(TAG, "workorder is not yet assigned");
             _isMapHidden = true;
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -351,6 +353,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     private void lookupMap() {
         Log.v(TAG, "lookupMap");
+//        if (_isMapHidden) return;
         if (_mapboxClient == null || !_mapboxClient.isConnected())
             return;
 
