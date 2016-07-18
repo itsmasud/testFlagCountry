@@ -68,6 +68,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private boolean _mapUnavailable = false;
     private MapboxDirections _directions = null;
     private boolean _isMapHidden = false;
+    private boolean isAssigned = false;
+
 
     // Services
     private MapboxClient _mapboxClient = null;
@@ -171,7 +173,10 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private void calculateAddressTileVisibility() {
         if (_isMapHidden) return;
 
-        _navigateButton.setVisibility(VISIBLE);
+        if (isAssigned) {
+            _navigateButton.setVisibility(GONE);
+        } else _navigateButton.setVisibility(VISIBLE);
+
         if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
             _navigateButton.setVisibility(GONE);
 
@@ -284,25 +289,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_isMapHidden) return;
         if (_workorder.getWorkorderStatus().equals(WorkorderStatus.AVAILABLE) ||
                 _workorder.getWorkorderStatus().equals(WorkorderStatus.CANCELED)) {
-            // hiding map till wo is assigned
-            Log.e(TAG, "workorder is not yet assigned");
-            _isMapHidden = true;
-            _loadingProgress.setVisibility(GONE);
-            _mapImageView.setImageResource(R.drawable.no_map);
-            _noMapLayout.setVisibility(VISIBLE);
-            _gpsError1TextView.setVisibility(GONE);
-            _gpsError2TextView.setVisibility(GONE);
+            // hiding address details till wo is assigned
+            isAssigned = true;
             _navigateButton.setVisibility(GONE);
-
             _addressTextView.setText(getResources().getString(R.string.location_hidden));
             _locationTypeLayout.setVisibility(GONE);
             _distanceTextView.setVisibility(GONE);
             _noteTextView.setVisibility(GONE);
-
             _mapImageView.setOnClickListener(null);
             _addressLayout.setOnClickListener(null);
+            _loadingProgress.setVisibility(GONE);
+            _mapImageView.setImageBitmap(_map);
+            _noMapLayout.setVisibility(GONE);
 
-            return;
         } else if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
