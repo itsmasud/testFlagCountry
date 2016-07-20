@@ -37,6 +37,10 @@ import com.fieldnation.utils.misc;
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
 
+    private static final int ACTION_NAVIGATE = 0;
+    private static final int ACTION_GPS_SETTINGS = 1;
+    private static final int ACTION_MESSAGES = 2;
+
     // UI
     private TextView _noLocationTextView;
 
@@ -59,7 +63,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private TextView _distanceTextView;
     private TextView _noteTextView;
 
-    private Button _navigateButton;
+    private Button _actionButton;
 
     // Data
     private Workorder _workorder;
@@ -68,7 +72,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private boolean _mapUnavailable = false;
     private MapboxDirections _directions = null;
     private boolean _isMapHidden = false;
-    private boolean isAssigned = false;
+    private boolean _isAssigned = false;
+    private int _action = ACTION_NAVIGATE;
 
 
     // Services
@@ -113,8 +118,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
         _noteTextView = (TextView) findViewById(R.id.note_textview);
 
-        _navigateButton = (Button) findViewById(R.id.navigate_button);
-        _navigateButton.setOnClickListener(_navigate_onClick);
+        _actionButton = (Button) findViewById(R.id.navigate_button);
+        _actionButton.setOnClickListener(_action_onClick);
 
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
@@ -173,12 +178,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private void calculateAddressTileVisibility() {
         if (_isMapHidden) return;
 
-        if (isAssigned) {
-            _navigateButton.setVisibility(GONE);
-        } else _navigateButton.setVisibility(VISIBLE);
+        if (_isAssigned) {
+            _actionButton.setVisibility(GONE);
+        } else _actionButton.setVisibility(VISIBLE);
 
         if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
-            _navigateButton.setVisibility(GONE);
+            _actionButton.setVisibility(GONE);
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
@@ -271,7 +276,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         } else if (loc.getGeo() == null) {
             _distanceTextView.setText(R.string.cannot_display_distance);
         } else if (_isMapHidden) {
-            _distanceTextView.setText(getResources().getString(R.string.cant_calc_miles));
+            _distanceTextView.setText(R.string.cant_calc_miles);
         } else {
             _distanceTextView.setText(R.string.fetching_distance);
         }
@@ -290,8 +295,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_workorder.getWorkorderStatus().equals(WorkorderStatus.AVAILABLE) ||
                 _workorder.getWorkorderStatus().equals(WorkorderStatus.CANCELED)) {
             // hiding address details till wo is assigned
-            isAssigned = true;
-            _navigateButton.setVisibility(GONE);
+            _isAssigned = true;
+            _actionButton.setVisibility(GONE);
             _addressTextView.setText(getResources().getString(R.string.location_hidden));
             _locationTypeLayout.setVisibility(GONE);
             _distanceTextView.setVisibility(GONE);
@@ -307,7 +312,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
-            _navigateButton.setText(getResources().getString(R.string.icon_gear));
+            _actionButton.setText(getResources().getString(R.string.icon_gear));
+            _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
             _mapImageView.setOnClickListener(null);
@@ -403,9 +409,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _loadingProgress.setVisibility(GONE);
                 _mapImageView.setImageResource(R.drawable.no_map);
                 _noMapLayout.setVisibility(VISIBLE);
-                _navigateButton.setText(getResources().getString(R.string.icon_messages_solid));
+                _actionButton.setText(getResources().getString(R.string.icon_messages_detail));
+                _action = ACTION_MESSAGES;
                 _gpsError1TextView.setText(R.string.invalid_address);
                 _gpsError2TextView.setText(R.string.contact_wo_manager);
+                _distanceTextView.setText(R.string.cant_calc_miles);
                 _gpsError1TextView.setVisibility(VISIBLE);
                 _gpsError2TextView.setVisibility(VISIBLE);
 
@@ -437,44 +445,47 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _navigate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _action_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.v(TAG, "_navigate_onClick");
-
-            if (((Button) v).getText().equals(getResources().getString(R.string.icon_gear))) {
-                final Intent intent = new Intent();
-                intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                App.get().startActivity(intent);
-                return;
-            }
-
-            if (((Button) v).getText().equals(getResources().getString(R.string.icon_messages_solid))) {
-                Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                App.get().startActivity(intent);
-                return;
-            }
-
-            if (_workorder != null && !_workorder.getIsRemoteWork()) {
-                Location location = _workorder.getLocation();
-                if (location != null) {
-                    try {
-                        GoogleAnalyticsTopicClient
-                                .dispatchEvent(getContext(), "WorkorderActivity",
-                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment", 1);
-                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
-                        String _uriString = "google.navigation:q=" + _fullAddress;
-                        Uri _uri = Uri.parse(_uriString);
-                        showMapActivity(_uri);
-                    } catch (Exception e) {
+            Log.v(TAG, "_action_onClick");
+            switch (_action) {
+                case ACTION_GPS_SETTINGS: {
+                    final Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    App.get().startActivity(intent);
+                    break;
+                }
+                case ACTION_MESSAGES: {
+                    Intent intent = new Intent(getContext(), WorkorderActivity.class);
+                    intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    App.get().startActivity(intent);
+                    break;
+                }
+                case ACTION_NAVIGATE: {
+                    if (_workorder != null && !_workorder.getIsRemoteWork()) {
+                        Location location = _workorder.getLocation();
+                        if (location != null) {
+                            try {
+                                GoogleAnalyticsTopicClient
+                                        .dispatchEvent(getContext(), "WorkorderActivity",
+                                                GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                                "WorkFragment", 1);
+                                String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                                String _uriString = "google.navigation:q=" + _fullAddress;
+                                Uri _uri = Uri.parse(_uriString);
+                                showMapActivity(_uri);
+                            } catch (Exception e) {
+                            }
+                        }
                     }
+                    break;
                 }
             }
+
         }
     };
 
@@ -506,7 +517,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _navigateButton.setText(getResources().getString(R.string.icon_car));
+            _actionButton.setText(getResources().getString(R.string.icon_car));
+            _action = ACTION_NAVIGATE;
             lookupMap();
         }
     };
