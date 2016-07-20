@@ -137,29 +137,36 @@ public class SearchEditScreen extends RelativeLayout {
         _searchEditText.setText("");
     }
 
+    private void doSearch() {
+        if (misc.isEmptyOrNull(_searchEditText.getText())) {
+            // Run search and results page
+
+        } else {
+            doWorkorderLookup();
+        }
+    }
+
+    private void doWorkorderLookup() {
+        try {
+            _workorderClient.subGet(Long.parseLong(_searchEditText.getText()));
+            WorkorderClient.get(App.get(), Long.parseLong(_searchEditText.getText()), false);
+            _loadingView.startRefreshing();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     private final View.OnClickListener _action_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                _workorderClient.subGet(Long.parseLong(_searchEditText.getText()));
-                WorkorderClient.get(App.get(), Long.parseLong(_searchEditText.getText()), false);
-                _loadingView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            doSearch();
         }
     };
 
     private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
         @Override
         public void startSearch(String searchString) {
-            try {
-                _workorderClient.subGet(Long.parseLong(searchString));
-                WorkorderClient.get(App.get(), Long.parseLong(searchString), false);
-                _loadingView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            doSearch();
         }
 
         @Override
@@ -218,15 +225,15 @@ public class SearchEditScreen extends RelativeLayout {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
+        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
             _loadingView.refreshComplete();
+            _workorderClient.unsubGet(workorderId);
             if (workorder == null || failed) {
                 if (_listener != null)
                     _listener.showNotAvailableDialog();
             } else {
-                _workorderClient.unsubGet(workorder.getWorkorderId());
                 ActivityResultClient.startActivity(App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorder.getWorkorderId()));
+                        WorkorderActivity.makeIntentShow(App.get(), workorderId));
             }
         }
     };
