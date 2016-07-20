@@ -41,6 +41,8 @@ public class SearchEditScreen extends RelativeLayout {
             WorkorderDataSelector.ROUTED
     };
 
+    private static final int[] indexLookup = new int[]{1, 4, 0, 3, 2, 5};
+
     // UI
     private RefreshView _loadingView;
     private SearchEditText _searchEditText;
@@ -112,13 +114,15 @@ public class SearchEditScreen extends RelativeLayout {
         adapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _distanceSpinner.setAdapter(adapter);
-        _distanceSpinner.setSelection(0);
+        _distanceSpinner.setSelection(3);
 
         _actionButton = (Button) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+
+        _statusSpinner.setSelection(indexLookup[App.getLastViewedList().ordinal()]);
     }
 
     @Override
@@ -135,6 +139,7 @@ public class SearchEditScreen extends RelativeLayout {
 
     public void reset() {
         _searchEditText.setText("");
+        _statusSpinner.setSelection(indexLookup[App.getLastViewedList().ordinal()]);
     }
 
     private void doSearch() {

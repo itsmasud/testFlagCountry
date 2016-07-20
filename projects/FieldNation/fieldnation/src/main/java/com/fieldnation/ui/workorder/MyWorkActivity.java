@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
@@ -34,6 +35,8 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void loadFragments() {
+        App.setLastViewedList(WorkorderDataSelector.ASSIGNED);
+
         _fragments = new WorkorderListFragment[3];
         _fragments[0] = getFragment(WorkorderDataSelector.ASSIGNED);
         _fragments[1] = getFragment(WorkorderDataSelector.COMPLETED);
