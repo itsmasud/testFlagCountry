@@ -103,7 +103,7 @@ public class SearchEditScreen extends RelativeLayout {
         adapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _locationSpinner.setAdapter(adapter);
-        _locationSpinner.setSelection(0);
+        _locationSpinner.setSelection(1);
 
         _otherLocationEditText = (EditText) findViewById(R.id.otherLocation_edittext);
 
