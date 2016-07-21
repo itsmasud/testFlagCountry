@@ -9,12 +9,14 @@ import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
@@ -33,7 +35,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private TextView _bundleWarningTextView;
 
     private LinearLayout _descriptionContainer;
-    private TextView _descriptionTextView;
+    private WebView _descriptionWebView;
     private EditText _descriptionEditText;
     private RelativeLayout _descriptionShortLayout;
     private TextView _descriptionShortTextView;
@@ -76,8 +78,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
         _descriptionContainer = (LinearLayout) findViewById(R.id.description_container);
 
-        _descriptionTextView = (TextView) findViewById(R.id.description_textview);
-        _descriptionTextView.setOnLongClickListener(_editMode_listener);
+        _descriptionWebView = (WebView) findViewById(R.id.description_webview);
 
         _descriptionShortLayout = (RelativeLayout) findViewById(R.id.descriptionShort_layout);
         _descriptionShortTextView = (TextView) findViewById(R.id.descriptionShort_textview);
@@ -142,10 +143,11 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionContainer.setVisibility(GONE);
         } else {
             _descriptionContainer.setVisibility(VISIBLE);
-            _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
-            _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
+//            _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+//            _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
             _descriptionEditText.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
 
+            _descriptionWebView.loadData(_workorder.getFullWorkDescription(), "text/html", "utf-8");
             _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
@@ -180,14 +182,13 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private final OnClickListener _readMore_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _descriptionEditText.setVisibility(GONE);
 
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionTextView.setVisibility(View.VISIBLE);
+                _descriptionWebView.setVisibility(View.VISIBLE);
                 _descriptionShortLayout.setVisibility(View.GONE);
                 _readMoreButton.setText(R.string.btn_read_less);
             } else {
-                _descriptionTextView.setVisibility(View.GONE);
+                _descriptionWebView.setVisibility(View.GONE);
                 _descriptionShortLayout.setVisibility(View.VISIBLE);
                 _readMoreButton.setText(R.string.btn_read_more);
             }
@@ -231,9 +232,9 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private final OnLongClickListener _editMode_listener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            _descriptionTextView.setVisibility(GONE);
+            _descriptionWebView.setVisibility(GONE);
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionTextView.setVisibility(View.GONE);
+                _descriptionWebView.setVisibility(View.GONE);
                 _descriptionShortLayout.setVisibility(View.GONE);
                 _readMoreButton.setText(R.string.btn_read_less);
             }
