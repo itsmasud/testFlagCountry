@@ -26,7 +26,6 @@ import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
@@ -72,7 +71,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private boolean _mapUnavailable = false;
     private MapboxDirections _directions = null;
     private boolean _isMapHidden = false;
-    private boolean _isAssigned = false;
     private int _action = ACTION_NAVIGATE;
 
 
@@ -170,6 +168,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         setVisibility(VISIBLE);
 
+        _actionButton.setText(R.string.icon_car);
+        _action = ACTION_NAVIGATE;
+
         populateAddressTile();
         populateMap();
         calculateAddressTileVisibility();
@@ -177,10 +178,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     private void calculateAddressTileVisibility() {
         if (_isMapHidden) return;
-
-        if (_isAssigned) {
-            _actionButton.setVisibility(GONE);
-        } else _actionButton.setVisibility(VISIBLE);
 
         if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
             _actionButton.setVisibility(GONE);
@@ -273,6 +270,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Log.v(TAG, ex);
                 _distanceTextView.setText(R.string.cannot_display_distance);
             }
+
         } else if (loc.getGeo() == null) {
             _distanceTextView.setText(R.string.cannot_display_distance);
         } else if (_isMapHidden) {
@@ -292,27 +290,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     private void populateMap() {
         if (_isMapHidden) return;
-        if (_workorder.getWorkorderStatus().equals(WorkorderStatus.AVAILABLE) ||
-                _workorder.getWorkorderStatus().equals(WorkorderStatus.CANCELED)) {
-            // hiding address details till wo is assigned
-            _isAssigned = true;
-            _actionButton.setVisibility(GONE);
-            _addressTextView.setText(getResources().getString(R.string.location_hidden));
-            _locationTypeLayout.setVisibility(GONE);
-            _distanceTextView.setVisibility(GONE);
-            _noteTextView.setVisibility(GONE);
-            _mapImageView.setOnClickListener(null);
-            _addressLayout.setOnClickListener(null);
-            _loadingProgress.setVisibility(GONE);
-            _mapImageView.setImageBitmap(_map);
-            _noMapLayout.setVisibility(GONE);
-
-        } else if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
-            _actionButton.setText(getResources().getString(R.string.icon_gear));
+            _actionButton.setText(R.string.icon_gear);
+            _actionButton.setVisibility(VISIBLE);
             _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
@@ -409,7 +393,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 _loadingProgress.setVisibility(GONE);
                 _mapImageView.setImageResource(R.drawable.no_map);
                 _noMapLayout.setVisibility(VISIBLE);
-                _actionButton.setText(getResources().getString(R.string.icon_messages_detail));
+                _actionButton.setText(R.string.icon_messages_detail);
+                _actionButton.setVisibility(VISIBLE);
                 _action = ACTION_MESSAGES;
                 _gpsError1TextView.setText(R.string.invalid_address);
                 _gpsError2TextView.setText(R.string.contact_wo_manager);
@@ -517,7 +502,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _actionButton.setText(getResources().getString(R.string.icon_car));
+            _actionButton.setText(R.string.icon_car);
+            _actionButton.setVisibility(VISIBLE);
             _action = ACTION_NAVIGATE;
             lookupMap();
         }
