@@ -289,7 +289,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateMap() {
-        if (_isMapHidden) return;
+        if (_isMapHidden) {
+            _actionButton.setText(R.string.icon_messages_detail);
+            _actionButton.setVisibility(VISIBLE);
+            _action = ACTION_MESSAGES;
+            return;
+        }
         if (!SimpleGps.with(App.get()).isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
