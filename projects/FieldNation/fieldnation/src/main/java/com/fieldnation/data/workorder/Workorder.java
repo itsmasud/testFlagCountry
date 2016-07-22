@@ -544,15 +544,6 @@ public class Workorder implements Parcelable {
         return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
-    public boolean canViewConfidentialInfo() {
-        return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
-                || getWorkorderStatus() == WorkorderStatus.APPROVED
-                || getWorkorderStatus() == WorkorderStatus.COMPLETED
-                || getWorkorderStatus() == WorkorderStatus.CANCELED
-                || getWorkorderStatus() == WorkorderStatus.PAID;
-    }
-
     public boolean canChangeCustomFields() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED
                 || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
