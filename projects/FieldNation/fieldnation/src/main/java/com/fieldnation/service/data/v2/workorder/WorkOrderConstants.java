@@ -9,11 +9,12 @@ public interface WorkOrderConstants {
 
     // Parameters
     String PARAM_WORKORDER_ID = "PARAM_WORKORDER_ID";
-    String PARAM_STATUS = "PARAM_STATUS";
-    String PARAM_LATITUDE = "PARAM_LATITUDE";
-    String PARAM_LONGITUDE = "PARAM_LONGITUDE";
-    String PARAM_RADIUS = "PARAM_RADIUS";
+    String PARAM_SEARCH_PARAMS = "PARAM_SEARCH_PARAMS";
+    String PARAM_LIST_ENVELOPE = "PARAM_LIST_ENVELOPE";
 
+    // Actions
+    String PARAM_ACTION = "PARAM_ACTION";
+    String ACTION_SEARCH = "ACTION_SEARCH";
 
     // Stored Object Names
     String PSO_WORKORDER = "WorkOrder";

@@ -22,6 +22,7 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     public static byte[] pSearch(SearchParams searchParams) {
         try {
             JsonObject obj = new JsonObject("action", "pSearch");
+            obj.put("SearchParams", searchParams.toJson());
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -40,9 +41,10 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
             String action = params.getString("action");
             switch (action) {
                 case "pSearch":
-                    return
+                    return resultSearch(context, transaction, params, resultData);
+                default:
+                    break;
             }
-
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -51,6 +53,10 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
 
     private Result resultSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "resultSearch");
+
+        WorkOrderDispatch.search(context,
+                SearchParams.fromJson(params.getJsonObject("SearchParams")),
+                resultData.getByteArray());
 
         return Result.CONTINUE;
     }

@@ -17,8 +17,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
-                    .handler(null)
-                    .handlerParams(null)
+                    .handler(WorkOrderTransactionHandler.class)
+                    .handlerParams(WorkOrderTransactionHandler.pSearch(searchParams))
                     .key(searchParams.toKey())
                     .useAuth(true)
                     .isSyncCall(false)

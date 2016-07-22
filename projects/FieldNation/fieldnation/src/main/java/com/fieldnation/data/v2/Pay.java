@@ -7,6 +7,7 @@ import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
+import com.fieldnation.json.annotations.Json;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -14,12 +15,19 @@ import com.fieldnation.json.Unserializer;
 public class Pay implements Parcelable {
     private static final String TAG = "Pay";
 
+    @Json
     private String type;
+    @Json
     private String currency;
+    @Json
     private Double units;
+    @Json
     private Double amount;
+    @Json
     private Double additional_units;
+    @Json
     private Double additional_amount;
+    @Json
     private Double total;
 
     private Pay() {
