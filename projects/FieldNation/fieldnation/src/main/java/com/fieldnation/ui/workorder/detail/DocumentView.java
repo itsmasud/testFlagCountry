@@ -184,7 +184,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
-        _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+
+        if (_document.getUpdatedBy() != null) {
+            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+            _byTextView.setVisibility(VISIBLE);
+        } else {
+            _byTextView.setVisibility(GONE);
+            _usernameTextView.setText("");
+        }
 
         try {
             String ext = _document.getFileName();
