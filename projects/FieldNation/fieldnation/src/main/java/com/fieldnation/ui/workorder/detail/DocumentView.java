@@ -276,7 +276,7 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
                 return;
             }
 
-            if (_document.getFileType().equals("url")) {
+            if (!misc.isEmptyOrNull(_document.getFileType()) && _document.getFileType().equals("url")) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
                 getContext().startActivity(intent);
             } else if (_document.getDocumentId() != null) {
