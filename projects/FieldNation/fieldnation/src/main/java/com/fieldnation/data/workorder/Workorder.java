@@ -541,7 +541,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
+        return getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
     public boolean canChangeCustomFields() {
@@ -561,12 +561,6 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeClosingNotes() {
-        return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
-    }
-
-    public boolean canViewDeliverables() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
                 || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
