@@ -603,9 +603,11 @@ public class WorkorderCardView extends RelativeLayout {
 
         switch (_workorder.getRightButtonAction()) {
             case Workorder.BUTTON_ACTION_UPDATE_PAYMENT_INFO:
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_update_payment_info);
-                _rightWhiteButton.setEnabled(true);
+                if (_workorder.getPay() != null && !_workorder.getPay().hidePay()) {
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_update_payment_info);
+                    _rightWhiteButton.setEnabled(true);
+                }
                 break;
             case Workorder.BUTTON_ACTION_NONE:
                 if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.ONHOLD_ACKNOWLEDGED) {
@@ -658,9 +660,11 @@ public class WorkorderCardView extends RelativeLayout {
                 _rightWhiteButton.setEnabled(true);
                 break;
             case Workorder.BUTTON_ACTION_VIEW_PAYMENT:
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_view_payment);
-                _rightWhiteButton.setEnabled(true);
+                if (_workorder.getPay() != null && !_workorder.getPay().hidePay()) {
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_view_payment);
+                    _rightWhiteButton.setEnabled(true);
+                }
                 break;
             default:
                 break;
