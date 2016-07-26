@@ -1,5 +1,6 @@
 package com.fieldnation.ui;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -7,20 +8,36 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
+import android.preference.PreferenceScreen;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.ui.dialog.ReleaseNoteDialog;
+import android.support.v4.app.FragmentManager;
 
 /**
  * Created by Michael Carver on 4/15/2015.
  */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String TAG = "SettingsFragment";
 
+    private ReleaseNoteDialog _releaseNoteDialog;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.pref_general);
     }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        //TODO need to call
+//        _releaseNoteDialog = ReleaseNoteDialog.getInstance( getSupportFragmentManager(), TAG);
+
+    }
+
 
     @Override
     public void onResume() {
@@ -35,9 +52,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             if (preference instanceof PreferenceGroup) {
                 PreferenceGroup preferenceGroup = (PreferenceGroup) preference;
                 for (int j = 0; j < preferenceGroup.getPreferenceCount(); ++j) {
+                    preferenceGroup.getPreference(j).setOnPreferenceClickListener(preference_onClick_listener);
                     updatePreference(preferenceGroup.getPreference(j));
                 }
             } else {
+                preference.setOnPreferenceClickListener(preference_onClick_listener);
                 updatePreference(preference);
             }
         }
@@ -55,6 +74,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.e("SettingsFragment", "onSharedPreferenceChanged");
         updatePreference(findPreference(key));
     }
 
@@ -72,4 +92,37 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
 
     }
+
+
+    private Preference.OnPreferenceClickListener preference_onClick_listener = new Preference.OnPreferenceClickListener() {
+
+        @Override
+        public boolean onPreferenceClick(Preference preference) {
+
+            if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
+                Log.e("SettingsFragment", "release things clicked");
+                return true;
+            }
+            return false;
+        }
+    };
+
+
+//    @Override
+//    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
+//        if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
+//           Log.e("SettingsFragment", "release things clicked");
+//            return true;
+//        }
+//
+//        else {
+//            // if the button is anything but the simple toggle preference,
+//            // we'll need to disable all preferences to reject all click
+//            // events until the sub-activity's UI comes up.
+//            preferenceScreen.setEnabled(false);
+//            // Let the intents be launched by the Preference manager
+//            return false;
+//        }
+//    }
+
 }

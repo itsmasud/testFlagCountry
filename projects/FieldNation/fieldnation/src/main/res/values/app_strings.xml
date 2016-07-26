@@ -369,6 +369,10 @@
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
+    <string name="dialog_release_note_title">What new in Field Nation</string>
+    <string name="feature_header_added_new">What we added</string>
+    <string name="bugs_fixed_header">Bugs we fixed</string>
+    <string name="feature_wroking_on">We\'re working on</string>
     <string name="failed">Failed</string>
     <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
@@ -640,6 +644,12 @@
 
     <!-- data settings -->
     <string name="pref_string_data_settings_category_title">Data Settings</string>
+
+    <!-- release declaration -->
+    <string name="pref_string_data_release_title">Release 2.6.0</string>
+    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
+    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
+
 
     <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
     <string name="pref_string_data_remove_title">Remove unused data</string>
