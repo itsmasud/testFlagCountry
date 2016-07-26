@@ -2,8 +2,6 @@ package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
-import android.text.InputType;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -12,12 +10,10 @@ import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
@@ -150,7 +146,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _webSettings.setDefaultFontSize(fontSize);
 
             _descriptionWebView.loadData(_workorder.getFullWorkDescription(), "text/html", "utf-8");
-            _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+            _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription().trim(), Linkify.ALL));
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
