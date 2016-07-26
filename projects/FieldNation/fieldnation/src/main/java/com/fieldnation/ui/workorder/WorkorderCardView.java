@@ -324,7 +324,7 @@ public class WorkorderCardView extends RelativeLayout {
                     long completeTime = completeCal.getTimeInMillis();
 
                     if ((System.currentTimeMillis() - completeTime) / 3600000L <= 24) {
-                        _timeTextView.setText(DateUtils.formatTime(completeCal, false));
+                        _timeTextView.setText(DateUtils.formatTimeForCF(completeCal).toUpperCase());
                         _extraTextView.setText(R.string.marked_complete);
                     } else {
                         _timeTextView.setText(DateUtils.formatDate(completeCal));
