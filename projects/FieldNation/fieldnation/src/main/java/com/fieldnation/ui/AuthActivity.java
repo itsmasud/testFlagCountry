@@ -27,6 +27,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
@@ -65,6 +66,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     // Services
     private GlobalTopicClient _globalClient;
+    private ActivityResultClient _activityResultClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -137,12 +139,20 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         super.onResume();
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
     }
 
     @Override
     protected void onPause() {
         Log.v(TAG, "onPause");
-        _globalClient.disconnect(App.get());
+
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
+
         super.onPause();
     }
 
@@ -151,6 +161,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         Log.v(TAG, "onBackPressed");
         GlobalTopicClient.appShutdown(this);
         super.onBackPressed();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
     }
 
     /*-*********************************-*/
@@ -181,6 +197,24 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onAnimationRepeat(Animation animation) {
+        }
+    };
+
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+        @Override
+        public void onConnected() {
+            _activityResultClient.subStartActivity();
+            _activityResultClient.subStartActivityForResult();
+        }
+
+        @Override
+        public void startActivityForResult(Intent intent, int requestCode) {
+            AuthActivity.this.startActivityForResult(intent, requestCode);
+        }
+
+        @Override
+        public void startActivity(Intent intent) {
+            AuthActivity.this.startActivity(intent);
         }
     };
 

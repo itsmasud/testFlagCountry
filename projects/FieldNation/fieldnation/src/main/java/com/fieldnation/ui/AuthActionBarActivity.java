@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -24,6 +23,7 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
@@ -45,8 +45,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    NotificationActionBarView _notificationsView;
-    MessagesActionBarView _messagesView;
     private ActionBarDrawerView _actionBarView;
 
     private UpdateDialog _updateDialog;
@@ -59,6 +57,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private GlobalTopicClient _globalClient;
     private ToastClient _toastClient;
     private AuthTopicClient _authTopicClient;
+    private ActivityResultClient _activityResultClient;
 
     // Data
     private Profile _profile;
@@ -115,44 +114,25 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
-
-        _notificationsView = (NotificationActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.notifications_menuitem));
-        _notificationsView.setOnClickListener(_notifications_onClick);
-
-        _messagesView = (MessagesActionBarView) MenuItemCompat.getActionView(menu.findItem(R.id.messages_menuitem));
-        _messagesView.setOnClickListener(_messages_onClick);
-
         return true;
     }
-
-    private final View.OnClickListener _notifications_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            _actionBarView.showNotificationNav();
-        }
-    };
-
-    private final View.OnClickListener _messages_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            _actionBarView.showMessageNav();
-        }
-    };
 
     @Override
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
-        _toastClient = new ToastClient(_toastListener);
+        _toastClient = new ToastClient(_toastClient_listener);
         _toastClient.connect(App.get());
         _authTopicClient = new AuthTopicClient(_authTopicClient_listener);
         _authTopicClient.connect(App.get());
-        _globalClient = new GlobalTopicClient(_globalListener);
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
 
-        _notProviderDialog.setData("User Not Supported",
-                "Currently Buyer accounts are not supported. Please log in with a provider or service company account.",
-                "OK", _notProvider_listener);
+        _notProviderDialog.setData(getString(R.string.user_not_supported),
+                getString(R.string.buyer_not_supported),
+                getString(R.string.btn_ok), _notProvider_listener);
     }
 
     @Override
@@ -166,6 +146,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         if (_toastClient != null && _toastClient.isConnected())
             _toastClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
+
         super.onPause();
     }
 
@@ -250,6 +234,12 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             super.onBackPressed();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        ActivityResultClient.onActivityResult(App.get(), requestCode, resultCode, data);
+    }
+
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
@@ -322,6 +312,24 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+        @Override
+        public void onConnected() {
+            _activityResultClient.subStartActivity();
+            _activityResultClient.subStartActivityForResult();
+        }
+
+        @Override
+        public void startActivityForResult(Intent intent, int requestCode) {
+            AuthActionBarActivity.this.startActivityForResult(intent, requestCode);
+        }
+
+        @Override
+        public void startActivity(Intent intent) {
+            AuthActionBarActivity.this.startActivity(intent);
+        }
+    };
+
     private final AuthTopicClient.Listener _authTopicClient_listener = new AuthTopicClient.Listener() {
         @Override
         public void onConnected() {
@@ -341,7 +349,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalListener = new GlobalTopicClient.Listener() {
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
             _globalClient.subGotProfile();
@@ -390,7 +398,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
-    private final ToastClient.Listener _toastListener = new ToastClient.Listener() {
+    private final ToastClient.Listener _toastClient_listener = new ToastClient.Listener() {
         private Snackbar _snackbar = null;
         private long _lastId = 0;
 

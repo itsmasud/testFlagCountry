@@ -184,7 +184,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
         } catch (Exception e) {
             Log.v(TAG, e);
         }
-        _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+
+        if (_document.getUpdatedBy() != null) {
+            _usernameTextView.setText(_document.getUpdatedBy().getFullName());
+            _byTextView.setVisibility(VISIBLE);
+        } else {
+            _byTextView.setVisibility(GONE);
+            _usernameTextView.setText("");
+        }
 
         try {
             String ext = _document.getFileName();
@@ -219,7 +226,6 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
         }
 
         updateThumb();
-        setClickable(_workorder.canViewDeliverables());
     }
 
     private void updateThumb() {
@@ -266,14 +272,14 @@ public class DocumentView extends RelativeLayout implements PhotoReceiver {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_document == null || _document.getDocumentId() == null) {
+            if (_document == null) {
                 return;
             }
 
-            if (_document.getFileType().equals("url")) {
+            if (!misc.isEmptyOrNull(_document.getFileType()) && _document.getFileType().equals("url")) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_document.getFilePath()));
                 getContext().startActivity(intent);
-            } else {
+            } else if (_document.getDocumentId() != null) {
                 DocumentClient.downloadDocument(getContext(), _document.getDocumentId(),
                         _document.getFilePath(), _document.getFileName(), false);
             }

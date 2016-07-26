@@ -14,6 +14,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
@@ -28,6 +29,13 @@ public class UnavailableCardView extends FrameLayout {
     private TextView _titleTextView;
     private TextView _captionTexView;
     private Button _actionButton;
+
+    // Data
+    private WorkorderDataSelector _displayView = null;
+    private Profile _profile = null;
+
+    // Service
+    private ProfileClient _profileClient;
 
     public UnavailableCardView(Context context) {
         super(context);
@@ -52,10 +60,44 @@ public class UnavailableCardView extends FrameLayout {
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _captionTexView = (TextView) findViewById(R.id.caption_textview);
         _actionButton = (Button) findViewById(R.id.action_button);
+
+        _profileClient = new ProfileClient(_profileClient_listener);
+        _profileClient.connect(App.get());
+
+        populateUi();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
+
+        super.onDetachedFromWindow();
+    }
+
+    public void setNoMessages() {
+        _titleTextView.setText(R.string.no_messages);
+        _captionTexView.setText(R.string.nothing_to_worry_about);
+        _actionButton.setVisibility(GONE);
+    }
+
+    public void setNoNotifications() {
+        _titleTextView.setText(R.string.no_notifications);
+        _captionTexView.setText(R.string.nothing_to_worry_about);
+        _actionButton.setVisibility(GONE);
     }
 
     public void setData(WorkorderDataSelector displayView) {
-        switch (displayView) {
+        _displayView = displayView;
+        populateUi();
+    }
+
+    public void populateUi() {
+        if (_displayView == null || _profile == null) {
+            return;
+        }
+
+        switch (_displayView) {
             case ASSIGNED:
                 _titleTextView.setText(R.string.no_assigned_work);
                 _captionTexView.setText(R.string.check_our_marketplace_for_new_work);
@@ -64,16 +106,14 @@ public class UnavailableCardView extends FrameLayout {
                 _actionButton.setOnClickListener(_viewMarketplace_onClick);
                 break;
             case AVAILABLE: {
-                Profile profile = App.get().getProfile();
-
-                if (profile.getMarketplaceStatusOn()) {
+                if (_profile.getMarketplaceStatusOn()) {
                     _titleTextView.setText(R.string.no_available_work);
                     _captionTexView.setText(R.string.try_adding_to_your_profile);
                     _actionButton.setText(R.string.btn_edit_profile);
                     _actionButton.setVisibility(VISIBLE);
                     _actionButton.setOnClickListener(_editProfile_onClick);
                 } else {
-                    String reason = profile.getMarketplaceStatusReason();
+                    String reason = _profile.getMarketplaceStatusReason();
                     if (misc.isEmptyOrNull(reason)) {
                         _titleTextView.setText(R.string.no_available_work);
                         _captionTexView.setText(R.string.try_adding_to_your_profile);
@@ -103,16 +143,14 @@ public class UnavailableCardView extends FrameLayout {
                 break;
             }
             case ROUTED: {
-                Profile profile = App.get().getProfile();
-
-                if (profile.getMarketplaceStatusOn()) {
+                if (_profile.getMarketplaceStatusOn()) {
                     _titleTextView.setText(R.string.no_routed_work);
                     _captionTexView.setText(R.string.try_adding_to_your_profile);
                     _actionButton.setText(R.string.btn_edit_profile);
                     _actionButton.setVisibility(VISIBLE);
                     _actionButton.setOnClickListener(_editProfile_onClick);
                 } else {
-                    String reason = profile.getMarketplaceStatusReason();
+                    String reason = _profile.getMarketplaceStatusReason();
                     if (misc.isEmptyOrNull(reason)) {
                         _titleTextView.setText(R.string.no_routed_work);
                         _captionTexView.setText(R.string.try_adding_to_your_profile);
@@ -158,6 +196,19 @@ public class UnavailableCardView extends FrameLayout {
                 break;
         }
     }
+
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profileClient.subGet(false);
+        }
+
+        @Override
+        public void onGet(Profile profile, boolean failed) {
+            _profile = profile;
+            populateUi();
+        }
+    };
 
     private final View.OnClickListener _viewMarketplace_onClick = new View.OnClickListener() {
         @Override

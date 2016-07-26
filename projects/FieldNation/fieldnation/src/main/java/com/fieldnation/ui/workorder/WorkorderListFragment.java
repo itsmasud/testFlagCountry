@@ -24,9 +24,11 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.ui.LeavingActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
@@ -61,9 +63,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_CURRENT_WORKORDER = TAG_BASE + ".STATE_CURRENT_WORKORDER";
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
-
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKIN = 1;
-    private static final int RESULT_CODE_ENABLE_GPS_CHECKOUT = 2;
 
     // UI
     private OverScrollListView _listView;
@@ -132,7 +131,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_workorder_list, container, false);
+        return inflater.inflate(R.layout.fragment_list, container, false);
     }
 
     private GpsLocationService getLocationService() {
@@ -153,7 +152,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _adapter.setOnLoadingCompleteListener(_adapterListener);
 
-        _listView = (OverScrollListView) view.findViewById(R.id.workorders_listview);
+        _listView = (OverScrollListView) view.findViewById(R.id.listview);
         _listView.setDivider(null);
         _listView.setOnOverScrollListener(_loadingView);
         _listView.setAdapter(_adapter);
@@ -486,9 +485,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         super.onActivityResult(requestCode, resultCode, data);
 
         try {
-            if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKIN) {
+            if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
-            } else if (requestCode == RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+            } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
                 startCheckOut();
             }
         } catch (Exception ex) {
@@ -561,7 +560,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onOk() {
             try {
                 Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKIN);
+                startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
             } catch (Exception ex) {
                 new Handler().postDelayed(new Runnable() {
                     @Override
@@ -597,7 +596,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onOk() {
             Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, RESULT_CODE_ENABLE_GPS_CHECKOUT);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
         }
 
         @Override
@@ -727,10 +726,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             com.fieldnation.data.workorder.Location location = workorder.getLocation();
             if (location != null) {
                 try {
-                    GoogleAnalyticsTopicClient
-                            .dispatchEvent(App.get(), getGaLabel(),
-                                    GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                    "WorkFragment", 1);
+                    GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
+                            GoogleAnalyticsTopicClient.EventAction.START_MAP, "WorkFragment", 1);
                     String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                     String _uriString = "geo:0,0?q=" + _fullAddress;
                     Uri _uri = Uri.parse(_uriString);
@@ -744,7 +741,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     e.printStackTrace();
                 }
             }
-
         }
 
         @Override
@@ -757,6 +753,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void actionMarkIncomplete(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
             _markIncompleteDialog.show(workorder);
+        }
+
+        @Override
+        public void actionUpdatePaymentInfo(WorkorderCardView view, Workorder workorder) {
+            LeavingActivity.start(getActivity(), R.string.update_your_payment_info, R.string.currently_to_edit_your, Uri.parse("https://app.fieldnation.com/"));
         }
     };
 

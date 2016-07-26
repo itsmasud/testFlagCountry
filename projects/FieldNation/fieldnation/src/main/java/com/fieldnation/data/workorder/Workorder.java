@@ -41,6 +41,8 @@ public class Workorder implements Parcelable {
     private Integer _companyId;
     @Json(name = "companyName")
     private String _companyName;
+    @Json(name = "completeTime")
+    private String _completeTime;
     @Json(name = "confidentialInformation")
     private String _confidentialInformation;
     @Json(name = "counterOfferInfo")
@@ -109,6 +111,8 @@ public class Workorder implements Parcelable {
     private String _typeOfWork;
     @Json(name = "uploadSlots")
     private UploadSlot[] _uploadSlots;
+    @Json(name = "validPaymentInfo")
+    private Boolean _validPaymentInfo;
     @Json(name = "w2")
     private Integer _w2;
     @Json(name = "workorderId")
@@ -170,6 +174,10 @@ public class Workorder implements Parcelable {
         return _companyName;
     }
 
+    public String getCompleteTime() {
+        return _completeTime;
+    }
+
     public String getConfidentialInformation() {
         return _confidentialInformation;
     }
@@ -197,7 +205,7 @@ public class Workorder implements Parcelable {
     public Boolean displayCounterOffer() {
         if (_displayCounterOffer == null)
             return true;
-        
+
         return _displayCounterOffer;
     }
 
@@ -316,6 +324,12 @@ public class Workorder implements Parcelable {
         return _uploadSlots;
     }
 
+    public Boolean hasValidPaymentInfo() {
+        if (_validPaymentInfo == null)
+            return true;
+        return _validPaymentInfo;
+    }
+
     public Integer getW2() {
         return _w2;
     }
@@ -368,14 +382,15 @@ public class Workorder implements Parcelable {
     public static final int BUTTON_ACTION_READY_TO_GO = 9;
     public static final int BUTTON_ACTION_CONFIRM = 10;
     public static final int BUTTON_ACTION_MAP = 11;
-    public static final int BUTTON_ACTION_NAVIGATE = 12;
+    //public static final int BUTTON_ACTION_NAVIGATE = 12;
     public static final int BUTTON_ACTION_REPORT_PROBLEM = 13;
-    public static final int BUTTON_ACTION_CLOSING_NOTES = 14;
+    //public static final int BUTTON_ACTION_CLOSING_NOTES = 14;
     public static final int BUTTON_ACTION_MARK_INCOMPLETE = 15;
-    public static final int BUTTON_ACTION_REVIEW_UPDATE = 16;
-    public static final int BUTTON_ACTION_REVIEW_IN = 17;
-    public static final int BUTTON_ACTION_EDIT_REVIEW = 18;
-    public static final int BUTTON_ACTION_VIEW_REVIEW = 19;
+    //public static final int BUTTON_ACTION_REVIEW_UPDATE = 16;
+    //public static final int BUTTON_ACTION_REVIEW_IN = 17;
+    //public static final int BUTTON_ACTION_EDIT_REVIEW = 18;
+    //public static final int BUTTON_ACTION_VIEW_REVIEW = 19;
+    public static final int BUTTON_ACTION_UPDATE_PAYMENT_INFO = 20;
 
     private int _rightButtonAction = 0;
     private int _leftButtonAction = 0;
@@ -526,16 +541,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
-    }
-
-    public boolean canViewConfidentialInfo() {
-        return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
-                || getWorkorderStatus() == WorkorderStatus.APPROVED
-                || getWorkorderStatus() == WorkorderStatus.COMPLETED
-                || getWorkorderStatus() == WorkorderStatus.CANCELED
-                || getWorkorderStatus() == WorkorderStatus.PAID;
+        return getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
     public boolean canChangeCustomFields() {
@@ -555,12 +561,6 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeClosingNotes() {
-        return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
-    }
-
-    public boolean canViewDeliverables() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
                 || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
@@ -774,18 +774,26 @@ public class Workorder implements Parcelable {
 
     private void buildStatusCompleted(Status status) {
         _leftButtonAction = BUTTON_ACTION_NONE;
+        _rightButtonAction = BUTTON_ACTION_NONE;
         switch (status.getWorkorderSubstatus()) {
             case PENDINGREVIEW:
                 _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case INREVIEW:
                 _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case APPROVED_PROCESSINGPAYMENT:
                 _rightButtonAction = BUTTON_ACTION_NONE;
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case PAID:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             default:
                 _leftButtonAction = BUTTON_ACTION_NONE;
@@ -796,15 +804,18 @@ public class Workorder implements Parcelable {
 
     private void buildStatusCanceled(Status status) {
         _leftButtonAction = BUTTON_ACTION_NONE;
+        _rightButtonAction = BUTTON_ACTION_NONE;
         switch (status.getWorkorderSubstatus()) {
             case CANCELED:
-                _rightButtonAction = BUTTON_ACTION_NONE;
+                // do nothing
                 break;
             case CANCELED_LATEFEEPAID:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             default:
                 _leftButtonAction = BUTTON_ACTION_NONE;

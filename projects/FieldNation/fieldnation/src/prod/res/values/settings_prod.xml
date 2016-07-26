@@ -6,7 +6,7 @@
     <string name="auth_default_username"></string>
     <string name="auth_default_password"></string>
     <string name="auth_fn_grant_type">password</string>
-    <string name="auth_fn_client_id">android0</string>
+    <string name="auth_fn_client_id">android1</string>
     <string name="auth_fn_client_secret">pjfdrjG^B8KhfaDd5WTJyUWFMps4yXjH</string>
     <string name="auth_account_type">com.fieldnation</string>
     <string name="auth_authority">com.fieldnation.service</string>

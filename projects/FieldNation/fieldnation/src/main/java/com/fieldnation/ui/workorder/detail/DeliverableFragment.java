@@ -35,6 +35,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -61,12 +62,6 @@ import java.util.List;
 
 public class DeliverableFragment extends WorkorderFragment {
     private static final String TAG = "DeliverableFragment";
-
-    // activity result codes
-    private static final int RESULT_CODE_BASE = 100;
-    private static final int RESULT_CODE_GET_ATTACHMENT = RESULT_CODE_BASE + 1;
-    private static final int RESULT_CODE_GET_CAMERA_PIC = RESULT_CODE_BASE + 2;
-
 
     // State
     private static final String STATE_UPLOAD_SLOTID = "STATE_UPLOAD_SLOTID";
@@ -95,7 +90,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private DocumentClient _docClient;
     private GlobalTopicClient _globalClient;
     private WorkorderClient _workorderClient;
-	private PhotoClient _photoClient;
+    private PhotoClient _photoClient;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -143,7 +138,7 @@ public class DeliverableFragment extends WorkorderFragment {
         _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _appPickerDialog.setListener(_appdialog_listener);
 
-		_actionButton = (Button) view.findViewById(R.id.action_button);
+        _actionButton = (Button) view.findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
 
         checkMedia();
@@ -202,8 +197,8 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
-		if (_photoClient != null && _photoClient.isConnected())
-			_photoClient.disconnect(App.get());
+        if (_photoClient != null && _photoClient.isConnected())
+            _photoClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -362,8 +357,8 @@ public class DeliverableFragment extends WorkorderFragment {
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
+                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
                     && resultCode == Activity.RESULT_OK) {
 
                 setLoading(true);
@@ -385,7 +380,7 @@ public class DeliverableFragment extends WorkorderFragment {
                             if (count == 1) {
                                 _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
-                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), clipData.getItemAt(0).getUri()));
+                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 WorkorderClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
                             } else {
                                 for (int i = 0; i < count; ++i) {
@@ -555,7 +550,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, RESULT_CODE_GET_ATTACHMENT);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
@@ -564,7 +559,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 // removed because this doesn't work on my motorola
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, RESULT_CODE_GET_CAMERA_PIC);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
             }
         }
     };
@@ -671,7 +666,31 @@ public class DeliverableFragment extends WorkorderFragment {
                         _uploadingSlotId, filename, _tempUri, photoDescription);
             }
         }
+
+        @Override
+        public void onImageClick() {
+            Intent intent;
+            if (_tempUri == null) {
+                Log.e(TAG, "_tempUri is null");
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
+
+            } else {
+                Log.e(TAG, "_tempFile is null");
+                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     };
+
 
     private final WorkorderClient.Listener _workorderData_listener = new WorkorderClient.Listener() {
         @Override

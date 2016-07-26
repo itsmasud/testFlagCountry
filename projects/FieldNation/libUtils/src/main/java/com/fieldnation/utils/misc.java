@@ -402,6 +402,10 @@ public class misc {
         return data.toString();
     }
 
+    public static String extractNumbers(String blob) {
+        return blob.replaceAll("[^0-9]", "");
+    }
+
     public static String unescapeForHTML(String Value) {
         if (Value == null) {
             return "";

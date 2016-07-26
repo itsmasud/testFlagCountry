@@ -25,6 +25,9 @@ public class AvailableWorkorderListFragment extends WorkorderListFragment {
             WorkorderSubstatus substatus;
 
             for (Workorder workorder : list) {
+                if (workorder == null || workorder.getStatus() == null)
+                    continue;
+
                 status = workorder.getWorkorderStatus();
                 substatus = workorder.getWorkorderSubstatus();
 

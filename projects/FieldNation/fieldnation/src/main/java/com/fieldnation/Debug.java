@@ -73,15 +73,18 @@ public class Debug {
 
     private static void dumpTodo() {
         synchronized (TAG) {
-            if (_crashlytics != null && _todo.size() > 0) {
-                // we do a for loop just in case the runnable adds items to the list
-                // we don't want to get stuck here forever
-                int count = _todo.size();
-                for (int i = 0; i < count; i++) {
-                    Runnable r = _todo.remove(0);
-                    if (r != null)
-                        r.run();
+            try {
+                if (_crashlytics != null && _todo.size() > 0) {
+                    // we do a for loop just in case the runnable adds items to the list
+                    // we don't want to get stuck here forever
+                    int count = _todo.size();
+                    for (int i = 0; i < count; i++) {
+                        Runnable r = _todo.remove(0);
+                        if (r != null)
+                            r.run();
+                    }
                 }
+            } catch (Exception ex) {
             }
         }
     }

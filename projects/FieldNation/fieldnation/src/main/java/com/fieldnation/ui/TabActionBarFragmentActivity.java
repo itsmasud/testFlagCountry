@@ -83,6 +83,10 @@ public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity
         }
     };
 
+    public void switchFragment(int position) {
+        _viewPager.setCurrentItem(position);
+    }
+
     public interface TabFragment {
         void isShowing();
     }

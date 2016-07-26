@@ -1,31 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="?attr/tileStyle"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content">
-
-    <com.fieldnation.ui.ProfilePicView
-        android:id="@+id/pic_view"
-        android:layout_width="48dp"
-        android:layout_height="48dp"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="16dp" />
-
 
     <TextView
         android:id="@+id/title_textview"
         style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="16dp"
         android:layout_toLeftOf="@+id/time_textview"
-        android:layout_toRightOf="@+id/pic_view"
         android:ellipsize="end"
         android:maxLines="1"
         android:singleLine="true"
-        android:text="@string/placeholder_phrase" />
+        android:text="@string/placeholder_paragraph" />
 
     <TextView
         android:id="@+id/timebold_textview"
@@ -55,10 +47,10 @@
         android:id="@+id/workorder_textview"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toRightOf="@+id/pic_view"
         android:text="WO 1234456789" />
 
     <TextView
@@ -66,18 +58,29 @@
         style="@style/Text_Body_1_Caption"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/workorder_textview"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:layout_toRightOf="@+id/pic_view"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/placeholder_paragraph" />
+        android:text="@string/placeholder_paragraph"
+        android:textColorLink="@color/fn_clickable_text" />
 
     <View
         style="?attr/tileDividerStyle"
+        android:layout_alignParentLeft="true"
         android:layout_below="@+id/messagebody_textview"
-        android:layout_marginLeft="16dp"
-        android:layout_toRightOf="@+id/pic_view" />
+        android:layout_marginLeft="16dp" />
+
+    <View
+        android:id="@+id/click_overlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignBottom="@+id/messagebody_textview"
+        android:layout_alignLeft="@+id/title_textview"
+        android:layout_alignRight="@+id/time_textview"
+        android:layout_alignTop="@+id/title_textview"
+        android:clickable="true" />
 </RelativeLayout>

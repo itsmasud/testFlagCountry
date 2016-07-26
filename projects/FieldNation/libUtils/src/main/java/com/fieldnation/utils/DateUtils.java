@@ -8,19 +8,40 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
+    public static String humanReadableAge(Calendar past) {
+        long now = System.currentTimeMillis();
+
+        // same day, show time
+        if (now - past.getTimeInMillis() < 86400000) {
+            return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(past.getTime()).toUpperCase();
+        }
+        // yesterday show yesterda
+        else if (now - past.getTimeInMillis() < 172800000) {
+            return "Yesterday";
+        }
+        // if same week show day
+        else if (now - past.getTimeInMillis() < 604800000) {
+            return new SimpleDateFormat("EEEE", Locale.getDefault()).format(past.getTime());
+        }
+        // else show date
+        else {
+            return new SimpleDateFormat("M/dd/yy", Locale.getDefault()).format(past.getTime());
+        }
+    }
+
     public static String formatDateForCF(final Calendar calendar) {
         Date date = calendar.getTime();
-        return new SimpleDateFormat("MM/dd/yyyy").format(date);
+        return new SimpleDateFormat("MM/dd/yyyy", Locale.getDefault()).format(date);
     }
 
     public static String formatTimeForCF(final Calendar calendar) {
         Date date = calendar.getTime();
-        return new SimpleDateFormat("h:mm a").format(date);
+        return new SimpleDateFormat("h:mm a", Locale.getDefault()).format(date);
     }
 
     public static String formatDateTimeForCF(final Calendar calendar) {
         Date date = calendar.getTime();
-        return new SimpleDateFormat("MM/dd/yyyy h:mm a").format(date);
+        return new SimpleDateFormat("MM/dd/yyyy h:mm a", Locale.getDefault()).format(date);
     }
 
     public static String toRoundDuration(long milliseconds) {

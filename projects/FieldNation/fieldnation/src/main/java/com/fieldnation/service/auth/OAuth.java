@@ -157,6 +157,10 @@ public class OAuth implements Parcelable {
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + params, 0);
     }
 
+    public static void flushAll() {
+        StoredObject.flushAllOfType("OAuthToken");
+    }
+
     public static OAuth lookup(String username) {
         try {
             StoredObject obj = StoredObject.get(0, "OAuthToken", username);
@@ -198,6 +202,7 @@ public class OAuth implements Parcelable {
                 .protocol("https")
                 .host(host)
                 .path(path)
+                .urlParams("?as_provider=1")
                 .timingKey("POST" + path)
                 .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                 .body("grant_type=" + grantType +
