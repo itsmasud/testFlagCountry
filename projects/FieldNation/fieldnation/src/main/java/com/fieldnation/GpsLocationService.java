@@ -99,19 +99,24 @@ public class GpsLocationService {
     private final GoogleApiClient.ConnectionCallbacks _connectionCallbacks = new GoogleApiClient.ConnectionCallbacks() {
         @Override
         public void onConnected(Bundle bundle) {
-            Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected");
-            Location currentLocation = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
+            try {
+                Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected");
+                Location currentLocation = _fusedLocationProviderApi.getLastLocation(_googleApiClient);
 
-            // Have a location... this is good, grab it and shutdown
-            if (currentLocation != null) {
-                Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected Done");
-                _location = currentLocation;
-                if (_listener != null)
-                    _listener.onLocation(_location);
+                // Have a location... this is good, grab it and shutdown
+                if (currentLocation != null) {
+                    Log.v(TAG, "GoogleApiClient.ConnectionCallbacks.onConnected Done");
+                    _location = currentLocation;
+                    if (_listener != null)
+                        _listener.onLocation(_location);
+                    stopLocationUpdates();
+                } else {
+                    // no location, request one
+                    _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
                 stopLocationUpdates();
-            } else {
-                // no location, request one
-                _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
             }
         }
 
