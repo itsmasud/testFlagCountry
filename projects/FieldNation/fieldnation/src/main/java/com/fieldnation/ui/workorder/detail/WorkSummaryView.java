@@ -150,21 +150,16 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionShortTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (!_workorder.canViewConfidentialInfo()) {
-            _policiesTextView.setVisibility(View.GONE);
-            _confidentialTextView.setVisibility(View.GONE);
+        if (!misc.isEmptyOrNull(_workorder.getCustomerPoliciesProcedures())) {
+            _policiesTextView.setVisibility(View.VISIBLE);
         } else {
-            if (!misc.isEmptyOrNull(_workorder.getCustomerPoliciesProcedures())) {
-                _policiesTextView.setVisibility(View.VISIBLE);
-            } else {
-                _policiesTextView.setVisibility(View.GONE);
-            }
+            _policiesTextView.setVisibility(View.GONE);
+        }
 
-            if (!misc.isEmptyOrNull(_workorder.getConfidentialInformation())) {
-                _confidentialTextView.setVisibility(View.VISIBLE);
-            } else {
-                _confidentialTextView.setVisibility(View.GONE);
-            }
+        if (!misc.isEmptyOrNull(_workorder.getConfidentialInformation())) {
+            _confidentialTextView.setVisibility(View.VISIBLE);
+        } else {
+            _confidentialTextView.setVisibility(View.GONE);
         }
 
         if (!misc.isEmptyOrNull(_workorder.getStandardInstruction())) {
