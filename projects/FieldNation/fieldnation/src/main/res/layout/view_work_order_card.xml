@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/CardContainer"
+    android:layout_marginBottom="0dp"
+    android:padding="0dp">
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/bundle_iconFont"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:gravity="center_vertical"
+        android:text="@string/icon_bundle"
+        android:textSize="24sp" />
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_toRightOf="@+id/bundle_iconFont"
+        android:ellipsize="end"
+        android:gravity="center_vertical"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Workorder Name" />
+
+    <!-- left side -->
+    <TextView
+        android:id="@+id/companyName_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:text="Company Name" />
+
+    <TextView
+        android:id="@+id/time_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/companyName_textview"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="8dp"
+        android:text="In 45 mins" />
+
+    <TextView
+        android:id="@+id/extra_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/time_textview"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="4dp"
+        android:text="a" />
+
+    <!-- right side -->
+    <TextView
+        android:id="@+id/workorderId_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="12dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="6dp"
+        android:text="WO 123456789" />
+
+    <TextView
+        android:id="@+id/price_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/workorderId_textview"
+        android:layout_marginRight="12dp"
+        android:layout_marginTop="8dp"
+        android:text="$104.00" />
+
+    <TextView
+        android:id="@+id/status_textview"
+        style="@style/Text_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/price_textview"
+        android:layout_marginRight="12dp"
+        android:text="In Review" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/extra_textview"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="6dp">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <com.fieldnation.ui.IconFontTextView
+                android:id="@+id/leftButton1_iconfont"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:gravity="center"
+                android:text="A" />
+
+            <com.fieldnation.ui.IconFontTextView
+                android:id="@+id/leftButton2_iconfont"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:gravity="center"
+                android:text="A" />
+
+            <com.fieldnation.ui.IconFontTextView
+                android:id="@+id/leftButton3_iconfont"
+                android:layout_width="38dp"
+                android:layout_height="38dp"
+                android:gravity="center"
+                android:text="A" />
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/rightWhite_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2" />
+
+        <Button
+            android:id="@+id/rightOrange_button"
+            style="?attr/buttonOrangeStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/rightGreen_button"
+            style="?attr/buttonGreenStyle"
+            android:layout_width="0dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_weight="1"
+            android:text="THING 2"
+            android:visibility="gone" />
+    </LinearLayout>
+</RelativeLayout>
