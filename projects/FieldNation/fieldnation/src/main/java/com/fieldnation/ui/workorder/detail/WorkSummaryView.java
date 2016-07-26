@@ -9,6 +9,7 @@ import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.EditText;
@@ -36,7 +37,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
 
     private LinearLayout _descriptionContainer;
     private WebView _descriptionWebView;
-    private EditText _descriptionEditText;
     private RelativeLayout _descriptionShortLayout;
     private TextView _descriptionShortTextView;
 
@@ -83,7 +83,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         _descriptionShortLayout = (RelativeLayout) findViewById(R.id.descriptionShort_layout);
         _descriptionShortTextView = (TextView) findViewById(R.id.descriptionShort_textview);
         _descriptionShortTextView.setOnLongClickListener(_editMode_listener);
-        _descriptionEditText = (EditText) findViewById(R.id.description_edittext);
 
         _confidentialTextView = (TextView) findViewById(R.id.confidential_textview);
         _confidentialTextView.setOnClickListener(_confidential_onClick);
@@ -145,7 +144,10 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
             _descriptionContainer.setVisibility(VISIBLE);
 //            _descriptionTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
 //            _descriptionTextView.setMovementMethod(LinkMovementMethod.getInstance());
-            _descriptionEditText.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
+
+            int fontSize = getResources().getInteger(R.integer.textSizeWorkorderDescription);
+            WebSettings _webSettings = _descriptionWebView.getSettings();
+            _webSettings.setDefaultFontSize(fontSize);
 
             _descriptionWebView.loadData(_workorder.getFullWorkDescription(), "text/html", "utf-8");
             _descriptionShortTextView.setText(misc.linkifyHtml(_workorder.getFullWorkDescription(), Linkify.ALL));
@@ -232,21 +234,11 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private final OnLongClickListener _editMode_listener = new OnLongClickListener() {
         @Override
         public boolean onLongClick(View v) {
-            _descriptionWebView.setVisibility(GONE);
             if (_descriptionShortLayout.getVisibility() == VISIBLE) {
-                _descriptionWebView.setVisibility(View.GONE);
+                _descriptionWebView.setVisibility(View.VISIBLE);
                 _descriptionShortLayout.setVisibility(View.GONE);
                 _readMoreButton.setText(R.string.btn_read_less);
             }
-            _descriptionEditText.setVisibility(VISIBLE);
-            if (Build.VERSION.SDK_INT >= 11) {
-                _descriptionEditText.setRawInputType(InputType.TYPE_CLASS_TEXT);
-                _descriptionEditText.setTextIsSelectable(true);
-            } else {
-                _descriptionEditText.setRawInputType(InputType.TYPE_NULL);
-                _descriptionEditText.setFocusable(true);
-            }
-
 
             return true;
         }
