@@ -45,6 +45,10 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         return register(TOPIC_ID_SEARCH + "/" + searchParams.toKey(), TAG);
     }
 
+    public boolean subSearch() {
+        return register(TOPIC_ID_SEARCH, TAG);
+    }
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -68,6 +72,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
                         searchParams = payload.getParcelable(PARAM_SEARCH_PARAMS);
                         List<WorkOrder> list = new LinkedList<WorkOrder>();
+                        Log.v(STAG, new String(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         ListEnvelope env = ListEnvelope.fromJson(new JsonObject(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         JsonArray array = env.getResults();
 

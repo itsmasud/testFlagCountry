@@ -1,19 +1,18 @@
 package com.fieldnation.ui.worecycler;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.fieldnation.ui.workorder.WorkorderCardView;
+import com.fieldnation.ui.workorder.WorkOrderCard;
 
 /**
  * Created by Michael on 3/11/2016.
  */
-public class WorkorderHolder extends BaseHolder {
-    public WorkorderHolder(View itemView) {
-        super(itemView, TYPE_WORKORDER);
+public class WorkOrderHolder extends BaseHolder {
+    public WorkOrderHolder(View itemView) {
+        super(itemView, TYPE_OBJECT);
     }
 
-    public WorkorderCardView getView() {
-        return (WorkorderCardView) itemView;
+    public WorkOrderCard getView() {
+        return (WorkOrderCard) itemView;
     }
 }

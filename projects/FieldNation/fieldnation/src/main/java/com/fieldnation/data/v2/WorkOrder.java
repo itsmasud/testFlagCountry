@@ -8,6 +8,9 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.ISO8601;
+
+import java.util.Comparator;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -30,7 +33,7 @@ public class WorkOrder implements Parcelable {
     @Json
     private Pay pay;
 
-    private WorkOrder() {
+    public WorkOrder() {
     }
 
     public Long getId() {
@@ -68,6 +71,37 @@ public class WorkOrder implements Parcelable {
     public Pay getPay() {
         return pay;
     }
+
+    @Override
+    public int hashCode() {
+        return (int) (long) id;
+    }
+
+    public static Comparator<WorkOrder> getTimeComparator() {
+        return _timeComparator;
+    }
+
+    private static final Comparator<WorkOrder> _timeComparator = new Comparator<WorkOrder>() {
+        @Override
+        public int compare(WorkOrder lhs, WorkOrder rhs) {
+            try {
+                long l = ISO8601.toUtc(lhs.getRequirements().getSchedule().getStart());
+                long r = ISO8601.toUtc(rhs.getRequirements().getSchedule().getStart());
+
+                if (l < r)
+                    return 1;
+                else if (l > r)
+                    return -1;
+                else
+                    return 0;
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            return 0;
+        }
+    };
+
 
     /*-*************************************-*/
     /*-			JSON Implementation			-*/
@@ -137,7 +171,7 @@ public class WorkOrder implements Parcelable {
         @Json
         private String secondary;
 
-        private Status() {
+        public Status() {
         }
 
         public Primary getPrimary() {

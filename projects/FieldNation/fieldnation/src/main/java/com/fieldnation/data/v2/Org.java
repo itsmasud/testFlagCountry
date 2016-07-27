@@ -20,7 +20,7 @@ public class Org implements Parcelable {
     @Json
     private String name;
 
-    private Org() {
+    public Org() {
     }
 
     public Long getId() {

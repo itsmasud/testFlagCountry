@@ -24,7 +24,7 @@ public class Geo implements Parcelable {
     @Json
     private Boolean precise;
 
-    private Geo() {
+    public Geo() {
     }
 
     public Boolean getObfuscated() {

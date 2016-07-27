@@ -5,16 +5,12 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.RateMeView;
-import com.fieldnation.ui.workorder.WorkorderCardView;
-import com.fieldnation.utils.ISO8601;
 
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -22,28 +18,27 @@ import java.util.Set;
 /**
  * Created by Michael on 3/11/2016.
  */
-public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder> {
+public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHolder> {
     private static final String TAG = "TimeHeaderAdapter";
 
     private static final Object RATEME = new Object();
 
     private RateMeView _rateMeView = null;
-    private List<Workorder> _workorders = new LinkedList<>();
+    private List<T> _objects = new LinkedList<>();
+    private Class<T> _objectType;
     private List<Object> _displayList = new LinkedList<>();
-    private WorkorderCardView.Listener _listener;
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;
     private int _lastPage = 0;
 
-    public TimeHeaderAdapter(WorkorderCardView.Listener listener) {
+    public TimeHeaderAdapter(Class<T> clazz) {
         super();
-
+        _objectType = clazz;
         requestPage(0, false);
-        _listener = listener;
     }
 
     public void refreshPages() {
-        _workorders.clear();
+        _objects.clear();
         _displayList.clear();
         notifyDataSetChanged();
         Log.v(TAG, "refreshPages");
@@ -52,38 +47,38 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
     }
 
     public void setRateMeAllowed(boolean allowed) {
-//        if (allowed) {
-//            _showRateMe = App.get().showRateMe();
-//        } else {
-//            _showRateMe = false;
-//        }
-        _showRateMe = true;
+        if (allowed) {
+            _showRateMe = App.get().showRateMe();
+        } else {
+            _showRateMe = false;
+        }
     }
 
-    public void addWorkorders(List<Workorder> list) {
-        Set<Long> ids = new HashSet<>();
+    public void addObjects(List<T> list) {
+        Set<Integer> ids = new HashSet<>();
 
         if (list == null || list.size() == 0) {
             return;
         }
 
-        List<Workorder> newList = new LinkedList<>();
+        List<T> newList = new LinkedList<>();
         for (int i = 0; i < list.size(); i++) {
-            ids.add(list.get(i).getWorkorderId());
+            ids.add(list.get(i).hashCode());
             newList.add(list.get(i));
         }
 
-        for (int i = 0; i < _workorders.size(); i++) {
-            Workorder wo = _workorders.get(i);
-            if (!ids.contains(wo.getWorkorderId())) {
-                ids.add(wo.getWorkorderId());
-                newList.add(wo);
+        for (int i = 0; i < _objects.size(); i++) {
+            T object = _objects.get(i);
+
+            if (!ids.contains(object.hashCode())) {
+                ids.add(object.hashCode());
+                newList.add(object);
             }
         }
-        _workorders = newList;
+        _objects = newList;
 
         // sort list
-        Collections.sort(_workorders, _comparator);
+        Collections.sort(_objects, getTimeComparator());
 
         rebuildList();
     }
@@ -92,18 +87,18 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
         // Build the real list
         _displayList.clear();
         try {
-            Calendar startTime = ISO8601.toCalendar(_workorders.get(0).getSchedule().getStartTime());
+            Calendar startTime = getObjectTime(_objects.get(0));
             _displayList.add(startTime);
-            _displayList.add(_workorders.get(0));
-            for (int i = 1; i < _workorders.size(); i++) {
-                Workorder wo = _workorders.get(i);
+            _displayList.add(_objects.get(0));
+            for (int i = 1; i < _objects.size(); i++) {
+                T object = _objects.get(i);
 
-                Calendar newTime = ISO8601.toCalendar(wo.getSchedule().getStartTime());
+                Calendar newTime = getObjectTime(object);
 
                 if (newTime.get(Calendar.DAY_OF_YEAR) != startTime.get(Calendar.DAY_OF_YEAR)) {
                     _displayList.add(newTime);
                 }
-                _displayList.add(wo);
+                _displayList.add(object);
 
                 startTime = newTime;
 
@@ -118,32 +113,11 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
         notifyDataSetChanged();
     }
 
-    private final Comparator<Workorder> _comparator = new Comparator<Workorder>() {
-        @Override
-        public int compare(Workorder lhs, Workorder rhs) {
-            try {
-                long l = ISO8601.toUtc(lhs.getSchedule().getStartTime());
-                long r = ISO8601.toUtc(rhs.getSchedule().getStartTime());
-
-                if (l < r)
-                    return 1;
-                else if (l > r)
-                    return -1;
-                else
-                    return 0;
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return 0;
-        }
-    };
-
     @Override
     public BaseHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         switch (viewType) {
-            case BaseHolder.TYPE_WORKORDER:
-                return new WorkorderHolder(new WorkorderCardView(parent.getContext()));
+            case BaseHolder.TYPE_OBJECT:
+                return onCreateObjectViewHolder(parent, viewType);
             case BaseHolder.TYPE_DATE:
                 return new DateHolder(new ListTimeHeader(parent.getContext()));
             case BaseHolder.TYPE_RATE_ME:
@@ -159,11 +133,8 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
     @Override
     public void onBindViewHolder(BaseHolder holder, int position) {
         switch (holder.type) {
-            case BaseHolder.TYPE_WORKORDER: {
-                WorkorderHolder h = (WorkorderHolder) holder;
-                WorkorderCardView v = h.getView();
-                v.setWorkorder((Workorder) _displayList.get(position));
-                v.setWorkorderSummaryListener(_listener);
+            case BaseHolder.TYPE_OBJECT: {
+                onBindObjectViewHolder(holder, (T) _displayList.get(position));
                 break;
             }
             case BaseHolder.TYPE_DATE: {
@@ -194,8 +165,8 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
     @Override
     public int getItemViewType(int position) {
         Object obj = _displayList.get(position);
-        if (obj instanceof Workorder) {
-            return BaseHolder.TYPE_WORKORDER;
+        if (_objectType.isInstance(obj)) {
+            return BaseHolder.TYPE_OBJECT;
         } else if (obj instanceof Calendar) {
             return BaseHolder.TYPE_DATE;
         } else {
@@ -212,4 +183,12 @@ public abstract class TimeHeaderAdapter extends RecyclerView.Adapter<BaseHolder>
     };
 
     public abstract void requestPage(int page, boolean allowCache);
+
+    public abstract Comparator<T> getTimeComparator();
+
+    public abstract Calendar getObjectTime(T object);
+
+    public abstract BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType);
+
+    public abstract void onBindObjectViewHolder(BaseHolder holder, T object);
 }

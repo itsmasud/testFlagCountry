@@ -20,7 +20,7 @@ public class Schedule implements Parcelable {
     @Json
     private String end;
 
-    private Schedule() {
+    public Schedule() {
     }
 
     public String getStart() {

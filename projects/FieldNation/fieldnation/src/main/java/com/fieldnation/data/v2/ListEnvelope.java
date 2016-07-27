@@ -27,6 +27,9 @@ public class ListEnvelope implements Parcelable {
 
     private JsonObject _source = null;
 
+    public ListEnvelope() {
+    }
+
     public ListEnvelope(JsonObject object) {
     }
 

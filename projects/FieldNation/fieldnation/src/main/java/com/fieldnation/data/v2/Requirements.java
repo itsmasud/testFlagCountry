@@ -20,7 +20,7 @@ public class Requirements implements Parcelable {
     @Json
     private Boolean gps_checkin;
 
-    private Requirements() {
+    public Requirements() {
     }
 
     public Schedule getSchedule() {

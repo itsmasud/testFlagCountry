@@ -8,6 +8,7 @@ import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -15,38 +16,38 @@ import com.fieldnation.json.annotations.Json;
 public class Location implements Parcelable {
     private static final String TAG = "Location";
 
-    @Json
-    private String city;
-    @Json
-    private String zip;
-    @Json
-    private String state;
-    @Json
-    private String country;
-    @Json
-    private Geo geo;
+    @Json(name = "city")
+    private String _city;
+    @Json(name = "zip")
+    private String _zip;
+    @Json(name = "state")
+    private String _state;
+    @Json(name = "country")
+    private String _country;
+    @Json(name = "geo")
+    private Geo _geo;
+
+    public Location() {
+    }
 
     public String getCity() {
-        return city;
+        return _city;
     }
 
     public String getZip() {
-        return zip;
+        return _zip;
     }
 
     public String getState() {
-        return state;
+        return _state;
     }
 
     public String getCountry() {
-        return country;
+        return _country;
     }
 
     public Geo getGeo() {
-        return geo;
-    }
-
-    private Location() {
+        return _geo;
     }
 
     /*-*************************************-*/
@@ -73,6 +74,99 @@ public class Location implements Parcelable {
             Log.v(TAG, ex);
             return null;
         }
+    }
+
+	/*-*************************************************-*/
+    /*-				Human Generated Code				-*/
+    /*-*************************************************-*/
+
+    public String getTopAddressLine() {
+//        if (getAddress1() != null || getAddress2() != null) {
+        String address1 = null;
+        String address2 = null;
+
+//            if (getAddress1() != null)
+//                address1 = getAddress1();
+//            if (getAddress2() != null)
+//                address2 = getAddress2();
+
+        if (misc.isEmptyOrNull(address1))
+            address1 = null;
+        if (misc.isEmptyOrNull(address2))
+            address2 = null;
+
+        if (address1 == null)
+            address1 = address2;
+        else if (address2 != null) {
+            address1 = (address1 + "\n" + address2).trim();
+        }
+
+        if (address1 != null) {
+            return address1;
+        } else {
+            return "";
+        }
+//        } else {
+//            return "";
+//        }
+    }
+
+    public String getFullAddressAndContactName() {
+        String address = "";
+
+//        if (!misc.isEmptyOrNull(_name)) {
+//            address += _name + "\n";
+//        }
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + "\n";
+        }
+
+        if (!misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state) && !misc.isEmptyOrNull(_zip) && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state + " " + _zip + "\n";
+            address += _country;
+        }
+
+        return address.trim();
+    }
+
+    public String getFullAddress() {
+        String address = "";
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + "\n";
+        }
+
+        if (!misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state) && !misc.isEmptyOrNull(_zip) && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state + " " + _zip + "\n";
+            address += _country;
+        }
+
+        return address.trim();
+    }
+
+    public String getFullAddressOneLine() {
+        String address = "";
+
+        String topAddr = getTopAddressLine();
+        if (!misc.isEmptyOrNull(topAddr)) {
+            address += topAddr + ", ";
+        }
+
+        if (!misc.isEmptyOrNull(_city)
+                && !misc.isEmptyOrNull(_state)
+                && !misc.isEmptyOrNull(_zip)
+                && !misc.isEmptyOrNull(_country)) {
+            address += _city + ", " + _state;
+        }
+
+        if (!misc.isEmptyOrNull(_zip)) {
+            address += " " + _zip;
+        }
+
+        return address.trim();
     }
 
     /*-*********************************************-*/

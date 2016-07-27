@@ -30,7 +30,7 @@ public class Pay implements Parcelable {
     @Json
     private Double total;
 
-    private Pay() {
+    public Pay() {
     }
 
     public String getType() {

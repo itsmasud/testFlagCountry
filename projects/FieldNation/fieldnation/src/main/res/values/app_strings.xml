@@ -12,12 +12,14 @@
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
+    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
     <string name="placeholder_date_short">10/20/1963</string>
     <string name="placeholder_money_short">$5.50</string>
     <string name="placeholder_money_long">$6000.00</string>
     <string name="placeholder_company_name">Company name not available</string>
-    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA</string>
+    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA (10mi)</string>
     <string name="placeholder_distance">65.46 miles</string>
+    <string name="placeholder_city_state_distance">Minneapolis, MN (10mi)</string>
     <string name="gcm_senderid">179310690338</string>
 
     <string name="activity_login_title">Field Nation Login</string>
