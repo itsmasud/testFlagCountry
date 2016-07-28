@@ -13,7 +13,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
 public class WorkOrderTransactionBuilder implements WorkOrderConstants {
     private static final String TAG = "WorkOrderTransactionBuilder";
 
-    public static void search(Context context, SearchParams searchParams) {
+    public static void search(Context context, SearchParams searchParams, int page) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -26,6 +26,7 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
                             .protocol("https")
                             .method("GET")
                             .timingKey("GET/v2/workorders")
+                            .urlParams(searchParams.toUrlParams() + "&page=" + page)
                             .path("/v2/workorders"))
                     .send();
         } catch (Exception ex) {

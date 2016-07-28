@@ -17,7 +17,7 @@ import com.fieldnation.ui.AuthActionBarActivity;
  * Created by Michael on 7/27/2016.
  */
 public class SearchResultsActivity extends AuthActionBarActivity {
-    private static final String TAG = "EditSearchActivity";
+    private static final String TAG = "SearchResultsActivity";
 
     // Ui
     private SearchResultScreen _searchResultScreen;
@@ -41,6 +41,7 @@ public class SearchResultsActivity extends AuthActionBarActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+        setTitle("Search Results");
         _searchResultScreen = (SearchResultScreen) findViewById(R.id.searchResultScreen);
     }
 
@@ -51,22 +52,14 @@ public class SearchResultsActivity extends AuthActionBarActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
 
         if (getIntent() != null && getIntent().hasExtra(INTENT_SEARCH_PARAMS)) {
             SearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
-
             _searchResultScreen.startSearch(searchParams);
-
         }
     }
-
 
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override

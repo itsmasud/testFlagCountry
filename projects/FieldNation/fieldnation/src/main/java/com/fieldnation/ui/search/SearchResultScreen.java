@@ -3,14 +3,18 @@ package com.fieldnation.ui.search;
 import android.content.Context;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
+import android.view.LayoutInflater;
 import android.view.ViewGroup;
+import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
+import com.fieldnation.R;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
@@ -24,11 +28,18 @@ import java.util.List;
 /**
  * Created by Michael on 7/27/2016.
  */
-public class SearchResultScreen extends OverScrollRecyclerView {
+public class SearchResultScreen extends RelativeLayout {
     private static final String TAG = "SearchResultScreen";
+
+    //UI
+    private OverScrollRecyclerView _workorderList;
+    private RefreshView _refreshView;
 
     // Service
     private WorkOrderClient _workOrderClient;
+
+    // Data
+    private SearchParams _searchParams;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -46,11 +57,23 @@ public class SearchResultScreen extends OverScrollRecyclerView {
     }
 
     private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.screen_search_result, this);
+
+        if (isInEditMode())
+            return;
+
+        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
+        _refreshView.setListener(_refreshView_listener);
+        _refreshView.startRefreshing();
+
+        _workorderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
+        _workorderList.setOnOverScrollListener(_refreshView);
+        _workorderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _workorderList.setAdapter(_adapter);
+
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
 
-        setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        setAdapter(_adapter);
     }
 
     @Override
@@ -61,9 +84,27 @@ public class SearchResultScreen extends OverScrollRecyclerView {
         super.onDetachedFromWindow();
     }
 
-    public void startSearch(SearchParams searchParams) {
-        WorkOrderClient.search(App.get(), searchParams);
+    private void getPage(int page) {
+        if (_searchParams == null)
+            return;
+
+        WorkOrderClient.search(App.get(), _searchParams, page);
+
+        if (_refreshView != null)
+            _refreshView.startRefreshing();
     }
+
+    public void startSearch(SearchParams searchParams) {
+        _searchParams = searchParams;
+        getPage(0);
+    }
+
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+        @Override
+        public void onStartRefresh() {
+            getPage(0);
+        }
+    };
 
     private final WorkOrderClient.Listener _workOrderClient_listener = new WorkOrderClient.Listener() {
         @Override
@@ -74,14 +115,17 @@ public class SearchResultScreen extends OverScrollRecyclerView {
         @Override
         public void onSearch(SearchParams searchParams, List<WorkOrder> workorder) {
             Log.v(TAG, "onSearch");
-            _adapter.addObjects(workorder);
+            if (workorder != null && workorder.size() > 0)
+                _adapter.addObjects(workorder);
+
+            _refreshView.refreshComplete();
         }
     };
 
     private final TimeHeaderAdapter<WorkOrder> _adapter = new TimeHeaderAdapter<WorkOrder>(WorkOrder.class) {
         @Override
         public void requestPage(int page, boolean allowCache) {
-
+            getPage(page);
         }
 
         @Override
@@ -110,5 +154,6 @@ public class SearchResultScreen extends OverScrollRecyclerView {
             WorkOrderCard v = h.getView();
             v.setData(object);
         }
+
     };
 }

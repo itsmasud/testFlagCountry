@@ -146,7 +146,7 @@ public class SearchEditScreen extends RelativeLayout {
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
-            SearchResultsActivity.runSearch(getContext(), new SearchParams().status("available"));
+            SearchResultsActivity.runSearch(getContext(), new SearchParams().status("assigned"));
         } else {
             doWorkorderLookup();
         }

@@ -37,8 +37,8 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
     /*-********************************-*/
     /*-             Search             -*/
     /*-********************************-*/
-    public static void search(Context context, SearchParams searchParams) {
-        WorkOrderTransactionBuilder.search(context, searchParams);
+    public static void search(Context context, SearchParams searchParams, int page) {
+        WorkOrderTransactionBuilder.search(context, searchParams, page);
     }
 
     public boolean subSearch(SearchParams searchParams) {
