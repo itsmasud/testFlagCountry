@@ -4,8 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fieldnation.ui.OverScrollRecyclerView
-        android:id="@+id/workOrderList_recyclerView"
+    <com.fieldnation.ui.search.SearchResultScreen
+        android:id="@+id/searchResultScreen"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 

@@ -90,7 +90,7 @@ public class SearchEditScreen extends RelativeLayout {
 
         _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
+        HintArrayAdapter<CharSequence> adapter = HintArrayAdapter.createFromResources(
                 getContext(), R.array.search_status, R.layout.view_spinner_item);
         adapter.setDropDownViewResource(
                 android.support.design.R.layout.support_simple_spinner_dropdown_item);

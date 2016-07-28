@@ -1,4 +1,4 @@
-package com.fieldnation.ui.workorder;
+package com.fieldnation.ui.workorder.v2;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -100,6 +101,8 @@ public class WorkOrderCard extends RelativeLayout {
 
         _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
         _rightGreenButton.setOnClickListener(_right_onClick);
+
+        setOnClickListener(_this_onClick);
     }
 
     public void setData(WorkOrder workOrder) {
@@ -163,6 +166,14 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
 
+        }
+    };
+
+    private final View.OnClickListener _this_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            getContext().startActivity(
+                    WorkorderActivity.makeIntentShow(getContext(), _workOrder.getId()));
         }
     };
 
