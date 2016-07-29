@@ -30,6 +30,8 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;
     private int _lastPage = 0;
+    private boolean _onLastPage = false;
+
 
     public TimeHeaderAdapter(Class<T> clazz) {
         super();
@@ -54,10 +56,11 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
         }
     }
 
-    public void addObjects(List<T> list) {
+    public void addObjects(int page, List<T> list) {
         Set<Integer> ids = new HashSet<>();
 
         if (list == null || list.size() == 0) {
+            _onLastPage = true;
             return;
         }
 
@@ -151,9 +154,9 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
             }
         }
 
-        if (position == (getItemCount() * 9) / 10) {
-            requestPage(_lastPage + 1, false);
+        if (position == (getItemCount() * 9) / 10 && !_onLastPage) {
             _lastPage++;
+            requestPage(_lastPage + 1, false);
         }
     }
 

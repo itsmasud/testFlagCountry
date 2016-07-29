@@ -64,6 +64,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         private void preOnSearch(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<WorkOrder>>() {
                 SearchParams searchParams;
+                ListEnvelope envelope;
 
                 @Override
                 protected List<WorkOrder> doInBackground(Bundle... params) {
@@ -73,8 +74,8 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
                         searchParams = payload.getParcelable(PARAM_SEARCH_PARAMS);
                         List<WorkOrder> list = new LinkedList<WorkOrder>();
                         Log.v(STAG, new String(payload.getByteArray(PARAM_LIST_ENVELOPE)));
-                        ListEnvelope env = ListEnvelope.fromJson(new JsonObject(payload.getByteArray(PARAM_LIST_ENVELOPE)));
-                        JsonArray array = env.getResults();
+                        envelope = ListEnvelope.fromJson(new JsonObject(payload.getByteArray(PARAM_LIST_ENVELOPE)));
+                        JsonArray array = envelope.getResults();
 
                         for (int i = 0; i < array.size(); i++) {
                             list.add(WorkOrder.fromJson(array.getJsonObject(i)));
@@ -89,12 +90,12 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
                 @Override
                 protected void onPostExecute(List<WorkOrder> o) {
-                    onSearch(searchParams, o);
+                    onSearch(searchParams, envelope, o);
                 }
             }.executeEx(payload);
         }
 
-        public void onSearch(SearchParams searchParams, List<WorkOrder> workorder) {
+        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workorders) {
         }
     }
 }

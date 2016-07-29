@@ -10,6 +10,7 @@ import android.widget.RelativeLayout;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
@@ -64,7 +65,6 @@ public class SearchResultScreen extends RelativeLayout {
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
-        _refreshView.startRefreshing();
 
         _workorderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
         _workorderList.setOnOverScrollListener(_refreshView);
@@ -74,6 +74,7 @@ public class SearchResultScreen extends RelativeLayout {
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
 
+        _refreshView.startRefreshing();
     }
 
     @Override
@@ -113,11 +114,12 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onSearch(SearchParams searchParams, List<WorkOrder> workorder) {
-            Log.v(TAG, "onSearch");
-            if (workorder != null && workorder.size() > 0)
-                _adapter.addObjects(workorder);
-
+        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workorders) {
+            Log.v(TAG, "onSearch" + (workorders != null ? " " + workorders.size() : ""));
+            if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
+                _adapter.addObjects(envelope.getPage(), workorders);
+            else
+                _adapter.addObjects(envelope.getPage(), null);
             _refreshView.refreshComplete();
         }
     };

@@ -16,7 +16,7 @@ public class SearchParams implements Parcelable {
     private static final String TAG = "SearchParams";
 
     @Json
-    public String status = "available";
+    public String status = "available"; // available, assigned, requested, completed
     @Json
     public Double latitude = null;
     @Json
@@ -36,9 +36,13 @@ public class SearchParams implements Parcelable {
         return this;
     }
 
-    public SearchParams location(Double latitude, Double longitude, Double radius) {
+    public SearchParams location(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
+        return this;
+    }
+
+    public SearchParams radius(Double radius) {
         this.radius = radius;
         return this;
     }

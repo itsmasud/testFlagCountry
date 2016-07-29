@@ -1,6 +1,9 @@
 package com.fieldnation.ui.search;
 
 import android.content.Context;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,8 +13,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
@@ -23,14 +28,16 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
 
+import java.util.List;
+
 /**
  * Created by Michael on 7/14/2016.
  */
 public class SearchEditScreen extends RelativeLayout {
     private static final String TAG = "SearchEditScreen";
 
-    private static final Integer[] DISTANCES = new Integer[]{
-            10, 20, 40, 60, 100, 150, 200, 300, 500
+    private static final Double[] DISTANCES = new Double[]{
+            10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
 
     private static final WorkorderDataSelector[] SELECTORS = new WorkorderDataSelector[]{
@@ -90,19 +97,15 @@ public class SearchEditScreen extends RelativeLayout {
 
         _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
-        HintArrayAdapter<CharSequence> adapter = HintArrayAdapter.createFromResources(
-                getContext(), R.array.search_status, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        HintArrayAdapter<CharSequence> adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
         _statusSpinner.setSelection(0);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(
-                getContext(), R.array.search_location, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _locationSpinner.setAdapter(adapter);
         _locationSpinner.setSelection(1);
 
@@ -110,10 +113,8 @@ public class SearchEditScreen extends RelativeLayout {
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
         _distanceSpinner.setOnItemSelectedListener(_distanceSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(
-                getContext(), R.array.search_distances, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(
-                android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item);
+        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
@@ -146,7 +147,48 @@ public class SearchEditScreen extends RelativeLayout {
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
-            SearchResultsActivity.runSearch(getContext(), new SearchParams().status("assigned"));
+            final SearchParams searchParams = new SearchParams()
+                    .status(SELECTORS[_statusSpinner.getSelectedItemPosition()].getCall())
+                    .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
+
+            switch (_locationSpinner.getSelectedItemPosition()) {
+                case 0: // profile
+                    SearchResultsActivity.runSearch(getContext(), searchParams);
+                    break;
+                case 1: // here
+                    SimpleGps.with(getContext()).start(new SimpleGps.Listener() {
+                        @Override
+                        public void onLocation(Location location) {
+                            searchParams.location(location.getLatitude(), location.getLongitude());
+                            SearchResultsActivity.runSearch(getContext(), searchParams);
+                            SimpleGps.with(getContext()).stop();
+                        }
+                    });
+                    break;
+                case 2: // other
+                    new AsyncTaskEx<String, Object, Address>() {
+                        @Override
+                        protected Address doInBackground(String... params) {
+                            try {
+                                List<Address> list = new Geocoder(App.get()).getFromLocationName(params[0], 5);
+
+                                return list.get(0);
+
+                            } catch (Exception ex) {
+                            }
+                            return null;
+                        }
+
+                        @Override
+                        protected void onPostExecute(Address o) {
+                            if (o != null) {
+                                searchParams.location(o.getLatitude(), o.getLongitude());
+                            }
+                            SearchResultsActivity.runSearch(getContext(), searchParams);
+                        }
+                    }.executeEx(_otherLocationEditText.getText().toString());
+                    break;
+            }
         } else {
             doWorkorderLookup();
         }
