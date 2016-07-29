@@ -788,9 +788,9 @@
     </string-array>
 
     <string-array name="search_location">
-        <item>Profile</item>
-        <item>Current</item>
-        <item>Other</item>
+        <item>Profile Address</item>
+        <item>My Location</item>
+        <item>City, State or Zip</item>
     </string-array>
 
     <string-array name="search_distances">

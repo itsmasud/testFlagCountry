@@ -23,6 +23,10 @@ public class SearchParams implements Parcelable {
     public Double longitude = null;
     @Json
     public Double radius = null;
+    @Json
+    public String sort = "time";
+    @Json
+    public String order = "asc";
 
     public SearchParams() {
     }
@@ -42,9 +46,14 @@ public class SearchParams implements Parcelable {
     public String toUrlParams() {
         String params = "?status=" + status;
 
-        if (latitude != null && longitude != null && radius != null) {
-            params += "&lat=" + latitude + "&lng=" + longitude + "&radius=" + radius;
-        }
+        if (latitude != null && longitude != null)
+            params += "&lat=" + latitude + "&lng=" + longitude;
+
+        if (radius != null)
+            params += "&radius=" + radius;
+
+        if (sort != null && order != null)
+            params += "&sort=" + sort + "&order=" + order;
 
         return params;
     }
@@ -53,9 +62,11 @@ public class SearchParams implements Parcelable {
         String key = status;
 
         if (latitude != null && longitude != null && radius != null) {
-            key += ":" + ((int) (latitude * 1000))
-                    + ":" + ((int) (longitude * 1000))
-                    + ":" + ((int) (radius * 1000));
+            key += ":" + ((int) (latitude * 1000)) + ":" + ((int) (longitude * 1000));
+        }
+
+        if (radius != null) {
+            key += ":" + ((int) (radius * 1000));
         }
         return key;
     }

@@ -129,12 +129,10 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateLocation() {
-
         _locationTextView.setText(_workOrder.getLocation().getFullAddressOneLine());
     }
 
     private void populatePay() {
-
     }
 
     private void populateButtons() {
@@ -172,8 +170,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            getContext().startActivity(
-                    WorkorderActivity.makeIntentShow(getContext(), _workOrder.getId()));
+            getContext().startActivity(WorkorderActivity.makeIntentShow(getContext(), _workOrder.getId()));
         }
     };
 
