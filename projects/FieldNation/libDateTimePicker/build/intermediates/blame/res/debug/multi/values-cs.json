@@ -1,0 +1,463 @@
+[
+    {
+        "outputFile": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\res\\merged\\debug\\values-cs\\values-cs.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 105,
+                    "endColumn": 106,
+                    "endOffset": 207
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 291,
+                        "endColumn": 106,
+                        "endOffset": 393
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 212,
+                    "endColumn": 101,
+                    "endOffset": 309
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 398,
+                        "endColumn": 101,
+                        "endOffset": 495
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 314,
+                    "endColumn": 108,
+                    "endOffset": 418
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 500,
+                        "endColumn": 108,
+                        "endOffset": 604
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 423,
+                    "endColumn": 85,
+                    "endOffset": 504
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 609,
+                        "endColumn": 85,
+                        "endOffset": 690
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 509,
+                    "endColumn": 104,
+                    "endOffset": 609
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 695,
+                        "endColumn": 104,
+                        "endOffset": 795
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 614,
+                    "endColumn": 116,
+                    "endOffset": 726
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 800,
+                        "endColumn": 116,
+                        "endOffset": 912
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 731,
+                    "endColumn": 103,
+                    "endOffset": 830
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 917,
+                        "endColumn": 103,
+                        "endOffset": 1016
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 835,
+                    "endColumn": 108,
+                    "endOffset": 939
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 1021,
+                        "endColumn": 108,
+                        "endOffset": 1125
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 944,
+                    "endColumn": 98,
+                    "endOffset": 1038
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 1130,
+                        "endColumn": 98,
+                        "endOffset": 1224
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 1043,
+                    "endColumn": 105,
+                    "endOffset": 1144
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 1229,
+                        "endColumn": 105,
+                        "endOffset": 1330
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 1149,
+                    "endColumn": 109,
+                    "endOffset": 1254
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 1335,
+                        "endColumn": 109,
+                        "endOffset": 1440
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 1259,
+                    "endColumn": 106,
+                    "endOffset": 1361
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 1445,
+                        "endColumn": 106,
+                        "endOffset": 1547
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 1366,
+                    "endColumn": 121,
+                    "endOffset": 1483
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-cs\\values-cs.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 1552,
+                        "endColumn": 121,
+                        "endOffset": 1669
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 1488,
+                    "endColumn": 107,
+                    "endOffset": 1591
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 24,
+                        "startColumn": 4,
+                        "startOffset": 1293,
+                        "endColumn": 107,
+                        "endOffset": 1396
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 1596,
+                    "endColumn": 106,
+                    "endOffset": 1698
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 29,
+                        "startColumn": 4,
+                        "startOffset": 1796,
+                        "endColumn": 110,
+                        "endOffset": 1902
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 1703,
+                    "endColumn": 75,
+                    "endOffset": 1774
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 19,
+                        "startColumn": 4,
+                        "startOffset": 828,
+                        "endColumn": 75,
+                        "endOffset": 899
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 1779,
+                    "endColumn": 104,
+                    "endOffset": 1879
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 20,
+                        "startColumn": 4,
+                        "startOffset": 905,
+                        "endColumn": 104,
+                        "endOffset": 1005
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1884,
+                    "endColumn": 120,
+                    "endOffset": 2000
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 28,
+                        "startColumn": 4,
+                        "startOffset": 1670,
+                        "endColumn": 124,
+                        "endOffset": 1790
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 2005,
+                    "endColumn": 106,
+                    "endOffset": 2107
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 21,
+                        "startColumn": 4,
+                        "startOffset": 1011,
+                        "endColumn": 106,
+                        "endOffset": 1113
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 2112,
+                    "endColumn": 88,
+                    "endOffset": 2196
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 26,
+                        "startColumn": 4,
+                        "startOffset": 1497,
+                        "endColumn": 88,
+                        "endOffset": 1581
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 2201,
+                    "endColumn": 84,
+                    "endOffset": 2281
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 22,
+                        "startColumn": 4,
+                        "startOffset": 1119,
+                        "endColumn": 84,
+                        "endOffset": 1199
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 2286,
+                    "endColumn": 86,
+                    "endOffset": 2368
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 23,
+                        "startColumn": 4,
+                        "startOffset": 1205,
+                        "endColumn": 86,
+                        "endOffset": 1287
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 24,
+                    "startColumn": 4,
+                    "startOffset": 2373,
+                    "endColumn": 81,
+                    "endOffset": 2450
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 27,
+                        "startColumn": 4,
+                        "startOffset": 1587,
+                        "endColumn": 81,
+                        "endOffset": 1664
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 25,
+                    "startColumn": 4,
+                    "startOffset": 2455,
+                    "endColumn": 93,
+                    "endOffset": 2544
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\src\\main\\res\\values-cs\\strings.xml",
+                    "position": {
+                        "startLine": 25,
+                        "startColumn": 4,
+                        "startOffset": 1402,
+                        "endColumn": 93,
+                        "endOffset": 1491
+                    }
+                }
+            }
+        ]
+    }
+]

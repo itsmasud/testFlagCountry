@@ -1,0 +1,463 @@
+[
+    {
+        "outputFile": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\res\\merged\\androidTest\\debug\\values-en-rGB\\values-en-rGB.xml",
+        "map": [
+            {
+                "to": {
+                    "startLine": 2,
+                    "startColumn": 4,
+                    "startOffset": 105,
+                    "endColumn": 103,
+                    "endOffset": 204
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 295,
+                        "endColumn": 103,
+                        "endOffset": 394
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 3,
+                    "startColumn": 4,
+                    "startOffset": 209,
+                    "endColumn": 99,
+                    "endOffset": 304
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 399,
+                        "endColumn": 99,
+                        "endOffset": 494
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 4,
+                    "startColumn": 4,
+                    "startOffset": 309,
+                    "endColumn": 107,
+                    "endOffset": 412
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 499,
+                        "endColumn": 107,
+                        "endOffset": 602
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 5,
+                    "startColumn": 4,
+                    "startOffset": 417,
+                    "endColumn": 87,
+                    "endOffset": 500
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 607,
+                        "endColumn": 87,
+                        "endOffset": 690
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 6,
+                    "startColumn": 4,
+                    "startOffset": 505,
+                    "endColumn": 99,
+                    "endOffset": 600
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 695,
+                        "endColumn": 99,
+                        "endOffset": 790
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 7,
+                    "startColumn": 4,
+                    "startOffset": 605,
+                    "endColumn": 114,
+                    "endOffset": 715
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 795,
+                        "endColumn": 114,
+                        "endOffset": 905
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 8,
+                    "startColumn": 4,
+                    "startOffset": 720,
+                    "endColumn": 102,
+                    "endOffset": 818
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 910,
+                        "endColumn": 102,
+                        "endOffset": 1008
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 9,
+                    "startColumn": 4,
+                    "startOffset": 823,
+                    "endColumn": 103,
+                    "endOffset": 922
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 1013,
+                        "endColumn": 103,
+                        "endOffset": 1112
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 10,
+                    "startColumn": 4,
+                    "startOffset": 927,
+                    "endColumn": 98,
+                    "endOffset": 1021
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 1117,
+                        "endColumn": 98,
+                        "endOffset": 1211
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 11,
+                    "startColumn": 4,
+                    "startOffset": 1026,
+                    "endColumn": 104,
+                    "endOffset": 1126
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 13,
+                        "startColumn": 4,
+                        "startOffset": 1216,
+                        "endColumn": 104,
+                        "endOffset": 1316
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 12,
+                    "startColumn": 4,
+                    "startOffset": 1131,
+                    "endColumn": 102,
+                    "endOffset": 1229
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 14,
+                        "startColumn": 4,
+                        "startOffset": 1321,
+                        "endColumn": 102,
+                        "endOffset": 1419
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 13,
+                    "startColumn": 4,
+                    "startOffset": 1234,
+                    "endColumn": 103,
+                    "endOffset": 1333
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 15,
+                        "startColumn": 4,
+                        "startOffset": 1424,
+                        "endColumn": 103,
+                        "endOffset": 1523
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 14,
+                    "startColumn": 4,
+                    "startOffset": 1338,
+                    "endColumn": 118,
+                    "endOffset": 1452
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\exploded-aar\\com.android.support\\appcompat-v7\\22.2.1\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 16,
+                        "startColumn": 4,
+                        "startOffset": 1528,
+                        "endColumn": 118,
+                        "endOffset": 1642
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 15,
+                    "startColumn": 4,
+                    "startOffset": 1457,
+                    "endColumn": 99,
+                    "endOffset": 1552
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 2,
+                        "startColumn": 4,
+                        "startOffset": 105,
+                        "endColumn": 99,
+                        "endOffset": 200
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 16,
+                    "startColumn": 4,
+                    "startOffset": 1557,
+                    "endColumn": 106,
+                    "endOffset": 1659
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 3,
+                        "startColumn": 4,
+                        "startOffset": 205,
+                        "endColumn": 106,
+                        "endOffset": 307
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 17,
+                    "startColumn": 4,
+                    "startOffset": 1664,
+                    "endColumn": 73,
+                    "endOffset": 1733
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 4,
+                        "startColumn": 4,
+                        "startOffset": 312,
+                        "endColumn": 73,
+                        "endOffset": 381
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 18,
+                    "startColumn": 4,
+                    "startOffset": 1738,
+                    "endColumn": 103,
+                    "endOffset": 1837
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 5,
+                        "startColumn": 4,
+                        "startOffset": 386,
+                        "endColumn": 103,
+                        "endOffset": 485
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 19,
+                    "startColumn": 4,
+                    "startOffset": 1842,
+                    "endColumn": 113,
+                    "endOffset": 1951
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 6,
+                        "startColumn": 4,
+                        "startOffset": 490,
+                        "endColumn": 113,
+                        "endOffset": 599
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 20,
+                    "startColumn": 4,
+                    "startOffset": 1956,
+                    "endColumn": 107,
+                    "endOffset": 2059
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 7,
+                        "startColumn": 4,
+                        "startOffset": 604,
+                        "endColumn": 107,
+                        "endOffset": 707
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 21,
+                    "startColumn": 4,
+                    "startOffset": 2064,
+                    "endColumn": 89,
+                    "endOffset": 2149
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 8,
+                        "startColumn": 4,
+                        "startOffset": 712,
+                        "endColumn": 89,
+                        "endOffset": 797
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 22,
+                    "startColumn": 4,
+                    "startOffset": 2154,
+                    "endColumn": 83,
+                    "endOffset": 2233
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 9,
+                        "startColumn": 4,
+                        "startOffset": 802,
+                        "endColumn": 83,
+                        "endOffset": 881
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 23,
+                    "startColumn": 4,
+                    "startOffset": 2238,
+                    "endColumn": 87,
+                    "endOffset": 2321
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 10,
+                        "startColumn": 4,
+                        "startOffset": 886,
+                        "endColumn": 87,
+                        "endOffset": 969
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 24,
+                    "startColumn": 4,
+                    "startOffset": 2326,
+                    "endColumn": 81,
+                    "endOffset": 2403
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 11,
+                        "startColumn": 4,
+                        "startOffset": 974,
+                        "endColumn": 81,
+                        "endOffset": 1051
+                    }
+                }
+            },
+            {
+                "to": {
+                    "startLine": 25,
+                    "startColumn": 4,
+                    "startOffset": 2408,
+                    "endColumn": 91,
+                    "endOffset": 2495
+                },
+                "from": {
+                    "file": "D:\\Source\\bitbucket\\android_dev\\projects\\FieldNation\\libDateTimePicker\\build\\intermediates\\bundles\\debug\\res\\values-en-rGB\\values-en-rGB.xml",
+                    "position": {
+                        "startLine": 12,
+                        "startColumn": 4,
+                        "startOffset": 1056,
+                        "endColumn": 91,
+                        "endOffset": 1143
+                    }
+                }
+            }
+        ]
+    }
+]
