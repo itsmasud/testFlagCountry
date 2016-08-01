@@ -1489,15 +1489,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-//            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
-
-            RateBuyerModal dialog = RateBuyerModal.getInstance(getFragmentManager(), TAG);
-            dialog.show(_workorder);
-
-            // testing RateBuyerModal
-//            RateBuyerDialog dialog = RateBuyerDialog.getInstance(getFragmentManager(), TAG);
-//            dialog.show(_workorder);
-
+            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
         }
 
         @Override
