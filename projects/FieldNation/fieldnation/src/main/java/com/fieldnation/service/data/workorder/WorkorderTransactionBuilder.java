@@ -556,8 +556,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
 
-    public static Intent actionPostRatingIntent(Context context, int satisfactionRating, int scopeRating,
-                                                int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+    public static Intent actionPostRatingIntent(Context context, long workorderId, int satisfactionRating, int scopeRating,
+                                                int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         try {
             String body = "";
 
@@ -566,9 +566,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             body += "&satisfaction_rating=" + satisfactionRating;
             body += "&scope_rating=" + scopeRating;
             body += "&respect_rating=" + respectRating;
-            body += "&respect_comment=" + respectComment;
-            body += "&recommend_buyer=" + recommendBuyer;
-            body += "&other_comments=" + otherComments;
+            body += respectComment == -1 ? "" : "&respect_comment=" + respectComment;
+            body += recommendBuyer == false ? "" : "&recommend_buyer=" + recommendBuyer;
+            body += misc.isEmptyOrNull(otherComments)? "" : "&other_comments=" + otherComments;
 
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")

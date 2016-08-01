@@ -6,7 +6,7 @@
     <View
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/circle_gray" />
+        android:background="@drawable/circle_light_gray" />
 
     <View
         android:layout_width="match_parent"

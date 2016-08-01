@@ -78,6 +78,8 @@ import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
+import com.fieldnation.ui.dialog.RateBuyerDialog;
+import com.fieldnation.ui.dialog.RateBuyerModal;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -1487,7 +1489,15 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
+//            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
+
+            RateBuyerModal dialog = RateBuyerModal.getInstance(getFragmentManager(), TAG);
+            dialog.show(_workorder);
+
+            // testing RateBuyerModal
+//            RateBuyerDialog dialog = RateBuyerDialog.getInstance(getFragmentManager(), TAG);
+//            dialog.show(_workorder);
+
         }
 
         @Override

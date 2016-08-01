@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 
@@ -58,6 +59,12 @@ public class StarView extends FrameLayout {
         setStars(goldStars, _totalStars);
     }
 
+    private Listener _listener;
+
+    public void setListener(Listener listener){
+        _listener = listener;
+    }
+
     public void setStars(int goldStars, int totalStars) {
         _goldStars = goldStars;
         _totalStars = totalStars;
@@ -78,15 +85,25 @@ public class StarView extends FrameLayout {
         _rightStars.setText(misc.repeat(_star, totalStars - goldStars));
     }
 
-    private void setChangeEnabled(boolean enabled) {
+    public void setChangeEnabled(boolean enabled) {
         _leftStars.setClickable(enabled);
         _rightStars.setClickable(enabled);
+    }
+
+    public void setStarFontSize(int fontSize) {
+        _leftStars.setTextSize(fontSize);
+        _rightStars.setTextSize(fontSize);
+    }
+
+    public int getNumberOfGoldStar(){
+        return _goldStars;
     }
 
     private final TextView.OnClickListener _leftStar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             setStars(_goldStars - 1);
+            _listener.onClick(_goldStars);
         }
     };
 
@@ -94,7 +111,12 @@ public class StarView extends FrameLayout {
         @Override
         public void onClick(View v) {
             setStars(_goldStars + 1);
+            _listener.onClick(_goldStars);
         }
     };
+
+    public interface Listener{
+        void onClick(int goldStar);
+    }
 
 }

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="?attr/dialogContainerStyle"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/dialogBg_Material">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="?attr/dialogTitleStyle"
+        android:text="@string/modal_rate_buyer_title" />
+
+    <TextView
+        android:id="@+id/body_textview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:paddingBottom="24dp"
+        android:text="@string/modal_rate_buyer_body" />
+
+
+    <Button
+        android:id="@+id/remindMeLter_button"
+        style="?attr/dialogCancelButtonStyle"
+        android:layout_below="@+id/body_textview"
+        android:text="@string/btn_remind_me_later" />
+
+    <Button
+        android:id="@+id/continue_button"
+        style="?attr/dialogOkButtonStyle"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/body_textview"
+        android:text="@string/btn_continue" />
+</RelativeLayout>
