@@ -16,6 +16,8 @@ public class Pay implements Parcelable {
     private static final String TAG = "Pay";
 
     @Json
+    private Long id;
+    @Json
     private String type;
     @Json
     private String currency;
@@ -28,9 +30,15 @@ public class Pay implements Parcelable {
     @Json
     private Double additional_amount;
     @Json
+    private String approximate_date;
+    @Json
     private Double total;
 
     public Pay() {
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getType() {
@@ -55,6 +63,10 @@ public class Pay implements Parcelable {
 
     public Double getAdditionalAmount() {
         return additional_amount;
+    }
+
+    public String getApproximateDate() {
+        return approximate_date;
     }
 
     public Double getTotal() {

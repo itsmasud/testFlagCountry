@@ -2,6 +2,7 @@ package com.fieldnation.ui.workorder.v2;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -9,11 +10,14 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -118,7 +122,11 @@ public class WorkOrderCard extends RelativeLayout {
         if (_rightGreenButton == null)
             return;
 
-        _bundleIconFont.setVisibility(GONE);
+        if (_workOrder.isBundle())
+            _bundleIconFont.setVisibility(VISIBLE);
+        else
+            _bundleIconFont.setVisibility(GONE);
+
         _titleTextView.setText(_workOrder.getTitle());
         _companyNameTextView.setText(_workOrder.getOrg().getName());
         _workOrderIdTextView.setText("WO " + _workOrder.getId());
@@ -126,13 +134,81 @@ public class WorkOrderCard extends RelativeLayout {
         populateLocation();
         populatePay();
         populateButtons();
+        populateTime();
+    }
+
+    private void populateTime() {
+
     }
 
     private void populateLocation() {
-        _locationTextView.setText(_workOrder.getLocation().getFullAddressOneLine());
+        if (!_workOrder.getLocation().isRemote())
+            _locationTextView.setText(_workOrder.getLocation().getFullAddressOneLine());
+        else
+            _locationTextView.setText("");
     }
 
     private void populatePay() {
+        _payLeftLayout.setVisibility(GONE);
+        if (_workOrder.getPay() == null) {
+            _payRightLayout.setVisibility(INVISIBLE);
+            return;
+        }
+
+        _priceRightTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+        _priceLeftTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
+
+        Pay pay = _workOrder.getPay();
+        if (misc.isEmptyOrNull(pay.getType())) {
+            Log.v(TAG, "PAY TYPE IS BAD!!! " + _workOrder.getId());
+            _payRightLayout.setVisibility(INVISIBLE);
+            return;
+        }
+
+        LinearLayout.LayoutParams params;
+        params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
+        params.gravity = Gravity.RIGHT;
+        _statusRightTextView.setLayoutParams(params);
+        params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
+        params.gravity = Gravity.RIGHT;
+        _priceRightTextView.setLayoutParams(params);
+
+        switch (pay.getType()) {
+            case "blended":
+                _payLeftLayout.setVisibility(VISIBLE);
+                _payRightLayout.setVisibility(VISIBLE);
+
+                params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
+                params.gravity = Gravity.LEFT;
+                _statusRightTextView.setLayoutParams(params);
+                params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
+                params.gravity = Gravity.LEFT;
+                _priceRightTextView.setLayoutParams(params);
+
+                _priceLeftTextView.setText(misc.toCurrency(pay.getAmount()));
+                _statusLeftTextView.setText(getResources().getString(R.string.first_time_hours, pay.getUnits()));
+                _priceRightTextView.setText(misc.toCurrency(pay.getAdditionalAmount()));
+                _statusRightTextView.setText(R.string.hourly_after);
+                break;
+            case "fixed":
+                _payRightLayout.setVisibility(VISIBLE);
+                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
+                _statusRightTextView.setText(R.string.fixed);
+                break;
+            case "hourly":
+                _payRightLayout.setVisibility(VISIBLE);
+                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
+                _statusRightTextView.setText(R.string.hourly);
+                break;
+            case "device":
+                _payRightLayout.setVisibility(VISIBLE);
+                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
+                _statusRightTextView.setText(R.string.per_device);
+                break;
+            default:
+                Log.v(TAG, "PAY TYPE:" + pay.getType());
+                break;
+        }
     }
 
     private void populateButtons() {

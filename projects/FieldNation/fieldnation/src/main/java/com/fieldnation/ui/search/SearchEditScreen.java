@@ -151,6 +151,8 @@ public class SearchEditScreen extends RelativeLayout {
                     .status(SELECTORS[_statusSpinner.getSelectedItemPosition()].getCall())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
 
+            App.setLastViewedList(SELECTORS[_statusSpinner.getSelectedItemPosition()]);
+
             switch (_locationSpinner.getSelectedItemPosition()) {
                 case 0: // profile
                     SearchResultsActivity.runSearch(getContext(), searchParams);

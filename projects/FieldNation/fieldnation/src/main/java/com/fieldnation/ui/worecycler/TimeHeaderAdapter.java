@@ -39,11 +39,12 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
         requestPage(0, false);
     }
 
-    public void refreshPages() {
+    public void clear() {
+        Log.v(TAG, "clear");
         _objects.clear();
         _displayList.clear();
+        _onLastPage = false;
         notifyDataSetChanged();
-        Log.v(TAG, "refreshPages");
         _lastPage = 0;
         requestPage(0, false);
     }

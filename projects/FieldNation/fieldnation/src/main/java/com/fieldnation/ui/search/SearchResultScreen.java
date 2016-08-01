@@ -33,7 +33,7 @@ public class SearchResultScreen extends RelativeLayout {
     private static final String TAG = "SearchResultScreen";
 
     //UI
-    private OverScrollRecyclerView _workorderList;
+    private OverScrollRecyclerView _workOrderList;
     private RefreshView _refreshView;
 
     // Service
@@ -66,15 +66,22 @@ public class SearchResultScreen extends RelativeLayout {
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _workorderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
-        _workorderList.setOnOverScrollListener(_refreshView);
-        _workorderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-        _workorderList.setAdapter(_adapter);
+        _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
+        _workOrderList.setOnOverScrollListener(_refreshView);
+        _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
+        _workOrderList.setAdapter(_adapter);
 
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
 
-        _refreshView.startRefreshing();
+        _adapter.clear();
+
+        post(new Runnable() {
+            @Override
+            public void run() {
+                _refreshView.startRefreshing();
+            }
+        });
     }
 
     @Override
@@ -110,12 +117,12 @@ public class SearchResultScreen extends RelativeLayout {
     private final WorkOrderClient.Listener _workOrderClient_listener = new WorkOrderClient.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subSearch();
+            _workOrderClient.subSearch(_searchParams);
         }
 
         @Override
         public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workorders) {
-            Log.v(TAG, "onSearch" + (workorders != null ? " " + workorders.size() : ""));
+            Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
             if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
                 _adapter.addObjects(envelope.getPage(), workorders);
             else
@@ -156,6 +163,5 @@ public class SearchResultScreen extends RelativeLayout {
             WorkOrderCard v = h.getView();
             v.setData(object);
         }
-
     };
 }
