@@ -61,7 +61,7 @@ public class StarView extends FrameLayout {
 
     private Listener _listener;
 
-    public void setListener(Listener listener){
+    public void setListener(Listener listener) {
         _listener = listener;
     }
 
@@ -95,7 +95,7 @@ public class StarView extends FrameLayout {
         _rightStars.setTextSize(fontSize);
     }
 
-    public int getNumberOfGoldStar(){
+    public int getNumberOfGoldStar() {
         return _goldStars;
     }
 
@@ -103,6 +103,7 @@ public class StarView extends FrameLayout {
         @Override
         public void onClick(View v) {
             setStars(_goldStars - 1);
+            if (_listener != null)
             _listener.onClick(_goldStars);
         }
     };
@@ -111,11 +112,12 @@ public class StarView extends FrameLayout {
         @Override
         public void onClick(View v) {
             setStars(_goldStars + 1);
-            _listener.onClick(_goldStars);
+            if (_listener != null)
+                _listener.onClick(_goldStars);
         }
     };
 
-    public interface Listener{
+    public interface Listener {
         void onClick(int goldStar);
     }
 
