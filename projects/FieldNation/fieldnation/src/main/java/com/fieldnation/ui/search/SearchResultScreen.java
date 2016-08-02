@@ -1,6 +1,7 @@
 package com.fieldnation.ui.search;
 
 import android.content.Context;
+import android.location.Location;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.RelativeLayout;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.SimpleGps;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
@@ -41,6 +43,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Data
     private SearchParams _searchParams;
+    private Location _location;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -80,6 +83,14 @@ public class SearchResultScreen extends RelativeLayout {
             @Override
             public void run() {
                 _refreshView.startRefreshing();
+            }
+        });
+
+        SimpleGps.with(App.get()).start(new SimpleGps.Listener() {
+            @Override
+            public void onLocation(Location location) {
+                SimpleGps.with(App.get()).stop();
+                _location = location;
             }
         });
     }
@@ -161,7 +172,7 @@ public class SearchResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(object);
+            v.setData(object, _location);
         }
     };
 }

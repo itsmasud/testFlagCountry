@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.v2;
 
 import android.content.Context;
+import android.location.Location;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -14,10 +15,16 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 /**
  * Created by Michael on 7/26/2016.
@@ -51,6 +58,7 @@ public class WorkOrderCard extends RelativeLayout {
 
     // Data
     private WorkOrder _workOrder;
+    private Location _location;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -109,8 +117,9 @@ public class WorkOrderCard extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    public void setData(WorkOrder workOrder) {
+    public void setData(WorkOrder workOrder, Location location) {
         _workOrder = workOrder;
+        _location = location;
 
         populateUi();
     }
@@ -138,14 +147,45 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateTime() {
-
+        if (misc.isEmptyOrNull(_workOrder.getRequirements().getSchedule().getEnd())) {
+            try {
+                Calendar cal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getStart());
+                _timeTextView.setText(
+                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else {
+            try {
+                Calendar scal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getStart());
+                Calendar ecal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getEnd());
+                _timeTextView.setText(
+                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
+                                + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
     }
 
     private void populateLocation() {
-        if (!_workOrder.getLocation().isRemote())
-            _locationTextView.setText(_workOrder.getLocation().getFullAddressOneLine());
-        else
-            _locationTextView.setText("");
+        com.fieldnation.data.v2.Location location = _workOrder.getLocation();
+        if (location.isRemote())
+            _locationTextView.setText(R.string.remote_work);
+        else {
+            if (location.getGeo() == null || _location == null) {
+                _locationTextView.setText(location.getFullAddressOneLine());
+            } else {
+                try {
+                    Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
+                    Position myLoc = new Position(_location.getLongitude(), _location.getLatitude());
+                    _locationTextView.setText(location.getFullAddressOneLine() + " (" + myLoc.distanceTo(siteLoc) + "mi)");
+                } catch (Exception ex) {
+                    //Log.v(TAG, ex);
+                    _locationTextView.setText(location.getFullAddressOneLine());
+                }
+            }
+        }
     }
 
     private void populatePay() {
@@ -154,9 +194,6 @@ public class WorkOrderCard extends RelativeLayout {
             _payRightLayout.setVisibility(INVISIBLE);
             return;
         }
-
-        _priceRightTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
-        _priceLeftTextView.setTextColor(getResources().getColor(R.color.fn_dark_text));
 
         Pay pay = _workOrder.getPay();
         if (misc.isEmptyOrNull(pay.getType())) {
@@ -212,6 +249,11 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateButtons() {
+        //* Assigned
+        // location
+        // chat
+        // alert?
+
 
     }
 

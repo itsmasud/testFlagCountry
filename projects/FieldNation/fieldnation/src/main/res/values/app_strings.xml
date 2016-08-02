@@ -504,6 +504,7 @@
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="reason_for_request">Reason For Request (optional)</string>
+    <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="request_bundle">Request Bundle</string>
     <string name="requested_work">Requested work</string>
