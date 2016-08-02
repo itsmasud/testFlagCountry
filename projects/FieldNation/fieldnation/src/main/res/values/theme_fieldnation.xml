@@ -82,7 +82,7 @@
 
         <!-- card styles -->
         <item name="cardStyle">@style/Card</item>
-        <item name="cardContainerStyle">@style/CardContainer</item>
+        <!--<item name="cardContainerStyle">@style/CardContainer</item>-->
 
         <!-- dialogs -->
         <item name="dialogStyle">@style/Dialog</item>

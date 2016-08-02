@@ -16,7 +16,7 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:gravity="center"
-            android:text="@string/btn_location" />
+            android:text="@string/view_title_location" />
 
         <TextView
             android:id="@+id/noLocation_textview"

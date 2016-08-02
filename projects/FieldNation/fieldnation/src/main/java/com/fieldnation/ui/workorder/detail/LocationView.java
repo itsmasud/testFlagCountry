@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.Settings;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,10 +30,15 @@ import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.utils.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
+
+    private static final int ACTION_NAVIGATE = 0;
+    private static final int ACTION_GPS_SETTINGS = 1;
+    private static final int ACTION_MESSAGES = 2;
 
     // UI
     private TextView _noLocationTextView;
@@ -56,7 +62,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private TextView _distanceTextView;
     private TextView _noteTextView;
 
-    private Button _navigateButton;
+    private Button _actionButton;
 
     // Data
     private Workorder _workorder;
@@ -64,6 +70,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private Bitmap _map = null;
     private boolean _mapUnavailable = false;
     private MapboxDirections _directions = null;
+    private boolean _invalidAddress = false;
+    private int _action = ACTION_NAVIGATE;
+
 
     // Services
     private MapboxClient _mapboxClient = null;
@@ -107,8 +116,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
         _noteTextView = (TextView) findViewById(R.id.note_textview);
 
-        _navigateButton = (Button) findViewById(R.id.navigate_button);
-        _navigateButton.setOnClickListener(_navigate_onClick);
+        _actionButton = (Button) findViewById(R.id.navigate_button);
+        _actionButton.setOnClickListener(_action_onClick);
 
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
@@ -159,15 +168,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         setVisibility(VISIBLE);
 
+        _actionButton.setText(R.string.icon_car);
+        _action = ACTION_NAVIGATE;
+
         populateAddressTile();
         populateMap();
         calculateAddressTileVisibility();
     }
 
     private void calculateAddressTileVisibility() {
-        _navigateButton.setVisibility(VISIBLE);
+        if (_invalidAddress) return;
+
         if (_workorder.getIsRemoteWork() || _workorder.getLocation() == null)
-            _navigateButton.setVisibility(GONE);
+            _actionButton.setVisibility(GONE);
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
@@ -179,6 +192,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateAddressTile() {
+        if (_invalidAddress) return;
         // Address info
         Location loc = _workorder.getLocation();
         if (loc == null)
@@ -238,7 +252,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         // distance
         _distanceTextView.setVisibility(VISIBLE);
         if (!SimpleGps.with(App.get()).isLocationEnabled()) {
-            _distanceTextView.setText(R.string.gps_disabled_cant_calc_dist);
+            _distanceTextView.setText(R.string.cant_calc_miles);
         } else if (_directions != null) {
             double miles = 0.0;
             MapboxRoute[] routes = _directions.getRoutes();
@@ -246,7 +260,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 miles += route.getDistanceMi();
             }
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
-        } else if (_userLocation != null && loc.getGeo() != null) {
+        } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude() != null && loc.getGeo().getLatitude() != null) {
             try {
                 Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
                 Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
@@ -256,8 +270,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Log.v(TAG, ex);
                 _distanceTextView.setText(R.string.cannot_display_distance);
             }
+
         } else if (loc.getGeo() == null) {
             _distanceTextView.setText(R.string.cannot_display_distance);
+        } else if (_invalidAddress) {
+            _distanceTextView.setText(R.string.cant_calc_miles);
         } else {
             _distanceTextView.setText(R.string.fetching_distance);
         }
@@ -272,13 +289,22 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     }
 
     private void populateMap() {
-        //        no gps - !isLocationEnabled()
+        if (_invalidAddress) {
+            _actionButton.setText(R.string.icon_messages_detail);
+            _actionButton.setVisibility(VISIBLE);
+            _action = ACTION_MESSAGES;
+            return;
+        }
         if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+            //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
             _noMapLayout.setVisibility(VISIBLE);
+            _actionButton.setText(R.string.icon_gear);
+            _actionButton.setVisibility(VISIBLE);
+            _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
-            _gpsError2TextView.setText(R.string.gps_is_currently_disabled);
+            _gpsError2TextView.setText(R.string.check_gps_settings);
 
         } else if (_workorder.getIsRemoteWork()) {
 //        remote work
@@ -317,6 +343,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     private void lookupMap() {
         Log.v(TAG, "lookupMap");
+//        if (_invalidAddress) return;
         if (_mapboxClient == null || !_mapboxClient.isConnected())
             return;
 
@@ -354,6 +381,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (loc != null) {
             Geo geo = loc.getGeo();
             if (geo != null && geo.getLongitude() != null && geo.getLatitude() != null) {
+                _invalidAddress = false;
                 endPos = new Position(geo.getLongitude(), geo.getLatitude());
                 if (geo.getObfuscated() || !geo.getPrecise()) {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
@@ -363,6 +391,22 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_endMarkerUrl));
                 }
+            } else {
+                // invalid location
+                _invalidAddress = true;
+                _loadingProgress.setVisibility(GONE);
+                _mapImageView.setImageResource(R.drawable.no_map);
+                _noMapLayout.setVisibility(VISIBLE);
+                _actionButton.setText(R.string.icon_messages_detail);
+                _actionButton.setVisibility(VISIBLE);
+                _action = ACTION_MESSAGES;
+                _gpsError1TextView.setText(R.string.invalid_address);
+                _gpsError2TextView.setText(R.string.contact_wo_manager);
+                _distanceTextView.setText(R.string.cant_calc_miles);
+                _gpsError1TextView.setVisibility(VISIBLE);
+                _gpsError2TextView.setVisibility(VISIBLE);
+
+                return;
             }
         }
 
@@ -390,26 +434,47 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
-    private final View.OnClickListener _navigate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _action_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Log.v(TAG, "_navigate_onClick");
-            if (_workorder != null && !_workorder.getIsRemoteWork()) {
-                Location location = _workorder.getLocation();
-                if (location != null) {
-                    try {
-                        GoogleAnalyticsTopicClient
-                                .dispatchEvent(getContext(), "WorkorderActivity",
-                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment", 1);
-                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
-                        String _uriString = "google.navigation:q=" + _fullAddress;
-                        Uri _uri = Uri.parse(_uriString);
-                        showMapActivity(_uri);
-                    } catch (Exception e) {
+            Log.v(TAG, "_action_onClick");
+            switch (_action) {
+                case ACTION_GPS_SETTINGS: {
+                    final Intent intent = new Intent();
+                    intent.setAction(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    App.get().startActivity(intent);
+                    break;
+                }
+                case ACTION_MESSAGES: {
+                    Intent intent = new Intent(getContext(), WorkorderActivity.class);
+                    intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    App.get().startActivity(intent);
+                    break;
+                }
+                case ACTION_NAVIGATE: {
+                    if (_workorder != null && !_workorder.getIsRemoteWork()) {
+                        Location location = _workorder.getLocation();
+                        if (location != null) {
+                            try {
+                                GoogleAnalyticsTopicClient
+                                        .dispatchEvent(getContext(), "WorkorderActivity",
+                                                GoogleAnalyticsTopicClient.EventAction.START_MAP,
+                                                "WorkFragment", 1);
+                                String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                                String _uriString = "google.navigation:q=" + _fullAddress;
+                                Uri _uri = Uri.parse(_uriString);
+                                showMapActivity(_uri);
+                            } catch (Exception e) {
+                            }
+                        }
                     }
+                    break;
                 }
             }
+
         }
     };
 
@@ -417,7 +482,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_map_onClick");
-            if (_workorder != null && !_workorder.getIsRemoteWork()) {
+            if (_workorder != null && !_workorder.getIsRemoteWork() && !_invalidAddress && !_mapUnavailable) {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
@@ -441,6 +506,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
+            _actionButton.setText(R.string.icon_car);
+            _actionButton.setVisibility(VISIBLE);
+            _action = ACTION_NAVIGATE;
             lookupMap();
         }
     };

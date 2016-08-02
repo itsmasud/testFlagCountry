@@ -228,7 +228,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         }
 
         updateThumb();
-        setClickable(_workorder.canViewDeliverables());
     }
 
     private void updateThumb() {

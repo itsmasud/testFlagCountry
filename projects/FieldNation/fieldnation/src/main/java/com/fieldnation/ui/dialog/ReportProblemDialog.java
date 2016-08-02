@@ -54,8 +54,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private Listener _listener;
     private ReportProblemType[] _primaryList = null;
     private ReportProblemType[] _secondaryList = null;
-//    private HintArrayAdapter _primaryAdapter = null;
-//    private HintArrayAdapter _secondaryAdapter = null;
 
     // Saved Data
     private Workorder _workorder;
@@ -160,7 +158,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
     private HintSpinner getPrimarySpinner() {
         if (_primarySpinner != null && _primarySpinner.getAdapter() == null) {
-            HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
+            HintArrayAdapter<ReportProblemType> adapter = new HintArrayAdapter<>(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -170,13 +168,13 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return _primarySpinner;
     }
 
-    private HintArrayAdapter getPrimaryAdapter() {
-        return (HintArrayAdapter) getPrimarySpinner().getAdapter();
+    private HintArrayAdapter<ReportProblemType> getPrimaryAdapter() {
+        return (HintArrayAdapter<ReportProblemType>) getPrimarySpinner().getAdapter();
     }
 
     private HintSpinner getSecondarySpinner() {
         if (_secondarySpinner != null && _secondarySpinner.getAdapter() == null) {
-            HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
+            HintArrayAdapter<ReportProblemType> adapter = new HintArrayAdapter<>(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -186,8 +184,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return _secondarySpinner;
     }
 
-    private HintArrayAdapter getSecondaryAdapter() {
-        return (HintArrayAdapter) getSecondarySpinner().getAdapter();
+    private HintArrayAdapter<ReportProblemType> getSecondaryAdapter() {
+        return (HintArrayAdapter<ReportProblemType>) getSecondarySpinner().getAdapter();
     }
 
 

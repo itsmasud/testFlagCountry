@@ -541,16 +541,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return canViewDeliverables() && getUploadSlots() != null && getUploadSlots().length > 0;
-    }
-
-    public boolean canViewConfidentialInfo() {
-        return getWorkorderStatus() == WorkorderStatus.ASSIGNED
-                || getWorkorderStatus() == WorkorderStatus.INPROGRESS
-                || getWorkorderStatus() == WorkorderStatus.APPROVED
-                || getWorkorderStatus() == WorkorderStatus.COMPLETED
-                || getWorkorderStatus() == WorkorderStatus.CANCELED
-                || getWorkorderStatus() == WorkorderStatus.PAID;
+        return getUploadSlots() != null && getUploadSlots().length > 0;
     }
 
     public boolean canChangeCustomFields() {
@@ -570,12 +561,6 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeClosingNotes() {
-        return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
-                && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
-                || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
-    }
-
-    public boolean canViewDeliverables() {
         return (getWorkorderStatus() == WorkorderStatus.ASSIGNED || getWorkorderStatus() == WorkorderStatus.INPROGRESS)
                 && (getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDIN || getWorkorderSubstatus() == WorkorderSubstatus.CHECKEDOUT
                 || getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED);
@@ -789,24 +774,26 @@ public class Workorder implements Parcelable {
 
     private void buildStatusCompleted(Status status) {
         _leftButtonAction = BUTTON_ACTION_NONE;
+        _rightButtonAction = BUTTON_ACTION_NONE;
         switch (status.getWorkorderSubstatus()) {
             case PENDINGREVIEW:
                 _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
-                if (!hasValidPaymentInfo())
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
                     _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case INREVIEW:
                 _rightButtonAction = BUTTON_ACTION_MARK_INCOMPLETE;
-                if (!hasValidPaymentInfo())
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
                     _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case APPROVED_PROCESSINGPAYMENT:
                 _rightButtonAction = BUTTON_ACTION_NONE;
-                if (!hasValidPaymentInfo())
+                if (!hasValidPaymentInfo() && getPay() != null && !getPay().hidePay())
                     _rightButtonAction = BUTTON_ACTION_UPDATE_PAYMENT_INFO;
                 break;
             case PAID:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             default:
                 _leftButtonAction = BUTTON_ACTION_NONE;
@@ -817,15 +804,18 @@ public class Workorder implements Parcelable {
 
     private void buildStatusCanceled(Status status) {
         _leftButtonAction = BUTTON_ACTION_NONE;
+        _rightButtonAction = BUTTON_ACTION_NONE;
         switch (status.getWorkorderSubstatus()) {
             case CANCELED:
-                _rightButtonAction = BUTTON_ACTION_NONE;
+                // do nothing
                 break;
             case CANCELED_LATEFEEPAID:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             case CANCELED_LATEFEEPROCESSING:
-                _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
+                if (getPay() != null && !getPay().hidePay())
+                    _rightButtonAction = BUTTON_ACTION_VIEW_PAYMENT;
                 break;
             default:
                 _leftButtonAction = BUTTON_ACTION_NONE;

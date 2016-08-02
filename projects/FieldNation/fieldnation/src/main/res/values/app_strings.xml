@@ -12,12 +12,14 @@
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
+    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
     <string name="placeholder_date_short">10/20/1963</string>
     <string name="placeholder_money_short">$5.50</string>
     <string name="placeholder_money_long">$6000.00</string>
     <string name="placeholder_company_name">Company name not available</string>
-    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA</string>
+    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA (10mi)</string>
     <string name="placeholder_distance">65.46 miles</string>
+    <string name="placeholder_city_state_distance">Minneapolis, MN (10mi)</string>
     <string name="gcm_senderid">179310690338</string>
 
     <string name="activity_login_title">Field Nation Login</string>
@@ -86,7 +88,6 @@
     <string name="btn_gps_settings">GPS SETTINGS</string>
     <string name="btn_later">LATER</string>
     <string name="btn_login">LOGIN</string>
-    <string name="btn_location">LOCATION</string>
     <string name="btn_mark_completed">MARK COMPLETED</string>
     <string name="btn_mark_incomplete">MARK INCOMPLETE</string>
     <string name="btn_never">NEVER</string>
@@ -149,6 +150,8 @@
     <string name="toast_must_enter_description">Please enter a description</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection</string>
+
+    <string name="view_title_location">LOCATION</string>
 
     <string name="spinner_custom_field_default">Select an option</string>
 
@@ -380,8 +383,9 @@
     <string name="for_up_to">for up to</string>
     <string name="forgot_your_password">Forgot your password?</string>
     <string name="government">Government</string>
-    <string name="gps_disabled_cant_calc_dist">GPS disabled, can\'t calculate distance</string>
-    <string name="gps_is_currently_disabled">GPS is currently disabled</string>
+    <string name="cant_calc_miles">Cannot calculate miles</string>
+    <string name="check_gps_settings">Check your GPS settings</string>
+    <string name="location_hidden">Location hidden until assigned</string>
     <string name="help">Help</string>
     <string name="hourly">Hourly</string>
     <string name="hourly_after">Hourly after</string>
@@ -397,6 +401,8 @@
     <string name="manage_profiles">Manage Profiles</string>
     <string name="map_not_available">MAP NOT AVAILABLE</string>
     <string name="mark_as_complete">Mark as complete</string>
+    <string name="invalid_address">INVALID ADDRESS</string>
+    <string name="contact_wo_manager">Contact work order manager</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
@@ -498,6 +504,7 @@
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="reason_for_request">Reason For Request (optional)</string>
+    <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="request_bundle">Request Bundle</string>
     <string name="requested_work">Requested work</string>
@@ -782,9 +789,9 @@
     </string-array>
 
     <string-array name="search_location">
-        <item>Profile</item>
-        <item>Current</item>
-        <item>Other</item>
+        <item>Profile Address</item>
+        <item>My Location</item>
+        <item>City, State or Zip</item>
     </string-array>
 
     <string-array name="search_distances">
