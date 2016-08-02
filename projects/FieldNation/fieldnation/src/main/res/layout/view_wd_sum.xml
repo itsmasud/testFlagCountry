@@ -68,7 +68,7 @@
             android:id="@+id/description_container"
             style="@style/Tile"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:orientation="vertical">
 
             <RelativeLayout
@@ -88,37 +88,19 @@
                     android:paddingRight="16dp"
                     android:paddingTop="16dp"
                     android:text="@string/placeholder_phrase" />
-
-                <!--<View-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:layout_height="28dp"-->
-                <!--android:layout_alignBottom="@+id/descriptionShort_textview"-->
-                <!--android:layout_margin="4dp"-->
-                <!--android:background="@drawable/fn_clickable_fade" />-->
             </RelativeLayout>
 
-            <TextView
-                android:id="@+id/description_textview"
+            <WebView
+                android:id="@+id/description_webview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="12dp"
                 android:paddingBottom="4dp"
                 android:paddingLeft="16dp"
                 android:paddingRight="16dp"
                 android:paddingTop="16dp"
-                android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
-                android:visibility="gone" />
-
-            <EditText
-                android:id="@+id/description_edittext"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@android:color/transparent"
-                android:paddingBottom="4dp"
-                android:paddingLeft="16dp"
-                android:paddingRight="16dp"
-                android:paddingTop="16dp"
-                android:text="Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. Some random crap that should be wrapped. "
-                android:textSize="14sp"
                 android:visibility="gone" />
 
             <Button

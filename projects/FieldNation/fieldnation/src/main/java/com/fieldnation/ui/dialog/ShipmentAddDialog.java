@@ -23,8 +23,8 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.utils.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
@@ -443,7 +443,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _scan_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _listener.onScan();
+            if (_listener != null)
+                _listener.onScan();
         }
     };
 
