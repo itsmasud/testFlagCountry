@@ -214,7 +214,6 @@
         <activity
             android:name=".ui.NewFeatureActivity"
             android:exported="false"
-            android:label="New feature"
             android:process=":frontside" />
 
 

@@ -369,7 +369,7 @@
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
-    <string name="dialog_release_note_title">What new in Field Nation</string>
+    <string name="dialog_release_note_title">What\'s new in Field Nation</string>
     <string name="feature_header_added_new">What we added</string>
     <string name="bugs_fixed_header">Bugs we fixed</string>
     <string name="feature_wroking_on">We\'re working on</string>
