@@ -39,6 +39,9 @@
     <color name="btn_status_green_disabled">@color/fn_accent_color_10</color>
     <color name="btn_status_green_disabled_top">@color/fn_accent_color_10</color>
 
+    <color name="btn_status_red_pressed">@color/fn_red</color>
+
+
     <color name="btn_status_gray_fill">#FF999999</color>
     <color name="btn_status_gray_top">#CC999999</color>
     <color name="btn_status_gray_center">#00999999</color>
