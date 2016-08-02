@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.fieldnation.ui.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/dialogBg_Material">
+
+    <RelativeLayout
+        style="?attr/dialogContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/dialogBg_Material">
+
+
+        <TextView
+            android:id="@+id/title_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:paddingBottom="15dp"
+            android:paddingTop="10dp"
+            android:text="@string/dialog_release_note_title"
+            android:textSize="20dp"
+            android:visibility="visible" />
+
+        <com.fieldnation.ui.IconFontButton
+            android:id="@+id/cancel_button"
+            style="@style/Text_Body_1"
+            android:layout_width="15dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginRight="3dp"
+            android:background="@android:color/transparent"
+            android:text="@string/icon_x"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="15sp"
+            android:textStyle="normal"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/addedNew_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/title_textview"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:text="@string/feature_header_added_new"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="16dp"
+            android:visibility="visible" />
+
+        <WebView
+            android:id="@+id/addedNew_webview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/addedNew_textview"
+            android:layout_margin="0dp"
+            android:paddingBottom="4dp"
+            android:paddingLeft="0dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text=""
+            android:visibility="visible" />
+
+
+        <TextView
+            android:id="@+id/bugFixed_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/addedNew_webview"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:text="@string/bugs_fixed_header"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="16dp"
+            android:visibility="visible" />
+
+        <WebView
+            android:id="@+id/bugFixed_webview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/bugFixed_textview"
+            android:paddingBottom="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text=""
+            android:visibility="visible" />
+
+
+        <TextView
+            android:id="@+id/workingOnFeature_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/bugFixed_webview"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:text="@string/feature_wroking_on"
+            android:textColor="@color/fn_dark_text_50"
+            android:textSize="16dp"
+            android:visibility="visible" />
+
+        <WebView
+            android:id="@+id/workingOnFeature_webview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/workingOnFeature_textview"
+            android:paddingBottom="4dp"
+            android:paddingLeft="8dp"
+            android:paddingRight="16dp"
+            android:paddingTop="16dp"
+            android:text=""
+            android:visibility="visible" />
+
+
+    </RelativeLayout>
+</com.fieldnation.ui.OverScrollView>

@@ -34,7 +34,7 @@
         style="?attr/buttonWhiteStyle"
         android:layout_gravity="right"
         android:layout_marginRight="16dp"
-        android:text="ADD SHIPMENT" />
+        android:text="@string/btn_add_shipment" />
 
     <View
         style="@style/DividerFull"

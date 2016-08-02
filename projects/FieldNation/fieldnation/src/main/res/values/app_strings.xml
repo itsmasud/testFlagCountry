@@ -385,6 +385,10 @@
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
+    <string name="dialog_release_note_title">What\'s new in Field Nation</string>
+    <string name="feature_header_added_new">What we added</string>
+    <string name="bugs_fixed_header">Bugs we fixed</string>
+    <string name="feature_wroking_on">We\'re working on</string>
     <string name="failed">Failed</string>
     <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
@@ -658,6 +662,13 @@
     <!-- data settings -->
     <string name="pref_string_data_settings_category_title">Data Settings</string>
 
+    <!-- release declaration -->
+    <string name="pref_string_data_release_title">Release %1$s</string>
+    <string name="pref_category_key_release_declaration">pref_category_key_release_declaration</string>
+    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
+    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
+
+
     <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
     <string name="pref_string_data_remove_title">Remove unused data</string>
     <string name="pref_string_data_remove_summary">Unused data will be removed from your device.</string>
@@ -729,6 +740,18 @@
         <item>Ship From Site</item>
     </string-array>
 
+    <!-- workorder status list -->
+    <string-array name="workorder_status">
+        <item>Available</item>
+        <item>Assigned</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Canceled</item>
+        <item>Paid</item>
+        <item>Approved</item>
+    </string-array>
+
+
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
         <item>Available</item>
@@ -792,6 +815,22 @@
         <item>App Feedback</item>
         <item>Help/Support</item>
     </string-array>
+
+    <string name="added_new_feature">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
+    <string name="bugs_fixed">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
+    <string name="working_on_feature">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
 
     <string-array name="search_status">
         <item>Assigned</item>
