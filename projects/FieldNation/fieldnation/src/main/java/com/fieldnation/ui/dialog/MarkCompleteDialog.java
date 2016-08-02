@@ -27,6 +27,8 @@ public class MarkCompleteDialog extends DialogFragmentBase {
     private Button _continueButton;
     private Button _cancelButton;
 
+    private RateBuyerModal _rateBuyerModal;
+
     // Data
     private Listener _listener;
     private Workorder _workorder;
@@ -71,6 +73,8 @@ public class MarkCompleteDialog extends DialogFragmentBase {
 
         _continueButton = (Button) v.findViewById(R.id.continue_button);
         _continueButton.setOnClickListener(_continue_onClick);
+
+        _rateBuyerModal = RateBuyerModal.getInstance(getFragmentManager(), TAG);
 
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
@@ -136,6 +140,7 @@ public class MarkCompleteDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onContinueClick();
                 dismiss();
+                _rateBuyerModal.show(_workorder);
             }
         }
     };
