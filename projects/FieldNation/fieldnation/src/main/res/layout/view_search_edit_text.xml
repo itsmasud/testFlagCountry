@@ -3,6 +3,7 @@
     style="@style/CardContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="0dp"
     android:padding="8dp">
 
     <com.fieldnation.ui.IconFontTextView

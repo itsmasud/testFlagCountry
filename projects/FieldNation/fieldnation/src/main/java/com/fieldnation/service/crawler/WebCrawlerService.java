@@ -400,7 +400,7 @@ public class WebCrawlerService extends Service {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
+        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
             incrementPendingRequestCounter(-1);
 
             if (failed || workorder == null) return;

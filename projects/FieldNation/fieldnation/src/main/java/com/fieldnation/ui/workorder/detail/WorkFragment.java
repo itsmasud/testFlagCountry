@@ -215,8 +215,7 @@ public class WorkFragment extends WorkorderFragment {
         _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
-        _scheduleView = (ScheduleSummaryView) view
-                .findViewById(R.id.schedule_view);
+        _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);

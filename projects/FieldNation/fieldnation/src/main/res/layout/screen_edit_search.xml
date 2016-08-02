@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="8dp">
+
+            <com.fieldnation.ui.search.SearchEditText
+                android:id="@+id/searchedittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="Status" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/status_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/searchedittext"
+                android:layout_marginBottom="16dp" />
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="Location" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/location_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/status_spinner"
+                android:layout_marginBottom="16dp" />
+
+            <EditText
+                android:id="@+id/otherLocation_edittext"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:hint="Enter City, State or zip code"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:visibility="gone" />
+
+            <TextView
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:text="Distance" />
+
+            <com.fieldnation.ui.HintSpinner
+                android:id="@+id/distance_spinner"
+                style="@style/Widget.AppCompat.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/location_spinner"
+                android:layout_marginBottom="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/loading_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/action_button"
+        style="@style/Material.Button.Circle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="@string/icon_search"
+        android:textSize="22sp" />
+</RelativeLayout>

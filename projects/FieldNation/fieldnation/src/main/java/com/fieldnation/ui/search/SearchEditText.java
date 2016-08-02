@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -63,6 +65,7 @@ public class SearchEditText extends RelativeLayout {
 
         _searchTermEditText = (EditText) findViewById(R.id.search_edittext);
         _searchTermEditText.setOnEditorActionListener(_onEditor);
+        _searchTermEditText.addTextChangedListener(_searchTermEditText_textChangedListener);
 
         _micIconFont = (IconFontTextView) findViewById(R.id.right_textview);
         _micIconFont.setOnClickListener(_micIconFont_onClick);
@@ -109,6 +112,22 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
+    private final TextWatcher _searchTermEditText_textChangedListener = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (_listener != null)
+                _listener.onTextChanged(s);
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
     private final View.OnClickListener _micIconFont_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -137,5 +156,7 @@ public class SearchEditText extends RelativeLayout {
 
     public interface Listener {
         void startSearch(String searchString);
+
+        void onTextChanged(CharSequence s);
     }
 }

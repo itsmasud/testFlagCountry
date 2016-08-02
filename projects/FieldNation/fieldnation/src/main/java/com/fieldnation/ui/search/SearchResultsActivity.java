@@ -8,23 +8,22 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
-import com.fieldnation.ui.dialog.OneButtonDialog;
 
 /**
- * Created by Michael on 7/7/2016.
+ * Created by Michael on 7/27/2016.
  */
-public class EditSearchActivity extends AuthActionBarActivity {
-    private static final String TAG = "EditSearchActivity";
+public class SearchResultsActivity extends AuthActionBarActivity {
+    private static final String TAG = "SearchResultsActivity";
 
     // Ui
-    private SearchEditScreen _searchEditScreen;
+    private SearchResultScreen _searchResultScreen;
 
-    // Dialog
-    private OneButtonDialog _notAvailableDialog;
+    // State
+    private static final String INTENT_SEARCH_PARAMS = "INTENT_SEARCH_PARAMS";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +36,13 @@ public class EditSearchActivity extends AuthActionBarActivity {
 
     @Override
     public int getLayoutResource() {
-        return R.layout.activity_edit_search;
+        return R.layout.activity_search_result;
     }
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
-        setTitle(R.string.work_order_search);
-
-        _searchEditScreen = (SearchEditScreen) findViewById(R.id.searchEdit_screen);
-        _searchEditScreen.setListener(_searchEditScreen_listener);
-
-        _notAvailableDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":notAvailableDialog");
+        setTitle("Search Results");
+        _searchResultScreen = (SearchResultScreen) findViewById(R.id.searchResultScreen);
     }
 
     @Override
@@ -57,25 +52,14 @@ public class EditSearchActivity extends AuthActionBarActivity {
     }
 
     @Override
-    protected void onRestart() {
-        super.onRestart();
-        _searchEditScreen.reset();
-    }
-
-    @Override
     protected void onResume() {
         super.onResume();
-        _notAvailableDialog.setData(getString(R.string.not_available),
-                getString(R.string.workorder_not_found),
-                getString(R.string.btn_close), null);
-    }
 
-    private final SearchEditScreen.Listener _searchEditScreen_listener = new SearchEditScreen.Listener() {
-        @Override
-        public void showNotAvailableDialog() {
-            _notAvailableDialog.show();
+        if (getIntent() != null && getIntent().hasExtra(INTENT_SEARCH_PARAMS)) {
+            SearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
+            _searchResultScreen.startSearch(searchParams);
         }
-    };
+    }
 
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
@@ -84,10 +68,10 @@ public class EditSearchActivity extends AuthActionBarActivity {
         }
     };
 
-    public static void startNew(Context context) {
-        Log.v(TAG, "startNew");
-        Intent intent = new Intent(context, EditSearchActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+    public static void runSearch(Context context, SearchParams searchParams) {
+        Intent intent = new Intent(context, SearchResultsActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
+        intent.putExtra(INTENT_SEARCH_PARAMS, searchParams);
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
