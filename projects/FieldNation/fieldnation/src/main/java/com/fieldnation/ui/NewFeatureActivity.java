@@ -1,6 +1,7 @@
 package com.fieldnation.ui;
 
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -50,36 +51,18 @@ public class NewFeatureActivity extends AuthFragmentActivity {
 
     private void populateUi() {
 
-        final String dataAddedNewFeature = "<ul>" +
-                "<li>Point One</li>" +
-                "<li>Point Two</li>" +
-                "<li>Point Three</li>" +
-                "</ul>";
-
-        final String dataBugsFixed = "<ul>" +
-                "<li>Point One</li>" +
-                "<li>Point Two</li>" +
-                "<li>Point Three</li>" +
-                "</ul>";
-
-        final String dataWorkingOnFeatures = "<ul>" +
-                "<li>Point One</li>" +
-                "<li>Point Two</li>" +
-                "<li>Point Three</li>" +
-                "</ul>";
-
         int fontSize = getResources().getInteger(R.integer.textSizeReleaseNote);
         WebSettings webSettings = null;
 
         webSettings = _addedNewWebView.getSettings();
-        _addedNewWebView.loadData(dataAddedNewFeature, "text/html", "utf-8");
+        _addedNewWebView.loadData(getString(R.string.added_new_feature), "text/html", "utf-8");
         webSettings.setDefaultFontSize(fontSize);
 
-        _bugFixedWebView.loadData(dataBugsFixed, "text/html", "utf-8");
+        _bugFixedWebView.loadData(getString(R.string.bugs_fixed), "text/html", "utf-8");
         webSettings = _bugFixedWebView.getSettings();
         webSettings.setDefaultFontSize(fontSize);
 
-        _workingOnFeatureWebView.loadData(dataWorkingOnFeatures, "text/html", "utf-8");
+        _workingOnFeatureWebView.loadData(getString(R.string.working_on_feature), "text/html", "utf-8");
         webSettings = _workingOnFeatureWebView.getSettings();
         webSettings.setDefaultFontSize(fontSize);
 
