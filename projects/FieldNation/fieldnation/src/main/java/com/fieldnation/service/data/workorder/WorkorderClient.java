@@ -338,11 +338,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             Ratings               -*/
     /*-*************************************-*/
-    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
-                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+    public static void sendRating(Context context,  long workorderId, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         context.startService(
-                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
-                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments));
+    }
+
+    public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
+                                  int respectRating, String otherComments) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
+                        respectRating, -1, false, otherComments));
     }
 
 

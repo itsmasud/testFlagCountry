@@ -813,8 +813,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleRatingFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
         try {
             Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(context,
-                    params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
-                    params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"), params.getLong("workorderId"));
+                    params.getLong("workorderId"), params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
+                    params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"));
 
             PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 

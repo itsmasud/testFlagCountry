@@ -127,6 +127,7 @@
     <string name="btn_yes">YES</string>
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
+    <string name="btn_remind_me_later">REMIND ME LATER</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -150,6 +151,7 @@
     <string name="toast_must_enter_description">Please enter a description</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection</string>
+    <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -215,6 +217,10 @@
         <item>17</item>
         <item>21</item>
     </integer-array>
+
+    <string name="modal_rate_buyer_title">Would you like to rate this buyer now?</string>
+    <string name="modal_rate_buyer_body">Your work order has been marked as complete and you can now rate %1$s</string>
+
 
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
@@ -285,6 +291,14 @@
     <string name="dialog_insert_file_name">Please insert file name.</string>
     <string name="dialog_invalid_file_name">Invalid file name. Remove invalid characters.</string>
     <string name="dialog_insert_filename_before_extension">Insert file name before extension.</string>
+
+    <string name="dialog_rate_buyer_title">Rate WO %1$d</string>
+    <string name="overall_satisfaction_header">Overall satisfaction</string>
+    <string name="clear_expectation_header">Were the expectation clear?</string>
+    <string name="chk_professional_header">Were they professional?</string>
+    <string name="other_thoughts">Other thoughts</string>
+    <string name="character_counting">%1$d /120</string>
+
 
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
@@ -479,7 +493,7 @@
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
     <string name="optional_caps">OPTIONAL</string>
-    <string name="overall_rating__">Overall rating: </string>
+    <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
