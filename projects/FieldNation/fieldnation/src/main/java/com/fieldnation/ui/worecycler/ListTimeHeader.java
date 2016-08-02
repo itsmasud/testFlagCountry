@@ -60,16 +60,26 @@ public class ListTimeHeader extends RelativeLayout {
         if (_dotTextView == null || _dayTextView == null || _dateTextView == null)
             return;
 
+        Calendar _now = Calendar.getInstance();
+
         if (DateUtils.isToday(_cal)) {
             _dotTextView.setVisibility(VISIBLE);
             _dayTextView.setVisibility(VISIBLE);
-            _dayTextView.setText("Today");
+            _dayTextView.setText(R.string.today);
+        } else if (DateUtils.isTomorrow(_cal)) {
+            _dotTextView.setVisibility(VISIBLE);
+            _dayTextView.setVisibility(VISIBLE);
+            _dayTextView.setText(R.string.tomorrow);
         } else {
             _dotTextView.setVisibility(GONE);
             _dayTextView.setVisibility(GONE);
         }
 
-        _dateTextView.setText(DateUtils.formatDateLong(_cal));
+        if (_now.get(Calendar.YEAR) != _cal.get(Calendar.YEAR)) {
+            _dateTextView.setText(DateUtils.formatDateLong(_cal));
+        } else {
+            _dateTextView.setText(DateUtils.formatDateReallyLongNoYear(_cal));
+        }
     }
 
     public void setDate(Calendar utc) {

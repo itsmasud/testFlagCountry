@@ -127,6 +127,15 @@ public class DateUtils {
 
     /**
      * @param calendar
+     * @return Wednesday, Jun 3
+     */
+    public static String formatDateReallyLongNoYear(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH);
+    }
+
+    /**
+     * @param calendar
      * @param seconds
      * @return MM/DD/YYYY HH:MM:SS am/pm
      */
