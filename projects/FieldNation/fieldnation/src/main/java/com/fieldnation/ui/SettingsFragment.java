@@ -6,10 +6,12 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.crawler.WebCrawlerService;
@@ -41,6 +43,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Set up a listener whenever a key changes
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
+
+        PreferenceCategory prefCat=(PreferenceCategory)findPreference(getString(R.string.pref_category_key_release_declaration));
+        prefCat.setTitle(getString(R.string.pref_string_data_release_title, BuildConfig.VERSION_NAME));
 
         for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
             Preference preference = getPreferenceScreen().getPreference(i);

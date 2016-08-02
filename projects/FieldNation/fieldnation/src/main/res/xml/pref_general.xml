@@ -75,7 +75,9 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="@string/pref_string_data_release_title">
+    <PreferenceCategory
+        android:key="@string/pref_category_key_release_declaration"
+        android:title="@string/pref_string_data_release_title">
         <Preference
             android:key="@string/pref_key_release_declaration"
             android:summary="@string/pref_string_release_summary" />
