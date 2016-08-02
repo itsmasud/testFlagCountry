@@ -15,6 +15,8 @@ import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.ui.dialog.ReleaseNoteDialog;
+import com.fieldnation.ui.payment.PaymentListActivity;
+
 import android.support.v4.app.FragmentManager;
 
 /**
@@ -101,6 +103,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
             if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
                 Log.e("SettingsFragment", "release things clicked");
+                Intent intent = new Intent(App.get(), NewFeatureActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                App.get().startActivity(intent);
                 return true;
             }
             return false;

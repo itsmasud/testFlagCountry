@@ -211,6 +211,12 @@
             android:label="@string/activity_share_activity_title"
             android:process=":frontside"></activity>
 
+        <activity
+            android:name=".ui.NewFeatureActivity"
+            android:exported="false"
+            android:label="New feature"
+            android:process=":frontside" />
+
 
         <service
             android:name=".service.auth.AuthService"
