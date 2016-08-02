@@ -2,7 +2,8 @@
 
 <com.fieldnation.ui.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/dialogBg_Material">
 
     <RelativeLayout
         style="?attr/dialogContainerStyle"
@@ -16,8 +17,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
-            android:paddingTop="10dp"
             android:paddingBottom="15dp"
+            android:paddingTop="10dp"
             android:text="@string/dialog_release_note_title"
             android:textSize="20dp"
             android:visibility="visible" />
@@ -45,8 +46,8 @@
             android:layout_below="@+id/title_textview"
             android:paddingLeft="12dp"
             android:paddingTop="10dp"
-            android:textColor="@color/fn_dark_text_50"
             android:text="@string/feature_header_added_new"
+            android:textColor="@color/fn_dark_text_50"
             android:textSize="16dp"
             android:visibility="visible" />
 
@@ -55,11 +56,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/addedNew_textview"
+            android:layout_margin="0dp"
             android:paddingBottom="4dp"
             android:paddingLeft="0dp"
             android:paddingRight="16dp"
             android:paddingTop="16dp"
-            android:layout_margin="0dp"
             android:text=""
             android:visibility="visible" />
 
@@ -70,11 +71,11 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/addedNew_webview"
-            android:paddingTop="10dp"
             android:paddingLeft="12dp"
+            android:paddingTop="10dp"
             android:text="@string/bugs_fixed_header"
-            android:textSize="16dp"
             android:textColor="@color/fn_dark_text_50"
+            android:textSize="16dp"
             android:visibility="visible" />
 
         <WebView
@@ -96,10 +97,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@+id/bugFixed_webview"
-            android:paddingTop="10dp"
-            android:textColor="@color/fn_dark_text_50"
             android:paddingLeft="12dp"
+            android:paddingTop="10dp"
             android:text="@string/feature_wroking_on"
+            android:textColor="@color/fn_dark_text_50"
             android:textSize="16dp"
             android:visibility="visible" />
 

@@ -8,16 +8,11 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
-import android.preference.PreferenceScreen;
 
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.crawler.WebCrawlerService;
-import com.fieldnation.ui.dialog.ReleaseNoteDialog;
-import com.fieldnation.ui.payment.PaymentListActivity;
-
-import android.support.v4.app.FragmentManager;
 
 /**
  * Created by Michael Carver on 4/15/2015.
@@ -25,7 +20,6 @@ import android.support.v4.app.FragmentManager;
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = "SettingsFragment";
 
-    private ReleaseNoteDialog _releaseNoteDialog;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,7 +31,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onAttach(activity);
         //TODO need to call
 //        _releaseNoteDialog = ReleaseNoteDialog.getInstance( getSupportFragmentManager(), TAG);
-
     }
 
 
@@ -104,7 +97,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
                 Log.e("SettingsFragment", "release things clicked");
                 Intent intent = new Intent(App.get(), NewFeatureActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                 App.get().startActivity(intent);
                 return true;
             }
