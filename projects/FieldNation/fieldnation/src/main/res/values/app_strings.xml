@@ -530,6 +530,7 @@
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
     <string name="schedule">Schedule</string>
+    <string name="schedule_caps">SCHEDULE</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>

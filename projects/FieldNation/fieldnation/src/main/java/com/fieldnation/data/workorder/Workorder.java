@@ -93,6 +93,8 @@ public class Workorder implements Parcelable {
     private Long _paymentId;
     @Json(name = "schedule")
     private Schedule _schedule;
+    @Json(name = "scheduleType")
+    private Integer _scheduleType;
     @Json(name = "shipmentTracking")
     private ShipmentTracking[] _shipmentTracking;
     @Json(name = "signatureList")
@@ -291,6 +293,15 @@ public class Workorder implements Parcelable {
 
     public Schedule getSchedule() {
         return _schedule;
+    }
+
+    // 1=>exact schedule
+    // 2=>Buseness hours
+    // 3=>Open range
+    public Integer getScheduleType() {
+        if (_scheduleType == null)
+            return 1;
+        return _scheduleType;
     }
 
     public ShipmentTracking[] getShipmentTracking() {

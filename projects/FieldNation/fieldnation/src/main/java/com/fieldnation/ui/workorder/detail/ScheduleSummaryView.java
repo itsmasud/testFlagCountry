@@ -9,15 +9,19 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.utils.ISO8601;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ScheduleSummaryView";
 
     // UI
-    private TextView _dateTextView;
-    private TextView _timeTextView;
-    private LinearLayout _durationLayout;
-    private TextView _durationTextView;
+    private TextView _type1TextView;
+    private TextView _date1TextView;
+    private TextView _type2TextView;
+    private TextView _date2TextView;
 
     // Data
     private Workorder _workorder;
@@ -42,19 +46,18 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         if (isInEditMode())
             return;
 
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _timeTextView = (TextView) findViewById(R.id.time_textview);
-        _durationLayout = (LinearLayout) findViewById(R.id.duration_layout);
-        _durationTextView = (TextView) findViewById(R.id.duration_textview);
+        _type1TextView = (TextView) findViewById(R.id.type1_textview);
+        _date1TextView = (TextView) findViewById(R.id.date1_textview);
+        _type2TextView = (TextView) findViewById(R.id.type2_textview);
+        _date2TextView = (TextView) findViewById(R.id.date2_textview);
 
 
         setVisibility(View.GONE);
     }
 
-	/*-*************************************-*/
+    /*-*************************************-*/
     /*-				Mutators				-*/
     /*-*************************************-*/
-
     @Override
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
@@ -64,29 +67,52 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private void refresh() {
         if (_workorder == null)
             return;
+        setVisibility(View.VISIBLE);
 
-        if (_workorder.getEstimatedSchedule() != null) {
-            _dateTextView.setText(_workorder.getEstimatedSchedule().getFormatedDate());
-            _timeTextView.setText(_workorder.getEstimatedSchedule().getFormatedTime());
-            if (_workorder.getEstimatedSchedule().getDuration() != null) {
-                _durationLayout.setVisibility(VISIBLE);
-                _durationTextView.setText(_workorder.getEstimatedSchedule().getDuration() + " hours");
-            } else {
-                _durationLayout.setVisibility(GONE);
+        try {
+            switch (_workorder.getScheduleType()) {
+                case 1: // exact schedule
+                    _type2TextView.setVisibility(GONE);
+                    _date2TextView.setVisibility(GONE);
+
+                    _type1TextView.setText("Exactly on");
+                    _date1TextView.setText(
+                            new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault())
+                                    .format(ISO8601.toCalendar(_workorder.getSchedule().getStartTime()).getTime()));
+                    break;
+                case 2: // Buseness hours
+                    break;
+                case 3: // Open range
+                    break;
+                default:
+                    break;
             }
-            setVisibility(View.VISIBLE);
-        } else if (_workorder.getSchedule() != null) {
-            _dateTextView.setText(_workorder.getSchedule().getFormatedDate());
-            _timeTextView.setText(_workorder.getSchedule().getFormatedTime());
-            if (_workorder.getSchedule().getDuration() != null) {
-                _durationLayout.setVisibility(VISIBLE);
-                _durationTextView.setText(_workorder.getSchedule().getDuration() + " hours");
-            } else {
-                _durationLayout.setVisibility(GONE);
-            }
-            setVisibility(View.VISIBLE);
-        } else {
-            setVisibility(View.GONE);
+        } catch (Exception ex) {
+            ex.printStackTrace();
         }
+
+//        if (_workorder.getEstimatedSchedule() != null) {
+//            _dateTextView.setText(_workorder.getEstimatedSchedule().getFormatedDate());
+//            _timeTextView.setText(_workorder.getEstimatedSchedule().getFormatedTime());
+//            if (_workorder.getEstimatedSchedule().getDuration() != null) {
+//                _durationLayout.setVisibility(VISIBLE);
+//                _durationTextView.setText(_workorder.getEstimatedSchedule().getDuration() + " hours");
+//            } else {
+//                _durationLayout.setVisibility(GONE);
+//            }
+//            setVisibility(View.VISIBLE);
+//        } else if (_workorder.getSchedule() != null) {
+//            _dateTextView.setText(_workorder.getSchedule().getFormatedDate());
+//            _timeTextView.setText(_workorder.getSchedule().getFormatedTime());
+//            if (_workorder.getSchedule().getDuration() != null) {
+//                _durationLayout.setVisibility(VISIBLE);
+//                _durationTextView.setText(_workorder.getSchedule().getDuration() + " hours");
+//            } else {
+//                _durationLayout.setVisibility(GONE);
+//            }
+//            setVisibility(View.VISIBLE);
+//        } else {
+//            setVisibility(View.GONE);
+//        }
     }
 }
