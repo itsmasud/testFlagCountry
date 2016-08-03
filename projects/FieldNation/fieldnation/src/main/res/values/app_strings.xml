@@ -300,7 +300,6 @@
     <string name="character_counting">%1$d /120</string>
 
 
-
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
     <string name="tab_assigned">ASSIGNED</string>
@@ -662,13 +661,6 @@
     <!-- data settings -->
     <string name="pref_string_data_settings_category_title">Data Settings</string>
 
-    <!-- release declaration -->
-    <string name="pref_string_data_release_title">Release %1$s</string>
-    <string name="pref_category_key_release_declaration">pref_category_key_release_declaration</string>
-    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
-    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
-
-
     <string name="pref_key_allow_data_remove">pref_key_allow_data_remove</string>
     <string name="pref_string_data_remove_title">Remove unused data</string>
     <string name="pref_string_data_remove_summary">Unused data will be removed from your device.</string>
@@ -710,6 +702,16 @@
     <string name="pref_key_profile_photo_wifi_only">pref_key_profile_photo_wifi_only</string>
     <string name="pref_string_profile_photo_wifi_title">Use wifi to download profile images</string>
     <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
+
+    <!-- legal section -->
+    <string name="pref_string_data_settings_legal">Legal</string>
+    <string name="pref_string_qa_title">Quality Assurance Policy</string>
+
+    <!-- release declaration -->
+    <string name="pref_string_data_release_title">Release %1$s</string>
+    <string name="pref_category_key_release_declaration">pref_category_key_release_declaration</string>
+    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
+    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
 
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
