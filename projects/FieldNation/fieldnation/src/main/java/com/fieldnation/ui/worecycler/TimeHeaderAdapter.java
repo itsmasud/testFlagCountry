@@ -161,6 +161,10 @@ public abstract class TimeHeaderAdapter<T> extends RecyclerView.Adapter<BaseHold
         }
     }
 
+    public Object getObject(int index) {
+        return _displayList.get(index);
+    }
+
     @Override
     public int getItemCount() {
         return _displayList.size();
