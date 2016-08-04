@@ -1,17 +1,11 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.ui;
 
-import android.content.DialogInterface;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.app.FragmentManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -20,13 +14,10 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.StarView;
 import com.fieldnation.utils.misc;
 
 import java.lang.ref.WeakReference;
@@ -34,15 +25,18 @@ import java.lang.ref.WeakReference;
 /**
  * Created by shoaib.ahmed on 07/28/2016.
  */
-public class RateBuyerDialog extends DialogFragmentBase {
-    private static final String TAG = "RateBuyerDialog";
+public class RateBuyerActivity extends AuthFragmentActivity {
+    private static final String TAG = "RateBuyerActivity";
 
     // State
-    private static final String STATE_WORKORDER = "RateBuyerDialog:STATE_WORKORDER";
-    private static final String STATE_GOLD_STAR = "RateBuyerDialog:STATE_GOLD_STAR";
-    private static final String STATE_SCOPE_RATING = "RateBuyerDialog:STATE_SCOPE_RATING";
-    private static final String STATE_RESPECT_RATING = "RateBuyerDialog:STATE_RESPECT_RATING";
-    private static final String STATE_COMMENT_TEXT = "RateBuyerDialog:STATE_COMMENT_TEXT";
+    private static final String STATE_WORKORDER = "RateBuyerActivity:STATE_WORKORDER";
+    private static final String STATE_GOLD_STAR = "RateBuyerActivity:STATE_GOLD_STAR";
+    private static final String STATE_SCOPE_RATING = "RateBuyerActivity:STATE_SCOPE_RATING";
+    private static final String STATE_RESPECT_RATING = "RateBuyerActivity:STATE_RESPECT_RATING";
+    private static final String STATE_COMMENT_TEXT = "RateBuyerActivity:STATE_COMMENT_TEXT";
+
+    private static final String INTENT_WORKORDER = "INTENT_WORKORDER";
+
 
     // UI
     private TextView _titleTextView;
@@ -55,15 +49,14 @@ public class RateBuyerDialog extends DialogFragmentBase {
     private TextView _chkProfessionalNoTextView;
     private TextView _chkProfessionalYesTextView;
     private EditText _otherThoughtsEditText;
-    private TextView _characterCountingTextView;
 
     private Button _submitButton;
     private Button _cancelButton;
 
     // Data
+    private boolean _clear = false;
     private Workorder _workorder;
     private Listener _listener;
-    private boolean _clear = false;
     private final int MAX_THOUGHTS_LENGTH = 120;
     private boolean _hasToastShown = false;
     private int _goldStar = 0;
@@ -77,13 +70,52 @@ public class RateBuyerDialog extends DialogFragmentBase {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public static RateBuyerDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, RateBuyerDialog.class);
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         Log.v(TAG, "onCreate");
+
+        setContentView(R.layout.activity_rate_buyer);
+
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            if (extras.containsKey(INTENT_WORKORDER))
+                _workorder = extras.getParcelable(INTENT_WORKORDER);
+        }
+
+        _titleTextView = (TextView) findViewById(R.id.title_textview);
+
+        _rateStarView = (StarView) findViewById(R.id.star_rating);
+
+        _picView = (ProfilePicView) findViewById(R.id.pic_view);
+        _picView.setProfilePic(R.drawable.missing_circle);
+
+        _companyNameTextView = (TextView) findViewById(R.id.company_name_textview);
+        _locationTextView = (TextView) findViewById(R.id.location_textview);
+
+        _expectationNoTextView = (TextView) findViewById(R.id.expectation_no_textview);
+        _expectationNoTextView.setOnClickListener(expectation_onClick_listener);
+        _expectationYesTextView = (TextView) findViewById(R.id.expectation_yes_textview);
+        _expectationYesTextView.setOnClickListener(expectation_onClick_listener);
+
+        _chkProfessionalNoTextView = (TextView) findViewById(R.id.chk_professional_no_textview);
+        _chkProfessionalNoTextView.setOnClickListener(chkProfession_onClick_listener);
+        _chkProfessionalYesTextView = (TextView) findViewById(R.id.chk_professinal_yes_textview);
+        _chkProfessionalYesTextView.setOnClickListener(chkProfession_onClick_listener);
+
+        _otherThoughtsEditText = (EditText) findViewById(R.id.other_thoughts_edittext);
+        _otherThoughtsEditText.addTextChangedListener(_textEditText_watcherListener);
+
+        _submitButton = (Button) findViewById(R.id.submit_button);
+        _submitButton.setOnClickListener(_submit_onClick);
+
+        _cancelButton = (Button) findViewById(R.id.cancel_button);
+        _cancelButton.setOnClickListener(_cancel_onClick);
+
+        super.onCreate(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -99,12 +131,9 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_COMMENT_TEXT))
                 _commentText = savedInstanceState.getString(STATE_COMMENT_TEXT);
-
-
         }
-        super.onCreate(savedInstanceState);
 
-        setStyle(STYLE_NO_TITLE, 0);
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     @Override
@@ -129,50 +158,9 @@ public class RateBuyerDialog extends DialogFragmentBase {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_rate_buyer, container);
-
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
-
-        _rateStarView = (StarView) v.findViewById(R.id.star_rating);
-
-        _picView = (ProfilePicView) v.findViewById(R.id.pic_view);
-        _picView.setProfilePic(R.drawable.missing_circle);
-
-        _companyNameTextView = (TextView) v.findViewById(R.id.company_name_textview);
-        _locationTextView = (TextView) v.findViewById(R.id.location_textview);
-
-        _expectationNoTextView = (TextView) v.findViewById(R.id.expectation_no_textview);
-        _expectationNoTextView.setOnClickListener(expectation_onClick_listener);
-        _expectationYesTextView = (TextView) v.findViewById(R.id.expectation_yes_textview);
-        _expectationYesTextView.setOnClickListener(expectation_onClick_listener);
-
-        _chkProfessionalNoTextView = (TextView) v.findViewById(R.id.chk_professional_no_textview);
-        _chkProfessionalNoTextView.setOnClickListener(chkProfession_onClick_listener);
-        _chkProfessionalYesTextView = (TextView) v.findViewById(R.id.chk_professinal_yes_textview);
-        _chkProfessionalYesTextView.setOnClickListener(chkProfession_onClick_listener);
-
-        _otherThoughtsEditText = (EditText) v.findViewById(R.id.other_thoughts_edittext);
-        _otherThoughtsEditText.addTextChangedListener(_textEditText_watcherListener);
-
-        _characterCountingTextView = (TextView) v.findViewById(R.id.character_counting_textview);
-
-        _submitButton = (Button) v.findViewById(R.id.submit_button);
-        _submitButton.setOnClickListener(_submit_onClick);
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _cancelButton.setOnClickListener(_cancel_onClick);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        return v;
-    }
-
-    @Override
-    public void reset() {
-        Log.v(TAG, "reset");
-        super.reset();
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        _submitButton.requestFocus();
     }
 
     @Override
@@ -182,8 +170,6 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
         if (_clear) {
             _otherThoughtsEditText.setText("");
-            _characterCountingTextView.setText(getString(R.string.character_counting, 0));
-
         } else {
 
             _rateStarView.setStars(_goldStar);
@@ -216,7 +202,8 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
         }
 
         _photos = new PhotoClient(_photo_listener);
@@ -226,25 +213,13 @@ public class RateBuyerDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void dismiss() {
-//        Log.e(TAG, "dismiss");
+    protected void onStop() {
         _clear = true;
-        super.dismiss();
-    }
-
-    @Override
-    public void onDismiss(DialogInterface dialog) {
-//        Log.e(TAG, "onDismiss");
-        super.onDismiss(dialog);
+        super.onStop();
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
-    }
-
-    public void show(Workorder workorder) {
-        _workorder = workorder;
-        super.show();
     }
 
     private void populateUi() {
@@ -301,7 +276,8 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
 
 
         }
@@ -324,7 +300,8 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
 
         }
     };
@@ -343,10 +320,6 @@ public class RateBuyerDialog extends DialogFragmentBase {
                 } else {
                     _hasToastShown = false;
                 }
-
-                _characterCountingTextView.setText(getString(R.string.character_counting, numberOfCharacter));
-            } else {
-                _characterCountingTextView.setText(getString(R.string.character_counting, 0));
             }
         }
 
@@ -381,16 +354,14 @@ public class RateBuyerDialog extends DialogFragmentBase {
             WorkorderClient.sendRating(App.get(), _workorder.getWorkorderId(),
                     _goldStar, _hasSelectedScopeRating == true ? 1 : 0,
                     _hasSelectedRespectRating == true ? 1 : 0, _commentText);
-
-            dismiss();
-
+            onBackPressed();
         }
     };
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            dismiss();
+            onBackPressed();
         }
     };
 
@@ -402,7 +373,8 @@ public class RateBuyerDialog extends DialogFragmentBase {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
         }
     };
 
