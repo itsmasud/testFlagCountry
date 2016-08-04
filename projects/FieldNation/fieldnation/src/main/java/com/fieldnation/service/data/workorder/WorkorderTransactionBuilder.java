@@ -6,6 +6,7 @@ import android.location.Location;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.Debug;
 import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -568,7 +569,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             body += "&respect_rating=" + respectRating;
             body += respectComment == -1 ? "" : "&respect_comment=" + respectComment;
             body += recommendBuyer == false ? "" : "&recommend_buyer=" + recommendBuyer;
-            body += misc.isEmptyOrNull(otherComments)? "" : "&other_comments=" + otherComments;
+            body += misc.isEmptyOrNull(otherComments) ? "" : "&other_comments=" + otherComments;
 
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
@@ -714,10 +715,19 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static void uploadDeliverable(Context context, StoredObject upFile, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
 
+        if (upFile == null) {
+            ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
+            Debug.logException(new Exception("PA-332 - UpFile is null"));
+            WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
+            return;
+        }
+
+
         if (upFile.isFile() && upFile.getFile() != null) {
             if (upFile.getFile().length() > 100000000) { // 100 MB?
                 StoredObject.delete(upFile);
                 ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
+                WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
                 return;
             }
         }
@@ -730,7 +740,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .path("/api/rest/v1/workorder/" + workorderId + "/deliverables")
                     .multipartFile("file", filename, upFile)
                     .multipartField("note", (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
-//                    .body("note=" + (photoDescription == null ? "" : misc.escapeForURL(photoDescription)))
                     .doNotRead();
 
             if (uploadSlotId != 0) {
