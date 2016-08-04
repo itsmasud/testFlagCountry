@@ -125,6 +125,10 @@ public class SearchEditScreen extends RelativeLayout {
         _workorderClient.connect(App.get());
 
         _statusSpinner.setSelection(indexLookup[App.getLastViewedList().ordinal()]);
+
+        if (!App.get().isLocationEnabled()) {
+            _locationSpinner.setSelection(0);
+        }
     }
 
     @Override

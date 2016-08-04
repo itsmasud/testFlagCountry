@@ -65,6 +65,8 @@ public class App extends Application {
     public static final String PREF_INSTALL_TIME = "PREF_INSTALL_TIME";
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
+    public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
+
 
     private static App _context;
 
@@ -561,6 +563,16 @@ public class App extends Application {
         edit.apply();
     }
 
+    public void setReleaseNoteShownReminded(long profileUserId) {
+        Log.v(TAG, "setReleaseNoteReminded");
+        // misc.printStackTrace("setCoiReminded");
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_RELEASE_NOTE_SHOWN, profileUserId);
+        edit.apply();
+    }
+
+
     public void setNeverRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
@@ -677,6 +689,10 @@ public class App extends Application {
         }
     }
 
+    public boolean hasReleaseNoteShownForThisPofile(long profileUserId) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return profileUserId == settings.getLong(PREF_RELEASE_NOTE_SHOWN, -1);
+    }
 
     public boolean showRateMe() {
         // if hasn't completed a work order, then no
