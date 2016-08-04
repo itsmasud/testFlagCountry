@@ -2,7 +2,8 @@
 
 <com.fieldnation.ui.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="match_parent"
+    android:background="@color/dialogBg_Material">
 
     <RelativeLayout
         style="?attr/dialogContainerStyle"
@@ -68,6 +69,7 @@
                     android:id="@+id/company_name_textview"
                     style="@style/DrawerProfileName"
                     android:maxLines="1"
+                    android:ellipsize="end"
                     android:text="Firstname Lastname" />
 
                 <TextView
@@ -210,26 +212,16 @@
                 android:imeOptions="actionDone" />
         </android.support.design.widget.TextInputLayout>
 
-        <TextView
-            android:id="@+id/character_counting_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_below="@+id/other_thoughts_layout"
-            android:padding="3dp"
-            android:text="0/120"
-            android:textColor="@color/fn_light_text_80"
-            android:textSize="10dp" />
-
         <Button
             android:id="@+id/submit_button"
-            style="?attr/dialogOkButtonStyle"
+            style="?attr/buttonGrayStyle"
             android:layout_width="150dp"
-            android:layout_below="@id/character_counting_textview"
+            android:layout_below="@id/other_thoughts_layout"
             android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
+            android:textColor="@android:color/white"
             android:text="@string/btn_submit"
             android:enabled="false"/>
-
 
     </RelativeLayout>
 </com.fieldnation.ui.OverScrollView>

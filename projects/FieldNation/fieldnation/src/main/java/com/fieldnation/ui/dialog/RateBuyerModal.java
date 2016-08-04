@@ -1,10 +1,10 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +12,12 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.ui.NewFeatureActivity;
+import com.fieldnation.ui.RateBuyerActivity;
 import com.fieldnation.utils.misc;
 
 /**
@@ -25,13 +27,16 @@ public class RateBuyerModal extends DialogFragmentBase {
     private static final String TAG = "RateBuyerModal";
 
     // State
-    private static final String STATE_WORKORDER = "RateBuyerDialog:STATE_WORKORDER";
+    private static final String STATE_WORKORDER = "RateBuyerActivity:STATE_WORKORDER";
+
+    private static final String INTENT_WORKORDER = "INTENT_WORKORDER";
+
 
     // UI
     private TextView _bodyTextView;
     private Button _continueButton;
     private Button _remindMeLaterButton;
-    private RateBuyerDialog _rateBuyerDialog;
+    private RateBuyerActivity _rateBuyerDialog;
 
     // Data
     private Workorder _workorder;
@@ -85,9 +90,6 @@ public class RateBuyerModal extends DialogFragmentBase {
         _remindMeLaterButton = (Button) v.findViewById(R.id.remindMeLter_button);
         _remindMeLaterButton.setOnClickListener(_remindMeLater_onClick);
 
-        _rateBuyerDialog = RateBuyerDialog.getInstance(getFragmentManager(), TAG);
-
-
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -135,11 +137,13 @@ public class RateBuyerModal extends DialogFragmentBase {
         }
     }
 
-
     private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _rateBuyerDialog.show(_workorder);
+            Intent intent = new Intent(App.get(), RateBuyerActivity.class);
+            intent.putExtra(INTENT_WORKORDER, _workorder);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+            App.get().startActivity(intent);
             dismiss();
         }
     };

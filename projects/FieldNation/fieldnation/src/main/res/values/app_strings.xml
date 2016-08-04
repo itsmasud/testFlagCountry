@@ -297,8 +297,6 @@
     <string name="clear_expectation_header">Were the expectation clear?</string>
     <string name="chk_professional_header">Were they professional?</string>
     <string name="other_thoughts">Other thoughts</string>
-    <string name="character_counting">%1$d /120</string>
-
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 

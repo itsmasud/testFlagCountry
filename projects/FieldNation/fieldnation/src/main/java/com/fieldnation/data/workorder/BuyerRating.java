@@ -35,6 +35,9 @@ public class BuyerRating {
     private Long _workorderManagerId;
     @Json(name = "workorderManagerName")
     private String _workorderManagerName;
+    @Json(name = "ratingId")
+    private Integer _ratingId ;
+
 
     public BuyerRating() {
     }
@@ -89,6 +92,10 @@ public class BuyerRating {
 
     public String getWorkorderManagerName() {
         return _workorderManagerName;
+    }
+
+    public Integer getRatingId() {
+        return _ratingId;
     }
 
     public JsonObject toJson() {
