@@ -112,7 +112,6 @@ public class RateBuyerActivity extends AuthFragmentActivity {
         _cancelButton.setOnClickListener(_cancel_onClick);
 
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -159,6 +158,12 @@ public class RateBuyerActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        _submitButton.requestFocus();
+    }
+
+    @Override
     public void onResume() {
         Log.e(TAG, "onResume");
         super.onResume();
@@ -197,7 +202,8 @@ public class RateBuyerActivity extends AuthFragmentActivity {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
         }
 
         _photos = new PhotoClient(_photo_listener);
@@ -270,7 +276,8 @@ public class RateBuyerActivity extends AuthFragmentActivity {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
 
 
         }
@@ -293,7 +300,8 @@ public class RateBuyerActivity extends AuthFragmentActivity {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
 
         }
     };
@@ -365,7 +373,8 @@ public class RateBuyerActivity extends AuthFragmentActivity {
 
             if (_hasSelectedScopeRating != null && _hasSelectedRespectRating != null & _goldStar > 0)
                 _submitButton.setEnabled(true);
-            else _submitButton.setEnabled(false);
+            else
+                _submitButton.setEnabled(false);
         }
     };
 

@@ -294,7 +294,7 @@
 
     <string name="dialog_rate_buyer_title">Rate WO %1$d</string>
     <string name="overall_satisfaction_header">Overall satisfaction</string>
-    <string name="clear_expectation_header">Were the expectation clear?</string>
+    <string name="clear_expectation_header">Were the expectations clear?</string>
     <string name="chk_professional_header">Were they professional?</string>
     <string name="other_thoughts">Other thoughts</string>
 
