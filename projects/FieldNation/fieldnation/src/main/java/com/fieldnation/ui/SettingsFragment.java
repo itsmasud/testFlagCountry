@@ -44,7 +44,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         getPreferenceScreen().getSharedPreferences()
                 .registerOnSharedPreferenceChangeListener(this);
 
-        PreferenceCategory prefCat=(PreferenceCategory)findPreference(getString(R.string.pref_category_key_release_declaration));
+        PreferenceCategory prefCat = (PreferenceCategory) findPreference(getString(R.string.pref_category_key_release_declaration));
         prefCat.setTitle(getString(R.string.pref_string_data_release_title, BuildConfig.VERSION_NAME));
 
         for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
@@ -98,8 +98,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         @Override
         public boolean onPreferenceClick(Preference preference) {
-
-            if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
+            if (preference.getKey() != null && (preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
                 Log.e("SettingsFragment", "release things clicked");
                 Intent intent = new Intent(App.get(), NewFeatureActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);

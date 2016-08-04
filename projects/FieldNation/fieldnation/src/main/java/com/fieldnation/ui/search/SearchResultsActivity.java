@@ -12,6 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 7/27/2016.
@@ -58,6 +59,8 @@ public class SearchResultsActivity extends AuthActionBarActivity {
         if (getIntent() != null && getIntent().hasExtra(INTENT_SEARCH_PARAMS)) {
             SearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
             _searchResultScreen.startSearch(searchParams);
+
+            setTitle(misc.capitalize(searchParams.status) + " Search");
         }
     }
 
