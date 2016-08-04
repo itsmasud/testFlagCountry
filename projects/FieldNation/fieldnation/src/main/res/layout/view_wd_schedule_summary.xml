@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="16dp"
-        android:text="Between" />
+        android:text="@string/between" />
 
     <TextView
         android:id="@+id/date1_textview"
@@ -28,10 +28,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
-        android:layout_marginBottom="16dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/type1_textview"
-        android:text="Wednesday, Dec 40, 2103\nWednesday, Dec 15, 2103" />
+        android:text="@string/placeholder_time_long" />
 
     <TextView
         android:id="@+id/type2_textview"
@@ -40,7 +39,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/date1_textview"
         android:layout_marginLeft="16dp"
-        android:text="During" />
+        android:layout_marginTop="16dp"
+        android:text="@string/during" />
 
     <TextView
         android:id="@+id/date2_textview"
@@ -49,8 +49,9 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/date1_textview"
         android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/type2_textview"
-        android:text="Wednesday, Dec 40, 2103\nWednesday, Dec 15, 2103" />
+        android:text="@string/placeholder_time_long" />
 
     <View
         style="@style/DividerFull"
