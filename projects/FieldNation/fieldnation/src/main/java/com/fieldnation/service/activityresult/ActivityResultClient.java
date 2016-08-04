@@ -41,8 +41,12 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         TopicService.dispatchEvent(context, TOPIC_ID_START_ACTIVITY_FOR_RESULT, payload, Sticky.NONE);
     }
 
+    public void clearActivityForResult(int requestCode) {
+        clearTopic(TOPIC_ID_START_ACTIVITY_FOR_RESULT + "/" + requestCode);
+    }
+
     public boolean subStartActivityForResult() {
-        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT, TAG);
+        return register(TOPIC_ID_ON_ACTIVITY_RESULT, TAG);
     }
 
     public static void onActivityResult(Context context, int requestCode, int resultCode, Intent data) {
