@@ -102,53 +102,43 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(new String[]{"am", "pm"});
-            switch (_workorder.getScheduleType()) {
-                case 1: { // exact schedule
-                    SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
-                    sdf.setDateFormatSymbols(symbols);
+            if (_workorder.getEstimatedSchedule() != null || _workorder.getScheduleType() == 1) {
+                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
+                sdf.setDateFormatSymbols(symbols);
 
-                    _type1TextView.setText(R.string.exactly_on);
-                    _date1TextView.setText(sdf.format(sCal.getTime()));
-                    _type2TextView.setVisibility(GONE);
-                    _date2TextView.setVisibility(GONE);
-                    break;
-                }
-                case 2: { // Business hours
-                    SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
-                    sdf1.setDateFormatSymbols(symbols);
-                    SimpleDateFormat sdf2 = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
-                    sdf2.setDateFormatSymbols(symbols);
+                _type1TextView.setText(R.string.exactly_on);
+                _date1TextView.setText(sdf.format(sCal.getTime()));
+                _type2TextView.setVisibility(GONE);
+                _date2TextView.setVisibility(GONE);
+            } else if (_workorder.getScheduleType() == 2) {
+                SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
+                sdf1.setDateFormatSymbols(symbols);
+                SimpleDateFormat sdf2 = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
+                sdf2.setDateFormatSymbols(symbols);
 
-                    _type1TextView.setText(R.string.between);
-                    _date1TextView.setText(
-                            getContext().getString(R.string.schedule_business_hours_format1,
-                                    sdf1.format(sCal.getTime()),
-                                    sdf2.format(eCal.getTime())));
+                _type1TextView.setText(R.string.between);
+                _date1TextView.setText(
+                        getContext().getString(R.string.schedule_business_hours_format1,
+                                sdf1.format(sCal.getTime()),
+                                sdf2.format(eCal.getTime())));
 
-                    sdf1 = new SimpleDateFormat("hh:mma", Locale.getDefault());
-                    sdf1.setDateFormatSymbols(symbols);
+                sdf1 = new SimpleDateFormat("hh:mma", Locale.getDefault());
+                sdf1.setDateFormatSymbols(symbols);
 
-                    _type2TextView.setVisibility(VISIBLE);
-                    _date2TextView.setVisibility(VISIBLE);
-                    _date2TextView.setText(
-                            getContext().getString(R.string.schedule_business_hours_format2,
-                                    sdf1.format(sCal.getTime()),
-                                    sdf1.format(eCal.getTime())))
-                    ;
-                    break;
-                }
-                case 3: { // Open range
-                    SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
-                    sdf.setDateFormatSymbols(symbols);
-                    _type1TextView.setText(R.string.between);
-                    _date1TextView.setText(
-                            getContext().getString(R.string.schedule_open_range_format,
-                                    sdf.format(sCal.getTime()),
-                                    sdf.format(eCal.getTime())));
-                    break;
-                }
-                default:
-                    break;
+                _type2TextView.setVisibility(VISIBLE);
+                _date2TextView.setVisibility(VISIBLE);
+                _date2TextView.setText(
+                        getContext().getString(R.string.schedule_business_hours_format2,
+                                sdf1.format(sCal.getTime()),
+                                sdf1.format(eCal.getTime())));
+            } else if (_workorder.getScheduleType() == 3) {
+                SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
+                sdf.setDateFormatSymbols(symbols);
+                _type1TextView.setText(R.string.between);
+                _date1TextView.setText(
+                        getContext().getString(R.string.schedule_open_range_format,
+                                sdf.format(sCal.getTime()),
+                                sdf.format(eCal.getTime())));
             }
         } catch (Exception ex) {
             ex.printStackTrace();
