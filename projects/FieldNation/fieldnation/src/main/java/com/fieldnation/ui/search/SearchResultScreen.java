@@ -133,34 +133,15 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders) {
+            if (envelope == null)
+                return;
+
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
             if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
                 _adapter.addObjects(envelope.getPage(), workOrders);
             else
                 _adapter.addObjects(envelope.getPage(), null);
             _refreshView.refreshComplete();
-
-/*
-            if (envelope.getPage() == 0) {
-                try {
-                    int count = _adapter.getItemCount();
-                    int lastWo = -1;
-                    for (int i = 0; i < count; i++) {
-                        Object object = _adapter.getObject(i);
-                        if (object instanceof WorkOrder) {
-                            lastWo = i;
-                            WorkOrder wo = (WorkOrder) object;
-                            if (ISO8601.toUtc(wo.getRequirements().getSchedule().getStart()) > System.currentTimeMillis()) {
-                                break;
-                            }
-                        }
-                    }
-                    _workOrderList.smoothScrollToPosition(lastWo);
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
-            }
-*/
         }
     };
 
