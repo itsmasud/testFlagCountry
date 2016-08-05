@@ -13,7 +13,7 @@
             android:id="@+id/tos_imageview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="35dp"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="15dp"
             android:scaleType="fitCenter"
@@ -45,8 +45,8 @@
         <Button
             android:id="@+id/review_tos_button"
             style="?attr/buttonGrayStyle"
-            android:layout_marginTop="30dp"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="8dp"
             android:layout_below="@+id/body_textview"
             android:layout_centerHorizontal="true"
             android:text="@string/btn_review_tos" />
@@ -56,7 +56,6 @@
             style="?attr/dialogOkButtonStyle"
             android:layout_alignParentRight="true"
             android:layout_below="@id/review_tos_button"
-
             android:text="@string/btn_accept" />
 
     </RelativeLayout>

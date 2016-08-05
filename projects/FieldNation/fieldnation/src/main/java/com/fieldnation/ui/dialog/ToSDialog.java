@@ -68,6 +68,8 @@ public class ToSDialog extends DialogFragmentBase {
         _acceptButton = (Button) v.findViewById(R.id.accept_button);
         _acceptButton.setOnClickListener(_accept_onClick);
 
+        setCancelable(false);
+
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;

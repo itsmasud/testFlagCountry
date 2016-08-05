@@ -50,7 +50,6 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     private UpdateDialog _updateDialog;
     private OneButtonDialog _notProviderDialog;
-    private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
     private ToSDialog _tosDialog;
@@ -97,17 +96,13 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
 
-        _acceptTermsDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":TOS");
-        _acceptTermsDialog.setCancelable(false);
+        _tosDialog = ToSDialog.getInstance(getSupportFragmentManager(), TAG);
 
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
-
-        _tosDialog = ToSDialog.getInstance(getSupportFragmentManager(), TAG);
-
 
         onFinishCreate(savedInstanceState);
     }
@@ -177,7 +172,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _tosDialog.show();
         }
 
-        if (_profile!=null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
+        if (_profile != null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
             App.get().setReleaseNoteShownReminded(_profile.getUserId());
             Intent intent = new Intent(App.get(), NewFeatureActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -189,28 +184,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 //            return;
         }
         App gs = App.get();
-        if (!profile.getAcceptedTos() && (gs.canRemindTos() || profile.isTosRequired())) {
-            Log.v(TAG, "Asking Tos");
-            if (profile.isTosRequired()) {
-                Log.v(TAG, "Asking Tos, hard");
-                _acceptTermsDialog.setData(getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_hard, profile.insurancePercent()),
-                        getString(R.string.btn_accept),
-                        _acceptTerms_listener);
-            } else {
-                Log.v(TAG, "Asking Tos, soft");
-                _acceptTermsDialog.setData(
-                        getString(R.string.dialog_accept_terms_title),
-                        getString(R.string.dialog_accept_terms_body_soft, profile.insurancePercent(), profile.daysUntilRequired()),
-                        getString(R.string.btn_accept),
-                        getString(R.string.btn_later), _acceptTerms_listener);
-            }
-            try {
-                _acceptTermsDialog.show();
-            } catch (Exception ex) {
-                Debug.logException(ex);
-            }
-        } else if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
+        if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
             _coiWarningDialog.setData(
                     getString(R.string.dialog_coi_title),

@@ -587,18 +587,16 @@ public class App extends Application {
     }
 
     public boolean shouldShowToSDialog() {
-        Log.e(TAG, "shouldShowToSDialog");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        Date startDate = null;
         if (settings.contains(PREF_TOS_ACCEPTED)) {
-            Log.e(TAG, "found PREF_TOS_ACCEPTED");
+            Date tosDate = null;
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
             try {
-                startDate = df.parse(getString(R.string.tos_date));
+                tosDate = df.parse(getString(R.string.tos_date));
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            return (new DateUtils().isBeforeDay(new Date(settings.getLong(PREF_TOS_ACCEPTED, -1)), startDate));
+            return (new DateUtils().isBeforeDay(new Date(settings.getLong(PREF_TOS_ACCEPTED, -1)), tosDate));
         } else return true;
     }
 
