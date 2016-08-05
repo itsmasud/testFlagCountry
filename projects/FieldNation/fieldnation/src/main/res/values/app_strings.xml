@@ -297,6 +297,8 @@
     <string name="clear_expectation_header">Were the expectations clear?</string>
     <string name="chk_professional_header">Were they professional?</string>
     <string name="other_thoughts">Other thoughts</string>
+    <string name="character_counting">%1$d /120</string>
+
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -367,6 +369,7 @@
     <string name="done">Done</string>
     <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="downloading">Downloading…</string>
+    <string name="during">During</string>
     <string name="edit_your_profile">Edit your profile</string>
     <string name="educational">Educational</string>
     <string name="end_time">End Time</string>
@@ -376,6 +379,7 @@
     <string name="error_looking_up_map">Error looking up the map</string>
     <string name="estimated">Estimated</string>
     <string name="everything_is_good_to_go">Everything is good to go.\nSign off is complete.</string>
+    <string name="exactly_on">Exactly on</string>
     <string name="expense">Expense</string>
     <string name="expenses">Expenses</string>
     <string name="expenses_caps">EXPENSES</string>
@@ -527,6 +531,10 @@
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
     <string name="schedule">Schedule</string>
+    <string name="schedule_caps">SCHEDULE</string>
+    <string name="schedule_business_hours_format1">%1$s - %2$s</string>
+    <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_open_range_format">%1$s\n%2$s</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
