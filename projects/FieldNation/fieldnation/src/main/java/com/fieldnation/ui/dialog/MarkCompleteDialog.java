@@ -10,6 +10,8 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
@@ -140,7 +142,9 @@ public class MarkCompleteDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onContinueClick();
                 dismiss();
-                _rateBuyerModal.show(_workorder);
+                if (_workorder.getBuyerRatingInfo().getRatingId() == null) {
+                    _rateBuyerModal.show(_workorder);
+                }
             }
         }
     };
