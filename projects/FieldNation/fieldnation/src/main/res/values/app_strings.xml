@@ -128,6 +128,7 @@
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
+    <string name="btn_review_tos">REVIEW TERMS OF SERVICE</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -239,6 +240,7 @@
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
 
     <string name="dialog_accept_terms_title">Terms of Service</string>
+    <string name="dialog_tos_body_message">We have updated out terms of service. Please, review the new terms of service that will go into effect in 0 days.</string>
     <string name="dialog_accept_terms_body_soft">
         By accepting you agree to the new
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
@@ -703,6 +705,7 @@
 
     <!-- legal section -->
     <string name="pref_string_data_settings_legal">Legal</string>
+    <string name="pref_string_tc_title">Terms and Conditions</string>
     <string name="pref_string_qa_title">Quality Assurance Policy</string>
 
     <!-- release declaration -->
@@ -811,6 +814,7 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="tos_date">10/02/2015</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>

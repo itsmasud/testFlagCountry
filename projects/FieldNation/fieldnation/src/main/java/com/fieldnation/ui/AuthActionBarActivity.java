@@ -29,6 +29,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.ToSDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -52,6 +53,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
+    private ToSDialog _tosDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -103,6 +105,9 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
+
+        _tosDialog = ToSDialog.getInstance(getSupportFragmentManager(), TAG);
+
 
         onFinishCreate(savedInstanceState);
     }
@@ -167,6 +172,10 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             return;
 
         _profileBounceProtect = true;
+
+        if (App.get().shouldShowToSDialog()) {
+            _tosDialog.show();
+        }
 
         if (_profile!=null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
             App.get().setReleaseNoteShownReminded(_profile.getUserId());

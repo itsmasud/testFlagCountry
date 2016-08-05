@@ -76,6 +76,11 @@
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_string_data_settings_legal">
+        <Preference android:title="@string/pref_string_tc_title">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:data="https://app.fieldnation.com/legal/?a=provider" />
+        </Preference>
         <Preference android:title="@string/pref_string_qa_title">
             <intent
                 android:action="android.intent.action.VIEW"
@@ -87,9 +92,9 @@
         android:key="@string/pref_category_key_release_declaration"
         android:title="@string/pref_string_data_release_title">
         <Preference
-            android:title="@string/pref_string_qa_title"
             android:key="@string/pref_key_release_declaration"
-            android:summary="@string/pref_string_release_summary" />
+            android:summary="@string/pref_string_release_summary"
+            android:title="@string/pref_string_qa_title" />
 
     </PreferenceCategory>
 </PreferenceScreen>

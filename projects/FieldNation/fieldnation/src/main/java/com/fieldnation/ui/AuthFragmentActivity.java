@@ -26,6 +26,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.ToSDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -43,6 +44,8 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _acceptTermsDialog;
     private TwoButtonDialog _coiWarningDialog;
+    private ToSDialog _tosDialog;
+
 
     // Services
     private GlobalTopicClient _globalTopicClient;
@@ -79,6 +82,9 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
+
+        _tosDialog = ToSDialog.getInstance(getSupportFragmentManager(), TAG);
+
     }
 
     @Override
@@ -138,6 +144,10 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
             return;
 
         _profileBounceProtect = true;
+
+        if (App.get().shouldShowToSDialog()) {
+            _tosDialog.show();
+        }
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
             App.get().setReleaseNoteShownReminded(_profile.getUserId());
