@@ -33,6 +33,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         return register(TOPIC_ID_START_ACTIVITY, TAG);
     }
 
+    // For Result stuff
+
     public static void startActivityForResult(Context context, Intent intent, int requestCode) {
         Bundle payload = new Bundle();
         payload.putParcelable(PARAM_INTENT, intent);
@@ -41,12 +43,12 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         TopicService.dispatchEvent(context, TOPIC_ID_START_ACTIVITY_FOR_RESULT, payload, Sticky.NONE);
     }
 
-    public void clearActivityForResult(int requestCode) {
-        clearTopic(TOPIC_ID_START_ACTIVITY_FOR_RESULT + "/" + requestCode);
+    public boolean subStartActivityForResult() {
+        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT, TAG);
     }
 
-    public boolean subStartActivityForResult() {
-        return register(TOPIC_ID_ON_ACTIVITY_RESULT, TAG);
+    public boolean clearStartActivityForResult() {
+        return clearTopic(TOPIC_ID_START_ACTIVITY_FOR_RESULT);
     }
 
     public static void onActivityResult(Context context, int requestCode, int resultCode, Intent data) {
@@ -59,22 +61,17 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     /**
-     * Subscribe to this if you want to receive results from activities
-     *
-     * @return true if subscribed, false otherwise
-     */
-    public boolean subOnActivityResult() {
-        return register(TOPIC_ID_ON_ACTIVITY_RESULT, TAG);
-    }
-
-    /**
-     * Same as subOnActivityResult(), however, also subscribes to a specific resultCode
+     * Subscribes to an activity result
      *
      * @param requestCode
      * @return
      */
     public boolean subOnActivityResult(int requestCode) {
         return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, TAG);
+    }
+
+    public void clearOnActivityResult(int requestCode) {
+        clearTopic(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
     }
 
     /*-**********************************-*/

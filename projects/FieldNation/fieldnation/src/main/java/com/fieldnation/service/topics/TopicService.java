@@ -202,21 +202,13 @@ public class TopicService extends MSService implements TopicConstants {
     }
 
     private void clearTopic(Bundle bundle) {
-        String[] topicIdTree = bundle.getString(PARAM_TOPIC_ID).split("/");
+        String topicId = bundle.getString(PARAM_TOPIC_ID);
 
         synchronized (TAG) {
-            String topicId = topicIdTree[0];
             // exact match
             TopicUser.clearTopic(topicId);
             if (_stickies.containsKey(topicId))
                 _stickies.remove(topicId);
-
-            for (int i = 1; i < topicIdTree.length; i++) {
-                topicId += "/" + topicIdTree[i];
-                TopicUser.clearTopic(topicId);
-                if (_stickies.containsKey(topicId))
-                    _stickies.remove(topicId);
-            }
         }
     }
 
