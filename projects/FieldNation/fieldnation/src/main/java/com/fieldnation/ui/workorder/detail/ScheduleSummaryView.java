@@ -8,6 +8,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.utils.ISO8601;
 import com.fieldnation.utils.misc;
@@ -72,19 +73,25 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             return;
         setVisibility(View.VISIBLE);
 
+        Schedule schedule = _workorder.getSchedule();
+
+        if (_workorder.getEstimatedSchedule() != null) {
+            schedule = _workorder.getEstimatedSchedule();
+        }
+
         try {
             Calendar sCal = null;
             Calendar eCal = null;
 
             try {
-                if (_workorder.getSchedule() != null && !misc.isEmptyOrNull(_workorder.getSchedule().getStartTime()))
-                    sCal = ISO8601.toCalendar(_workorder.getSchedule().getStartTime());
+                if (schedule != null && !misc.isEmptyOrNull(schedule.getStartTime()))
+                    sCal = ISO8601.toCalendar(schedule.getStartTime());
             } catch (Exception ex) {
             }
 
             try {
-                if (_workorder.getSchedule() != null && !misc.isEmptyOrNull(_workorder.getSchedule().getEndTime()))
-                    eCal = ISO8601.toCalendar(_workorder.getSchedule().getEndTime());
+                if (schedule != null && !misc.isEmptyOrNull(schedule.getEndTime()))
+                    eCal = ISO8601.toCalendar(schedule.getEndTime());
             } catch (Exception ex) {
             }
 
