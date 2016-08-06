@@ -311,11 +311,13 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         @Override
         public void startActivityForResult(Intent intent, int requestCode) {
+            Log.v(TAG, "startActivityForResult");
             AuthActionBarActivity.this.startActivityForResult(intent, requestCode);
         }
 
         @Override
         public void startActivity(Intent intent) {
+            Log.v(TAG, "startActivity");
             AuthActionBarActivity.this.startActivity(intent);
         }
     };

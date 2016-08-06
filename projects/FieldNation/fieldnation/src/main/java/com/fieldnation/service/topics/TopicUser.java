@@ -57,6 +57,11 @@ class TopicUser {
         return _topics.get(topic);
     }
 
+    public static void clearTopic(String topic) {
+        if (_topics.containsKey(topic))
+            _topics.remove(topic);
+    }
+
 
     public static TopicUser getUser(String userTag) {
         if (!_instances.containsKey(userTag)) {
