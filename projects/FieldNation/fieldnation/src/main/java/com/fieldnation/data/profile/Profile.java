@@ -65,13 +65,6 @@ public class Profile implements Parcelable {
     public Profile() {
     }
 
-    public Boolean getAcceptedTos() {
-        if (_acceptedTos == null)
-            return true;
-
-        return _acceptedTos;
-    }
-
     public Boolean getCanViewPayments() {
         if (_canViewPayments == null)
             return true;
