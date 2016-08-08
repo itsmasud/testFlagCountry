@@ -172,8 +172,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
             _tosDialog.show();
         }
 
-        if (_profile != null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
-            App.get().setReleaseNoteShownReminded(_profile.getUserId());
+        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion()) {
+            App.get().setReleaseNoteShownReminded();
             Intent intent = new Intent(App.get(), NewFeatureActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             App.get().startActivity(intent);

@@ -569,13 +569,18 @@ public class App extends Application {
         edit.apply();
     }
 
-    public void setReleaseNoteShownReminded(long profileUserId) {
+    public void setReleaseNoteShownReminded() {
         Log.v(TAG, "setReleaseNoteReminded");
         // misc.printStackTrace("setCoiReminded");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putLong(PREF_RELEASE_NOTE_SHOWN, profileUserId);
+        edit.putLong(PREF_RELEASE_NOTE_SHOWN, BuildConfig.VERSION_CODE);
         edit.apply();
+    }
+
+    public boolean hasReleaseNoteShownForThisVersion() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return BuildConfig.VERSION_CODE == settings.getLong(PREF_RELEASE_NOTE_SHOWN, -1);
     }
 
     public void setToSAccepted() {
@@ -715,11 +720,6 @@ public class App extends Application {
         } finally {
             Log.v(TAG, "onlyUploadWithWifi time:" + stopwatch.finish());
         }
-    }
-
-    public boolean hasReleaseNoteShownForThisPofile(long profileUserId) {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return profileUserId == settings.getLong(PREF_RELEASE_NOTE_SHOWN, -1);
     }
 
     public boolean showRateMe() {

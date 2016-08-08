@@ -13,9 +13,9 @@
             android:id="@+id/tos_imageview"
             android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="35dp"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="15dp"
+            android:layout_marginTop="35dp"
             android:scaleType="fitCenter"
             android:src="@drawable/tos"
             android:visibility="visible" />
@@ -26,29 +26,29 @@
             style="?attr/dialogTitleStyle"
             android:layout_below="@+id/tos_imageview"
             android:layout_centerHorizontal="true"
-            android:textStyle="bold"
-            android:text="@string/dialog_accept_terms_title" />
+            android:text="@string/dialog_accept_terms_title"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/body_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title_textview"
-            android:gravity="center"
-            android:paddingRight="15dp"
-            android:paddingLeft="15dp"
-            android:textSize="18dp"
             android:layout_centerHorizontal="true"
-            android:text="@string/dialog_tos_body_message" />
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="@string/dialog_tos_body_message"
+            android:textSize="18dp" />
 
 
         <Button
             android:id="@+id/review_tos_button"
             style="?attr/buttonGrayStyle"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="8dp"
             android:layout_below="@+id/body_textview"
             android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="20dp"
             android:text="@string/btn_review_tos" />
 
         <Button
