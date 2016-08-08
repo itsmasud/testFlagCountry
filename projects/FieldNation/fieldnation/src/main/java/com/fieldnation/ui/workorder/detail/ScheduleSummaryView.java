@@ -132,6 +132,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                                 sdf.format(sCal.getTime()),
                                 sdf.format(eCal.getTime())));
 
+                _type2TextView.setVisibility(GONE);
+                _date2TextView.setVisibility(GONE);
             } else if ((int) _workorder.getScheduleType() == 1) {
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
