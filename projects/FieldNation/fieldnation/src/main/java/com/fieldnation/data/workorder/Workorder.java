@@ -342,6 +342,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean isW2Workorder() {
+        if (_w2 == null) return false;
         return _w2 == 1 ? true : false;
     }
 
