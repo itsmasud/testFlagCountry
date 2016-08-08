@@ -206,7 +206,6 @@ public class TopicService extends MSService implements TopicConstants {
 
         synchronized (TAG) {
             // exact match
-            TopicUser.clearTopic(topicId);
             if (_stickies.containsKey(topicId))
                 _stickies.remove(topicId);
         }

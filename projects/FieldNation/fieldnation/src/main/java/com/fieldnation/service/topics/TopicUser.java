@@ -2,8 +2,6 @@ package com.fieldnation.service.topics;
 
 import android.os.Messenger;
 
-import com.fieldnation.Log;
-
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -36,10 +34,6 @@ class TopicUser {
      */
     private static Hashtable<String, Set<TopicUser>> _topics = new Hashtable<>();
 
-    static {
-        Log.v(TAG, "TopicUser reset");
-    }
-
     public TopicUser(String userTag) {
         this.userTag = userTag;
     }
@@ -55,11 +49,6 @@ class TopicUser {
         }
 
         return _topics.get(topic);
-    }
-
-    public static void clearTopic(String topic) {
-        if (_topics.containsKey(topic))
-            _topics.remove(topic);
     }
 
 
