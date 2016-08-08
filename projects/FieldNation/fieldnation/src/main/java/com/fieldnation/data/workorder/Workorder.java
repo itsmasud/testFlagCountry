@@ -341,8 +341,8 @@ public class Workorder implements Parcelable {
         return _validPaymentInfo;
     }
 
-    public Integer getW2() {
-        return _w2;
+    public boolean isW2Workorder() {
+        return _w2 == 1 ? true : false;
     }
 
     public Long getWorkorderId() {
