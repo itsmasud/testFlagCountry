@@ -47,6 +47,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         PreferenceCategory prefCat = (PreferenceCategory) findPreference(getString(R.string.pref_category_key_release_declaration));
         prefCat.setTitle(getString(R.string.pref_string_data_release_title, BuildConfig.VERSION_NAME));
 
+
         for (int i = 0; i < getPreferenceScreen().getPreferenceCount(); ++i) {
             Preference preference = getPreferenceScreen().getPreference(i);
             if (preference instanceof PreferenceGroup) {
