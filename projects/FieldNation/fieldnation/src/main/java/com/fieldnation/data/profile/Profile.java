@@ -180,9 +180,10 @@ public class Profile implements Parcelable {
     }
 
     public Boolean canRequestWorkOnMarketplace() {
-        if (_canRequestWorkOnMarketplace != null)
+        if (_canRequestWorkOnMarketplace != null) {
             return _canRequestWorkOnMarketplace;
-        return false;
+        }
+        return true;
     }
 
 
