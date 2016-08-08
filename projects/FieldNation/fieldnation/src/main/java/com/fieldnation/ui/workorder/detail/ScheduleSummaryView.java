@@ -109,6 +109,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
                     _type1TextView.setText(R.string.exactly_on);
                     _date1TextView.setText(sdf.format(sCal.getTime()));
+
                     _type2TextView.setVisibility(GONE);
                     _date2TextView.setVisibility(GONE);
                     break;
@@ -120,31 +121,30 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                     sdf2.setDateFormatSymbols(symbols);
 
                     _type1TextView.setText(R.string.between);
-                    _date1TextView.setText(
-                            getContext().getString(R.string.schedule_business_hours_format1,
-                                    sdf1.format(sCal.getTime()),
-                                    sdf2.format(eCal.getTime())));
+                    _date1TextView.setText(getContext().getString(R.string.schedule_business_hours_format1,
+                            sdf1.format(sCal.getTime()),
+                            sdf2.format(eCal.getTime())));
 
                     sdf1 = new SimpleDateFormat("hh:mma", Locale.getDefault());
                     sdf1.setDateFormatSymbols(symbols);
 
                     _type2TextView.setVisibility(VISIBLE);
                     _date2TextView.setVisibility(VISIBLE);
-                    _date2TextView.setText(
-                            getContext().getString(R.string.schedule_business_hours_format2,
-                                    sdf1.format(sCal.getTime()),
-                                    sdf1.format(eCal.getTime())))
-                    ;
+                    _date2TextView.setText(getContext().getString(R.string.schedule_business_hours_format2,
+                            sdf1.format(sCal.getTime()),
+                            sdf1.format(eCal.getTime())));
                     break;
                 }
                 case 3: { // Open range
                     SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                     sdf.setDateFormatSymbols(symbols);
                     _type1TextView.setText(R.string.between);
-                    _date1TextView.setText(
-                            getContext().getString(R.string.schedule_open_range_format,
-                                    sdf.format(sCal.getTime()),
-                                    sdf.format(eCal.getTime())));
+                    _date1TextView.setText(getContext().getString(R.string.schedule_open_range_format,
+                            sdf.format(sCal.getTime()),
+                            sdf.format(eCal.getTime())));
+
+                    _type2TextView.setVisibility(GONE);
+                    _date2TextView.setVisibility(GONE);
                     break;
                 }
                 default:
