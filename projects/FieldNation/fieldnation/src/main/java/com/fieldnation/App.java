@@ -35,6 +35,7 @@ import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
+import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
@@ -44,7 +45,11 @@ import com.google.android.gms.analytics.Tracker;
 import java.io.File;
 import java.net.URLConnection;
 import java.security.SecureRandom;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Defines some global values that will be shared between all objects.
@@ -66,6 +71,7 @@ public class App extends Application {
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
+    public static final String PREF_TOS_ACCEPTED = "PREF_TOS_ACCEPTED";
 
 
     private static App _context;
@@ -570,6 +576,28 @@ public class App extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_RELEASE_NOTE_SHOWN, profileUserId);
         edit.apply();
+    }
+
+    public void setToSAccepted() {
+        Log.v(TAG, "setToSReminded");
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putLong(PREF_TOS_ACCEPTED, System.currentTimeMillis());
+        edit.apply();
+    }
+
+    public boolean shouldShowToSDialog() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        if (settings.contains(PREF_TOS_ACCEPTED)) {
+            Date tosDate = null;
+            DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
+            try {
+                tosDate = df.parse(getString(R.string.tos_date));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            return (new DateUtils().isBeforeDay(new Date(settings.getLong(PREF_TOS_ACCEPTED, -1)), tosDate));
+        } else return true;
     }
 
 

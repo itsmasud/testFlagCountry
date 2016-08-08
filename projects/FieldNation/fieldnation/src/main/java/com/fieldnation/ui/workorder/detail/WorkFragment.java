@@ -778,8 +778,8 @@ public class WorkFragment extends WorkorderFragment {
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK
+                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
                     && resultCode == Activity.RESULT_OK) {
 
                 _workorderClient.subDeliverableCache();
@@ -882,13 +882,13 @@ public class WorkFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
             }
             setLoading(true);
         }

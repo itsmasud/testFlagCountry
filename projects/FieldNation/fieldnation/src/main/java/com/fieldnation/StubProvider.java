@@ -7,7 +7,7 @@ import android.net.Uri;
 
 
 public class StubProvider extends ContentProvider {
-	private static final String TAG = "rpc.server.StubProvider";
+	private static final String TAG = "StubProvider";
 
 	@Override
 	public boolean onCreate() {

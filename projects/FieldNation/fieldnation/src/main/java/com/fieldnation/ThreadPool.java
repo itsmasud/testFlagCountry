@@ -4,20 +4,22 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by Michael Carver on 4/28/2015.
+ * Created by Michael Carver on 8/6/2016.
  */
-public class ThreadManager {
-    private static final String TAG = "ThreadManager";
+public class ThreadPool {
+    private static final String TAG = "ThreadPool";
     private final Object THREAD_PAUSE = new Object();
 
     private final List<ManagedThread> _threads = new LinkedList<>();
+    private WorkHandler _listener;
 
-    public ThreadManager() {
-        Log.v(TAG, "ThreadManager");
-    }
+    public ThreadPool(int count, WorkHandler listener) {
+        Log.v(TAG, "ThreadPool");
+        _listener = listener;
 
-    public void addThread(ManagedThread thread) {
-        _threads.add(thread);
+        for (int i = 0; i < count; i++) {
+            _threads.add(new ManagedThread(this));
+        }
     }
 
     public void shutdown() {
@@ -49,14 +51,17 @@ public class ThreadManager {
         }
     }
 
-    public static abstract class ManagedThread extends Thread {
+    private static class ManagedThread extends Thread {
         private boolean _running = true;
         private final Object THREAD_PAUSE;
+        private final WorkHandler _listener;
 
-        public ManagedThread(ThreadManager manager) {
+        public ManagedThread(ThreadPool manager) {
             super();
             THREAD_PAUSE = manager.THREAD_PAUSE;
+            _listener = manager._listener;
             setName("ManagedThread/" + getClass().getSimpleName());
+            start();
         }
 
         void finish() {
@@ -76,15 +81,18 @@ public class ThreadManager {
         @Override
         public void run() {
             while (_running) {
-                if (!doWork()) {
+                if (_listener == null || !_listener.doWork())
                     sleep();
-                }
             }
         }
+    }
 
+    public interface WorkHandler {
         /**
+         * Called when a worker thread is ready to process a step
+         *
          * @return true if work was done, false if work was not done.
          */
-        public abstract boolean doWork();
+        boolean doWork();
     }
 }
