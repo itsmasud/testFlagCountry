@@ -19,4 +19,7 @@ public interface WorkOrderConstants {
     // Stored Object Names
     String PSO_WORKORDER = "WorkOrder";
     String PSO_WORKORDER_LIST = "WorkOrderList";
+
+    // Params
+    String PARAM_FAILED = "failed";
 }

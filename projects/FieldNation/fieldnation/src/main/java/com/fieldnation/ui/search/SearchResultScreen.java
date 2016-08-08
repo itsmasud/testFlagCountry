@@ -5,6 +5,7 @@ import android.location.Location;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
@@ -37,6 +38,7 @@ public class SearchResultScreen extends RelativeLayout {
     //UI
     private OverScrollRecyclerView _workOrderList;
     private RefreshView _refreshView;
+    private View _unavailableView;
 
     // Service
     private WorkOrderClient _workOrderClient;
@@ -68,6 +70,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
+
+        _unavailableView = findViewById(R.id.marketplaceUnavailable_layout);
 
         _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
@@ -132,9 +136,13 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders) {
+        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
             if (envelope == null) {
                 _refreshView.refreshComplete();
+                if (_adapter.getItemCount() == 0)
+                    _unavailableView.setVisibility(VISIBLE);
+                else
+                    _unavailableView.setVisibility(GONE);
                 return;
             }
 
@@ -143,7 +151,12 @@ public class SearchResultScreen extends RelativeLayout {
                 _adapter.addObjects(envelope.getPage(), workOrders);
             else
                 _adapter.addObjects(envelope.getPage(), null);
+
             _refreshView.refreshComplete();
+            if (_adapter.getItemCount() == 0)
+                _unavailableView.setVisibility(VISIBLE);
+            else
+                _unavailableView.setVisibility(GONE);
         }
     };
 

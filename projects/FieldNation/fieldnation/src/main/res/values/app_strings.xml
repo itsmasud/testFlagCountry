@@ -822,7 +822,7 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
-    <string name="tos_date">08/12/2016</string>
+    <string name="tos_date">08/6/2016</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>
