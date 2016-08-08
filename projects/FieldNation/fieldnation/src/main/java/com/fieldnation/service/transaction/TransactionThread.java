@@ -305,14 +305,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
-        } catch (SecurityException ex) {
+        } catch (SecurityException | UnknownHostException ex) {
             Log.v(TAG, "4b");
             Log.v(TAG, ex);
             WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
-        } catch (SSLProtocolException | UnknownHostException | ConnectException | SocketTimeoutException | EOFException ex) {
+        } catch (SSLProtocolException | ConnectException | SocketTimeoutException | EOFException ex) {
             Log.v(TAG, "5");
             Log.v(TAG, ex);
             transRequeueNetworkDown(trans, notifId, notifRetry);

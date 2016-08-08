@@ -12,7 +12,6 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.Log;
 
 import java.lang.ref.WeakReference;
@@ -53,7 +52,7 @@ public class TopicClient implements TopicConstants {
         try {
             context.unbindService(_serviceConnection);
         } catch (Exception ex) {
-            Debug.logException(ex);
+            Log.v(TAG, ex);
         }
         _subscribed.clear();
         _isConnected = false;
@@ -114,7 +113,6 @@ public class TopicClient implements TopicConstants {
     }
 
     public boolean delete(String userTag) {
-//        Log.v(TAG, "delete");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_USER_TAG, userTag);
@@ -127,7 +125,22 @@ public class TopicClient implements TopicConstants {
 
             _subscribed.clear();
         } catch (Exception ex) {
-//            Log.v(TAG, ex);
+        }
+        return false;
+    }
+
+    public boolean clearTopic(String topicId) {
+        try {
+            Bundle bundle = new Bundle();
+            bundle.putString(PARAM_TOPIC_ID, topicId);
+
+            Message msg = Message.obtain();
+            msg.what = WHAT_CLEAR_TOPIC;
+            msg.setData(bundle);
+            msg.replyTo = _rcvService;
+            _sndService.send(msg);
+            _subscribed.clear();
+        } catch (Exception ex) {
         }
         return false;
     }

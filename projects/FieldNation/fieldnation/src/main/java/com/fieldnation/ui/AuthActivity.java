@@ -209,11 +209,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void startActivityForResult(Intent intent, int requestCode) {
+            Log.v(TAG, "startActivityForResult");
             AuthActivity.this.startActivityForResult(intent, requestCode);
         }
 
         @Override
         public void startActivity(Intent intent) {
+            Log.v(TAG, "startActivity");
             AuthActivity.this.startActivity(intent);
         }
     };

@@ -35,6 +35,7 @@ import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
@@ -91,13 +92,11 @@ public class DeliverableFragment extends WorkorderFragment {
     private GlobalTopicClient _globalClient;
     private WorkorderClient _workorderClient;
     private PhotoClient _photoClient;
+    private ActivityResultClient _activityResultClient;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
     private ForLoopRunnable _reviewRunnable = null;
-
-    // Temporary storage
-    private final List<Runnable> _untilAdded = new LinkedList<>();
 
     /*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -135,9 +134,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _noDocsTextView = (TextView) view.findViewById(R.id.nodocs_textview);
 
-        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
-        _appPickerDialog.setListener(_appdialog_listener);
-
         _actionButton = (Button) view.findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_actionButton_onClick);
 
@@ -162,11 +158,6 @@ public class DeliverableFragment extends WorkorderFragment {
     public void onAttach(Activity activity) {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
-        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
-        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
-
-        _photoUploadDialog.setListener(_photoUploadDialog_listener);
 
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
@@ -179,10 +170,6 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
-
-        while (_untilAdded.size() > 0) {
-            _untilAdded.remove(0).run();
-        }
     }
 
     @Override
@@ -208,6 +195,15 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onResume");
         super.onResume();
 
+        _uploadSlotDialog = UploadSlotDialog.getInstance(getFragmentManager(), TAG);
+        _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
+
+        _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
+        _photoUploadDialog.setListener(_photoUploadDialog_listener);
+
+        _appPickerDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
+        _appPickerDialog.setListener(_appdialog_listener);
+
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
         intent.setType("*/*");
         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -221,6 +217,17 @@ public class DeliverableFragment extends WorkorderFragment {
             intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
+
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
+    }
+
+    @Override
+    public void onPause() {
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
+
+        super.onPause();
     }
 
     private boolean checkMedia() {
@@ -341,25 +348,28 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-    @Override
-    public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
-        Log.v(TAG, "onActivityResult");
-        if (!isAdded()) {
-            _untilAdded.add(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
-                }
-            });
-            return;
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+        @Override
+        public void onConnected() {
+            Log.v(TAG, "_activityResultClient_listener.onConnected");
+            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+            _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
         }
 
-        try {
-            Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            Log.v(TAG, "_activityResultClient_listener.onActivityResult");
+            try {
+                Log.v(TAG, "_activityResultClient_listener.onActivityResult() resultCode= " + resultCode);
 
-            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
-                    && resultCode == Activity.RESULT_OK) {
+                if ((requestCode != ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
+                        && requestCode != ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
+                        || resultCode != Activity.RESULT_OK) {
+                    return;
+                }
+
+                _activityResultClient.clearOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+                _activityResultClient.clearOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
 
                 setLoading(true);
 
@@ -407,18 +417,12 @@ public class DeliverableFragment extends WorkorderFragment {
                         WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
+            } catch (Exception ex) {
+                Debug.logException(ex);
+                Log.e(TAG, ex.getMessage());
             }
-        } catch (Exception ex) {
-            Debug.logException(ex);
-            Log.e(TAG, ex.getMessage());
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onActivityResult(requestCode, resultCode, data);
-                }
-            }, 100);
         }
-    }
+    };
 
     /*-*********************************-*/
     /*-				Events				-*/
@@ -550,7 +554,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
+                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
@@ -559,7 +563,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
                 // removed because this doesn't work on my motorola
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
+                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
             }
         }
     };

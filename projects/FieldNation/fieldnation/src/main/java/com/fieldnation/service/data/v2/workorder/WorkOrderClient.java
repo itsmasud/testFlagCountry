@@ -95,7 +95,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
             }.executeEx(payload);
         }
 
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workorders) {
+        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders) {
         }
     }
 }

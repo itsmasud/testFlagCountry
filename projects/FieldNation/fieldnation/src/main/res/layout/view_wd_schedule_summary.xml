@@ -1,100 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:layout_height="wrap_content">
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Subhead"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp">
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:text="@string/schedule_caps" />
 
-        <TextView
-            style="@style/Text_Subhead"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center"
-            android:text="SCHEDULE" />
+    <TextView
+        android:id="@+id/type1_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="16dp"
+        android:text="@string/between" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/date1_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/type1_textview"
+        android:text="@string/placeholder_time_long" />
 
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/Text_Subhead"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:text="@string/icon_calendar"
-                android:textColor="@color/fn_light_text" />
+    <TextView
+        android:id="@+id/type2_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date1_textview"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/during" />
 
-            <TextView
-                android:id="@+id/date_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="Wednesday, Dec 40, 2103\nWednesday, Dec 15, 2103" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:gravity="center_vertical"
-            android:orientation="horizontal">
-
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/Text_Subhead"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:text="@string/icon_clock"
-                android:textColor="@color/fn_light_text" />
-
-            <TextView
-                android:id="@+id/time_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="1:00am - 2:15pm (CST)" />
-        </LinearLayout>
-
-
-        <LinearLayout
-            android:id="@+id/duration_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:visibility="gone">
-
-            <com.fieldnation.ui.IconFontTextView
-                style="@style/Text_Subhead"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
-                android:text="@string/icon_stop_watch"
-                android:textColor="@color/fn_light_text" />
-
-            <TextView
-                android:id="@+id/duration_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
-                android:text="For 6 Hours" />
-        </LinearLayout>
-
-
-    </LinearLayout>
+    <TextView
+        android:id="@+id/date2_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date1_textview"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toRightOf="@+id/type2_textview"
+        android:text="@string/placeholder_time_long" />
 
     <View
         style="@style/DividerFull"
         android:layout_width="match_parent"
+        android:layout_below="@id/date2_textview"
         android:layout_marginBottom="16dp"
         android:layout_marginTop="16dp" />
-</LinearLayout>
+</RelativeLayout>

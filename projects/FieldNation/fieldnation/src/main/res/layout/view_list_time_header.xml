@@ -11,8 +11,7 @@
         style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Today"
-        android:textStyle="bold" />
+        android:text="Today" />
 
     <TextView
         android:id="@+id/dot_textView"

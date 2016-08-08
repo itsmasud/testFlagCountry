@@ -306,11 +306,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             try {
                 id = db.insert(ObjectStoreSqlHelper.TABLE_NAME, null, v);
             } finally {
-                //db.close();
+                // db.close();
             }
         }
         if (id != -1) {
-//            Log.v(TAG, "put2, copy file, " + id);
+            // Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
             String appFileStore = App.get().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
@@ -327,11 +327,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
 
             if (!copySuccess) {
-//                Log.v(TAG, "put2, copy failed");
+                // Log.v(TAG, "put2, copy failed");
                 delete(id);
                 dest.delete();
             } else {
-//                Log.v(TAG, "put2, copy success");
+                // Log.v(TAG, "put2, copy success");
                 result = get(id);
                 result.setFile(dest);
                 result = result.save();
@@ -381,7 +381,7 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
         }
         if (id != -1) {
-//            Log.v(TAG, "put2, copy file, " + id);
+            // Log.v(TAG, "put2, copy file, " + id);
             // copy the file to the file store
             String appFileStore = App.get().getStoragePath() + "/FileStore";
             new File(appFileStore).mkdirs();
@@ -398,11 +398,11 @@ public class StoredObject implements Parcelable, ObjectStoreConstants {
             }
 
             if (!copySuccess) {
-//                Log.v(TAG, "put2, copy failed");
+                // Log.v(TAG, "put2, copy failed");
                 delete(id);
                 dest.delete();
             } else {
-//                Log.v(TAG, "put2, copy success");
+                // Log.v(TAG, "put2, copy success");
                 result = get(id);
                 result.setFile(dest);
                 result = result.save();

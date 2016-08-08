@@ -201,6 +201,16 @@ public class TopicService extends MSService implements TopicConstants {
         }
     }
 
+    private void clearTopic(Bundle bundle) {
+        String topicId = bundle.getString(PARAM_TOPIC_ID);
+
+        synchronized (TAG) {
+            // exact match
+            if (_stickies.containsKey(topicId))
+                _stickies.remove(topicId);
+        }
+    }
+
     private void deleteUser(Bundle bundle) {
         //Log.v(TAG, "deleteUser");
         String userTag = bundle.getString(PARAM_USER_TAG);
@@ -310,6 +320,9 @@ public class TopicService extends MSService implements TopicConstants {
                     break;
                 case WHAT_UNREGISTER_LISTENER:
                     svc.unregister(msg.getData());
+                    break;
+                case WHAT_CLEAR_TOPIC:
+                    svc.clearTopic(msg.getData());
                     break;
             }
         }

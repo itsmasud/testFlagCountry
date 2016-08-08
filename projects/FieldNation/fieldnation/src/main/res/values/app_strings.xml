@@ -127,6 +127,8 @@
     <string name="btn_yes">YES</string>
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
+    <string name="btn_remind_me_later">REMIND ME LATER</string>
+    <string name="btn_review_tos">REVIEW TERMS OF SERVICE</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -150,6 +152,7 @@
     <string name="toast_must_enter_description">Please enter a description</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection</string>
+    <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -216,6 +219,10 @@
         <item>21</item>
     </integer-array>
 
+    <string name="modal_rate_buyer_title">Would you like to rate this buyer now?</string>
+    <string name="modal_rate_buyer_body">Your work order has been marked as complete and you can now rate %1$s</string>
+
+
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
@@ -233,6 +240,7 @@
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
 
     <string name="dialog_accept_terms_title">Terms of Service</string>
+    <string name="dialog_tos_body_message">We have updated out terms of service. Please, review the new terms of service that will go into effect in 0 days.</string>
     <string name="dialog_accept_terms_body_soft">
         By accepting you agree to the new
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
@@ -285,6 +293,13 @@
     <string name="dialog_insert_file_name">Please insert file name.</string>
     <string name="dialog_invalid_file_name">Invalid file name. Remove invalid characters.</string>
     <string name="dialog_insert_filename_before_extension">Insert file name before extension.</string>
+
+    <string name="dialog_rate_buyer_title">Rate WO %1$d</string>
+    <string name="overall_satisfaction_header">Overall satisfaction</string>
+    <string name="clear_expectation_header">Were the expectations clear?</string>
+    <string name="chk_professional_header">Were they professional?</string>
+    <string name="other_thoughts">Other thoughts</string>
+    <string name="character_counting">%1$d /120</string>
 
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
@@ -356,6 +371,7 @@
     <string name="done">Done</string>
     <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="downloading">Downloading…</string>
+    <string name="during">During</string>
     <string name="edit_your_profile">Edit your profile</string>
     <string name="educational">Educational</string>
     <string name="end_time">End Time</string>
@@ -365,12 +381,17 @@
     <string name="error_looking_up_map">Error looking up the map</string>
     <string name="estimated">Estimated</string>
     <string name="everything_is_good_to_go">Everything is good to go.\nSign off is complete.</string>
+    <string name="exactly_on">Exactly on</string>
     <string name="expense">Expense</string>
     <string name="expenses">Expenses</string>
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
+    <string name="dialog_release_note_title">What\'s new in Field Nation</string>
+    <string name="feature_header_added_new">What we added</string>
+    <string name="bugs_fixed_header">Bugs we fixed</string>
+    <string name="feature_wroking_on">We\'re working on</string>
     <string name="failed">Failed</string>
     <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
@@ -479,7 +500,7 @@
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
     <string name="optional_caps">OPTIONAL</string>
-    <string name="overall_rating__">Overall rating: </string>
+    <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
@@ -512,6 +533,10 @@
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
     <string name="schedule">Schedule</string>
+    <string name="schedule_caps">SCHEDULE</string>
+    <string name="schedule_business_hours_format1">%1$s - %2$s</string>
+    <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_open_range_format">%1$s\n%2$s</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
@@ -686,6 +711,18 @@
     <string name="pref_string_profile_photo_wifi_title">Use wifi to download profile images</string>
     <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
 
+    <!-- legal section -->
+    <string name="pref_string_data_settings_legal">Legal</string>
+    <string name="pref_string_tc_title">Terms and Conditions</string>
+    <string name="pref_string_qa_title">Quality Assurance Policy</string>
+
+    <!-- release declaration -->
+    <string name="pref_string_data_release_title">Release %1$s</string>
+    <string name="pref_string_release_title">View what\'s new in Field Nation</string>
+    <string name="pref_category_key_release_declaration">pref_category_key_release_declaration</string>
+    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
+    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
+
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
@@ -714,6 +751,18 @@
         <item>Ship To Site</item>
         <item>Ship From Site</item>
     </string-array>
+
+    <!-- workorder status list -->
+    <string-array name="workorder_status">
+        <item>Available</item>
+        <item>Assigned</item>
+        <item>In Progress</item>
+        <item>Completed</item>
+        <item>Canceled</item>
+        <item>Paid</item>
+        <item>Approved</item>
+    </string-array>
+
 
     <!-- workorder substatus list -->
     <string-array name="workorder_substatus">
@@ -773,11 +822,28 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="tos_date">10/02/2015</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>
         <item>Help/Support</item>
     </string-array>
+
+    <string name="added_new_feature">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
+    <string name="bugs_fixed">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
+    <string name="working_on_feature">&lt;ul&gt;
+                &lt;li&gt;Point One&lt;/li&gt;
+                &lt;li&gt;Point Two&lt;/li&gt;
+                &lt;li&gt;Point Three&lt;/li&gt;
+                &lt;/ul&gt;</string>
 
     <string-array name="search_status">
         <item>Assigned</item>
