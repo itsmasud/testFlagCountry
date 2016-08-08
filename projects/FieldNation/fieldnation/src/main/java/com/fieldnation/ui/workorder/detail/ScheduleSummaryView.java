@@ -109,10 +109,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                 sdf2.setDateFormatSymbols(symbols);
 
                 _type1TextView.setText(R.string.between);
-                _date1TextView.setText(
-                        getContext().getString(R.string.schedule_business_hours_format1,
-                                sdf1.format(sCal.getTime()),
-                                sdf2.format(eCal.getTime())));
+                _date1TextView.setText(getContext().getString(R.string.schedule_business_hours_format1,
+                        sdf1.format(sCal.getTime()),
+                        sdf2.format(eCal.getTime())));
 
                 sdf1 = new SimpleDateFormat("hh:mma", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
@@ -132,7 +131,9 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                         getContext().getString(R.string.schedule_open_range_format,
                                 sdf.format(sCal.getTime()),
                                 sdf.format(eCal.getTime())));
-                
+
+                _type2TextView.setVisibility(GONE);
+                _date2TextView.setVisibility(GONE);
             } else if ((int) _workorder.getScheduleType() == 1) {
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
