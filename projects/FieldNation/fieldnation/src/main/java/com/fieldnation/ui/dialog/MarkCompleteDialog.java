@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 
@@ -142,7 +141,7 @@ public class MarkCompleteDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onContinueClick();
                 dismiss();
-                if (_workorder.getBuyerRatingInfo().getRatingId() == null) {
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && _workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
                     _rateBuyerModal.show(_workorder);
                 }
             }
