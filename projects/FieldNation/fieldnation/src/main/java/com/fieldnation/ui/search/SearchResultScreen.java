@@ -133,8 +133,10 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders) {
-            if (envelope == null)
+            if (envelope == null) {
+                _refreshView.refreshComplete();
                 return;
+            }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
             if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)

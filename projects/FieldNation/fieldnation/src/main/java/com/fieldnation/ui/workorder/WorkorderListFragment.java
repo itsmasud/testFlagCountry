@@ -314,7 +314,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     public void isShowing() {
         Log.v(TAG, "isShowing");
         GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
-        App.setLastViewedList(_displayView);
+        App.setLastViewedList(_displayView.toWorkOrderListType());
     }
 
     private void setLoading(boolean loading) {

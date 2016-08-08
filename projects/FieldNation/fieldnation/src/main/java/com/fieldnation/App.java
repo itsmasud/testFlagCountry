@@ -31,10 +31,10 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;
@@ -90,7 +90,7 @@ public class App extends Application {
     private boolean _isConnected = false;
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
-    private static WorkorderDataSelector _lastListSelector = WorkorderDataSelector.AVAILABLE;
+    private static WorkOrderListType _lastListSelector = WorkOrderListType.AVAILABLE;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -109,11 +109,11 @@ public class App extends Application {
         Log.v(TAG, "GlobalState");
     }
 
-    public static void setLastViewedList(WorkorderDataSelector selector) {
+    public static void setLastViewedList(WorkOrderListType selector) {
         _lastListSelector = selector;
     }
 
-    public static WorkorderDataSelector getLastViewedList() {
+    public static WorkOrderListType getLastViewedList() {
         return _lastListSelector;
     }
 

@@ -35,7 +35,7 @@ public class MyWorkActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void loadFragments() {
-        App.setLastViewedList(WorkorderDataSelector.ASSIGNED);
+        App.setLastViewedList(WorkorderDataSelector.ASSIGNED.toWorkOrderListType());
 
         _fragments = new WorkorderListFragment[3];
         _fragments[0] = getFragment(WorkorderDataSelector.ASSIGNED);
