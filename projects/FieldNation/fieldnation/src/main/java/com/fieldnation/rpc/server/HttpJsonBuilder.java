@@ -5,7 +5,7 @@ import android.net.Uri;
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.fntools.misc;
 

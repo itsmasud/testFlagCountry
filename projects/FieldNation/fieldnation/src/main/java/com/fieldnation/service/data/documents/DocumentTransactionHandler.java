@@ -3,13 +3,13 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-import com.fieldnation.fntools.FileUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -104,9 +104,9 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
 
         StoredObject obj = null;
         if (resultData.isFile()) {
-            obj = StoredObject.put(App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getFile(), filename);
+            obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getFile(), filename);
         } else {
-            obj = StoredObject.put(App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
+            obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, resultData.getByteArray(), filename);
         }
 
         String name = obj.getFile().getName();

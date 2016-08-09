@@ -5,13 +5,13 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-import com.fieldnation.fntools.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
 
@@ -58,13 +58,13 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
 
             ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
             imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
-            StoredObject imageObj = StoredObject.put(App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
+            StoredObject imageObj = StoredObject.put(context, App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
             imageBitmap.recycle();
 
 
             ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
             circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
-            StoredObject circleObj = StoredObject.put(App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
+            StoredObject circleObj = StoredObject.put(context, App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
             circleBitmap.recycle();
 
             // build the response

@@ -3,9 +3,9 @@ package com.fieldnation.service.data.restv2;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.MultiThreadedService;
 
 import java.util.List;
 
@@ -50,7 +50,7 @@ public class RestService extends MultiThreadedService implements RestConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_SYNC, false);
         Sticky sticky = (Sticky) intent.getSerializableExtra(PARAM_STICKY);
 
-        List<StoredObject> list = StoredObject.list(App.getProfileId(), objectType);
+        List<StoredObject> list = StoredObject.list(this, App.getProfileId(), objectType);
 
         if (list != null && list.size() > 0) {
             for (StoredObject obj : list) {

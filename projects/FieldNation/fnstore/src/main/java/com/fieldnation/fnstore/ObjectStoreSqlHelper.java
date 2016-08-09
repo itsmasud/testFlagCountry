@@ -1,4 +1,4 @@
-package com.fieldnation.service.objectstore;
+package com.fieldnation.fnstore;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;

@@ -3,11 +3,11 @@ package com.fieldnation.service.data.payment;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 3/27/2015.
@@ -45,7 +45,7 @@ public class PaymentService extends MultiThreadedService implements PaymentConst
 
         StoredObject obj = null;
         if (allowCache) {
-            obj = StoredObject.get(App.getProfileId(), PSO_PAYMENT_LIST, page + "");
+            obj = StoredObject.get(this, App.getProfileId(), PSO_PAYMENT_LIST, page + "");
             if (obj != null) {
                 try {
                     PaymentDispatch.list(this, page, new JsonArray(obj.getData()), false, isSync, true);
@@ -64,7 +64,7 @@ public class PaymentService extends MultiThreadedService implements PaymentConst
         long paymentId = intent.getLongExtra(PARAM_PAYMENT_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_PAYMENT, paymentId);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_PAYMENT, paymentId);
         if (obj != null) {
             try {
                 PaymentDispatch.get(this, paymentId, new JsonObject(obj.getData()), false, isSync);

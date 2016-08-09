@@ -99,6 +99,7 @@ dependencies {
     compile project(':fntools')
     compile project(':fnjson')
     compile project(':fnpigeon')
+    compile project(':fnstore')
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:7.8.0'

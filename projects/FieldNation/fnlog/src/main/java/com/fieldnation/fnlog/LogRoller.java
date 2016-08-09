@@ -5,5 +5,7 @@ package com.fieldnation.fnlog;
  */
 public interface LogRoller {
 
-    void println(int priority, String tag, String msg);
+    void println(final int priority, final String tag, final String msg);
+
+    void logException(final Throwable throwable);
 }

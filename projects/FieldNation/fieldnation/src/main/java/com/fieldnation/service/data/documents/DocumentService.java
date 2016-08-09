@@ -5,9 +5,9 @@ import android.content.Intent;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.MultiThreadedService;
 
 import java.io.File;
 
@@ -49,7 +49,7 @@ public class DocumentService extends MultiThreadedService implements DocumentCon
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_DOCUMENT, documentId);
+        StoredObject obj = StoredObject.get(context, App.getProfileId(), PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
 

@@ -5,7 +5,12 @@ package com.fieldnation.fnlog;
  */
 public class DefaultRoller implements LogRoller {
     @Override
-    public void println(int priority, String tag, String msg) {
+    public void println(final int priority, final String tag, final String msg) {
         android.util.Log.println(priority, tag, msg);
+    }
+
+    @Override
+    public void logException(final Throwable throwable) {
+        Log.d("EXCEPTION", throwable);
     }
 }

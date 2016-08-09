@@ -7,22 +7,22 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.io.InputStream;
@@ -702,13 +702,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable file");
-        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
         uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
     public static void uploadDeliverable(Context context, InputStream inputStream, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
-        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
         uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
@@ -725,7 +725,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
         if (upFile.isFile() && upFile.getFile() != null) {
             if (upFile.getFile().length() > 100000000) { // 100 MB?
-                StoredObject.delete(upFile);
+                StoredObject.delete(context, upFile);
                 ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
                 WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
                 return;

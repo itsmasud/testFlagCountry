@@ -3,16 +3,17 @@ package com.fieldnation.service.auth;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -132,14 +133,14 @@ public class OAuth implements Parcelable {
     /*-*********************************-*/
     public void delete() {
         if (_id != -1)
-            StoredObject.delete(_id);
+            StoredObject.delete(App.get(), _id);
     }
 
     public void save() {
-        StoredObject obj = StoredObject.put(0, "OAuthToken", _username, null);
+        StoredObject obj = StoredObject.put(App.get(), 0, "OAuthToken", _username, null);
         _id = obj.getId();
         obj.setData(toJson().toByteArray());
-        obj.save();
+        obj.save(App.get());
     }
 
     public void applyToRequest(JsonObject request) throws ParseException {
@@ -158,12 +159,12 @@ public class OAuth implements Parcelable {
     }
 
     public static void flushAll() {
-        StoredObject.flushAllOfType("OAuthToken");
+        StoredObject.flushAllOfType(App.get(), "OAuthToken");
     }
 
     public static OAuth lookup(String username) {
         try {
-            StoredObject obj = StoredObject.get(0, "OAuthToken", username);
+            StoredObject obj = StoredObject.get(App.get(), 0, "OAuthToken", username);
 
             if (obj == null)
                 return null;
@@ -177,7 +178,7 @@ public class OAuth implements Parcelable {
 
     public static List<OAuth> list() {
         try {
-            List<StoredObject> objs = StoredObject.list(0, "OAuthToken");
+            List<StoredObject> objs = StoredObject.list(App.get(), 0, "OAuthToken");
             List<OAuth> list = new LinkedList<>();
             for (int i = 0; i < objs.size(); i++) {
                 try {

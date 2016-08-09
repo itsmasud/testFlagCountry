@@ -272,7 +272,7 @@ public class Debug {
         Crashlytics.setInt(key, value);
     }
 
-    public static void logCustom(CustomEvent event) {
+    public static void logCustom(final CustomEvent event) {
         if (!isCrashlyticsRunning())
             return;
 

@@ -7,7 +7,12 @@ import com.fieldnation.fnlog.LogRoller;
  */
 public class DebugLogRoller implements LogRoller {
     @Override
-    public void println(int priority, String tag, String msg) {
+    public void println(final int priority, final String tag, final String msg) {
         Debug.log(priority, tag, msg);
+    }
+
+    @Override
+    public void logException(final Throwable throwable) {
+        Debug.logException(throwable);
     }
 }

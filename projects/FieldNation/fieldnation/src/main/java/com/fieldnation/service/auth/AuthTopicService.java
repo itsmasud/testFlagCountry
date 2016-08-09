@@ -12,14 +12,14 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.fntools.FutureWaitAsyncTask;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.FutureWaitAsyncTask;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.profile.ProfileConstants;
-import com.fieldnation.service.objectstore.StoredObject;
 
 import java.util.List;
 
@@ -197,7 +197,7 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             return;
         Log.v(TAG, "removeAccount 2");
         OAuth.flushAll();
-        StoredObject.flushAllOfType(ProfileConstants.PSO_PROFILE);
+        StoredObject.flushAllOfType(this, ProfileConstants.PSO_PROFILE);
 
         if (_state == AuthState.AUTHENTICATED) {
             setState(AuthState.REMOVING);

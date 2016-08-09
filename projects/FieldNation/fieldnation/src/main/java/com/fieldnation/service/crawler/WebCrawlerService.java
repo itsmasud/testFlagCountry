@@ -8,12 +8,8 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.App;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.ThreadManager;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -22,15 +18,19 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.ThreadManager;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 import java.util.LinkedList;
@@ -127,7 +127,7 @@ public class WebCrawlerService extends Service {
                 Log.v(TAG, "Flushing logs");
                 DebugUtils.flushLogs(WebCrawlerService.this, 86400000); // 1 day
                 Log.v(TAG, "flushing data");
-                StoredObject.flush(604800000); // 1 week
+                StoredObject.flush(App.get(), 604800000); // 1 week
                 //StoredObject.flush(1000); // 1 week
 
                 Log.v(TAG, "_imageDaysToLive: " + _imageDaysToLive + " haveWifi: " + App.get().haveWifi());
@@ -136,22 +136,22 @@ public class WebCrawlerService extends Service {
                 if (_imageDaysToLive > -1 && App.get().haveWifi()) {
                     long days = _imageDaysToLive * 86400000;
                     long cutoff = System.currentTimeMillis();
-                    List<StoredObject> list = StoredObject.list(App.getProfileId(), "PhotoCache");
+                    List<StoredObject> list = StoredObject.list(App.get(), App.getProfileId(), "PhotoCache");
 
                     Log.v(TAG, "Flushing photos");
                     int count = 0;
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(obj);
+                            StoredObject.delete(App.get(), obj);
                             count++;
                         }
                     }
 
-                    list = StoredObject.list(App.getProfileId(), "PhotoCacheCircle");
+                    list = StoredObject.list(App.get(), App.getProfileId(), "PhotoCacheCircle");
 
                     for (StoredObject obj : list) {
                         if (obj.getLastUpdated() + days < cutoff) {
-                            StoredObject.delete(obj);
+                            StoredObject.delete(App.get(), obj);
                             count++;
                         }
                     }

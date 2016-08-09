@@ -6,8 +6,8 @@ import android.content.SharedPreferences;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.MultiThreadedService;
-import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 3/12/2015.
@@ -63,7 +63,7 @@ public class PhotoService extends MultiThreadedService implements PhotoConstants
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         // check cache
-        StoredObject obj = StoredObject.get(App.getProfileId(), objectName, url);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), objectName, url);
 
         if (obj != null) {
             PhotoDispatch.get(this, obj.getFile(), url, getCircle, false, isSync);
