@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 import com.fieldnation.service.topics.TopicService;

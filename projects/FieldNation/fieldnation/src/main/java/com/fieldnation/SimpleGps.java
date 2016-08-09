@@ -3,6 +3,8 @@ package com.fieldnation;
 import android.content.Context;
 import android.location.Location;
 
+import com.fieldnation.fnlog.Log;
+
 import java.util.Hashtable;
 
 /**

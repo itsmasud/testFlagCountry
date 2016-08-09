@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;

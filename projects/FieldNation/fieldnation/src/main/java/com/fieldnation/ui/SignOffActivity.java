@@ -10,7 +10,7 @@ import android.view.Window;
 
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;

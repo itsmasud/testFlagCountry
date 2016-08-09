@@ -3,7 +3,7 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;

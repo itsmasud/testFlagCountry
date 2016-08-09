@@ -3,7 +3,7 @@ package com.fieldnation.service.data.restv2;
 import android.content.Context;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;

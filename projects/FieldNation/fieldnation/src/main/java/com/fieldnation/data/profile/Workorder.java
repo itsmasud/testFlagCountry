@@ -1,6 +1,6 @@
 package com.fieldnation.data.profile;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.data.workorder.Status;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;

@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.json.JsonObject;

@@ -12,7 +12,7 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;

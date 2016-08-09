@@ -8,7 +8,7 @@ import android.widget.ImageView;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;

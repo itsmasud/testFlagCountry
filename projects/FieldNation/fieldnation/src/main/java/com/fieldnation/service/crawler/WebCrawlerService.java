@@ -10,7 +10,7 @@ import android.os.IBinder;
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
 import com.fieldnation.UniqueTag;

@@ -13,7 +13,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 

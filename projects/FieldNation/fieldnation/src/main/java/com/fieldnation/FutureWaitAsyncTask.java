@@ -4,6 +4,8 @@ import android.accounts.AccountManagerFuture;
 import android.os.AsyncTask;
 import android.os.Build;
 
+import com.fieldnation.fnlog.Log;
+
 
 /**
  * Waits for an {@link AccountManagerFuture} to resolve.

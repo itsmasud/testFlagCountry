@@ -14,7 +14,7 @@ import android.view.View;
 import com.caverock.androidsvg.SVG;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.shortstraw.Point;

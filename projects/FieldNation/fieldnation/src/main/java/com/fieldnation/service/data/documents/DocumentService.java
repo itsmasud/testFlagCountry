@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.utils.FileUtils;

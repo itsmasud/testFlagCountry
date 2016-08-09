@@ -9,7 +9,7 @@ import android.content.Context;
 import android.os.Bundle;
 
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 
 /**

@@ -25,7 +25,7 @@ import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;

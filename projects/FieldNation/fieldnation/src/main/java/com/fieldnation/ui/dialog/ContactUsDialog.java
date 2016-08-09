@@ -20,7 +20,7 @@ import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.Debug;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;

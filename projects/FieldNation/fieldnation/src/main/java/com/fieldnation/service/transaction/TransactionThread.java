@@ -10,7 +10,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.ThreadManager;
 import com.fieldnation.UniqueTag;

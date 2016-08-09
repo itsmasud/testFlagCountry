@@ -14,7 +14,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;

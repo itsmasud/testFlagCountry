@@ -3,7 +3,7 @@ package com.fieldnation.service.tracker;
 import android.content.Context;
 import android.content.Intent;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.utils.DebugUtils;
 
 /**

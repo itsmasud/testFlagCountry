@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;

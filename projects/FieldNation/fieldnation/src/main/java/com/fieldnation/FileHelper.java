@@ -9,6 +9,7 @@ import android.os.Environment;
 import android.provider.MediaStore;
 import android.widget.Toast;
 
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.ISO8601;
 

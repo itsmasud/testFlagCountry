@@ -9,7 +9,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
 import com.fieldnation.utils.FileUtils;
 import com.fieldnation.utils.Stopwatch;

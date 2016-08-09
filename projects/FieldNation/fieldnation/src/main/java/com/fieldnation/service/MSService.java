@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ThreadManager;
 
 import java.util.LinkedList;

@@ -3,7 +3,7 @@ package com.fieldnation.rpc.server;
 import android.net.Uri;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.StreamUtils;
 

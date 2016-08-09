@@ -1,6 +1,6 @@
 package com.fieldnation.shortstraw;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.json.JsonObject;
 
 /**

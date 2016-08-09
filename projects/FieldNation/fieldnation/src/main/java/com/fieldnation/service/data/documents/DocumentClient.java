@@ -9,7 +9,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicClient;

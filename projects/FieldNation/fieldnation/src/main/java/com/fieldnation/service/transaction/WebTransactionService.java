@@ -7,7 +7,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.ThreadManager;
 import com.fieldnation.service.MSService;
 import com.fieldnation.service.auth.AuthTopicClient;

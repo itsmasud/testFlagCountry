@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.utils.misc;
 

@@ -11,7 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.NumberPicker;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.workorder.Workorder;

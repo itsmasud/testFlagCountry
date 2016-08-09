@@ -13,7 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;

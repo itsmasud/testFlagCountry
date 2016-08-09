@@ -7,7 +7,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;

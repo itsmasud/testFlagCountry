@@ -28,7 +28,7 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;

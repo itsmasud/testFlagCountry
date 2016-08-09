@@ -1,5 +1,7 @@
 package com.fieldnation;
 
+import com.fieldnation.fnlog.Log;
+
 import java.util.LinkedList;
 import java.util.List;
 

@@ -11,25 +11,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.DatePicker;
-import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
-
-import java.util.Calendar;
 
 public class ToSDialog extends DialogFragmentBase {
     private static final String TAG = "ToSDialog";

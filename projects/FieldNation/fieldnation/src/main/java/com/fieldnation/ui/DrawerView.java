@@ -19,7 +19,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;

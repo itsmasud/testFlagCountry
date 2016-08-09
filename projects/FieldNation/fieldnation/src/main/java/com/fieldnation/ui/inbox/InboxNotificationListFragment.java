@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Notification;

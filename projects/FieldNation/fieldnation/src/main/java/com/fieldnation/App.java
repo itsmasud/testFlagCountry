@@ -25,6 +25,7 @@ import android.text.TextUtils;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -96,6 +97,10 @@ public class App extends Application {
     private static final int THRESHOLD_FREE_MB = 5;
 
     public static final SecureRandom secureRandom = new SecureRandom();
+
+    static {
+        Log.setRoller(new DebugLogRoller());
+    }
 
     @Override
     protected void attachBaseContext(Context base) {

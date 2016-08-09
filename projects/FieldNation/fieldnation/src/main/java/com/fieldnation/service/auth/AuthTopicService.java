@@ -14,7 +14,7 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.FutureWaitAsyncTask;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;

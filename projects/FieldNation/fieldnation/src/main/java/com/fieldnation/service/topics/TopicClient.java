@@ -12,7 +12,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 import java.lang.ref.WeakReference;
 import java.util.HashSet;

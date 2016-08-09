@@ -3,6 +3,8 @@ package com.fieldnation;
 
 import android.os.Handler;
 
+import com.fieldnation.fnlog.Log;
+
 /**
  * Created by Michael Carver on 1/5/2015.
  * This is a simple runnable that mimics a for loop, only it uses a {@Link Handler} to do the

@@ -9,7 +9,7 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.MSService;
 
 import java.lang.ref.WeakReference;
