@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael on 7/8/2016.
@@ -21,8 +21,9 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void startActivity(Context context, Intent intent) {

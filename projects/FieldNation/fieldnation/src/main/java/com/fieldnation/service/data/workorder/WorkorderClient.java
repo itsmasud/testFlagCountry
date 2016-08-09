@@ -44,8 +44,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-*****************************-*/

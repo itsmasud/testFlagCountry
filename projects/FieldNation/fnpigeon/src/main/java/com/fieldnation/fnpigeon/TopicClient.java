@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public class TopicClient implements TopicConstants {
+public abstract class TopicClient implements TopicConstants {
     public static final String TAG = "TopicClient";
 
     private boolean _isConnected = false;
@@ -45,9 +45,9 @@ public class TopicClient implements TopicConstants {
                 Context.BIND_AUTO_CREATE);
     }
 
-    public void disconnect(Context context, String userTag) {
+    public void disconnect(Context context) {
         _listener = null;
-        delete(userTag);
+        delete(getUserTag());
         try {
             context.unbindService(_serviceConnection);
         } catch (Exception ex) {
@@ -56,6 +56,8 @@ public class TopicClient implements TopicConstants {
         _subscribed.clear();
         _isConnected = false;
     }
+
+    public abstract String getUserTag();
 
     public boolean isConnected() {
         return _isConnected;

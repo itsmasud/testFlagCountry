@@ -4,10 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 
 /**
@@ -61,8 +61,9 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         }
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void dispatchEvent(Context context, String category, EventAction action, String label, long value) {

@@ -5,13 +5,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -27,13 +27,15 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
         super(listener);
     }
 
+    @Override
+    public String getUserTag() {
+        return TAG;
+    }
+
     /*-********************************-*/
     /*-         Data Interface         -*/
     /*-********************************-*/
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
-    }
 
     // get all
     public static void list(Context context, int page) {

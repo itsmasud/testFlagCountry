@@ -4,14 +4,14 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,8 +30,9 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-********************************-*/
