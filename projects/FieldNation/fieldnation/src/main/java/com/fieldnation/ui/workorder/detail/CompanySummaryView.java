@@ -12,7 +12,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.BuyerRating;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.StarView;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael Carver on 5/22/2015.

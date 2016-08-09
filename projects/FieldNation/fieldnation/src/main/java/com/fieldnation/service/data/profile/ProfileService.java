@@ -3,16 +3,16 @@ package com.fieldnation.service.data.profile;
 import android.content.Intent;
 
 import com.fieldnation.App;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileService extends MSService implements ProfileConstants {
+public class ProfileService extends MultiThreadedService implements ProfileConstants {
     private static final String TAG = "ProfileService";
 
     @Override

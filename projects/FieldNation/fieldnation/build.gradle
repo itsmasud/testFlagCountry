@@ -95,8 +95,9 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':libJson')
-    compile project(':libUtils')
+    compile project(':fnlog')
+    compile project(':fntools')
+    compile project(':fnjson')
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:7.8.0'

@@ -17,7 +17,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.RateBuyerActivity;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by shoaib.ahmed on 07/28/2016.

@@ -16,7 +16,7 @@ import com.fieldnation.data.workorder.ExpectedPayment;
 import com.fieldnation.data.workorder.Penalty;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ExpectedPaymentView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ExpectedPaymentView";

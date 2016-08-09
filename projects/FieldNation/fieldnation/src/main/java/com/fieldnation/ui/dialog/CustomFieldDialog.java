@@ -24,8 +24,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 

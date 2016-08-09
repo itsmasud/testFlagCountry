@@ -5,11 +5,11 @@ import android.net.Uri;
 import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.Debug;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.StreamUtils;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.io.FileInputStream;

@@ -16,9 +16,9 @@ import android.widget.TimePicker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.Calendar;

@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

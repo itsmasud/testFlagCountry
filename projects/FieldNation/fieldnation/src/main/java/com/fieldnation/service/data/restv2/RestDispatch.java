@@ -4,7 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicService;
 

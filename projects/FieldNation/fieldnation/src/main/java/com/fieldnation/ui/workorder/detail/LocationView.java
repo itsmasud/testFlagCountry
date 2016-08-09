@@ -20,7 +20,7 @@ import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.SimpleGps;
+import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
@@ -31,7 +31,7 @@ import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";

@@ -11,8 +11,8 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.objectstore.ObjectStoreSqlHelper.Column;
-import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.Stopwatch;
 
 import java.io.File;
 import java.io.FileOutputStream;

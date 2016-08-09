@@ -20,8 +20,8 @@ import android.widget.TextView;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 
 import java.util.LinkedList;
 import java.util.List;

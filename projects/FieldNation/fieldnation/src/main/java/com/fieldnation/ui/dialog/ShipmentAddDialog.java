@@ -25,7 +25,7 @@ import com.fieldnation.R;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";

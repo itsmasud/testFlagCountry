@@ -3,7 +3,7 @@ package com.fieldnation.service.data.restv2;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.topics.Sticky;
 
@@ -12,7 +12,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 4/30/2015.
  */
-public class RestService extends MSService implements RestConstants {
+public class RestService extends MultiThreadedService implements RestConstants {
 
     @Override
     public int getMaxWorkerCount() {

@@ -4,10 +4,10 @@ import android.content.Context;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.utils.StreamUtils;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.StreamUtils;
 
 import java.io.InputStream;
 

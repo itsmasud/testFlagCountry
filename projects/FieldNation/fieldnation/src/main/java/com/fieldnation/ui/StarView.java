@@ -8,7 +8,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael Carver on 5/22/2015.

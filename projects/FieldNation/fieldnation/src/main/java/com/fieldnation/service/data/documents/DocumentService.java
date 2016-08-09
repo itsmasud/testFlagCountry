@@ -5,16 +5,16 @@ import android.content.Intent;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.utils.FileUtils;
+import com.fieldnation.fntools.FileUtils;
 
 import java.io.File;
 
 /**
  * Created by Michael Carver on 5/28/2015.
  */
-public class DocumentService extends MSService implements DocumentConstants {
+public class DocumentService extends MultiThreadedService implements DocumentConstants {
     private static final String TAG = "DocumentService";
 
     @Override

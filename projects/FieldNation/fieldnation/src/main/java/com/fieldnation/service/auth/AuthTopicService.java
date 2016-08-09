@@ -12,11 +12,11 @@ import android.os.IBinder;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.FutureWaitAsyncTask;
+import com.fieldnation.fntools.FutureWaitAsyncTask;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.profile.ProfileConstants;
 import com.fieldnation.service.objectstore.StoredObject;

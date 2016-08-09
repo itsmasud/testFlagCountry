@@ -17,9 +17,9 @@ import com.fieldnation.R;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.EditTextAlertDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 

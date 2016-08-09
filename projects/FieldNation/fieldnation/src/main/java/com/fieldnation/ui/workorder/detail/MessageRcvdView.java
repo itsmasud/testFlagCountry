@@ -16,9 +16,9 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.lang.ref.WeakReference;
 import java.text.ParseException;

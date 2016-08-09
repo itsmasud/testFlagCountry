@@ -19,9 +19,9 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.util.Hashtable;

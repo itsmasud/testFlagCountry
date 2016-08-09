@@ -10,7 +10,7 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fntools.MultiThreadedService;
 
 import java.lang.ref.WeakReference;
 import java.util.Hashtable;
@@ -20,7 +20,7 @@ import java.util.Set;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public class TopicService extends MSService implements TopicConstants {
+public class TopicService extends MultiThreadedService implements TopicConstants {
     private static final String TAG = "TopicService";
 
     private final Messenger _me = new Messenger(new IncomeHandler(this));

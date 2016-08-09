@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 1/28/2015.

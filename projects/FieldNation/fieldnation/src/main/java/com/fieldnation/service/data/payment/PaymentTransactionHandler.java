@@ -4,8 +4,8 @@ import android.content.Context;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;

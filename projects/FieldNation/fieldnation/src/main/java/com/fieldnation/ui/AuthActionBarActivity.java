@@ -21,7 +21,7 @@ import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;

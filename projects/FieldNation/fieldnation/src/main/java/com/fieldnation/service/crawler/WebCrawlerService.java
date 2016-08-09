@@ -8,12 +8,12 @@ import android.os.Handler;
 import android.os.IBinder;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.ThreadManager;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.ThreadManager;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
@@ -28,9 +28,9 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.DebugUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 import java.util.LinkedList;

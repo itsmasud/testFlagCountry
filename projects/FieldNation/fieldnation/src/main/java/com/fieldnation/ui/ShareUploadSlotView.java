@@ -9,7 +9,7 @@ import android.widget.TextView;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 
 public class ShareUploadSlotView extends RelativeLayout {

@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 
 import java.util.LinkedList;

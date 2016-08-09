@@ -10,7 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ClosingNotesView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ClosingNotesView";

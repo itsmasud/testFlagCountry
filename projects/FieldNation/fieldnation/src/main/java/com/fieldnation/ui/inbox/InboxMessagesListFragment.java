@@ -13,7 +13,7 @@ import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;

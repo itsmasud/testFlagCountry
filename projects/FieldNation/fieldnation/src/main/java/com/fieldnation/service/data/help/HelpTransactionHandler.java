@@ -8,7 +8,7 @@ import android.widget.Toast;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.WebTransaction;

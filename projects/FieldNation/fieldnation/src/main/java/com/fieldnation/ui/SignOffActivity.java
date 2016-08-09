@@ -8,13 +8,13 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.utils.Stopwatch;
+import com.fieldnation.fntools.Stopwatch;
 
 /**
  * Created by michael.carver on 12/2/2014.

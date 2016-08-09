@@ -9,7 +9,7 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.transaction.TransformSqlHelper.Column;
 
 import java.util.LinkedList;

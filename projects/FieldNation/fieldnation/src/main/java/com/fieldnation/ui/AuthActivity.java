@@ -22,7 +22,7 @@ import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
@@ -33,7 +33,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called

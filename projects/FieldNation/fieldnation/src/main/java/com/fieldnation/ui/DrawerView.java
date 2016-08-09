@@ -21,15 +21,15 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.DebugUtils;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

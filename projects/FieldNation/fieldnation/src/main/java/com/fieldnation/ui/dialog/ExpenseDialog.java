@@ -27,7 +27,7 @@ import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ExpenseDialog extends DialogFragmentBase {
     private static final String TAG = "ExpenseDialog";

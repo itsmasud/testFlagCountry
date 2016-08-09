@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.topics.Sticky;
 import com.fieldnation.service.topics.TopicClient;
 

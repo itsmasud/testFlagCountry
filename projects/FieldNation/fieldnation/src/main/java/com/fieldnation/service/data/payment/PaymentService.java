@@ -4,15 +4,15 @@ import android.content.Intent;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 3/27/2015.
  */
-public class PaymentService extends MSService implements PaymentConstants {
+public class PaymentService extends MultiThreadedService implements PaymentConstants {
     private static final String TAG = "PaymentDataService";
 
     @Override

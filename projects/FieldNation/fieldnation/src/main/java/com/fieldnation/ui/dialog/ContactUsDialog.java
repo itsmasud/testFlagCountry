@@ -26,7 +26,7 @@ import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Shoaib on 4/27/2016.

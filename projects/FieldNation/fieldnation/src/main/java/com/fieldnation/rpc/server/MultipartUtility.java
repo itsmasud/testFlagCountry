@@ -4,8 +4,8 @@ import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.StreamUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.StreamUtils;
 
 import java.io.IOException;
 import java.io.InputStream;

@@ -9,8 +9,8 @@ import android.widget.TextView;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
 
 /**
  * Created by michael.carver on 12/5/2014.

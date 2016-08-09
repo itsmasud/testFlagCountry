@@ -9,14 +9,14 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class TaskRowView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("TaskRowView");

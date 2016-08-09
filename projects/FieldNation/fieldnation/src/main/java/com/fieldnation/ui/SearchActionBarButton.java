@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.search.EditSearchActivity;
 
 public class SearchActionBarButton extends RelativeLayout {

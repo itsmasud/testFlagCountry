@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.utils.DebugUtils;
+import com.fieldnation.fntools.DebugUtils;
 
 /**
  * Created by Michael on 5/18/2016.

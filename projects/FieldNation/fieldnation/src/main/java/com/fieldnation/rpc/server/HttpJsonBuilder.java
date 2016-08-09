@@ -4,10 +4,10 @@ import android.net.Uri;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.NotificationDefinition;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.security.SecureRandom;
 import java.text.ParseException;

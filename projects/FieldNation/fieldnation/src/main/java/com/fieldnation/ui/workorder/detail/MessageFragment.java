@@ -19,7 +19,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.util.LinkedList;
 import java.util.List;

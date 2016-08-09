@@ -11,7 +11,7 @@ import com.fieldnation.data.workorder.IncreaseRequestInfo;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 6/3/2016.

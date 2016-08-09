@@ -6,12 +6,12 @@ import android.graphics.BitmapFactory;
 
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-import com.fieldnation.utils.ImageUtils;
+import com.fieldnation.fntools.ImageUtils;
 
 import java.io.ByteArrayOutputStream;
 

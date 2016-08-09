@@ -12,7 +12,7 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ExpenseView extends LinearLayout {
     private static final String TAG = "ExpenseView";

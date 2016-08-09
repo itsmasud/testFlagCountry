@@ -15,7 +15,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.MemUtils;
+import com.fieldnation.fntools.MemUtils;
 
 /**
  * Created by michael.carver on 12/18/2014.

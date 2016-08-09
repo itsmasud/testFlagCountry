@@ -4,15 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
 
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoService extends MSService implements PhotoConstants {
+public class PhotoService extends MultiThreadedService implements PhotoConstants {
     public static final String TAG = "PhotoService";
 
     private static final long DAY = 86400000;

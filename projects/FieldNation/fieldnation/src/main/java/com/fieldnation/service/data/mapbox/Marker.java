@@ -1,6 +1,6 @@
 package com.fieldnation.service.data.mapbox;
 
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 6/23/2016.

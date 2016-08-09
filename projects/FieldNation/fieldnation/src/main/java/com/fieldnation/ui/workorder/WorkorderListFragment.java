@@ -15,10 +15,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.GpsLocationService;
+import com.fieldnation.fntools.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
@@ -47,8 +47,8 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.LinkedList;

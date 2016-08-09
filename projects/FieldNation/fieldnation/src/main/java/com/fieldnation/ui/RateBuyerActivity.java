@@ -18,7 +18,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.lang.ref.WeakReference;
 

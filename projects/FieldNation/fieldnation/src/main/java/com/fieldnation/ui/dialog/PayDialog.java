@@ -21,7 +21,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class PayDialog extends DialogFragmentBase {
     private static String TAG = "PayDialog";

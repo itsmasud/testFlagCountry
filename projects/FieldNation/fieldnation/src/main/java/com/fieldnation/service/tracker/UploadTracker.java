@@ -7,15 +7,15 @@ import android.content.Intent;
 import android.support.v4.app.NotificationCompat;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael on 5/18/2016.
  */
-public class UploadTracker extends MSService implements UploadTrackerConstants {
+public class UploadTracker extends MultiThreadedService implements UploadTrackerConstants {
     private static final String TAG = "UploadTracker";
 
     private int _notifcationId = App.secureRandom.nextInt();

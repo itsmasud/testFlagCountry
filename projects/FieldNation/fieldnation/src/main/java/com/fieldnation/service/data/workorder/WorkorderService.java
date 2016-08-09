@@ -6,9 +6,9 @@ import android.net.Uri;
 import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -17,7 +17,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 /**
  * Created by Michael Carver on 3/24/2015.
  */
-public class WorkorderService extends MSService implements WorkorderConstants {
+public class WorkorderService extends MultiThreadedService implements WorkorderConstants {
     private static final String TAG = "WorkorderService";
 
     @Override

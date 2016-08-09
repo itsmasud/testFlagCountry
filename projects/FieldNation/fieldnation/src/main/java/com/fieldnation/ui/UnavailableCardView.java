@@ -17,7 +17,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael Carver on 6/24/2015.
