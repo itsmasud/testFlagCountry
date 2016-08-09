@@ -5,8 +5,8 @@ import android.content.Intent;
 import android.os.Parcelable;
 
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
 
 import java.io.File;
 

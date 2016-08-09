@@ -1,1 +1,1 @@
-include ':fieldnation', ':fnlog', ':fntools', ':fnjson'
+include ':fieldnation', ':fnlog', ':fntools', ':fnjson', ':fnpigeon'

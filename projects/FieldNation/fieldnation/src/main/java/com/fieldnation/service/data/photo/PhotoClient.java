@@ -9,7 +9,7 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.misc;
 
 import java.io.File;

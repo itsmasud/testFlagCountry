@@ -6,8 +6,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
 
 /**
  * Created by Michael Carver on 7/17/2015.

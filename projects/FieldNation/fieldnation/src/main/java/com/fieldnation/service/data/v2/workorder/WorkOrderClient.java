@@ -11,7 +11,7 @@ import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 
 import java.util.LinkedList;
 import java.util.List;

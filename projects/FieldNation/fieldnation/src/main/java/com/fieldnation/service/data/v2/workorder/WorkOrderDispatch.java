@@ -3,8 +3,8 @@ package com.fieldnation.service.data.v2.workorder;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicService;
 
 /**
  * Created by Michael on 7/22/2016.

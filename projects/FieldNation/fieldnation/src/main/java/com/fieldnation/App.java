@@ -36,7 +36,7 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.Stopwatch;

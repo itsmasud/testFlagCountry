@@ -7,7 +7,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.Sticky;
+import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 

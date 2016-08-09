@@ -1,4 +1,4 @@
-package com.fieldnation.service.topics;
+package com.fieldnation.fnpigeon;
 
 import android.content.ComponentName;
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.os.Message;
 import android.os.Messenger;
 import android.os.Parcelable;
 
-import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 
 import java.lang.ref.WeakReference;
@@ -232,7 +231,7 @@ public class TopicClient implements TopicConstants {
             }
 
             if (msg.getData() != null) {
-                msg.getData().setClassLoader(App.get().getClassLoader());
+                msg.getData().setClassLoader(TopicClient.class.getClassLoader());
             }
 
             switch (msg.what) {

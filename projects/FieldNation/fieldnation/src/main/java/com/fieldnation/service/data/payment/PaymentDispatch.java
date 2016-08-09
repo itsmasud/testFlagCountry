@@ -5,8 +5,8 @@ import android.os.Bundle;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicService;
 
 /**
  * Created by Michael Carver on 4/21/2015.

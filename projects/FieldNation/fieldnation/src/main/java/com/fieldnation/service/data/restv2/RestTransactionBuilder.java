@@ -5,7 +5,7 @@ import android.content.Context;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.topics.Sticky;
+import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;

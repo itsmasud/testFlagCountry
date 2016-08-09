@@ -13,7 +13,7 @@ import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 
 import java.util.LinkedList;
 import java.util.List;

@@ -11,7 +11,7 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 
 import java.util.LinkedList;
 import java.util.List;

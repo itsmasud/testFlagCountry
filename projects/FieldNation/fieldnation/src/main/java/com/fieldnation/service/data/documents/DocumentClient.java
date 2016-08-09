@@ -12,7 +12,7 @@ import android.widget.Toast;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 
 import java.io.File;
 

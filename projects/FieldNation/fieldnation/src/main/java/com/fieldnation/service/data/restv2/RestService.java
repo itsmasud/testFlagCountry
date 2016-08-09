@@ -5,7 +5,7 @@ import android.content.Intent;
 import com.fieldnation.App;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.topics.Sticky;
+import com.fieldnation.fnpigeon.Sticky;
 
 import java.util.List;
 
