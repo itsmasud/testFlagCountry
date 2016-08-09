@@ -141,7 +141,7 @@ public class MarkCompleteDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onContinueClick();
                 dismiss();
-                if (App.get().getProfile().canRequestWorkOnMarketplace() && _workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
                     _rateBuyerModal.show(_workorder);
                 }
             }
