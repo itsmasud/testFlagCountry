@@ -212,7 +212,7 @@ public class OAuth implements Parcelable {
                         "&username=" + misc.escapeForURL(username) +
                         "&password=" + misc.escapeForURL(password));
 
-        HttpResult result = HttpJson.run(builder.build());
+        HttpResult result = HttpJson.run(App.get(), builder.build());
 
         Log.v(TAG, result.getResponseCode() + "");
         Log.v(TAG, result.getResponseMessage());

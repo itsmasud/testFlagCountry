@@ -10,19 +10,19 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.misc;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -82,7 +82,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
             try {
-                HttpJson.run(TEST_QUERY);
+                HttpJson.run(_service, TEST_QUERY);
                 GlobalTopicClient.networkConnected(_service);
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
@@ -186,7 +186,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
 
             // **** perform request ****
-            result = HttpJson.run(request);
+            result = HttpJson.run(_service, request);
 
             // debug output
             try {

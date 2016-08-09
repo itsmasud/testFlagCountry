@@ -1,9 +1,9 @@
 package com.fieldnation.rpc.server;
 
+import android.content.Context;
 import android.net.Uri;
 
 import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -27,7 +27,7 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public static HttpResult run(JsonObject request) throws Exception {
+    public static HttpResult run(Context context, JsonObject request) throws Exception {
         String path = "";
         String timingKey = null;
         Stopwatch watch = new Stopwatch(true);
@@ -130,7 +130,7 @@ public class HttpJson {
                             String filename = fo.getString("filename");
                             long soId = fo.getLong("soid");
                             String contentType = fo.getString("contentType");
-                            StoredObject so = StoredObject.get(App.get(), soId);
+                            StoredObject so = StoredObject.get(context, soId);
 
                             File sourceFile = so.getFile();
                             Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
@@ -157,7 +157,7 @@ public class HttpJson {
 
             } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {
                 long soid = request.getLong(HttpJsonBuilder.PARAM_WEB_BODY_SOID);
-                StoredObject so = StoredObject.get(App.get(), soid);
+                StoredObject so = StoredObject.get(context, soid);
                 conn.setDoOutput(true);
                 OutputStream out = conn.getOutputStream();
                 if (so.isFile()) {
