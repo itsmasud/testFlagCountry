@@ -155,14 +155,11 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                         }
                     }
                 };
-                postDelayed(_docsRunnable, 50);
+                post(_docsRunnable);
             } else {
-                if (files.size() < _docsList.getChildCount()) {
-                    _docsList.removeViews(files.size(), _docsList.getChildCount() - files.size());
-                }
-
                 _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
                     private final List<Object> _docs = files;
+                    private final List<UploadedDocumentView> _views = new LinkedList<>();
 
                     @Override
                     public void next(int i) throws Exception {
@@ -171,7 +168,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                             v = (UploadedDocumentView) _docsList.getChildAt(i);
                         } else {
                             v = new UploadedDocumentView(getContext());
-                            _docsList.addView(v);
+                            //_docsList.addView(v);
                         }
                         if (_docs.get(i) instanceof UploadedDocument) {
                             UploadedDocument doc = (UploadedDocument) _docs.get(i);
@@ -181,9 +178,18 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                             v.setUploading((String) (_uploadingFiles.toArray()[i]));
                             v.setListener(null);
                         }
+                        _views.add(v);
+                    }
+
+                    @Override
+                    public void finish(int count) throws Exception {
+                        _docsList.removeAllViews();
+                        for (UploadedDocumentView v : _views) {
+                            _docsList.addView(v);
+                        }
                     }
                 };
-                postDelayed(_docsRunnable, 50);
+                post(_docsRunnable);
             }
         } else {
             _docsList.removeAllViews();
@@ -247,9 +253,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
                     _uploadingFiles.remove(filename);
                 } else {
                     _uploadingFiles.add(filename);
+                    populateUi();
                 }
-
-                //populateUi();
             }
         }
     };

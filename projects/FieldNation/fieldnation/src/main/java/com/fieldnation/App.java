@@ -31,6 +31,7 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -90,7 +91,7 @@ public class App extends Application {
     private boolean _isConnected = false;
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
-    private static WorkorderDataSelector _lastListSelector = WorkorderDataSelector.AVAILABLE;
+    private static WorkOrderListType _lastListSelector = WorkOrderListType.AVAILABLE;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -109,11 +110,11 @@ public class App extends Application {
         Log.v(TAG, "GlobalState");
     }
 
-    public static void setLastViewedList(WorkorderDataSelector selector) {
+    public static void setLastViewedList(WorkOrderListType selector) {
         _lastListSelector = selector;
     }
 
-    public static WorkorderDataSelector getLastViewedList() {
+    public static WorkOrderListType getLastViewedList() {
         return _lastListSelector;
     }
 
@@ -569,13 +570,18 @@ public class App extends Application {
         edit.apply();
     }
 
-    public void setReleaseNoteShownReminded(long profileUserId) {
+    public void setReleaseNoteShownReminded() {
         Log.v(TAG, "setReleaseNoteReminded");
         // misc.printStackTrace("setCoiReminded");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putLong(PREF_RELEASE_NOTE_SHOWN, profileUserId);
+        edit.putLong(PREF_RELEASE_NOTE_SHOWN, BuildConfig.VERSION_CODE);
         edit.apply();
+    }
+
+    public boolean hasReleaseNoteShownForThisVersion() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return BuildConfig.VERSION_CODE == settings.getLong(PREF_RELEASE_NOTE_SHOWN, -1);
     }
 
     public void setToCAccepted() {
@@ -715,11 +721,6 @@ public class App extends Application {
         } finally {
             Log.v(TAG, "onlyUploadWithWifi time:" + stopwatch.finish());
         }
-    }
-
-    public boolean hasReleaseNoteShownForThisPofile(long profileUserId) {
-        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        return profileUserId == settings.getLong(PREF_RELEASE_NOTE_SHOWN, -1);
     }
 
     public boolean showRateMe() {

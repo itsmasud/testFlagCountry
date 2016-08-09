@@ -56,7 +56,7 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
 
         WorkOrderDispatch.search(context,
                 SearchParams.fromJson(params.getJsonObject("SearchParams")),
-                resultData.getByteArray());
+                resultData.getByteArray(), false);
 
         return Result.CONTINUE;
     }
@@ -66,6 +66,27 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     /*-**********************************-*/
     @Override
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pSearch":
+                    return failSearch(context, transaction, params, resultData);
+                default:
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return Result.CONTINUE;
+    }
+
+    private Result failSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "resultSearch");
+
+        WorkOrderDispatch.search(context,
+                SearchParams.fromJson(params.getJsonObject("SearchParams")), null, true);
+
         return Result.CONTINUE;
     }
 }

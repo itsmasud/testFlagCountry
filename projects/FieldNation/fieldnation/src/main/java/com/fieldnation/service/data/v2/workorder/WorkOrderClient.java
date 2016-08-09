@@ -65,6 +65,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
             new AsyncTaskEx<Bundle, Object, List<WorkOrder>>() {
                 SearchParams searchParams;
                 ListEnvelope envelope;
+                boolean failed;
 
                 @Override
                 protected List<WorkOrder> doInBackground(Bundle... params) {
@@ -74,6 +75,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
                         searchParams = payload.getParcelable(PARAM_SEARCH_PARAMS);
                         List<WorkOrder> list = new LinkedList<WorkOrder>();
                         Log.v(STAG, new String(payload.getByteArray(PARAM_LIST_ENVELOPE)));
+                        failed = payload.getBoolean(PARAM_FAILED);
                         envelope = ListEnvelope.fromJson(new JsonObject(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         JsonArray array = envelope.getResults();
 
@@ -90,12 +92,12 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
                 @Override
                 protected void onPostExecute(List<WorkOrder> o) {
-                    onSearch(searchParams, envelope, o);
+                    onSearch(searchParams, envelope, o, failed);
                 }
             }.executeEx(payload);
         }
 
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders) {
+        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
         }
     }
 }

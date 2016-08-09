@@ -1,7 +1,7 @@
 package com.fieldnation.ui;
 
+import android.app.Activity;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -14,7 +14,7 @@ import com.fieldnation.R;
 /**
  * Created by shoaib.ahmed on 08/02/2016.
  */
-public class NewFeatureActivity extends AuthFragmentActivity {
+public class NewFeatureActivity extends Activity {
     private static final String TAG = "NewFeatureActivity";
 
     // Ui
@@ -79,4 +79,5 @@ public class NewFeatureActivity extends AuthFragmentActivity {
         public void onClick(View v) {
             onBackPressed();
         }
-    };}
+    };
+}

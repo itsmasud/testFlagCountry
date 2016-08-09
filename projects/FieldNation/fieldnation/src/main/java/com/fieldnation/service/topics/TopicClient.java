@@ -12,7 +12,6 @@ import android.os.Messenger;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.Log;
 
 import java.lang.ref.WeakReference;
@@ -53,7 +52,7 @@ public class TopicClient implements TopicConstants {
         try {
             context.unbindService(_serviceConnection);
         } catch (Exception ex) {
-            Debug.logException(ex);
+            Log.v(TAG, ex);
         }
         _subscribed.clear();
         _isConnected = false;

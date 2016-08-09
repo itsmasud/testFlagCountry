@@ -4,7 +4,7 @@ import java.util.Hashtable;
 
 /**
  * Created by michael.carver on 12/23/2014.
- * Warning! Be careful using this with views that use their tags to index themselves in services, and dialogs.
+ * Warning! Be careful using this with fragments that use their tags to index themselves in services, and dialogs.
  */
 public class UniqueTag {
     private static final Object LOCK = new Object();

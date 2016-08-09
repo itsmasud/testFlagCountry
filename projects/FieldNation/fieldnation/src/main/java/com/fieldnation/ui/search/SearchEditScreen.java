@@ -20,12 +20,12 @@ import com.fieldnation.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
+import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.misc;
 
 import java.util.List;
@@ -40,16 +40,14 @@ public class SearchEditScreen extends RelativeLayout {
             10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
 
-    private static final WorkorderDataSelector[] SELECTORS = new WorkorderDataSelector[]{
-            WorkorderDataSelector.ASSIGNED,
-            WorkorderDataSelector.AVAILABLE,
-            WorkorderDataSelector.CANCELED,
-            WorkorderDataSelector.COMPLETED,
-            WorkorderDataSelector.REQUESTED,
-            WorkorderDataSelector.ROUTED
+    private static final WorkOrderListType[] SELECTORS = new WorkOrderListType[]{
+            WorkOrderListType.ASSIGNED,
+            WorkOrderListType.AVAILABLE,
+            WorkOrderListType.CANCELED,
+            WorkOrderListType.COMPLETED,
+            WorkOrderListType.REQUESTED,
+            WorkOrderListType.ROUTED
     };
-
-    private static final int[] indexLookup = new int[]{1, 4, 0, 3, 2, 5};
 
     // UI
     private RefreshView _loadingView;
@@ -124,7 +122,7 @@ public class SearchEditScreen extends RelativeLayout {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
-        _statusSpinner.setSelection(indexLookup[App.getLastViewedList().ordinal()]);
+        _statusSpinner.setSelection(App.getLastViewedList().ordinal());
 
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
@@ -145,14 +143,14 @@ public class SearchEditScreen extends RelativeLayout {
 
     public void reset() {
         _searchEditText.setText("");
-        _statusSpinner.setSelection(indexLookup[App.getLastViewedList().ordinal()]);
+        _statusSpinner.setSelection(App.getLastViewedList().ordinal());
     }
 
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
             final SearchParams searchParams = new SearchParams()
-                    .status(SELECTORS[_statusSpinner.getSelectedItemPosition()].getCall())
+                    .status(SELECTORS[_statusSpinner.getSelectedItemPosition()].getParam())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
 
             App.setLastViewedList(SELECTORS[_statusSpinner.getSelectedItemPosition()]);
