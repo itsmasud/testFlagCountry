@@ -71,7 +71,7 @@ public class App extends Application {
     public static final String PREF_RATE_INTERACTION = "PREF_RATE_INTERACTION";
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
-    public static final String PREF_TOS_ACCEPTED = "PREF_TOS_ACCEPTED";
+    public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
 
 
     private static App _context;
@@ -578,17 +578,17 @@ public class App extends Application {
         edit.apply();
     }
 
-    public void setToSAccepted() {
-        Log.v(TAG, "setToSReminded");
+    public void setToCAccepted() {
+        Log.v(TAG, "setToCAccepted");
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         SharedPreferences.Editor edit = settings.edit();
-        edit.putLong(PREF_TOS_ACCEPTED, System.currentTimeMillis());
+        edit.putLong(PREF_TOC_ACCEPTED, System.currentTimeMillis());
         edit.apply();
     }
 
-    public boolean shouldShowToSDialog() {
+    public boolean shouldShowTermsAndConditionsDialog() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
-        if (settings.contains(PREF_TOS_ACCEPTED)) {
+        if (settings.contains(PREF_TOC_ACCEPTED)) {
             Date tosDate = null;
             DateFormat df = new SimpleDateFormat("MM/dd/yyyy");
             try {
@@ -596,7 +596,7 @@ public class App extends Application {
             } catch (ParseException e) {
                 e.printStackTrace();
             }
-            return (new DateUtils().isBeforeDay(new Date(settings.getLong(PREF_TOS_ACCEPTED, -1)), tosDate));
+            return (new DateUtils().isBeforeDay(new Date(settings.getLong(PREF_TOC_ACCEPTED, -1)), tosDate));
         } else return true;
     }
 

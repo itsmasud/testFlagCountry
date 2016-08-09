@@ -29,7 +29,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
-import com.fieldnation.ui.dialog.ToSDialog;
+import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
 
@@ -52,7 +52,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
-    private ToSDialog _tosDialog;
+    private TermsAndConditionsDialog _termsAndConditionsDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -96,7 +96,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
 
-        _tosDialog = ToSDialog.getInstance(getSupportFragmentManager(), TAG);
+        _termsAndConditionsDialog = TermsAndConditionsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
         _coiWarningDialog.setCancelable(false);
@@ -168,8 +168,8 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         _profileBounceProtect = true;
 
-        if (App.get().shouldShowToSDialog()) {
-            _tosDialog.show();
+        if (App.get().shouldShowTermsAndConditionsDialog()) {
+            _termsAndConditionsDialog.show();
         }
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisPofile(_profile.getUserId())) {
@@ -198,7 +198,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
                 Debug.logException(ex);
             }
         } else {
-            Log.v(TAG, "tos/coi check done");
+            Log.v(TAG, "toc/coi check done");
             onProfile(profile);
             _profileBounceProtect = false;
         }
