@@ -146,7 +146,7 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     }
 
     public static void actionAcceptTos(Context context, long profileId) {
-        action(context, profileId, "accept-tos", null,
+        action(context, profileId, "accept-toc", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, null);
     }
 

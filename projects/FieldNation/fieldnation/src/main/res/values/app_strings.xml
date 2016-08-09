@@ -239,8 +239,8 @@
     <string name="dialog_location_loading_body">We are currently gathering your location information.\n\nThis could take up to several minutes.</string>
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
 
-    <string name="dialog_accept_terms_title">Terms of Service</string>
-    <string name="dialog_tos_body_message">We have updated our terms of service. Please review the new terms of service that are now in effect.</string>
+    <string name="dialog_toc_title">Terms and Conditions</string>
+    <string name="dialog_toc_body_message">We have updated our terms and conditions. You will need to accept the new terms before you can continue and use the Field Nation app.</string>
     <string name="dialog_accept_terms_body_soft">
         By accepting you agree to the new
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
@@ -822,7 +822,7 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
-    <string name="tos_date">08/6/2016</string>
+    <string name="tos_date">10/02/2015</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>
