@@ -15,8 +15,8 @@ import android.widget.Button;
 import com.fieldnation.App;
 import com.fieldnation.R;
 
-public class ToSDialog extends DialogFragmentBase {
-    private static final String TAG = "ToSDialog";
+public class TermsAndConditionsDialog extends DialogFragmentBase {
+    private static final String TAG = "TermsAndConditionsDialog";
 
     // Ui
     private Button _reviewTermsOfServiceButton;
@@ -25,8 +25,8 @@ public class ToSDialog extends DialogFragmentBase {
     /*-*********************************-*/
     /*-             Life Cycle          -*/
     /*-*********************************-*/
-    public static ToSDialog getInstance(FragmentManager fm, String tag) {
-        return getInstance(fm, tag, ToSDialog.class);
+    public static TermsAndConditionsDialog getInstance(FragmentManager fm, String tag) {
+        return getInstance(fm, tag, TermsAndConditionsDialog.class);
     }
 
     @Override
@@ -45,7 +45,7 @@ public class ToSDialog extends DialogFragmentBase {
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.dialog_tos, container, false);
+        View v = inflater.inflate(R.layout.dialog_toc, container, false);
 
         _reviewTermsOfServiceButton = (Button) v.findViewById(R.id.review_tos_button);
         _reviewTermsOfServiceButton.setOnClickListener(_reviewTermsOfServices_onClick);
@@ -88,7 +88,7 @@ public class ToSDialog extends DialogFragmentBase {
     private final View.OnClickListener _accept_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            App.get().setToSAccepted();
+            App.get().setToCAccepted();
             dismiss();
         }
     };
