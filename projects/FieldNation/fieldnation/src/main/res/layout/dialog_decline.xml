@@ -24,6 +24,30 @@
                 style="?attr/dialogBodyStyle"
                 android:text="@string/dialog_decline_message" />
 
+
+            <LinearLayout
+                android:id="@+id/decline_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:visibility="visible">
+
+                <com.fieldnation.ui.HintSpinner
+                    android:id="@+id/decline_spinner"
+                    style="@style/Widget.AppCompat.Spinner.Underlined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/decline_reason"
+                    android:visibility="visible" />
+
+                <EditText
+                    android:id="@+id/declineDetails_edittext"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:hint="@string/hint_text_additional_details"
+                    android:visibility="gone" />
+            </LinearLayout>
+
             <CheckBox
                 android:id="@+id/block_checkbox"
                 android:layout_width="match_parent"
@@ -35,7 +59,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:visibility="gone">
+                android:visibility="visible">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -52,10 +76,10 @@
                 </LinearLayout>
 
                 <EditText
-                    android:id="@+id/blockdetails_edittext"
+                    android:id="@+id/blockDetails_edittext"
                     style="@style/EditText"
                     android:layout_width="match_parent"
-                    android:hint="@string/dialog_block_details"
+                    android:hint="@string/hint_text_additional_details"
                     android:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
