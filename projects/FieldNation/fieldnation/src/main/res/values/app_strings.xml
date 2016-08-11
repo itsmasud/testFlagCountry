@@ -128,7 +128,7 @@
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
-    <string name="btn_review_tos">REVIEW TERMS OF SERVICE</string>
+    <string name="btn_review_toc">REVIEW TERMS OF CONDITIONS</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
