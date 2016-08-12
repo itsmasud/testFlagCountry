@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -14,11 +15,16 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import com.fieldnation.App;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.UniqueTag;
+import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -46,6 +52,8 @@ public class DeclineDialog extends DialogFragmentBase {
     private int _selectedPosition_declineSpinner = -1;
     private int _selectedPosition_blockSpinner = -1;
     private static int DECLINE_REASON_OTHER = 7;
+    private boolean _clear = false;
+
 
 
     /*-*************************************-*/
@@ -128,7 +136,35 @@ public class DeclineDialog extends DialogFragmentBase {
         super.onResume();
         getDeclineSpinner();
         getBlockSpinner();
+
+        if (_clear) {
+            Log.e(TAG , "inside _clear");
+            _clear = false;
+            _declineEditText.setText("");
+            _blockEditText.setText("");
+            _blockCheckBox.setChecked(false);
+            _blockCheckBox_onChecked.onCheckedChanged(_blockCheckBox, false);
+        }
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        _clear = true;
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        _clear = true;
+    }
+
+    @Override
+    public void dismiss() {
+        _clear = true;
+        super.dismiss();
+    }
+
 
     private HintSpinner getDeclineSpinner() {
         if (_declineSpinner != null && _declineSpinner.getAdapter() == null) {
@@ -172,12 +208,24 @@ public class DeclineDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
+                ToastClient.toast(App.get(), getString(R.string.toast_missing_decline_explanation), Toast.LENGTH_LONG);
+                return;
+            }
             dismiss();
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
-                    _listener.onOk(true, _blockReasonIds[_selectedPosition_blockSpinner], _blockEditText.getText().toString());
+                    if (_selectedPosition_declineSpinner == -1)
+                        _listener.onOk(true, _blockReasonIds[_selectedPosition_blockSpinner], _blockEditText.getText().toString());
+                    else
+                        _listener.onOk(true, _declineReasonIds[_selectedPosition_declineSpinner], _declineEditText.getText().toString(),
+                                _blockReasonIds[_selectedPosition_blockSpinner], _blockEditText.getText().toString());
                 } else {
-                    _listener.onOk(false, 0, null);
+                    if (_selectedPosition_declineSpinner == -1)
+                        _listener.onOk();
+                    else
+                        _listener.onOk(_declineReasonIds[_selectedPosition_declineSpinner], _declineEditText.getText().toString());
+
                 }
             }
         }
@@ -206,9 +254,10 @@ public class DeclineDialog extends DialogFragmentBase {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _selectedPosition_declineSpinner = position;
-            if (position == DECLINE_REASON_OTHER)
+            if (_declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER) {
                 _declineEditText.setVisibility(View.VISIBLE);
-            else _declineEditText.setVisibility(View.GONE);
+                _declineEditText.requestFocus();
+            } else _declineEditText.setVisibility(View.GONE);
         }
 
         @Override
@@ -228,7 +277,13 @@ public class DeclineDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        void onOk(boolean blockBuyer, int reasonId, String details);
+        void onOk();
+
+        void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation);
+
+        void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockReasonId, String blockingExplanation);
+
+        void onOk(int declineReasonId, String declineExplanation);
 
         void onCancel();
     }
