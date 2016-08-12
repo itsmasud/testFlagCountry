@@ -102,7 +102,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
             symbols.setAmPmStrings(new String[]{"am", "pm"});
-            if (!misc.isEmptyOrNull(schedule.getEndTime()) && (int) _workorder.getScheduleType() == 2) {
+            if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
                 SimpleDateFormat sdf2 = new SimpleDateFormat("E, MMM dd, yyyy", Locale.getDefault());
@@ -123,7 +123,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
                                 sdf1.format(sCal.getTime()),
                                 sdf1.format(eCal.getTime())));
 
-            } else if (!misc.isEmptyOrNull(schedule.getEndTime()) && (int) _workorder.getScheduleType() == 3) {
+            } else if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.OPEN_RAGE) {
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
                 _type1TextView.setText(R.string.between);
@@ -134,7 +134,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
-            } else if ((int) _workorder.getScheduleType() == 1) {
+            } else if (schedule.getType() == Schedule.Type.EXACT) {
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
 

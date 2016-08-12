@@ -29,6 +29,8 @@ public class Schedule implements Parcelable {
     private String _startTime;
     @Json(name = "workorderScheduleId")
     private Integer _workorderScheduleId;
+    @Json(name = "type")
+    private Integer _type;
 
     public Schedule() {
     }
@@ -82,6 +84,27 @@ public class Schedule implements Parcelable {
     public Schedule(String startTime, String endTime) {
         _startTime = startTime;
         _endTime = endTime;
+    }
+
+    void setType(Integer type) {
+        if (type == null)
+            return;
+
+        _type = type;
+    }
+
+    public Type getType() {
+        if (_type == null) {
+            if (isExact())
+                return Type.EXACT;
+            return Type.OPEN_RAGE;
+        }
+
+        return Type.values()[_type - 1];
+    }
+
+    public enum Type {
+        EXACT, BUSINESS_HOURS, OPEN_RAGE
     }
 
     public String getFormatedDate() {
