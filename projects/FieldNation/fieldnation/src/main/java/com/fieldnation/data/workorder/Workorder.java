@@ -216,6 +216,9 @@ public class Workorder implements Parcelable {
     }
 
     public Schedule getEstimatedSchedule() {
+        if (_scheduleType != null)
+            _estimatedSchedule.setType(_scheduleType);
+        
         return _estimatedSchedule;
     }
 
@@ -292,13 +295,15 @@ public class Workorder implements Parcelable {
     }
 
     public Schedule getSchedule() {
+        if (_scheduleType != null)
+            _schedule.setType(_scheduleType);
         return _schedule;
     }
 
     // 1=>exact schedule
     // 2=>Buseness hours
     // 3=>Open range
-    public Integer getScheduleType() {
+    private Integer getScheduleType() {
         if (_scheduleType == null)
             return 1;
         return _scheduleType;

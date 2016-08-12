@@ -46,7 +46,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="8dp"
             android:layout_marginTop="20dp"
-            android:text="@string/btn_review_tos" />
+            android:text="@string/btn_review_toc" />
 
         <Button
             android:id="@+id/accept_button"
