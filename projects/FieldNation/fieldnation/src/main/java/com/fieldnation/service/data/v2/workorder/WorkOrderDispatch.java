@@ -21,4 +21,18 @@ public class WorkOrderDispatch implements WorkOrderConstants {
 
         TopicService.dispatchEvent(context, TOPIC_ID_SEARCH + "/" + searchParams.toKey(), bundle, Sticky.TEMP);
     }
+
+    public static void action(Context context, long workOrderId, String action, boolean failed) {
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_ACTION, ACTION_ACTION_COMPLETE);
+        bundle.putLong(PARAM_WORKORDER_ID, workOrderId);
+        bundle.putBoolean(PARAM_FAILED, failed);
+        bundle.putString(PARAM_WO_ACTION, action);
+
+        String topicId = TOPIC_ID_ACTION_COMPLETE;
+        topicId += "/" + workOrderId;
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.TEMP);
+    }
+
 }

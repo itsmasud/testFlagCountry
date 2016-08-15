@@ -7,7 +7,6 @@ import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.data.workorder.WorkorderTransactionHandler;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
@@ -62,8 +61,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         context.startService(
                 action(context, workorderId, "POST", action, params, contentType, body,
                         "POST/v2/workorder/[workorderId]/" + action,
-                        WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pAction(workorderId, action), useKey));
+                        WorkOrderTransactionHandler.class,
+                        WorkOrderTransactionHandler.pAction(workorderId, action), useKey));
     }
 
 

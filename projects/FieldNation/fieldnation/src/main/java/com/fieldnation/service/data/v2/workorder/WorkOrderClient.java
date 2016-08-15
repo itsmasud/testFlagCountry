@@ -11,7 +11,6 @@ import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.service.topics.TopicClient;
 
 import java.util.LinkedList;
@@ -62,9 +61,20 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "topicId " + topicId);
-            if (topicId.startsWith(TOPIC_ID_SEARCH)) {
+            if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
+                preOnAction((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_SEARCH)) {
                 preOnSearch((Bundle) payload);
             }
+        }
+
+        private void preOnAction(Bundle payload) {
+            onAction(payload.getLong(PARAM_WORKORDER_ID),
+                    payload.getString(PARAM_WO_ACTION),
+                    payload.getBoolean(PARAM_FAILED));
+        }
+
+        public void onAction(long workOrderId, String action, boolean failed) {
         }
 
         private void preOnSearch(Bundle payload) {
