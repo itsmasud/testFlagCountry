@@ -55,8 +55,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         context.startService(
                 action(context, workorderId, "POST", action, params, contentType, body,
                         "POST/v2/workorder/[workorderId]/" + action,
-                        WorkorderTransactionHandler.class,
-                        WorkorderTransactionHandler.pAction(workorderId, action), useKey));
+                        WorkOrderTransactionHandler.class,
+                        WorkOrderTransactionHandler.pAction(workorderId, action), useKey));
     }
 
 
