@@ -11,6 +11,7 @@ import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
+import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.service.topics.TopicClient;
 
 import java.util.LinkedList;
@@ -48,6 +49,11 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
     public boolean subSearch() {
         return register(TOPIC_ID_SEARCH, TAG);
     }
+
+    public static void actionDecline(Context context, long workorderId, int declineReasonId, String explanation) {
+        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, explanation);
+    }
+
 
     /*-**********************************-*/
     /*-             Listener             -*/
