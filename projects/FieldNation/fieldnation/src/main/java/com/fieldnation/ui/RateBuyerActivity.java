@@ -257,6 +257,13 @@ public class RateBuyerActivity extends AuthFragmentActivity {
         } else if (_profilePic != null && _profilePic.get() != null) {
             _picView.setProfilePic(_profilePic.get());
         }
+
+        _otherThoughtsEditText.post(new Runnable() {
+            @Override
+            public void run() {
+                misc.hideKeyboard(_otherThoughtsEditText);
+            }
+        });
     }
 
     private final View.OnClickListener expectation_onClick_listener = new View.OnClickListener() {

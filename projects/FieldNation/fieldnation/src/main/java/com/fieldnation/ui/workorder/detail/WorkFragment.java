@@ -51,6 +51,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
@@ -957,15 +958,36 @@ public class WorkFragment extends WorkorderFragment {
 
     private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
-        public void onOk(boolean blockBuyer, int reasonId, String details) {
-            WorkorderClient.actionDecline(App.get(), _workorder.getWorkorderId());
+        public void onOk() {
+             WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+
             if (blockBuyer) {
                 ProfileClient.actionBlockCompany(App.get(),
                         App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), reasonId, details);
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+            }
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
+            if (blockBuyer) {
+                ProfileClient.actionBlockCompany(App.get(),
+                        App.get().getProfile().getUserId(),
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
             }
 
             getActivity().finish();
+        }
+
+        @Override
+        public void onOk(int declineReasonId, String declineExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
         }
 
         @Override
