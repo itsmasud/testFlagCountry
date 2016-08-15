@@ -5,10 +5,13 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fntools.misc;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 5/22/2015.
@@ -108,7 +111,7 @@ public class StarView extends FrameLayout {
         for (int i = 0; i < _starViews.size(); i++) {
             if (i < _goldStars) {
                 _starViews.get(i).setTextColor(getResources().getColor(R.color.fn_yellow));
-        } else {
+            } else {
                 _starViews.get(i).setTextColor(getResources().getColor(R.color.fn_light_text));
             }
         }

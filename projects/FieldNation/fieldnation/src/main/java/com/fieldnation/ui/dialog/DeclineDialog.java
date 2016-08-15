@@ -18,13 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -53,7 +53,6 @@ public class DeclineDialog extends DialogFragmentBase {
     private int _selectedPosition_blockSpinner = -1;
     private static int DECLINE_REASON_OTHER = 7;
     private boolean _clear = false;
-
 
 
     /*-*************************************-*/
@@ -138,7 +137,7 @@ public class DeclineDialog extends DialogFragmentBase {
         getBlockSpinner();
 
         if (_clear) {
-            Log.e(TAG , "inside _clear");
+            Log.e(TAG, "inside _clear");
             _clear = false;
             _declineEditText.setText("");
             _blockEditText.setText("");
