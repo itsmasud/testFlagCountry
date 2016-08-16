@@ -11,6 +11,13 @@ apply plugin: 'com.android.application'
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    maven {
+        url "https://artifactory.fndev.net/artifactory/libs-release-local"
+        credentials {
+            username = artifactory_username
+            password = artifactory_password
+        }
+    }
 }
 
 apply plugin: 'com.google.gms.google-services'
@@ -95,11 +102,13 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':fnlog')
+    //compile project(':fnlog')
     compile project(':fntools')
     compile project(':fnjson')
     compile project(':fnpigeon')
     compile project(':fnstore')
+
+    compile 'com.fieldnation:fnlog:1.0.0'
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:7.8.0'
