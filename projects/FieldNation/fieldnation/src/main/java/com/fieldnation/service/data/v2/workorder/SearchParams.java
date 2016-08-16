@@ -81,7 +81,7 @@ public class SearchParams implements Parcelable {
     @Json
     public String order = "asc";
     @Json
-    public Boolean remoteWork = true;
+    public Boolean remoteWork = null;
 
     public SearchParams() {
     }
@@ -128,8 +128,8 @@ public class SearchParams implements Parcelable {
         if (sort != null && order != null)
             params += "&sort=" + sort + "&order=" + order;
 
-        if (remoteWork)
-            params += "&remote_work=1";
+        if (remoteWork != null)
+            params += "&remote_work=" + (remoteWork ? 1 : 0);
 
         return params;
     }
@@ -157,8 +157,8 @@ public class SearchParams implements Parcelable {
             key += ":" + ((int) (radius * 1000));
         }
 
-        if (remoteWork)
-            key += ":remote_work=1";
+        if (remoteWork != null)
+            key += ":remote_work=" + (remoteWork ? 1 : 0);
 
         return key;
     }
