@@ -209,7 +209,7 @@ public class DeclineDialog extends DialogFragmentBase {
         public void onClick(View v) {
             if (_selectedPosition_declineSpinner != -1 &&
                     _declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER
-                    && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
+                    && !misc.isEmptyOrNull(_declineEditText.getText().toString())) {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_decline_explanation), Toast.LENGTH_LONG);
                 return;
             }
