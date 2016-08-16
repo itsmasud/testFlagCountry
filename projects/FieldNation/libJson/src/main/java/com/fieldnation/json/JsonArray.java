@@ -96,7 +96,7 @@ public class JsonArray implements Parcelable {
     }
 
     public String getString(int index) {
-        return (String) get(index);
+        return get(index) + "";
     }
 
     public JsonObject getJsonObject(int index) {
