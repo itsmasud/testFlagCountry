@@ -49,6 +49,11 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         return register(TOPIC_ID_SEARCH, TAG);
     }
 
+    public static void actionDecline(Context context, long workorderId, int declineReasonId, String explanation) {
+        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, explanation);
+    }
+
+
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
@@ -56,9 +61,20 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Log.v(STAG, "topicId " + topicId);
-            if (topicId.startsWith(TOPIC_ID_SEARCH)) {
+            if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
+                preOnAction((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_SEARCH)) {
                 preOnSearch((Bundle) payload);
             }
+        }
+
+        private void preOnAction(Bundle payload) {
+            onAction(payload.getLong(PARAM_WORKORDER_ID),
+                    payload.getString(PARAM_WO_ACTION),
+                    payload.getBoolean(PARAM_FAILED));
+        }
+
+        public void onAction(long workOrderId, String action, boolean failed) {
         }
 
         private void preOnSearch(Bundle payload) {

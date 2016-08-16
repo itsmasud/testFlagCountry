@@ -6,6 +6,7 @@ package com.fieldnation.service.data.v2.workorder;
 public interface WorkOrderConstants {
     // Topics
     String TOPIC_ID_SEARCH = "WorkOrderConstants:TOPIC_ID_SEARCH";
+    String TOPIC_ID_ACTION_COMPLETE = "WorkOrderConstants:TOPIC_ID_ACTION_COMPLETE";
 
     // Parameters
     String PARAM_WORKORDER_ID = "PARAM_WORKORDER_ID";
@@ -15,6 +16,7 @@ public interface WorkOrderConstants {
     // Actions
     String PARAM_ACTION = "PARAM_ACTION";
     String ACTION_SEARCH = "ACTION_SEARCH";
+    String ACTION_ACTION_COMPLETE = "ACTION_ACTION_COMPLETE";
 
     // Stored Object Names
     String PSO_WORKORDER = "WorkOrder";
@@ -22,4 +24,5 @@ public interface WorkOrderConstants {
 
     // Params
     String PARAM_FAILED = "failed";
+    String PARAM_WO_ACTION = "action";
 }
