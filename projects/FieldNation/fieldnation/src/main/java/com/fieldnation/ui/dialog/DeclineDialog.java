@@ -55,7 +55,6 @@ public class DeclineDialog extends DialogFragmentBase {
     private boolean _clear = false;
 
 
-
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -138,7 +137,7 @@ public class DeclineDialog extends DialogFragmentBase {
         getBlockSpinner();
 
         if (_clear) {
-            Log.e(TAG , "inside _clear");
+            Log.e(TAG, "inside _clear");
             _clear = false;
             _declineEditText.setText("");
             _blockEditText.setText("");
@@ -208,7 +207,9 @@ public class DeclineDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
+            if (_selectedPosition_declineSpinner != -1 &&
+                    _declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER
+                    && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_decline_explanation), Toast.LENGTH_LONG);
                 return;
             }

@@ -46,7 +46,7 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         action(context, workorderId, "decline", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 (declineReasonId == -1 ? "" : "workorder_decline_reason_id=" + declineReasonId)
-                        + (misc.isEmptyOrNull(declineExplanation) ? "" : "&explanation=" + misc.escapeForURL(declineExplanation)));
+                        + (misc.isEmptyOrNull(declineExplanation) ? "" : "&reason_other=" + misc.escapeForURL(declineExplanation)));
     }
 
     /*-*********************************-*/
