@@ -1,16 +1,22 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
+import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderContacts;
 import com.fieldnation.utils.misc;
+
+import java.util.Random;
 
 /**
  * Created by Michael Carver on 5/26/2015.
@@ -89,6 +95,27 @@ public class ContactListView extends RelativeLayout {
                 _listLayout.addView(tileView);
             }
         }
+
+        if (_workorder.getWorkorderContacts() != null) {
+            final WorkorderContacts[] workorderContacts = _workorder.getWorkorderContacts();
+
+            if (workorderContacts != null && workorderContacts.length > 0) {
+                ForLoopRunnable r = new ForLoopRunnable(workorderContacts.length, new Handler()) {
+
+                    @Override
+                    public void next(int i) throws Exception {
+                        ContactTileView v = null;
+                            v = new ContactTileView(getContext());
+                            _listLayout.addView(v);
+                        WorkorderContacts workorderContact = workorderContacts[i];
+                        v.setData(workorderContact.getName(), workorderContact.getPhoneNumber(), workorderContact.getRole());
+                    }
+                };
+                postDelayed(r, new Random().nextInt(1000));
+            }
+
+        }
+
 
         if (addedContact) {
             setVisibility(VISIBLE);
