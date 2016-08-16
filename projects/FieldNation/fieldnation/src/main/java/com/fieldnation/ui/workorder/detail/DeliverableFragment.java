@@ -548,10 +548,6 @@ public class DeliverableFragment extends WorkorderFragment {
                     info.activityInfo.applicationInfo.packageName,
                     info.activityInfo.name));
 
-            if (src.hasExtra(Intent.EXTRA_ALLOW_MULTIPLE)) {
-                ToastClient.toast(App.get(), getString(R.string.toast_multiple_files_selection_unsupported), Toast.LENGTH_LONG);
-            }
-
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
                 ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
