@@ -3,13 +3,13 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fntools.misc;
 
 import java.util.HashSet;
 import java.util.Iterator;

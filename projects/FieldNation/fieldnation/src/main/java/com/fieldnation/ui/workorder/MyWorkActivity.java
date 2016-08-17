@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 

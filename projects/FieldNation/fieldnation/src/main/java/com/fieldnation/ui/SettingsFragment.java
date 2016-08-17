@@ -12,7 +12,7 @@ import android.preference.PreferenceGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.service.crawler.WebCrawlerService;
 

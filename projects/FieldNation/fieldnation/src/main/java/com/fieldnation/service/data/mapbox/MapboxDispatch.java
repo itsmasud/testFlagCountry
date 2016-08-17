@@ -3,9 +3,9 @@ package com.fieldnation.service.data.mapbox;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.fieldnation.Log;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicService;
 
 /**
  * Created by Michael on 6/22/2016.

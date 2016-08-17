@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -21,8 +23,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     // gcm

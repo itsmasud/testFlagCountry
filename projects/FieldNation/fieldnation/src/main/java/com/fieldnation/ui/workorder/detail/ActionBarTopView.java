@@ -10,7 +10,7 @@ import android.widget.LinearLayout;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";

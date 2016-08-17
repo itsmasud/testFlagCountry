@@ -2,7 +2,7 @@ package com.fieldnation.shortstraw;
 
 
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 import java.util.LinkedList;
 import java.util.List;

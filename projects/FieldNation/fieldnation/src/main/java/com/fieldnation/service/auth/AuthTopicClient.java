@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -22,8 +22,9 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     // State

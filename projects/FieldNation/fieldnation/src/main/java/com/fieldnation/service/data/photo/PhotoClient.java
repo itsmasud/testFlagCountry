@@ -7,10 +7,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -24,13 +24,13 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
 
     private static final Hashtable<String, WeakReference<BitmapDrawable>> _pictureCache = new Hashtable<>();
 
-
     public PhotoClient(Listener listener) {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void get(Context context, String url, boolean getCircle, boolean isSync) {

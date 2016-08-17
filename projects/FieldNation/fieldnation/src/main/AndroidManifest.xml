@@ -252,7 +252,7 @@
         </service>
         <!--topics-->
         <service
-            android:name=".service.topics.TopicService"
+            android:name=".fnpigeon.TopicService"
             android:exported="false"
             android:process=":frontside" />
 

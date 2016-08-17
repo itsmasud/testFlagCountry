@@ -8,7 +8,7 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 
 /**

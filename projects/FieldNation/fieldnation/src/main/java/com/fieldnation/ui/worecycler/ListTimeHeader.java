@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.utils.DateUtils;
+import com.fieldnation.fntools.DateUtils;
 
 import java.util.Calendar;
 

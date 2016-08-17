@@ -5,9 +5,9 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 7/17/2015.
@@ -36,8 +36,9 @@ public class ToastClient extends TopicClient {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, STAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void snackbar(Context context, long id, String title, int duration) {

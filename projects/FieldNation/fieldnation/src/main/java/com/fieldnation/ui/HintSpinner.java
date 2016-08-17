@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael Carver on 1/25/2016.

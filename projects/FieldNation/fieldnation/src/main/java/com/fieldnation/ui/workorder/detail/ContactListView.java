@@ -10,7 +10,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael Carver on 5/26/2015.

@@ -14,9 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class ClosingNotesDialog extends DialogFragmentBase {
     private static final String TAG = "ClosingNotesDialog";

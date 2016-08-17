@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.net.Uri;
 
+import com.fieldnation.fnlog.Log;
+
 
 public class StubProvider extends ContentProvider {
 	private static final String TAG = "StubProvider";

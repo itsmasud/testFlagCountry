@@ -4,15 +4,15 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.MSService;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.MultiThreadedService;
 
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoService extends MSService implements PhotoConstants {
+public class PhotoService extends MultiThreadedService implements PhotoConstants {
     public static final String TAG = "PhotoService";
 
     private static final long DAY = 86400000;
@@ -63,7 +63,7 @@ public class PhotoService extends MSService implements PhotoConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         // check cache
-        StoredObject obj = StoredObject.get(App.getProfileId(), objectName, url);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), objectName, url);
 
         if (obj != null) {
             PhotoDispatch.get(this, obj.getFile(), url, getCircle, false, isSync);

@@ -26,9 +26,9 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
@@ -50,10 +50,10 @@ import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.MemUtils;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.MemUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;

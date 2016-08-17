@@ -9,11 +9,11 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -23,10 +23,10 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.io.File;
@@ -44,8 +44,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-*****************************-*/

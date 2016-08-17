@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 

@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
