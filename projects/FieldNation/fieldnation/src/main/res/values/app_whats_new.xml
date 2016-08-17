@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="added_new_feature">
+&lt;ul&gt;
+&lt;li&gt;Work order search by status, location and distance!&lt;/li&gt;
+&lt;li&gt;Now you can rate a buyer after work is completed&lt;/li&gt;
+&lt;li&gt;We've added reasons for declining work orders&lt;/li&gt;
+&lt;li&gt;Updated Terms and Conditions&lt;/li&gt;
+&lt;li&gt;Added Provider Quality Policy to settings&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+
+    <string name="bugs_fixed">
+&lt;ul&gt;
+&lt;li&gt;Fixed crashes caused by rotating the phone while uploading photos&lt;/li&gt;
+&lt;li&gt;Fixed app getting stuck in retry loop while downloading files&lt;/li&gt;
+&lt;li&gt;Bullet points now show up in work order descriptions&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+
+    <string name="working_on_feature">
+&lt;ul&gt;
+&lt;li&gt;New look and feel&lt;/li&gt;
+&lt;li&gt;More work order search options&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+</resources>
