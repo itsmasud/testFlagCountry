@@ -66,7 +66,7 @@ public class PhotoClient extends TopicClient implements PhotoConstants {
 
         topicId += url;
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

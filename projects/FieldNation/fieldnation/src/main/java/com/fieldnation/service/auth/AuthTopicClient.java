@@ -59,7 +59,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subAuthStateChange() {
-        return register(TOPIC_AUTH_STATE, TAG);
+        return register(TOPIC_AUTH_STATE);
     }
 
     public static void requestCommand(Context context) {
@@ -70,7 +70,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subRequestCommand() {
-        return register(TOPIC_AUTH_COMMAND_REQUEST, TAG);
+        return register(TOPIC_AUTH_COMMAND_REQUEST);
     }
 
     public static void invalidateCommand(Context context) {
@@ -81,7 +81,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subInvalidateCommand() {
-        return register(TOPIC_AUTH_COMMAND_INVALIDATE, TAG);
+        return register(TOPIC_AUTH_COMMAND_INVALIDATE);
     }
 
     public static void removeCommand(Context context) {
@@ -92,7 +92,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subRemoveCommand() {
-        return register(TOPIC_AUTH_COMMAND_REMOVE, TAG);
+        return register(TOPIC_AUTH_COMMAND_REMOVE);
     }
 
     public static void addedAccountCommand(Context context) {
@@ -103,7 +103,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subAccountAddedCommand() {
-        return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, TAG);
+        return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT);
     }
 
     public static void needUsernameAndPassword(Context context, Parcelable authenticatorResponse) {
@@ -117,7 +117,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subNeedUsernameAndPassword() {
-        return register(TOPIC_AUTH_COMMAND_NEED_PASSWORD, TAG);
+        return register(TOPIC_AUTH_COMMAND_NEED_PASSWORD);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

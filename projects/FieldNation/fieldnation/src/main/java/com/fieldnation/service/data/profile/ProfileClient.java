@@ -65,7 +65,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void listNotifications(Context context, int page) {
@@ -91,7 +91,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         if (isSync) {
             topicId += "_SYNC";
         }
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void listMessages(Context context, int page) {
@@ -118,7 +118,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void switchUser(Context context, long userId) {
@@ -127,7 +127,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
     public boolean subSwitchUser() {
         String topicId = TOPIC_ID_SWITCH_USER;
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-*********************************-*/
@@ -156,7 +156,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "/" + profileId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-******************************-*/

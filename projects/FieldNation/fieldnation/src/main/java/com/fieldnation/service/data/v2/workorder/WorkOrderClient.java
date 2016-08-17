@@ -43,11 +43,11 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
     }
 
     public boolean subSearch(SearchParams searchParams) {
-        return register(TOPIC_ID_SEARCH + "/" + searchParams.toKey(), TAG);
+        return register(TOPIC_ID_SEARCH + "/" + searchParams.toKey());
     }
 
     public boolean subSearch() {
-        return register(TOPIC_ID_SEARCH, TAG);
+        return register(TOPIC_ID_SEARCH);
     }
 
     public static void actionDecline(Context context, long workorderId, int declineReasonId, String declineExplanation) {

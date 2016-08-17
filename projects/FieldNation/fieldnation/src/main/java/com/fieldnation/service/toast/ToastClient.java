@@ -90,7 +90,7 @@ public class ToastClient extends TopicClient {
     }
 
     public boolean subSnackbar() {
-        return register(TOPIC_ID_SNACKBAR, TAG);
+        return register(TOPIC_ID_SNACKBAR);
     }
 
     public static void toast(Context context, String title, int duration) {
@@ -112,7 +112,7 @@ public class ToastClient extends TopicClient {
     }
 
     public boolean subToast() {
-        return register(TOPIC_ID_TOAST, TAG);
+        return register(TOPIC_ID_TOAST);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

@@ -69,7 +69,7 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
             topicId += "/" + documentId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

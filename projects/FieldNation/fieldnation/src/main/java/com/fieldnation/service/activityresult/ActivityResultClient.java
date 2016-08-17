@@ -31,7 +31,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public boolean subStartActivity() {
-        return register(TOPIC_ID_START_ACTIVITY, TAG);
+        return register(TOPIC_ID_START_ACTIVITY);
     }
 
     // For Result stuff
@@ -45,7 +45,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public boolean subStartActivityForResult() {
-        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT, TAG);
+        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT);
     }
 
     public boolean clearStartActivityForResult() {
@@ -68,7 +68,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
      * @return
      */
     public boolean subOnActivityResult(int requestCode) {
-        return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, TAG);
+        return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
     }
 
     public void clearOnActivityResult(int requestCode) {

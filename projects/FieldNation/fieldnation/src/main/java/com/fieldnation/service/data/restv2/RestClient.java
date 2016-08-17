@@ -167,7 +167,7 @@ public class RestClient extends TopicClient implements RestConstants {
             }
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public boolean subList(String resultTag, String objectType, boolean isSync) {
@@ -185,7 +185,7 @@ public class RestClient extends TopicClient implements RestConstants {
             topicId += "/" + objectType;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

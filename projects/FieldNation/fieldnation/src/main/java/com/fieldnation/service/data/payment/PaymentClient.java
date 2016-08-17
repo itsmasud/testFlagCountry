@@ -61,7 +61,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     // get payment
@@ -92,7 +92,7 @@ public class PaymentClient extends TopicClient implements PaymentConstants {
             topicId += "/" + paymentId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-*********************************-*/

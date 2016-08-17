@@ -35,7 +35,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
 
     public boolean subDirections(long workorderId) {
         Log.v(TAG, "subDirections");
-        return register(TOPIC_ID_DIRECTIONS + "/" + workorderId, TAG);
+        return register(TOPIC_ID_DIRECTIONS + "/" + workorderId);
     }
 
     public static void getStaticMapClassic(Context context, long workorderId, Marker start, Marker end, int width, int height) {
@@ -43,7 +43,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
     }
 
     public boolean subStaticMapClassic(long workorderId) {
-        return register(TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId, TAG);
+        return register(TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId);
     }
 
     /*-**********************************-*/

@@ -47,7 +47,7 @@ public abstract class TopicClient implements TopicConstants {
 
     public void disconnect(Context context) {
         _listener = null;
-        delete(getUserTag());
+        delete();
         try {
             context.unbindService(_serviceConnection);
         } catch (Exception ex) {
@@ -66,7 +66,7 @@ public abstract class TopicClient implements TopicConstants {
     /*-*****************************-*/
     /*-         Commands            -*/
     /*-*****************************-*/
-    public boolean register(String topicId, String userTag) {
+    public boolean register(String topicId) {
         if (!isConnected())
             return false;
 
@@ -77,7 +77,7 @@ public abstract class TopicClient implements TopicConstants {
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putString(PARAM_USER_TAG, userTag);
+            bundle.putString(PARAM_USER_TAG, getUserTag());
 
             Message msg = Message.obtain();
             msg.what = WHAT_REGISTER_LISTENER;
@@ -93,12 +93,12 @@ public abstract class TopicClient implements TopicConstants {
         return false;
     }
 
-    public boolean unregister(String topicId, String userTag) {
+    public boolean unregister(String topicId) {
 //        Log.v(TAG, "unregister");
         try {
             Bundle bundle = new Bundle();
             bundle.putString(PARAM_TOPIC_ID, topicId);
-            bundle.putString(PARAM_USER_TAG, userTag);
+            bundle.putString(PARAM_USER_TAG, getUserTag());
 
             Message msg = Message.obtain();
             msg.what = WHAT_UNREGISTER_LISTENER;
@@ -113,10 +113,10 @@ public abstract class TopicClient implements TopicConstants {
         return false;
     }
 
-    public boolean delete(String userTag) {
+    public boolean delete() {
         try {
             Bundle bundle = new Bundle();
-            bundle.putString(PARAM_USER_TAG, userTag);
+            bundle.putString(PARAM_USER_TAG, getUserTag());
 
             Message msg = Message.obtain();
             msg.what = WHAT_DELETE_CLIENT;

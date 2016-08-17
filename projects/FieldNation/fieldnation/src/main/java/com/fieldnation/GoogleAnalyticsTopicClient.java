@@ -80,7 +80,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     }
 
     public boolean registerEvents() {
-        return register(EVENT, TAG);
+        return register(EVENT);
     }
 
 
@@ -91,7 +91,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String SCREENVIEW_PARAM_NAME = "TOPIC_GA_SCREENVIEW_PARAM_NAME";
 
     public boolean registerScreenView() {
-        return register(SCREENVIEW, TAG);
+        return register(SCREENVIEW);
     }
 
     public static void dispatchScreenView(Context context, String screenName) {
@@ -114,7 +114,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String TIMING_PARAM_VALUE = "TOPIC_GA_TIMING_PARAM_VALUE";
 
     public boolean registerTiming() {
-        return register(TIMING, TAG);
+        return register(TIMING);
     }
 
     public static void dispatchTiming(Context context, String category, String variable, String label, long duration) {
