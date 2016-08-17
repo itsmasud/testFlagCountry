@@ -35,7 +35,6 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.workorder.WorkorderDataSelector;
 import com.fieldnation.utils.DateUtils;
 import com.fieldnation.utils.Stopwatch;
 import com.fieldnation.utils.misc;

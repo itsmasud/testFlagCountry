@@ -49,8 +49,8 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         return register(TOPIC_ID_SEARCH, TAG);
     }
 
-    public static void actionDecline(Context context, long workorderId, int declineReasonId, String explanation) {
-        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, explanation);
+    public static void actionDecline(Context context, long workorderId, int declineReasonId, String declineExplanation) {
+        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, declineExplanation);
     }
 
 

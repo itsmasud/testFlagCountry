@@ -4,6 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.Log;
+import com.fieldnation.json.JsonArray;
 import com.fieldnation.json.JsonObject;
 import com.fieldnation.json.Serializer;
 import com.fieldnation.json.Unserializer;
@@ -15,8 +16,60 @@ import com.fieldnation.json.annotations.Json;
 public class SearchParams implements Parcelable {
     private static final String TAG = "SearchParams";
 
-    @Json
-    public String status = "available"; // available, assigned, requested, completed
+    public enum ListType {
+        UNAVAILABLE("unavailable"),
+        AVAILABLE("available"),
+        ASSIGNED("assigned"),
+        COMPLETED("completed");
+
+        private final String _callString;
+
+        ListType(String callString) {
+            _callString = callString;
+        }
+
+        public String getCallString() {
+            return _callString;
+        }
+    }
+
+    public enum Status {
+        DRAFT("draft"),
+        DELETED("deleted"),
+        PUBLISHED("published"),
+        ROUTED("routed"),
+        REQUESTED("requested"),
+        DECLINED("declined"),
+        COUNTER_OFFER("counter_offer"),
+        CANCELED("canceled"),
+        IN_PROGRESS("in_progress"),
+        ON_HOLD("on_hold"),
+        ON_HOLD_ACK("on_hold_ack"),
+        NEEDS_READY_TO_GO("needs_ready_to_go"),
+        CONFIRMED("confirmed"),
+        UNCONFIRMED("unconfirmed"),
+        CONFIRMED_ETA("confirmed_eta"),
+        READY_TO_GO("ready_to_go"),
+        CHECKED_IN("checked_in"),
+        CHECKED_OUT("checked_out"),
+        PENDING_REVIEW("pending_review"),
+        APPROVED("approved"),
+        PAID("paid");
+
+        private final String _callString;
+
+        Status(String callString) {
+            _callString = callString;
+        }
+
+        public String getCallString() {
+            return _callString;
+        }
+    }
+
+    public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
+    public ListType type = ListType.AVAILABLE;
+    public Status status[] = new Status[]{Status.PUBLISHED};
     @Json
     public Double latitude = null;
     @Json
@@ -27,11 +80,18 @@ public class SearchParams implements Parcelable {
     public String sort = "time";
     @Json
     public String order = "asc";
+    @Json
+    public Boolean remoteWork = null;
 
     public SearchParams() {
     }
 
-    public SearchParams status(String status) {
+    public SearchParams type(ListType listType) {
+        type = listType;
+        return this;
+    }
+
+    public SearchParams status(Status[] status) {
         this.status = status;
         return this;
     }
@@ -48,7 +108,16 @@ public class SearchParams implements Parcelable {
     }
 
     public String toUrlParams() {
-        String params = "?status=" + status;
+        String params = "?type=" + type.getCallString();
+
+        if (status != null && status.length > 0) {
+            params += "&status=";
+            for (int i = 0; i < status.length; i++) {
+                params += status[i].getCallString();
+                if (i < status.length - 1)
+                    params += ",";
+            }
+        }
 
         if (latitude != null && longitude != null)
             params += "&lat=" + latitude + "&lng=" + longitude;
@@ -59,19 +128,38 @@ public class SearchParams implements Parcelable {
         if (sort != null && order != null)
             params += "&sort=" + sort + "&order=" + order;
 
+        if (remoteWork != null)
+            params += "&remote_work=" + (remoteWork ? 1 : 0);
+
         return params;
     }
 
     public String toKey() {
-        String key = status;
+        String key = type.getCallString();
 
-        if (latitude != null && longitude != null && radius != null) {
+        if (status != null && status.length > 0) {
+            key += ":";
+
+            for (int i = 0; i < status.length; i++) {
+                Status s = status[i];
+                key += s.getCallString();
+                if (i < status.length - 1) {
+                    key += ",";
+                }
+            }
+        }
+
+        if (latitude != null && longitude != null) {
             key += ":" + ((int) (latitude * 1000)) + ":" + ((int) (longitude * 1000));
         }
 
         if (radius != null) {
             key += ":" + ((int) (radius * 1000));
         }
+
+        if (remoteWork != null)
+            key += ":remote_work=" + (remoteWork ? 1 : 0);
+
         return key;
     }
 
@@ -84,7 +172,22 @@ public class SearchParams implements Parcelable {
 
     public static JsonObject toJson(SearchParams searchParams) {
         try {
-            return Serializer.serializeObject(searchParams);
+            JsonObject obj = Serializer.serializeObject(searchParams);
+
+            obj.put("woList", searchParams.woList.ordinal());
+
+            obj.put("listType", searchParams.type.ordinal());
+
+            if (searchParams.status != null && searchParams.status.length > 0) {
+                JsonArray ja = new JsonArray();
+
+                for (Status s : searchParams.status) {
+                    ja.add(s.ordinal());
+                }
+                obj.put("status", ja);
+            }
+
+            return obj;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -93,7 +196,21 @@ public class SearchParams implements Parcelable {
 
     public static SearchParams fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(SearchParams.class, json);
+            SearchParams searchParams = Unserializer.unserializeObject(SearchParams.class, json);
+
+            searchParams.type = ListType.values()[json.getInt("listType")];
+            searchParams.woList = WorkOrderListType.values()[json.getInt("woList")];
+
+            if (json.has("status")) {
+                JsonArray ja = json.getJsonArray("status");
+                Status[] status = new Status[ja.size()];
+                for (int i = 0; i < ja.size(); i++) {
+                    status[i] = Status.values()[ja.getInt(i)];
+                }
+                searchParams.status = status;
+            }
+            return searchParams;
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
