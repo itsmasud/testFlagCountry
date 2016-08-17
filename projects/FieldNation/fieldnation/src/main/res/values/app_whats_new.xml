@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="added_new_feature">
+&lt;ul&gt;
+&lt;li&gt;Added this dialog!&lt;/li&gt;
+&lt;li&gt;Decline reasons added to decline dialog&lt;/li&gt;
+&lt;li&gt;Rate a buyer dialog after work is completed&lt;/li&gt;
+&lt;li&gt;Bullet point support to work order descriptions&lt;/li&gt;
+&lt;li&gt;Work order search by status, location and distance&lt;/li&gt;
+&lt;li&gt;Updated Terms and Conditions&lt;/li&gt;
+&lt;li&gt;Added PQAP policy to settings&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+
+    <string name="bugs_fixed">
+&lt;ul&gt;
+&lt;li&gt;Fixed crashes caused by rotating the phone while uploading photos&lt;/li&gt;
+&lt;li&gt;Fixed app getting stuck in retry loop while downloading files&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+
+    <string name="working_on_feature">
+&lt;ul&gt;
+&lt;li&gt;New look and feel&lt;/li&gt;
+&lt;li&gt;More work order search options&lt;/li&gt;
+&lt;/ul&gt;
+    </string>
+</resources>

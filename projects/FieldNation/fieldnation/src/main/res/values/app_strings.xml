@@ -851,22 +851,6 @@
         <item>Help/Support</item>
     </string-array>
 
-    <string name="added_new_feature">&lt;ul&gt;
-                &lt;li&gt;Point One&lt;/li&gt;
-                &lt;li&gt;Point Two&lt;/li&gt;
-                &lt;li&gt;Point Three&lt;/li&gt;
-                &lt;/ul&gt;</string>
-    <string name="bugs_fixed">&lt;ul&gt;
-                &lt;li&gt;Point One&lt;/li&gt;
-                &lt;li&gt;Point Two&lt;/li&gt;
-                &lt;li&gt;Point Three&lt;/li&gt;
-                &lt;/ul&gt;</string>
-    <string name="working_on_feature">&lt;ul&gt;
-                &lt;li&gt;Point One&lt;/li&gt;
-                &lt;li&gt;Point Two&lt;/li&gt;
-                &lt;li&gt;Point Three&lt;/li&gt;
-                &lt;/ul&gt;</string>
-
     <string-array name="search_status">
         <item>Assigned</item>
         <item>Available</item>
