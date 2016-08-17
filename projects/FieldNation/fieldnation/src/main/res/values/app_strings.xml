@@ -153,6 +153,7 @@
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
     <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
     <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
+    <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
 
     <string name="view_title_location">LOCATION</string>
 
