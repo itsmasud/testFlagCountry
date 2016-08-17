@@ -60,7 +60,7 @@ public class SearchResultsActivity extends AuthActionBarActivity {
             SearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
             _searchResultScreen.startSearch(searchParams);
 
-            setTitle(misc.capitalize(searchParams.status) + " Search");
+            setTitle(misc.capitalize(searchParams.woList.getParam()) + " Search");
         }
     }
 

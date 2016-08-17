@@ -40,7 +40,7 @@ public class SearchEditScreen extends RelativeLayout {
             10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
 
-    private static final WorkOrderListType[] SELECTORS = new WorkOrderListType[]{
+    private static final WorkOrderListType[] TYPES = new WorkOrderListType[]{
             WorkOrderListType.ASSIGNED,
             WorkOrderListType.AVAILABLE,
             WorkOrderListType.CANCELED,
@@ -150,10 +150,13 @@ public class SearchEditScreen extends RelativeLayout {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
             final SearchParams searchParams = new SearchParams()
-                    .status(SELECTORS[_statusSpinner.getSelectedItemPosition()].getParam())
+                    .type(TYPES[_statusSpinner.getSelectedItemPosition()].getType())
+                    .status(TYPES[_statusSpinner.getSelectedItemPosition()].getStatuses())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
 
-            App.setLastViewedList(SELECTORS[_statusSpinner.getSelectedItemPosition()]);
+            searchParams.woList = TYPES[_statusSpinner.getSelectedItemPosition()];
+
+            App.setLastViewedList(TYPES[_statusSpinner.getSelectedItemPosition()]);
 
             switch (_locationSpinner.getSelectedItemPosition()) {
                 case 0: // profile

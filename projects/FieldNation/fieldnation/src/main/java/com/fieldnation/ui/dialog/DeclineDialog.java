@@ -207,13 +207,20 @@ public class DeclineDialog extends DialogFragmentBase {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
+            if (_selectedPosition_declineSpinner != -1 &&
+                    _declineReasonIds[_selectedPosition_declineSpinner] == DECLINE_REASON_OTHER
+                    && misc.isEmptyOrNull(_declineEditText.getText().toString())) {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_decline_explanation), Toast.LENGTH_LONG);
                 return;
             }
-            dismiss();
+
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
+                    if (_selectedPosition_blockSpinner == -1) {
+                        ToastClient.toast(App.get(), getString(R.string.toast_missing_blocking_reason), Toast.LENGTH_LONG);
+                        return;
+                    }
+
                     if (_selectedPosition_declineSpinner == -1)
                         _listener.onOk(true, _blockReasonIds[_selectedPosition_blockSpinner], _blockEditText.getText().toString());
                     else
@@ -227,6 +234,9 @@ public class DeclineDialog extends DialogFragmentBase {
 
                 }
             }
+
+            dismiss();
+
         }
     };
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
