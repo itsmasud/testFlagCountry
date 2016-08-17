@@ -137,7 +137,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
-            if (envelope == null) {
+            if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
                 if (_adapter.getItemCount() == 0)
                     _unavailableView.setVisibility(VISIBLE);
