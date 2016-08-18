@@ -134,7 +134,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
 
                 _type2TextView.setVisibility(GONE);
                 _date2TextView.setVisibility(GONE);
-            } else if (schedule.getType() == Schedule.Type.EXACT) {
+            } else { //if (schedule.getType() == Schedule.Type.EXACT) {
                 SimpleDateFormat sdf = new SimpleDateFormat("E, MMM dd, yyyy @ hh:mma", Locale.getDefault());
                 sdf.setDateFormatSymbols(symbols);
 
