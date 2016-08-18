@@ -47,7 +47,7 @@ public class ExpenseDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private ExpenseCategory[] _categories;
-    private HintArrayAdapter<ExpenseCategory> _adapter;
+    private HintArrayAdapter _adapter;
     private InputMethodManager _imm;
     private boolean _reset = false;
     private boolean _showCategories = true;

@@ -158,7 +158,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
     private HintSpinner getPrimarySpinner() {
         if (_primarySpinner != null && _primarySpinner.getAdapter() == null) {
-            HintArrayAdapter<ReportProblemType> adapter = new HintArrayAdapter<>(getActivity(), R.layout.view_spinner_item);
+            HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -168,13 +168,13 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return _primarySpinner;
     }
 
-    private HintArrayAdapter<ReportProblemType> getPrimaryAdapter() {
-        return (HintArrayAdapter<ReportProblemType>) getPrimarySpinner().getAdapter();
+    private HintArrayAdapter getPrimaryAdapter() {
+        return (HintArrayAdapter) getPrimarySpinner().getAdapter();
     }
 
     private HintSpinner getSecondarySpinner() {
         if (_secondarySpinner != null && _secondarySpinner.getAdapter() == null) {
-            HintArrayAdapter<ReportProblemType> adapter = new HintArrayAdapter<>(getActivity(), R.layout.view_spinner_item);
+            HintArrayAdapter adapter = new HintArrayAdapter(getActivity(), R.layout.view_spinner_item);
 
             adapter.setDropDownViewResource(
                     android.support.design.R.layout.support_simple_spinner_dropdown_item);
@@ -184,8 +184,8 @@ public class ReportProblemDialog extends DialogFragmentBase {
         return _secondarySpinner;
     }
 
-    private HintArrayAdapter<ReportProblemType> getSecondaryAdapter() {
-        return (HintArrayAdapter<ReportProblemType>) getSecondarySpinner().getAdapter();
+    private HintArrayAdapter getSecondaryAdapter() {
+        return (HintArrayAdapter) getSecondarySpinner().getAdapter();
     }
 
 
