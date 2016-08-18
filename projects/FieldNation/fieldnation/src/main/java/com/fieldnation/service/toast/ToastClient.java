@@ -1,10 +1,18 @@
 package com.fieldnation.service.toast;
 
+import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.design.widget.Snackbar;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.UniqueTag;
@@ -116,6 +124,20 @@ public class ToastClient extends TopicClient {
     }
 
     public static abstract class Listener extends TopicClient.Listener {
+        private static final String TAG = "ToastClient.Listener";
+        private Snackbar _snackbar = null;
+        private long _lastId = 0;
+
+        public abstract Activity getActivity();
+
+        public abstract ToastClient getToastClient();
+
+        @Override
+        public void onConnected() {
+            getToastClient().subSnackbar();
+            getToastClient().subToast();
+        }
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             switch (topicId) {
@@ -144,7 +166,48 @@ public class ToastClient extends TopicClient {
                     bundle.getInt(PARAM_DURATION));
         }
 
-        public void showSnackBar(long id, String title, String buttonText, PendingIntent buttonIntent, int duration) {
+        public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
+            Log.v(TAG, "showSnackBar(" + title + ")");
+
+            if (id > 0 && id == _lastId)
+                return;
+
+            if (getActivity().findViewById(android.R.id.content) == null) {
+                Log.v(TAG, "showSnackBar.findViewById() == null");
+                return;
+            }
+
+            Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), title, duration);
+            TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
+            tv.setTextColor(getActivity().getResources().getColor(R.color.fn_white_text));
+            snackbar.setActionTextColor(getActivity().getResources().getColor(R.color.fn_clickable_text));
+
+            if (buttonText == null)
+                buttonText = "DISMISS";
+
+            snackbar.setAction(buttonText, new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (_snackbar != null) {
+                        _snackbar.dismiss();
+                        _snackbar = null;
+                        _lastId = 0;
+                    }
+
+                    if (buttonIntent != null) {
+                        try {
+                            buttonIntent.send(getActivity(), 0, new Intent());
+                        } catch (PendingIntent.CanceledException e) {
+                            Log.v(TAG, e);
+                        }
+                    }
+                }
+            });
+
+            snackbar.show();
+            _snackbar = snackbar;
+            _lastId = id;
+            Log.v(TAG, "snackbar.show()");
         }
 
         private void preShowToast(Bundle bundle) {
@@ -152,10 +215,25 @@ public class ToastClient extends TopicClient {
         }
 
         public void showToast(String title, int duration) {
-
+            Log.v(TAG, "showToast");
+            Toast.makeText(getActivity(), title, duration).show();
         }
 
         public void dismissSnackBar(long id) {
+            Log.v(TAG, "dismissSnackBar");
+            if (_snackbar == null)
+                return;
+
+            if (_lastId != id)
+                return;
+
+            try {
+                _snackbar.dismiss();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+            _snackbar = null;
+            _lastId = 0;
         }
     }
 }
