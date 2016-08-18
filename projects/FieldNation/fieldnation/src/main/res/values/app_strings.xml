@@ -7,6 +7,8 @@
     <string name="mapbox_inpreciseMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>
     <string name="mapbox_reddot">http://fieldnation.s3.amazonaws.com/mapbox/reddot.png</string>
 
+    <string name="tos_date">08/16/2016</string>
+
     <!-- general strings -->
     <string name="placeholder_word">Word</string>
     <string name="placeholder_phrase">Should not see this.</string>
@@ -844,7 +846,6 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
-    <string name="tos_date">10/02/2015</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>
