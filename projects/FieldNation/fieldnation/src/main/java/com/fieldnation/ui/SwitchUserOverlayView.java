@@ -13,7 +13,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.workorder.MyWorkActivity;
+import com.fieldnation.ui.nav.NavActivity;
 
 /**
  * Created by Michael on 9/28/2015.
@@ -97,7 +97,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
 
         @Override
         public void onUserSwitched(Profile profile) {
-            MyWorkActivity.startNew(getContext());
+            NavActivity.startNew(getContext());
 //            _textView.clearAnimation();
 //            setVisibility(GONE);
         }
