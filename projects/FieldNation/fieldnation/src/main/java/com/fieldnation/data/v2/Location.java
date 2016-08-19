@@ -26,8 +26,6 @@ public class Location implements Parcelable {
     private String _country;
     @Json(name = "geo")
     private Geo _geo;
-    @Json(name = "remote")
-    private Boolean _remote = false;
 
     public Location() {
     }
@@ -50,10 +48,6 @@ public class Location implements Parcelable {
 
     public Geo getGeo() {
         return _geo;
-    }
-
-    public Boolean isRemote() {
-        return _remote;
     }
 
     /*-*************************************-*/

@@ -174,7 +174,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public Calendar getObjectTime(WorkOrder object) {
             try {
-                return ISO8601.toCalendar(object.getRequirements().getSchedule().getStart());
+                return ISO8601.toCalendar(object.getSchedule().getBegin());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

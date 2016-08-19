@@ -10,25 +10,19 @@ import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 /**
- * Created by Michael on 7/21/2016.
+ * Created by Michael on 8/19/2016.
  */
-public class Requirements implements Parcelable {
-    private static final String TAG = "Requirements";
+public class Estimate implements Parcelable {
+    private static final String TAG = "Estimate";
 
     @Json
-    private Schedule schedule;
-    @Json
-    private Boolean gps_checkin;
+    private String arrival;
 
-    public Requirements() {
+    public Estimate() {
     }
 
-    public Schedule getSchedule() {
-        return schedule;
-    }
-
-    public Boolean getGpsCheckin() {
-        return gps_checkin;
+    public String getArrival() {
+        return arrival;
     }
 
     /*-*************************************-*/
@@ -38,18 +32,18 @@ public class Requirements implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Requirements requirements) {
+    public static JsonObject toJson(Estimate estimate) {
         try {
-            return Serializer.serializeObject(requirements);
+            return Serializer.serializeObject(estimate);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 
-    public static Requirements fromJson(JsonObject json) {
+    public static Estimate fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(Requirements.class, json);
+            return Unserializer.unserializeObject(Estimate.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -59,12 +53,12 @@ public class Requirements implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Requirements> CREATOR = new Parcelable.Creator<Requirements>() {
+    public static final Parcelable.Creator<Estimate> CREATOR = new Parcelable.Creator<Estimate>() {
 
         @Override
-        public Requirements createFromParcel(Parcel source) {
+        public Estimate createFromParcel(Parcel source) {
             try {
-                return Requirements.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Estimate.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -72,8 +66,8 @@ public class Requirements implements Parcelable {
         }
 
         @Override
-        public Requirements[] newArray(int size) {
-            return new Requirements[size];
+        public Estimate[] newArray(int size) {
+            return new Estimate[size];
         }
     };
 

@@ -10,42 +10,31 @@ import com.fieldnation.json.Unserializer;
 import com.fieldnation.json.annotations.Json;
 
 /**
- * Created by Michael on 7/21/2016.
+ * Created by Michael on 8/19/2016.
  */
-public class Schedule implements Parcelable {
-    private static final String TAG = "Schedule";
+public class Range implements Parcelable {
+    private static final String TAG = "Range";
 
     @Json
-    private Estimate estimate;
+    private String end;
     @Json
-    private Range range;
+    private String begin;
     @Json
-    private String exact;
+    private String type;
 
-    public Schedule() {
+    public Range() {
     }
 
-    public Estimate getEstimate() {
-        return estimate;
-    }
-
-    public Range getRange() {
-        return range;
-    }
-
-    public String getExact() {
-        return exact;
+    public String getEnd() {
+        return end;
     }
 
     public String getBegin() {
-        if (getEstimate() != null && getEstimate().getArrival() != null)
-            return getEstimate().getArrival();
-        else if (getRange() != null)
-            return getRange().getBegin();
-        else if (getExact() != null)
-            return getExact();
+        return begin;
+    }
 
-        return null;
+    public String getType() {
+        return type;
     }
 
     /*-*************************************-*/
@@ -55,18 +44,18 @@ public class Schedule implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Schedule schedule) {
+    public static JsonObject toJson(Range range) {
         try {
-            return Serializer.serializeObject(schedule);
+            return Serializer.serializeObject(range);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 
-    public static Schedule fromJson(JsonObject json) {
+    public static Range fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(Schedule.class, json);
+            return Unserializer.unserializeObject(Range.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -76,12 +65,12 @@ public class Schedule implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Schedule> CREATOR = new Parcelable.Creator<Schedule>() {
+    public static final Parcelable.Creator<Range> CREATOR = new Parcelable.Creator<Range>() {
 
         @Override
-        public Schedule createFromParcel(Parcel source) {
+        public Range createFromParcel(Parcel source) {
             try {
-                return Schedule.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Range.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -89,8 +78,8 @@ public class Schedule implements Parcelable {
         }
 
         @Override
-        public Schedule[] newArray(int size) {
-            return new Schedule[size];
+        public Range[] newArray(int size) {
+            return new Range[size];
         }
     };
 
