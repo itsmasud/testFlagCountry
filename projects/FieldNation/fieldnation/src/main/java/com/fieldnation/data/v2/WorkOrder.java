@@ -87,7 +87,7 @@ public class WorkOrder implements Parcelable {
 
                 long r = 0;
                 if (rhs.getSchedule().getBegin() != null)
-                    r = ISO8601.toUtc(lhs.getSchedule().getBegin());
+                    r = ISO8601.toUtc(rhs.getSchedule().getBegin());
 
                 if (l < r)
                     return -1;
