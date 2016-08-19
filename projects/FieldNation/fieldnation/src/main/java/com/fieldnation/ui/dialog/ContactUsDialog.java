@@ -196,7 +196,7 @@ public class ContactUsDialog extends DialogFragmentBase {
 
     private HintSpinner populateSpinners() {
         if (_reasonSpinner != null && _reasonSpinner.getAdapter() == null) {
-            HintArrayAdapter<CharSequence> adapter = HintArrayAdapter.createFromResources(
+            HintArrayAdapter adapter = HintArrayAdapter.createFromResources(
                     getActivity(),
                     R.array.reason_list,
                     R.layout.view_spinner_item);

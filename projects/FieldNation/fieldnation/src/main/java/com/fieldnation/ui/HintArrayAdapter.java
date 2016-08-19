@@ -16,44 +16,48 @@ import java.util.List;
 /**
  * Created by Michael on 5/25/2016.
  */
-public class HintArrayAdapter<T> extends ArrayAdapter<T> {
-    private T _hint = null;
+public class HintArrayAdapter extends ArrayAdapter<Object> {
+    private Object _hint = "";
 
     public HintArrayAdapter(Context context, int resource) {
         super(context, resource);
         super.add(_hint);
     }
 
-    private HintArrayAdapter(Context context, int resource, List<T> objects) {
+    private HintArrayAdapter(Context context, int resource, List<Object> objects) {
         super(context, resource, objects);
         super.add(_hint);
     }
 
-    public static HintArrayAdapter<CharSequence> createFromResources(Context context, int textArrayResId, int textViewResId) {
-        List<CharSequence> list = new LinkedList<>();
+    public static HintArrayAdapter createFromResources(Context context, int textArrayResId, int textViewResId) {
+        List<Object> list = new LinkedList<>();
 
         Collections.addAll(list, context.getResources().getTextArray(textArrayResId));
 
-        return new HintArrayAdapter<>(context, textViewResId, list);
+        return new HintArrayAdapter(context, textViewResId, list);
     }
 
-    public static <T> HintArrayAdapter<T> createFromArray(Context context, T[] array, int textViewResId) {
-        List<T> list = new LinkedList<>();
+    public static HintArrayAdapter createFromArray(Context context, Object[] array, int textViewResId) {
+        List<Object> list = new LinkedList<>();
 
         Collections.addAll(list, array);
 
-        return new HintArrayAdapter<>(context, textViewResId, list);
+        return new HintArrayAdapter(context, textViewResId, list);
     }
 
-    public void setHint(T hint) {
-        _hint = hint;
+    public void setHint(Object hint) {
+        if (hint == null)
+            _hint = "";
+        else
+            _hint = hint;
+
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
-        super.add(hint);
+        super.add(_hint);
     }
 
     @Override
-    public void add(T object) {
+    public void add(Object object) {
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
         super.add(object);
@@ -61,7 +65,7 @@ public class HintArrayAdapter<T> extends ArrayAdapter<T> {
     }
 
     @Override
-    public void addAll(Collection<? extends T> collection) {
+    public void addAll(Collection<? extends Object> collection) {
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
         super.addAll(collection);
@@ -69,7 +73,7 @@ public class HintArrayAdapter<T> extends ArrayAdapter<T> {
     }
 
     @Override
-    public void addAll(T... items) {
+    public void addAll(Object... items) {
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
         super.addAll(items);

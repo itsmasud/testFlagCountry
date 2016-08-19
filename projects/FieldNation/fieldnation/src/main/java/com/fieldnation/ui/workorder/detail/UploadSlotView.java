@@ -202,11 +202,11 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
             _noDocsTextView.setVisibility(GONE);
         }
 
-        if (files.size() == 0 && !_workorder.canChangeDeliverables()) {
-            setVisibility(View.GONE);
-        } else {
-            setVisibility(View.VISIBLE);
-        }
+//        if (files.size() == 0 && !_workorder.canChangeDeliverables()) {
+//            setVisibility(View.GONE);
+//        } else {
+//            setVisibility(View.VISIBLE);
+//        }
     }
 
     private void populateUi() {

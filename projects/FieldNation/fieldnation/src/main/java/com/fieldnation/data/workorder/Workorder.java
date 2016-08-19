@@ -565,7 +565,10 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return getUploadSlots() != null && getUploadSlots().length > 0;
+        return getUploadSlots() != null && getUploadSlots().length > 0
+                && getWorkorderStatus() != WorkorderStatus.COMPLETED
+                && getWorkorderStatus() != WorkorderStatus.APPROVED
+                && getWorkorderStatus() != WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {
