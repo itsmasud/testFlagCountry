@@ -4,9 +4,10 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 
 /**
@@ -60,8 +61,9 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
         }
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void dispatchEvent(Context context, String category, EventAction action, String label, long value) {
@@ -78,7 +80,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     }
 
     public boolean registerEvents() {
-        return register(EVENT, TAG);
+        return register(EVENT);
     }
 
 
@@ -89,7 +91,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String SCREENVIEW_PARAM_NAME = "TOPIC_GA_SCREENVIEW_PARAM_NAME";
 
     public boolean registerScreenView() {
-        return register(SCREENVIEW, TAG);
+        return register(SCREENVIEW);
     }
 
     public static void dispatchScreenView(Context context, String screenName) {
@@ -112,7 +114,7 @@ public class GoogleAnalyticsTopicClient extends TopicClient {
     private static final String TIMING_PARAM_VALUE = "TOPIC_GA_TIMING_PARAM_VALUE";
 
     public boolean registerTiming() {
-        return register(TIMING, TAG);
+        return register(TIMING);
     }
 
     public static void dispatchTiming(Context context, String category, String variable, String label, long duration) {

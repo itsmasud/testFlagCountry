@@ -19,9 +19,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.ForLoopRunnable;
-import com.fieldnation.GpsLocationService;
-import com.fieldnation.Log;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.GpsLocationService;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
@@ -32,7 +32,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.FileUtils;
+import com.fieldnation.fntools.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;

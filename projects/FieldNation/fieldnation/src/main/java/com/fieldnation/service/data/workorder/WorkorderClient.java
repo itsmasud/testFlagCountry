@@ -9,11 +9,11 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.AsyncTaskEx;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -23,10 +23,10 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.io.File;
@@ -44,8 +44,9 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-*****************************-*/
@@ -82,7 +83,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + selector.ordinal() + "_" + selector.getCall();
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-********************************-*/
@@ -130,7 +131,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public boolean unsubGet(long workorderId, boolean isSync) {
@@ -144,7 +145,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
-        return unregister(topicId, TAG);
+        return unregister(topicId);
     }
 
     public static void listAlerts(Context context, long workorderId, boolean isSync) {
@@ -170,7 +171,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public boolean subActions() {
@@ -184,7 +185,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-*********************************-*/
@@ -212,7 +213,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         if (workorderId > 0) {
             topicId += "/" + workorderId;
         }
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void actionCompleteTask(Context context, long workorderId, long taskId) {
@@ -252,7 +253,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "/" + workorderId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void actionAddMessage(Context context, long workorderId, String message) {
@@ -392,7 +393,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     // add signature json
@@ -548,15 +549,15 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
     public boolean subDeliverableCache() {
-        return register(TOPIC_ID_CACHE_DELIVERABLE_START, TAG)
-                && register(TOPIC_ID_CACHE_DELIVERABLE_END, TAG);
+        return register(TOPIC_ID_CACHE_DELIVERABLE_START)
+                && register(TOPIC_ID_CACHE_DELIVERABLE_END);
     }
 
     public static void cacheDeliverableUpload(Context context, Uri uri) {
@@ -668,7 +669,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public boolean subDeliverableUpload() {
-        return register(TOPIC_ID_UPLOAD_DELIVERABLE, TAG);
+        return register(TOPIC_ID_UPLOAD_DELIVERABLE);
     }
 
     public boolean subDeliverableUpload(long workorderId, long uploadSlotId) {
@@ -676,7 +677,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
         topicId += "/" + workorderId + "/" + uploadSlotId;
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {

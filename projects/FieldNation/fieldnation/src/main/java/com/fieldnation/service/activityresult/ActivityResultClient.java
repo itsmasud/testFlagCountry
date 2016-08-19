@@ -5,10 +5,10 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael on 7/8/2016.
@@ -21,8 +21,9 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void startActivity(Context context, Intent intent) {
@@ -30,7 +31,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public boolean subStartActivity() {
-        return register(TOPIC_ID_START_ACTIVITY, TAG);
+        return register(TOPIC_ID_START_ACTIVITY);
     }
 
     // For Result stuff
@@ -44,7 +45,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public boolean subStartActivityForResult() {
-        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT, TAG);
+        return register(TOPIC_ID_START_ACTIVITY_FOR_RESULT);
     }
 
     public boolean clearStartActivityForResult() {
@@ -67,7 +68,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
      * @return
      */
     public boolean subOnActivityResult(int requestCode) {
-        return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode, TAG);
+        return register(TOPIC_ID_ON_ACTIVITY_RESULT + "/" + requestCode);
     }
 
     public void clearOnActivityResult(int requestCode) {

@@ -4,9 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Parcelable;
 
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.io.File;
 
@@ -19,6 +19,11 @@ public class RestClient extends TopicClient implements RestConstants {
 
     public RestClient(Listener listener) {
         super(listener);
+    }
+
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     // requests
@@ -162,7 +167,7 @@ public class RestClient extends TopicClient implements RestConstants {
             }
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public boolean subList(String resultTag, String objectType, boolean isSync) {
@@ -180,7 +185,7 @@ public class RestClient extends TopicClient implements RestConstants {
             topicId += "/" + objectType;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

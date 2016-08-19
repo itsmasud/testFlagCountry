@@ -3,8 +3,8 @@ package com.fieldnation.service.data.photo;
 import android.content.Context;
 import android.os.Bundle;
 
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicService;
 
 import java.io.File;
 

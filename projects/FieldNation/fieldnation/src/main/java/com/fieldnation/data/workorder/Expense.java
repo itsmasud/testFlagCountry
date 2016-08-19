@@ -3,11 +3,11 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
 
 public class Expense implements Parcelable {
     private static final String TAG = "Expense";

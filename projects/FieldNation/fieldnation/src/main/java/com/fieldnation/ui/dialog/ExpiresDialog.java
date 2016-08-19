@@ -17,8 +17,8 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
 
 import java.util.Calendar;
 

@@ -2,12 +2,12 @@ package com.fieldnation.service.data.profile;
 
 import android.content.Context;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael Carver on 4/22/2015.

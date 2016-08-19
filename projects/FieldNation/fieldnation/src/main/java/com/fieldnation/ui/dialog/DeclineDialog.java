@@ -18,13 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -213,9 +213,14 @@ public class DeclineDialog extends DialogFragmentBase {
                 ToastClient.toast(App.get(), getString(R.string.toast_missing_decline_explanation), Toast.LENGTH_LONG);
                 return;
             }
-            dismiss();
+
             if (_listener != null) {
                 if (_blockCheckBox.isChecked()) {
+                    if (_selectedPosition_blockSpinner == -1) {
+                        ToastClient.toast(App.get(), getString(R.string.toast_missing_blocking_reason), Toast.LENGTH_LONG);
+                        return;
+                    }
+
                     if (_selectedPosition_declineSpinner == -1)
                         _listener.onOk(true, _blockReasonIds[_selectedPosition_blockSpinner], _blockEditText.getText().toString());
                     else
@@ -229,6 +234,9 @@ public class DeclineDialog extends DialogFragmentBase {
 
                 }
             }
+
+            dismiss();
+
         }
     };
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {

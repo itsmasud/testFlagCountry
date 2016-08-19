@@ -25,6 +25,9 @@ import android.text.TextUtils;
 
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -33,11 +36,11 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -96,6 +99,10 @@ public class App extends Application {
     private static final int THRESHOLD_FREE_MB = 5;
 
     public static final SecureRandom secureRandom = new SecureRandom();
+
+    static {
+        Log.setRoller(new DebugLogRoller());
+    }
 
     @Override
     protected void attachBaseContext(Context base) {

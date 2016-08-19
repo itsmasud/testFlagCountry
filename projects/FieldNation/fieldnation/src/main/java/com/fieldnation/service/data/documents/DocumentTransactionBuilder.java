@@ -3,7 +3,7 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.NotificationDefinition;

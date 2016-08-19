@@ -8,7 +8,7 @@ import android.widget.BaseAdapter;
 import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 import java.util.HashSet;
 import java.util.Hashtable;

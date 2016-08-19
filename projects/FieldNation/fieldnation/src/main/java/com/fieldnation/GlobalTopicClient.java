@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -21,8 +23,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     // gcm
@@ -37,7 +40,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subGcm() {
-        return register(TOPIC_ID_GCM_MESSAGE, TAG);
+        return register(TOPIC_ID_GCM_MESSAGE);
     }
 
     // update app
@@ -49,7 +52,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subUpdateApp() {
-        return register(TOPIC_ID_APP_UPDATE, TAG);
+        return register(TOPIC_ID_APP_UPDATE);
     }
 
     // profile
@@ -60,7 +63,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subGotProfile() {
-        return register(TOPIC_ID_GOT_PROFILE, TAG);
+        return register(TOPIC_ID_GOT_PROFILE);
     }
 
     // invalid
@@ -72,7 +75,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subProfileInvalid(Context context) {
-        return register(TOPIC_ID_PROFILE_INVALID, TAG);
+        return register(TOPIC_ID_PROFILE_INVALID);
     }
 
     // shutdown
@@ -84,7 +87,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subAppShutdown() {
-        return register(TOPIC_ID_SHUTDOWN, TAG);
+        return register(TOPIC_ID_SHUTDOWN);
     }
 
     // ContactUs dialog
@@ -99,7 +102,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subShowContactUsDialog() {
-        return register(TOPIC_ID_SHOW_CONTACT_US, TAG);
+        return register(TOPIC_ID_SHOW_CONTACT_US);
     }
 
     // NETWORK STATE
@@ -134,7 +137,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subNetworkState() {
-        return register(TOPIC_ID_NETWORK_STATE, TAG);
+        return register(TOPIC_ID_NETWORK_STATE);
     }
 
     // try connect
@@ -155,7 +158,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subNetworkConnect() {
-        return register(TOPIC_ID_NETWORK_COMMAND_CONNECT, TAG);
+        return register(TOPIC_ID_NETWORK_COMMAND_CONNECT);
     }
 
 
@@ -172,11 +175,11 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     }
 
     public boolean subUserSwitched() {
-        return register(TOPIC_ID_USER_SWITCHED, TAG);
+        return register(TOPIC_ID_USER_SWITCHED);
     }
 
     public boolean subLoading() {
-        return register(TOPIC_ID_SHOW_LOADING, TAG);
+        return register(TOPIC_ID_SHOW_LOADING);
     }
 
     public static void setLoading(Context context, boolean isLoading) {

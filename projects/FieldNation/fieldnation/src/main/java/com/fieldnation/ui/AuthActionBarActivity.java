@@ -1,28 +1,24 @@
 package com.fieldnation.ui;
 
 import android.accounts.AccountManager;
-import android.app.PendingIntent;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -391,83 +387,14 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
     };
 
     private final ToastClient.Listener _toastClient_listener = new ToastClient.Listener() {
-        private Snackbar _snackbar = null;
-        private long _lastId = 0;
-
         @Override
-        public void onConnected() {
-            Log.v(TAG, "onConnected");
-            _toastClient.subSnackbar();
-            _toastClient.subToast();
+        public Activity getActivity() {
+            return AuthActionBarActivity.this;
         }
 
         @Override
-        public void showSnackBar(long id, String title, String buttonText, final PendingIntent buttonIntent, int duration) {
-            Log.v(TAG, "showSnackBar(" + title + ")");
-
-            if (id > 0 && id == _lastId)
-                return;
-
-            if (findViewById(android.R.id.content) == null) {
-                Log.v(TAG, "showSnackBar.findViewById() == null");
-                return;
-            }
-
-            Snackbar snackbar = Snackbar.make(findViewById(android.R.id.content), title, duration);
-            TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
-            tv.setTextColor(getResources().getColor(R.color.fn_white_text));
-            snackbar.setActionTextColor(getResources().getColor(R.color.fn_clickable_text));
-
-            if (buttonText == null)
-                buttonText = "DISMISS";
-
-            snackbar.setAction(buttonText, new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (_snackbar != null) {
-                        _snackbar.dismiss();
-                        _snackbar = null;
-                        _lastId = 0;
-                    }
-
-                    if (buttonIntent != null) {
-                        try {
-                            buttonIntent.send(AuthActionBarActivity.this, 0, new Intent());
-                        } catch (PendingIntent.CanceledException e) {
-                            Log.v(TAG, e);
-                        }
-                    }
-                }
-            });
-
-            snackbar.show();
-            _snackbar = snackbar;
-            _lastId = id;
-            Log.v(TAG, "snackbar.show()");
-        }
-
-        @Override
-        public void showToast(String title, int duration) {
-            Log.v(TAG, "showToast");
-            Toast.makeText(AuthActionBarActivity.this, title, duration).show();
-        }
-
-        @Override
-        public void dismissSnackBar(long id) {
-            Log.v(TAG, "dismissSnackBar");
-            if (_snackbar == null)
-                return;
-
-            if (_lastId != id)
-                return;
-
-            try {
-                _snackbar.dismiss();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            _snackbar = null;
-            _lastId = 0;
+        public ToastClient getToastClient() {
+            return _toastClient;
         }
     };
 }

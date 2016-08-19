@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 public class UploadingDocument implements Parcelable {
     private static final String TAG = "UploadingDocument";

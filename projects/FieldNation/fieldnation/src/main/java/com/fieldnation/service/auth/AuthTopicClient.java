@@ -5,11 +5,11 @@ import android.os.Bundle;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.topics.Sticky;
-import com.fieldnation.service.topics.TopicClient;
-import com.fieldnation.service.topics.TopicService;
+import com.fieldnation.fnpigeon.Sticky;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael Carver on 3/17/2015.
@@ -22,8 +22,9 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     // State
@@ -58,7 +59,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subAuthStateChange() {
-        return register(TOPIC_AUTH_STATE, TAG);
+        return register(TOPIC_AUTH_STATE);
     }
 
     public static void requestCommand(Context context) {
@@ -69,7 +70,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subRequestCommand() {
-        return register(TOPIC_AUTH_COMMAND_REQUEST, TAG);
+        return register(TOPIC_AUTH_COMMAND_REQUEST);
     }
 
     public static void invalidateCommand(Context context) {
@@ -80,7 +81,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subInvalidateCommand() {
-        return register(TOPIC_AUTH_COMMAND_INVALIDATE, TAG);
+        return register(TOPIC_AUTH_COMMAND_INVALIDATE);
     }
 
     public static void removeCommand(Context context) {
@@ -91,7 +92,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subRemoveCommand() {
-        return register(TOPIC_AUTH_COMMAND_REMOVE, TAG);
+        return register(TOPIC_AUTH_COMMAND_REMOVE);
     }
 
     public static void addedAccountCommand(Context context) {
@@ -102,7 +103,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subAccountAddedCommand() {
-        return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT, TAG);
+        return register(TOPIC_AUTH_COMMAND_ADDED_ACCOUNT);
     }
 
     public static void needUsernameAndPassword(Context context, Parcelable authenticatorResponse) {
@@ -116,7 +117,7 @@ public class AuthTopicClient extends TopicClient implements AuthTopicConstants {
     }
 
     public boolean subNeedUsernameAndPassword() {
-        return register(TOPIC_AUTH_COMMAND_NEED_PASSWORD, TAG);
+        return register(TOPIC_AUTH_COMMAND_NEED_PASSWORD);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

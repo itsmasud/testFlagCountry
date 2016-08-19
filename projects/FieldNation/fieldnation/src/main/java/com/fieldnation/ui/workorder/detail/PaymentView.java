@@ -13,7 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ui.workorder.detail.PaymentView";

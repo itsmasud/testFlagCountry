@@ -13,10 +13,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.SimpleGps;
+import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.SearchParams;
@@ -26,7 +26,7 @@ import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.util.List;
 

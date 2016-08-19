@@ -9,7 +9,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Fee;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class PaymentFeeView extends RelativeLayout {
     private static final String TAG = "PaymentFeeView";

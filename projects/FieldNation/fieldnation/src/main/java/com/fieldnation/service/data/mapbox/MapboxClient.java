@@ -6,12 +6,12 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.mapbox.MapboxDirections;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 /**
  * Created by Michael on 6/22/2016.
@@ -24,8 +24,9 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void getDirections(Context context, long workorderId, Position... positions) {
@@ -34,7 +35,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
 
     public boolean subDirections(long workorderId) {
         Log.v(TAG, "subDirections");
-        return register(TOPIC_ID_DIRECTIONS + "/" + workorderId, TAG);
+        return register(TOPIC_ID_DIRECTIONS + "/" + workorderId);
     }
 
     public static void getStaticMapClassic(Context context, long workorderId, Marker start, Marker end, int width, int height) {
@@ -42,7 +43,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
     }
 
     public boolean subStaticMapClassic(long workorderId) {
-        return register(TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId, TAG);
+        return register(TOPIC_ID_STATIC_MAP_CLASSIC + "/" + workorderId);
     }
 
     /*-**********************************-*/

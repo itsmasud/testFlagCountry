@@ -5,7 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 import java.util.LinkedList;
 import java.util.List;

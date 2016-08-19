@@ -20,7 +20,7 @@ import com.fieldnation.R;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 import java.util.ArrayList;
 

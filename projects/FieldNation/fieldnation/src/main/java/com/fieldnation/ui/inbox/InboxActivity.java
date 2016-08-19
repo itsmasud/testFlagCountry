@@ -10,7 +10,7 @@ import android.view.Menu;
 import android.view.View;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;

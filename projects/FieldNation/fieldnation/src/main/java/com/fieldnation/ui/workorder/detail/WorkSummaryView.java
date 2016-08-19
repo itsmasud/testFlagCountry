@@ -18,7 +18,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "WorkSummaryView";

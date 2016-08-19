@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.fieldnation.Log;
-
 /**
  * Created by Michael on 3/17/2016.
  */
