@@ -121,6 +121,9 @@ public class Workorder implements Parcelable {
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
+    @Json(name = "workorderContacts")
+    private WorkorderContacts[] _workorderContacts;
+
 
     public Workorder() {
     }
@@ -357,6 +360,10 @@ public class Workorder implements Parcelable {
 
     public User getWorkorderManagerInfo() {
         return _workorderManagerInfo;
+    }
+
+    public WorkorderContacts[] getWorkorderContacts(){
+        return _workorderContacts;
     }
 
     public JsonObject toJson() {
