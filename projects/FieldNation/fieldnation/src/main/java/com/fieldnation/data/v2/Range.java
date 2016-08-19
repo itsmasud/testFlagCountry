@@ -20,7 +20,7 @@ public class Range implements Parcelable {
     @Json
     private String begin;
     @Json
-    private String type;
+    private String type; //range or business
 
     public Range() {
     }
@@ -33,6 +33,10 @@ public class Range implements Parcelable {
         return begin;
     }
 
+    /**
+     *
+     * @return range or business
+     */
     public String getType() {
         return type;
     }
