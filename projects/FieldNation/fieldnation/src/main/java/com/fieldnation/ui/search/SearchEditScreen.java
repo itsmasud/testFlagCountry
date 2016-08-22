@@ -41,8 +41,8 @@ public class SearchEditScreen extends RelativeLayout {
     };
 
     private static final WorkOrderListType[] TYPES = new WorkOrderListType[]{
-            WorkOrderListType.ASSIGNED,
             WorkOrderListType.AVAILABLE,
+            WorkOrderListType.ASSIGNED,
             WorkOrderListType.CANCELED,
             WorkOrderListType.COMPLETED,
             WorkOrderListType.REQUESTED,
