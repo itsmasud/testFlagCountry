@@ -838,10 +838,8 @@ public class WorkFragment extends WorkorderFragment {
                 }
 
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
-                Log.e(TAG, "requestCode RESULT_CODE_GET_SIGNATURE");
                 requestWorkorder();
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                    Log.e(TAG, "inside _rateBuyerModal");
                     _rateBuyerModal.show(_workorder);
                 }
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
