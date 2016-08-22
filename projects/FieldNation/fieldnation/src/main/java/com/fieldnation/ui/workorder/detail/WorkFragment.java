@@ -79,6 +79,7 @@ import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
+import com.fieldnation.ui.dialog.RateBuyerModal;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -166,6 +167,8 @@ public class WorkFragment extends WorkorderFragment {
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
+    private RateBuyerModal _rateBuyerModal;
+
 
     // Data
     private WorkorderClient _workorderClient;
@@ -378,6 +381,8 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+        _rateBuyerModal = RateBuyerModal.getInstance(getFragmentManager(), TAG);
+
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -778,6 +783,7 @@ public class WorkFragment extends WorkorderFragment {
 
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+            Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
             if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK
                     || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
@@ -832,10 +838,18 @@ public class WorkFragment extends WorkorderFragment {
                 }
 
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
+                Log.e(TAG, "requestCode RESULT_CODE_GET_SIGNATURE");
                 requestWorkorder();
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
+                    Log.e(TAG, "inside _rateBuyerModal");
+                    _rateBuyerModal.show(_workorder);
+                }
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
+                startCheckOut();
+            }
+            else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
                 startCheckOut();
             }
         } catch (Exception ex) {
