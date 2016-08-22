@@ -847,9 +847,6 @@ public class WorkFragment extends WorkorderFragment {
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
                 startCheckOut();
             }
-            else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
-                startCheckOut();
-            }
         } catch (Exception ex) {
             ex.printStackTrace();
             Debug.logException(ex);
@@ -971,7 +968,7 @@ public class WorkFragment extends WorkorderFragment {
     private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
         public void onOk() {
-             WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
         }
 
         @Override
