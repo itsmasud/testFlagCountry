@@ -41,8 +41,8 @@ public class SearchEditScreen extends RelativeLayout {
     };
 
     private static final WorkOrderListType[] TYPES = new WorkOrderListType[]{
-            WorkOrderListType.AVAILABLE,
             WorkOrderListType.ASSIGNED,
+            WorkOrderListType.AVAILABLE,
             WorkOrderListType.CANCELED,
             WorkOrderListType.COMPLETED,
             WorkOrderListType.REQUESTED,
@@ -98,7 +98,7 @@ public class SearchEditScreen extends RelativeLayout {
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
-        _statusSpinner.setSelection(0);
+        App.setLastViewedList(WorkOrderListType.AVAILABLE);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);

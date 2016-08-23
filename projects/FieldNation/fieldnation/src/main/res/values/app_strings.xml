@@ -853,8 +853,8 @@
     </string-array>
 
     <string-array name="search_status">
-        <item>Available</item>
         <item>Assigned</item>
+        <item>Available</item>
         <item>Canceled</item>
         <item>Completed</item>
         <item>Requested</item>
