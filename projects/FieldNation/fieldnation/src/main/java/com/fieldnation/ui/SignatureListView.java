@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.ForLoopRunnable;
+import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Workorder;
@@ -22,7 +23,7 @@ import java.util.Random;
  * Created by michael.carver on 12/5/2014.
  */
 public class SignatureListView extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "SummaryListView";
+    private static final String TAG = "SignatureListView";
 
     // Ui
     private LinearLayout _listView;
@@ -89,7 +90,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
 
         if (!_workorder.canAcceptSignature()) {
-            return;
+            _addButton.setVisibility(GONE);
         }
 
         setVisibility(View.VISIBLE);
