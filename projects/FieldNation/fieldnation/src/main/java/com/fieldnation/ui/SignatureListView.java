@@ -90,6 +90,8 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
 
         if (!_workorder.canAcceptSignature()) {
             _addButton.setVisibility(GONE);
+        } else {
+            _addButton.setVisibility(VISIBLE);
         }
 
         setVisibility(View.VISIBLE);
