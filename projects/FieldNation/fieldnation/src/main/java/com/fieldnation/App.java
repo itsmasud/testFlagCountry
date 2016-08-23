@@ -31,7 +31,6 @@ import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
@@ -73,7 +72,6 @@ public class App extends Application {
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
 
-
     private static App _context;
 
     private Tracker _tracker;
@@ -90,7 +88,6 @@ public class App extends Application {
     private boolean _isConnected = false;
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
-    private static WorkOrderListType _lastListSelector = WorkOrderListType.AVAILABLE;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -107,14 +104,6 @@ public class App extends Application {
     public App() {
         super();
         Log.v(TAG, "GlobalState");
-    }
-
-    public static void setLastViewedList(WorkOrderListType selector) {
-        _lastListSelector = selector;
-    }
-
-    public static WorkOrderListType getLastViewedList() {
-        return _lastListSelector;
     }
 
     @Override

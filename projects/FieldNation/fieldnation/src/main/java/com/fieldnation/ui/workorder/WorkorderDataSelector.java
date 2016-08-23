@@ -1,7 +1,5 @@
 package com.fieldnation.ui.workorder;
 
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-
 /**
  * <P>
  * An enum that provides data selection abilities. Used primarily in
@@ -39,24 +37,6 @@ public enum WorkorderDataSelector {
 
     public boolean shouldShowGoToMarketplace() {
         return this == ASSIGNED || this == COMPLETED || this == CANCELED;
-    }
-
-    public WorkOrderListType toWorkOrderListType() {
-        switch (this) {
-            case AVAILABLE:
-                return WorkOrderListType.AVAILABLE;
-            case REQUESTED:
-                return WorkOrderListType.REQUESTED;
-            case ASSIGNED:
-                return WorkOrderListType.ASSIGNED;
-            case COMPLETED:
-                return WorkOrderListType.COMPLETED;
-            case CANCELED:
-                return WorkOrderListType.CANCELED;
-            case ROUTED:
-                return WorkOrderListType.ROUTED;
-        }
-        return null;
     }
 
     public static WorkorderDataSelector fromName(String name) {
