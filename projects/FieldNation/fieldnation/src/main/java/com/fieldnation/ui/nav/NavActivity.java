@@ -3,7 +3,6 @@ package com.fieldnation.ui.nav;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
@@ -25,7 +24,7 @@ public class NavActivity extends AuthSimpleActivity {
     // Ui
     private RecyclerView _recyclerView;
     private Toolbar _toolbar;
-//    private View _searchesView;
+    private View _searchesView;
 
     @Override
     public int getLayoutResource() {
@@ -35,19 +34,24 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        CoordinatorLayout _coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
-        //_toolbar.setOnClickListener(_toolbar_onClick);
+        _toolbar.setOnClickListener(_toolbar_onClick);
 
-        //_searchesView = findViewById(R.id.searchesView);
+        _searchesView = findViewById(R.id.searchesView);
+        _searchesView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hideDrawer();
+            }
+        });
 
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         _recyclerView.setAdapter(_recyclerView_adapter);
+        _recyclerView.addOnScrollListener(_recycler_onScroll);
 
-        //setTitle("");
-        //((TextView) _toolbar.findViewById(R.id.textview)).setText("Field Nation \uE006");
+        hideDrawer();
     }
 
     @Override
@@ -79,22 +83,36 @@ public class NavActivity extends AuthSimpleActivity {
         super.onPause();
     }
 
+    private void showDrawer() {
+        if (_searchesView.getVisibility() != View.VISIBLE) {
+            Log.v(TAG, "showDrawer");
+            setTitle("Field Nation \u25B2");
+            _searchesView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private void hideDrawer() {
+        if (_searchesView.getVisibility() != View.GONE) {
+            Log.v(TAG, "hideDrawer");
+            setTitle("Field Nation \u25BC");
+            _searchesView.setVisibility(View.GONE);
+            _recyclerView.forceLayout();
+        }
+    }
+
     // \u25B2 Up arrow
     // \u25BC down arrow
-/*
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_searchesView.getVisibility() == View.GONE) {
-                setTitle("Field Nation \u25B2");
-                _searchesView.setVisibility(View.VISIBLE);
+                showDrawer();
             } else {
-                setTitle("Field Nation \u25BC");
-                _searchesView.setVisibility(View.GONE);
+                hideDrawer();
+
             }
         }
     };
-*/
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
 
@@ -118,7 +136,14 @@ public class NavActivity extends AuthSimpleActivity {
 
         @Override
         public int getItemCount() {
-            return 100;
+            return 200;
+        }
+    };
+
+    private final RecyclerView.OnScrollListener _recycler_onScroll = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            hideDrawer();
         }
     };
 
