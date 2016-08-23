@@ -3,8 +3,10 @@ package com.fieldnation.ui.nav;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,9 +24,10 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Ui
     private RecyclerView _recyclerView;
+    private Toolbar _toolbar;
+//    private View _searchesView;
 
     @Override
-
     public int getLayoutResource() {
         return R.layout.activity_v3_nav;
     }
@@ -32,12 +35,20 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        CoordinatorLayout _coordinatorLayout = (CoordinatorLayout) findViewById(R.id.main_content);
+
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        //_toolbar.setOnClickListener(_toolbar_onClick);
+
+        //_searchesView = findViewById(R.id.searchesView);
 
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         _recyclerView.setAdapter(_recyclerView_adapter);
-    }
 
+        //setTitle("");
+        //((TextView) _toolbar.findViewById(R.id.textview)).setText("Field Nation \uE006");
+    }
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
@@ -56,7 +67,6 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
-
     }
 
     @Override
@@ -68,6 +78,23 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onPause() {
         super.onPause();
     }
+
+    // \u25B2 Up arrow
+    // \u25BC down arrow
+/*
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_searchesView.getVisibility() == View.GONE) {
+                setTitle("Field Nation \u25B2");
+                _searchesView.setVisibility(View.VISIBLE);
+            } else {
+                setTitle("Field Nation \u25BC");
+                _searchesView.setVisibility(View.GONE);
+            }
+        }
+    };
+*/
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
 
