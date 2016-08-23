@@ -22,7 +22,7 @@ import java.util.Random;
  * Created by michael.carver on 12/5/2014.
  */
 public class SignatureListView extends RelativeLayout implements WorkorderRenderer {
-    private static final String TAG = "SummaryListView";
+    private static final String TAG = "SignatureListView";
 
     // Ui
     private LinearLayout _listView;
@@ -89,7 +89,7 @@ public class SignatureListView extends RelativeLayout implements WorkorderRender
         }
 
         if (!_workorder.canAcceptSignature()) {
-            return;
+            _addButton.setVisibility(GONE);
         }
 
         setVisibility(View.VISIBLE);
