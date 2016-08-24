@@ -30,7 +30,17 @@
                     android:layout_height="?attr/actionBarSize"
                     android:background="#FF000000"
                     android:theme="@style/Theme.AppCompat.NoActionBar"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/arrow_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:text="@string/icon_arrow_down"
+                        android:textColor="#FFFFFFFF" />
+
+                </android.support.v7.widget.Toolbar>
 
                 <View
                     android:id="@+id/searchesView"
