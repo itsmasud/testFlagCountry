@@ -15,6 +15,12 @@
 
     <color name="fn_red">#FFa21623</color>
 
+    <color name="fn_leaving_grad_start">#FF671d26</color>
+    <color name="fn_leaving_grad_end">#FF6c4416</color>
+
+    <color name="fn_leaving_primary">#FF671d26</color>
+    <color name="fn_leaving_primary_dark">#FF671d26</color>
+    <color name="fn_leaving_accent">#FF671d26</color>
     <!--<color name="fn_brandcolor">#FFFF0000</color>-->
     <!--<color name="fn_brandcolor_medium">#FF770000</color>-->
     <!--<color name="fn_brandcolor_80">#CCFF0000</color>-->

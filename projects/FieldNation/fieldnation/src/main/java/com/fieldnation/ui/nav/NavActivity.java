@@ -71,7 +71,6 @@ public class NavActivity extends AuthSimpleActivity {
     private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
-
         }
 
         @Override
@@ -81,7 +80,6 @@ public class NavActivity extends AuthSimpleActivity {
 
         @Override
         public void onAnimationRepeat(Animation animation) {
-
         }
     };
 
@@ -117,8 +115,6 @@ public class NavActivity extends AuthSimpleActivity {
         }
     }
 
-    // \u25B2 Up arrow
-    // \u25BC down arrow
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -126,7 +122,6 @@ public class NavActivity extends AuthSimpleActivity {
                 showDrawer();
             } else {
                 hideDrawer();
-
             }
         }
     };
@@ -139,7 +134,6 @@ public class NavActivity extends AuthSimpleActivity {
     };
 
     private class MyViewHolder extends RecyclerView.ViewHolder {
-
         public MyViewHolder(View itemView) {
             super(itemView);
         }
@@ -154,7 +148,6 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onBindViewHolder(MyViewHolder holder, int position) {
             TextView v = (TextView) holder.itemView;
-
             v.setText(position + "");
         }
 

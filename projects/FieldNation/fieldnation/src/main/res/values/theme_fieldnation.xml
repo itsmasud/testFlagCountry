@@ -2,9 +2,9 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="FieldNation.Leaving.Theme" parent="FieldNation.Material.Theme">
-        <item name="colorPrimary">#FF671d26</item>
-        <item name="colorPrimaryDark">#FF671d26</item>
-        <item name="colorAccent">#FF671d26</item>
+        <item name="colorPrimary">@color/fn_leaving_primary</item>
+        <item name="colorPrimaryDark">@color/fn_leaving_primary_dark</item>
+        <item name="colorAccent">@color/fn_leaving_accent</item>
     </style>
 
     <style name="FieldNation.Material.Theme" parent="FieldNation.ActionBar.Theme">

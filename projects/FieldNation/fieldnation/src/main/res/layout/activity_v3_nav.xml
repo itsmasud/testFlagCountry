@@ -26,27 +26,24 @@
 
                 <android.support.v7.widget.Toolbar
                     android:id="@+id/toolbar"
+                    style="?attr/fnToolbarStyle"
                     android:layout_width="match_parent"
                     android:layout_height="?attr/actionBarSize"
-                    android:background="#FF000000"
-                    android:theme="@style/Theme.AppCompat.NoActionBar"
-                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+                    app:theme="@style/FieldNation.Material.ToolBar">
 
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/arrow_textview"
                         android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:gravity="center"
-                        android:text="@string/icon_arrow_down"
-                        android:textColor="#FFFFFFFF" />
+                        android:text="@string/icon_arrow_down" />
 
                 </android.support.v7.widget.Toolbar>
 
                 <View
                     android:id="@+id/searchesView"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp"
-                    android:background="#FF0000FF" />
+                    android:layout_height="120dp" />
             </LinearLayout>
 
         </android.support.design.widget.AppBarLayout>
@@ -55,7 +52,6 @@
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="#FF00FF00"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
     </android.support.design.widget.CoordinatorLayout>
@@ -64,6 +60,5 @@
         android:id="@+id/footer_view"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:layout_alignParentBottom="true"
-        android:background="#FF555555" />
+        android:layout_alignParentBottom="true" />
 </RelativeLayout>
