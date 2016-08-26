@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.App;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
@@ -19,7 +20,7 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
 public class WorkOrderTransactionBuilder implements WorkOrderConstants {
     private static final String TAG = "WorkOrderTransactionBuilder";
 
-    public static void search(Context context, SearchParams searchParams, int page) {
+    public static void search(Context context, SavedSearchParams searchParams, int page) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)

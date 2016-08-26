@@ -9,7 +9,8 @@
         android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/footer_view">
+        android:layout_above="@+id/footer_view"
+        android:layout_alignParentTop="true">
 
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
@@ -18,41 +19,36 @@
             android:fitsSystemWindows="true"
             android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <LinearLayout
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="?attr/fnToolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_scrollFlags="scroll|enterAlways">
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:theme="@style/FieldNation.Material.ToolBar">
 
-                <android.support.v7.widget.Toolbar
-                    android:id="@+id/toolbar"
-                    style="?attr/fnToolbarStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="?attr/actionBarSize"
-                    app:theme="@style/FieldNation.Material.ToolBar">
+                <com.fieldnation.ui.IconFontTextView
+                    android:id="@+id/arrow_textview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="@string/icon_arrow_down" />
 
-                    <com.fieldnation.ui.IconFontTextView
-                        android:id="@+id/arrow_textview"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center"
-                        android:text="@string/icon_arrow_down" />
-
-                </android.support.v7.widget.Toolbar>
-
-                <View
-                    android:id="@+id/searchesView"
-                    android:layout_width="match_parent"
-                    android:layout_height="120dp" />
-            </LinearLayout>
-
+            </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
         <android.support.v7.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:scrollbars="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
+
+        <com.fieldnation.ui.nav.SavedSearchList
+            android:id="@+id/searchesView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#FFFFFFFF" />
 
     </android.support.design.widget.CoordinatorLayout>
 

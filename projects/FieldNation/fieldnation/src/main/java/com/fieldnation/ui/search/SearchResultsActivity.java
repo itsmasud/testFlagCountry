@@ -9,7 +9,7 @@ import android.view.Menu;
 import android.view.View;
 
 import com.fieldnation.R;
-import com.fieldnation.service.data.v2.workorder.SearchParams;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.fntools.misc;
@@ -57,7 +57,7 @@ public class SearchResultsActivity extends AuthActionBarActivity {
         super.onResume();
 
         if (getIntent() != null && getIntent().hasExtra(INTENT_SEARCH_PARAMS)) {
-            SearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
+            SavedSearchParams searchParams = getIntent().getParcelableExtra(INTENT_SEARCH_PARAMS);
             _searchResultScreen.startSearch(searchParams);
 
             setTitle(misc.capitalize(searchParams.woList.getParam()) + " Search");
@@ -71,7 +71,7 @@ public class SearchResultsActivity extends AuthActionBarActivity {
         }
     };
 
-    public static void runSearch(Context context, SearchParams searchParams) {
+    public static void runSearch(Context context, SavedSearchParams searchParams) {
         Intent intent = new Intent(context, SearchResultsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         intent.putExtra(INTENT_SEARCH_PARAMS, searchParams);

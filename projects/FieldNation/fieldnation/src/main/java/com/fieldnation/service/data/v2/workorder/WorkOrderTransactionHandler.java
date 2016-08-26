@@ -2,6 +2,7 @@ package com.fieldnation.service.data.v2.workorder;
 
 import android.content.Context;
 
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpResult;
@@ -19,10 +20,10 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     /*-************************************************-*/
     /*-             Parameter Generators               -*/
     /*-************************************************-*/
-    public static byte[] pSearch(SearchParams searchParams) {
+    public static byte[] pSearch(SavedSearchParams searchParams) {
         try {
             JsonObject obj = new JsonObject("action", "pSearch");
-            obj.put("SearchParams", searchParams.toJson());
+            obj.put("SavedSearchParams", searchParams.toJson());
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -103,7 +104,7 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "resultSearch");
 
         WorkOrderDispatch.search(context,
-                SearchParams.fromJson(params.getJsonObject("SearchParams")),
+                SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
                 resultData.getByteArray(), false);
 
         return Result.CONTINUE;
@@ -145,7 +146,7 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "failSearch");
 
         WorkOrderDispatch.search(context,
-                SearchParams.fromJson(params.getJsonObject("SearchParams")), null, true);
+                SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
 
         return Result.CONTINUE;
     }

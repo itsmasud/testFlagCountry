@@ -15,7 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.service.data.v2.workorder.SearchParams;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -44,7 +44,7 @@ public class SearchResultScreen extends RelativeLayout {
     private WorkOrderClient _workOrderClient;
 
     // Data
-    private SearchParams _searchParams;
+    private SavedSearchParams _searchParams;
     private Location _location;
 
     public SearchResultScreen(Context context) {
@@ -117,7 +117,7 @@ public class SearchResultScreen extends RelativeLayout {
             _refreshView.startRefreshing();
     }
 
-    public void startSearch(SearchParams searchParams) {
+    public void startSearch(SavedSearchParams searchParams) {
         _searchParams = searchParams;
         getPage(0);
     }
@@ -136,7 +136,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         @Override
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
+        public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
                 if (_adapter.getItemCount() == 0)

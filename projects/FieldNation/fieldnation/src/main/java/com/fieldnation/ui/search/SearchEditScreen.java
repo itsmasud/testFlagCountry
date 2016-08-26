@@ -13,13 +13,13 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
@@ -149,7 +149,7 @@ public class SearchEditScreen extends RelativeLayout {
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
-            final SearchParams searchParams = new SearchParams()
+            final SavedSearchParams searchParams = new SavedSearchParams()
                     .type(TYPES[_statusSpinner.getSelectedItemPosition()].getType())
                     .status(TYPES[_statusSpinner.getSelectedItemPosition()].getStatuses())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);

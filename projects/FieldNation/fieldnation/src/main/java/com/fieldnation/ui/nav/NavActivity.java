@@ -3,9 +3,12 @@ package com.fieldnation.ui.nav;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.AppBarLayout;
+import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
@@ -29,6 +32,8 @@ public class NavActivity extends AuthSimpleActivity {
     private Toolbar _toolbar;
     private View _searchesView;
     private IconFontTextView _arrowTextView;
+    private CoordinatorLayout _layout;
+    private AppBarLayout _appBarLayout;
 
     // Animations
     private Animation _ccw;
@@ -42,6 +47,10 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        _layout = (CoordinatorLayout) findViewById(R.id.main_content);
+
+        _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setOnClickListener(_toolbar_onClick);
@@ -100,8 +109,10 @@ public class NavActivity extends AuthSimpleActivity {
         if (_searchesView.getVisibility() != View.VISIBLE) {
             Log.v(TAG, "showDrawer");
             setTitle("Field Nation");
-            _searchesView.setVisibility(View.VISIBLE);
+//            _searchesView.setVisibility(View.VISIBLE);
             _arrowTextView.startAnimation(_cw);
+//            _layout.requestLayout();
+//            _layout.invalidate();
         }
     }
 
@@ -109,9 +120,10 @@ public class NavActivity extends AuthSimpleActivity {
         if (_searchesView.getVisibility() != View.GONE) {
             Log.v(TAG, "hideDrawer");
             setTitle("Field Nation");
-            _searchesView.setVisibility(View.GONE);
-            _recyclerView.forceLayout();
+//            _searchesView.setVisibility(View.GONE);
             _arrowTextView.startAnimation(_ccw);
+//            _layout.requestLayout();
+//            _layout.invalidate();
         }
     }
 
@@ -142,7 +154,7 @@ public class NavActivity extends AuthSimpleActivity {
     private final RecyclerView.Adapter<MyViewHolder> _recyclerView_adapter = new RecyclerView.Adapter<MyViewHolder>() {
         @Override
         public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder(new TextView(parent.getContext()));
+            return new MyViewHolder((TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.view_saved_search_row, null));
         }
 
         @Override
