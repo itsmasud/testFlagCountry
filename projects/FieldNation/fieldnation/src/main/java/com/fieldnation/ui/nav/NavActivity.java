@@ -68,7 +68,6 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
         _recyclerView.setAdapter(_recyclerView_adapter);
-        _recyclerView.addOnScrollListener(_recycler_onScroll);
 
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
         _ccw.setAnimationListener(_ccw_animationListener);
@@ -138,13 +137,6 @@ public class NavActivity extends AuthSimpleActivity {
             } else {
                 hideDrawer();
             }
-        }
-    };
-
-    private final RecyclerView.OnScrollListener _recycler_onScroll = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            hideDrawer();
         }
     };
 
