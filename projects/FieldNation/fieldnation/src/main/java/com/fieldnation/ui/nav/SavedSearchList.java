@@ -1,5 +1,7 @@
 package com.fieldnation.ui.nav;
 
+import android.animation.Animator;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
@@ -82,6 +84,42 @@ public class SavedSearchList extends LinearLayout {
         }
     }
 
+    public void hide() {
+        if (getBehavior() == null)
+            return;
+
+        getBehavior().startHidingAnimation(this);
+    }
+
+    public void show() {
+        if (getBehavior() == null)
+            return;
+
+        getBehavior().startShowingAnimation((CoordinatorLayout) getParent(), this);
+    }
+
+    private Behavior getBehavior() {
+        if (getLayoutParams() == null || !(getLayoutParams() instanceof CoordinatorLayout.LayoutParams))
+            return null;
+
+        CoordinatorLayout.Behavior behavior = ((CoordinatorLayout.LayoutParams) getLayoutParams()).getBehavior();
+        if (behavior == null || !(behavior instanceof Behavior))
+            return null;
+
+        CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getLayoutParams();
+        return (Behavior) params.getBehavior();
+    }
+
+    private void setYPos(int y) {
+        int h = getHeight();
+        setTop(y);
+        setBottom(y + h);
+    }
+
+    private int getYPos() {
+        return getTop();
+    }
+
     private final View.OnClickListener _textView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -95,7 +133,10 @@ public class SavedSearchList extends LinearLayout {
 
         private static final int MODE_ATTACHED_TO_APPBAR = 1;
         private static final int MODE_SCROLLING = 2;
-        private static final int MODE_HIDDEN = 3;
+        private static final int MODE_HIDING = 3;
+        private static final int MODE_HIDDEN = 4;
+        private static final int MODE_SHOWING = 5;
+
         private int _mode = MODE_ATTACHED_TO_APPBAR;
 
         public Behavior() {
@@ -108,25 +149,121 @@ public class SavedSearchList extends LinearLayout {
             Log.v(TAG, "Behavior");
         }
 
+        private void setMode(int mode) {
+            if (mode != _mode) {
+                switch (mode) {
+                    case MODE_ATTACHED_TO_APPBAR:
+                        Log.v(TAG, "Behavior Mode: MODE_ATTACHED_TO_APPBAR");
+                        break;
+                    case MODE_SCROLLING:
+                        Log.v(TAG, "Behavior Mode: MODE_SCROLLING");
+                        break;
+                    case MODE_HIDDEN:
+                        Log.v(TAG, "Behavior Mode: MODE_HIDDEN");
+                        break;
+                    case MODE_HIDING:
+                        Log.v(TAG, "Behavior Mode: MODE_HIDING");
+                        break;
+                    case MODE_SHOWING:
+                        Log.v(TAG, "Behavior Mode: MODE_SHOWING");
+                        break;
+                }
+            }
+            _mode = mode;
+        }
+
+        void startShowingAnimation(CoordinatorLayout parent, final SavedSearchList child) {
+            if (_mode != MODE_HIDDEN)
+                return;
+            setMode(MODE_SHOWING);
+            child.setVisibility(VISIBLE);
+
+            int fin = 0;
+            List<View> dependencies = parent.getDependencies(child);
+            for (int i = 0; i < dependencies.size(); i++) {
+                View dependency = dependencies.get(i);
+                if (dependency instanceof AppBarLayout) {
+                    fin = dependency.getBottom();
+                    break;
+                }
+            }
+
+            ValueAnimator a = ValueAnimator.ofInt(child.getTop(), fin);
+            a.setDuration(100);
+            a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    child.setYPos((Integer) animation.getAnimatedValue());
+                }
+            });
+            a.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    setMode(MODE_ATTACHED_TO_APPBAR);
+                    child.requestLayout();
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+            a.start();
+        }
+
+        void startHidingAnimation(final SavedSearchList child) {
+            setMode(MODE_HIDING);
+
+            ValueAnimator a = ValueAnimator.ofInt(child.getTop(), -child.getHeight());
+            a.setDuration(100);
+            a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+                @Override
+                public void onAnimationUpdate(ValueAnimator animation) {
+                    child.setYPos((Integer) animation.getAnimatedValue());
+                }
+            });
+            a.addListener(new Animator.AnimatorListener() {
+                @Override
+                public void onAnimationStart(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    setMode(MODE_HIDDEN);
+                    child.setVisibility(GONE);
+                }
+
+                @Override
+                public void onAnimationCancel(Animator animation) {
+                }
+
+                @Override
+                public void onAnimationRepeat(Animator animation) {
+                }
+            });
+            a.start();
+        }
+
         @Override
         public boolean onLayoutChild(CoordinatorLayout parent, SavedSearchList child, int layoutDirection) {
             // Log.v(TAG, "onLayoutChild");
-
             parent.onLayoutChild(child, layoutDirection);
-
             if (_mode == MODE_ATTACHED_TO_APPBAR) {
-
                 List<View> dependencies = parent.getDependencies(child);
                 for (int i = 0; i < dependencies.size(); i++) {
                     View dependency = dependencies.get(i);
                     if (dependency instanceof AppBarLayout) {
                         //Log.v(TAG, "onLayoutChild " + (dependency.getVisibility() == VISIBLE ? "VISIBLE" : "GONE") + " " + dependency.getBottom());
-                        int h = child.getHeight();
-                        child.setTop(dependency.getBottom());
-                        child.setBottom(dependency.getBottom() + h);
+                        child.setYPos(dependency.getBottom());
                     }
                 }
-
                 return true;
             }
             return false;
@@ -138,22 +275,14 @@ public class SavedSearchList extends LinearLayout {
         }
 
         @Override
-        public void onNestedScrollAccepted(CoordinatorLayout coordinatorLayout, SavedSearchList child, View directTargetChild, View target, int nestedScrollAxes) {
-            super.onNestedScrollAccepted(coordinatorLayout, child, directTargetChild, target, nestedScrollAxes);
-        }
-
-        @Override
         public boolean onDependentViewChanged(CoordinatorLayout parent, SavedSearchList child, View dependency) {
             //Log.v(TAG, "onDependentViewChanged " + dependency.toString());
             if (dependency instanceof AppBarLayout) {
                 if (dependency.getBottom() == 0) {
-                    _mode = MODE_SCROLLING;
+                    setMode(MODE_SCROLLING);
                 } else {
-                    _mode = MODE_ATTACHED_TO_APPBAR;
-
-                    int h = child.getHeight();
-                    child.setTop(dependency.getBottom());
-                    child.setBottom(dependency.getBottom() + h);
+                    setMode(MODE_ATTACHED_TO_APPBAR);
+                    child.setYPos(dependency.getBottom());
                     return true;
                 }
             }
@@ -163,54 +292,39 @@ public class SavedSearchList extends LinearLayout {
         @Override
         public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View directTargetChild, View target, int nestedScrollAxes) {
             Log.v(TAG, "onStartNestedScroll " + nestedScrollAxes);
-            if (_mode == MODE_SCROLLING) {
+            if (_mode == MODE_SCROLLING && child.getBottom() <= 0) {
+                setMode(MODE_HIDDEN);
                 child.setVisibility(GONE);
-                _mode = MODE_HIDDEN;
+                return false;
+            } else if (_mode == MODE_HIDDEN) {
+                return false;
             }
-            return false;
-        }
-
-        @Override
-        public void onNestedPreScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target, int dx, int dy, int[] consumed) {
-            Log.v(TAG, "onNestedPreScroll " + dx + " " + dy);
-        }
-
-        @Override
-        public void onStopNestedScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target) {
-            Log.v(TAG, "onStopNestedScroll");
-        }
-
-        @Override
-        public boolean onNestedFling(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target, float velocityX, float velocityY, boolean consumed) {
-            Log.v(TAG, "onNestedFling " + velocityX + " " + velocityY + " " + consumed);
-            return super.onNestedFling(coordinatorLayout, child, target, velocityX, velocityY, consumed);
-        }
-
-        @Override
-        public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target, float velocityX, float velocityY) {
-            Log.v(TAG, "onNestedPreFling " + velocityX + " " + velocityY);
-            return super.onNestedPreFling(coordinatorLayout, child, target, velocityX, velocityY);
-        }
-
-        @Override
-        public void onDependentViewRemoved(CoordinatorLayout parent, SavedSearchList child, View dependency) {
-            Log.v(TAG, "onDependentViewRemoved " + dependency.toString());
+            return true;
         }
 
         @Override
         public void onNestedScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
             Log.v(TAG, "onNestedScroll " + dxConsumed + " " + dyConsumed + " " + dxUnconsumed + " " + dyUnconsumed);
+            if (_mode == MODE_SCROLLING) {
+                int h = child.getHeight();
+                int b = child.getBottom() - (dyUnconsumed + dyConsumed);
+                Log.v(TAG, "onNestedScroll " + child.getTop() + " " + child.getBottom() + " " + (b - h) + " " + b);
+                if (b < 0) {
+                    setMode(MODE_HIDDEN);
+                    child.setVisibility(GONE);
+                } else {
+                    child.setYPos(b - h);
+                }
+            }
+        }
 
-//            if (_mode == MODE_SCROLLING) {
-//                Log.v(TAG, "onNestedScroll " + child.getTop() + " " + child.getBottom());
-//                int h = child.getHeight();
-//                int b = child.getBottom() - (dyUnconsumed + dyConsumed);
-//                if (b < 0) b = 0;
-//
-//                child.setBottom(b);
-//                child.setTop(b - h);
-//            }
+        @Override
+        public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, final SavedSearchList child, View target, float velocityX, float velocityY) {
+            Log.v(TAG, "onNestedPreFling " + velocityX + " " + velocityY);
+            if (_mode == MODE_SCROLLING && velocityY > 0) {
+                startHidingAnimation(child);
+            }
+            return false;
         }
     }
-
 }

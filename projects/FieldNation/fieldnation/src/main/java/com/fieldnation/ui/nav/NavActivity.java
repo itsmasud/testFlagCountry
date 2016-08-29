@@ -30,7 +30,7 @@ public class NavActivity extends AuthSimpleActivity {
     // Ui
     private RecyclerView _recyclerView;
     private Toolbar _toolbar;
-    private View _searchesView;
+    private SavedSearchList _searchesView;
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
     private AppBarLayout _appBarLayout;
@@ -57,7 +57,7 @@ public class NavActivity extends AuthSimpleActivity {
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
-        _searchesView = findViewById(R.id.searchesView);
+        _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
         _searchesView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -106,25 +106,28 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     private void showDrawer() {
-        if (_searchesView.getVisibility() != View.VISIBLE) {
-            Log.v(TAG, "showDrawer");
-            setTitle("Field Nation");
+        _searchesView.show();
+//        if (_searchesView.getVisibility() != View.VISIBLE) {
+//            Log.v(TAG, "showDrawer");
+//            setTitle("Field Nation");
 //            _searchesView.setVisibility(View.VISIBLE);
-            _arrowTextView.startAnimation(_cw);
+//            _arrowTextView.startAnimation(_cw);
 //            _layout.requestLayout();
 //            _layout.invalidate();
-        }
+//    }
+
     }
 
     private void hideDrawer() {
-        if (_searchesView.getVisibility() != View.GONE) {
-            Log.v(TAG, "hideDrawer");
-            setTitle("Field Nation");
+        _searchesView.hide();
+//        if (_searchesView.getVisibility() != View.GONE) {
+//            Log.v(TAG, "hideDrawer");
+//            setTitle("Field Nation");
 //            _searchesView.setVisibility(View.GONE);
-            _arrowTextView.startAnimation(_ccw);
+//            _arrowTextView.startAnimation(_ccw);
 //            _layout.requestLayout();
 //            _layout.invalidate();
-        }
+//    }
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -149,6 +152,7 @@ public class NavActivity extends AuthSimpleActivity {
         public MyViewHolder(View itemView) {
             super(itemView);
         }
+
     }
 
     private final RecyclerView.Adapter<MyViewHolder> _recyclerView_adapter = new RecyclerView.Adapter<MyViewHolder>() {
