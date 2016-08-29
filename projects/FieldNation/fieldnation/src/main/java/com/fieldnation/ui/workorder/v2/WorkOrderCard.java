@@ -147,7 +147,8 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateTime() {
-        if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+        if (_workOrder.getSchedule()!=null
+         && _workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
             try {
                 Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
                 _timeTextView.setText(
