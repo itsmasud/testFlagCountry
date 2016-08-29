@@ -119,6 +119,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void startSearch(SearchParams searchParams) {
         _searchParams = searchParams;
+        _adapter.clear();
         getPage(0);
     }
 
