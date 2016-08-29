@@ -147,33 +147,37 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateTime() {
-        if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
-            try {
-                Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
-                _timeTextView.setText(
-                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        if (_workOrder.getSchedule() != null) {
+            if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
-        } else if (_workOrder.getSchedule().getExact() != null) {
-            try {
-                Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
-                _timeTextView.setText(
-                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            } else if (_workOrder.getSchedule().getExact() != null) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
 
-        } else if (_workOrder.getSchedule().getRange() != null) {
-            try {
-                Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
-                Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
-                _timeTextView.setText(
-                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
-                                + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+            } else if (_workOrder.getSchedule().getRange() != null) {
+                try {
+                    Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                    Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
+                                    + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                _timeTextView.setText("");
             }
         }
     }
