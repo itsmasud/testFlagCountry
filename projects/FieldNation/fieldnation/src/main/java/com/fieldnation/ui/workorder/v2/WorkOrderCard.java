@@ -157,7 +157,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Log.v(TAG, ex);
             }
 
-        } else if (_workOrder.getSchedule().getExact() != null) {
+        } else if (_workOrder.getSchedule()!=null && _workOrder.getSchedule().getExact() != null) {
             try {
                 Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
                 _timeTextView.setText(
@@ -166,7 +166,7 @@ public class WorkOrderCard extends RelativeLayout {
                 Log.v(TAG, ex);
             }
 
-        } else if (_workOrder.getSchedule().getRange() != null) {
+        } else if (_workOrder.getSchedule()!=null && _workOrder.getSchedule().getRange() != null) {
             try {
                 Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
                 Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
