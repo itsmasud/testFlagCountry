@@ -80,7 +80,6 @@ public class ToastClient extends TopicClient {
         dispatchEvent(context, TOPIC_ID_SNACKBAR, bundle, Sticky.NONE);
     }
 
-
     public static void dismissSnackbar(Context context, long id) {
         Bundle bundle = new Bundle();
         bundle.putString(PARAM_ACTION, PARAM_ACTION_DISMISS_SNACKBAR);

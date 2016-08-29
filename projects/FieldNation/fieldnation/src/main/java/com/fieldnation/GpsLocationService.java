@@ -1,11 +1,12 @@
 package com.fieldnation;
 
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
+import com.fieldnation.service.toast.ToastClient;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -51,12 +52,19 @@ public class GpsLocationService {
     }
 
     public void startLocation() {
-        if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
-            _isRunning = true;
-            _googleApiClient.connect();
-        } else if (!_googleApiClient.isConnecting()) {
-            _isRunning = true;
-            _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
+        try {
+            if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
+                _isRunning = true;
+                _googleApiClient.connect();
+            } else if (!_googleApiClient.isConnecting()) {
+                _isRunning = true;
+                _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            ToastClient.toast(App.get(), "Could not get gps location", Toast.LENGTH_SHORT);
+            //if (_listener != null)
+            //_listener.onLocationNotAllowed();
         }
     }
 
@@ -114,6 +122,11 @@ public class GpsLocationService {
                     // no location, request one
                     _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
                 }
+            } catch (SecurityException ex) {
+                Log.v(TAG, ex);
+                ToastClient.toast(App.get(), "Could not get gps location", Toast.LENGTH_SHORT);
+                stopLocationUpdates();
+
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 stopLocationUpdates();
