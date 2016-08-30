@@ -35,8 +35,6 @@ public class MarketActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void loadFragments() {
-        App.setLastViewedList(WorkorderDataSelector.ROUTED.toWorkOrderListType());
-
         _fragments = new WorkorderListFragment[3];
         _fragments[0] = getFragment(WorkorderDataSelector.ROUTED);
         _fragments[1] = getFragment(WorkorderDataSelector.AVAILABLE);

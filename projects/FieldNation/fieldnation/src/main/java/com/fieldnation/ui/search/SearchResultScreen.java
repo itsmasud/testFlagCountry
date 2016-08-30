@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.v2.SavedSearchParams;
@@ -119,6 +119,7 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void startSearch(SavedSearchParams searchParams) {
         _searchParams = searchParams;
+        _adapter.clear();
         getPage(0);
     }
 
@@ -174,7 +175,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public Calendar getObjectTime(WorkOrder object) {
             try {
-                return ISO8601.toCalendar(object.getRequirements().getSchedule().getStart());
+                return ISO8601.toCalendar(object.getSchedule().getBegin());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }

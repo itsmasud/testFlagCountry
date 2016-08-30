@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.crashlytics.android.answers.CustomEvent;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
@@ -25,7 +26,6 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 

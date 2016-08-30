@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 
 public class DurationDialog extends DialogFragmentBase {

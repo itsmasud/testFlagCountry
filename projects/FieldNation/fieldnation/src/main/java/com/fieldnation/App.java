@@ -26,21 +26,21 @@ import android.text.TextUtils;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.misc;
 import com.google.android.gms.analytics.GoogleAnalytics;
 import com.google.android.gms.analytics.HitBuilders;
 import com.google.android.gms.analytics.Tracker;
@@ -76,7 +76,6 @@ public class App extends Application {
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
 
-
     private static App _context;
 
     private Tracker _tracker;
@@ -93,7 +92,6 @@ public class App extends Application {
     private boolean _isConnected = false;
     private OAuth _auth = null;
     private boolean _hasInteracted = false;
-    private static WorkOrderListType _lastListSelector = WorkOrderListType.AVAILABLE;
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
@@ -114,14 +112,12 @@ public class App extends Application {
     public App() {
         super();
         Log.v(TAG, "GlobalState");
-    }
-
-    public static void setLastViewedList(WorkOrderListType selector) {
-        _lastListSelector = selector;
-    }
-
-    public static WorkOrderListType getLastViewedList() {
-        return _lastListSelector;
+        ContextProvider.setProvider(new ContextProvider.Provider() {
+            @Override
+            public Context get() {
+                return App.this;
+            }
+        });
     }
 
     @Override

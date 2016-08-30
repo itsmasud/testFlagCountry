@@ -26,6 +26,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
@@ -41,7 +42,6 @@ import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;

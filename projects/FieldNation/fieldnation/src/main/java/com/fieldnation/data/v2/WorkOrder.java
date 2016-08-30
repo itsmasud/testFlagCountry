@@ -23,15 +23,13 @@ public class WorkOrder implements Parcelable {
     @Json
     private String title;
     @Json
-    private Status status;
-    @Json
     private Org org;
     @Json
     private Bundle bundle;
     @Json
     private Location location;
     @Json
-    private Requirements requirements;
+    private Schedule schedule;
     @Json
     private Pay pay;
 
@@ -44,18 +42,6 @@ public class WorkOrder implements Parcelable {
 
     public String getTitle() {
         return title;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public Status.Primary getPrimaryStatus() {
-        return status.getPrimary();
-    }
-
-    public Status.Secondary getSecondaryStatus() {
-        return status.getSecondary();
     }
 
     public Org getOrg() {
@@ -74,8 +60,8 @@ public class WorkOrder implements Parcelable {
         return location;
     }
 
-    public Requirements getRequirements() {
-        return requirements;
+    public Schedule getSchedule() {
+        return schedule;
     }
 
     public Pay getPay() {
@@ -95,8 +81,13 @@ public class WorkOrder implements Parcelable {
         @Override
         public int compare(WorkOrder lhs, WorkOrder rhs) {
             try {
-                long l = ISO8601.toUtc(lhs.getRequirements().getSchedule().getStart());
-                long r = ISO8601.toUtc(rhs.getRequirements().getSchedule().getStart());
+                long l = 0;
+                if (lhs.getSchedule().getBegin() != null)
+                    l = ISO8601.toUtc(lhs.getSchedule().getBegin());
+
+                long r = 0;
+                if (rhs.getSchedule().getBegin() != null)
+                    r = ISO8601.toUtc(rhs.getSchedule().getBegin());
 
                 if (l < r)
                     return -1;
@@ -184,14 +175,6 @@ public class WorkOrder implements Parcelable {
         public Status() {
         }
 
-        public Primary getPrimary() {
-            return Primary.valueOf(primary);
-        }
-
-        public Secondary getSecondary() {
-            return Secondary.fromValue(secondary);
-        }
-
         public JsonObject toJson() {
             return toJson(this);
         }
@@ -244,79 +227,5 @@ public class WorkOrder implements Parcelable {
         public void writeToParcel(Parcel dest, int flags) {
             dest.writeParcelable(toJson(), flags);
         }
-
-
-        public enum Primary {
-            AVAILABLE("available"), // 2 or 9
-            ASSIGNED("assigned"), // 3
-            INPROGRESS("inprogress"), // 3 + checkedin/out -- assigned
-            COMPLETED("completed"), // 4 workdone
-            APPROVED("approved"), // 5 == completed
-            PAID("paid"), // 6 == completed
-            CANCELED("canceled"), // 7
-            NA("NA");
-
-            private final String _value;
-
-            Primary(String value) {
-                _value = value;
-            }
-
-            public static Primary fromValue(String value) {
-                if (value == null)
-                    return NA;
-
-                Primary[] stati = values();
-                for (int i = 0; i < stati.length; i++) {
-                    if (stati[i]._value.equals(value)) {
-                        return stati[i];
-                    }
-                }
-                return NA;
-            }
-        }
-
-        public enum Secondary {
-            AVAILABLE("available"), // 2
-            ROUTED("routed"), // 2 + routed or 9 + routed
-            REQUESTED("requested"), // not routed, not in available
-            COUNTEROFFERED("counteroffered"), // SUBSTATUS_REQUESTED + countered
-            UNCONFIRMED("unconfirmed"), // 3
-            CONFIRMED("confirmed"), // 3 + confirmed
-            ONHOLD_UNACKNOWLEDGED("onhold_unacknowledged"), // 3
-            ONHOLD_ACKNOWLEDGED("onhold_acknowledged"), // 3
-            CHECKEDIN("checkedin"), // 3 + checked in
-            CHECKEDOUT("checkedout"), // 3 + checked out
-
-            PENDINGREVIEW("pendingreview"), // 4
-            INREVIEW("inreview"), // not a thing?
-            APPROVED_PROCESSINGPAYMENT("approved_processingpayment"), // 5
-            PAID("paid"), // 6
-            CANCELED("cancelled"), // 7
-            CANCELED_LATEFEEPROCESSING("cancelled_latefeeprocessing"), // 7 + has fees not paid
-            CANCELED_LATEFEEPAID("cancelled_latefeepaid"), // 7 + has feed, paid
-            NA("NA");
-
-            private final String _value;
-
-            Secondary(String value) {
-                _value = value;
-
-            }
-
-            public static Secondary fromValue(String value) {
-                if (value == null)
-                    return NA;
-
-                Secondary[] stati = values();
-                for (int i = 0; i < stati.length; i++) {
-                    if (stati[i]._value.equals(value)) {
-                        return stati[i];
-                    }
-                }
-                return NA;
-            }
-        }
     }
-
 }

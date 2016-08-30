@@ -19,8 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fntools.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadSlot;

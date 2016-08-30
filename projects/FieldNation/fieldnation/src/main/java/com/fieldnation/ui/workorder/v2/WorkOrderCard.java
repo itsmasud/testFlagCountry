@@ -147,30 +147,44 @@ public class WorkOrderCard extends RelativeLayout {
     }
 
     private void populateTime() {
-        if (misc.isEmptyOrNull(_workOrder.getRequirements().getSchedule().getEnd())) {
-            try {
-                Calendar cal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getStart());
-                _timeTextView.setText(
-                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        } else {
-            try {
-                Calendar scal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getStart());
-                Calendar ecal = ISO8601.toCalendar(_workOrder.getRequirements().getSchedule().getEnd());
-                _timeTextView.setText(
-                        new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
-                                + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
+        if (_workOrder.getSchedule() != null) {
+            if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+            } else if (_workOrder.getSchedule().getExact() != null) {
+                try {
+                    Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+            } else if (_workOrder.getSchedule().getRange() != null) {
+                try {
+                    Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                    Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                    _timeTextView.setText(
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
+                                    + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+            } else {
+                _timeTextView.setText("");
             }
         }
     }
 
     private void populateLocation() {
         com.fieldnation.data.v2.Location location = _workOrder.getLocation();
-        if (location.isRemote())
+        if (location == null)
             _locationTextView.setText(R.string.remote_work);
         else {
             if (location.getGeo() == null || _location == null) {

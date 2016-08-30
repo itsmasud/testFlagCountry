@@ -15,9 +15,9 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 import com.fieldnation.fntools.misc;
 
