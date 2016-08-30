@@ -98,7 +98,7 @@ public class SearchEditScreen extends RelativeLayout {
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
-        _statusSpinner.setSelection(0);
+        _statusSpinner.setSelection(1);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
@@ -122,8 +122,6 @@ public class SearchEditScreen extends RelativeLayout {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
-        _statusSpinner.setSelection(App.getLastViewedList().ordinal());
-
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
         }
@@ -143,7 +141,6 @@ public class SearchEditScreen extends RelativeLayout {
 
     public void reset() {
         _searchEditText.setText("");
-        _statusSpinner.setSelection(App.getLastViewedList().ordinal());
     }
 
     private void doSearch() {
@@ -155,8 +152,6 @@ public class SearchEditScreen extends RelativeLayout {
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
 
             searchParams.woList = TYPES[_statusSpinner.getSelectedItemPosition()];
-
-            App.setLastViewedList(TYPES[_statusSpinner.getSelectedItemPosition()]);
 
             switch (_locationSpinner.getSelectedItemPosition()) {
                 case 0: // profile

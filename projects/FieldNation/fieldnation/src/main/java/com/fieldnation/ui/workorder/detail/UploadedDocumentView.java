@@ -100,7 +100,6 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         _docClient.connect(App.get());
 
         setOnClickListener(_this_onClick);
-        setOnLongClickListener(_delete_onClick);
         setLoading(false, 0);
     }
 
@@ -194,6 +193,9 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
             Log.v(TAG, e);
         }
         _usernameTextView.setText(_doc.getUploaderUserName());
+
+        if (_workorder.canChangeDeliverables())
+            setOnLongClickListener(_delete_onClick);
 
         try {
             String ext = _doc.getFileName();

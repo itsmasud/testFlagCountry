@@ -16,19 +16,36 @@ public class Schedule implements Parcelable {
     private static final String TAG = "Schedule";
 
     @Json
-    private String start;
+    private Estimate estimate;
     @Json
-    private String end;
+    private Range range;
+    @Json
+    private String exact;
 
     public Schedule() {
     }
 
-    public String getStart() {
-        return start;
+    public Estimate getEstimate() {
+        return estimate;
     }
 
-    public String getEnd() {
-        return end;
+    public Range getRange() {
+        return range;
+    }
+
+    public String getExact() {
+        return exact;
+    }
+
+    public String getBegin() {
+        if (getEstimate() != null && getEstimate().getArrival() != null)
+            return getEstimate().getArrival();
+        else if (getRange() != null)
+            return getRange().getBegin();
+        else if (getExact() != null)
+            return getExact();
+
+        return null;
     }
 
     /*-*************************************-*/
