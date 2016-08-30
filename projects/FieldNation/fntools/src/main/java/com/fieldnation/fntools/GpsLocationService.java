@@ -1,6 +1,5 @@
 package com.fieldnation.fntools;
 
-
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
@@ -53,13 +52,13 @@ public class GpsLocationService {
 
     public void startLocation() {
         try {
-        if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
-            _isRunning = true;
-            _googleApiClient.connect();
-        } else if (!_googleApiClient.isConnecting()) {
-            _isRunning = true;
-            _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
-        }
+            if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
+                _isRunning = true;
+                _googleApiClient.connect();
+            } else if (!_googleApiClient.isConnecting()) {
+                _isRunning = true;
+                _fusedLocationProviderApi.requestLocationUpdates(_googleApiClient, _locationRequest, _locationListener);
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
             ToastClient.toast(App.get(), "Could not get gps location", Toast.LENGTH_SHORT);
