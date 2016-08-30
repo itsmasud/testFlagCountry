@@ -12,7 +12,7 @@ import android.widget.Toast;
 
 import com.fieldnation.Debug;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fntoast.ToastClient;
 
 /**
  * Created by Michael Carver on 5/26/2015.

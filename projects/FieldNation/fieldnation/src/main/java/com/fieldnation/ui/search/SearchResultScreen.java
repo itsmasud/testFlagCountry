@@ -10,9 +10,9 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.service.data.v2.workorder.SearchParams;

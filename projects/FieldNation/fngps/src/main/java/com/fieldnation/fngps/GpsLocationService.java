@@ -1,11 +1,14 @@
-package com.fieldnation.fntools;
+package com.fieldnation.fngps;
 
 import android.content.Context;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.widget.Toast;
 
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ContextProvider;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.FusedLocationProviderApi;
@@ -61,7 +64,7 @@ public class GpsLocationService {
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            ToastClient.toast(App.get(), "Could not get gps location", Toast.LENGTH_SHORT);
+            ToastClient.toast(ContextProvider.get(), "Could not get gps location", Toast.LENGTH_SHORT);
             //if (_listener != null)
             //_listener.onLocationNotAllowed();
         }
@@ -123,7 +126,7 @@ public class GpsLocationService {
                 }
             } catch (SecurityException ex) {
                 Log.v(TAG, ex);
-                ToastClient.toast(App.get(), "Could not get gps location", Toast.LENGTH_SHORT);
+                ToastClient.toast(ContextProvider.get(), "Could not get gps location", Toast.LENGTH_SHORT);
                 stopLocationUpdates();
 
             } catch (Exception ex) {

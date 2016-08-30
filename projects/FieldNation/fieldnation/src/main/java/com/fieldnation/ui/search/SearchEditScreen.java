@@ -13,10 +13,10 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.SearchParams;

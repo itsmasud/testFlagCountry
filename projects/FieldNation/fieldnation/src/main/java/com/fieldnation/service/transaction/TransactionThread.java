@@ -13,6 +13,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
@@ -22,7 +23,6 @@ import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.toast.ToastClient;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;

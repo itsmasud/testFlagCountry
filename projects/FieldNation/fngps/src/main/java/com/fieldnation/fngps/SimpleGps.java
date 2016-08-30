@@ -1,7 +1,8 @@
-package com.fieldnation.fntools;
+package com.fieldnation.fngps;
 
 import android.content.Context;
 import android.location.Location;
+
 
 import com.fieldnation.fnlog.Log;
 

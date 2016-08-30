@@ -11,8 +11,8 @@ import android.widget.Toast;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
-import com.fieldnation.service.toast.ToastClient;
 
 import java.io.File;
 

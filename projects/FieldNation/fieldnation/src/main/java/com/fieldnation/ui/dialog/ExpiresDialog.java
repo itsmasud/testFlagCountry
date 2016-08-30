@@ -16,7 +16,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 

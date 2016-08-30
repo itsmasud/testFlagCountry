@@ -18,9 +18,9 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.SimpleGps;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;

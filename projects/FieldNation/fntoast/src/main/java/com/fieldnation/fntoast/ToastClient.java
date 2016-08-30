@@ -1,17 +1,12 @@
-package com.fieldnation.service.toast;
+package com.fieldnation.fntoast;
 
 import android.app.Activity;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.design.widget.Snackbar;
-import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -124,7 +119,7 @@ public class ToastClient extends TopicClient {
 
     public static abstract class Listener extends TopicClient.Listener {
         private static final String TAG = "ToastClient.Listener";
-        private Snackbar _snackbar = null;
+        // private Snackbar _snackbar = null;
         private long _lastId = 0;
 
         public abstract Activity getActivity();
@@ -176,6 +171,7 @@ public class ToastClient extends TopicClient {
                 return;
             }
 
+/*
             Snackbar snackbar = Snackbar.make(getActivity().findViewById(android.R.id.content), title, duration);
             TextView tv = (TextView) snackbar.getView().findViewById(android.support.design.R.id.snackbar_text);
             tv.setTextColor(getActivity().getResources().getColor(R.color.fn_white_text));
@@ -207,6 +203,7 @@ public class ToastClient extends TopicClient {
             _snackbar = snackbar;
             _lastId = id;
             Log.v(TAG, "snackbar.show()");
+*/
         }
 
         private void preShowToast(Bundle bundle) {
@@ -220,18 +217,18 @@ public class ToastClient extends TopicClient {
 
         public void dismissSnackBar(long id) {
             Log.v(TAG, "dismissSnackBar");
-            if (_snackbar == null)
-                return;
+//            if (_snackbar == null)
+//                return;
 
             if (_lastId != id)
                 return;
 
             try {
-                _snackbar.dismiss();
+                //_snackbar.dismiss();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
-            _snackbar = null;
+//            _snackbar = null;
             _lastId = 0;
         }
     }

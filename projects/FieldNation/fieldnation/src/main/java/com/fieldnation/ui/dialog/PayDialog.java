@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Pay;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.fntools.misc;
