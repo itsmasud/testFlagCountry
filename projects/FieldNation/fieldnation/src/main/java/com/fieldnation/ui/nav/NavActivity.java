@@ -58,12 +58,6 @@ public class NavActivity extends AuthSimpleActivity {
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
         _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
-        _searchesView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                hideDrawer();
-            }
-        });
 
         _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));

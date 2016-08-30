@@ -130,6 +130,7 @@ public class SavedSearchList extends LinearLayout {
 
     public static class Behavior extends CoordinatorLayout.Behavior<SavedSearchList> {
         private static final String TAG = "SavedSearchList.Behavior";
+        private static final int ANIMATION_DURATION = 250;
 
         private static final int MODE_ATTACHED_TO_APPBAR = 1;
         private static final int MODE_SCROLLING = 2;
@@ -138,6 +139,9 @@ public class SavedSearchList extends LinearLayout {
         private static final int MODE_SHOWING = 5;
 
         private int _mode = MODE_ATTACHED_TO_APPBAR;
+
+        private ValueAnimator _showingAnimation;
+        private ValueAnimator _hidingAnimation;
 
         public Behavior() {
             super();
@@ -173,8 +177,10 @@ public class SavedSearchList extends LinearLayout {
         }
 
         void startShowingAnimation(CoordinatorLayout parent, final SavedSearchList child) {
-            if (_mode != MODE_HIDDEN)
+            Log.v(TAG, "startShowingAnimation");
+            if (_mode != MODE_ATTACHED_TO_APPBAR)
                 return;
+            Log.v(TAG, "startShowingAnimation 1");
             setMode(MODE_SHOWING);
             child.setVisibility(VISIBLE);
 
@@ -188,15 +194,19 @@ public class SavedSearchList extends LinearLayout {
                 }
             }
 
-            ValueAnimator a = ValueAnimator.ofInt(child.getTop(), fin);
-            a.setDuration(100);
-            a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            if (_showingAnimation != null && _showingAnimation.isRunning()) {
+                _showingAnimation.cancel();
+            }
+
+            _showingAnimation = ValueAnimator.ofInt(child.getTop(), fin);
+            _showingAnimation.setDuration(ANIMATION_DURATION);
+            _showingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     child.setYPos((Integer) animation.getAnimatedValue());
                 }
             });
-            a.addListener(new Animator.AnimatorListener() {
+            _showingAnimation.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                 }
@@ -215,21 +225,27 @@ public class SavedSearchList extends LinearLayout {
                 public void onAnimationRepeat(Animator animation) {
                 }
             });
-            a.start();
+            _showingAnimation.start();
         }
 
         void startHidingAnimation(final SavedSearchList child) {
+            Log.v(TAG, "startHidingAnimation");
             setMode(MODE_HIDING);
 
-            ValueAnimator a = ValueAnimator.ofInt(child.getTop(), -child.getHeight());
-            a.setDuration(100);
-            a.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            if (_hidingAnimation != null && _hidingAnimation.isRunning()) {
+                _hidingAnimation.cancel();
+            }
+
+
+            _hidingAnimation = ValueAnimator.ofInt(child.getTop(), -child.getHeight());
+            _hidingAnimation.setDuration(ANIMATION_DURATION);
+            _hidingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     child.setYPos((Integer) animation.getAnimatedValue());
                 }
             });
-            a.addListener(new Animator.AnimatorListener() {
+            _hidingAnimation.addListener(new Animator.AnimatorListener() {
                 @Override
                 public void onAnimationStart(Animator animation) {
                 }
@@ -248,7 +264,7 @@ public class SavedSearchList extends LinearLayout {
                 public void onAnimationRepeat(Animator animation) {
                 }
             });
-            a.start();
+            _hidingAnimation.start();
         }
 
         @Override
