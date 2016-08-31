@@ -60,6 +60,12 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.red"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        mobile {
+            applicationId "com.fieldnation.android.mobile"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Mobile"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.mobile"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
         blue {
             applicationId "com.fieldnation.android.blue"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Blue"'
@@ -102,7 +108,7 @@ dependencies {
     compile project(':fnstore')
     compile project(':fntoast')
     compile project(':fngps')
-    
+
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'
     compile 'com.google.android.gms:play-services:7.8.0'

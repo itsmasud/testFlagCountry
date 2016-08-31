@@ -37,24 +37,23 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
-        <android.support.v7.widget.RecyclerView
+        <com.fieldnation.ui.search.SearchResultScreen
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
             app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 
         <com.fieldnation.ui.nav.SavedSearchList
             android:id="@+id/searchesView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#FFFFFFFF" />
+            android:background="@color/fn_grad_start" />
 
     </android.support.design.widget.CoordinatorLayout>
 
-    <View
+    <com.fieldnation.ui.nav.FooterBarView
         android:id="@+id/footer_view"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 </RelativeLayout>

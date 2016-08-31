@@ -34,6 +34,7 @@ public class SavedSearchList extends LinearLayout {
             new SavedSearchParams()
                     .type(WorkOrderListType.AVAILABLE.getType())
                     .status(WorkOrderListType.AVAILABLE.getStatuses())
+                    .radius(60.0)
                     .title("Available"),
             new SavedSearchParams()
                     .type(WorkOrderListType.CANCELED.getType())
@@ -52,6 +53,11 @@ public class SavedSearchList extends LinearLayout {
                     .status(WorkOrderListType.ROUTED.getStatuses())
                     .title("Routed")
     };
+
+    // Data
+    private OnHideListener _onHideListener;
+    private OnShowListener _onShowListener;
+    private OnSavedSearchParamsChangeListener _onSavedSearchParamsChangeListener;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -82,6 +88,18 @@ public class SavedSearchList extends LinearLayout {
             tv.setOnClickListener(_textView_onClick);
             addView(tv);
         }
+    }
+
+    public void setOnShowListener(OnShowListener onShowListener) {
+        _onShowListener = onShowListener;
+    }
+
+    public void setOnHideListener(OnHideListener onHideListener) {
+        _onHideListener = onHideListener;
+    }
+
+    public void setOnSavedSearchParamsChangeListener(OnSavedSearchParamsChangeListener listener) {
+        _onSavedSearchParamsChangeListener = listener;
     }
 
     public void hide() {
@@ -123,8 +141,9 @@ public class SavedSearchList extends LinearLayout {
     private final View.OnClickListener _textView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // Todo send some sort of signal here
-            Log.v(TAG, ((SavedSearchParams) v.getTag()).title);
+            hide();
+            if (_onSavedSearchParamsChangeListener != null)
+                _onSavedSearchParamsChangeListener.onChange((SavedSearchParams) v.getTag());
         }
     };
 
@@ -184,6 +203,9 @@ public class SavedSearchList extends LinearLayout {
             setMode(MODE_SHOWING);
             child.setVisibility(VISIBLE);
 
+            if (child._onShowListener != null)
+                child._onShowListener.onShow();
+
             int fin = 0;
             List<View> dependencies = parent.getDependencies(child);
             for (int i = 0; i < dependencies.size(); i++) {
@@ -231,11 +253,12 @@ public class SavedSearchList extends LinearLayout {
         void startHidingAnimation(final SavedSearchList child) {
             Log.v(TAG, "startHidingAnimation");
             setMode(MODE_HIDING);
+            if (child._onHideListener != null)
+                child._onHideListener.onHide();
 
             if (_hidingAnimation != null && _hidingAnimation.isRunning()) {
                 _hidingAnimation.cancel();
             }
-
 
             _hidingAnimation = ValueAnimator.ofInt(child.getTop(), -child.getHeight());
             _hidingAnimation.setDuration(ANIMATION_DURATION);
@@ -252,7 +275,7 @@ public class SavedSearchList extends LinearLayout {
 
                 @Override
                 public void onAnimationEnd(Animator animation) {
-                    setMode(MODE_HIDDEN);
+                    setMode(MODE_ATTACHED_TO_APPBAR);
                     child.setVisibility(GONE);
                 }
 
@@ -342,5 +365,17 @@ public class SavedSearchList extends LinearLayout {
             }
             return false;
         }
+    }
+
+    public interface OnHideListener {
+        void onHide();
+    }
+
+    public interface OnShowListener {
+        void onShow();
+    }
+
+    public interface OnSavedSearchParamsChangeListener {
+        void onChange(SavedSearchParams params);
     }
 }

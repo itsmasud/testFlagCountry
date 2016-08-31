@@ -5,21 +5,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
-import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.search.SearchResultScreen;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -28,7 +27,7 @@ public class NavActivity extends AuthSimpleActivity {
     private static final String TAG = "NavActivity";
 
     // Ui
-    private RecyclerView _recyclerView;
+    private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
     private SavedSearchList _searchesView;
     private IconFontTextView _arrowTextView;
@@ -58,16 +57,26 @@ public class NavActivity extends AuthSimpleActivity {
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
         _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
+        _searchesView.setOnHideListener(_onHideListener);
+        _searchesView.setOnShowListener(_onShowListener);
+        _searchesView.setOnSavedSearchParamsChangeListener(_onSearchChangedListener);
 
-        _recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        _recyclerView.setLayoutManager(new StaggeredGridLayoutManager(1, StaggeredGridLayoutManager.VERTICAL));
-        _recyclerView.setAdapter(_recyclerView_adapter);
+        _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
 
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
         _ccw.setAnimationListener(_ccw_animationListener);
         _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
         _cw.setAnimationListener(_ccw_animationListener);
-        hideDrawer();
+
+        _arrowTextView.startAnimation(_cw);
+
+        SavedSearchParams savedSearchParams = new SavedSearchParams()
+                .type(WorkOrderListType.AVAILABLE.getType())
+                .status(WorkOrderListType.AVAILABLE.getStatuses())
+                .title("Available");
+
+        _recyclerView.startSearch(savedSearchParams);
+        setTitle("Available Search");
     }
 
     private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
@@ -99,28 +108,16 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     private void showDrawer() {
-        _searchesView.show();
-//        if (_searchesView.getVisibility() != View.VISIBLE) {
-//            Log.v(TAG, "showDrawer");
-//            setTitle("Field Nation");
-//            _searchesView.setVisibility(View.VISIBLE);
-//            _arrowTextView.startAnimation(_cw);
-//            _layout.requestLayout();
-//            _layout.invalidate();
-//    }
-
+        if (_searchesView.getVisibility() != View.VISIBLE) {
+            _searchesView.show();
+        }
     }
 
     private void hideDrawer() {
-        _searchesView.hide();
-//        if (_searchesView.getVisibility() != View.GONE) {
-//            Log.v(TAG, "hideDrawer");
-//            setTitle("Field Nation");
-//            _searchesView.setVisibility(View.GONE);
-//            _arrowTextView.startAnimation(_ccw);
-//            _layout.requestLayout();
-//            _layout.invalidate();
-//    }
+        if (_searchesView.getVisibility() != View.GONE) {
+            _searchesView.hide();
+            Log.v(TAG, "hideDrawer");
+        }
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
@@ -134,28 +131,25 @@ public class NavActivity extends AuthSimpleActivity {
         }
     };
 
-    private class MyViewHolder extends RecyclerView.ViewHolder {
-        public MyViewHolder(View itemView) {
-            super(itemView);
-        }
-
-    }
-
-    private final RecyclerView.Adapter<MyViewHolder> _recyclerView_adapter = new RecyclerView.Adapter<MyViewHolder>() {
+    private final SavedSearchList.OnHideListener _onHideListener = new SavedSearchList.OnHideListener() {
         @Override
-        public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-            return new MyViewHolder((TextView) LayoutInflater.from(parent.getContext()).inflate(R.layout.view_saved_search_row, null));
+        public void onHide() {
+            _arrowTextView.startAnimation(_ccw);
         }
+    };
 
+    private final SavedSearchList.OnShowListener _onShowListener = new SavedSearchList.OnShowListener() {
         @Override
-        public void onBindViewHolder(MyViewHolder holder, int position) {
-            TextView v = (TextView) holder.itemView;
-            v.setText(position + "");
+        public void onShow() {
+            _arrowTextView.startAnimation(_cw);
         }
+    };
 
+    private final SavedSearchList.OnSavedSearchParamsChangeListener _onSearchChangedListener = new SavedSearchList.OnSavedSearchParamsChangeListener() {
         @Override
-        public int getItemCount() {
-            return 200;
+        public void onChange(SavedSearchParams params) {
+            _recyclerView.startSearch(params);
+            NavActivity.this.setTitle(misc.capitalize(params.title) + " Search");
         }
     };
 

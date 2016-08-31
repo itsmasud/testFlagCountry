@@ -10,12 +10,13 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.ListEnvelope;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
@@ -23,7 +24,6 @@ import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
-import com.fieldnation.fntools.ISO8601;
 
 import java.util.Calendar;
 import java.util.Comparator;
@@ -133,11 +133,14 @@ public class SearchResultScreen extends RelativeLayout {
     private final WorkOrderClient.Listener _workOrderClient_listener = new WorkOrderClient.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subSearch(_searchParams);
+            _workOrderClient.subSearch();
         }
 
         @Override
         public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
+            if (!_searchParams.toKey().equals(searchParams.toKey()))
+                return;
+
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
                 if (_adapter.getItemCount() == 0)
