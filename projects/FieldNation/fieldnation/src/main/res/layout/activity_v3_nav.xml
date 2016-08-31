@@ -47,7 +47,7 @@
             android:id="@+id/searchesView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/fn_grad_start" />
+            android:background="@color/fn_toolbar_menu_bg" />
 
     </android.support.design.widget.CoordinatorLayout>
 

@@ -27,8 +27,25 @@
     <!--<color name="fn_brandcolor_0">#00FF0000</color>-->
     <!--<color name="fn_brandcolor_dark">#FF550000</color>-->
 
+    <!--
+    97% - F8
+    90% - E6
+    80% - CC
+    50% - 80
+    40% - 66
+    30% - 4C
+    25% - 3F
+    20% - 33
+    15% - 26
+    10% - 19
+    -->
 
-    <color name="fn_primary_bg">#FFF3F3EB</color>
+    <color name="fn_primary">#FF1D1D1D</color>
+    <color name="fn_primary_dark">#FF000000</color>
+    <!--<color name="fn_toolbar_menu_bg">#F81D1D1D</color>--> <!-- 97% -->
+    <color name="fn_toolbar_menu_bg">#E61D1D1D</color>
+
+    <color name="fn_primary_bg">#FFFAFAFA</color>
     <color name="fn_primary_bg_medium">#FFd9d9d2</color>
     <color name="fn_primary_bg_80">#CCF3F3EB</color>
     <color name="fn_primary_bg_0">#00F3F3EB</color>
@@ -39,11 +56,11 @@
     <color name="fn_clickable_bg_50">#80FFFFFF</color>
     <color name="fn_clickable_bg_0">#00FFFFFF</color>
 
-    <color name="fn_menu_bg">#FFf9f9f9</color>
-    <color name="fn_menu_bg_80">#CCf9f9f9</color>
-    <color name="fn_menu_bg_50">#80f9f9f9</color>
+    <color name="fn_menu_bg">#FFFFFFFF</color>
+    <color name="fn_menu_bg_80">#CCFFFFFF</color>
+    <color name="fn_menu_bg_50">#80FFFFFF</color>
 
-    <color name="fn_list_bg">#FFFCFCFC</color>
+    <color name="fn_list_bg">#FFFFFFFF</color>
 
     <!--<color name="fn_primary_bg">#FF4444FF</color>-->
     <!--<color name="fn_primary_bg_medium">#FF4444FF</color>-->
@@ -83,8 +100,8 @@
     <!--<color name="fn_accent_color_0">#00FFFF00</color>-->
     <!--<color name="fn_accent_color_dark">#FF555500</color>-->
 
-    <color name="fn_grad_start">#FF8EADDB</color>
-    <color name="fn_grad_end">#FF61C4B2</color>
+    <!--<color name="fn_grad_start">#FF8EADDB</color>-->
+    <!--<color name="fn_grad_end">#FF61C4B2</color>-->
 
     <!--<color name="fn_grad_start">#FFFF0000</color>-->
     <!--<color name="fn_grad_end">#FFFFFF00</color>-->

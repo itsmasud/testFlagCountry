@@ -3,6 +3,6 @@
     style="@style/Text_Subhead"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="8dp"
+    android:padding="10dp"
     android:text="@string/placeholder_phrase"
     android:textColor="@color/fn_white_text" />
