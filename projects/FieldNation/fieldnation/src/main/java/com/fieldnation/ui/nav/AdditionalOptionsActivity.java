@@ -11,6 +11,7 @@ import android.view.View;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 
 /**
@@ -65,6 +66,8 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, AdditionalOptionsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        ActivityResultClient.startActivity();
+
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);

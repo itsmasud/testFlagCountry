@@ -197,21 +197,13 @@ public abstract class AuthFragmentActivity extends FragmentActivity {
     /*-*********************************-*/
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
         @Override
-        public void onConnected() {
-            _activityResultClient.subStartActivityForResult();
-            _activityResultClient.subStartActivity();
+        public Activity getActivity() {
+            return AuthFragmentActivity.this;
         }
 
         @Override
-        public void startActivity(Intent intent) {
-            Log.v(TAG, "startActivity");
-            AuthFragmentActivity.this.startActivity(intent);
-        }
-
-        @Override
-        public void startActivityForResult(Intent intent, int requestCode) {
-            Log.v(TAG, "startActivityForResult");
-            AuthFragmentActivity.this.startActivityForResult(intent, requestCode);
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
     };
 

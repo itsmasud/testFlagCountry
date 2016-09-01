@@ -300,21 +300,13 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
         @Override
-        public void onConnected() {
-            _activityResultClient.subStartActivity();
-            _activityResultClient.subStartActivityForResult();
+        public Activity getActivity() {
+            return AuthActionBarActivity.this;
         }
 
         @Override
-        public void startActivityForResult(Intent intent, int requestCode) {
-            Log.v(TAG, "startActivityForResult");
-            AuthActionBarActivity.this.startActivityForResult(intent, requestCode);
-        }
-
-        @Override
-        public void startActivity(Intent intent) {
-            Log.v(TAG, "startActivity");
-            AuthActionBarActivity.this.startActivity(intent);
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
     };
 

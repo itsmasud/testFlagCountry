@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
@@ -22,18 +23,18 @@ import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
-import com.fieldnation.fntools.misc;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -202,21 +203,13 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
         @Override
-        public void onConnected() {
-            _activityResultClient.subStartActivity();
-            _activityResultClient.subStartActivityForResult();
+        public Activity getActivity() {
+            return AuthActivity.this;
         }
 
         @Override
-        public void startActivityForResult(Intent intent, int requestCode) {
-            Log.v(TAG, "startActivityForResult");
-            AuthActivity.this.startActivityForResult(intent, requestCode);
-        }
-
-        @Override
-        public void startActivity(Intent intent) {
-            Log.v(TAG, "startActivity");
-            AuthActivity.this.startActivity(intent);
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
     };
 
