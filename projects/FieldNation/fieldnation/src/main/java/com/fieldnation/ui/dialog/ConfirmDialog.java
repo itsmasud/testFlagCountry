@@ -156,27 +156,6 @@ public class ConfirmDialog extends DialogFragmentBase {
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
     }
 
-//    public void setTime(Calendar time) {
-//        try {
-//            _startCalendar.set(time.get(Calendar.YEAR), time.get(Calendar.MONTH),
-//                    time.get(Calendar.DAY_OF_MONTH), time.get(Calendar.HOUR_OF_DAY),
-//                    time.get(Calendar.MINUTE));
-//
-//            long start = ISO8601.toUtc(_schedule.getStartTime());
-//            long end = ISO8601.toUtc(_schedule.getEndTime());
-//
-//            long input = _startCalendar.getTimeInMillis();
-//
-//            if (input < start || input > end) {
-//                Toast.makeText(getActivity(), "Arrival time is out of range. Please try again", Toast.LENGTH_LONG).show();
-//                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-//            }
-//
-//            _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
-//    }
 
     public void show(Workorder workorder, Schedule schedule) {
         _schedule = schedule;

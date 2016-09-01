@@ -15,16 +15,18 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fngps.GpsLocationService;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -35,10 +37,9 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
@@ -47,8 +48,6 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -70,8 +69,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private UnavailableCardView _emptyView;
 
     // Dialogs
-    private ExpiresDialog _expiresDialog;
-    private ConfirmDialog _confirmDialog;
+    private EtaDialog _etaDialog;
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
@@ -160,10 +158,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _etaDialog = EtaDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -244,8 +241,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _expiresDialog.setListener(_expiresDialog_listener);
-        _confirmDialog.setListener(_confirmDialog_listener);
+        _etaDialog.setListener(_etaDialog_listener);
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
@@ -617,7 +613,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _expiresDialog.show(workorder);
+                _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
             }
         }
 
@@ -665,7 +661,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            _etaDialog.show(workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
         }
 
         @Override
@@ -718,7 +714,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            _etaDialog.show(workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
         }
 
         @Override
@@ -767,7 +763,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
+            _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
         }
     };
 
@@ -788,7 +784,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+    private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String dateTime) {
             long time = -1;
@@ -807,9 +803,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             // notify the UI
             _adapter.refreshPages();
         }
-    };
 
-    private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {

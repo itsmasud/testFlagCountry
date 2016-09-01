@@ -65,7 +65,6 @@ import com.fieldnation.ui.SignatureListView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
@@ -73,7 +72,6 @@ import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
-import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
@@ -147,14 +145,13 @@ public class WorkFragment extends WorkorderFragment {
     private AcceptBundleDialog _acceptBundleWOExpiresDialog;
     private AppPickerDialog _appDialog;
     private ClosingNotesDialog _closingDialog;
-    private ConfirmDialog _confirmDialog;
+    private EtaDialog _etaDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
     private DeviceCountDialog _deviceCountDialog;
     private DiscountDialog _discountDialog;
     private ExpenseDialog _expenseDialog;
-    private ExpiresDialog _expiresDialog;
     private MarkCompleteDialog _markCompleteDialog;
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
@@ -361,14 +358,13 @@ public class WorkFragment extends WorkorderFragment {
         _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _etaDialog = EtaDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
@@ -394,12 +390,11 @@ public class WorkFragment extends WorkorderFragment {
         _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
         _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
         _closingDialog.setListener(_closingNotes_onOk);
-        _confirmDialog.setListener(_confirmListener);
+        _etaDialog.setListener(_etaDialog_listener);
         _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
         _expenseDialog.setListener(_expenseDialog_listener);
-        _expiresDialog.setListener(_expiresDialog_listener);
         _customFieldDialog.setListener(_customFieldDialog_listener);
         _appDialog.setListener(_appdialog_listener);
         _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
@@ -595,7 +590,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _confirmDialog.show(_workorder, _workorder.getSchedule());
+                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -868,14 +863,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _confirmDialog.show(_workorder, workorder.getSchedule());
+            _etaDialog.show(_workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
+            _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
         }
     };
 
@@ -918,7 +913,26 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+    private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
+
+        @Override
+        public void onOk(Workorder workorder, String dateTime) {
+            long seconds = -1;
+            if (dateTime != null) {
+                try {
+                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            }
+
+            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
+                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
+            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
+            setLoading(true);
+
+        }
+
         @Override
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
@@ -1044,25 +1058,25 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            long seconds = -1;
-            if (dateTime != null) {
-                try {
-                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
-            }
-
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
-            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-            setLoading(true);
-
-        }
-    };
+//    private final EtaDialog.Listener _expiresDialog_listener = new EtaDialog.Listener() {
+//        @Override
+//        public void onOk(Workorder workorder, String dateTime) {
+//            long seconds = -1;
+//            if (dateTime != null) {
+//                try {
+//                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+//                } catch (ParseException e) {
+//                    Log.v(TAG, e);
+//                }
+//            }
+//
+//            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
+//                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
+//            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
+//            setLoading(true);
+//
+//        }
+//    };
 
     private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
@@ -1338,7 +1352,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _expiresDialog.show(_workorder);
+                _etaDialog.show(_workorder, "Request ", getString(R.string.btn_submit));
             }
         }
 
@@ -1347,7 +1361,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _confirmDialog.show(_workorder, _workorder.getSchedule());
+                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
             }
         }
 
@@ -1377,7 +1391,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _confirmDialog.show(_workorder, _workorder.getSchedule());
+                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
             }
         }
 
@@ -1651,7 +1665,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _confirmDialog.show(_workorder, _workorder.getSchedule());
+            _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
         }
 
         @Override
