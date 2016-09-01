@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="OptionsProfileImage">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+    </style>
+
+    <style name="OptionsTitle" parent="@style/Text_Body_1">
+        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:textColor">@color/fn_accent_color</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="OptionsMenu">
+        <item name="android:paddingLeft">8dp</item>
+    </style>
+
+    <style name="OptionsMenuIcon" parent="@style/Text_Body_1_Caption">
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:gravity">center</item>
+        <item name="android:textSize">24sp</item>
+    </style>
+
+    <style name="OptionsMenuTitle" parent="@style/Text_Subhead">
+        <item name="android:layout_centerVertical">true</item>
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+
+    </style>
+</resources>

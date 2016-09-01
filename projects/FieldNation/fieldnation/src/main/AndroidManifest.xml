@@ -40,6 +40,10 @@
             tools:replace="android:value" />
 
         <activity
+            android:name=".ui.nav.AdditionalOptionsActivity"
+            android:exported="false"
+            android:process=":frontside" />
+        <activity
             android:name=".ui.search.SearchResultsActivity"
             android:exported="false"
             android:process=":frontside" />
