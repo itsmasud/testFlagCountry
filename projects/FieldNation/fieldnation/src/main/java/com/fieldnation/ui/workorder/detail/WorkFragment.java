@@ -71,6 +71,7 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
+import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
@@ -1517,7 +1518,9 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
+//            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
+            EtaDialog dialog = EtaDialog.getInstance(getFragmentManager(), TAG);
+            dialog.show();
         }
 
         @Override

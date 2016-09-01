@@ -602,7 +602,7 @@
     <string name="what_about_approval">What about approval?</string>
     <string name="what_about_payment">What about payment?</string>
     <string name="what_about_site">What about the site?</string>
-    <string name="when_does_this_request_expire">When does this request expire?</string>
+    <string name="when_does_this_request_expire">Expire request</string>
     <string name="what_category">What is the category?</string>
     <string name="what_type">What is the type?</string>
     <string name="what_type_of_schedule">What type of schedule?</string>
