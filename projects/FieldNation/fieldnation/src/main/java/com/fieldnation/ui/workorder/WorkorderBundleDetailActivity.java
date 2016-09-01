@@ -9,14 +9,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.AuthActionBarActivity;
 
 import java.text.NumberFormat;
 
@@ -33,7 +33,6 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private TextView _distanceTextView;
     private TextView _dateTextView;
     private Button _requestButton;
-//    private RelativeLayout _loadingLayout;
 
     // Data
     private long _workorderId = 0;

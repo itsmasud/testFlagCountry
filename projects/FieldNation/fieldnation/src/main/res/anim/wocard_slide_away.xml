@@ -2,6 +2,4 @@
 <translate xmlns:android="http://schemas.android.com/apk/res/android"
     android:duration="250"
     android:fillAfter="true"
-    android:toXDelta="-90%" >
-
-</translate>
+    android:toXDelta="-90%" />

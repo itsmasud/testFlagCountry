@@ -18,7 +18,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical"
-                android:background="@drawable/fn_gradient"
+                android:background="@color/fn_primary"
                 android:paddingBottom="32dp"
                 android:paddingLeft="16dp"
                 android:paddingTop="32dp">

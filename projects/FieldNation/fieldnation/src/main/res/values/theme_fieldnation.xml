@@ -2,20 +2,20 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
 
     <style name="FieldNation.Leaving.Theme" parent="FieldNation.Material.Theme">
-        <item name="colorPrimary">#FF671d26</item>
-        <item name="colorPrimaryDark">#FF671d26</item>
-        <item name="colorAccent">#FF671d26</item>
+        <item name="colorPrimary">@color/fn_leaving_primary</item>
+        <item name="colorPrimaryDark">@color/fn_leaving_primary_dark</item>
+        <item name="colorAccent">@color/fn_leaving_accent</item>
     </style>
 
     <style name="FieldNation.Material.Theme" parent="FieldNation.ActionBar.Theme">
         <!-- Main theme colors v21+ -->
         <!--   your app branding color for the app bar -->
-        <item name="colorPrimary">@color/fn_grad_start</item>
+        <item name="colorPrimary">@color/fn_primary</item>
         <!--   darker variant for the status bar and contextual app bars -->
-        <item name="colorPrimaryDark">@color/fn_grad_end</item>
+        <item name="colorPrimaryDark">@color/fn_primary_dark</item>
         <!--   theme UI controls like checkboxes and text fields -->
         <!--<item name="colorAccent">@color/fn_brandcolor</item>-->
-        <item name="colorAccent">@color/fn_clickable_text</item>
+        <item name="colorAccent">@color/fn_brandcolor</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowNoTitle">true</item>
 
@@ -47,7 +47,6 @@
         <item name="fnToolbarStyle">@style/toolbarStyle</item>
         <item name="fnToolbarTabListStyle">@style/toolbarTabListStyle</item>
         <item name="fnToolbarTabListContainerStyle">@style/toolbarTabListContainerStyle</item>
-
 
         <!-- activities -->
         <item name="activityMainStyle">@style/ActivityMain</item>

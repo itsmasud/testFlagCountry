@@ -14,6 +14,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 import com.fieldnation.fntools.MemUtils;
 
@@ -149,7 +150,7 @@ public class SplashActivity extends AuthFragmentActivity {
             if (!_calledMyWork) {
                 Log.v(TAG, "doNextStep 5");
                 _calledMyWork = true;
-                MyWorkActivity.startNew(this);
+                NavActivity.startNew(this);
                 finish();
             }
         }

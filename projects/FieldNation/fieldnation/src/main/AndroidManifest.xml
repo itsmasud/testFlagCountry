@@ -48,7 +48,7 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
-            android:name=".ui.workorder.MyWorkActivity"
+            android:name=".ui.nav.NavActivity"
             android:exported="false"
             android:process=":frontside" />
         <activity
@@ -61,10 +61,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".ui.market.MarketActivity"
-            android:exported="false"
-            android:process=":frontside" />
         <activity
             android:name=".ui.SignatureActivity"
             android:exported="false"

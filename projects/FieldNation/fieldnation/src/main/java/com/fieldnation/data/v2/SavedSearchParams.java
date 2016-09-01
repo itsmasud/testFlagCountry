@@ -1,20 +1,21 @@
-package com.fieldnation.service.data.v2.workorder;
+package com.fieldnation.data.v2;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.fnjson.JsonArray;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 
 /**
  * Created by Michael on 7/21/2016.
  */
-public class SearchParams implements Parcelable {
-    private static final String TAG = "SearchParams";
+public class SavedSearchParams implements Parcelable {
+    private static final String TAG = "SavedSearchParams";
 
     public enum ListType {
         UNAVAILABLE("unavailable"),
@@ -82,28 +83,35 @@ public class SearchParams implements Parcelable {
     public String order = "asc";
     @Json
     public Boolean remoteWork = null;
+    @Json
+    public String title;
 
-    public SearchParams() {
+    public SavedSearchParams() {
     }
 
-    public SearchParams type(ListType listType) {
+    public SavedSearchParams type(ListType listType) {
         type = listType;
         return this;
     }
 
-    public SearchParams status(Status[] status) {
+    public SavedSearchParams status(Status[] status) {
         this.status = status;
         return this;
     }
 
-    public SearchParams location(Double latitude, Double longitude) {
+    public SavedSearchParams location(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
         return this;
     }
 
-    public SearchParams radius(Double radius) {
+    public SavedSearchParams radius(Double radius) {
         this.radius = radius;
+        return this;
+    }
+
+    public SavedSearchParams title(String title) {
+        this.title = title;
         return this;
     }
 
@@ -170,7 +178,7 @@ public class SearchParams implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(SearchParams searchParams) {
+    public static JsonObject toJson(SavedSearchParams searchParams) {
         try {
             JsonObject obj = Serializer.serializeObject(searchParams);
 
@@ -194,9 +202,9 @@ public class SearchParams implements Parcelable {
         }
     }
 
-    public static SearchParams fromJson(JsonObject json) {
+    public static SavedSearchParams fromJson(JsonObject json) {
         try {
-            SearchParams searchParams = Unserializer.unserializeObject(SearchParams.class, json);
+            SavedSearchParams searchParams = Unserializer.unserializeObject(SavedSearchParams.class, json);
 
             searchParams.type = ListType.values()[json.getInt("listType")];
             searchParams.woList = WorkOrderListType.values()[json.getInt("woList")];
@@ -220,12 +228,12 @@ public class SearchParams implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<SearchParams> CREATOR = new Parcelable.Creator<SearchParams>() {
+    public static final Parcelable.Creator<SavedSearchParams> CREATOR = new Parcelable.Creator<SavedSearchParams>() {
 
         @Override
-        public SearchParams createFromParcel(Parcel source) {
+        public SavedSearchParams createFromParcel(Parcel source) {
             try {
-                return SearchParams.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return SavedSearchParams.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -233,8 +241,8 @@ public class SearchParams implements Parcelable {
         }
 
         @Override
-        public SearchParams[] newArray(int size) {
-            return new SearchParams[size];
+        public SavedSearchParams[] newArray(int size) {
+            return new SavedSearchParams[size];
         }
     };
 

@@ -38,7 +38,7 @@ public class OverScrollRecyclerView extends RecyclerView {
     }
 
     private void init() {
-        setOverScrollMode(OVER_SCROLL_ALWAYS);
+        //setOverScrollMode(OVER_SCROLL_ALWAYS);
     }
 
     public void setOnOverScrollListener(OnOverScrollListener listener) {
