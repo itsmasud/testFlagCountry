@@ -330,7 +330,7 @@ public class SavedSearchList extends LinearLayout {
 
         @Override
         public boolean onStartNestedScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View directTargetChild, View target, int nestedScrollAxes) {
-            Log.v(TAG, "onStartNestedScroll " + nestedScrollAxes);
+            // Log.v(TAG, "onStartNestedScroll " + nestedScrollAxes);
             if (_mode == MODE_SCROLLING && child.getBottom() <= 0) {
                 setMode(MODE_HIDDEN);
                 child.setVisibility(GONE);
@@ -343,11 +343,11 @@ public class SavedSearchList extends LinearLayout {
 
         @Override
         public void onNestedScroll(CoordinatorLayout coordinatorLayout, SavedSearchList child, View target, int dxConsumed, int dyConsumed, int dxUnconsumed, int dyUnconsumed) {
-            Log.v(TAG, "onNestedScroll " + dxConsumed + " " + dyConsumed + " " + dxUnconsumed + " " + dyUnconsumed);
+            // Log.v(TAG, "onNestedScroll " + dxConsumed + " " + dyConsumed + " " + dxUnconsumed + " " + dyUnconsumed);
             if (_mode == MODE_SCROLLING) {
                 int h = child.getHeight();
                 int b = child.getBottom() - (dyUnconsumed + dyConsumed);
-                Log.v(TAG, "onNestedScroll " + child.getTop() + " " + child.getBottom() + " " + (b - h) + " " + b);
+                // Log.v(TAG, "onNestedScroll " + child.getTop() + " " + child.getBottom() + " " + (b - h) + " " + b);
                 if (b < 0) {
                     setMode(MODE_HIDDEN);
                     child.setVisibility(GONE);
@@ -359,7 +359,7 @@ public class SavedSearchList extends LinearLayout {
 
         @Override
         public boolean onNestedPreFling(CoordinatorLayout coordinatorLayout, final SavedSearchList child, View target, float velocityX, float velocityY) {
-            Log.v(TAG, "onNestedPreFling " + velocityX + " " + velocityY);
+            // Log.v(TAG, "onNestedPreFling " + velocityX + " " + velocityY);
             if (_mode == MODE_SCROLLING && velocityY > 0) {
                 startHidingAnimation(child);
             }

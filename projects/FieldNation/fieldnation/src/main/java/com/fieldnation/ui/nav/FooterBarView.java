@@ -57,7 +57,7 @@ public class FooterBarView extends RelativeLayout {
     private final View.OnClickListener _menu_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            AdditionalOptionsActivity.startNew(v.getContext());
+            AdditionalOptionsActivity.startNew(getContext());
         }
     };
 }

@@ -53,6 +53,7 @@ public class AdditionalOptionsView extends RelativeLayout {
     private View _contactMenu;
     private View _debugMenu;
     private View _legalMenu;
+    private View _versionMenu;
     private TextView _versionTextView;
     private View _linkContainerView;
 
@@ -116,8 +117,10 @@ public class AdditionalOptionsView extends RelativeLayout {
         _legalMenu = findViewById(R.id.legal_menu);
         _legalMenu.setOnClickListener(_legal_onClick);
 
+        _versionMenu = findViewById(R.id.version_menu);
+        _versionMenu.setOnClickListener(_version_onClick);
+
         _versionTextView = (TextView) findViewById(R.id.version_textview);
-        _versionTextView.setOnClickListener(_version_onClick);
         try {
             _versionTextView.setText("Version "
                     + (BuildConfig.VERSION_NAME + " "
@@ -298,7 +301,7 @@ public class AdditionalOptionsView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }
@@ -308,6 +311,7 @@ public class AdditionalOptionsView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
             getContext().startActivity(intent);
             attachAnimations();
         }

@@ -64,11 +64,10 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, AdditionalOptionsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
         if (context instanceof Activity) {
             ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
         }
     }
-
 }
