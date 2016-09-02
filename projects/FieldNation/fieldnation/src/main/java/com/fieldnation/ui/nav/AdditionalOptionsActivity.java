@@ -19,9 +19,6 @@ import com.fieldnation.ui.AuthSimpleActivity;
 public class AdditionalOptionsActivity extends AuthSimpleActivity {
     private static final String TAG = "AdditionalOptionsActivity";
 
-    // Ui
-    private AdditionalOptionsScreen _screen;
-
     @Override
     public int getLayoutResource() {
         return R.layout.activity_additional_options;
@@ -34,9 +31,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.back_arrow);
         toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
-
-        _screen = (AdditionalOptionsScreen) findViewById(R.id.screen);
-        _screen.setFinishListener(_finishListener);
 
         setTitle("Additional Options");
     }
@@ -64,13 +58,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
-
-    private final AdditionalOptionsScreen.FinishListener _finishListener = new AdditionalOptionsScreen.FinishListener() {
-        @Override
-        public void finish() {
-            AdditionalOptionsActivity.this.finish();
-        }
-    };
 
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override

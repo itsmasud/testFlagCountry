@@ -62,7 +62,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     // Services
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
-    private FinishListener _finishListener;
 
     public AdditionalOptionsScreen(Context context) {
         super(context);
@@ -132,10 +131,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(App.get());
-    }
-
-    public void setFinishListener(FinishListener listener) {
-        _finishListener = listener;
     }
 
     @Override
@@ -295,8 +290,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             PaymentListActivity.startNew(getContext());
-            if (_finishListener != null)
-                _finishListener.finish();
         }
     };
 
@@ -343,8 +336,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             NewFeatureActivity.startNew(App.get());
-            if (_finishListener != null)
-                _finishListener.finish();
         }
     };
 
@@ -354,9 +345,4 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             // TODO show the new legal page
         }
     };
-
-    public interface FinishListener {
-        void finish();
-    }
-
 }
