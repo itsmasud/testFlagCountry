@@ -14,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -79,18 +80,10 @@ public class NavActivity extends AuthSimpleActivity {
         setTitle("Available");
     }
 
-    private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
+    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
             _ccw.cancel();
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
         }
     };
 

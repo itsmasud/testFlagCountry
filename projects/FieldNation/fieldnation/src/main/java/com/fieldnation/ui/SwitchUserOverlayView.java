@@ -12,6 +12,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.nav.NavActivity;
 
@@ -103,7 +104,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
         }
     };
 
-    private final Animation.AnimationListener _shrinkListener = new Animation.AnimationListener() {
+    private final Animation.AnimationListener _shrinkListener = new DefaultAnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
             postDelayed(new Runnable() {
@@ -131,14 +132,9 @@ public class SwitchUserOverlayView extends RelativeLayout {
 
             _textView.startAnimation(_growAnimation);
         }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
     };
 
-    private final Animation.AnimationListener _growListener = new Animation.AnimationListener() {
+    private final Animation.AnimationListener _growListener = new DefaultAnimationListener() {
         @Override
         public void onAnimationStart(Animation animation) {
             postDelayed(new Runnable() {
@@ -162,11 +158,6 @@ public class SwitchUserOverlayView extends RelativeLayout {
         @Override
         public void onAnimationEnd(Animation animation) {
             _textView.startAnimation(_shrinkAnimation);
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
         }
     };
 }

@@ -28,6 +28,7 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -186,18 +187,10 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
+    private final Animation.AnimationListener _fadeout_listener = new DefaultAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
         }
     };
 
