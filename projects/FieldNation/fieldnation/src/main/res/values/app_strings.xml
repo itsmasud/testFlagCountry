@@ -14,7 +14,8 @@
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
-    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
+    <string name="placeholder_time_long">12:00 AM</string>
+    <string name="placeholder_time_duration_long">12:00 AM - 12:00 PM</string>
     <string name="placeholder_date_short">10/20/1963</string>
     <string name="placeholder_money_short">$5.50</string>
     <string name="placeholder_money_long">$6000.00</string>
@@ -205,7 +206,7 @@
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="hint_text_decline_spinner">Please specify</string>
-    <string name="hint_text_block_spinner">Feel free to share more details</string>
+    <string name="hint_text_optional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -348,6 +349,8 @@
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="arrival_time">Arrival Time</string>
+    <string name="tv_date">Date</string>
+    <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
     <string name="block_reason">Block Reason</string>

@@ -30,7 +30,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/type1_textview"
-        android:text="@string/placeholder_time_long" />
+        android:text="@string/placeholder_time_duration_long" />
 
     <TextView
         android:id="@+id/type2_textview"
@@ -51,7 +51,7 @@
         android:layout_marginLeft="16dp"
         android:layout_marginTop="16dp"
         android:layout_toRightOf="@+id/type2_textview"
-        android:text="@string/placeholder_time_long" />
+        android:text="@string/placeholder_time_duration_long" />
 
     <View
         style="@style/DividerFull"

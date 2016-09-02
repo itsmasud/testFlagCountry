@@ -160,10 +160,100 @@
                 android:layout_marginLeft="4dp"
                 android:text="@string/job_duration" />
 
+            <CheckBox
+                android:id="@+id/tac_checkbox"
+                style="?attr/tileCheckBoxStyle"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/jobDuration_textview"
+                android:text="@string/i_accept" />
+
+            <Button
+                android:id="@+id/tac_button"
+                style="?attr/buttonFlatStyle"
+                android:layout_below="@+id/jobDuration_textview"
+                android:layout_toRightOf="@+id/tac_checkbox"
+                android:gravity="left|center_vertical"
+                android:maxLines="1"
+                android:text="@string/terms_and_conditions" />
+
+        </RelativeLayout>
+
+        <Switch
+            android:id="@+id/enableEta_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/confirm_layout"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:paddingLeft="@dimen/dialogGutter"
+            android:paddingRight="@dimen/dialogGutter"
+            android:text="Set ETA" />
+
+        <RelativeLayout
+            android:id="@+id/eta_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/enableEta_switch"
+            android:background="@color/dialogBg_Material"
+            android:paddingLeft="@dimen/dialogGutter"
+            android:paddingRight="@dimen/dialogGutter"
+            android:visibility="visible">
+
+
+            <TextView
+                android:id="@+id/etaStartDate_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:text="@string/tv_date" />
+
+            <Button
+                android:id="@+id/etaStartDate_button"
+                style="@style/SpinnerButton"
+                android:layout_below="@+id/etaStartDate_textview"
+                android:text="@string/placeholder_date_long" />
+
+            <View
+                android:id="@+id/etaStartDate_divider"
+                style="@style/DividerSpinnerFull"
+                android:layout_below="@+id/etaStartDate_button"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/fn_material_spinner_bottom_line" />
+
+
+            <TextView
+                android:id="@+id/etaStartTime_textview"
+                style="@style/Text_Caption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/etaStartDate_divider"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:text="@string/tv_start_time" />
+
+            <Button
+                android:id="@+id/etaStartTime_button"
+                style="@style/SpinnerButton"
+                android:layout_below="@+id/etaStartTime_textview"
+                android:text="@string/placeholder_time_long" />
+
+            <View
+                android:id="@+id/etaStartTime_divider"
+                style="@style/DividerSpinnerFull"
+                android:layout_below="@+id/etaStartTime_button"
+                android:layout_marginBottom="8dp"
+                android:layout_marginLeft="4dp"
+                android:layout_marginRight="4dp"
+                android:background="@color/fn_material_spinner_bottom_line" />
+
             <Button
                 android:id="@+id/duration_button"
                 style="@style/SpinnerButton"
-                android:layout_below="@+id/jobDuration_textview"
+                android:layout_below="@+id/etaStartTime_divider"
                 android:text="@string/placeholder_word" />
 
             <View
@@ -175,24 +265,13 @@
                 android:layout_marginRight="4dp"
                 android:background="@color/fn_material_spinner_bottom_line" />
 
-
-            <CheckBox
-                android:id="@+id/tac_checkbox"
-                style="?attr/tileCheckBoxStyle"
-                android:layout_width="wrap_content"
+            <EditText
+                android:id="@+id/optionalDetails_edittext"
+                style="@style/EditText"
+                android:layout_width="match_parent"
                 android:layout_below="@+id/duration_divider"
-                android:text="@string/i_accept" />
-
-            <Button
-                android:id="@+id/tac_button"
-                style="?attr/buttonFlatStyle"
-                android:layout_below="@+id/duration_divider"
-                android:layout_toRightOf="@+id/tac_checkbox"
-                android:gravity="left|center_vertical"
-                android:maxLines="1"
-                android:text="@string/terms_and_conditions" />
-
-
+                android:hint="@string/hint_text_optional_details"
+                android:visibility="visible" />
         </RelativeLayout>
 
 
