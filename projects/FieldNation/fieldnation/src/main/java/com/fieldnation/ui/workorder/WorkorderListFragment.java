@@ -613,7 +613,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
+                _etaDialog.show(workorder, true, false);
             }
         }
 
@@ -661,7 +661,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _etaDialog.show(workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+            _etaDialog.show(workorder, false, true);
         }
 
         @Override
@@ -714,7 +714,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _etaDialog.show(workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+            _etaDialog.show(workorder, false, true);
         }
 
         @Override
@@ -763,7 +763,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
+            _etaDialog.show(workorder, true, false);
         }
     };
 

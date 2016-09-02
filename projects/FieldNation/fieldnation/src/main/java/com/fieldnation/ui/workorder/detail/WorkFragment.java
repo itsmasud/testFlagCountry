@@ -590,7 +590,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+                _etaDialog.show(_workorder, false, true);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -863,14 +863,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(_workorder, workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+            _etaDialog.show(_workorder, false, true);
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, "Request ", getString(R.string.btn_submit));
+            _etaDialog.show(workorder, true, false);
         }
     };
 
@@ -1352,7 +1352,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, "Request ", getString(R.string.btn_submit));
+                _etaDialog.show(_workorder, true, false);
             }
         }
 
@@ -1361,7 +1361,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+                _etaDialog.show(_workorder, false, true);
             }
         }
 
@@ -1391,7 +1391,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+                _etaDialog.show(_workorder, false, true);
             }
         }
 
@@ -1665,7 +1665,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _etaDialog.show(_workorder, _workorder.getSchedule(), "Confirm ", getString(R.string.btn_confirm));
+            _etaDialog.show(_workorder, false, true);
         }
 
         @Override

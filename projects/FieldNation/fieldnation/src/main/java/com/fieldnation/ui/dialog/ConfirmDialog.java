@@ -108,7 +108,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         _startDateLayout = (LinearLayout) v.findViewById(R.id.startDate_layout);
 
-        _startDateButton = (Button) v.findViewById(R.id.startDate_button);
+        _startDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
         _startDateButton.setOnClickListener(_startDate_onClick);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);

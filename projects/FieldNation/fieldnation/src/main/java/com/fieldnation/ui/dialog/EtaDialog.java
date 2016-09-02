@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -51,15 +52,16 @@ public class EtaDialog extends DialogFragmentBase {
     private RelativeLayout _requestLayout;
     private RelativeLayout _confirmLayout;
 
-    private RelativeLayout _startDateLayout;
     private Button _startDateButton;
-    private Button _durationButton;
     private TextView _scheduleTextView;
     private CheckBox _tacCheckBox;
     private Button _tacButton;
 
+    private RelativeLayout _etaLayout;
     private Switch _etaSwitch;
-    private Button _etaDurationButton;
+    private Button _durationButton;
+    private Button _etaStartDateButton;
+    private EditText _noteEditText;
 
 
     //    private DatePickerDialog _datePicker;
@@ -73,8 +75,6 @@ public class EtaDialog extends DialogFragmentBase {
     private Listener _listener;
     private Workorder _workorder;
     private Schedule _schedule;
-    private String _okButtonText;
-    private String _title;
     private boolean _isRequest = false;
     private boolean _isConfirm = false;
     private final Handler _handler = new Handler();
@@ -156,9 +156,8 @@ public class EtaDialog extends DialogFragmentBase {
         _calendar = Calendar.getInstance();
 
         // confirm related
-        _startDateLayout = (RelativeLayout) v.findViewById(R.id.startDate_layout);
 
-        _startDateButton = (Button) v.findViewById(R.id.startDate_button);
+        _startDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
         _startDateButton.setOnClickListener(_startDate_onClick);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);
@@ -181,6 +180,12 @@ public class EtaDialog extends DialogFragmentBase {
         _durationDialog.setListener(_duration_listener);
 
 
+        _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
+        _etaSwitch = (Switch) v.findViewById(R.id.enableEta_switch);
+        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
+        _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
+
+
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         return v;
@@ -190,50 +195,55 @@ public class EtaDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(Workorder workorder, String titleInitial, String okButtonText) {
+
+    public void show(Workorder workorder, boolean isRequest, boolean isConfirm) {
         _isDateSet = false;
         _workorder = workorder;
-        _okButtonText = okButtonText;
-        _title = titleInitial + workorder.getWorkorderId();
-        _isRequest = true;
+        _isRequest = isRequest;
+        _isConfirm = isConfirm;
+        _schedule = workorder.getSchedule();
+
 
         super.show();
     }
 
 
-    public void show(Workorder workorder, Schedule schedule, String titleInitial, String okButtonText) {
-        _schedule = schedule;
-        _workorder = workorder;
 
-        _okButtonText = okButtonText;
-        _title = titleInitial + workorder.getWorkorderId();
-        _isConfirm = true;
-
-        super.show();
-    }
+//    public void show(Workorder workorder, Schedule schedule, String titleInitial, String okButtonText) {
+//        _schedule = schedule;
+//        _workorder = workorder;
+//
+//        _okButtonText = okButtonText;
+//        _title = titleInitial + workorder.getWorkorderId();
+//        _isConfirm = true;
+//
+//        super.show();
+//    }
 
 
     private void populateUi() {
-        if (!misc.isEmptyOrNull(_title))
-            _titleTextView.setText(_title);
-
-        if (!misc.isEmptyOrNull(_okButtonText))
-            _okButton.setText(_okButtonText);
-
-        if (_isRequest && !_isConfirm) {
-            _requestLayout.setVisibility(View.VISIBLE);
-            _confirmLayout.setVisibility(View.GONE);
-        } else {
-            _requestLayout.setVisibility(View.GONE);
-            _confirmLayout.setVisibility(View.VISIBLE);
-        }
-
 
         if (_schedule == null)
             return;
 
-        if (_scheduleTextView == null)
-            return;
+        if (_isRequest && !_isConfirm) {
+            _okButton.setText(getString(R.string.btn_submit));
+            _titleTextView.setText("Request " + _workorder.getWorkorderId());
+
+            _requestLayout.setVisibility(View.VISIBLE);
+            _confirmLayout.setVisibility(View.GONE);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, false);
+            _etaSwitch.setVisibility(View.VISIBLE);
+
+        } else {
+            _okButton.setText(getString(R.string.btn_confirm));
+            _titleTextView.setText("Confirm " + _workorder.getWorkorderId());
+            _requestLayout.setVisibility(View.GONE);
+            _confirmLayout.setVisibility(View.VISIBLE);
+            _etaSwitch.setVisibility(View.GONE);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
+        }
+
 
         _tacCheckBox.setChecked(_tacAccept);
 
@@ -243,7 +253,6 @@ public class EtaDialog extends DialogFragmentBase {
         if (_schedule.isExact()) {
             try {
                 _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-                _startDateLayout.setVisibility(View.GONE);
                 setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -254,7 +263,6 @@ public class EtaDialog extends DialogFragmentBase {
                 Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
                 _startCalendar = cal;
                 _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
-                _startDateLayout.setVisibility(View.VISIBLE);
                 setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -445,15 +453,30 @@ public class EtaDialog extends DialogFragmentBase {
         }
     };
 
+    private Switch.OnCheckedChangeListener _switchOnclick_listener = new Switch.OnCheckedChangeListener() {
+        @Override
+        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+
+            if (isChecked) {
+                _etaLayout.setVisibility(View.VISIBLE);
+            } else {
+                _etaLayout.setVisibility(View.GONE);
+            }
+
+
+        }
+    };
+
 
     public interface Listener {
-    void onOk(Workorder workorder, String dateTime);
 
-    void onOk(Workorder workorder, String startDate, long durationMilliseconds);
+        void onOk(Workorder workorder, String dateTime);
 
-    void onCancel(Workorder workorder);
+        void onOk(Workorder workorder, String startDate, long durationMilliseconds);
 
-    void termsOnClick(Workorder workorder);
-}
+        void onCancel(Workorder workorder);
+
+        void termsOnClick(Workorder workorder);
+    }
 
 }
