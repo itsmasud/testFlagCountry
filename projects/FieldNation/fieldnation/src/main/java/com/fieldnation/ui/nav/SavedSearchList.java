@@ -3,6 +3,8 @@ package com.fieldnation.ui.nav;
 import android.animation.Animator;
 import android.animation.ValueAnimator;
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.CoordinatorLayout.DefaultBehavior;
@@ -90,6 +92,24 @@ public class SavedSearchList extends LinearLayout {
         }
     }
 
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putInt("VISIBILITY", getVisibility());
+        bundle.putParcelable("SUPER", super.onSaveInstanceState());
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            if (((Bundle) state).containsKey("VISIBILITY"))
+                setVisibility(((Bundle) state).getInt("VISIBILITY") == GONE ? GONE : VISIBLE);
+            if (((Bundle) state).containsKey("SUPER"))
+                super.onRestoreInstanceState(((Bundle) state).getParcelable("SUPER"));
+        }
+    }
+
     public void setOnShowListener(OnShowListener onShowListener) {
         _onShowListener = onShowListener;
     }
@@ -170,6 +190,25 @@ public class SavedSearchList extends LinearLayout {
         public Behavior(Context context, AttributeSet attrs) {
             super(context, attrs);
             Log.v(TAG, "Behavior");
+        }
+
+        @Override
+        public Parcelable onSaveInstanceState(CoordinatorLayout parent, SavedSearchList child) {
+            Log.v(TAG, "onSaveInstanceState");
+            Bundle bundle = new Bundle();
+            bundle.putInt("MODE", _mode);
+            bundle.putInt("TOP", child.getTop());
+            return bundle;
+        }
+
+        @Override
+        public void onRestoreInstanceState(CoordinatorLayout parent, SavedSearchList child, Parcelable state) {
+            Log.v(TAG, "onRestoreInstanceState");
+            if (state instanceof Bundle && ((Bundle) state).containsKey("MODE")) {
+                setMode(((Bundle) state).getInt("MODE"));
+                child.setYPos(((Bundle) state).getInt("TOP"));
+            }
+            super.onRestoreInstanceState(parent, child, state);
         }
 
         private void setMode(int mode) {

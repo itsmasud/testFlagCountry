@@ -71,12 +71,12 @@ public class NavActivity extends AuthSimpleActivity {
         _arrowTextView.startAnimation(_cw);
 
         SavedSearchParams savedSearchParams = new SavedSearchParams()
-                .type(WorkOrderListType.AVAILABLE.getType())
-                .status(WorkOrderListType.AVAILABLE.getStatuses())
-                .title("Available");
+                .type(WorkOrderListType.ASSIGNED.getType())
+                .status(WorkOrderListType.ASSIGNED.getStatuses())
+                .title("Assigned");
 
         _recyclerView.startSearch(savedSearchParams);
-        setTitle("Available Search");
+        setTitle("Available");
     }
 
     private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
@@ -149,7 +149,7 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onChange(SavedSearchParams params) {
             _recyclerView.startSearch(params);
-            NavActivity.this.setTitle(misc.capitalize(params.title) + " Search");
+            NavActivity.this.setTitle(misc.capitalize(params.title));
         }
     };
 
