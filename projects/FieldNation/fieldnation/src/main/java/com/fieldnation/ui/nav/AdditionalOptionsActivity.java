@@ -1,6 +1,5 @@
 package com.fieldnation.ui.nav;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -20,6 +19,9 @@ import com.fieldnation.ui.AuthSimpleActivity;
 public class AdditionalOptionsActivity extends AuthSimpleActivity {
     private static final String TAG = "AdditionalOptionsActivity";
 
+    // Ui
+    private AdditionalOptionsScreen _screen;
+
     @Override
     public int getLayoutResource() {
         return R.layout.activity_additional_options;
@@ -32,6 +34,9 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.back_arrow);
         toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+
+        _screen = (AdditionalOptionsScreen) findViewById(R.id.screen);
+        _screen.setFinishListener(_finishListener);
 
         setTitle("Additional Options");
     }
@@ -52,8 +57,20 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
-
     }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
+    }
+
+    private final AdditionalOptionsScreen.FinishListener _finishListener = new AdditionalOptionsScreen.FinishListener() {
+        @Override
+        public void finish() {
+            AdditionalOptionsActivity.this.finish();
+        }
+    };
 
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
@@ -66,11 +83,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, AdditionalOptionsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity();
-
-        context.startActivity(intent);
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
-        }
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

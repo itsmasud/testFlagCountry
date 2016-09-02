@@ -1,6 +1,5 @@
 package com.fieldnation.ui.nav;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
@@ -20,7 +19,6 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -28,8 +26,8 @@ import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.NewFeatureActivity;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.SettingsActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
+import com.fieldnation.ui.settings.SettingsActivity;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -37,7 +35,7 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Michael on 9/1/2016.
  */
-public class AdditionalOptionsView extends RelativeLayout {
+public class AdditionalOptionsScreen extends RelativeLayout {
     private static final String TAG = "AdditionalOptionsView";
 
     // Ui
@@ -64,18 +62,19 @@ public class AdditionalOptionsView extends RelativeLayout {
     // Services
     private PhotoClient _photoClient;
     private GlobalTopicClient _globalTopicClient;
+    private FinishListener _finishListener;
 
-    public AdditionalOptionsView(Context context) {
+    public AdditionalOptionsScreen(Context context) {
         super(context);
         init();
     }
 
-    public AdditionalOptionsView(Context context, AttributeSet attrs) {
+    public AdditionalOptionsScreen(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public AdditionalOptionsView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public AdditionalOptionsScreen(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -122,9 +121,7 @@ public class AdditionalOptionsView extends RelativeLayout {
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
-            _versionTextView.setText("Version "
-                    + (BuildConfig.VERSION_NAME + " "
-                    + BuildConfig.BUILD_FLAVOR_NAME).trim());
+            _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
             _versionTextView.setVisibility(View.VISIBLE);
         } catch (Exception ex) {
             _versionTextView.setVisibility(View.GONE);
@@ -137,11 +134,8 @@ public class AdditionalOptionsView extends RelativeLayout {
         _photoClient.connect(App.get());
     }
 
-    private void attachAnimations() {
-        Context context = getContext();
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
-        }
+    public void setFinishListener(FinishListener listener) {
+        _finishListener = listener;
     }
 
     @Override
@@ -300,20 +294,16 @@ public class AdditionalOptionsView extends RelativeLayout {
     private final View.OnClickListener _payment_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), PaymentListActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
+            PaymentListActivity.startNew(getContext());
+            if (_finishListener != null)
+                _finishListener.finish();
         }
     };
 
     private final View.OnClickListener _settings_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), SettingsActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            getContext().startActivity(intent);
-            attachAnimations();
+            SettingsActivity.startNew(getContext());
         }
     };
 
@@ -321,7 +311,6 @@ public class AdditionalOptionsView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AuthTopicClient.removeCommand(getContext());
-            Log.v(TAG, "SplashActivity");
         }
     };
 
@@ -353,9 +342,9 @@ public class AdditionalOptionsView extends RelativeLayout {
     private final View.OnClickListener _version_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(App.get(), NewFeatureActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            v.getContext().startActivity(intent);
+            NewFeatureActivity.startNew(App.get());
+            if (_finishListener != null)
+                _finishListener.finish();
         }
     };
 
@@ -365,5 +354,9 @@ public class AdditionalOptionsView extends RelativeLayout {
             // TODO show the new legal page
         }
     };
+
+    public interface FinishListener {
+        void finish();
+    }
 
 }

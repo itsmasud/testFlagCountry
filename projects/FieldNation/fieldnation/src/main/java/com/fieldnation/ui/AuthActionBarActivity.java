@@ -170,9 +170,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion()) {
             App.get().setReleaseNoteShownReminded();
-            Intent intent = new Intent(App.get(), NewFeatureActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.get().startActivity(intent);
+            NewFeatureActivity.startNew(App.get());
         }
 
         if (!_profile.isProvider()) {
@@ -298,7 +296,7 @@ public abstract class AuthActionBarActivity extends AppCompatActivity {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
         @Override
         public Activity getActivity() {
             return AuthActionBarActivity.this;

@@ -1,16 +1,19 @@
 package com.fieldnation.ui.payment;
 
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.payment.PaymentClient;
 import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.payment.MonthHeaderView.Header;
-import com.fieldnation.fntools.ISO8601;
 
 import java.util.Calendar;
 import java.util.Hashtable;
@@ -65,6 +68,12 @@ public class PaymentListActivity extends AuthActionBarActivity {
         if (_paymentClient != null && _paymentClient.isConnected())
             _paymentClient.disconnect(App.get());
         super.onPause();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 
     private void rebuildList() {
@@ -190,4 +199,11 @@ public class PaymentListActivity extends AuthActionBarActivity {
                 PaymentClient.list(App.get(), _nextPage);
         }
     };
+
+    public static void startNew(Context context) {
+        Intent intent = new Intent(context, PaymentListActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
+
+    }
 }

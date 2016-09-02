@@ -9,8 +9,8 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_string_workorder_card_location_title" />
-
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_string_sync_category_title">
         <SwitchPreference
             android:defaultValue="false"
@@ -37,6 +37,7 @@
             android:summary="@string/pref_string_sync_require_power_summary"
             android:title="@string/pref_string_sync_require_power_title" />
     </PreferenceCategory>
+
     <PreferenceCategory android:title="@string/pref_string_data_settings_category_title">
         <CheckBoxPreference
             android:defaultValue="true"
@@ -52,27 +53,23 @@
             android:negativeButtonText="@null"
             android:positiveButtonText="@null"
             android:title="@string/pref_string_remove_rate" />
-
         <SwitchPreference
             android:defaultValue="false"
             android:key="@string/pref_key_use_less_data"
             android:summary="@string/pref_string_use_less_data_summary"
             android:title="@string/pref_string_use_less_data_title" />
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="@string/pref_key_use_less_data"
             android:key="@string/pref_key_use_wifi_to_upload"
             android:summary="@string/pref_string_use_wifi_to_upload_summary"
             android:title="@string/pref_string_use_wifi_to_upload_title" />
-
         <CheckBoxPreference
             android:defaultValue="false"
             android:dependency="@string/pref_key_use_less_data"
             android:key="@string/pref_key_profile_photo_wifi_only"
             android:summary="@string/pref_string_profile_photo_wifi_summary"
             android:title="@string/pref_string_profile_photo_wifi_title" />
-
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/pref_string_data_settings_legal">
@@ -95,6 +92,5 @@
             android:key="pref_key_release_declaration"
             android:summary="@string/pref_string_release_summary"
             android:title="@string/pref_string_release_title" />
-
     </PreferenceCategory>
 </PreferenceScreen>

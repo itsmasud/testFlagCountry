@@ -102,8 +102,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     /*-**********************************-*/
     /*-             Listener             -*/
     /*-**********************************-*/
-    public static abstract class Listener extends TopicClient.Listener {
-        private static final String TAG = "ActivityResultClient.Listener";
+    public static abstract class RequestListener extends TopicClient.Listener {
+        private static final String TAG = "ActivityResultClient.RequestListener";
 
         @Override
         public void onConnected() {
@@ -113,9 +113,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
         @Override
         public void onEvent(String topicId, Parcelable payload) {
-            if (topicId.startsWith(TOPIC_ID_ON_ACTIVITY_RESULT)) {
-                preOnActivityResult((Bundle) payload);
-            } else if (topicId.startsWith(TOPIC_ID_START_ACTIVITY_FOR_RESULT)) {
+            if (topicId.startsWith(TOPIC_ID_START_ACTIVITY_FOR_RESULT)) {
                 startActivityForResult((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_START_ACTIVITY)) {
                 startActivity((Bundle) payload);
@@ -167,6 +165,17 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
             if (start != 0 || end != 0) {
                 getActivity().overridePendingTransition(start, end);
+            }
+        }
+    }
+
+    public static abstract class ResultListener extends TopicClient.Listener {
+        private static final String TAG = "ActivityResultClient.ResultListener";
+
+        @Override
+        public void onEvent(String topicId, Parcelable payload) {
+            if (topicId.startsWith(TOPIC_ID_ON_ACTIVITY_RESULT)) {
+                preOnActivityResult((Bundle) payload);
             }
         }
 

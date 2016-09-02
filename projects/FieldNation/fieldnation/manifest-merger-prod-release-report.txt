@@ -253,7 +253,7 @@ ADDED from AndroidManifest.xml:133:9
 		ADDED from AndroidManifest.xml:135:13
 	android:name
 		ADDED from AndroidManifest.xml:134:13
-activity#com.fieldnation.ui.SettingsActivity
+activity#com.fieldnation.ui.settings.SettingsActivity
 ADDED from AndroidManifest.xml:137:9
 	android:label
 		ADDED from AndroidManifest.xml:140:13

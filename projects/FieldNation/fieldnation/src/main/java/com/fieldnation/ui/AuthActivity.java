@@ -201,7 +201,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
         @Override
         public Activity getActivity() {
             return AuthActivity.this;

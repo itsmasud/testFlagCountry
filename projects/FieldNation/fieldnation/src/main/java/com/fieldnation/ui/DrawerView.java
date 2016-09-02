@@ -27,6 +27,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
+import com.fieldnation.ui.settings.SettingsActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;

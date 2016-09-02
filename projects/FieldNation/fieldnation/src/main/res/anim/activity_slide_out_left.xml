@@ -4,5 +4,5 @@
         android:duration="@android:integer/config_shortAnimTime"
         android:fillBefore="true"
         android:fromXDelta="0%"
-        android:toXDelta="100%" />
+        android:toXDelta="-100%" />
 </set>

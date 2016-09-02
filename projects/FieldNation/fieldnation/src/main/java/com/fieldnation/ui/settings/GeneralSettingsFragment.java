@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.settings;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -12,15 +12,16 @@ import android.preference.PreferenceGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
+import com.fieldnation.ui.NewFeatureActivity;
 
 /**
  * Created by Michael Carver on 4/15/2015.
  */
-public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
-    private static final String TAG = "SettingsFragment";
+public class GeneralSettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
+    private static final String TAG = "GeneralSettingsFragment";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        Log.e("SettingsFragment", "onSharedPreferenceChanged");
+        Log.e("GeneralSettingsFragment", "onSharedPreferenceChanged");
         updatePreference(findPreference(key));
     }
 
@@ -100,10 +101,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         @Override
         public boolean onPreferenceClick(Preference preference) {
             if (preference.getKey() != null && (preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
-                Log.e("SettingsFragment", "release things clicked");
-                Intent intent = new Intent(App.get(), NewFeatureActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                App.get().startActivity(intent);
+                Log.e("GeneralSettingsFragment", "release things clicked");
+                NewFeatureActivity.startNew(App.get());
                 return true;
             }
             return false;
@@ -114,7 +113,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 //    @Override
 //    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference preference) {
 //        if ((preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
-//           Log.e("SettingsFragment", "release things clicked");
+//           Log.e("GeneralSettingsFragment", "release things clicked");
 //            return true;
 //        }
 //

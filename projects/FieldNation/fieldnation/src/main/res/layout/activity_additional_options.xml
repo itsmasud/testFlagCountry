@@ -23,7 +23,8 @@
             app:theme="@style/FieldNation.Material.ToolBar"></android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <com.fieldnation.ui.nav.AdditionalOptionsView
+    <com.fieldnation.ui.nav.AdditionalOptionsScreen
+        android:id="@+id/screen"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_behavior="@string/appbar_scrolling_view_behavior" />
