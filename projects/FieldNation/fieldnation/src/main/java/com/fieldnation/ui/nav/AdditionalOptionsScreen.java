@@ -342,7 +342,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _legal_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO show the new legal page
+            SettingsActivity.startNewLegal(getContext());
         }
     };
 }
