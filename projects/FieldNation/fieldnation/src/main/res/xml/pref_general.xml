@@ -76,7 +76,7 @@
         <Preference android:title="@string/pref_string_user_agreement">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=provider" />
+                android:data="https://app.fieldnation.com/legal/?a=user" />
         </Preference>
         <Preference android:title="@string/pref_string_tc_title">
             <intent
@@ -86,12 +86,12 @@
         <Preference android:title="@string/pref_string_work_order_tc">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=provider" />
+                android:data="https://app.fieldnation.com/legal/?a=workorder" />
         </Preference>
         <Preference android:title="@string/pref_string_referral_terms">
             <intent
                 android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=provider" />
+                android:data="https://app.fieldnation.com/legal/?a=referral" />
         </Preference>
         <Preference android:title="@string/pref_string_qa_title">
             <intent
