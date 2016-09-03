@@ -60,6 +60,7 @@
     <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
+    <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
@@ -132,6 +133,8 @@
     <string name="btn_upload">UPLOAD</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
     <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
+
+    <string name="switch_text_set_eta">Set an ETA</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -325,6 +328,7 @@
     <string name="other_thoughts">Other thoughts</string>
     <string name="character_counting">%1$d /120</string>
 
+    <string name="dialog_eta_title">Edit ETA</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -564,6 +568,8 @@
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
     <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
     <string name="schedule_open_range_format">%1$s\n%2$s</string>
+    <string name="schedule_current">Current Schedule</string>
+    <string name="schedule_original">Original Schedule</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>

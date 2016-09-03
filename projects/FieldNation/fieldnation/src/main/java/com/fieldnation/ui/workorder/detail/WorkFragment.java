@@ -216,6 +216,7 @@ public class WorkFragment extends WorkorderFragment {
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
         _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
+        _scheduleView.setListener(_editEta_listener);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
@@ -590,7 +591,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _etaDialog.show(_workorder, false, true);
+                _etaDialog.show(_workorder, false, true, false);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -863,14 +864,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(_workorder, false, true);
+            _etaDialog.show(_workorder, false, true, false);
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, true, false);
+            _etaDialog.show(workorder, true, false, false);
         }
     };
 
@@ -916,7 +917,7 @@ public class WorkFragment extends WorkorderFragment {
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
 
         @Override
-        public void onOk(Workorder workorder, String dateTime) {
+        public void onRequest(Workorder workorder, String dateTime) {
             long seconds = -1;
             if (dateTime != null) {
                 try {
@@ -934,13 +935,12 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+        public void onConfirm(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
                         GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 WorkorderClient.actionConfirmAssignment(App.get(),
-                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
+                        _workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds));
                 setLoading(true);
 
             } catch (Exception ex) {
@@ -1352,7 +1352,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, true, false);
+                _etaDialog.show(_workorder, true, false, false);
             }
         }
 
@@ -1361,7 +1361,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true);
+                _etaDialog.show(_workorder, false, true, false);
             }
         }
 
@@ -1391,7 +1391,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true);
+                _etaDialog.show(_workorder, false, true, false);
             }
         }
 
@@ -1665,7 +1665,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _etaDialog.show(_workorder, false, true);
+            _etaDialog.show(_workorder, false, true, false);
         }
 
         @Override
@@ -1916,6 +1916,14 @@ public class WorkFragment extends WorkorderFragment {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+        }
+    };
+
+    ScheduleSummaryView.Listener _editEta_listener  = new ScheduleSummaryView.Listener() {
+        @Override
+        public void editEta() {
+            _etaDialog.show(_workorder, false, false, true);
+
         }
     };
 }

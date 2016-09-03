@@ -47,25 +47,25 @@ public class EtaDialog extends DialogFragmentBase {
     private Button _expirationButton;
     private Button _cancelButton;
     private Button _okButton;
-    private DatePickerDialog _datePicker;
-    private TimePickerDialog _requestTimePicker;
+    private DatePickerDialog _expirationDatePicker;
+    private TimePickerDialog _expirationTimePicker;
     private RelativeLayout _requestLayout;
     private RelativeLayout _confirmLayout;
 
-    private Button _startDateButton;
     private TextView _scheduleTextView;
     private CheckBox _tacCheckBox;
     private Button _tacButton;
 
     private RelativeLayout _etaLayout;
     private Switch _etaSwitch;
-    private Button _durationButton;
     private Button _etaStartDateButton;
+    private Button _etaStartTimeButton;
+    private Button _durationButton;
     private EditText _noteEditText;
 
 
-    //    private DatePickerDialog _datePicker;
-    private TimePickerDialog _confirmTimePicker;
+    private DatePickerDialog _etaStartDatePicker;
+    private TimePickerDialog _etaStartTimePicker;
     private DurationDialog _durationDialog;
 
 
@@ -77,6 +77,7 @@ public class EtaDialog extends DialogFragmentBase {
     private Schedule _schedule;
     private boolean _isRequest = false;
     private boolean _isConfirm = false;
+    private boolean _isEdit = false;
     private final Handler _handler = new Handler();
 
     private Calendar _startCalendar;
@@ -146,19 +147,18 @@ public class EtaDialog extends DialogFragmentBase {
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
 
-
         _confirmLayout = (RelativeLayout) v.findViewById(R.id.confirm_layout);
 
-        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _requestTimePicker = new TimePickerDialog(getActivity(), _requestTime_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
-
+//        final Calendar c = Calendar.getInstance();
         _calendar = Calendar.getInstance();
 
-        // confirm related
+        _expirationDatePicker = new DatePickerDialog(getActivity(), _expirationDate_onSet, _calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH), _calendar.get(Calendar.DAY_OF_MONTH));
+        _expirationTimePicker = new TimePickerDialog(getActivity(), _expirationTime_onSet, _calendar.get(Calendar.HOUR_OF_DAY), _calendar.get(Calendar.MINUTE), false);
 
-        _startDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
-        _startDateButton.setOnClickListener(_startDate_onClick);
+//        _calendar = Calendar.getInstance();
+
+        _etaStartDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
+        _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);
         _durationButton.setOnClickListener(_duration_onClick);
@@ -170,9 +170,9 @@ public class EtaDialog extends DialogFragmentBase {
 
         _tacCheckBox = (CheckBox) v.findViewById(R.id.tac_checkbox);
         _tacCheckBox.setOnCheckedChangeListener(_tacCheck_change);
-//        final Calendar c = Calendar.getInstance();
-        _datePicker = new DatePickerDialog(getActivity(), _date_onSet, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-        _confirmTimePicker = new TimePickerDialog(getActivity(), _confirmTime_onSet, c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), false);
+
+        _etaStartDatePicker = new DatePickerDialog(getActivity(), _etaStartDate_onSet, _calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH), _calendar.get(Calendar.DAY_OF_MONTH));
+        _etaStartTimePicker = new TimePickerDialog(getActivity(), _etaStartTime_onSet, _calendar.get(Calendar.HOUR_OF_DAY), _calendar.get(Calendar.MINUTE), false);
 
         _startCalendar = Calendar.getInstance();
 
@@ -183,6 +183,8 @@ public class EtaDialog extends DialogFragmentBase {
         _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
         _etaSwitch = (Switch) v.findViewById(R.id.enableEta_switch);
         _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
+        _etaStartTimeButton = (Button) v.findViewById(R.id.etaStartTime_button);
+        _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
 
 
@@ -196,48 +198,43 @@ public class EtaDialog extends DialogFragmentBase {
     }
 
 
-    public void show(Workorder workorder, boolean isRequest, boolean isConfirm) {
+    public void show(Workorder workorder, boolean isRequest, boolean isConfirm, boolean isEdit) {
         _isDateSet = false;
         _workorder = workorder;
         _isRequest = isRequest;
         _isConfirm = isConfirm;
+        _isEdit = isEdit;
         _schedule = workorder.getSchedule();
-
 
         super.show();
     }
 
 
-
-//    public void show(Workorder workorder, Schedule schedule, String titleInitial, String okButtonText) {
-//        _schedule = schedule;
-//        _workorder = workorder;
-//
-//        _okButtonText = okButtonText;
-//        _title = titleInitial + workorder.getWorkorderId();
-//        _isConfirm = true;
-//
-//        super.show();
-//    }
-
-
     private void populateUi() {
+
+        Log.e(TAG, "populateUi");
 
         if (_schedule == null)
             return;
 
-        if (_isRequest && !_isConfirm) {
+        if (_isRequest) {
             _okButton.setText(getString(R.string.btn_submit));
             _titleTextView.setText("Request " + _workorder.getWorkorderId());
-
             _requestLayout.setVisibility(View.VISIBLE);
             _confirmLayout.setVisibility(View.GONE);
             _switchOnclick_listener.onCheckedChanged(_etaSwitch, false);
             _etaSwitch.setVisibility(View.VISIBLE);
 
-        } else {
+        } else if (_isConfirm) {
             _okButton.setText(getString(R.string.btn_confirm));
             _titleTextView.setText("Confirm " + _workorder.getWorkorderId());
+            _requestLayout.setVisibility(View.GONE);
+            _confirmLayout.setVisibility(View.VISIBLE);
+            _etaSwitch.setVisibility(View.GONE);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
+        } else if (_isEdit) {
+            _okButton.setText(getString(R.string.btn_save));
+            _titleTextView.setText(getString(R.string.dialog_eta_title));
             _requestLayout.setVisibility(View.GONE);
             _confirmLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.GONE);
@@ -249,24 +246,32 @@ public class EtaDialog extends DialogFragmentBase {
 
         String display = _schedule.getDisplayString(false);
         _scheduleTextView.setText(display);
-        setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
-        if (_schedule.isExact()) {
-            try {
-                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        } else {
-            try {
-                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
-                Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
-                _startCalendar = cal;
-                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
-                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+
+
+        if (_schedule.getType() == Schedule.Type.EXACT) {
+            Log.e(TAG, "schedule exact");
+            populateEtaLayout();
+        }
+
+        if (_schedule.getType() == Schedule.Type.OPEN_RAGE) {
+            Log.e(TAG, "open range");
+            populateEtaLayout();
+
+        } else if (_schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
+//            try {
+            Log.e(TAG, "business hour");
+            populateEtaLayout();
+
+
+//                Calendar cal = ISO8601.toCalendar(_schedule.getStartTime());
+//                Calendar cal2 = ISO8601.toCalendar(_schedule.getEndTime());
+//                _startCalendar = cal;
+//                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
+//                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : cal2.getTimeInMillis() - cal.getTimeInMillis());
+//            } catch (Exception ex) {
+//                Log.v(TAG, ex);
+//            }
+//            }
         }
     }
 
@@ -274,6 +279,47 @@ public class EtaDialog extends DialogFragmentBase {
         _durationMilliseconds = timeMilliseconds;
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
     }
+
+    private void populateEtaLayout() {
+
+        if (_isRequest || _isConfirm) {
+            try {
+                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
+
+                // TODO getting null from API !!!
+                _etaStartTimeButton.setText(_schedule.getStartTimeHours());
+                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
+
+                if (_schedule.getType() == Schedule.Type.EXACT) {
+                    _etaStartDateButton.setEnabled(false);
+                    _etaStartDateButton.setEnabled(false);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else if (_isEdit) {
+            final Schedule estimatedSchedule;
+            if ((estimatedSchedule = _workorder.getEstimatedSchedule()) == null) return;
+
+            try {
+                _startCalendar = ISO8601.toCalendar(estimatedSchedule.getStartTime());
+                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
+                _etaStartTimeButton.setText(estimatedSchedule.getStartTimeHours());
+                _noteEditText.setText(estimatedSchedule.getNote());
+
+                setDuration(_durationMilliseconds > -1 ? _durationMilliseconds : MIN_JOB_DURATION);
+
+                if (estimatedSchedule.getType() == Schedule.Type.EXACT) {
+                    _etaStartDateButton.setEnabled(false);
+                    _etaStartDateButton.setEnabled(false);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    }
+
 
 
 
@@ -283,7 +329,7 @@ public class EtaDialog extends DialogFragmentBase {
     /*-			Events			-*/
     /*-*************************-*/
 
-    private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
+    private final DatePickerDialog.OnDateSetListener _expirationDate_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             _calendar.set(year, monthOfYear, dayOfMonth);
@@ -292,17 +338,35 @@ public class EtaDialog extends DialogFragmentBase {
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        _datePicker.show();
+                        _expirationDatePicker.show();
                     }
                 }, 100);
             } else {
-                _requestTimePicker.show();
+                _expirationTimePicker.show();
             }
         }
     };
 
-    private final TimePickerDialog.OnTimeSetListener _requestTime_onSet = new TimePickerDialog.OnTimeSetListener() {
+    private final DatePickerDialog.OnDateSetListener _etaStartDate_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            _calendar.set(year, monthOfYear, dayOfMonth);
+            if (DateUtils.isBeforeToday(_calendar)) {
+                ToastClient.toast(App.get(), getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _etaStartDatePicker.show();
+                    }
+                }, 100);
+            }
 
+            _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_calendar));
+
+        }
+    };
+
+    private final TimePickerDialog.OnTimeSetListener _expirationTime_onSet = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
@@ -314,7 +378,7 @@ public class EtaDialog extends DialogFragmentBase {
                 _handler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        _requestTimePicker.show();
+                        _expirationTimePicker.show();
                     }
                 }, 100);
                 return;
@@ -322,13 +386,25 @@ public class EtaDialog extends DialogFragmentBase {
 
             _expirationButton.setText(DateUtils.formatDateTimeLong(_calendar));
             _isDateSet = true;
+
+        }
+    };
+
+    private final TimePickerDialog.OnTimeSetListener _etaStartTime_onSet = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            // TODO do something here
+            _calendar.set(_calendar.get(Calendar.YEAR), _calendar.get(Calendar.MONTH),
+                    _calendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+            _etaStartTimeButton.setText(DateUtils.formatTimeLong(_calendar));
+
         }
     };
 
     private final View.OnClickListener _expiration_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _datePicker.show();
+            _expirationDatePicker.show();
         }
     };
 
@@ -344,9 +420,9 @@ public class EtaDialog extends DialogFragmentBase {
         public void onClick(View v) {
             if (_listener != null && _isRequest) {
                 if (_isDateSet) {
-                    _listener.onOk(_workorder, ISO8601.fromCalendar(_calendar));
+                    _listener.onRequest(_workorder, ISO8601.fromCalendar(_calendar));
                 } else {
-                    _listener.onOk(_workorder, null);
+                    _listener.onRequest(_workorder, null);
                 }
             }
 
@@ -356,7 +432,7 @@ public class EtaDialog extends DialogFragmentBase {
                     return;
                 }
                 if (_listener != null) {
-                    _listener.onOk(_workorder, ISO8601.fromCalendar(_startCalendar), _durationMilliseconds);
+                    _listener.onConfirm(_workorder, ISO8601.fromCalendar(_startCalendar), _durationMilliseconds);
                 }
             }
 
@@ -383,7 +459,7 @@ public class EtaDialog extends DialogFragmentBase {
                     _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
                 }
 
-                _startDateButton.setText(DateUtils.formatDateTimeLong(_startCalendar));
+                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -406,28 +482,37 @@ public class EtaDialog extends DialogFragmentBase {
         }
     };
 
-    private final View.OnClickListener _startDate_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _etaStartDate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            try {
-                Calendar start = ISO8601.toCalendar(_schedule.getStartTime());
+//            try {
+//                Calendar start = ISO8601.toCalendar(_schedule.getStartTime());
+//
+//                if (!_schedule.isExact()) {
+//                    Calendar stop = ISO8601.toCalendar(_schedule.getEndTime());
+//
+//                    if (start.get(Calendar.YEAR) == stop.get(Calendar.YEAR)
+//                            && start.get(Calendar.DAY_OF_YEAR) == stop.get(Calendar.DAY_OF_YEAR)) {
+//                        _expirationTimePicker.show();
+//                    } else {
+//                        _expirationDatePicker.show();
+//                    }
+//                }
+//            } catch (Exception ex) {
+//                Log.v(TAG, ex);
+//            }
 
-                if (!_schedule.isExact()) {
-                    Calendar stop = ISO8601.toCalendar(_schedule.getEndTime());
 
-                    if (start.get(Calendar.YEAR) == stop.get(Calendar.YEAR)
-                            && start.get(Calendar.DAY_OF_YEAR) == stop.get(Calendar.DAY_OF_YEAR)) {
-                        _requestTimePicker.show();
-                    } else {
-                        _datePicker.show();
-                    }
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+            _etaStartDatePicker.show();
         }
     };
 
+    private final View.OnClickListener _etaStartTime_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _etaStartTimePicker.show();
+        }
+    };
 
     private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
         @Override
@@ -470,9 +555,9 @@ public class EtaDialog extends DialogFragmentBase {
 
     public interface Listener {
 
-        void onOk(Workorder workorder, String dateTime);
+        void onRequest(Workorder workorder, String dateTime);
 
-        void onOk(Workorder workorder, String startDate, long durationMilliseconds);
+        void onConfirm(Workorder workorder, String startDate, long durationMilliseconds);
 
         void onCancel(Workorder workorder);
 

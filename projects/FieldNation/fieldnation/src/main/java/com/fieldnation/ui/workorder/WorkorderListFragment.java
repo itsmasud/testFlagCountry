@@ -613,7 +613,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _etaDialog.show(workorder, true, false);
+                _etaDialog.show(workorder, true, false, false);
             }
         }
 
@@ -661,7 +661,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _etaDialog.show(workorder, false, true);
+            _etaDialog.show(workorder, false, true, false);
         }
 
         @Override
@@ -714,7 +714,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _etaDialog.show(workorder, false, true);
+            _etaDialog.show(workorder, false, true, false);
         }
 
         @Override
@@ -763,7 +763,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, true, false);
+            _etaDialog.show(workorder, true, false, false);
         }
     };
 
@@ -786,7 +786,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String dateTime) {
+        public void onRequest(Workorder workorder, String dateTime) {
             long time = -1;
             if (dateTime != null) {
                 try {
@@ -804,13 +804,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _adapter.refreshPages();
         }
 
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+        public void onConfirm(Workorder workorder, String startDate, long durationMilliseconds) {
             //set  loading mode
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
                 WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds));
                 _adapter.refreshPages();
             } catch (Exception ex) {
                 Log.v(TAG, ex);

@@ -125,6 +125,7 @@ public class DateUtils {
         return String.format(Locale.US, "%tB", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH);
     }
 
+
     /**
      * @param calendar
      * @return Wednesday, Jun 3, 2014
@@ -133,6 +134,16 @@ public class DateUtils {
         calendar = applyTimeZone(calendar);
         return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tb", calendar) + " " + calendar.get(Calendar.DAY_OF_MONTH) + ", " + calendar.get(Calendar.YEAR);
     }
+
+    /**
+     * @param calendar
+     * @return Sunday, September 04, 2016
+     */
+    public static String formatDateReallyLongV2(Calendar calendar) {
+        calendar = applyTimeZone(calendar);
+        return String.format(Locale.US, "%tA", calendar) + ", " + String.format(Locale.US, "%tB", calendar) + " " + String.format(Locale.US, "%td", calendar) + ", " + calendar.get(Calendar.YEAR);
+    }
+
 
     /**
      * @param calendar
@@ -158,6 +169,14 @@ public class DateUtils {
      */
     public static String formatDateTimeLong(Calendar calendar) {
         return formatDateLong(calendar) + " @ " + formatTime(calendar, false);
+    }
+
+    /**
+     * @param calendar
+     * @return  HH:MM am/pm
+     */
+    public static String formatTimeLong(Calendar calendar) {
+        return  formatTime(calendar, false);
     }
 
     /**

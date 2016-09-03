@@ -105,7 +105,7 @@
             android:layout_below="@+id/request_layout"
             android:paddingLeft="@dimen/dialogGutter"
             android:paddingRight="@dimen/dialogGutter"
-            android:text="Current Schedule" />
+            android:text="@string/schedule_current" />
 
 
         <TextView
@@ -156,7 +156,7 @@
             android:layout_marginTop="8dp"
             android:paddingLeft="@dimen/dialogGutter"
             android:paddingRight="@dimen/dialogGutter"
-            android:text="Set ETA" />
+            android:text="@string/switch_text_set_eta" />
 
         <RelativeLayout
             android:id="@+id/eta_layout"
