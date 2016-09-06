@@ -60,7 +60,7 @@
 
                 <ImageButton
                     android:id="@+id/profileexpand_button"
-                    style="@style/DrawerProfileButton"
+                    style="@style/OptionsProfileButton"
                     android:visibility="gone" />
             </RelativeLayout>
 
