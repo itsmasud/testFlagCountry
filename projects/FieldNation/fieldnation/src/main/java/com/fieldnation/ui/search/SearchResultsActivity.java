@@ -1,6 +1,5 @@
 package com.fieldnation.ui.search;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,15 +8,16 @@ import android.view.Menu;
 import android.view.View;
 
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.ui.ActionBarDrawerView;
-import com.fieldnation.ui.AuthActionBarActivity;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.ui.AuthSimpleActivity;
 
 /**
  * Created by Michael on 7/27/2016.
  */
-public class SearchResultsActivity extends AuthActionBarActivity {
+public class SearchResultsActivity extends AuthSimpleActivity {
     private static final String TAG = "SearchResultsActivity";
 
     // Ui
@@ -29,8 +29,8 @@ public class SearchResultsActivity extends AuthActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        ActionBarDrawerView actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
-        Toolbar toolbar = actionBarView.getToolbar();
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         toolbar.setNavigationIcon(R.drawable.back_arrow);
         toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
@@ -47,8 +47,12 @@ public class SearchResultsActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search, menu);
         return true;
     }
 
@@ -64,6 +68,16 @@ public class SearchResultsActivity extends AuthActionBarActivity {
         }
     }
 
+    @Override
+    public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
+    }
+
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -75,9 +89,6 @@ public class SearchResultsActivity extends AuthActionBarActivity {
         Intent intent = new Intent(context, SearchResultsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_BROUGHT_TO_FRONT);
         intent.putExtra(INTENT_SEARCH_PARAMS, searchParams);
-        context.startActivity(intent);
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
-        }
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

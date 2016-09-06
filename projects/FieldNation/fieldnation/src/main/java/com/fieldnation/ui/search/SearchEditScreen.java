@@ -4,21 +4,22 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -26,14 +27,13 @@ import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.fntools.misc;
 
 import java.util.List;
 
 /**
  * Created by Michael on 7/14/2016.
  */
-public class SearchEditScreen extends RelativeLayout {
+public class SearchEditScreen extends FrameLayout {
     private static final String TAG = "SearchEditScreen";
 
     private static final Double[] DISTANCES = new Double[]{
@@ -56,7 +56,7 @@ public class SearchEditScreen extends RelativeLayout {
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
-    private Button _actionButton;
+    private FloatingActionButton _actionButton;
 
     // Services
     private WorkorderClient _workorderClient;
@@ -116,7 +116,7 @@ public class SearchEditScreen extends RelativeLayout {
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _actionButton = (FloatingActionButton) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);

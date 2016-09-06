@@ -19,18 +19,20 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.NavProfileDetailListView;
+import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
 import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.fntools.DebugUtils;
-import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -332,7 +334,7 @@ public class DrawerView extends RelativeLayout {
     /*-*************************************-*/
     /*-				Item Events				-*/
     /*-*************************************-*/
-    private final View.OnClickListener _myworkView_onClick = new View.OnClickListener() {
+    private final OnClickListener _myworkView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             MyWorkActivity.startNew(getContext());
@@ -340,7 +342,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _marketView_onClick = new View.OnClickListener() {
+    private final OnClickListener _marketView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), MarketActivity.class);
@@ -350,7 +352,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _paymentView_onClick = new View.OnClickListener() {
+    private final OnClickListener _paymentView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), PaymentListActivity.class);
@@ -363,7 +365,7 @@ public class DrawerView extends RelativeLayout {
     /*-*****************************************-*/
     /*-				Subitem Events				-*/
     /*-*****************************************-*/
-    private final View.OnClickListener _settingsView_onClick = new View.OnClickListener() {
+    private final OnClickListener _settingsView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(getContext(), SettingsActivity.class);
@@ -372,7 +374,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _debugView_onClick = new OnClickListener() {
+    private final OnClickListener _debugView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             File tempfile = DebugUtils.dumpLogcat(getContext(), (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
@@ -416,7 +418,7 @@ public class DrawerView extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _logoutView_onClick = new View.OnClickListener() {
+    private final OnClickListener _logoutView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             AuthTopicClient.removeCommand(getContext());
