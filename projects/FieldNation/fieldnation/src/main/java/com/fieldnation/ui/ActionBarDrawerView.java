@@ -54,7 +54,6 @@ public class ActionBarDrawerView extends FrameLayout {
         _drawerView = (DrawerView) findViewById(R.id.leftDrawerView);
         _drawerView.setListener(_drawerView_lsitener);
         _switchUserOverlayViewStub = (ViewStub) findViewById(R.id.switchUserOverlay_viewstub);
-
     }
 
     private FrameLayout getBody() {
@@ -101,7 +100,7 @@ public class ActionBarDrawerView extends FrameLayout {
             if (_switchUserOverlay == null) {
                 _switchUserOverlay = (SwitchUserOverlayView) _switchUserOverlayViewStub.inflate();
             }
-            _switchUserOverlay.startSwitch(userId);
+            _switchUserOverlay.startSwitch();
         }
     };
 }

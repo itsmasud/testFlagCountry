@@ -58,6 +58,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     // Data
     private Profile _profile = null;
     private WeakReference<Drawable> _profilePic = null;
+    private Listener _listener = null;
 
     // Services
     private PhotoClient _photoClient;
@@ -131,6 +132,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(App.get());
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     @Override
@@ -226,7 +231,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final NavProfileDetailListView.Listener _navlistener = new NavProfileDetailListView.Listener() {
         @Override
         public void onUserSwitch(long userId) {
-            // TODO - need to switch the user
+            if (_listener != null) {
+                _listener.onSwitchUser(userId);
+            }
         }
     };
 
@@ -345,4 +352,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             SettingsActivity.startNewLegal(getContext());
         }
     };
+
+    public interface Listener {
+        void onSwitchUser(long userId);
+    }
 }

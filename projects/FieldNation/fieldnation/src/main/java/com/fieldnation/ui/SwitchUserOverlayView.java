@@ -13,8 +13,6 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DefaultAnimationListener;
-import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.nav.NavActivity;
 
 /**
  * Created by Michael on 9/28/2015.
@@ -26,11 +24,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
     private IconFontTextView _textView;
 
     // Data
-    private long _userId;
-    private final int[] _icons = new int[]{R.string.icon_my_wos,
-            R.string.icon_hiring,
-            R.string.icon_circle_dollar,
-            R.string.icon_summary};
+    private final int[] _icons = new int[]{R.string.icon_my_wos, R.string.icon_hiring, R.string.icon_circle_dollar, R.string.icon_summary};
     private int _iconIndex = 0;
 
     // Serivces
@@ -81,11 +75,7 @@ public class SwitchUserOverlayView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    public void startSwitch(long userId) {
-        _userId = userId;
-
-        ProfileClient.switchUser(getContext(), _userId);
-
+    public void startSwitch() {
         _textView.startAnimation(_shrinkAnimation);
         setVisibility(VISIBLE);
     }
@@ -98,9 +88,9 @@ public class SwitchUserOverlayView extends RelativeLayout {
 
         @Override
         public void onUserSwitched(Profile profile) {
-            NavActivity.startNew(getContext());
-//            _textView.clearAnimation();
-//            setVisibility(GONE);
+            // NavActivity.startNew(getContext());
+            _textView.clearAnimation();
+            setVisibility(GONE);
         }
     };
 

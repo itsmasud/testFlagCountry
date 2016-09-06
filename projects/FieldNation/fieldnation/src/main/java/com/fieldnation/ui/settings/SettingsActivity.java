@@ -58,7 +58,7 @@ public class SettingsActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
     }
 
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
@@ -71,13 +71,13 @@ public class SettingsActivity extends AuthSimpleActivity {
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 
     public static void startNewLegal(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra("SHOW_LEGAL", true);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }
