@@ -282,8 +282,11 @@ public class SearchEditScreen extends RelativeLayout {
                 if (_listener != null)
                     _listener.showNotAvailableDialog();
             } else {
-                ActivityResultClient.startActivity(App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorderId));
+                ActivityResultClient.startActivity(
+                        App.get(),
+                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
+                        R.anim.activity_slide_in_right,
+                        R.anim.activity_slide_out_left);
             }
         }
     };

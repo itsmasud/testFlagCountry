@@ -4,8 +4,7 @@
     android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_alignParentTop="true"
-    android:fitsSystemWindows="true">
+    android:layout_alignParentTop="true">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"

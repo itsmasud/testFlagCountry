@@ -16,12 +16,12 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.ActionBarDrawerView;
-import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
@@ -30,7 +30,7 @@ import com.fieldnation.ui.workorder.detail.WorkFragment;
 
 import java.util.List;
 
-public class WorkorderActivity extends AuthActionBarActivity {
+public class WorkorderActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderActivity";
 
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderActivity:workorder_id";
@@ -54,9 +54,6 @@ public class WorkorderActivity extends AuthActionBarActivity {
     private ViewPager _viewPager;
     private WorkorderFragment[] _fragments;
     private WorkorderTabView _tabview;
-
-    private ActionBarDrawerView _actionBarView;
-    private Toolbar _toolbar;
 
     // Data
     private WorkorderClient _workorderClient;
@@ -82,10 +79,9 @@ public class WorkorderActivity extends AuthActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
-        _toolbar = _actionBarView.getToolbar();
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.back_arrow);
+        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
 
     @Override
@@ -164,6 +160,11 @@ public class WorkorderActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_workorderId != 0)
             outState.putLong(STATE_WORKORDERID, _workorderId);
@@ -178,6 +179,10 @@ public class WorkorderActivity extends AuthActionBarActivity {
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     private void buildFragments(Bundle savedInstanceState) {
@@ -264,6 +269,12 @@ public class WorkorderActivity extends AuthActionBarActivity {
             _workorderClient.disconnect(App.get());
 
         super.onPause();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
     private void populateUi() {
@@ -476,7 +487,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
     public static Intent makeIntentShow(Context context, long workorderId) {
         Intent intent = new Intent(context, WorkorderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
         return intent;

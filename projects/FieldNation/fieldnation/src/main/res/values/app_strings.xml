@@ -633,7 +633,7 @@
 
     <!-- main activity strings -->
     <!--<string name="launcher_open">I am Open</string>-->
-    <string name="work_order_detail_title">Work Order</string>
+    <string name="work_order_detail_title">WO:</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">My Work Orders</string>
