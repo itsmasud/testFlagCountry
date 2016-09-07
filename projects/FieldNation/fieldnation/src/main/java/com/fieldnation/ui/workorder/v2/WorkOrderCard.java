@@ -11,16 +11,18 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -302,8 +304,11 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            getContext().startActivity(WorkorderActivity.makeIntentShow(getContext(), _workOrder.getId()));
+            ActivityResultClient.startActivity(
+                    App.get(),
+                    WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),
+                    R.anim.activity_slide_in_right,
+                    R.anim.activity_slide_out_left);
         }
     };
-
 }

@@ -2,12 +2,15 @@ package com.fieldnation.ui;
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -22,18 +25,19 @@ import android.widget.Toast;
 
 import com.fieldnation.AccountAuthenticatorSupportFragmentActivity;
 import com.fieldnation.App;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.DefaultAnimationListener;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.dialog.UpdateDialog;
-import com.fieldnation.fntools.misc;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -157,6 +161,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     }
 
     @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
+    }
+
+    @Override
     public void onBackPressed() {
         Log.v(TAG, "onBackPressed");
         GlobalTopicClient.appShutdown(this);
@@ -185,38 +195,22 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
         }
     };
 
-    private final Animation.AnimationListener _fadeout_listener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
+    private final Animation.AnimationListener _fadeout_listener = new DefaultAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
             _fader.setVisibility(View.GONE);
         }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-        }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.RequestListener() {
         @Override
-        public void onConnected() {
-            _activityResultClient.subStartActivity();
-            _activityResultClient.subStartActivityForResult();
+        public Activity getActivity() {
+            return AuthActivity.this;
         }
 
         @Override
-        public void startActivityForResult(Intent intent, int requestCode) {
-            Log.v(TAG, "startActivityForResult");
-            AuthActivity.this.startActivityForResult(intent, requestCode);
-        }
-
-        @Override
-        public void startActivity(Intent intent) {
-            Log.v(TAG, "startActivity");
-            AuthActivity.this.startActivity(intent);
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
     };
 
@@ -353,5 +347,17 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return handled;
         }
     };
+
+    public static void startNewWithResponse(Context context, Parcelable authenticatorResponse) {
+        Intent intent = new Intent(context, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        ActivityResultClient.startActivity(context, intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+    }
 }
 

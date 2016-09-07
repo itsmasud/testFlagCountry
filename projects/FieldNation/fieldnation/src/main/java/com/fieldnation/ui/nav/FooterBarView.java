@@ -50,14 +50,14 @@ public class FooterBarView extends RelativeLayout {
     private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            InboxActivity.startNew(getContext());
+            InboxActivity.startNew(v.getContext());
         }
     };
 
     private final View.OnClickListener _menu_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            AdditionalOptionsActivity.startNew(getContext());
         }
     };
 }

@@ -78,9 +78,7 @@ public class PaymentWorkorderView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            getContext().startActivity(intent);
+            WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId());
         }
     };
 

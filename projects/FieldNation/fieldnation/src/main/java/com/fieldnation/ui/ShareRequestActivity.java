@@ -8,7 +8,6 @@ import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,20 +18,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fngps.GpsLocationService;
-import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderCardView;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.fntools.FileUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +42,7 @@ import java.util.Random;
 /**
  * Created by shoaib.ahmed on Sept/08/2015.
  */
-public class ShareRequestActivity extends AuthFragmentActivity {
+public class ShareRequestActivity extends AuthSimpleActivity {
     private static final String TAG = "ShareRequestActivity";
 
     private static final String STATE_LAYOUT = "STATE_LAYOUT";
@@ -50,6 +51,7 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private static final String STATE_UPLAODING_DOCS = "STATE_UPLAODING_DOCS";
 
     // UI
+    private Toolbar _toolbar;
     private OverScrollListView _workorderListView;
     private OverScrollView _uploadSlotScrollView;
     private TextView _titleWorkorderTextView;
@@ -63,9 +65,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     private OverScrollListView _fileList;
     private RefreshView _refreshView;
     private UnavailableCardView _emptyView;
-
-    private ActionBarDrawerView _actionBarView;
-    private Toolbar _toolbar;
 
     private RelativeLayout _loadingLayout;
     private ProgressBar _loadingProgress;
@@ -92,10 +91,12 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share_request);
+    public int getLayoutResource() {
+        return R.layout.activity_share_request;
+    }
 
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         layoutType = LayoutType.WORKORDER_LAYOUT;
 
         if (savedInstanceState != null) {
@@ -117,14 +118,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
             }
         }
 
-        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
-
-        _toolbar = _actionBarView.getToolbar();
-        _toolbar.setTitleTextColor(Color.WHITE);
-        _toolbar.setSubtitleTextColor(Color.WHITE);
-        _toolbar.setTitle(R.string.activity_share_request_title_workorder);
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
+        _toolbar.setNavigationOnClickListener(null);
+        //_toolbar.setTitle(R.string.activity_share_request_title_workorder);
+        setTitle(R.string.activity_share_request_title_workorder);
         _toolbar.setOnMenuItemClickListener(_sendMenuItem_listener);
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
@@ -160,6 +158,11 @@ public class ShareRequestActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putInt(STATE_LAYOUT, layoutType.ordinal());
 
@@ -176,6 +179,10 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         }
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     @Override
@@ -287,12 +294,6 @@ public class ShareRequestActivity extends AuthFragmentActivity {
         super.onPause();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
-
     private void setLoading(boolean loading) {
         Log.v(TAG, "setLoading(" + loading + ")");
         if (_refreshView != null) {
@@ -347,21 +348,16 @@ public class ShareRequestActivity extends AuthFragmentActivity {
                     }
                 }
 
-                Intent intent = new Intent(ShareRequestActivity.this, WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
+
+                Intent intent = WorkorderActivity.makeIntentShow(App.get(), _workorder.getWorkorderId());
                 intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                ActivityResultClient.startActivity(App.get(), intent,
+                        R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
                 startActivity(intent);
                 finish();
             }
             return false;
-        }
-    };
-
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
         }
     };
 

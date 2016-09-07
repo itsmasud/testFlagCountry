@@ -28,13 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fngps.GpsLocationService;
-import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
@@ -50,6 +46,15 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.MemUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
@@ -92,11 +97,6 @@ import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.fntools.Stopwatch;
-import com.fieldnation.fntools.misc;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -1307,12 +1307,9 @@ public class WorkFragment extends WorkorderFragment {
                     GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
 
             if (_workorder.getPaymentId() != null) {
-                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
-                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _workorder.getPaymentId());
-                startActivity(intent);
+                PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
             } else {
-                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
-                startActivity(intent);
+                PaymentListActivity.startNew(App.get());
             }
         }
 
@@ -1822,10 +1819,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            getActivity().startActivity(intent);
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
             setLoading(true);
         }
     };

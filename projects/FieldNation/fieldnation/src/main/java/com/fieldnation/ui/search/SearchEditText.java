@@ -138,7 +138,7 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
             _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_VOICE_REQUEST);

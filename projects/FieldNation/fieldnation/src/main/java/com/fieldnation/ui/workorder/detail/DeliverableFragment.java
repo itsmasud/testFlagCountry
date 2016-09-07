@@ -348,7 +348,7 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_activityResultClient_listener.onConnected");

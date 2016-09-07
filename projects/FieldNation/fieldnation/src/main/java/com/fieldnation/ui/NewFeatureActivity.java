@@ -1,6 +1,8 @@
 package com.fieldnation.ui;
 
 import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.webkit.WebSettings;
@@ -8,8 +10,9 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 
 /**
  * Created by shoaib.ahmed on 08/02/2016.
@@ -69,9 +72,9 @@ public class NewFeatureActivity extends Activity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        Log.v(TAG, "onResume");
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.hold, R.anim.activity_slide_out_bottom);
     }
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
@@ -80,4 +83,10 @@ public class NewFeatureActivity extends Activity {
             onBackPressed();
         }
     };
+
+    public static void startNew(Context context) {
+        Intent intent = new Intent(context, NewFeatureActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_bottom, R.anim.hold);
+    }
 }

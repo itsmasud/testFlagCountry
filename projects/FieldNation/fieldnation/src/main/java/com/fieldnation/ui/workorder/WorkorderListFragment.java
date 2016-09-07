@@ -15,16 +15,18 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fngps.GpsLocationService;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -47,8 +49,6 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.util.LinkedList;
@@ -684,11 +684,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             setLoading(true);
-            Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-//            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-            getActivity().startActivity(intent);
+            WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
             view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
         }
 
@@ -698,12 +694,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkorderCardView", 1);
 
             if (workorder.getPaymentId() != null) {
-                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
-                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, workorder.getPaymentId());
-                startActivity(intent);
+                PaymentDetailActivity.startNew(App.get(), workorder.getPaymentId());
             } else {
-                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
-                startActivity(intent);
+                PaymentListActivity.startNew(App.get());
             }
         }
 

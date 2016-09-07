@@ -1,6 +1,5 @@
 package com.fieldnation.ui.search;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -8,16 +7,17 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.ui.ActionBarDrawerView;
-import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 
 /**
  * Created by Michael on 7/7/2016.
  */
-public class EditSearchActivity extends AuthActionBarActivity {
+public class EditSearchActivity extends AuthSimpleActivity {
     private static final String TAG = "EditSearchActivity";
 
     // Ui
@@ -25,15 +25,6 @@ public class EditSearchActivity extends AuthActionBarActivity {
 
     // Dialog
     private OneButtonDialog _notAvailableDialog;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ActionBarDrawerView actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
-        Toolbar toolbar = actionBarView.getToolbar();
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
-    }
 
     @Override
     public int getLayoutResource() {
@@ -51,9 +42,8 @@ public class EditSearchActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.search, menu);
-        return true;
+    public int getToolbarId() {
+        return R.id.toolbar;
     }
 
     @Override
@@ -70,6 +60,10 @@ public class EditSearchActivity extends AuthActionBarActivity {
                 getString(R.string.btn_close), null);
     }
 
+    @Override
+    public void onProfile(Profile profile) {
+    }
+
     private final SearchEditScreen.Listener _searchEditScreen_listener = new SearchEditScreen.Listener() {
         @Override
         public void showNotAvailableDialog() {
@@ -77,20 +71,10 @@ public class EditSearchActivity extends AuthActionBarActivity {
         }
     };
 
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
-
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, EditSearchActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        context.startActivity(intent);
-        if (context instanceof Activity) {
-            ((Activity) context).overridePendingTransition(R.anim.activity_slide_in_right, 0);
-        }
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }

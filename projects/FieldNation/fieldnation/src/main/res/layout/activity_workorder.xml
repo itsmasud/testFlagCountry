@@ -1,24 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/actionbardrawerview"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_content"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- The main content view -->
-    <LinearLayout
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:layout_alignParentTop="true"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+    <com.fieldnation.ui.workorder.WorkorderTabView
+        android:id="@+id/tabview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar" />
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/content_viewpager"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_below="@+id/tabview" />
 
-        <com.fieldnation.ui.workorder.WorkorderTabView
-            android:id="@+id/tabview"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <android.support.v4.view.ViewPager
-            android:id="@+id/content_viewpager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
-
-</com.fieldnation.ui.ActionBarDrawerView>
+</RelativeLayout>

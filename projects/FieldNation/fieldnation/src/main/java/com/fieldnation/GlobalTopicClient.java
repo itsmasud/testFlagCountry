@@ -271,4 +271,14 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         public void setLoading(boolean isLoading) {
         }
     }
+
+    public static abstract class ProfileSwitchListener extends Listener {
+
+        public abstract GlobalTopicClient getGlobalTopicClient();
+
+        @Override
+        public void onConnected() {
+            getGlobalTopicClient().subUserSwitched();
+        }
+    }
 }

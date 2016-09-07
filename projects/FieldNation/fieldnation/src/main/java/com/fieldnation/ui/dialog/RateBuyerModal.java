@@ -139,10 +139,7 @@ public class RateBuyerModal extends DialogFragmentBase {
     private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(App.get(), RateBuyerActivity.class);
-            intent.putExtra(INTENT_WORKORDER, _workorder);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.get().startActivity(intent);
+            RateBuyerActivity.startNew(App.get(), _workorder);
             dismiss();
         }
     };

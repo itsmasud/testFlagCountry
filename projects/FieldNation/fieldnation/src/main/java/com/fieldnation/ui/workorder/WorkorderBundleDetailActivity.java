@@ -1,5 +1,6 @@
 package com.fieldnation.ui.workorder;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -10,21 +11,23 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.ui.AuthSimpleActivity;
 
 import java.text.NumberFormat;
 
-public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
+public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderBundleDetailActivity";
 
-    public static final String INTENT_FIELD_WORKORDER_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:workorder_id";
-    public static final String INTENT_FIELD_BUNDLE_ID = "com.fieldnation.ui.workorder.WorkorderBundleDetailActivity:bundle_id";
+    public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderBundleDetailActivity:workorder_id";
+    public static final String INTENT_FIELD_BUNDLE_ID = "WorkorderBundleDetailActivity:bundle_id";
 
     private static final int WEB_GET_BUNDLE = 1;
 
@@ -80,6 +83,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         _workorderClient = new WorkorderClient(_workorderClient_listener);
@@ -93,6 +101,11 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
         super.onPause();
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
+
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -145,11 +158,15 @@ public class WorkorderBundleDetailActivity extends AuthActionBarActivity {
     private final WorkorderCardView.Listener _wocard_listener = new WorkorderCardView.DefaultListener() {
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
-            Intent intent = new Intent(WorkorderBundleDetailActivity.this, WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-            WorkorderBundleDetailActivity.this.startActivity(intent);
-            // Todo set loading here
+            WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
         }
     };
+
+    public static void startNew(Context context, long workorderId, long bundleId) {
+        Intent intent = new Intent(context, WorkorderBundleDetailActivity.class);
+        intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, bundleId);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+    }
 }
 

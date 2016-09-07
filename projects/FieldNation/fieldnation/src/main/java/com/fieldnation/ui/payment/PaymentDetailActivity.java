@@ -1,5 +1,6 @@
 package com.fieldnation.ui.payment;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -8,21 +9,23 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.service.data.payment.PaymentClient;
-import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.data.payment.PaymentClient;
+import com.fieldnation.ui.AuthSimpleActivity;
 
 import java.util.Calendar;
 
-public class PaymentDetailActivity extends AuthActionBarActivity {
-    private static final String TAG = "ui.payment.PaymentDetailActivity";
+public class PaymentDetailActivity extends AuthSimpleActivity {
+    private static final String TAG = "PaymentDetailActivity";
 
-    public static final String INTENT_KEY_PAYMENT_ID = "com.fieldnation.ui.payment.PaymentDetailActivity:PAYMENT_ID";
+    public static final String INTENT_KEY_PAYMENT_ID = "PaymentDetailActivity:PAYMENT_ID";
 
     private static final int WEB_GET_PAY = 1;
 
@@ -53,10 +56,6 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             return;
         }
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_nav_onClick);
-
         try {
             _paymentId = intent.getLongExtra(INTENT_KEY_PAYMENT_ID, -1);
         } catch (Exception e) {
@@ -74,12 +73,10 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         requestData();
     }
 
-    private final View.OnClickListener _nav_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
+    @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
 
     @Override
     protected void onResume() {
@@ -93,6 +90,10 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
         if (_paymentClient != null && _paymentClient.isConnected())
             _paymentClient.disconnect(App.get());
         super.onPause();
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     private void requestData() {
@@ -152,4 +153,13 @@ public class PaymentDetailActivity extends AuthActionBarActivity {
             populateUi();
         }
     };
+
+    public static void startNew(Context context, long paymentId) {
+        Log.v(TAG, "startNew");
+        Intent intent = new Intent(context, PaymentDetailActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.putExtra(INTENT_KEY_PAYMENT_ID, paymentId);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+    }
+
 }

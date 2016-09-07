@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -58,6 +60,7 @@ public class NavActivity extends AuthSimpleActivity {
         _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
@@ -108,18 +111,10 @@ public class NavActivity extends AuthSimpleActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
-        }
-
+    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
             _ccw.cancel();
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
         }
     };
 
@@ -134,6 +129,12 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     private void showDrawer() {
