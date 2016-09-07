@@ -12,25 +12,27 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.detail.TimeLogRowView;
-import com.fieldnation.fntools.misc;
 
 import java.util.Random;
 
 /**
  * Created by michael.carver on 12/9/2014.
  */
-public class SignatureDisplayActivity extends AuthActionBarActivity {
+public class SignatureDisplayActivity extends AuthSimpleActivity {
     private static final String TAG = "SignatureDisplayActivity";
 
     // State
@@ -43,9 +45,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     public static final String INTENT_PARAM_WORKORDER = "ui.SignatureDisplayActivity:INTENT_PARAM_WORKORDER";
 
     // Ui
-    private ActionBarDrawerView _actionBarView;
-    private Toolbar _toolbar;
-
     private TextView _titleTextView;
     private TextView _descriptionTextView;
 
@@ -75,12 +74,11 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     private WorkorderClient _workorderClient;
 
     @Override
-    public void onCreate(Bundle savedInstanceState){
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        _actionBarView = (ActionBarDrawerView) findViewById(R.id.actionbardrawerview);
-        _toolbar = _actionBarView.getToolbar();
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        toolbar.setNavigationIcon(R.drawable.back_arrow);
+        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
 
     @Override
@@ -180,6 +178,11 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         if (_signature != null)
             outState.putParcelable(STATE_SIGNATURE, _signature);
@@ -190,6 +193,10 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         outState.putLong(STATE_SIGNATURE_ID, _signatureId);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     @Override
@@ -320,6 +327,12 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
+    }
+
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -358,6 +371,6 @@ public class SignatureDisplayActivity extends AuthActionBarActivity {
         if (!(context instanceof Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
-        context.startActivity(intent);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
     }
 }
