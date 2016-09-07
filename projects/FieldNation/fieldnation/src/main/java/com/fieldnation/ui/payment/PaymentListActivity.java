@@ -7,10 +7,11 @@ import android.os.Bundle;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.payment.PaymentClient;
-import com.fieldnation.ui.AuthActionBarActivity;
+import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.payment.MonthHeaderView.Header;
@@ -20,7 +21,7 @@ import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
-public class PaymentListActivity extends AuthActionBarActivity {
+public class PaymentListActivity extends AuthSimpleActivity {
     private static final String TAG = "PaymentListActivity";
 
     // UI
@@ -54,6 +55,11 @@ public class PaymentListActivity extends AuthActionBarActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         _paymentClient = new PaymentClient(_payment_listener);
@@ -71,9 +77,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
     }
 
     @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
+    public void onProfile(Profile profile) {
     }
 
     private void rebuildList() {
@@ -203,7 +207,7 @@ public class PaymentListActivity extends AuthActionBarActivity {
     public static void startNew(Context context) {
         Intent intent = new Intent(context, PaymentListActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_right, R.anim.activity_slide_out_left);
 
     }
 }

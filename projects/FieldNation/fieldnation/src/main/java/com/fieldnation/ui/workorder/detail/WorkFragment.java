@@ -1307,12 +1307,9 @@ public class WorkFragment extends WorkorderFragment {
                     GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
 
             if (_workorder.getPaymentId() != null) {
-                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
-                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _workorder.getPaymentId());
-                startActivity(intent);
+                PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
             } else {
-                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
-                startActivity(intent);
+                PaymentListActivity.startNew(App.get());
             }
         }
 
@@ -1822,10 +1819,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            getActivity().startActivity(intent);
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
             setLoading(true);
         }
     };

@@ -11,7 +11,7 @@ import com.fieldnation.R;
 /**
  * Created by Michael Carver on 1/30/2015.
  */
-public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity {
+public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
 
     // UI
     private ViewPager _viewPager;
@@ -35,6 +35,11 @@ public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         _viewPager.setOnPageChangeListener(_pageChangeListener);
         _tabListView.setViewPager(_viewPager);
+    }
+
+    @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
     }
 
     public abstract void loadFragments();

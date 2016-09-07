@@ -27,14 +27,6 @@ public class EditSearchActivity extends AuthSimpleActivity {
     private OneButtonDialog _notAvailableDialog;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
-    }
-
-    @Override
     public int getLayoutResource() {
         return R.layout.activity_edit_search;
     }
@@ -55,11 +47,6 @@ public class EditSearchActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return true;
-    }
-
-    @Override
     protected void onRestart() {
         super.onRestart();
         _searchEditScreen.reset();
@@ -77,23 +64,10 @@ public class EditSearchActivity extends AuthSimpleActivity {
     public void onProfile(Profile profile) {
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
-    }
-
     private final SearchEditScreen.Listener _searchEditScreen_listener = new SearchEditScreen.Listener() {
         @Override
         public void showNotAvailableDialog() {
             _notAvailableDialog.show();
-        }
-    };
-
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
         }
     };
 

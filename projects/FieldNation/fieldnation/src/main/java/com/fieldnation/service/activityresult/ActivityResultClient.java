@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -134,8 +135,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
             Intent intent = payload.getParcelable(PARAM_INTENT);
             getActivity().startActivity(intent);
 
-            int start = 0;
-            int end = 0;
+            int start = R.anim.activity_slide_in_right;
+            int end = R.anim.activity_slide_out_left;
 
             if (payload.containsKey(PARAM_TRANSITION_START_ANIMATION))
                 start = payload.getInt(PARAM_TRANSITION_START_ANIMATION);
@@ -154,8 +155,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
 
             getActivity().startActivityForResult(intent, requestCode);
 
-            int start = 0;
-            int end = 0;
+            int start = R.anim.activity_slide_in_right;
+            int end = R.anim.activity_slide_out_left;
 
             if (bundle.containsKey(PARAM_TRANSITION_START_ANIMATION))
                 start = bundle.getInt(PARAM_TRANSITION_START_ANIMATION);

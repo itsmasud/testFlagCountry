@@ -1,15 +1,13 @@
 package com.fieldnation.ui;
 
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcelable;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.view.View;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
@@ -62,10 +60,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
 
-        Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
-
-        setSupportActionBar(toolbar);
-        final ActionBar ab = getSupportActionBar();
+        if (getToolbarId() != 0) {
+            Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
+            setSupportActionBar(toolbar);
+            toolbar.setNavigationIcon(R.drawable.back_arrow);
+            toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
+        }
 
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TAG)) {
@@ -97,12 +97,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public abstract void onFinishCreate(Bundle savedInstanceState);
 
     public abstract int getToolbarId();
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main, menu);
-        return true;
-    }
 
     @Override
     protected void onResume() {
@@ -144,6 +138,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
     private void gotProfile(Profile profile) {
@@ -200,6 +200,12 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            onBackPressed();
+        }
+    };
 
     private final OneButtonDialog.Listener _notProvider_listener = new OneButtonDialog.Listener() {
         @Override
@@ -289,14 +295,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNeedUsernameAndPassword(Parcelable authenticatorResponse) {
-            Intent intent = new Intent(AuthSimpleActivity.this, AuthActivity.class);
-
-            intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
-
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
-                    | Intent.FLAG_ACTIVITY_CLEAR_TASK
-                    | Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity(intent);
+            AuthActivity.startNewWithResponse(App.get(), authenticatorResponse);
         }
     };
 

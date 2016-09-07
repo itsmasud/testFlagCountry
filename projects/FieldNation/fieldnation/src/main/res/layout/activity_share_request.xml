@@ -1,120 +1,126 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.fieldnation.ui.ActionBarDrawerView
-        android:id="@+id/actionbardrawerview"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <RelativeLayout
+
+        <com.fieldnation.ui.OverScrollListView
+            android:id="@+id/workorders_listview"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
-
-            <com.fieldnation.ui.OverScrollListView
-                android:id="@+id/workorders_listview"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:animateLayoutChanges="true"
-                android:divider="@null"
-                android:dividerHeight="0dp"
-                android:smoothScrollbar="true" />
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:animateLayoutChanges="true"
+            android:divider="@null"
+            android:dividerHeight="0dp"
+            android:smoothScrollbar="true" />
 
 
-            <com.fieldnation.ui.OverScrollView
-                android:id="@+id/uploadSolt_scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+        <com.fieldnation.ui.OverScrollView
+            android:id="@+id/uploadSolt_scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:visibility="gone">
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/titleWorkorder_textview"
-                        style="@style/Text_Subhead"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:gravity="center"
-                        android:text="@string/tasks_caps" />
-
-                    <LinearLayout
-                        android:id="@+id/uploadSlot_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </com.fieldnation.ui.OverScrollView>
-
-            <com.fieldnation.ui.OverScrollView
-                android:id="@+id/sharedFiles_scrollView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/titleTask_textview"
-                        style="@style/Text_Subhead"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:gravity="center"
-                        android:text="Task Title" />
-
-                    <TextView
-                        android:id="@+id/maxFilesNumber_textview"
-                        style="@style/Text_Body_2"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginRight="16dp"
-                        android:gravity="center"
-                        android:text="Select up to 5 files" />
-
-                    <LinearLayout
-                        android:id="@+id/filesList_layout"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:animateLayoutChanges="true"
-                        android:orientation="vertical" />
-                </LinearLayout>
-            </com.fieldnation.ui.OverScrollView>
-
-            <com.fieldnation.ui.UnavailableCardView
-                android:id="@+id/empty_view"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentTop="true"
-                android:visibility="gone" />
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
 
-            <com.fieldnation.ui.RefreshView
-                android:id="@+id/refresh_view"
-                android:layout_width="wrap_content"
-                android:layout_height="250dp"
-                android:layout_centerHorizontal="true"
-                android:layout_marginTop="-50dp" />
-        </RelativeLayout>
-    </com.fieldnation.ui.ActionBarDrawerView>
+                <TextView
+                    android:id="@+id/titleWorkorder_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="@string/tasks_caps" />
+
+                <LinearLayout
+                    android:id="@+id/uploadSlot_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.fieldnation.ui.OverScrollView>
+
+        <com.fieldnation.ui.OverScrollView
+            android:id="@+id/sharedFiles_scrollView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/toolbar"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/titleTask_textview"
+                    style="@style/Text_Subhead"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="Task Title" />
+
+                <TextView
+                    android:id="@+id/maxFilesNumber_textview"
+                    style="@style/Text_Body_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginRight="16dp"
+                    android:gravity="center"
+                    android:text="Select up to 5 files" />
+
+                <LinearLayout
+                    android:id="@+id/filesList_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:animateLayoutChanges="true"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </com.fieldnation.ui.OverScrollView>
+
+        <com.fieldnation.ui.UnavailableCardView
+            android:id="@+id/empty_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:visibility="gone" />
+
+        <com.fieldnation.ui.RefreshView
+            android:id="@+id/refresh_view"
+            android:layout_width="wrap_content"
+            android:layout_height="250dp"
+            android:layout_below="@+id/toolbar"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="-50dp" />
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="?attr/fnToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/FieldNation.Material.ToolBar" />
+    </RelativeLayout>
 
     <RelativeLayout
         android:id="@+id/loading_layout"
@@ -148,4 +154,4 @@
                 android:indeterminate="true" />
         </RelativeLayout>
     </RelativeLayout>
-</RelativeLayout>
+</FrameLayout>

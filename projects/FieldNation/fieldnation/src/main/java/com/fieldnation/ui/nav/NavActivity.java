@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -53,6 +54,7 @@ public class NavActivity extends AuthSimpleActivity {
         _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
@@ -98,6 +100,12 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     private void showDrawer() {

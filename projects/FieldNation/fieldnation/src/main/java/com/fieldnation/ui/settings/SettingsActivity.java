@@ -3,8 +3,6 @@ package com.fieldnation.ui.settings;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
@@ -22,15 +20,6 @@ public class SettingsActivity extends AuthSimpleActivity {
     @Override
     public int getLayoutResource() {
         return R.layout.activity_settings;
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
 
     @Override
@@ -60,13 +49,6 @@ public class SettingsActivity extends AuthSimpleActivity {
         super.finish();
         overridePendingTransition(R.anim.activity_slide_in_left, R.anim.activity_slide_out_right);
     }
-
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
 
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SettingsActivity.class);

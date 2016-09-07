@@ -3,12 +3,14 @@ package com.fieldnation.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.graphics.PixelFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -156,6 +158,12 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             _activityResultClient.disconnect(App.get());
 
         super.onPause();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 
     @Override
@@ -339,5 +347,17 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
             return handled;
         }
     };
+
+    public static void startNewWithResponse(Context context, Parcelable authenticatorResponse) {
+        Intent intent = new Intent(context, AuthActivity.class);
+
+        intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE, authenticatorResponse);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        ActivityResultClient.startActivity(context, intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+    }
 }
 

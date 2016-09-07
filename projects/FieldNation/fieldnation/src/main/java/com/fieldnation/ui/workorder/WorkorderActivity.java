@@ -10,8 +10,6 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
-import android.view.View;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -20,9 +18,10 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.market.MarketActivity;
+import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
@@ -74,14 +73,6 @@ public class WorkorderActivity extends AuthSimpleActivity {
     @Override
     public int getLayoutResource() {
         return R.layout.activity_workorder;
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
     }
 
     @Override
@@ -271,12 +262,6 @@ public class WorkorderActivity extends AuthSimpleActivity {
         super.onPause();
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
-    }
-
     private void populateUi() {
         if (_workorder == null)
             return;
@@ -442,8 +427,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
                     try {
                         Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
 
-                        Intent intent = new Intent(WorkorderActivity.this, MarketActivity.class);
-                        startActivity(intent);
+                        NavActivity.startNew(App.get());
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                             finishAndRemoveTask();
@@ -466,12 +450,17 @@ public class WorkorderActivity extends AuthSimpleActivity {
         }
     };
 
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
-        }
-    };
+    public static void startNew(Context context, long workorderId) {
+        startNew(context, workorderId, TAB_DETAILS);
+    }
+
+    public static void startNew(Context context, long workorderId, int tab) {
+        Intent intent = new Intent(context, WorkorderActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
+        intent.putExtra(INTENT_FIELD_CURRENT_TAB, tab);
+        ActivityResultClient.startActivity(context, intent);
+    }
 
     public static Intent makeIntentConfirm(Context context, long workorderId) {
         Log.v(TAG, "makeIntentConfirm");

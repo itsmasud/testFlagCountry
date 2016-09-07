@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -72,14 +71,6 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
 
     // Service
     private WorkorderClient _workorderClient;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
-    }
 
     @Override
     public int getLayoutResource() {
@@ -327,12 +318,6 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         WorkorderClient.getSignature(this, _workorder.getWorkorderId(), _signatureId);
     }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
-    }
-
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
@@ -353,13 +338,6 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
         @Override
         public void onClick(View v) {
             finish();
-        }
-    };
-
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
         }
     };
 

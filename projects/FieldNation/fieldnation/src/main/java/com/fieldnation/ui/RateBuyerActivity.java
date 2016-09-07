@@ -1,5 +1,7 @@
 package com.fieldnation.ui;
 
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,20 +14,22 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.fntools.misc;
 
 import java.lang.ref.WeakReference;
 
 /**
  * Created by shoaib.ahmed on 07/28/2016.
  */
-public class RateBuyerActivity extends AuthFragmentActivity {
+public class RateBuyerActivity extends AuthSimpleActivity {
     private static final String TAG = "RateBuyerActivity";
 
     // State
@@ -36,7 +40,6 @@ public class RateBuyerActivity extends AuthFragmentActivity {
     private static final String STATE_COMMENT_TEXT = "RateBuyerActivity:STATE_COMMENT_TEXT";
 
     private static final String INTENT_WORKORDER = "INTENT_WORKORDER";
-
 
     // UI
     private TextView _titleTextView;
@@ -71,11 +74,12 @@ public class RateBuyerActivity extends AuthFragmentActivity {
     /*-         Life Cycle          -*/
     /*-*****************************-*/
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
+    public int getLayoutResource() {
+        return R.layout.activity_rate_buyer;
+    }
 
-        setContentView(R.layout.activity_rate_buyer);
-
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             if (extras.containsKey(INTENT_WORKORDER))
@@ -110,8 +114,11 @@ public class RateBuyerActivity extends AuthFragmentActivity {
 
         _cancelButton = (Button) findViewById(R.id.cancel_button);
         _cancelButton.setOnClickListener(_cancel_onClick);
+    }
 
-        super.onCreate(savedInstanceState);
+    @Override
+    public int getToolbarId() {
+        return 0;
     }
 
     @Override
@@ -155,6 +162,10 @@ public class RateBuyerActivity extends AuthFragmentActivity {
             outState.putString(STATE_COMMENT_TEXT, _commentText);
 
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     @Override
@@ -216,6 +227,12 @@ public class RateBuyerActivity extends AuthFragmentActivity {
     protected void onStop() {
         _clear = true;
         super.onStop();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.hold, R.anim.activity_slide_out_bottom);
     }
 
     public void setListener(Listener listener) {
@@ -389,5 +406,12 @@ public class RateBuyerActivity extends AuthFragmentActivity {
     private interface Listener {
         void onOk(long workorderId, int satisfactionRating, int scopeRating,
                   int respectRating, String otherComments);
+    }
+
+    public static void startNew(Context context, Workorder workorder) {
+        Intent intent = new Intent(context, RateBuyerActivity.class);
+        intent.putExtra(INTENT_WORKORDER, workorder);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_bottom, R.anim.hold);
     }
 }

@@ -40,10 +40,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        toolbar.setNavigationIcon(R.drawable.back_arrow);
-        toolbar.setNavigationOnClickListener(_toolbarNavication_listener);
-
         ((AdditionalOptionsScreen) findViewById(R.id.screen)).setListener(_screen_listener);
 
         _switchUserOverlayViewStub = (ViewStub) findViewById(R.id.switchUserOverlay_viewstub);
@@ -58,11 +54,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        return false;
     }
 
     @Override
@@ -82,12 +73,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
 
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
             _globalTopicClient.disconnect(App.get());
-    }
-
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.activity_slide_in_left, R.anim.slide_out_right);
     }
 
     private final AdditionalOptionsScreen.Listener _screen_listener = new AdditionalOptionsScreen.Listener() {
@@ -110,13 +95,6 @@ public class AdditionalOptionsActivity extends AuthSimpleActivity {
         @Override
         public void onUserSwitched(Profile profile) {
             //startNew(App.get());
-        }
-    };
-
-    private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            onBackPressed();
         }
     };
 
