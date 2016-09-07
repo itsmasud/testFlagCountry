@@ -4,13 +4,12 @@ import android.content.Context;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
-import android.support.design.widget.FloatingActionButton;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -25,6 +24,7 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
@@ -33,7 +33,7 @@ import java.util.List;
 /**
  * Created by Michael on 7/14/2016.
  */
-public class SearchEditScreen extends FrameLayout {
+public class SearchEditScreen extends RelativeLayout {
     private static final String TAG = "SearchEditScreen";
 
     private static final Double[] DISTANCES = new Double[]{
@@ -56,7 +56,7 @@ public class SearchEditScreen extends FrameLayout {
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
-    private FloatingActionButton _actionButton;
+    private IconFontButton _actionButton;
 
     // Services
     private WorkorderClient _workorderClient;
@@ -116,7 +116,7 @@ public class SearchEditScreen extends FrameLayout {
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
-        _actionButton = (FloatingActionButton) findViewById(R.id.action_button);
+        _actionButton = (IconFontButton) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);

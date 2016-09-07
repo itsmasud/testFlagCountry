@@ -83,11 +83,14 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="-50dp" />
 
-    <android.support.design.widget.FloatingActionButton
+    <com.fieldnation.ui.IconFontButton
         android:id="@+id/action_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        style="@style/Material.Button.Circle"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:gravity="center" />
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="16dp"
+        android:gravity="center"
+        android:text="@string/icon_search"
+        android:textSize="22sp" />
 </merge>
