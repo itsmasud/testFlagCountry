@@ -17,7 +17,7 @@ import java.util.List;
  * Created by Michael on 5/25/2016.
  */
 public class HintArrayAdapter extends ArrayAdapter<Object> {
-    private CharSequence _hint = "";
+    private Object _hint = "";
 
     public HintArrayAdapter(Context context, int resource) {
         super(context, resource);
@@ -45,14 +45,15 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
         return new HintArrayAdapter(context, textViewResId, list);
     }
 
-    public void setHint(CharSequence hint) {
+    public void setHint(Object hint) {
         if (hint == null)
-            hint = "";
+            _hint = "";
+        else
+            _hint = hint;
 
-        _hint = hint;
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
-        super.add(hint);
+        super.add(_hint);
     }
 
     @Override
@@ -64,7 +65,7 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
     }
 
     @Override
-    public void addAll(Collection<?> collection) {
+    public void addAll(Collection<? extends Object> collection) {
         if (getCount() > 0)
             super.remove(getItem(getCount() - 1));
         super.addAll(collection);
@@ -96,7 +97,6 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
                 ((TextView) v).setTextColor(getContext().getResources().getColor(R.color.fn_dark_text));
             }
         }
-
         return v;
     }
 

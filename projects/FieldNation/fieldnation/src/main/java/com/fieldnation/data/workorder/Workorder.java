@@ -93,6 +93,8 @@ public class Workorder implements Parcelable {
     private Long _paymentId;
     @Json(name = "schedule")
     private Schedule _schedule;
+    @Json(name = "scheduleType")
+    private Integer _scheduleType;
     @Json(name = "shipmentTracking")
     private ShipmentTracking[] _shipmentTracking;
     @Json(name = "signatureList")
@@ -214,6 +216,9 @@ public class Workorder implements Parcelable {
     }
 
     public Schedule getEstimatedSchedule() {
+        if (_scheduleType != null && _estimatedSchedule != null)
+            _estimatedSchedule.setType(_scheduleType);
+
         return _estimatedSchedule;
     }
 
@@ -290,7 +295,18 @@ public class Workorder implements Parcelable {
     }
 
     public Schedule getSchedule() {
+        if (_scheduleType != null && _schedule != null)
+            _schedule.setType(_scheduleType);
         return _schedule;
+    }
+
+    // 1=>exact schedule
+    // 2=>Buseness hours
+    // 3=>Open range
+    private Integer getScheduleType() {
+        if (_scheduleType == null)
+            return 1;
+        return _scheduleType;
     }
 
     public ShipmentTracking[] getShipmentTracking() {
@@ -330,8 +346,9 @@ public class Workorder implements Parcelable {
         return _validPaymentInfo;
     }
 
-    public Integer getW2() {
-        return _w2;
+    public boolean isW2Workorder() {
+        if (_w2 == null) return false;
+        return _w2 == 1 ? true : false;
     }
 
     public Long getWorkorderId() {
@@ -541,7 +558,10 @@ public class Workorder implements Parcelable {
     }
 
     public boolean canChangeDeliverables() {
-        return getUploadSlots() != null && getUploadSlots().length > 0;
+        return getUploadSlots() != null && getUploadSlots().length > 0
+                && getWorkorderStatus() != WorkorderStatus.COMPLETED
+                && getWorkorderStatus() != WorkorderStatus.APPROVED
+                && getWorkorderStatus() != WorkorderStatus.PAID;
     }
 
     public boolean canChangeCustomFields() {

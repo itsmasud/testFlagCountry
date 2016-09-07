@@ -24,6 +24,4 @@ public interface GlobalTopicConstants {
     int NETWORK_STATE_CONNECTING = 3;
 
     String PARAM_GCM_MESSAGE = "PARAM_GCM_MESSAGE";
-
-
 }

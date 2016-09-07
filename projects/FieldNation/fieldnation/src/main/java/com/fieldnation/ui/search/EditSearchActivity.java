@@ -7,18 +7,12 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
-import android.widget.Button;
 
-import com.fieldnation.App;
 import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ActionBarDrawerView;
 import com.fieldnation.ui.AuthActionBarActivity;
-import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.OneButtonDialog;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by Michael on 7/7/2016.
@@ -26,16 +20,11 @@ import com.fieldnation.ui.workorder.WorkorderActivity;
 public class EditSearchActivity extends AuthActionBarActivity {
     private static final String TAG = "EditSearchActivity";
 
-    // UI
-    private SearchEditText _searchEditText;
-    private RefreshView _loadingView;
-    private Button _actionButton;
+    // Ui
+    private SearchEditScreen _searchEditScreen;
 
     // Dialog
     private OneButtonDialog _notAvailableDialog;
-
-    // Services
-    private WorkorderClient _workorderClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,13 +43,9 @@ public class EditSearchActivity extends AuthActionBarActivity {
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
         setTitle(R.string.work_order_search);
-        _searchEditText = (SearchEditText) findViewById(R.id.searchedittext);
-        _searchEditText.setListener(_searchEditText_listener);
 
-        _loadingView = (RefreshView) findViewById(R.id.loading_view);
-
-        _actionButton = (Button) findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_action_onClick);
+        _searchEditScreen = (SearchEditScreen) findViewById(R.id.searchEdit_screen);
+        _searchEditScreen.setListener(_searchEditScreen_listener);
 
         _notAvailableDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":notAvailableDialog");
     }
@@ -74,53 +59,21 @@ public class EditSearchActivity extends AuthActionBarActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-
-        _searchEditText.setText("");
+        _searchEditScreen.reset();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-
         _notAvailableDialog.setData(getString(R.string.not_available),
                 getString(R.string.workorder_not_found),
                 getString(R.string.btn_close), null);
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-    }
-
-    private final View.OnClickListener _action_onClick = new View.OnClickListener() {
+    private final SearchEditScreen.Listener _searchEditScreen_listener = new SearchEditScreen.Listener() {
         @Override
-        public void onClick(View v) {
-            try {
-                _workorderClient.subGet(Long.parseLong(_searchEditText.getText()));
-                WorkorderClient.get(App.get(), Long.parseLong(_searchEditText.getText()), false);
-                _loadingView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-    };
-
-    private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
-        @Override
-        public void startSearch(String searchString) {
-            try {
-                _workorderClient.subGet(Long.parseLong(searchString));
-                WorkorderClient.get(App.get(), Long.parseLong(searchString), false);
-                _loadingView.startRefreshing();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
+        public void showNotAvailableDialog() {
+            _notAvailableDialog.show();
         }
     };
 
@@ -128,24 +81,6 @@ public class EditSearchActivity extends AuthActionBarActivity {
         @Override
         public void onClick(View v) {
             onBackPressed();
-        }
-    };
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-        }
-
-        @Override
-        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
-            _loadingView.refreshComplete();
-            if (workorder == null || failed) {
-                _notAvailableDialog.show();
-            } else {
-                _workorderClient.unsubGet(workorder.getWorkorderId());
-                startActivity(
-                        WorkorderActivity.makeIntentShow(EditSearchActivity.this, workorder.getWorkorderId()));
-            }
         }
     };
 

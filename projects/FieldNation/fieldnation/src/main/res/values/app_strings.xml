@@ -7,17 +7,21 @@
     <string name="mapbox_inpreciseMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>
     <string name="mapbox_reddot">http://fieldnation.s3.amazonaws.com/mapbox/reddot.png</string>
 
+    <string name="tos_date">08/16/2016</string>
+
     <!-- general strings -->
     <string name="placeholder_word">Word</string>
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
+    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
     <string name="placeholder_date_short">10/20/1963</string>
     <string name="placeholder_money_short">$5.50</string>
     <string name="placeholder_money_long">$6000.00</string>
     <string name="placeholder_company_name">Company name not available</string>
-    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA</string>
+    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA (10mi)</string>
     <string name="placeholder_distance">65.46 miles</string>
+    <string name="placeholder_city_state_distance">Minneapolis, MN (10mi)</string>
     <string name="gcm_senderid">179310690338</string>
 
     <string name="activity_login_title">Field Nation Login</string>
@@ -125,6 +129,8 @@
     <string name="btn_yes">YES</string>
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
+    <string name="btn_remind_me_later">REMIND ME LATER</string>
+    <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
 
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
@@ -147,7 +153,9 @@
     <string name="toast_must_select_category">Please select a category</string>
     <string name="toast_must_enter_description">Please enter a description</string>
     <string name="toast_external_storage_needed">Need External Storage, please insert storage device before continuing</string>
-    <string name="toast_multiple_files_selection_unsupported">Your android version doesn\'t support multiple files selection</string>
+    <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
+    <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
+    <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -196,7 +204,27 @@
     <string name="dialog_decline_title">Not interested</string>
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
-    <string name="dialog_block_details">Additional details</string>
+    <string name="hint_text_decline_spinner">Please specify</string>
+    <string name="hint_text_block_spinner">Feel free to share more details</string>
+    <string-array name="dialog_decline_reasons">
+        <item>Low pay</item>
+        <item>Schedule conflict</item>
+        <item>Unclear scope of work</item>
+        <item>Unreasonable expectations</item>
+        <item>Too far</item>
+        <item>I don\'t do this type of work</item>
+        <item>Other</item>
+    </string-array>
+    <integer-array name="dialog_decline_reason_ids">
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>4</item>
+        <item>6</item>
+        <item>8</item>
+        <item>7</item>
+    </integer-array>
+
     <string-array name="dialog_block_reasons">
         <item>Other</item>
         <item>Scope not as described</item>
@@ -214,6 +242,10 @@
         <item>21</item>
     </integer-array>
 
+    <string name="modal_rate_buyer_title">Would you like to rate this buyer now?</string>
+    <string name="modal_rate_buyer_body">Your work order has been marked as complete and you can now rate %1$s</string>
+
+
     <string name="dialog_update_title">Please Update</string>
     <string name="dialog_update_message">This app version is no longer supported and needs to be updated</string>
 
@@ -230,7 +262,8 @@
     <string name="dialog_location_loading_body">We are currently gathering your location information.\n\nThis could take up to several minutes.</string>
     <string name="dialog_location_loading_button">@string/btn_cancel</string>
 
-    <string name="dialog_accept_terms_title">Terms of Service</string>
+    <string name="dialog_toc_title">Terms and Conditions</string>
+    <string name="dialog_toc_body_message">We have updated our terms and conditions. You will need to accept the new terms before you can continue and use the Field Nation app.</string>
     <string name="dialog_accept_terms_body_soft">
         By accepting you agree to the new
         &lt;a href=\"https://app.fieldnation.com/legal/?a=provider\"&gt;Terms of Service&lt;/a&gt;
@@ -284,6 +317,13 @@
     <string name="dialog_invalid_file_name">Invalid file name. Remove invalid characters.</string>
     <string name="dialog_insert_filename_before_extension">Insert file name before extension.</string>
 
+    <string name="dialog_rate_buyer_title">Rate WO %1$d</string>
+    <string name="overall_satisfaction_header">Overall satisfaction</string>
+    <string name="clear_expectation_header">Were the expectations clear?</string>
+    <string name="chk_professional_header">Were they professional?</string>
+    <string name="other_thoughts">Other thoughts</string>
+    <string name="character_counting">%1$d /120</string>
+
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -311,6 +351,7 @@
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
     <string name="block_reason">Block Reason</string>
+    <string name="decline_reason">Decline Reason</string>
     <string name="bundle">Bundle</string>
     <string name="buyer_has_been_notified">Buyer has been notified. You may be contacted for follow up.</string>
     <string name="buyer_and_support_have_been_notified">Buyer and support have been notified. You may be contacted for follow up.</string>
@@ -354,6 +395,7 @@
     <string name="done">Done</string>
     <string name="dont_have_an_account_sign_up">Don\'t have an account? Sign Up</string>
     <string name="downloading">Downloading…</string>
+    <string name="during">During</string>
     <string name="edit_your_profile">Edit your profile</string>
     <string name="educational">Educational</string>
     <string name="end_time">End Time</string>
@@ -363,12 +405,17 @@
     <string name="error_looking_up_map">Error looking up the map</string>
     <string name="estimated">Estimated</string>
     <string name="everything_is_good_to_go">Everything is good to go.\nSign off is complete.</string>
+    <string name="exactly_on">Exactly on</string>
     <string name="expense">Expense</string>
     <string name="expenses">Expenses</string>
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
     <string name="contact_us">Contact Us</string>
+    <string name="dialog_release_note_title">What\'s new in Field Nation</string>
+    <string name="feature_header_added_new">What we added</string>
+    <string name="bugs_fixed_header">Bugs we fixed</string>
+    <string name="feature_wroking_on">We\'re working on</string>
     <string name="failed">Failed</string>
     <string name="fetching_distance">Fetching distance...</string>
     <string name="file_name">File name</string>
@@ -477,7 +524,7 @@
     <string name="on_site">On Site</string>
     <string name="on_site_work">On Site Work</string>
     <string name="optional_caps">OPTIONAL</string>
-    <string name="overall_rating__">Overall rating: </string>
+    <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
@@ -502,6 +549,7 @@
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="reason_for_request">Reason For Request (optional)</string>
+    <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="request_bundle">Request Bundle</string>
     <string name="requested_work">Requested work</string>
@@ -509,6 +557,10 @@
     <string name="review">Review</string>
     <string name="review_and_sign">Review &amp; Sign</string>
     <string name="schedule">Schedule</string>
+    <string name="schedule_caps">SCHEDULE</string>
+    <string name="schedule_business_hours_format1">%1$s - %2$s</string>
+    <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_open_range_format">%1$s\n%2$s</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
@@ -683,6 +735,18 @@
     <string name="pref_string_profile_photo_wifi_title">Use wifi to download profile images</string>
     <string name="pref_string_profile_photo_wifi_summary">Wifi will be required to download profile images.</string>
 
+    <!-- legal section -->
+    <string name="pref_string_data_settings_legal">Legal</string>
+    <string name="pref_string_tc_title">Terms and Conditions</string>
+    <string name="pref_string_qa_title">Quality Assurance Policy</string>
+
+    <!-- release declaration -->
+    <string name="pref_string_data_release_title">Release %1$s</string>
+    <string name="pref_string_release_title">View what\'s new in Field Nation</string>
+    <string name="pref_category_key_release_declaration">pref_category_key_release_declaration</string>
+    <string name="pref_key_release_declaration">pref_key_release_declaration</string>
+    <string name="pref_string_release_summary">Every release we will let you know what we added, bugs we fixed, and what we are working on.</string>
+
     <!-- login error messages -->
     <string name="login_error_no_error">Success!</string>
     <string name="login_error_not_found_in_db">Authentication Failed, check your network settings, and retry.[1]</string>
@@ -787,4 +851,32 @@
         <item>App Feedback</item>
         <item>Help/Support</item>
     </string-array>
+
+    <string-array name="search_status">
+        <item>Assigned</item>
+        <item>Available</item>
+        <item>Canceled</item>
+        <item>Completed</item>
+        <item>Requested</item>
+        <item>Routed</item>
+    </string-array>
+
+    <string-array name="search_location">
+        <item>Profile Address</item>
+        <item>My Location</item>
+        <item>City, State or Zip</item>
+    </string-array>
+
+    <string-array name="search_distances">
+        <item>10 miles</item>
+        <item>20 miles</item>
+        <item>40 miles</item>
+        <item>60 miles</item>
+        <item>100 miles</item>
+        <item>150 miles</item>
+        <item>200 miles</item>
+        <item>300 miles</item>
+        <item>500 miles</item>
+    </string-array>
+
 </resources>

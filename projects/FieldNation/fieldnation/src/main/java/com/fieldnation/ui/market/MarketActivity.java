@@ -3,6 +3,7 @@ package com.fieldnation.ui.market;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
@@ -35,7 +36,6 @@ public class MarketActivity extends TabActionBarFragmentActivity {
     @Override
     public void loadFragments() {
         _fragments = new WorkorderListFragment[3];
-
         _fragments[0] = getFragment(WorkorderDataSelector.ROUTED);
         _fragments[1] = getFragment(WorkorderDataSelector.AVAILABLE);
         _fragments[2] = getFragment(WorkorderDataSelector.REQUESTED);

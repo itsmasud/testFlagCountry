@@ -51,6 +51,7 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.toast.ToastClient;
@@ -78,6 +79,7 @@ import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
+import com.fieldnation.ui.dialog.RateBuyerModal;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
@@ -165,6 +167,8 @@ public class WorkFragment extends WorkorderFragment {
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
+    private RateBuyerModal _rateBuyerModal;
+
 
     // Data
     private WorkorderClient _workorderClient;
@@ -213,8 +217,7 @@ public class WorkFragment extends WorkorderFragment {
         _contactListView = (ContactListView) view.findViewById(R.id.contactList_view);
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
-        _scheduleView = (ScheduleSummaryView) view
-                .findViewById(R.id.schedule_view);
+        _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
@@ -378,6 +381,8 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
+        _rateBuyerModal = RateBuyerModal.getInstance(getFragmentManager(), TAG);
+
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -778,9 +783,10 @@ public class WorkFragment extends WorkorderFragment {
 
         try {
             Log.v(TAG, "onActivityResult() resultCode= " + resultCode);
+            Log.v(TAG, "onActivityResult() requestCode= " + requestCode);
 
-            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT
-                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC)
+            if ((requestCode == ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK
+                    || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
                     && resultCode == Activity.RESULT_OK) {
 
                 _workorderClient.subDeliverableCache();
@@ -833,6 +839,9 @@ public class WorkFragment extends WorkorderFragment {
 
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
+                if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
+                    _rateBuyerModal.show(_workorder);
+                }
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT) {
@@ -883,13 +892,13 @@ public class WorkFragment extends WorkorderFragment {
 
             if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
                 _tempFile = temppath;
                 src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC);
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
             }
             setLoading(true);
         }
@@ -958,15 +967,36 @@ public class WorkFragment extends WorkorderFragment {
 
     private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
         @Override
-        public void onOk(boolean blockBuyer, int reasonId, String details) {
-            WorkorderClient.actionDecline(App.get(), _workorder.getWorkorderId());
+        public void onOk() {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+
             if (blockBuyer) {
                 ProfileClient.actionBlockCompany(App.get(),
                         App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), reasonId, details);
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+            }
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
+            if (blockBuyer) {
+                ProfileClient.actionBlockCompany(App.get(),
+                        App.get().getProfile().getUserId(),
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
             }
 
             getActivity().finish();
+        }
+
+        @Override
+        public void onOk(int declineReasonId, String declineExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
         }
 
         @Override

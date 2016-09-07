@@ -54,8 +54,6 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private Listener _listener;
     private ReportProblemType[] _primaryList = null;
     private ReportProblemType[] _secondaryList = null;
-//    private HintArrayAdapter _primaryAdapter = null;
-//    private HintArrayAdapter _secondaryAdapter = null;
 
     // Saved Data
     private Workorder _workorder;

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/marketplaceUnavailable_layout"
+        style="?attr/cardContainerStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No work found" />
+
+        <TextView
+            android:id="@+id/caption_textview"
+            style="@style/Text_Caption"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="Try changing your search settings" />
+
+    </LinearLayout>
+
+    <com.fieldnation.ui.OverScrollRecyclerView
+        android:id="@+id/workOrderList_recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbars="vertical" />
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
+
+</RelativeLayout>

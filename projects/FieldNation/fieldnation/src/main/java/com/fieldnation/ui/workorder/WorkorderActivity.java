@@ -422,7 +422,7 @@ public class WorkorderActivity extends AuthActionBarActivity {
         }
 
         @Override
-        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
+        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
             Log.v(TAG, "_workorderClient_listener.onDetails");
             if (workorder == null || failed) {
                 if (isCached) {

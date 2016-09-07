@@ -338,11 +338,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             Ratings               -*/
     /*-*************************************-*/
-    public static void sendRating(Context context, int satisfactionRating, int scopeRating,
-                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments, long workorderId) {
+    public static void sendRating(Context context,  long workorderId, int satisfactionRating, int scopeRating,
+                                  int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         context.startService(
-                WorkorderTransactionBuilder.actionPostRatingIntent(context, satisfactionRating, scopeRating,
-                        respectRating, respectComment, recommendBuyer, otherComments, workorderId));
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
+                        respectRating, respectComment, recommendBuyer, otherComments));
+    }
+
+    public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
+                                  int respectRating, String otherComments) {
+        context.startService(
+                WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
+                        respectRating, -1, false, otherComments));
     }
 
 
@@ -469,10 +476,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
         WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
-    }
-
-    public static void actionDecline(Context context, long workorderId) {
-        WorkorderTransactionBuilder.actionDecline(context, workorderId);
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
@@ -943,15 +946,17 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         // details
         protected void preGet(Bundle payload) {
             if (payload.getBoolean(PARAM_ERROR)) {
-                onGet(null, true, payload.getBoolean(PARAM_IS_CACHED));
+                onGet(payload.getLong(PARAM_WORKORDER_ID), null, true, payload.getBoolean(PARAM_IS_CACHED));
             } else {
                 new AsyncTaskEx<Bundle, Object, Workorder>() {
                     private boolean _isCached = false;
+                    private long _workorderId = 0;
 
                     @Override
                     protected Workorder doInBackground(Bundle... params) {
                         Bundle bundle = params[0];
                         _isCached = bundle.getBoolean(PARAM_IS_CACHED);
+                        _workorderId = bundle.getLong(PARAM_WORKORDER_ID);
                         try {
                             return Workorder.fromJson((JsonObject) bundle.getParcelable(PARAM_DATA_PARCELABLE));
                         } catch (Exception ex) {
@@ -962,13 +967,13 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
                     @Override
                     protected void onPostExecute(Workorder workorder) {
-                        onGet(workorder, false, _isCached);
+                        onGet(_workorderId, workorder, false, _isCached);
                     }
                 }.executeEx(payload);
             }
         }
 
-        public void onGet(Workorder workorder, boolean failed, boolean isCached) {
+        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
         }
 
         // get signature

@@ -66,27 +66,25 @@ public class ThreadManager {
         private void sleep() {
             synchronized (THREAD_PAUSE) {
                 try {
-//                    Log.v(getName(), "sleeping");
                     THREAD_PAUSE.wait(1000);
                 } catch (InterruptedException e) {
                     Log.v(TAG, e);
                 }
             }
-            //Log.v(getName(), "woke up");
         }
 
         @Override
         public void run() {
             while (_running) {
                 if (!doWork()) {
-                    //Log.v(TAG, "doWork=False");
                     sleep();
-                } //else {
-                //Log.v(TAG, "doWork=True");
-                //}
+                }
             }
         }
 
+        /**
+         * @return true if work was done, false if work was not done.
+         */
         public abstract boolean doWork();
     }
 }

@@ -22,7 +22,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/overall_rating__" />
+                android:text="@string/overall_rating" />
 
 
             <com.fieldnation.ui.StarView

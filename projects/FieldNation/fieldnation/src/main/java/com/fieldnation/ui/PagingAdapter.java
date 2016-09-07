@@ -208,5 +208,4 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
     public interface OnLoadingCompleteListener {
         void onLoadingComplete();
     }
-
 }

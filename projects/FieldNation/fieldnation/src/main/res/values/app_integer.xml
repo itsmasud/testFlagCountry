@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="textSizeReleaseNote">14</integer>
+    <integer name="textSizeWorkorderDescription">14</integer>
+    <integer name="textSizeBuyerRatingStar">24</integer>
+</resources>

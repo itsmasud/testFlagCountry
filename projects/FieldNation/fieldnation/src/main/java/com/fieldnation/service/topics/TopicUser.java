@@ -2,8 +2,6 @@ package com.fieldnation.service.topics;
 
 import android.os.Messenger;
 
-import com.fieldnation.Log;
-
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -35,10 +33,6 @@ class TopicUser {
      * All of the users that are listening to a topic. Indexed by topic
      */
     private static Hashtable<String, Set<TopicUser>> _topics = new Hashtable<>();
-
-    static {
-        Log.v(TAG, "TopicUser reset");
-    }
 
     public TopicUser(String userTag) {
         this.userTag = userTag;

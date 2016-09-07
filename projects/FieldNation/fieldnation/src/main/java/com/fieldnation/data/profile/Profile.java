@@ -61,15 +61,11 @@ public class Profile implements Parcelable {
     private Long _userId;
     @Json(name = "workordersTotal")
     private Integer _workordersTotal;
+    @Json(name = "canRequestWorkOnMarketplace")
+    private Boolean _canRequestWorkOnMarketplace;
+
 
     public Profile() {
-    }
-
-    public Boolean getAcceptedTos() {
-        if (_acceptedTos == null)
-            return true;
-
-        return _acceptedTos;
     }
 
     public Boolean getCanViewPayments() {
@@ -175,6 +171,14 @@ public class Profile implements Parcelable {
     public Integer getWorkordersTotal() {
         return _workordersTotal;
     }
+
+    public Boolean canRequestWorkOnMarketplace() {
+        if (_canRequestWorkOnMarketplace != null) {
+            return _canRequestWorkOnMarketplace;
+        }
+        return true;
+    }
+
 
     public JsonObject toJson() {
         return toJson(this);
