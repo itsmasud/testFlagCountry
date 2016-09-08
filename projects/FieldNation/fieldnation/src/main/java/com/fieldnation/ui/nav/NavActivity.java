@@ -28,6 +28,8 @@ import com.fieldnation.ui.search.SearchResultScreen;
 public class NavActivity extends AuthSimpleActivity {
     private static final String TAG = "NavActivity";
 
+    private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
+
     // Ui
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
@@ -40,6 +42,9 @@ public class NavActivity extends AuthSimpleActivity {
     private Animation _ccw;
     private Animation _cw;
 
+    // Data
+    private SavedSearchParams _currentSearch = null;
+
     @Override
     public int getLayoutResource() {
         return R.layout.activity_v3_nav;
@@ -48,6 +53,7 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
 
         _layout = (CoordinatorLayout) findViewById(R.id.main_content);
 
@@ -73,13 +79,36 @@ public class NavActivity extends AuthSimpleActivity {
 
         _arrowTextView.startAnimation(_cw);
 
-        SavedSearchParams savedSearchParams = new SavedSearchParams()
-                .type(WorkOrderListType.ASSIGNED.getType())
-                .status(WorkOrderListType.ASSIGNED.getStatuses())
-                .title("Assigned");
+        if (_currentSearch == null && savedInstanceState != null && !savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+            _currentSearch = new SavedSearchParams()
+                    .type(WorkOrderListType.ASSIGNED.getType())
+                    .status(WorkOrderListType.ASSIGNED.getStatuses())
+                    .title("Assigned");
 
-        _recyclerView.startSearch(savedSearchParams);
-        setTitle("Available");
+            _recyclerView.startSearch(_currentSearch);
+            setTitle("Assigned");
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (_currentSearch != null)
+            outState.putParcelable(STATE_CURRENT_SEARCH, _currentSearch);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(TAG, "onRestoreInstanceState");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+                _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            }
+        }
+        super.onRestoreInstanceState(savedInstanceState);
     }
 
     private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
@@ -149,8 +178,9 @@ public class NavActivity extends AuthSimpleActivity {
     private final SavedSearchList.OnSavedSearchParamsChangeListener _onSearchChangedListener = new SavedSearchList.OnSavedSearchParamsChangeListener() {
         @Override
         public void onChange(SavedSearchParams params) {
-            _recyclerView.startSearch(params);
-            NavActivity.this.setTitle(misc.capitalize(params.title));
+            _currentSearch = params;
+            _recyclerView.startSearch(_currentSearch);
+            NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
         }
     };
 
