@@ -358,5 +358,10 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         public ToastClient getToastClient() {
             return _toastClient;
         }
+
+        @Override
+        public int getSnackbarTextId() {
+            return android.support.design.R.id.snackbar_text;
+        }
     };
 }

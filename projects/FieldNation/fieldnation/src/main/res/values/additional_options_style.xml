@@ -7,8 +7,8 @@
     </style>
 
     <style name="OptionsProfileButton" parent="Material.Button.Flat">
-        <item name="android:layout_width">48dp</item>
-        <item name="android:layout_height">64dp</item>
+        <item name="android:layout_width">64dp</item>
+        <item name="android:layout_height">48dp</item>
         <item name="android:layout_marginRight">16dp</item>
         <item name="android:layout_marginTop">0dp</item>
         <item name="android:layout_marginBottom">0dp</item>
@@ -18,14 +18,15 @@
     </style>
 
     <style name="OptionsTitle" parent="@style/Text_Body_1">
-        <item name="android:layout_marginBottom">8dp</item>
+        <item name="android:layout_marginBottom">16dp</item>
         <item name="android:layout_marginLeft">8dp</item>
-        <item name="android:layout_marginTop">8dp</item>
+        <item name="android:layout_marginTop">16dp</item>
         <item name="android:textColor">?attr/colorAccent</item>
         <item name="android:textStyle">bold</item>
     </style>
 
     <style name="OptionsMenu">
+        <item name="android:background">@color/fn_clickable_bg</item>
         <item name="android:paddingLeft">8dp</item>
     </style>
 
