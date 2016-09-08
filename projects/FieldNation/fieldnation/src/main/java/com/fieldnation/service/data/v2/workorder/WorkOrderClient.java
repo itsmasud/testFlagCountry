@@ -55,6 +55,10 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, declineExplanation);
     }
 
+    public static void actionEta(Context context, long workorderId, String startTime, String endTime, String note) {
+        WorkOrderTransactionBuilder.actionEta(context, workorderId, startTime, endTime, note);
+    }
+
 
     /*-**********************************-*/
     /*-             Listener             -*/

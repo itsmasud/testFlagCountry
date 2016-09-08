@@ -28,6 +28,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.LeavingActivity;
@@ -37,10 +38,9 @@ import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.ExpiresDialog;
+import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
@@ -70,8 +70,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private UnavailableCardView _emptyView;
 
     // Dialogs
-    private ExpiresDialog _expiresDialog;
-    private ConfirmDialog _confirmDialog;
+    private EtaDialog _etaDialog;
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
@@ -160,10 +159,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
+        _etaDialog = EtaDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -244,8 +242,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _expiresDialog.setListener(_expiresDialog_listener);
-        _confirmDialog.setListener(_confirmDialog_listener);
+        _etaDialog.setListener(_etaDialog_listener);
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
@@ -617,7 +614,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _expiresDialog.show(workorder);
+                _etaDialog.show(workorder, true, false, false);
             }
         }
 
@@ -665,7 +662,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            _etaDialog.show(workorder, false, true, false);
         }
 
         @Override
@@ -711,7 +708,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            _etaDialog.show(workorder, false, true, false);
         }
 
         @Override
@@ -760,7 +757,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
+            _etaDialog.show(workorder, true, false, false);
         }
     };
 
@@ -781,35 +778,29 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+    private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            long time = -1;
-            if (dateTime != null) {
-                try {
-                    time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
+        public void onRequest(Workorder workorder, long milliseconds) {
+            long seconds = -1;
+            if (milliseconds > 0) {
+                seconds = milliseconds / 1000;
             }
+
             // request the workorder
             GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
-            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), time);
+            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
 
             // notify the UI
             _adapter.refreshPages();
         }
-    };
 
-    private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            //set  loading mode
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+            //set loading mode
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
+                WorkOrderClient.actionEta(App.get(),
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
                 _adapter.refreshPages();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -818,11 +809,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
     };

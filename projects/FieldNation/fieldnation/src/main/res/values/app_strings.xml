@@ -14,7 +14,8 @@
     <string name="placeholder_phrase">Should not see this.</string>
     <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
     <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
-    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
+    <string name="placeholder_time_long">12:00 AM</string>
+    <string name="placeholder_time_duration_long">12:00 AM - 12:00 PM</string>
     <string name="placeholder_date_short">10/20/1963</string>
     <string name="placeholder_money_short">$5.50</string>
     <string name="placeholder_money_long">$6000.00</string>
@@ -59,6 +60,7 @@
     <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
+    <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
@@ -132,6 +134,8 @@
     <string name="btn_remind_me_later">REMIND ME LATER</string>
     <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
 
+    <string name="switch_text_set_eta">Set an ETA</string>
+
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_downloading">Downloading</string>
@@ -140,6 +144,8 @@
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
+    <string name="toast_choose_date_between_schedule">Please pick a date in between schedule.</string>
+    <string name="toast_choose_time_between_schedule">Please pick a time in between schedule.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
@@ -148,6 +154,7 @@
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
+    <string name="toast_minimum_expiring_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
     <string name="toast_must_select_category">Please select a category</string>
@@ -205,7 +212,7 @@
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="hint_text_decline_spinner">Please specify</string>
-    <string name="hint_text_block_spinner">Feel free to share more details</string>
+    <string name="hint_text_optional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -324,6 +331,7 @@
     <string name="other_thoughts">Other thoughts</string>
     <string name="character_counting">%1$d /120</string>
 
+    <string name="dialog_eta_title">Edit ETA</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -348,6 +356,8 @@
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="arrival_time">Arrival Time</string>
+    <string name="tv_date">Date</string>
+    <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
     <string name="block_reason">Block Reason</string>
@@ -560,7 +570,11 @@
     <string name="schedule_caps">SCHEDULE</string>
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
     <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_business_hours_format3"> (%1$s - %2$s)</string>
     <string name="schedule_open_range_format">%1$s\n%2$s</string>
+    <string name="schedule_open_range_format2">%1$s\ - %2$s</string>
+    <string name="schedule_current">Current Schedule</string>
+    <string name="schedule_original">Original Schedule</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
@@ -602,7 +616,7 @@
     <string name="what_about_approval">What about approval?</string>
     <string name="what_about_payment">What about payment?</string>
     <string name="what_about_site">What about the site?</string>
-    <string name="when_does_this_request_expire">When does this request expire?</string>
+    <string name="when_does_this_request_expire">Expire request</string>
     <string name="what_category">What is the category?</string>
     <string name="what_type">What is the type?</string>
     <string name="what_type_of_schedule">What type of schedule?</string>
@@ -671,6 +685,15 @@
         <item>distance</item>
         <item>city_state</item>
     </string-array>
+    <string-array name="schedule_small_case_am_pm_array">
+        <item>am</item>
+        <item>pm</item>
+    </string-array>
+    <string-array name="schedule_capital_case_am_pm_array">
+        <item>AM</item>
+        <item>PM</item>
+    </string-array>
+
 
     <!-- sync settings -->
     <string name="pref_string_sync_category_title">Sync Settings</string>
