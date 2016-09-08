@@ -77,7 +77,6 @@ public class SavedSearchList extends LinearLayout {
     }
 
     private void init() {
-
         if (isInEditMode())
             return;
 
@@ -90,6 +89,8 @@ public class SavedSearchList extends LinearLayout {
             tv.setOnClickListener(_textView_onClick);
             addView(tv);
         }
+
+        setVisibility(GONE);
     }
 
     @Override

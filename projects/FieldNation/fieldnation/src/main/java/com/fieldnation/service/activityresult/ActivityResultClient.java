@@ -131,7 +131,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
          * @param payload
          */
         private void startActivity(Bundle payload) {
-            Log.v(TAG, "startActivity");
+            Log.v(TAG, "startActivity " + getActivity().getClass().getSimpleName());
             Intent intent = payload.getParcelable(PARAM_INTENT);
             getActivity().startActivity(intent);
 
