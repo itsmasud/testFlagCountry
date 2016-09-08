@@ -28,10 +28,12 @@ public class SettingsActivity extends AuthSimpleActivity {
             getFragmentManager().beginTransaction()
                     .replace(R.id.content, new LegalSettingsFragment())
                     .commit();
+            setTitle("Legal");
         } else {
             getFragmentManager().beginTransaction()
                     .replace(R.id.content, new GeneralSettingsFragment())
                     .commit();
+            setTitle("Settings");
         }
     }
 

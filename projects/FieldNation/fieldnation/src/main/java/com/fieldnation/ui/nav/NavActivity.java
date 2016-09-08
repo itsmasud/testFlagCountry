@@ -79,15 +79,19 @@ public class NavActivity extends AuthSimpleActivity {
 
         _arrowTextView.startAnimation(_cw);
 
-        if (_currentSearch == null && savedInstanceState != null && !savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+            _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
+        }
+
+        if (_currentSearch == null) {
             _currentSearch = new SavedSearchParams()
                     .type(WorkOrderListType.ASSIGNED.getType())
                     .status(WorkOrderListType.ASSIGNED.getStatuses())
                     .title("Assigned");
-
-            _recyclerView.startSearch(_currentSearch);
-            setTitle("Assigned");
         }
+
+        _recyclerView.startSearch(_currentSearch);
+        NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
     }
 
     @Override

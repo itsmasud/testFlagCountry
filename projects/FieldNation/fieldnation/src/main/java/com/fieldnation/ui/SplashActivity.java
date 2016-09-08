@@ -12,7 +12,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -182,6 +181,6 @@ public class SplashActivity extends AuthSimpleActivity {
     public static void startNew(Context context) {
         Intent intent = new Intent(context, SplashActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.abc_fade_in, R.anim.abc_fade_out);
+        context.startActivity(intent);
     }
 }
