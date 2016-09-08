@@ -79,7 +79,7 @@
                     android:id="@+id/blockDetails_edittext"
                     style="@style/EditText"
                     android:layout_width="match_parent"
-                    android:hint="@string/hint_text_block_spinner"
+                    android:hint="@string/hint_text_optional_details"
                     android:visibility="visible" />
             </LinearLayout>
         </LinearLayout>
