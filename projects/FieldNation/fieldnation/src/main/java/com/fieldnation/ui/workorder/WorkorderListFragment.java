@@ -28,6 +28,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.LeavingActivity;
@@ -786,30 +787,27 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
-        public void onRequest(Workorder workorder, String dateTime) {
-            long time = -1;
-            if (dateTime != null) {
-                try {
-                    time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
+        public void onRequest(Workorder workorder, long milliseconds) {
+            long seconds = -1;
+            if (milliseconds > 0) {
+                seconds = milliseconds / 1000;
             }
+
             // request the workorder
             GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
                     GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
-            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), time);
+            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
 
             // notify the UI
             _adapter.refreshPages();
         }
 
-        public void onConfirm(Workorder workorder, String startDate, long durationMilliseconds) {
-            //set  loading mode
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+            //set loading mode
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds));
+                WorkOrderClient.actionEta(App.get(),
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
                 _adapter.refreshPages();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -818,11 +816,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
         }
 
     };

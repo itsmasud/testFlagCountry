@@ -917,14 +917,10 @@ public class WorkFragment extends WorkorderFragment {
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
 
         @Override
-        public void onRequest(Workorder workorder, String dateTime) {
+        public void onRequest(Workorder workorder, long milliseconds) {
             long seconds = -1;
-            if (dateTime != null) {
-                try {
-                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
+            if (milliseconds > 0) {
+                seconds = milliseconds / 1000;
             }
 
             GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
@@ -935,12 +931,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onConfirm(Workorder workorder, String startDate, long durationMilliseconds) {
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
             try {
                 GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
                         GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        _workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds));
+                WorkOrderClient.actionEta(App.get(),
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+
                 setLoading(true);
 
             } catch (Exception ex) {
@@ -952,10 +949,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onCancel(Workorder workorder) {
         }
 
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
-        }
     };
 
     private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
@@ -1532,9 +1525,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-//            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
-            EtaDialog dialog = EtaDialog.getInstance(getFragmentManager(), TAG);
-            dialog.show();
+            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
         }
 
         @Override
@@ -1919,7 +1910,7 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    ScheduleSummaryView.Listener _editEta_listener  = new ScheduleSummaryView.Listener() {
+    ScheduleSummaryView.Listener _editEta_listener = new ScheduleSummaryView.Listener() {
         @Override
         public void editEta() {
             _etaDialog.show(_workorder, false, false, true);

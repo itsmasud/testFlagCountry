@@ -10,13 +10,11 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.StarView;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -86,13 +84,11 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             return;
         setVisibility(View.VISIBLE);
 
-        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.REQUESTED
-                || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED
-                || _workorder.getWorkorderSubstatus() == WorkorderSubstatus.UNCONFIRMED
-                || !_workorder.isWorkLogged()){
+        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED
+                && _workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
             _addButton.setVisibility(VISIBLE);
 
-        }else {
+        } else {
             _addButton.setVisibility(GONE);
         }
 
@@ -124,7 +120,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             }
 
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            symbols.setAmPmStrings(new String[]{"am", "pm"});
+            symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
             if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);

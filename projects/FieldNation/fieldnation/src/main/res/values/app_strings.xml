@@ -144,6 +144,8 @@
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
+    <string name="toast_choose_date_between_schedule">Please pick a date in between schedule.</string>
+    <string name="toast_choose_time_between_schedule">Please pick a time in between schedule.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
@@ -152,6 +154,7 @@
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
+    <string name="toast_minimum_expiring_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
     <string name="toast_must_select_category">Please select a category</string>
@@ -567,7 +570,9 @@
     <string name="schedule_caps">SCHEDULE</string>
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
     <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_business_hours_format3"> (%1$s - %2$s)</string>
     <string name="schedule_open_range_format">%1$s\n%2$s</string>
+    <string name="schedule_open_range_format2">%1$s\ - %2$s</string>
     <string name="schedule_current">Current Schedule</string>
     <string name="schedule_original">Original Schedule</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
@@ -680,6 +685,15 @@
         <item>distance</item>
         <item>city_state</item>
     </string-array>
+    <string-array name="schedule_small_case_am_pm_array">
+        <item>am</item>
+        <item>pm</item>
+    </string-array>
+    <string-array name="schedule_capital_case_am_pm_array">
+        <item>AM</item>
+        <item>PM</item>
+    </string-array>
+
 
     <!-- sync settings -->
     <string name="pref_string_sync_category_title">Sync Settings</string>

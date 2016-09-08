@@ -48,6 +48,14 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
                         + (misc.isEmptyOrNull(declineExplanation) ? "" : "&reason_other=" + misc.escapeForURL(declineExplanation)));
     }
 
+    public static void actionEta(Context context, long workorderId, String startTime, String endTime, String note) {
+        action(context, workorderId, "confirm-eta", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "start_time=" + startTime
+                + "&end_time=" + endTime
+                + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)));
+    }
+
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/

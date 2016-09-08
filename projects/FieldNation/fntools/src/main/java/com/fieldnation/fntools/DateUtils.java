@@ -173,10 +173,10 @@ public class DateUtils {
 
     /**
      * @param calendar
-     * @return  HH:MM am/pm
+     * @return HH:MM am/pm
      */
     public static String formatTimeLong(Calendar calendar) {
-        return  formatTime(calendar, false);
+        return formatTime(calendar, false);
     }
 
     /**
@@ -578,5 +578,11 @@ public class DateUtils {
      * The maximum date possible.
      */
     public static Date MAX_DATE = new Date(Long.MAX_VALUE);
+
+
+    public static long returnMinutes(long millisenonds) {
+        return millisenonds / 60000;
+    }
+
 
 }
