@@ -17,13 +17,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.EventAction;
+import com.fieldnation.fnanalytics.EventCategory;
+import com.fieldnation.fnanalytics.EventLabel;
+import com.fieldnation.fnanalytics.EventProperty;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
@@ -455,10 +459,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         Location location = _workorder.getLocation();
                         if (location != null) {
                             try {
-                                GoogleAnalyticsTopicClient
-                                        .dispatchEvent(getContext(), "WorkorderActivity",
-                                                GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                                "WorkFragment", 1);
+                                Tracker.event(App.get(), EventCategory.WORK_ORDER,
+                                        EventAction.SHOW_MAP, EventLabel.NULL, EventProperty.WORK_ORDER_ID,
+                                        (double) _workorder.getWorkorderId());
                                 String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                                 String _uriString = "google.navigation:q=" + _fullAddress;
                                 Uri _uri = Uri.parse(_uriString);
@@ -482,10 +485,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
-                        GoogleAnalyticsTopicClient
-                                .dispatchEvent(getContext(), "WorkorderActivity",
-                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment", 1);
+                        Tracker.event(App.get(), EventCategory.WORK_ORDER,
+                                EventAction.SHOW_MAP, EventLabel.NULL, EventProperty.WORK_ORDER_ID,
+                                (double) _workorder.getWorkorderId());
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);

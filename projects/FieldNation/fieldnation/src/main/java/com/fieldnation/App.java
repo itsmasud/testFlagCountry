@@ -41,9 +41,6 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -78,9 +75,7 @@ public class App extends Application {
 
     private static App _context;
 
-    private Tracker _tracker;
     private Profile _profile;
-    private GoogleAnalyticsTopicClient _gaTopicClient;
     private GlobalTopicClient _globalTopicClient;
     private ProfileClient _profileClient;
     private AuthTopicClient _authTopicClient;
@@ -118,6 +113,7 @@ public class App extends Application {
                 return App.this;
             }
         });
+        com.fieldnation.fnanalytics.Tracker.addTrackerWrapper(new SnowplowWrapper());
     }
 
     @Override
@@ -183,30 +179,6 @@ public class App extends Application {
         // read in exepense categories
         new ExpenseCategories(this);
 
-        // GoogleAnalytics.getInstance(context) has been causing ANRs, so I'm running this in a separate thread for now
-        new AsyncTaskEx<App, Object, Tracker>() {
-            @Override
-            protected Tracker doInBackground(App... params) {
-                Stopwatch stopwatch = new Stopwatch(true);
-                App app = params[0];
-                GoogleAnalytics analytics = GoogleAnalytics.getInstance(app);
-                analytics.enableAutoActivityReports(app);
-                analytics.setLocalDispatchPeriod(app.getResources().getInteger(R.integer.ga_local_dispatch_period));
-                analytics.setDryRun(app.getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
-                Tracker tracker = analytics.newTracker(R.xml.ga_config);
-                tracker.enableAdvertisingIdCollection(true);
-                tracker.enableAutoActivityTracking(true);
-                tracker.enableExceptionReporting(false);
-                Log.v(TAG, "Get Tracker time: " + stopwatch.finish());
-                return tracker;
-            }
-
-            @Override
-            protected void onPostExecute(Tracker tracker) {
-                _tracker = tracker;
-            }
-        }.executeEx(this);
-
         watch.finishAndRestart();
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
@@ -215,9 +187,6 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
-        _gaTopicClient.connect(this);
-
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
         _globalTopicClient.connect(this);
 
@@ -282,7 +251,6 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
-        _gaTopicClient.disconnect(this);
         _profileClient.disconnect(this);
         _globalTopicClient.disconnect(this);
         _authTopicClient.disconnect(this);
@@ -455,105 +423,6 @@ public class App extends Application {
         }
         return -1;
     }
-
-    /*-*********************-*/
-    /*-         GA          -*/
-    /*-*********************-*/
-
-    /**
-     * Get's the google analytics tracker.
-     *
-     * @return The tracker object, can be null!
-     */
-    private synchronized Tracker getTracker() {
-        return _tracker;
-    }
-
-    private final GoogleAnalyticsTopicClient.Listener _gaTopicClient_listener = new GoogleAnalyticsTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _gaTopicClient.registerEvents();
-            _gaTopicClient.registerScreenView();
-            _gaTopicClient.registerTiming();
-        }
-
-        @Override
-        public void onGaEvent(final String category, final String action, final String label, final Long value) {
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaEvent(category, action, label, value);
-                    }
-                }, 100);
-                return;
-            }
-
-            HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
-
-            event.setCategory(category).setAction(action).setLabel(label);
-
-            if (value != null) {
-                event.setValue(value);
-            }
-
-            t.send(event.build());
-        }
-
-        @Override
-        public void onGaScreen(final String screenName) {
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaScreen(screenName);
-                    }
-                }, 100);
-                return;
-            }
-
-            t.setScreenName(screenName);
-            t.send(new HitBuilders.AppViewBuilder().build());
-        }
-
-        @Override
-        public void onGaTiming(final String category, final String variable, final String label, final Long value) {
-            HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaTiming(category, variable, label, value);
-                    }
-                }, 100);
-                return;
-            }
-
-            if (category != null)
-                timing.setCategory(category);
-
-            if (variable != null)
-                timing.setVariable(variable);
-
-            if (label != null)
-                timing.setLabel(label);
-
-            if (value != null)
-                timing.setValue(value);
-
-            t.send(timing.build());
-        }
-    };
-
 
     public boolean canRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);

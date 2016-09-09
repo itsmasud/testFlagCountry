@@ -30,7 +30,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
@@ -46,6 +45,11 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.fnanalytics.EventAction;
+import com.fieldnation.fnanalytics.EventCategory;
+import com.fieldnation.fnanalytics.EventLabel;
+import com.fieldnation.fnanalytics.EventProperty;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -100,7 +104,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -674,7 +677,8 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckin() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkFragment", 1);
+        Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CHECK_IN, EventLabel.NULL,
+                EventProperty.WORK_ORDER_ID, (double) _workorder.getWorkorderId());
         if (_gpsLocationService.hasLocation()) {
             WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
                     _gpsLocationService.getLocation());
@@ -686,8 +690,8 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckOut() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkFragment", 1);
+        Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CHECK_OUT, EventLabel.NULL,
+                EventProperty.WORK_ORDER_ID, (double) _workorder.getWorkorderId());
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
                 WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
@@ -922,9 +926,8 @@ public class WorkFragment extends WorkorderFragment {
             if (milliseconds > 0) {
                 seconds = milliseconds / 1000;
             }
-
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.REQUEST, EventLabel.NULL,
+                    EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
             WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
             setLoading(true);
 
@@ -933,8 +936,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
             try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
+                Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CONFIRM,
+                        EventLabel.NULL, EventProperty.WORK_ORDER_ID, workorder.getWorkorderId());
                 WorkOrderClient.actionEta(App.get(),
                         workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
 
@@ -955,9 +958,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkFragment", 1);
-
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.COUNTER_OFFER,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, workorder.getWorkorderId());
             WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
                     reason, expirationInSeconds, pay, schedule, expenses);
             setLoading(true);
@@ -1097,25 +1099,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK, "WorkFragment", 1);
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
-            } catch (Exception ex) {
-                // I don't expect this to ever fail, but it could. just a safe guard.
-                Log.v(TAG, ex);
-            }
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED_GROSS, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
-            } catch (Exception ex) {
-                // I don't expect this to ever fail, but it could. just a safe guard.
-                Log.v(TAG, ex);
-            }
-
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.MARK_COMPLETE,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
             WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
@@ -1127,8 +1112,8 @@ public class WorkFragment extends WorkorderFragment {
         // TODO: I am not pretty sure about the following method
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.MARK_INCOMPLETE,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
 
             WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
@@ -1296,8 +1281,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.ACKNOWLEDGE_HOLD,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
 
             WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
 
@@ -1311,8 +1296,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onViewPayment() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.VIEW_PAYMENT,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
 
             if (_workorder.getPaymentId() != null) {
                 PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
@@ -1357,8 +1342,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onWithdraw() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.WITHDRAW,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
 
             WorkorderClient.actionWithdrawRequest(App.get(), _workorder.getWorkorderId());
         }
@@ -1370,8 +1355,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReadyToGo() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkFragment", 1);
+            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.READY_TO_GO,
+                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
 
             WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
         }
