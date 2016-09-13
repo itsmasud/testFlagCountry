@@ -49,6 +49,12 @@ public class AnswersWrapper implements TrackerWrapper {
     public void screen(Context context, Screen screen) {
         if (!Debug.isCrashlyticsRunning())
             return;
+
+        if (screen != null && screen.name != null) {
+            Answers.getInstance().logCustom(
+                    new CustomEvent("Screen View")
+                            .putCustomAttribute("screen", screen.name));
+        }
     }
 
     @Override
@@ -56,5 +62,11 @@ public class AnswersWrapper implements TrackerWrapper {
         if (!Debug.isCrashlyticsRunning())
             return;
 
+        if (timing != null && timing.category != null && timing.label != null && timing.timing != null) {
+            Answers.getInstance().logCustom(
+                    new CustomEvent(timing.category)
+                            .putCustomAttribute("label", timing.label)
+                            .putCustomAttribute("time", timing.timing));
+        }
     }
 }
