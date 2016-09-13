@@ -23,9 +23,11 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
@@ -114,7 +116,8 @@ public class App extends Application {
                 return App.this;
             }
         });
-        com.fieldnation.fnanalytics.Tracker.addTrackerWrapper(new SnowplowWrapper());
+        Tracker.addTrackerWrapper(new SnowplowWrapper());
+        Tracker.addTrackerWrapper(new AnswersWrapper());
     }
 
     @Override

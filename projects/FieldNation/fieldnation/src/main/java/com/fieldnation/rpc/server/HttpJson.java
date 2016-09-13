@@ -3,6 +3,7 @@ package com.fieldnation.rpc.server;
 import android.content.Context;
 import android.net.Uri;
 
+import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.fnanalytics.Timing;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
@@ -184,6 +185,7 @@ public class HttpJson {
             if (timingKey != null) {
                 Tracker.timing(context,
                         new Timing.Builder()
+                                .tag(AnswersWrapper.TAG)
                                 .category("Web Timing")
                                 .label(timingKey)
                                 .timing((int) watch.finish())

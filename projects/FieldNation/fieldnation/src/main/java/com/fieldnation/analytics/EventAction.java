@@ -24,5 +24,6 @@ public interface EventAction {
     String SHOW_MAP = "Show Map";
 
     String PUSH_NOTIFICATION = "Push Notification Received";
+    String PUSH_NOTIFICATION_INTERACTED = "Push Notification Interacted";
     String CONTACT_US = "Contact Us";
 }

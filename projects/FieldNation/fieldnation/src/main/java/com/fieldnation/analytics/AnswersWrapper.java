@@ -32,14 +32,26 @@ public class AnswersWrapper implements TrackerWrapper {
 
         if (event != null && event.category != null) {
             CustomEvent customEvent = new CustomEvent(event.category);
-            if (event.action != null)
-                customEvent.putCustomAttribute("action", event.action);
-            if (event.label != null)
-                customEvent.putCustomAttribute("label", event.label);
-            if (event.property != null)
-                customEvent.putCustomAttribute("property", event.property);
-            if (event.value != null)
-                customEvent.putCustomAttribute("value", event.value);
+            if (event.action != null) {
+                customEvent.putCustomAttribute("Actions", event.action);
+
+                if (event.label != null)
+                    customEvent.putCustomAttribute(event.action, event.label);
+                else
+                    customEvent.putCustomAttribute(event.action, 1);
+
+            } else if (event.label != null)
+                customEvent.putCustomAttribute("Label", event.value);
+
+            if (event.property != null) {
+                customEvent.putCustomAttribute("Properties", event.property);
+
+                if (event.value != null)
+                    customEvent.putCustomAttribute(event.property, event.value);
+                else
+                    customEvent.putCustomAttribute(event.property, 1);
+            } else if (event.value != null)
+                customEvent.putCustomAttribute("Value", event.value);
 
             Answers.getInstance().logCustom(customEvent);
         }
@@ -53,7 +65,7 @@ public class AnswersWrapper implements TrackerWrapper {
         if (screen != null && screen.name != null) {
             Answers.getInstance().logCustom(
                     new CustomEvent("Screen View")
-                            .putCustomAttribute("screen", screen.name));
+                            .putCustomAttribute("Screen", screen.name));
         }
     }
 
@@ -65,8 +77,8 @@ public class AnswersWrapper implements TrackerWrapper {
         if (timing != null && timing.category != null && timing.label != null && timing.timing != null) {
             Answers.getInstance().logCustom(
                     new CustomEvent(timing.category)
-                            .putCustomAttribute("label", timing.label)
-                            .putCustomAttribute("time", timing.timing));
+                            .putCustomAttribute(timing.label, timing.timing)
+                            .putCustomAttribute("Labels", timing.label));
         }
     }
 }

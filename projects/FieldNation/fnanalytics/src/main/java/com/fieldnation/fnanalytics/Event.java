@@ -1,9 +1,13 @@
 package com.fieldnation.fnanalytics;
 
+import android.os.Bundle;
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Michael on 9/13/2016.
  */
-public class Event {
+public class Event implements Parcelable {
 
     final public String tag;
     final public String category;
@@ -66,5 +70,59 @@ public class Event {
             this.value = value;
             return this;
         }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static Creator<Event> CREATOR = new Creator<Event>() {
+        @Override
+        public Event createFromParcel(Parcel source) {
+            Bundle bundle = source.readBundle();
+            Builder builder = new Builder();
+            
+            if (bundle.containsKey("tag"))
+                builder.tag(bundle.getString("tag"));
+            if (bundle.containsKey("category"))
+                builder.category(bundle.getString("category"));
+            if (bundle.containsKey("action"))
+                builder.action(bundle.getString("action"));
+            if (bundle.containsKey("label"))
+                builder.label(bundle.getString("label"));
+            if (bundle.containsKey("property"))
+                builder.property(bundle.getString("property"));
+            if (bundle.containsKey("value"))
+                builder.value(bundle.getDouble("value"));
+
+            return builder.build();
+        }
+
+        @Override
+        public Event[] newArray(int size) {
+            return new Event[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        Bundle bundle = new Bundle();
+        if (this.tag != null)
+            bundle.putString("tag", this.tag);
+        if (this.category != null)
+            bundle.putString("category", this.category);
+        if (this.action != null)
+            bundle.putString("action", this.action);
+        if (this.label != null)
+            bundle.putString("label", this.label);
+        if (this.property != null)
+            bundle.putString("property", this.property);
+        if (this.value != null)
+            bundle.putDouble("value", this.value.doubleValue());
+        dest.writeBundle(bundle);
     }
 }
