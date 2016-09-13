@@ -31,6 +31,10 @@ import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.analytics.EventProperty;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -45,10 +49,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.fnanalytics.EventAction;
-import com.fieldnation.fnanalytics.EventCategory;
-import com.fieldnation.fnanalytics.EventLabel;
-import com.fieldnation.fnanalytics.EventProperty;
+import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
@@ -436,6 +437,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
     }
 
     @Override
@@ -677,8 +679,13 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckin() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CHECK_IN, EventLabel.NULL,
-                EventProperty.WORK_ORDER_ID, (double) _workorder.getWorkorderId());
+        Tracker.event(App.get(),
+                new Event.Builder()
+                        .category(EventCategory.WORK_ORDER)
+                        .action(EventAction.CHECK_IN)
+                        .property(EventProperty.WORK_ORDER_ID)
+                        .value(_workorder.getWorkorderId())
+                        .build());
         if (_gpsLocationService.hasLocation()) {
             WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
                     _gpsLocationService.getLocation());
@@ -690,8 +697,13 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckOut() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CHECK_OUT, EventLabel.NULL,
-                EventProperty.WORK_ORDER_ID, (double) _workorder.getWorkorderId());
+        Tracker.event(App.get(),
+                new Event.Builder()
+                        .category(EventCategory.WORK_ORDER)
+                        .action(EventAction.CHECK_OUT)
+                        .property(EventProperty.WORK_ORDER_ID)
+                        .value(_workorder.getWorkorderId())
+                        .build());
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
                 WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
@@ -926,8 +938,13 @@ public class WorkFragment extends WorkorderFragment {
             if (milliseconds > 0) {
                 seconds = milliseconds / 1000;
             }
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.REQUEST, EventLabel.NULL,
-                    EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.REQUEST)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
             WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
             setLoading(true);
 
@@ -936,8 +953,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
             try {
-                Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.CONFIRM,
-                        EventLabel.NULL, EventProperty.WORK_ORDER_ID, workorder.getWorkorderId());
+                Tracker.event(App.get(),
+                        new Event.Builder()
+                                .category(EventCategory.WORK_ORDER)
+                                .action(EventAction.CONFIRM)
+                                .property(EventProperty.WORK_ORDER_ID)
+                                .value(workorder.getWorkorderId())
+                                .build());
                 WorkOrderClient.actionEta(App.get(),
                         workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
 
@@ -958,8 +980,13 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.COUNTER_OFFER,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.COUNTER_OFFER)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(workorder.getWorkorderId())
+                            .build());
             WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
                     reason, expirationInSeconds, pay, schedule, expenses);
             setLoading(true);
@@ -1099,8 +1126,13 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.MARK_COMPLETE,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.MARK_COMPLETE)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
             WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
@@ -1112,9 +1144,13 @@ public class WorkFragment extends WorkorderFragment {
         // TODO: I am not pretty sure about the following method
         @Override
         public void onContinueClick() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.MARK_INCOMPLETE,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
-
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.MARK_INCOMPLETE)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
             WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
@@ -1281,8 +1317,13 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.ACKNOWLEDGE_HOLD,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.ACKNOWLEDGE_HOLD)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
 
             WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
 
@@ -1296,8 +1337,13 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onViewPayment() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.VIEW_PAYMENT,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.VIEW_PAYMENT)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
 
             if (_workorder.getPaymentId() != null) {
                 PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
@@ -1342,8 +1388,13 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onWithdraw() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.WITHDRAW,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.WITHDRAW)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
 
             WorkorderClient.actionWithdrawRequest(App.get(), _workorder.getWorkorderId());
         }
@@ -1355,8 +1406,13 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReadyToGo() {
-            Tracker.event(App.get(), EventCategory.WORK_ORDER, EventAction.READY_TO_GO,
-                    EventLabel.NULL, EventProperty.WORK_ORDER_ID, _workorder.getWorkorderId());
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.READY_TO_GO)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .value(_workorder.getWorkorderId())
+                            .build());
 
             WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
         }

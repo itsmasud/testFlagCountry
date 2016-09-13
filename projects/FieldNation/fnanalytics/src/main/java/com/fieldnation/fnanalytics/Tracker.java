@@ -21,30 +21,27 @@ public class Tracker {
         }
     }
 
-    public static void event(Context context, EventCategory category, EventAction action,
-                             EventLabel label, EventProperty property, Long value) {
-        if (value != null)
-            event(context, category, action, label, property, value.doubleValue());
-        else
-            event(context, category, action, label, property, (Double) null);
-    }
-
-    public static void event(Context context, EventCategory category, EventAction action,
-                             EventLabel label, EventProperty property, Double value) {
+    public static void event(Context context, Event event) {
         for (int i = 0; i < _wrappers.size(); i++) {
-            _wrappers.get(i).event(context, category, action, label, property, value);
+            TrackerWrapper wrapper = _wrappers.get(i);
+            if (event.tag == null || wrapper.getTag().equals(event.tag))
+                wrapper.event(context, event);
         }
     }
 
-    public static void screen(Context context, ScreenName name) {
+    public static void screen(Context context, Screen screen) {
         for (int i = 0; i < _wrappers.size(); i++) {
-            _wrappers.get(i).screen(context, name);
+            TrackerWrapper wrapper = _wrappers.get(i);
+            if (screen.tag == null || wrapper.getTag().equals(screen.tag))
+                wrapper.screen(context, screen);
         }
     }
 
-    public static void timing(Context context, String category, String label, Integer timing, String variable) {
+    public static void timing(Context context, Timing timing) {
         for (int i = 0; i < _wrappers.size(); i++) {
-            _wrappers.get(i).timing(context, category, label, timing, variable);
+            TrackerWrapper wrapper = _wrappers.get(i);
+            if (timing.tag == null || wrapper.getTag().equals(timing.tag))
+                wrapper.timing(context, timing);
 
         }
     }

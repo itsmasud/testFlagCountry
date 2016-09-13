@@ -23,6 +23,7 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnlog.Log;

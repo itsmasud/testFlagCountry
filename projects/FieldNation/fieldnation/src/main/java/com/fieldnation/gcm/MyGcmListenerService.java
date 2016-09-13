@@ -23,12 +23,15 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 import android.util.Log;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.Debug;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -53,7 +56,12 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
-        Debug.logCustom(new CustomEvent("PushNotificationReceived"));
+        Tracker.event(this,
+                new Event.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category(EventCategory.GCM)
+                        .action(EventAction.PUSH_NOTIFICATION)
+                        .build());
 
 //        GlobalTopicClient.gcm(this, message);
         sendNotification(message);

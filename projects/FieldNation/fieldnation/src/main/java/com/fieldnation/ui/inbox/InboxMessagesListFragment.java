@@ -11,8 +11,8 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.fnanalytics.ScreenName;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
@@ -106,7 +106,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
 
         setLoading(true);
 
-        Tracker.screen(App.get(), ScreenName.INBOX_MESSAGES);
+        Tracker.screen(App.get(), ScreenName.inboxMessages());
     }
 
     @Override
@@ -136,7 +136,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        Tracker.screen(App.get(), ScreenName.INBOX_MESSAGES);
+        Tracker.screen(App.get(), ScreenName.inboxMessages());
     }
 
     private void setLoading(boolean loading) {
