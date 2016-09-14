@@ -20,5 +20,6 @@ public interface ElementIdentity {
     String ACKNOWLEDGE_HOLD = "Acknowledge Hold";
     String MARK_INCOMPLETE = "Mark Incomplete";
     String VIEW_PAYMENT = "View Payment";
+    String ACCEPT = "Accept";
 
 }

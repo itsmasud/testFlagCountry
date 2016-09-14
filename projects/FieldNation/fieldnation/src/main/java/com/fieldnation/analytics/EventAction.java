@@ -21,9 +21,9 @@ public interface EventAction {
     String REPORT_PROBLEM = "Report Problem";
     String WITHDRAW = "Withdraw";
     String VIEW_PAYMENT = "View Payment";
-    String SHOW_MAP = "Show Map";
 
+    String SHOW_MAP = "Show Map";
+    String CONTACT_US = "Contact Us";
     String PUSH_NOTIFICATION = "Push Notification Received";
     String PUSH_NOTIFICATION_INTERACTED = "Push Notification Interacted";
-    String CONTACT_US = "Contact Us";
 }

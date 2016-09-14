@@ -395,14 +395,14 @@ public class ActionBarTopView extends LinearLayout {
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
-                            .action(EventAction.CONFIRM)
+                            .action(EventAction.ACCEPT)
                             .property(EventProperty.WORK_ORDER_ID)
                             .label(_workorder.getWorkorderId() + "")
                             .addContext(new SpUIContext.Builder()
                                     .page(ScreenName.workOrderDetailsWork().name)
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
-                                    .elementIdentity(ElementIdentity.CONFIRM)
+                                    .elementIdentity(ElementIdentity.ACCEPT)
                                     .build())
                             .build());
             if (_listener != null) {
@@ -520,6 +520,7 @@ public class ActionBarTopView extends LinearLayout {
             }
         }
     };
+
     private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -540,6 +541,7 @@ public class ActionBarTopView extends LinearLayout {
                 _listener.onConfirm();
         }
     };
+
     private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -668,7 +670,6 @@ public class ActionBarTopView extends LinearLayout {
                 _listener.onViewPayment();
         }
     };
-
 
     public interface Listener {
         void onNotInterested();
