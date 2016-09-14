@@ -18,7 +18,7 @@
     <string name="sp_collector_uri">collector.fieldnation.com</string>
     <string name="sp_app_id">fn:dev</string>
     <string name="sp_namespace">android</string>
-    <string name="sp_context_uri">com.fieldnation/user_interface_context/jsonschema/1-0-0</string>
+    <string name="sp_ui_context_schema_uri">com.fieldnation/user_interface_context/jsonschema/1-0-0</string>
 
     <!-- Placeholders -->
     <string name="placeholder_word">Word</string>

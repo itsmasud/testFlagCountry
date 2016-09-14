@@ -516,24 +516,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_IN)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_IN)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -541,46 +527,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_OUT)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_OUT)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_OUT)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_OUT)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 

@@ -7,9 +7,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementIdentity;
+import com.fieldnation.analytics.ElementType;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.analytics.EventProperty;
+import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.SpUIContext;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fntools.misc;
 
 public class ActionBarTopView extends LinearLayout {
@@ -204,10 +215,12 @@ public class ActionBarTopView extends LinearLayout {
                     _rightWhiteButton.setVisibility(VISIBLE);
                     if (_workorder.getIsWorkPerformed()) {
                         _rightWhiteButton.setText(R.string.btn_check_in_again);
+                        _rightWhiteButton.setOnClickListener(_checkinAgain_onClick);
                     } else {
                         _rightWhiteButton.setText(R.string.btn_check_in);
+                        _rightWhiteButton.setOnClickListener(_checkin_onClick);
                     }
-                    _rightWhiteButton.setOnClickListener(_checkin_onClick);
+
                 }
 
                 setVisibility(View.VISIBLE);
@@ -400,6 +413,42 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CHECK_IN)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CHECK_IN)
+                                    .build())
+                            .build());
+
+            if (_listener != null)
+                _listener.onCheckIn();
+        }
+    };
+
+    private final View.OnClickListener _checkinAgain_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CHECK_IN_AGAIN)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CHECK_IN_AGAIN)
+                                    .build())
+                            .build());
+
             if (_listener != null)
                 _listener.onCheckIn();
         }
@@ -408,6 +457,20 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CHECK_OUT)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CHECK_OUT)
+                                    .build())
+                            .build());
+
             if (_listener != null)
                 _listener.onCheckOut();
         }

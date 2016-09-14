@@ -6,6 +6,8 @@ import com.fieldnation.R;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.TrackerWrapper;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.Stopwatch;
 import com.snowplowanalytics.snowplow.tracker.DevicePlatforms;
@@ -17,10 +19,8 @@ import com.snowplowanalytics.snowplow.tracker.events.Structured;
 import com.snowplowanalytics.snowplow.tracker.events.Timing;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by Michael on 9/8/2016.
@@ -29,7 +29,6 @@ public class SnowplowWrapper implements TrackerWrapper {
     public static final String TAG = "SnowplowWrapper";
 
     private static Tracker _tracker = null;
-    private static List<SelfDescribingJson> DEFAULT_CONTEXT;
 
     private static Tracker getTracker(Context context) {
         Stopwatch stopwatch = new Stopwatch(true);
@@ -52,19 +51,32 @@ public class SnowplowWrapper implements TrackerWrapper {
                                 )
                                 .subject(new Subject.SubjectBuilder().build())
                                 .platform(DevicePlatforms.Mobile)
+                                .geoLocationContext(true)
+                                .mobileContext(true)
                                 .build());
-
-                // Build the default context
-                Map<String, String> dataMap = new HashMap<>();
-                dataMap.put("invalid_field", "somedata");
-                SelfDescribingJson spContext = new SelfDescribingJson(context.getString(R.string.sp_context_uri), dataMap);
-                DEFAULT_CONTEXT = new LinkedList<>();
-                DEFAULT_CONTEXT.add(spContext);
             }
             return _tracker;
         } finally {
             Log.v(TAG, "getTracker time: " + stopwatch.finish() + "ms");
         }
+    }
+
+    private List<SelfDescribingJson> buildExtraContexts(Context context, JsonArray extraContext) {
+        List<SelfDescribingJson> list = new LinkedList<>();
+
+        if (extraContext != null) {
+            for (int i = 0; i < extraContext.size(); i++) {
+                JsonObject obj = extraContext.getJsonObject(i);
+                try {
+                    if (obj.has("tag") && obj.getString("tag").equals(SpUIContext.TAG)) {
+                        list.add(SpUIContext.fromJson(obj).toSelfDescribingJson(context));
+                    }
+                } catch (Exception ex) {
+                }
+            }
+        }
+
+        return list;
     }
 
     @Override
@@ -78,7 +90,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void event(Context context, Event event) {
-        event(context, event, DEFAULT_CONTEXT, null, null, null);
+        event(context, event, buildExtraContexts(context, event.extraContext), null, null, null);
     }
 
     private void event(Context context, Event event, List<SelfDescribingJson> customContext,
@@ -111,7 +123,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void screen(Context context, Screen screen) {
-        screen(context, screen, DEFAULT_CONTEXT, null, null, null);
+        screen(context, screen, null, null, null, null);
     }
 
     private void screen(Context context, Screen screen, List<SelfDescribingJson> customContext, Long deviceCreatedTimestamp, Long trueTimestamp, String eventId) {
@@ -137,7 +149,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void timing(Context context, com.fieldnation.fnanalytics.Timing timing) {
-        timing(context, timing, DEFAULT_CONTEXT, null, null, null);
+        timing(context, timing, null, null, null, null);
     }
 
     private void timing(Context context, com.fieldnation.fnanalytics.Timing timing, List<SelfDescribingJson> customContext, Long deviceCreatedTimestamp, Long trueTimestamp, String eventId) {

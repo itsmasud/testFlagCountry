@@ -41,15 +41,20 @@ public class AnswersWrapper implements TrackerWrapper {
                     customEvent.putCustomAttribute(event.action, 1);
 
             } else if (event.label != null)
-                customEvent.putCustomAttribute("Label", event.value);
+                customEvent.putCustomAttribute("Labels", event.value);
 
             if (event.property != null) {
                 customEvent.putCustomAttribute("Properties", event.property);
 
                 if (event.value != null)
                     customEvent.putCustomAttribute(event.property, event.value);
-                else
+
+                if (event.label != null)
+                    customEvent.putCustomAttribute(event.property, event.label);
+
+                if (event.value == null && event.label == null)
                     customEvent.putCustomAttribute(event.property, 1);
+                
             } else if (event.value != null)
                 customEvent.putCustomAttribute("Value", event.value);
 

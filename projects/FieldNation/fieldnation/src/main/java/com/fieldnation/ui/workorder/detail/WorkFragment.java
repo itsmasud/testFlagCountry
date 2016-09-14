@@ -679,13 +679,6 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckin() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        Tracker.event(App.get(),
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_IN)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(_workorder.getWorkorderId())
-                        .build());
         if (_gpsLocationService.hasLocation()) {
             WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
                     _gpsLocationService.getLocation());
@@ -697,13 +690,6 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckOut() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        Tracker.event(App.get(),
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.CHECK_OUT)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(_workorder.getWorkorderId())
-                        .build());
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
                 WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),

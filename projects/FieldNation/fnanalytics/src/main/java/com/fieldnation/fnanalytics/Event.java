@@ -1,20 +1,43 @@
 package com.fieldnation.fnanalytics;
 
-import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
 
 /**
  * Created by Michael on 9/13/2016.
  */
 public class Event implements Parcelable {
 
+    @Json
     final public String tag;
+    @Json
     final public String category;
+    @Json
     final public String action;
+    @Json
     final public String label;
+    @Json
     final public String property;
+    @Json
     final public Number value;
+    @Json
+    final public JsonArray extraContext;
+
+    public Event() {
+        this.tag = null;
+        this.category = null;
+        this.action = null;
+        this.label = null;
+        this.property = null;
+        this.value = null;
+        this.extraContext = null;
+    }
 
     public Event(Builder builder) {
         this.tag = builder.tag;
@@ -23,16 +46,35 @@ public class Event implements Parcelable {
         this.label = builder.label;
         this.property = builder.property;
         this.value = builder.value;
+        this.extraContext = builder.extraContext;
+    }
+
+    public JsonObject toJson() {
+        try {
+            return Serializer.serializeObject(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Event fromJson(JsonObject object) {
+        try {
+            return Unserializer.unserializeObject(Event.class, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static class Builder {
-
-        public String tag;
-        public String category;
-        public String action;
-        public String label;
-        public String property;
-        public Number value;
+        private String tag;
+        private String category;
+        private String action;
+        private String label;
+        private String property;
+        private Number value;
+        private JsonArray extraContext = new JsonArray();
 
         public Builder() {
         }
@@ -43,6 +85,15 @@ public class Event implements Parcelable {
 
         public Builder tag(String tag) {
             this.tag = tag;
+            return this;
+        }
+
+        public Builder addContext(EventContext object) {
+            try {
+                extraContext.add(object.toJson());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
             return this;
         }
 
@@ -78,23 +129,7 @@ public class Event implements Parcelable {
     public static Creator<Event> CREATOR = new Creator<Event>() {
         @Override
         public Event createFromParcel(Parcel source) {
-            Bundle bundle = source.readBundle();
-            Builder builder = new Builder();
-            
-            if (bundle.containsKey("tag"))
-                builder.tag(bundle.getString("tag"));
-            if (bundle.containsKey("category"))
-                builder.category(bundle.getString("category"));
-            if (bundle.containsKey("action"))
-                builder.action(bundle.getString("action"));
-            if (bundle.containsKey("label"))
-                builder.label(bundle.getString("label"));
-            if (bundle.containsKey("property"))
-                builder.property(bundle.getString("property"));
-            if (bundle.containsKey("value"))
-                builder.value(bundle.getDouble("value"));
-
-            return builder.build();
+            return Event.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
         }
 
         @Override
@@ -110,19 +145,6 @@ public class Event implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        Bundle bundle = new Bundle();
-        if (this.tag != null)
-            bundle.putString("tag", this.tag);
-        if (this.category != null)
-            bundle.putString("category", this.category);
-        if (this.action != null)
-            bundle.putString("action", this.action);
-        if (this.label != null)
-            bundle.putString("label", this.label);
-        if (this.property != null)
-            bundle.putString("property", this.property);
-        if (this.value != null)
-            bundle.putDouble("value", this.value.doubleValue());
-        dest.writeBundle(bundle);
+        dest.writeParcelable(toJson(), flags);
     }
 }

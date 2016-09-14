@@ -4,7 +4,7 @@ package com.fieldnation.fnanalytics;
  * Created by Michael on 9/13/2016.
  */
 public class Screen {
-
+    
     final public String tag;
     final public String name;
 
