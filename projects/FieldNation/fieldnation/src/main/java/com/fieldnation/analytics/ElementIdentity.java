@@ -21,5 +21,6 @@ public interface ElementIdentity {
     String MARK_INCOMPLETE = "Mark Incomplete";
     String VIEW_PAYMENT = "View Payment";
     String ACCEPT = "Accept";
+    String COUNTER_OFFER = "Counter Offer";
 
 }
