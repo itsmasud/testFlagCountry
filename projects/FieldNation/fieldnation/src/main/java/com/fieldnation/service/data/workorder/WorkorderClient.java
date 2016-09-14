@@ -9,9 +9,6 @@ import android.os.Parcelable;
 import android.widget.Toast;
 
 import com.fieldnation.FileHelper;
-import com.fieldnation.analytics.EventAction;
-import com.fieldnation.analytics.EventCategory;
-import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -21,8 +18,6 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Event;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -224,13 +219,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.REPORT_PROBLEM)
-                        .property(EventProperty.PROBLEM_TYPE)
-                        .label(type.value)
-                        .build());
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type);
     }
 
@@ -448,13 +436,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.MARK_COMPLETE)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
@@ -476,27 +457,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.COUNTER_OFFER)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
-        Tracker.event(context,
-                new Event.Builder()
-                        .category(EventCategory.WORK_ORDER)
-                        .action(EventAction.REQUEST)
-                        .property(EventProperty.WORK_ORDER_ID)
-                        .value(workorderId)
-                        .build());
-
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
     }
 

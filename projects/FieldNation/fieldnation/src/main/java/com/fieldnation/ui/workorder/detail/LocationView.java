@@ -18,16 +18,11 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.EventAction;
-import com.fieldnation.analytics.EventCategory;
-import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Event;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
@@ -459,13 +454,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         Location location = _workorder.getLocation();
                         if (location != null) {
                             try {
-                                Tracker.event(App.get(),
-                                        new Event.Builder()
-                                                .category(EventCategory.WORK_ORDER)
-                                                .action(EventAction.SHOW_MAP)
-                                                .property(EventProperty.WORK_ORDER_ID)
-                                                .value(_workorder.getWorkorderId())
-                                                .build());
                                 String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                                 String _uriString = "google.navigation:q=" + _fullAddress;
                                 Uri _uri = Uri.parse(_uriString);
@@ -489,13 +477,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
-                        Tracker.event(App.get(),
-                                new Event.Builder()
-                                        .category(EventCategory.WORK_ORDER)
-                                        .action(EventAction.SHOW_MAP)
-                                        .property(EventProperty.WORK_ORDER_ID)
-                                        .value(_workorder.getWorkorderId())
-                                        .build());
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);

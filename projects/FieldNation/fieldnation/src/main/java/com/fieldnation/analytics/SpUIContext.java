@@ -45,11 +45,6 @@ public class SpUIContext implements EventContext {
         this.elementIdentity = builder.elementIdentity;
     }
 
-    @Override
-    public String getContextName() {
-        return TAG;
-    }
-
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("interface", "android");

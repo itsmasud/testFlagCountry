@@ -1,15 +1,40 @@
 package com.fieldnation.fnanalytics;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+
 /**
  * Created by Michael on 9/13/2016.
  */
-public class Timing {
+public class Timing implements Parcelable {
 
+    @Json
     final public String tag;
+    @Json
     final public String category;
+    @Json
     final public String label;
+    @Json
     final public Integer timing;
+    @Json
     final public String variable;
+    @Json
+    final public JsonArray extraContext;
+
+    public Timing() {
+        this.tag = null;
+        this.category = null;
+        this.label = null;
+        this.timing = null;
+        this.variable = null;
+        this.extraContext = null;
+    }
 
     public Timing(Builder builder) {
         this.tag = builder.tag;
@@ -17,14 +42,34 @@ public class Timing {
         this.label = builder.label;
         this.timing = builder.timing;
         this.variable = builder.variable;
+        this.extraContext = builder.extraContext;
+    }
+
+    public JsonObject toJson() {
+        try {
+            return Serializer.serializeObject(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Timing fromJson(JsonObject object) {
+        try {
+            return Unserializer.unserializeObject(Timing.class, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     public static class Builder {
-        public String tag;
-        public String category;
-        public String label;
-        public Integer timing;
-        public String variable;
+        private String tag;
+        private String category;
+        private String label;
+        private Integer timing;
+        private String variable;
+        private JsonArray extraContext = new JsonArray();
 
         public Builder() {
         }
@@ -57,5 +102,39 @@ public class Timing {
             this.variable = variable;
             return this;
         }
+
+        public Builder addContext(EventContext object) {
+            try {
+                extraContext.add(object.toJson());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static Creator<Timing> CREATOR = new Creator<Timing>() {
+        @Override
+        public Timing createFromParcel(Parcel source) {
+            return Timing.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+        }
+
+        @Override
+        public Timing[] newArray(int size) {
+            return new Timing[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
     }
 }

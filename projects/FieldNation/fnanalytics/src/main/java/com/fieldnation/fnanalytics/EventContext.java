@@ -7,7 +7,5 @@ import com.fieldnation.fnjson.JsonObject;
  */
 public interface EventContext {
 
-    String getContextName();
-
     JsonObject toJson();
 }

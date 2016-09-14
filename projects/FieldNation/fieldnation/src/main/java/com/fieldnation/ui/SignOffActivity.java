@@ -10,11 +10,14 @@ import android.view.Window;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementIdentity;
+import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
-import com.fieldnation.analytics.EventLabel;
 import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.SpUIContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnanalytics.Event;
@@ -218,9 +221,14 @@ public class SignOffActivity extends AuthSimpleActivity {
             Tracker.event(App.get(), new Event.Builder()
                     .category(EventCategory.WORK_ORDER)
                     .action(EventAction.MARK_COMPLETE)
-                    .label(EventLabel.COLLECT_SIGNATURE)
+                    .label(_workorder.getWorkorderId() + "")
                     .property(EventProperty.WORK_ORDER_ID)
-                    .value(_workorder.getWorkorderId())
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.collectSignature().name)
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.BUTTON)
+                            .elementIdentity(ElementIdentity.SEND)
+                            .build())
                     .build());
             WorkorderClient.get(this, _workorder.getWorkorderId(), false);
         }

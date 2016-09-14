@@ -1,21 +1,42 @@
 package com.fieldnation.fnanalytics;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+
 /**
  * Created by Michael on 9/13/2016.
  */
-public class Screen {
-    
+public class Screen implements Parcelable {
+
+    @Json
     final public String tag;
+    @Json
     final public String name;
+    @Json
+    final public JsonArray extraContext;
+
+    public Screen() {
+        this.tag = null;
+        this.name = null;
+        this.extraContext = null;
+    }
 
     public Screen(Screen.Builder builder) {
         this.tag = builder.tag;
         this.name = builder.name;
+        this.extraContext = builder.extraContext;
     }
 
     public static class Builder {
-        public String tag;
-        public String name;
+        private String tag;
+        private String name;
+        private JsonArray extraContext = new JsonArray();
 
         public Builder() {
         }
@@ -33,5 +54,58 @@ public class Screen {
             this.name = name;
             return this;
         }
+
+        public Builder addContext(EventContext object) {
+            try {
+                extraContext.add(object.toJson());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return this;
+        }
     }
+
+    public JsonObject toJson() {
+        try {
+            return Serializer.serializeObject(this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Screen fromJson(JsonObject object) {
+        try {
+            return Unserializer.unserializeObject(Screen.class, object);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    /*-*********************************************-*/
+    /*-			Parcelable Implementation			-*/
+    /*-*********************************************-*/
+    public static Parcelable.Creator<Screen> CREATOR = new Creator<Screen>() {
+        @Override
+        public Screen createFromParcel(Parcel source) {
+            return Screen.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+        }
+
+        @Override
+        public Screen[] newArray(int size) {
+            return new Screen[size];
+        }
+    };
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeParcelable(toJson(), flags);
+    }
+
 }

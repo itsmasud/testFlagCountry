@@ -326,6 +326,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.REPORT_PROBLEM)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.REPORT_PROBLEM)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onReportProblem();
             }
@@ -335,6 +348,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.NOT_INTERESTED)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.NOT_INTERESTED)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onNotInterested();
             }
@@ -344,6 +370,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.REQUEST)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.REQUEST)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onRequest();
             }
@@ -353,6 +392,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CONFIRM)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CONFIRM)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onConfirmAssignment();
             }
@@ -362,6 +414,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.WITHDRAW)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.WITHDRAW)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onWithdraw();
             }
@@ -371,6 +436,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.VIEW_COUNTER_OFFER)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.VIEW_COUNTER_OFFER)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onViewCounter();
             }
@@ -380,6 +458,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.READY_TO_GO)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.READY_TO_GO)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onReadyToGo();
             }
@@ -389,6 +480,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markComplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.MARK_COMPLETE)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.MARK_COMPLETE)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onMarkComplete();
             }
@@ -398,6 +502,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CLOSING_NOTE)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CLOSING_NOTE)
+                                    .build())
+                            .build());
             if (_listener != null) {
                 _listener.onEnterClosingNotes();
             }
@@ -406,6 +523,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.CONFIRM)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.CONFIRM)
+                                    .build())
+                            .build());
             if (_listener != null)
                 _listener.onConfirm();
         }
@@ -479,6 +609,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.ACKNOWLEDGE_HOLD)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.ACKNOWLEDGE_HOLD)
+                                    .build())
+                            .build());
             if (_listener != null)
                 _listener.onAcknowledgeHold();
         }
@@ -487,6 +630,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markIncomplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.MARK_INCOMPLETE)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.MARK_INCOMPLETE)
+                                    .build())
+                            .build());
             if (_listener != null)
                 _listener.onMarkIncomplete();
         }
@@ -495,6 +651,19 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .category(EventCategory.WORK_ORDER)
+                            .action(EventAction.VIEW_PAYMENT)
+                            .property(EventProperty.WORK_ORDER_ID)
+                            .label(_workorder.getWorkorderId() + "")
+                            .addContext(new SpUIContext.Builder()
+                                    .page(ScreenName.workOrderDetailsWork().name)
+                                    .elementAction(ElementAction.CLICK)
+                                    .elementType(ElementType.BUTTON)
+                                    .elementIdentity(ElementIdentity.VIEW_PAYMENT)
+                                    .build())
+                            .build());
             if (_listener != null)
                 _listener.onViewPayment();
         }
