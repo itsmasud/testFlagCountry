@@ -373,6 +373,8 @@ public class App extends Application {
             if (profile != null) {
                 _profile = profile;
 
+                Tracker.setUserId(App.this, _profile.getUserId());
+
                 Debug.setLong("user_id", _profile.getUserId());
                 Debug.setUserIdentifier(_profile.getUserId() + "");
 
