@@ -123,7 +123,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void screen(Context context, Screen screen) {
-        screen(context, screen, null, null, null, null);
+        screen(context, screen, buildExtraContexts(context, screen.extraContext), null, null, null);
     }
 
     private void screen(Context context, Screen screen, List<SelfDescribingJson> customContext, Long deviceCreatedTimestamp, Long trueTimestamp, String eventId) {
@@ -149,7 +149,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void timing(Context context, com.fieldnation.fnanalytics.Timing timing) {
-        timing(context, timing, null, null, null, null);
+        timing(context, timing, buildExtraContexts(context, timing.extraContext), null, null, null);
     }
 
     private void timing(Context context, com.fieldnation.fnanalytics.Timing timing, List<SelfDescribingJson> customContext, Long deviceCreatedTimestamp, Long trueTimestamp, String eventId) {
