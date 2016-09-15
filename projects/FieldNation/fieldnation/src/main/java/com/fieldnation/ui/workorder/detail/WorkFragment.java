@@ -28,7 +28,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.ScreenName;
@@ -844,7 +843,7 @@ public class WorkFragment extends WorkorderFragment {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            Debug.logException(ex);
+            Log.logException(ex);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {

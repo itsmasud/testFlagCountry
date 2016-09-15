@@ -8,11 +8,13 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 9/13/2016.
  */
 public class Timing implements Parcelable {
+    private static final String TAG = "Timing";
 
     @Json
     final public String tag;
@@ -49,7 +51,7 @@ public class Timing implements Parcelable {
         try {
             return Serializer.serializeObject(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }
@@ -58,7 +60,7 @@ public class Timing implements Parcelable {
         try {
             return Unserializer.unserializeObject(Timing.class, object);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }

@@ -25,7 +25,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.ScreenName;
@@ -421,7 +420,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                 }
             } catch (Exception ex) {
-                Debug.logException(ex);
+                Log.logException(ex);
                 Log.e(TAG, ex.getMessage());
             }
         }

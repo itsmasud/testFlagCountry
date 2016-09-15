@@ -23,4 +23,5 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project(':fnjson')
+    compile project(':fnlog')
 }

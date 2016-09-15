@@ -54,7 +54,7 @@ public class AnswersWrapper implements TrackerWrapper {
 
                 if (event.value == null && event.label == null)
                     customEvent.putCustomAttribute(event.property, 1);
-                
+
             } else if (event.value != null)
                 customEvent.putCustomAttribute("Value", event.value);
 

@@ -17,6 +17,7 @@ import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.SpUIContext;
+import com.fieldnation.analytics.SpWorkOrderContext;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnanalytics.Event;
@@ -338,6 +339,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.REPORT_PROBLEM)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null) {
                 _listener.onReportProblem();
@@ -359,6 +363,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.NOT_INTERESTED)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
             if (_listener != null) {
@@ -382,6 +389,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.REQUEST)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null) {
                 _listener.onRequest();
@@ -403,6 +413,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.ACCEPT)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
             if (_listener != null) {
@@ -426,6 +439,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.WITHDRAW)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null) {
                 _listener.onWithdraw();
@@ -447,6 +463,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.VIEW_COUNTER_OFFER)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
             if (_listener != null) {
@@ -470,6 +489,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.READY_TO_GO)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null) {
                 _listener.onReadyToGo();
@@ -491,6 +513,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.MARK_COMPLETE)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
             if (_listener != null) {
@@ -514,6 +539,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.CLOSING_NOTE)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null) {
                 _listener.onEnterClosingNotes();
@@ -536,6 +564,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.CONFIRM)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null)
                 _listener.onConfirm();
@@ -556,6 +587,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.CHECK_IN)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
 
@@ -579,6 +613,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.CHECK_IN_AGAIN)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
 
             if (_listener != null)
@@ -600,6 +637,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.CHECK_OUT)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
 
@@ -623,6 +663,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.ACKNOWLEDGE_HOLD)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null)
                 _listener.onAcknowledgeHold();
@@ -644,6 +687,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.MARK_INCOMPLETE)
                                     .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
+                                    .build())
                             .build());
             if (_listener != null)
                 _listener.onMarkIncomplete();
@@ -664,6 +710,9 @@ public class ActionBarTopView extends LinearLayout {
                                     .elementAction(ElementAction.CLICK)
                                     .elementType(ElementType.BUTTON)
                                     .elementIdentity(ElementIdentity.VIEW_PAYMENT)
+                                    .build())
+                            .addContext(new SpWorkOrderContext.Builder()
+                                    .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
             if (_listener != null)

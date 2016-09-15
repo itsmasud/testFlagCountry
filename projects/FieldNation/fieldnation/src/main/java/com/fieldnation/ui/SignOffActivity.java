@@ -18,6 +18,7 @@ import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.SpUIContext;
+import com.fieldnation.analytics.SpWorkOrderContext;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnanalytics.Event;
@@ -228,6 +229,9 @@ public class SignOffActivity extends AuthSimpleActivity {
                             .elementAction(ElementAction.CLICK)
                             .elementType(ElementType.BUTTON)
                             .elementIdentity(ElementIdentity.SEND)
+                            .build())
+                    .addContext(new SpWorkOrderContext.Builder()
+                            .workOrderId(_workorder.getWorkorderId())
                             .build())
                     .build());
             WorkorderClient.get(this, _workorder.getWorkorderId(), false);

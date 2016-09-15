@@ -8,11 +8,13 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 9/13/2016.
  */
 public class Screen implements Parcelable {
+    private static final String TAG = "Screen";
 
     @Json
     final public String tag;
@@ -59,7 +61,7 @@ public class Screen implements Parcelable {
             try {
                 extraContext.add(object.toJson());
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.v(TAG, e);
             }
             return this;
         }
@@ -69,7 +71,7 @@ public class Screen implements Parcelable {
         try {
             return Serializer.serializeObject(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }
@@ -78,7 +80,7 @@ public class Screen implements Parcelable {
         try {
             return Unserializer.unserializeObject(Screen.class, object);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }

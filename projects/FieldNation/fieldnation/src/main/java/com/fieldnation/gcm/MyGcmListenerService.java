@@ -21,7 +21,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
@@ -31,6 +30,7 @@ import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;

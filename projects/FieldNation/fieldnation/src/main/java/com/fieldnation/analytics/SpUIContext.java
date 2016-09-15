@@ -9,6 +9,7 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
 import java.util.HashMap;
@@ -17,7 +18,7 @@ import java.util.Map;
 /**
  * Created by Michael on 9/14/2016.
  */
-public class SpUIContext implements EventContext {
+public class SpUIContext implements EventContext, SpContext {
     public static final String TAG = "SpUIContext";
 
     @Json
@@ -45,6 +46,7 @@ public class SpUIContext implements EventContext {
         this.elementIdentity = builder.elementIdentity;
     }
 
+    @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, String> dataMap = new HashMap<>();
         dataMap.put("interface", "android");
@@ -71,7 +73,7 @@ public class SpUIContext implements EventContext {
         try {
             return Serializer.serializeObject(this);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }
@@ -80,7 +82,7 @@ public class SpUIContext implements EventContext {
         try {
             return Unserializer.unserializeObject(SpUIContext.class, object.getJsonObject(TAG));
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.v(TAG, e);
         }
         return null;
     }

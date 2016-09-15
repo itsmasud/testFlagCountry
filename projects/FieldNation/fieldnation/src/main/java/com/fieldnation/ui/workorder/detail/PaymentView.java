@@ -19,6 +19,7 @@ import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.SpUIContext;
+import com.fieldnation.analytics.SpWorkOrderContext;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
@@ -168,6 +169,9 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                                         .elementAction(ElementAction.CLICK)
                                         .elementType(ElementType.BUTTON)
                                         .elementIdentity(ElementIdentity.COUNTER_OFFER)
+                                        .build())
+                                .addContext(new SpWorkOrderContext.Builder()
+                                        .workOrderId(_workorder.getWorkorderId())
                                         .build())
                                 .build());
                 if (_listener != null)
