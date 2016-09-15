@@ -60,7 +60,7 @@
 
                 </LinearLayout>
 
-                <ImageButton
+                <com.fieldnation.ui.IconFontButton
                     android:id="@+id/profileexpand_button"
                     style="@style/OptionsProfileButton"
                     android:visibility="gone" />
@@ -88,7 +88,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_dollar" />
+                        android:text="@string/icon_dollarsign" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
@@ -145,7 +145,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/contact_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_speech_bubble" />
+                        android:text="@string/icon_contact" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
@@ -179,7 +179,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/legal_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_missing" />
+                        android:text="@string/icon_gavel" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"
@@ -196,7 +196,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/version_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_clock" />
+                        android:text="@string/icon_info_circle_line" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
