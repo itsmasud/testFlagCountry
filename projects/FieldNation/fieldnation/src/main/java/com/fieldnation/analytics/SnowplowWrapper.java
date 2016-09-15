@@ -53,6 +53,7 @@ public class SnowplowWrapper implements TrackerWrapper {
                                 .platform(DevicePlatforms.Mobile)
                                 .geoLocationContext(true)
                                 .mobileContext(true)
+                                .sessionContext(true)
                                 .build());
             }
             return _tracker;
@@ -143,7 +144,7 @@ public class SnowplowWrapper implements TrackerWrapper {
 //            if (id != null)
 //                builder.id(id);
         }
-        if (customContext != null)
+        if (customContext != null && customContext.size() > 0)
             builder.customContext(customContext);
         if (deviceCreatedTimestamp != null)
             builder.deviceCreatedTimestamp(deviceCreatedTimestamp);
@@ -173,7 +174,7 @@ public class SnowplowWrapper implements TrackerWrapper {
             if (timing.variable != null)
                 builder.variable(timing.variable);
         }
-        if (customContext != null)
+        if (customContext != null && customContext.size() > 0)
             builder.customContext(customContext);
         if (deviceCreatedTimestamp != null)
             builder.deviceCreatedTimestamp(deviceCreatedTimestamp);
