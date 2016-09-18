@@ -73,4 +73,9 @@ public final class ISO8601 {
     public static long toUtc(final String iso8601string) throws ParseException {
         return toCalendar(iso8601string).getTimeInMillis();
     }
+
+    public static String getEndDate(final String startDate, final long durationMilliseconds) throws ParseException {
+        return fromUTC(durationMilliseconds + ISO8601.toUtc(startDate));
+    }
+
 }

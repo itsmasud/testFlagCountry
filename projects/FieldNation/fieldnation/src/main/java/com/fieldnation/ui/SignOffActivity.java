@@ -8,18 +8,19 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 
 /**
  * Created by michael.carver on 12/2/2014.
  */
-public class SignOffActivity extends AuthFragmentActivity {
+public class SignOffActivity extends AuthSimpleActivity {
     private static final String TAG = "SignOffActivity";
 
     // State
@@ -58,11 +59,18 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Stopwatch stopwatch = new Stopwatch();
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signoff);
+    }
 
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_signoff;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
+        Stopwatch stopwatch = new Stopwatch();
         _signOffFrag = SignOffFragment.getInstance(getSupportFragmentManager(), TAG);
         _signOffFrag.setListener(_signOff_listener);
 
@@ -160,6 +168,11 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return 0;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         Stopwatch stopwatch = new Stopwatch();
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
@@ -177,6 +190,10 @@ public class SignOffActivity extends AuthFragmentActivity {
 
         super.onSaveInstanceState(outState);
         Log.v(TAG, "onSave time " + stopwatch.finish());
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     private void sendSignature() {
@@ -333,5 +350,4 @@ public class SignOffActivity extends AuthFragmentActivity {
             }
         }.executeEx(context, workorder, taskId);
     }
-
 }

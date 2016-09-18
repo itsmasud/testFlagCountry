@@ -1,20 +1,20 @@
 package com.fieldnation.ui.payment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
-import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 
 public class PaymentCardView extends RelativeLayout {
     private static final String TAG = "PaymentCardView";
@@ -65,9 +65,7 @@ public class PaymentCardView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), PaymentDetailActivity.class);
-            intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, _paymentInfo.getPaymentId());
-            getContext().startActivity(intent);
+            PaymentDetailActivity.startNew(App.get(), _paymentInfo.getPaymentId());
         }
     };
 

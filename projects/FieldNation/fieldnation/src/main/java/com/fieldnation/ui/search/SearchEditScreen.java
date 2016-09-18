@@ -8,25 +8,25 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
-import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.fntools.misc;
 
 import java.util.List;
 
@@ -56,7 +56,7 @@ public class SearchEditScreen extends RelativeLayout {
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
-    private Button _actionButton;
+    private IconFontButton _actionButton;
 
     // Services
     private WorkorderClient _workorderClient;
@@ -116,7 +116,7 @@ public class SearchEditScreen extends RelativeLayout {
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _actionButton = (IconFontButton) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
@@ -282,8 +282,11 @@ public class SearchEditScreen extends RelativeLayout {
                 if (_listener != null)
                     _listener.showNotAvailableDialog();
             } else {
-                ActivityResultClient.startActivity(App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorderId));
+                ActivityResultClient.startActivity(
+                        App.get(),
+                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
+                        R.anim.activity_slide_in_right,
+                        R.anim.activity_slide_out_left);
             }
         }
     };

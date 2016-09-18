@@ -1,6 +1,5 @@
 package com.fieldnation.ui.dialog;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
@@ -12,6 +11,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
@@ -122,10 +122,7 @@ public class AcceptBundleDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             dismiss();
-            Intent intent = new Intent(getActivity(), WorkorderBundleDetailActivity.class);
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            getActivity().startActivity(intent);
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
     };
 

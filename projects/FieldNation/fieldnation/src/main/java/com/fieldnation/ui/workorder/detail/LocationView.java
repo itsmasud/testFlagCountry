@@ -18,20 +18,20 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.fntools.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
@@ -447,11 +447,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    App.get().startActivity(intent);
+                    WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {

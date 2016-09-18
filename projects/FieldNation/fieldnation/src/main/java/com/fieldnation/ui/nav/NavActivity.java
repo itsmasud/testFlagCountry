@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
@@ -14,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -25,6 +27,8 @@ import com.fieldnation.ui.search.SearchResultScreen;
  */
 public class NavActivity extends AuthSimpleActivity {
     private static final String TAG = "NavActivity";
+
+    private static final String STATE_CURRENT_SEARCH = "STATE_CURRENT_SEARCH";
 
     // Ui
     private SearchResultScreen _recyclerView;
@@ -38,6 +42,9 @@ public class NavActivity extends AuthSimpleActivity {
     private Animation _ccw;
     private Animation _cw;
 
+    // Data
+    private SavedSearchParams _currentSearch = null;
+
     @Override
     public int getLayoutResource() {
         return R.layout.activity_v3_nav;
@@ -46,12 +53,14 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(TAG, "onCreate");
 
         _layout = (CoordinatorLayout) findViewById(R.id.main_content);
 
         _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
@@ -70,27 +79,46 @@ public class NavActivity extends AuthSimpleActivity {
 
         _arrowTextView.startAnimation(_cw);
 
-        SavedSearchParams savedSearchParams = new SavedSearchParams()
-                .type(WorkOrderListType.ASSIGNED.getType())
-                .status(WorkOrderListType.ASSIGNED.getStatuses())
-                .title("Assigned");
-
-        _recyclerView.startSearch(savedSearchParams);
-        setTitle("Available");
-    }
-
-    private final Animation.AnimationListener _ccw_animationListener = new Animation.AnimationListener() {
-        @Override
-        public void onAnimationStart(Animation animation) {
+        if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+            _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
         }
 
+        if (_currentSearch == null) {
+            _currentSearch = new SavedSearchParams()
+                    .type(WorkOrderListType.ASSIGNED.getType())
+                    .status(WorkOrderListType.ASSIGNED.getStatuses())
+                    .title("Assigned");
+        }
+
+        _recyclerView.startSearch(_currentSearch);
+        NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        Log.v(TAG, "onSaveInstanceState");
+        if (_currentSearch != null)
+            outState.putParcelable(STATE_CURRENT_SEARCH, _currentSearch);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        Log.v(TAG, "onRestoreInstanceState");
+        if (savedInstanceState != null) {
+            if (savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
+                _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            }
+        }
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
         @Override
         public void onAnimationEnd(Animation animation) {
             _ccw.cancel();
-        }
-
-        @Override
-        public void onAnimationRepeat(Animation animation) {
         }
     };
 
@@ -105,6 +133,12 @@ public class NavActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
     private void showDrawer() {
@@ -148,8 +182,9 @@ public class NavActivity extends AuthSimpleActivity {
     private final SavedSearchList.OnSavedSearchParamsChangeListener _onSearchChangedListener = new SavedSearchList.OnSavedSearchParamsChangeListener() {
         @Override
         public void onChange(SavedSearchParams params) {
-            _recyclerView.startSearch(params);
-            NavActivity.this.setTitle(misc.capitalize(params.title));
+            _currentSearch = params;
+            _recyclerView.startSearch(_currentSearch);
+            NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
         }
     };
 

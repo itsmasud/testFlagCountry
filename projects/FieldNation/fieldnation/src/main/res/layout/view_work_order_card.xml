@@ -55,7 +55,7 @@
         android:layout_marginLeft="12dp"
         android:layout_marginTop="8dp"
         android:layout_toLeftOf="@+id/payLeft_layout"
-        android:text="@string/placeholder_time_long" />
+        android:text="@string/placeholder_time_duration_long" />
 
     <TextView
         android:id="@+id/location_textview"

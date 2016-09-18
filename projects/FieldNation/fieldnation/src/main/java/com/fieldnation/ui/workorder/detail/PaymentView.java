@@ -166,8 +166,10 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _requestNewPay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                _listener.onRequestNewPay(_workorder);
+            if (_workorder.canRequestPayIncrease()) {
+                if (_listener != null) {
+                    _listener.onRequestNewPay(_workorder);
+                }
             }
         }
     };

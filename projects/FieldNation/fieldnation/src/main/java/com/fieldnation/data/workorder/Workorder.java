@@ -123,6 +123,8 @@ public class Workorder implements Parcelable {
     private User _workorderManagerInfo;
     @Json(name = "workorderContacts")
     private WorkorderContacts[] _workorderContacts;
+    @Json(name = "loggedWorkExists")
+    private int _loggedWorkExists;
 
 
     public Workorder() {
@@ -362,7 +364,7 @@ public class Workorder implements Parcelable {
         return _workorderManagerInfo;
     }
 
-    public WorkorderContacts[] getWorkorderContacts(){
+    public WorkorderContacts[] getWorkorderContacts() {
         return _workorderContacts;
     }
 
@@ -621,6 +623,9 @@ public class Workorder implements Parcelable {
         return getWorkorderSubstatus() == WorkorderSubstatus.UNCONFIRMED;
     }
 
+    public boolean isWorkLogged() {
+        return _loggedWorkExists == 0 ? false : true;
+    }
 
     public void dispatchOnChange() {
         Iterator<Listener> iter = _listeners.iterator();
