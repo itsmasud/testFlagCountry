@@ -108,6 +108,7 @@ dependencies {
     compile project(':fnstore')
     compile project(':fntoast')
     compile project(':fngps')
+    compile project(':fndialog')
 
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'

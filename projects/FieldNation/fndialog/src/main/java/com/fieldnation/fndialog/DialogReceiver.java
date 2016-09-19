@@ -1,106 +1,145 @@
 package com.fieldnation.fndialog;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
+import android.os.Parcelable;
 import android.util.AttributeSet;
-import android.view.View;
 import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 
 import java.util.Hashtable;
 
 /**
  * Created by Michael on 9/6/2016.
+ * <p/>
+ * This class is the heart of the dialog system it has the following responsibilities
+ * # Receive dialog show and cancel requests
+ * # Instantiate dialogs as needed and manage their state
  */
-public class DialogReceiver extends FrameLayout implements DialogConstants {
+public class DialogReceiver extends FrameLayout implements Constants {
     private static final String TAG = "DialogReceiver";
 
+    // Service
+    private Server _dialogReceiver;
+
+    // Stores the instantiated dialogs
     private Hashtable<String, Dialog> _dialogs = new Hashtable<>();
 
     public DialogReceiver(Context context) {
         super(context);
+        init();
     }
 
     public DialogReceiver(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init();
     }
 
     public DialogReceiver(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        init();
+    }
+
+    private void init() {
+    }
+
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.v(TAG, "onSaveInstanceState");
+        return super.onSaveInstanceState();
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(TAG, "onRestoreInstanceState");
+        super.onRestoreInstanceState(state);
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
 
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(ACTION_SHOW_DIALOG);
-        intentFilter.addAction(ACTION_DISMISS_DIALOG);
-        intentFilter.addCategory(Intent.CATEGORY_DEFAULT);
-        LocalBroadcastManager.getInstance(getContext()).registerReceiver(_broadcastReceiver, intentFilter);
+        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+            _dialogReceiver.disconnect(ContextProvider.get());
+        }
+
+        _dialogReceiver = new Server(_dialogReceiver_listener);
+        _dialogReceiver.connect(ContextProvider.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(_broadcastReceiver);
+        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+            _dialogReceiver.disconnect(ContextProvider.get());
+        }
     }
 
-    private BroadcastReceiver _broadcastReceiver = new BroadcastReceiver() {
+    private Server.Listener _dialogReceiver_listener = new Server.Listener() {
         @Override
-        public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
-            switch (action) {
-                case ACTION_SHOW_DIALOG:
-                    showDialog(intent);
-                    break;
-                case ACTION_DISMISS_DIALOG:
-                    hideDialog(intent);
-                    break;
-                default:
-                    break;
+        public Server getClient() {
+            return _dialogReceiver;
+        }
+
+        @Override
+        public void onShowDialog(String className, ClassLoader classLoader, Bundle params) {
+            try {
+                Class<?> clazz = classLoader.loadClass(className);
+
+                if (_dialogs.containsKey(className)) {
+                    _dialogs.get(className).show(params);
+                    return;
+                }
+
+                Object object = clazz.getConstructor(Context.class).newInstance(getContext());
+
+                if (!(object instanceof Dialog)) {
+                    return;
+                }
+
+                Dialog dialog = (Dialog) object;
+
+                addView(dialog.getView());
+                dialog.getView().setVisibility(GONE);
+
+                ((Dialog) object).show(params);
+
+                _dialogs.put(className, (Dialog) object);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onDismissDialog(String className) {
+            if (_dialogs.containsKey(className)) {
+                Dialog v = _dialogs.get(className);
+                v.dismiss();
+                // Todo need to hide self, once dialog is done with its animation
             }
         }
     };
 
-    private void showDialog(Intent intent) {
-        try {
-            Bundle command = intent.getExtras();
+    private static class DialogHolder {
+        public Dialog dialog;
+        public Bundle params;
 
-            String className = command.getString(PARAM_DIALOG_CLASS_NAME);
-            Class<?> clazz = command.getClassLoader().loadClass(className);
-
-            if (_dialogs.containsKey(className)) {
-                _dialogs.get(className).onShow(command.getBundle(PARAM_DIALOG_PAYLOAD));
-                return;
-            }
-
-            Object object = clazz.getConstructor(Context.class).newInstance(getContext());
-
-            if (!(object instanceof View) || !(object instanceof Dialog)) {
-                return;
-            }
-            ((Dialog) object).onShow(command.getBundle(PARAM_DIALOG_PAYLOAD));
-
-            _dialogs.put(className, (Dialog) object);
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+        public DialogHolder(Dialog dialog, Bundle params) {
+            this.dialog = dialog;
+            this.params = params;
         }
-    }
 
-    private void hideDialog(Intent intent) {
-        Bundle command = intent.getExtras();
-
-        String className = command.getString(PARAM_DIALOG_CLASS_NAME);
-
-        if (_dialogs.containsKey(className)) {
-            _dialogs.get(className).onDismiss();
+        public Bundle saveState() {
+            Bundle savedState = new Bundle();
+            savedState.putParcelable("savedState", dialog.onSaveDialogState());
+            savedState.putString("className", dialog.getClass().getName());
+            savedState.setClassLoader(dialog.getClass().getClassLoader());
+            savedState.putBundle("params", params);
+            return savedState;
         }
     }
 }
