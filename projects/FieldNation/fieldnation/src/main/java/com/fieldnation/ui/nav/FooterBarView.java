@@ -1,6 +1,7 @@
 package com.fieldnation.ui.nav;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -41,13 +42,11 @@ public class FooterBarView extends RelativeLayout {
     }
 
     private void init() {
+        Log.v(TAG, "init");
         LayoutInflater.from(getContext()).inflate(R.layout.view_footerbar, this);
 
         if (isInEditMode())
             return;
-
-        _testDialog = new TestDialog.Controller(App.get());
-        _testDialog.setDialogListener(dialog_listener);
 
         _inboxTextView = (IconFontTextView) findViewById(R.id.inbox_textview);
         _inboxTextView.setOnClickListener(_inbox_onClick);
@@ -56,11 +55,33 @@ public class FooterBarView extends RelativeLayout {
     }
 
     @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        Log.v(TAG, "onRestoreInstanceState");
+        // todo... need to load some sort of unique key so that the controller can resync with the dialog
+        super.onRestoreInstanceState(state);
+    }
+
+    @Override
+    protected void onAttachedToWindow() {
+        Log.v(TAG, "onAttachedToWindow");
+        _testDialog = new TestDialog.Controller(App.get());
+        _testDialog.setDialogListener(dialog_listener);
+        super.onAttachedToWindow();
+    }
+
+    @Override
     protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
         if (_testDialog != null) {
             _testDialog.disconnect(App.get());
         }
         super.onDetachedFromWindow();
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Log.v(TAG, "onSaveInstanceState");
+        return super.onSaveInstanceState();
     }
 
     private final TestDialog.ControllerListener dialog_listener = new TestDialog.ControllerListener() {

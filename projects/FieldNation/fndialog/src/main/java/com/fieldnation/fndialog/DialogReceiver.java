@@ -104,8 +104,7 @@ public class DialogReceiver extends FrameLayout implements Constants {
 
                 addView(dialog.getView());
                 dialog.getView().setVisibility(GONE);
-
-                ((Dialog) object).show(params);
+                dialog.show(params);
 
                 _dialogs.put(className, (Dialog) object);
 
