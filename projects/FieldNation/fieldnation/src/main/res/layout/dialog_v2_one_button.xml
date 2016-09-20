@@ -2,8 +2,40 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/fn_shadow">
+    android:background="@color/fn_dialog_shadow"
+    android:clickable="true"
+    android:padding="32dp">
 
+    <RelativeLayout
+        style="@style/Dialog.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/DialogTitle.v3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/placeholder_phrase" />
+
+        <TextView
+            android:id="@+id/body_textview"
+            style="@style/DialogBody.v3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_textview"
+            android:text="@string/placeholder_paragraph" />
+
+        <Button
+            android:id="@+id/button"
+            style="@style/DialogButton.v3"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/body_textview"
+            android:layout_marginRight="8dp"
+            android:text="OK" />
+    </RelativeLayout>
 
 
 </RelativeLayout>

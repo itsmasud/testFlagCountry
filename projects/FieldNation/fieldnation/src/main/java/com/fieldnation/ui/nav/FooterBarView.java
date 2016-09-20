@@ -11,7 +11,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.TestDialog;
+import com.fieldnation.ui.dialog.v2.OneButtonDialog;
 
 /**
  * Created by Michael on 8/31/2016.
@@ -22,9 +22,6 @@ public class FooterBarView extends RelativeLayout {
     // Ui
     private IconFontTextView _inboxTextView;
     private IconFontTextView _menuTextView;
-
-    // Dialog Controllers
-    private TestDialog.Controller _testDialog;
 
     public FooterBarView(Context context) {
         super(context);
@@ -62,51 +59,17 @@ public class FooterBarView extends RelativeLayout {
     }
 
     @Override
-    protected void onAttachedToWindow() {
-        Log.v(TAG, "onAttachedToWindow");
-        _testDialog = new TestDialog.Controller(App.get());
-        _testDialog.setControllerListener(dialog_listener);
-        super.onAttachedToWindow();
-    }
-
-    @Override
-    protected void onDetachedFromWindow() {
-        Log.v(TAG, "onDetachedFromWindow");
-        if (_testDialog != null) {
-            _testDialog.disconnect(App.get());
-        }
-        super.onDetachedFromWindow();
-    }
-
-    @Override
     protected Parcelable onSaveInstanceState() {
         Log.v(TAG, "onSaveInstanceState");
         return super.onSaveInstanceState();
     }
-
-    private final TestDialog.ControllerListener dialog_listener = new TestDialog.ControllerListener() {
-        @Override
-        public void onOk() {
-            Log.v(TAG, "onOk");
-        }
-
-        @Override
-        public void onCancel() {
-            Log.v(TAG, "onCancel");
-        }
-
-        @Override
-        public void onDismiss() {
-            Log.v(TAG, "onDismiss");
-        }
-    };
 
     private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             //InboxActivity.startNew(v.getContext());
 
-            TestDialog.Controller.show(App.get(), "This is a test title");
+            OneButtonDialog.Controller.show(App.get(), "This is a test title", "This is my body", "Button");
         }
     };
 
