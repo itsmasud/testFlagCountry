@@ -114,7 +114,7 @@ public class TestDialog extends FrameLayout implements Dialog {
             super(context, TestDialog.class);
         }
 
-        public void setDialogListener(ControllerListener dialogListener) {
+        public void setControllerListener(ControllerListener dialogListener) {
             _dialogListener = dialogListener;
         }
 

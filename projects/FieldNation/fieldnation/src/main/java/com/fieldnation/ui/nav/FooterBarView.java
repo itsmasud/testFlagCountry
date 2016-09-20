@@ -65,7 +65,7 @@ public class FooterBarView extends RelativeLayout {
     protected void onAttachedToWindow() {
         Log.v(TAG, "onAttachedToWindow");
         _testDialog = new TestDialog.Controller(App.get());
-        _testDialog.setDialogListener(dialog_listener);
+        _testDialog.setControllerListener(dialog_listener);
         super.onAttachedToWindow();
     }
 

@@ -25,7 +25,8 @@ public class DialogReceiver extends FrameLayout implements Constants {
     private Server _dialogReceiver;
 
     // Stores the instantiated dialogs
-    private Hashtable<String, Dialog> _dialogs = new Hashtable<>();
+    private DialogHolder _lastDialog = null;
+    private Hashtable<String, DialogHolder> _dialogs = new Hashtable<>();
 
     public DialogReceiver(Context context) {
         super(context);
@@ -49,33 +50,81 @@ public class DialogReceiver extends FrameLayout implements Constants {
     @Override
     protected Parcelable onSaveInstanceState() {
         Log.v(TAG, "onSaveInstanceState");
-        return super.onSaveInstanceState();
+
+        Bundle savedInstance = new Bundle();
+        savedInstance.putParcelable("super", super.onSaveInstanceState());
+        if (_lastDialog != null && _lastDialog.dialog.getView().getVisibility() == VISIBLE)
+            savedInstance.putBundle("lastDialog", _lastDialog.saveState());
+
+        return savedInstance;
     }
 
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         Log.v(TAG, "onRestoreInstanceState");
-        super.onRestoreInstanceState(state);
+        Bundle savedInstance = (Bundle) state;
+        super.onRestoreInstanceState(savedInstance.getParcelable("super"));
+
+        if (savedInstance.containsKey("lastDialog")) {
+            Bundle lastDialogState = savedInstance.getBundle("lastDialog");
+            Parcelable dialogSavedState = lastDialogState.getParcelable("savedState");
+            String className = lastDialogState.getString("className");
+            ClassLoader classLoader = lastDialogState.getClassLoader();
+            Bundle params = lastDialogState.getBundle("params");
+
+            DialogHolder holder = getDialogHolder(className, classLoader);
+            if (holder != null) {
+                holder.params = params;
+                _lastDialog = holder;
+                _dialogs.put(className, holder);
+                holder.dialog.show(params);
+                if (dialogSavedState != null)
+                    holder.dialog.onRestoreDialogState(dialogSavedState);
+            }
+        }
     }
 
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-
         if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
-
         _dialogReceiver = new Server(_dialogReceiver_listener);
         _dialogReceiver.connect(ContextProvider.get());
     }
 
+    private DialogHolder getDialogHolder(String className, ClassLoader classLoader) {
+        try {
+            Class<?> clazz = classLoader.loadClass(className);
+
+            // check if we have it already, if so, update the params, and return
+            if (_dialogs.containsKey(className)) {
+                return _dialogs.get(className);
+            }
+
+            Object object = clazz.getConstructor(Context.class).newInstance(getContext());
+            if (!(object instanceof Dialog)) {
+                return null;
+            }
+
+            Dialog dialog = (Dialog) object;
+            addView(dialog.getView());
+            dialog.getView().setVisibility(GONE);
+
+            return new DialogHolder(dialog);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return null;
+    }
+
     @Override
     protected void onDetachedFromWindow() {
-        super.onDetachedFromWindow();
         if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
+        super.onDetachedFromWindow();
     }
 
     private Server.Listener _dialogReceiver_listener = new Server.Listener() {
@@ -87,27 +136,14 @@ public class DialogReceiver extends FrameLayout implements Constants {
         @Override
         public void onShowDialog(String className, ClassLoader classLoader, Bundle params) {
             try {
-                Class<?> clazz = classLoader.loadClass(className);
+                DialogHolder holder = getDialogHolder(className, classLoader);
 
-                if (_dialogs.containsKey(className)) {
-                    _dialogs.get(className).show(params);
-                    return;
+                if (holder != null) {
+                    holder.dialog.show(params);
+                    holder.params = params;
+                    _lastDialog = holder;
+                    _dialogs.put(className, _lastDialog);
                 }
-
-                Object object = clazz.getConstructor(Context.class).newInstance(getContext());
-
-                if (!(object instanceof Dialog)) {
-                    return;
-                }
-
-                Dialog dialog = (Dialog) object;
-
-                addView(dialog.getView());
-                dialog.getView().setVisibility(GONE);
-                dialog.show(params);
-
-                _dialogs.put(className, (Dialog) object);
-
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -116,8 +152,7 @@ public class DialogReceiver extends FrameLayout implements Constants {
         @Override
         public void onDismissDialog(String className) {
             if (_dialogs.containsKey(className)) {
-                Dialog v = _dialogs.get(className);
-                v.dismiss();
+                _dialogs.get(className).dialog.dismiss();
                 // Todo need to hide self, once dialog is done with its animation
             }
         }
@@ -127,12 +162,11 @@ public class DialogReceiver extends FrameLayout implements Constants {
         public Dialog dialog;
         public Bundle params;
 
-        public DialogHolder(Dialog dialog, Bundle params) {
+        DialogHolder(Dialog dialog) {
             this.dialog = dialog;
-            this.params = params;
         }
 
-        public Bundle saveState() {
+        Bundle saveState() {
             Bundle savedState = new Bundle();
             savedState.putParcelable("savedState", dialog.onSaveDialogState());
             savedState.putString("className", dialog.getClass().getName());

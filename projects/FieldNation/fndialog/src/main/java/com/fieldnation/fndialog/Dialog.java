@@ -11,13 +11,13 @@ import android.view.View;
  * interface.
  */
 public interface Dialog {
+    View getView();
+
     void show(Bundle payload);
 
-    void dismiss();
-
-    View getView();
+    void onRestoreDialogState(Parcelable savedState);
 
     Parcelable onSaveDialogState();
 
-    void onRestoreDialogState(Parcelable savedState);
+    void dismiss();
 }
