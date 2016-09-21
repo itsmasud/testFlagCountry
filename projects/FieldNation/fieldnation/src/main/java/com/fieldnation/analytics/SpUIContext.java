@@ -22,21 +22,17 @@ public class SpUIContext implements EventContext, SpContext {
     public static final String TAG = "SpUIContext";
 
     @Json
-    public final String tag = TAG;
+    public String tag = TAG;
     @Json
-    public final String page;
+    public String page;
     @Json
-    public final String elementType;
+    public String elementType;
     @Json
-    public final String elementAction;
+    public String elementAction;
     @Json
-    public final String elementIdentity;
+    public String elementIdentity;
 
     public SpUIContext() {
-        this.page = null;
-        this.elementType = null;
-        this.elementAction = null;
-        this.elementIdentity = null;
     }
 
     public SpUIContext(Builder builder) {
@@ -80,7 +76,7 @@ public class SpUIContext implements EventContext, SpContext {
 
     public static SpUIContext fromJson(JsonObject object) {
         try {
-            return Unserializer.unserializeObject(SpUIContext.class, object.getJsonObject(TAG));
+            return Unserializer.unserializeObject(SpUIContext.class, object);
         } catch (Exception e) {
             Log.v(TAG, e);
         }

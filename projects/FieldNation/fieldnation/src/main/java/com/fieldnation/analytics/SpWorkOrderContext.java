@@ -21,12 +21,11 @@ public class SpWorkOrderContext implements EventContext, SpContext {
     public static final String TAG = "SpWorkOrderContext";
 
     @Json
-    public final String tag = TAG;
+    public String tag = TAG;
     @Json
-    public final Long workOrderId;
+    public Long workOrderId;
 
     public SpWorkOrderContext() {
-        this.workOrderId = null;
     }
 
     public SpWorkOrderContext(Builder builder) {
