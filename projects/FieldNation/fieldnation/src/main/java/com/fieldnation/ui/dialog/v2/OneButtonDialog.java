@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.RelativeLayout;
+import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
@@ -16,7 +16,7 @@ import com.fieldnation.fndialog.Dialog;
 /**
  * Created by Michael on 9/19/2016.
  */
-public class OneButtonDialog extends RelativeLayout implements Dialog {
+public class OneButtonDialog extends FrameLayout implements Dialog {
     private static final String TAG = "OneButtonDialog";
 
     private static final String PARAM_TITLE = "title";
@@ -81,6 +81,12 @@ public class OneButtonDialog extends RelativeLayout implements Dialog {
 
     @Override
     public void dismiss() {
+        setVisibility(GONE);
+    }
+
+    @Override
+    public boolean onBackPressed() {
+        return false;
     }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {

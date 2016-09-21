@@ -7,8 +7,11 @@ import android.os.Bundle;
  * Created by Michael on 9/19/2016.
  */
 public abstract class Controller {
+    private static final String TAG = "Controller";
+
     private Client _client;
     private Class<? extends Dialog> _klass;
+    private Listener _listener;
 
     public Controller(Context context, Class<? extends Dialog> klass) {
         _klass = klass;
@@ -16,12 +19,14 @@ public abstract class Controller {
         _client.connect(context);
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
     public void disconnect(Context context) {
         if (_client != null && _client.isConnected())
             _client.disconnect(context);
     }
-
-    protected abstract void onComplete(Bundle response);
 
     public static void show(Context context, Class<? extends Dialog> klass, Bundle params) {
         Client.show(context, klass, params);
@@ -45,7 +50,12 @@ public abstract class Controller {
 
         @Override
         public void onComplete(Bundle response) {
-            Controller.this.onComplete(response);
+            if (_listener != null)
+                _listener.onComplete(response);
         }
     };
+
+    public interface Listener {
+        void onComplete(Bundle response);
+    }
 }

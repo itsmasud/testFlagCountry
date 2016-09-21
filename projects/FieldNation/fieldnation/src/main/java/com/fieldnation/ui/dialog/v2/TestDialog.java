@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller.Listener;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.EventDispatch;
 
@@ -23,7 +24,6 @@ public class TestDialog extends FrameLayout implements Dialog {
     private static final String PARAM_RESPONSE = "response";
     private static final int PARAM_RESPONSE_OK = 0;
     private static final int PARAM_RESPONSE_CANCEL = 1;
-    private static final int PARAM_RESPONSE_DISMISS = 2;
 
     // Ui
     private TextView _titleTextView;
@@ -48,7 +48,12 @@ public class TestDialog extends FrameLayout implements Dialog {
     }
 
     @Override
-    public void show(Bundle payload) {
+    public boolean isCancelable() {
+        return false;
+    }
+
+    @Override
+    public void show(Bundle payload, boolean animate) {
         _titleTextView.setText(payload.getString(PARAM_TITLE));
         setVisibility(VISIBLE);
     }
@@ -66,9 +71,14 @@ public class TestDialog extends FrameLayout implements Dialog {
     }
 
     @Override
-    public void dismiss() {
+    public void dismiss(boolean animate) {
+        setVisibility(GONE);
+    }
+
+    @Override
+    public void cancel() {
         Bundle response = new Bundle();
-        response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_DISMISS);
+        response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
         EventDispatch.dialogComplete(App.get(), TestDialog.this, response);
         setVisibility(GONE);
     }
@@ -76,10 +86,12 @@ public class TestDialog extends FrameLayout implements Dialog {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_DISMISS);
-            EventDispatch.dialogComplete(App.get(), TestDialog.this, response);
-            setVisibility(GONE);
+            if (isCancelable()) {
+                Bundle response = new Bundle();
+                response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
+                EventDispatch.dialogComplete(App.get(), TestDialog.this, response);
+                setVisibility(GONE);
+            }
         }
     };
 
@@ -108,31 +120,8 @@ public class TestDialog extends FrameLayout implements Dialog {
      */
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
-        private ControllerListener _dialogListener;
-
         public Controller(Context context) {
             super(context, TestDialog.class);
-        }
-
-        public void setControllerListener(ControllerListener dialogListener) {
-            _dialogListener = dialogListener;
-        }
-
-        @Override
-        protected void onComplete(Bundle response) {
-            if (_dialogListener != null) {
-                switch (response.getInt(PARAM_RESPONSE)) {
-                    case PARAM_RESPONSE_OK:
-                        _dialogListener.onOk();
-                        break;
-                    case PARAM_RESPONSE_CANCEL:
-                        _dialogListener.onCancel();
-                        break;
-                    case PARAM_RESPONSE_DISMISS:
-                        _dialogListener.onDismiss();
-                        break;
-                }
-            }
         }
 
         public static void show(Context context, String title) {
@@ -150,11 +139,23 @@ public class TestDialog extends FrameLayout implements Dialog {
     /**
      * The listener that lets the user know when events happen
      */
-    public interface ControllerListener {
-        void onOk();
+    public abstract class ControllerListener implements Listener {
+        @Override
+        public void onComplete(Bundle response) {
+            switch (response.getInt(PARAM_RESPONSE)) {
+                case PARAM_RESPONSE_OK:
+                    onOk();
+                    break;
+                case PARAM_RESPONSE_CANCEL:
+                    onCancel();
+                    break;
+                default:
+                    break;
+            }
+        }
 
-        void onCancel();
+        abstract void onOk();
 
-        void onDismiss();
+        abstract void onCancel();
     }
 }

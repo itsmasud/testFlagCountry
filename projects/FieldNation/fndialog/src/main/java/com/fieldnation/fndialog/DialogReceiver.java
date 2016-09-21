@@ -46,7 +46,11 @@ public class DialogReceiver extends FrameLayout implements Constants {
     private void init() {
     }
 
-
+    /**
+     * Saves the state of the last displayed dialog. We don't keep the non-visible dialogs
+     *
+     * @return
+     */
     @Override
     protected Parcelable onSaveInstanceState() {
         Log.v(TAG, "onSaveInstanceState");
@@ -57,6 +61,22 @@ public class DialogReceiver extends FrameLayout implements Constants {
             savedInstance.putBundle("lastDialog", _lastDialog.saveState());
 
         return savedInstance;
+    }
+
+    /**
+     * Should be called tby the activity that owns this view
+     *
+     * @return true if the button event was handled, false if not
+     */
+    public boolean onBackPressed() {
+        if (_lastDialog != null) {
+            if (_lastDialog.dialog.isCancelable() && _lastDialog.dialog.getView().getVisibility() == VISIBLE) {
+                _lastDialog.dialog.cancel();
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -77,7 +97,7 @@ public class DialogReceiver extends FrameLayout implements Constants {
                 holder.params = params;
                 _lastDialog = holder;
                 _dialogs.put(className, holder);
-                holder.dialog.show(params);
+                holder.dialog.show(params, false);
                 if (dialogSavedState != null)
                     holder.dialog.onRestoreDialogState(dialogSavedState);
             }
@@ -139,7 +159,7 @@ public class DialogReceiver extends FrameLayout implements Constants {
                 DialogHolder holder = getDialogHolder(className, classLoader);
 
                 if (holder != null) {
-                    holder.dialog.show(params);
+                    holder.dialog.show(params, true);
                     holder.params = params;
                     _lastDialog = holder;
                     _dialogs.put(className, _lastDialog);
@@ -152,8 +172,7 @@ public class DialogReceiver extends FrameLayout implements Constants {
         @Override
         public void onDismissDialog(String className) {
             if (_dialogs.containsKey(className)) {
-                _dialogs.get(className).dialog.dismiss();
-                // Todo need to hide self, once dialog is done with its animation
+                _dialogs.get(className).dialog.dismiss(true);
             }
         }
     };
