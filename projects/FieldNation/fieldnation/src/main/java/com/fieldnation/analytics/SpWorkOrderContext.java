@@ -35,12 +35,12 @@ public class SpWorkOrderContext implements EventContext, SpContext {
 
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
-        Map<String, String> dataMap = new HashMap<>();
+        Map<String, Object> dataMap = new HashMap<>();
 
         dataMap.put("workOrderId", "na");
 
         if (workOrderId != null)
-            dataMap.put("workOrderId", workOrderId + "");
+            dataMap.put("workOrderId", workOrderId);
 
         return new SelfDescribingJson(context.getString(R.string.sp_work_order_context_schema_uri), dataMap);
     }
