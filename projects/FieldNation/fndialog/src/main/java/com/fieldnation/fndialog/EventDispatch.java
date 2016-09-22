@@ -19,5 +19,4 @@ public class EventDispatch implements Constants {
 
         TopicClient.dispatchEvent(context, TOPIC_ID_DIALOG_COMPLETE + "/" + dialog.getClass().getName(), payload, Sticky.NONE);
     }
-
 }

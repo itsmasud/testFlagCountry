@@ -55,6 +55,8 @@ public abstract class SystemDialog extends RelativeLayout implements Dialog {
 
         getContainer().setOnClickListener(_this_onClick);
 
+        addView(onCreateView(LayoutInflater.from(getContext()), this));
+
         _bgFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.bg_fade_in);
         _bgFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.bg_fade_out);
         _fgFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fg_fade_in);

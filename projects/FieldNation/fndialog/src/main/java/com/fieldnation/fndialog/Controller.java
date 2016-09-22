@@ -36,7 +36,6 @@ public abstract class Controller {
         Client.dismiss(context, klass);
     }
 
-
     private final Client.Listener _dialog_listener = new Client.Listener() {
         @Override
         public Class<? extends Dialog> getDialogClass() {

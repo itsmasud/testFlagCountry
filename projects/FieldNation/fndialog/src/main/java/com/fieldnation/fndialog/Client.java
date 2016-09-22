@@ -19,7 +19,7 @@ class Client extends TopicClient implements Constants {
     private final String TAG = UniqueTag.makeTag(STAG);
 
 
-    public Client(Listener listener) {
+    Client(Listener listener) {
         super(listener);
     }
 
@@ -41,17 +41,17 @@ class Client extends TopicClient implements Constants {
         show(context, klass.getName(), klass.getClassLoader(), params);
     }
 
-    public static void dismiss(Context context, String className) {
+    public static void dismiss(Context context, String className, ClassLoader classLoader) {
         Bundle payload = new Bundle();
         payload.putString(PARAM_DIALOG_CLASS_NAME, className);
+        payload.setClassLoader(classLoader);
 
         TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG, payload, Sticky.NONE);
     }
 
     public static void dismiss(Context context, Class<? extends Dialog> klass) {
-        dismiss(context, klass.getName());
+        dismiss(context, klass.getName(), klass.getClassLoader());
     }
-
 
     public static abstract class Listener extends TopicClient.Listener {
         private static final String TAG = "Client.Listener";

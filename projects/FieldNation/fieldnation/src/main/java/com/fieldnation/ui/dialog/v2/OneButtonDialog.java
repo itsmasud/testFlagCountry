@@ -11,6 +11,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller.Listener;
 import com.fieldnation.fndialog.Dialog;
 
 /**
@@ -24,7 +25,7 @@ public class OneButtonDialog extends FrameLayout implements Dialog {
     private static final String PARAM_BUTTON = "button";
     private static final String PARAM_RESPONSE = "response";
     private static final int PARAM_RESPONSE_OK = 0;
-    private static final int PARAM_RESPONSE_DISMISS = 1;
+    private static final int PARAM_RESPONSE_CANCEL = 1;
 
     // Ui
     private TextView _titleTextView;
@@ -63,7 +64,7 @@ public class OneButtonDialog extends FrameLayout implements Dialog {
     }
 
     @Override
-    public void show(Bundle payload) {
+    public void show(Bundle payload, boolean animate) {
         _titleTextView.setText(payload.getString(PARAM_TITLE));
         _bodyTextView.setText(payload.getString(PARAM_BODY));
         _button.setText(payload.getString(PARAM_BUTTON));
@@ -80,25 +81,24 @@ public class OneButtonDialog extends FrameLayout implements Dialog {
     }
 
     @Override
-    public void dismiss() {
+    public void dismiss(boolean animate) {
         setVisibility(GONE);
     }
 
     @Override
-    public boolean onBackPressed() {
-        return false;
+    public void cancel() {
+
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return true;
     }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
-        private ControllerListener _listener;
-
         public Controller(Context context) {
             super(context, OneButtonDialog.class);
-        }
-
-        public void setControllerListener(ControllerListener listener) {
-            _listener = listener;
         }
 
         public static void show(Context context, String title, String body, String button) {
@@ -113,25 +113,25 @@ public class OneButtonDialog extends FrameLayout implements Dialog {
         public static void dismiss(Context context) {
             dismiss(context, OneButtonDialog.class);
         }
-
-        @Override
-        protected void onComplete(Bundle response) {
-            if (_listener != null) {
-                switch (response.getInt(PARAM_RESPONSE)) {
-                    case PARAM_RESPONSE_OK:
-                        _listener.onOk();
-                        break;
-                    case PARAM_RESPONSE_DISMISS:
-                        _listener.onDismiss();
-                        break;
-                }
-            }
-        }
     }
 
-    public interface ControllerListener {
-        void onOk();
+    public abstract class ControllerListener implements Listener {
+        @Override
+        public void onComplete(Bundle response) {
+            switch (response.getInt(PARAM_RESPONSE)) {
+                case PARAM_RESPONSE_OK:
+                    onOk();
+                    break;
+                case PARAM_RESPONSE_CANCEL:
+                    onDismiss();
+                    break;
+                default:
+                    break;
+            }
+        }
 
-        void onDismiss();
+        abstract void onOk();
+
+        abstract void onDismiss();
     }
 }
