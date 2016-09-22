@@ -46,7 +46,7 @@ public class SpUIContext implements EventContext, SpContext {
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
         dataMap.put("interface", "android");
-        dataMap.put("version", "HI! " + (BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_FLAVOR_NAME).trim());
+        dataMap.put("version", (BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_FLAVOR_NAME).trim());
 
         dataMap.put("page", "na");
         dataMap.put("element_type", "na"); // button, switch, link, card... etc..
