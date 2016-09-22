@@ -2,7 +2,6 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,13 +9,13 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.fndialog.SystemDialog;
+import com.fieldnation.fndialog.SimpleDialog;
 
 /**
  * Created by Michael on 9/21/2016.
  */
 
-public class TwoButtonDialog extends SystemDialog {
+public class TwoButtonDialog extends SimpleDialog {
     private static final String TAG = "TwoButtonDialog";
 
     // Ui
@@ -29,17 +28,9 @@ public class TwoButtonDialog extends SystemDialog {
         super(context);
     }
 
-    public TwoButtonDialog(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
-
-    public TwoButtonDialog(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container) {
-        View v = inflater.inflate(R.layout.dialog_v2_two_button, this);
+        View v = inflater.inflate(R.layout.dialog_v2_two_button, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);

@@ -14,7 +14,7 @@ import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fndialog.DialogReceiver;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
@@ -99,7 +99,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract int getToolbarId();
 
-    public DialogReceiver getDialogReceiver() {
+    public DialogManager getDialogReceiver() {
         return null;
     }
 
@@ -198,9 +198,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DialogReceiver dialogReceiver = getDialogReceiver();
-        if (dialogReceiver != null) {
-            if (dialogReceiver.onBackPressed())
+        DialogManager dialogManager = getDialogReceiver();
+        if (dialogManager != null) {
+            if (dialogManager.onBackPressed())
                 return;
         }
         super.onBackPressed();

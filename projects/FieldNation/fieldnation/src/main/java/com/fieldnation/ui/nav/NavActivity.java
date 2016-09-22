@@ -14,7 +14,7 @@ import android.view.animation.AnimationUtils;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.fndialog.DialogReceiver;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
@@ -96,8 +96,8 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public DialogReceiver getDialogReceiver() {
-        return (DialogReceiver) findViewById(R.id.dialogReceiver);
+    public DialogManager getDialogReceiver() {
+        return (DialogManager) findViewById(R.id.dialogReceiver);
     }
 
     @Override

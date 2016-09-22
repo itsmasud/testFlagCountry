@@ -18,8 +18,8 @@ import java.util.Hashtable;
  * # Receive dialog show and cancel requests
  * # Instantiate dialogs as needed and manage their state
  */
-public class DialogReceiver extends FrameLayout implements Constants {
-    private static final String TAG = "DialogReceiver";
+public class DialogManager extends FrameLayout implements Constants {
+    private static final String TAG = "DialogManager";
 
     // Service
     private Server _dialogReceiver;
@@ -28,17 +28,17 @@ public class DialogReceiver extends FrameLayout implements Constants {
     private DialogHolder _lastDialog = null;
     private Hashtable<String, DialogHolder> _dialogs = new Hashtable<>();
 
-    public DialogReceiver(Context context) {
+    public DialogManager(Context context) {
         super(context);
         init();
     }
 
-    public DialogReceiver(Context context, AttributeSet attrs) {
+    public DialogManager(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public DialogReceiver(Context context, AttributeSet attrs, int defStyleAttr) {
+    public DialogManager(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }

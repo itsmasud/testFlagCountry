@@ -57,7 +57,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true" />
 
-    <com.fieldnation.fndialog.DialogReceiver
+    <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogReceiver"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />

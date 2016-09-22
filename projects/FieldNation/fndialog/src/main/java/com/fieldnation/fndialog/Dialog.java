@@ -11,7 +11,7 @@ import android.view.View;
  * interface.
  * <p>
  * Dialogs should also contain a Controller object and Controller.Listener for users to use for
- * calling and listening for events from your dialog. See SystemDialog and TwoButtonDialog for
+ * calling and listening for events from your dialog. See SimpleDialog and TwoButtonDialog for
  * examples.
  */
 public interface Dialog {

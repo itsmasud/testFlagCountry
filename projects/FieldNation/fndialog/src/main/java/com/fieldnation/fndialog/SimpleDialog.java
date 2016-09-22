@@ -3,7 +3,6 @@ package com.fieldnation.fndialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +16,11 @@ import com.fieldnation.fntools.DefaultAnimationListener;
  * Created by Michael on 9/20/2016.
  */
 
-public abstract class SystemDialog extends RelativeLayout implements Dialog {
-    private static final String TAG = "SystemDialog";
+public abstract class SimpleDialog implements Dialog {
+    private static final String TAG = "SimpleDialog";
 
     // Ui
+    private View _root;
     private RelativeLayout _container;
 
     // Animations
@@ -32,65 +32,33 @@ public abstract class SystemDialog extends RelativeLayout implements Dialog {
     // Data
     private boolean _isCancelable = true;
 
-    public SystemDialog(Context context) {
-        super(context);
-        init();
-    }
+    public SimpleDialog(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        _root = inflater.inflate(R.layout.dialog_base, null);
+        _container = (RelativeLayout) _root.findViewById(R.id.container);
 
-    public SystemDialog(Context context, AttributeSet attrs) {
-        super(context, attrs);
-        init();
-    }
+        _container.setOnClickListener(_this_onClick);
 
-    public SystemDialog(Context context, AttributeSet attrs, int defStyleAttr) {
-        super(context, attrs, defStyleAttr);
-        init();
-    }
+        _container.addView(onCreateView(LayoutInflater.from(context), _container));
 
-    private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.dialog_base, this);
-
-        if (isInEditMode())
-            return;
-
-        getContainer().setOnClickListener(_this_onClick);
-
-        addView(onCreateView(LayoutInflater.from(getContext()), this));
-
-        _bgFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.bg_fade_in);
-        _bgFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.bg_fade_out);
-        _fgFadeIn = AnimationUtils.loadAnimation(getContext(), R.anim.fg_fade_in);
-        _fgFadeOut = AnimationUtils.loadAnimation(getContext(), R.anim.fg_fade_out);
+        _bgFadeIn = AnimationUtils.loadAnimation(context, R.anim.bg_fade_in);
+        _bgFadeOut = AnimationUtils.loadAnimation(context, R.anim.bg_fade_out);
+        _fgFadeIn = AnimationUtils.loadAnimation(context, R.anim.fg_fade_in);
+        _fgFadeOut = AnimationUtils.loadAnimation(context, R.anim.fg_fade_out);
 
         _bgFadeOut.setAnimationListener(new DefaultAnimationListener() {
             @Override
             public void onAnimationEnd(Animation animation) {
-                setVisibility(GONE);
+                _root.setVisibility(View.GONE);
             }
         });
     }
 
     public abstract View onCreateView(LayoutInflater inflater, ViewGroup container);
 
-    // Handles children
-    private RelativeLayout getContainer() {
-        if (_container == null)
-            _container = (RelativeLayout) findViewById(R.id.container);
-
-        return _container;
-    }
-
-    @Override
-    public void addView(View child, int index, ViewGroup.LayoutParams params) {
-        if (child.getId() == R.id.container || getContainer() == null)
-            super.addView(child, index, params);
-        else
-            getContainer().addView(child, index, params);
-    }
-
     @Override
     public View getView() {
-        return this;
+        return _root;
     }
 
     @Override
@@ -100,7 +68,7 @@ public abstract class SystemDialog extends RelativeLayout implements Dialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
-        setVisibility(VISIBLE);
+        _root.setVisibility(View.VISIBLE);
         if (animate) {
             View child = _container.getChildAt(0);
             _container.startAnimation(_bgFadeIn);
@@ -132,7 +100,7 @@ public abstract class SystemDialog extends RelativeLayout implements Dialog {
         dismiss(true);
     }
 
-    private final View.OnClickListener _this_onClick = new OnClickListener() {
+    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (isCancelable())
