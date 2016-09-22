@@ -10,7 +10,6 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
@@ -185,7 +184,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             try {
                 _coiWarningDialog.show();
             } catch (Exception ex) {
-                Debug.logException(ex);
+                Log.logException(ex);
             }
         } else {
             Log.v(TAG, "toc/coi check done");
@@ -335,7 +334,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             try {
                 _updateDialog.show();
             } catch (Exception ex) {
-                Debug.logException(ex);
+                Log.logException(ex);
             }
         }
 
@@ -349,7 +348,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             try {
                 _contactUsDialog.show(source);
             } catch (Exception ex) {
-                Debug.logException(ex);
+                Log.logException(ex);
             }
         }
 
