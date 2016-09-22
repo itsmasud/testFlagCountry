@@ -6,7 +6,6 @@ import android.location.Location;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
@@ -711,7 +710,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
-            Debug.logException(new Exception("PA-332 - UpFile is null"));
+            Log.logException(new Exception("PA-332 - UpFile is null"));
             WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
             return;
         }

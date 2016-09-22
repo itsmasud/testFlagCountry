@@ -9,10 +9,22 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementIdentity;
+import com.fieldnation.analytics.ElementType;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.analytics.EventProperty;
+import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.SpUIContext;
+import com.fieldnation.analytics.SpWorkOrderContext;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fntools.misc;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
@@ -145,12 +157,28 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _action_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null) {
-                if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
+            if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
+                Tracker.event(App.get(),
+                        new Event.Builder()
+                                .category(EventCategory.WORK_ORDER)
+                                .action(EventAction.COUNTER_OFFER)
+                                .property(EventProperty.WORK_ORDER_ID)
+                                .label(_workorder.getWorkorderId() + "")
+                                .addContext(new SpUIContext.Builder()
+                                        .page(ScreenName.workOrderDetailsWork().name)
+                                        .elementAction(ElementAction.CLICK)
+                                        .elementType(ElementType.BUTTON)
+                                        .elementIdentity(ElementIdentity.COUNTER_OFFER)
+                                        .build())
+                                .addContext(new SpWorkOrderContext.Builder()
+                                        .workOrderId(_workorder.getWorkorderId())
+                                        .build())
+                                .build());
+                if (_listener != null)
                     _listener.onCounterOffer(_workorder);
-                } else if (_workorder.canRequestPayIncrease()) {
+            } else if (_workorder.canRequestPayIncrease()) {
+                if (_listener != null)
                     _listener.onRequestNewPay(_workorder);
-                }
             }
         }
     };

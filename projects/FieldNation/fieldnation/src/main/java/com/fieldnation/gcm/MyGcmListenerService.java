@@ -21,14 +21,18 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
-import android.util.Log;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.Debug;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
@@ -53,7 +57,12 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "From: " + from);
         Log.d(TAG, "Message: " + message);
 
-        Debug.logCustom(new CustomEvent("PushNotificationReceived"));
+        Tracker.event(this,
+                new Event.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category(EventCategory.GCM)
+                        .action(EventAction.PUSH_NOTIFICATION)
+                        .build());
 
 //        GlobalTopicClient.gcm(this, message);
         sendNotification(message);
@@ -66,6 +75,10 @@ public class MyGcmListenerService extends GcmListenerService {
         super.onDestroy();
     }
 
+    private static final Event VISITED_EVENT = new Event.Builder()
+            .category(EventCategory.GCM)
+            .action(EventAction.PUSH_NOTIFICATION_INTERACTED)
+            .build();
 
     /**
      * Create and show a simple notification containing the received GCM message.
@@ -101,7 +114,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                 PendingIntent workorderPi = PendingIntent.getActivity(this, 0, workorderIntent, 0);
 
-                builder.setContentIntent(workorderPi);
+                builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
+                        this, VISITED_EVENT, workorderPi));
 
                 if (negativeButton != null) {
                     builder.addAction(R.drawable.ic_notif_glass, negativeButton.getString("label"), workorderPi);
@@ -113,13 +127,15 @@ public class MyGcmListenerService extends GcmListenerService {
                         PendingIntent readyToGoPi = PendingIntent.getActivity(this, 0,
                                 WorkorderActivity.makeIntentConfirm(this, obj.getLong("workorder_id")), 0);
 
-                        builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"), readyToGoPi);
+                        builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
+                                AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
                     } else {
                         Log.v(TAG, "positiveButton2");
                         PendingIntent readyToGoPi = PendingIntent.getService(this, 0,
                                 WorkorderTransactionBuilder.actionReadyIntent(this, obj.getLong("workorder_id")), 0);
 
-                        builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"), readyToGoPi);
+                        builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
+                                AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
                     }
                 }
 
