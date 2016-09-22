@@ -8,13 +8,7 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
@@ -26,7 +20,11 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.io.File;
@@ -221,8 +219,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
-        Debug.logCustom(new CustomEvent("ReportProblem")
-                .putCustomAttribute("type", type.value));
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type);
     }
 
@@ -440,7 +436,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
 
     // complete workorder
     public static void actionComplete(Context context, long workorderId) {
-        Debug.logCustom(new CustomEvent("MarkComplete"));
         WorkorderTransactionBuilder.actionComplete(context, workorderId);
     }
 
@@ -462,16 +457,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     public static void actionCounterOffer(Context context, long workorderId, boolean expires,
                                           String reason, int expiresAfterInSecond, Pay pay,
                                           Schedule schedule, Expense[] expenses) {
-
-        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "CounterOffer"));
         WorkorderTransactionBuilder.actionCounterOffer(context, workorderId, expires, reason,
                 expiresAfterInSecond, pay, schedule, expenses);
     }
 
     // request
     public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
-
-        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
 
@@ -491,12 +482,10 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkin            -*/
     /*-******************************************-*/
     public static void actionCheckin(Context context, long workorderId) {
-        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId);
     }
 
     public static void actionCheckin(Context context, long workorderId, Location location) {
-        Debug.logCustom(new CustomEvent("CheckIn"));
         WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
     }
 
@@ -504,22 +493,18 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
     public static void actionCheckout(Context context, long workorderId) {
-        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId);
     }
 
     public static void actionCheckout(Context context, long workorderId, Location location) {
-        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
     }
 
     public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        Debug.logCustom(new CustomEvent("CheckOut"));
         WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
     }
 

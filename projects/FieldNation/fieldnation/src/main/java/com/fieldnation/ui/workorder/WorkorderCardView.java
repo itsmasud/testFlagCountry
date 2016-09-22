@@ -12,8 +12,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Pay;
@@ -21,11 +19,12 @@ import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.service.data.mapbox.Position;
-import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.ui.IconFontTextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -198,8 +197,6 @@ public class WorkorderCardView extends RelativeLayout {
     private final View.OnClickListener _left_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView",
-                    GoogleAnalyticsTopicClient.EventAction.CLICK, _leftButton.getText().toString(), 1);
             handleButtonClick(_workorder.getLeftButtonAction());
         }
     };
@@ -207,16 +204,6 @@ public class WorkorderCardView extends RelativeLayout {
     private final View.OnClickListener _right_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_rightWhiteButton.getVisibility() == VISIBLE) {
-                GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView",
-                        GoogleAnalyticsTopicClient.EventAction.CLICK, _rightWhiteButton.getText().toString(), 1);
-            } else if (_rightOrangeButton.getVisibility() == VISIBLE) {
-                GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView",
-                        GoogleAnalyticsTopicClient.EventAction.CLICK, _rightOrangeButton.getText().toString(), 1);
-            } else if (_rightGreenButton.getVisibility() == VISIBLE) {
-                GoogleAnalyticsTopicClient.dispatchEvent(getContext(), "WorkorderCardView",
-                        GoogleAnalyticsTopicClient.EventAction.CLICK, _rightGreenButton.getText().toString(), 1);
-            }
             handleButtonClick(_workorder.getRightButtonAction());
         }
     };

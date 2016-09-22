@@ -8,11 +8,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Notification;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
@@ -88,11 +89,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
         super.onSaveInstanceState(outState);
     }
 
-
-    public String getGaLabel() {
-        return TAG_BASE;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -103,7 +99,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
 
         setLoading(true);
 
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
+        Tracker.screen(App.get(), ScreenName.inboxAlerts());
     }
 
     @Override
@@ -128,7 +124,7 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
+        Tracker.screen(App.get(), ScreenName.inboxAlerts());
     }
 
     private void setLoading(boolean loading) {
