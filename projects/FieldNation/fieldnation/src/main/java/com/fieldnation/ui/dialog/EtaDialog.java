@@ -138,7 +138,7 @@ public class EtaDialog extends DialogFragmentBase {
         }
         super.onCreate(savedInstanceState);
 
-        setStyle(STYLE_NO_TITLE, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
+        setStyle(STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
 //        setStyle(STYLE_NO_TITLE, 0);
     }
 
