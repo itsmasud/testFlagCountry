@@ -591,7 +591,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -861,14 +861,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(_workorder, false, true, false);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, true, false, false);
+            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
         }
     };
 
@@ -914,20 +914,23 @@ public class WorkFragment extends WorkorderFragment {
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
 
         @Override
-        public void onRequest(Workorder workorder, long milliseconds) {
-            long seconds = -1;
-            if (milliseconds > 0) {
-                seconds = milliseconds / 1000;
+        public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
+                WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                setLoading(true);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-            setLoading(true);
-
         }
 
         @Override
         public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
             try {
-                WorkOrderClient.actionEta(App.get(),
+                WorkorderClient.actionConfirmAssignment(App.get(),
                         workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
 
                 setLoading(true);
@@ -1039,26 +1042,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onCancel() {
         }
     };
-
-//    private final EtaDialog.Listener _expiresDialog_listener = new EtaDialog.Listener() {
-//        @Override
-//        public void onOk(Workorder workorder, String dateTime) {
-//            long seconds = -1;
-//            if (dateTime != null) {
-//                try {
-//                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-//                } catch (ParseException e) {
-//                    Log.v(TAG, e);
-//                }
-//            }
-//
-//            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-//                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
-//            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-//            setLoading(true);
-//
-//        }
-//    };
 
     private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
@@ -1303,7 +1286,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, true, false, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_REQUEST);
             }
         }
 
@@ -1312,7 +1295,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
             }
         }
 
@@ -1336,7 +1319,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
             }
         }
 
@@ -1608,7 +1591,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _etaDialog.show(_workorder, false, true, false);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
 
         @Override
@@ -1862,7 +1845,7 @@ public class WorkFragment extends WorkorderFragment {
     ScheduleSummaryView.Listener _editEta_listener = new ScheduleSummaryView.Listener() {
         @Override
         public void editEta() {
-            _etaDialog.show(_workorder, false, false, true);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_EDIT);
 
         }
     };

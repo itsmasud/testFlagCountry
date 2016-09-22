@@ -600,7 +600,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _etaDialog.show(workorder, true, false, false);
+                _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
             }
         }
 
@@ -645,7 +645,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _etaDialog.show(workorder, false, true, false);
+            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
 
         @Override
@@ -683,7 +683,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _etaDialog.show(workorder, false, true, false);
+            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
 
         @Override
@@ -730,7 +730,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, true, false, false);
+            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
         }
     };
 
@@ -753,14 +753,18 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
-        public void onRequest(Workorder workorder, long milliseconds) {
-            long seconds = -1;
-            if (milliseconds > 0) {
-                seconds = milliseconds / 1000;
-            }
+        public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
 
-            // request the workorder
-            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
+                // request the workorder
+                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
 
             // notify the UI
             _adapter.refreshPages();

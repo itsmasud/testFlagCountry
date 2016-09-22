@@ -62,6 +62,7 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
     /*-*********************************-*/
     private static void action(Context context, long workorderId, String action, String params,
                                String contentType, String body) {
+        Log.e(TAG, "body: " + body);
         action(context, workorderId, action, params, contentType, body, true);
     }
 
