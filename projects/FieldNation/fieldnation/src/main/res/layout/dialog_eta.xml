@@ -14,17 +14,11 @@
         <RelativeLayout
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_marginBottom="24dp"
             android:background="@color/fn_primary"
             android:visibility="visible">
 
-            <View
-                android:id="@+id/dividerBackground"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginBottom="8dp"
-                android:background="@color/fn_primary" />
 
             <TextView
                 android:id="@+id/title_textview"
@@ -45,7 +39,6 @@
                 android:layout_height="wrap_content"
                 android:layout_alignBaseline="@+id/title_textview"
                 android:layout_alignParentLeft="true"
-                android:layout_marginBottom="16dp"
                 android:layout_marginRight="3dp"
                 android:background="@android:color/transparent"
                 android:paddingLeft="14dp"
