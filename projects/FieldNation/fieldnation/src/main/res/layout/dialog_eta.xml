@@ -15,14 +15,16 @@
             android:id="@+id/header_layout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/dialogBg_Material">
+            android:layout_marginBottom="24dp"
+            android:background="@color/fn_primary"
+            android:visibility="visible">
 
             <View
                 android:id="@+id/dividerBackground"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_marginBottom="8dp"
-                android:background="@color/btn_status_green_top" />
+                android:background="@color/fn_primary" />
 
             <TextView
                 android:id="@+id/title_textview"
@@ -39,13 +41,14 @@
             <com.fieldnation.ui.IconFontButton
                 android:id="@+id/cancel_button"
                 style="@style/Text_Body_1"
-                android:layout_width="25dp"
+                android:layout_width="32dp"
                 android:layout_height="wrap_content"
+                android:layout_alignBaseline="@+id/title_textview"
                 android:layout_alignParentLeft="true"
                 android:layout_marginBottom="16dp"
                 android:layout_marginRight="3dp"
                 android:background="@android:color/transparent"
-                android:paddingLeft="8dp"
+                android:paddingLeft="14dp"
                 android:text="@string/icon_x"
                 android:textColor="@color/white"
                 android:textSize="12sp"
@@ -70,7 +73,7 @@
             android:background="@color/dialogBg_Material"
             android:paddingLeft="@dimen/dialogGutter"
             android:paddingRight="@dimen/dialogGutter"
-            android:visibility="visible">
+            android:visibility="gone">
 
 
             <TextView
@@ -101,8 +104,8 @@
             android:id="@+id/scheduleTitle_textview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
             android:layout_below="@+id/request_layout"
+            android:layout_gravity="center"
             android:paddingLeft="@dimen/dialogGutter"
             android:paddingRight="@dimen/dialogGutter"
             android:text="@string/schedule_current" />

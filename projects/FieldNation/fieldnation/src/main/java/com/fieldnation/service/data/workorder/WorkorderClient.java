@@ -339,7 +339,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             Ratings               -*/
     /*-*************************************-*/
-    public static void sendRating(Context context,  long workorderId, int satisfactionRating, int scopeRating,
+    public static void sendRating(Context context, long workorderId, int satisfactionRating, int scopeRating,
                                   int respectRating, int respectComment, boolean recommendBuyer, String otherComments) {
         context.startService(
                 WorkorderTransactionBuilder.actionPostRatingIntent(context, workorderId, satisfactionRating, scopeRating,
@@ -469,14 +469,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     // request
-    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
 
         Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
-        WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
+        WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
 
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601);
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+        WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601, note);
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {

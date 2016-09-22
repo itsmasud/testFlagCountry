@@ -133,11 +133,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pActionRequest(long workorderId, long expireInSeconds) {
+    public static byte[] pActionRequest(long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         try {
             JsonObject obj = new JsonObject("action", "pActionRequest");
             obj.put("workorderId", workorderId);
             obj.put("expireInSeconds", expireInSeconds);
+            obj.put("startTime", startTime);
+            obj.put("endTime", endTime);
+            obj.put("note", note);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -145,12 +148,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601) {
+    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
         try {
             JsonObject obj = new JsonObject("action", "pAssignment");
             obj.put("workorderId", workorderId);
             obj.put("startTimeIso8601", startTimeIso8601);
             obj.put("endTimeIso8601", endTimeIso8601);
+            obj.put("note", note);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -882,10 +886,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         long workorderId = params.getLong("workorderId");
         long expireInSeconds = params.getLong("expireInSeconds");
+        String startTime = params.getString("startTime");
+        String endTime = params.getString("endTime");
+        String note = params.getString("note");
 
         WorkorderDispatch.action(context, workorderId, "request", true);
 
-        Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds);
+        Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
         ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
@@ -900,10 +907,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
         String startTimeIso8601 = params.getString("startTimeIso8601");
         String endTimeIso8601 = params.getString("endTimeIso8601");
+        String note = params.getString("note");
 
         WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
         ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
