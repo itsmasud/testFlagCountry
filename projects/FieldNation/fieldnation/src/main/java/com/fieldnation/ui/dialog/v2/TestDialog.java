@@ -43,6 +43,11 @@ public class TestDialog extends FrameLayout implements Dialog {
     }
 
     @Override
+    public void onAdded() {
+        
+    }
+
+    @Override
     public View getView() {
         return this;
     }

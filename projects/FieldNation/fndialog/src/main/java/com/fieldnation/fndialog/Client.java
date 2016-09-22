@@ -46,7 +46,7 @@ class Client extends TopicClient implements Constants {
         payload.putString(PARAM_DIALOG_CLASS_NAME, className);
         payload.setClassLoader(classLoader);
 
-        TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG, payload, Sticky.NONE);
+        TopicService.dispatchEvent(context, TOPIC_ID_DISMISS_DIALOG + "/" + className, payload, Sticky.NONE);
     }
 
     public static void dismiss(Context context, Class<? extends Dialog> klass) {

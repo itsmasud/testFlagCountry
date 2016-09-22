@@ -21,7 +21,9 @@ public abstract class SimpleDialog implements Dialog {
 
     // Ui
     private View _root;
+    private View _clickBarrier;
     private RelativeLayout _container;
+    private View _child;
 
     // Animations
     private Animation _bgFadeIn;
@@ -32,14 +34,15 @@ public abstract class SimpleDialog implements Dialog {
     // Data
     private boolean _isCancelable = true;
 
-    public SimpleDialog(Context context) {
+    public SimpleDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
-        _root = inflater.inflate(R.layout.dialog_base, null);
+
+        _root = inflater.inflate(R.layout.dialog_base, container, false);
         _container = (RelativeLayout) _root.findViewById(R.id.container);
+        _clickBarrier = _root.findViewById(R.id.click_barrier);
 
-        _container.setOnClickListener(_this_onClick);
-
-        _container.addView(onCreateView(LayoutInflater.from(context), _container));
+        _child = onCreateView(context, _container);
+        _container.addView(_child);
 
         _bgFadeIn = AnimationUtils.loadAnimation(context, R.anim.bg_fade_in);
         _bgFadeOut = AnimationUtils.loadAnimation(context, R.anim.bg_fade_out);
@@ -52,9 +55,21 @@ public abstract class SimpleDialog implements Dialog {
                 _root.setVisibility(View.GONE);
             }
         });
+
+        _fgFadeOut.setAnimationListener(new DefaultAnimationListener() {
+            @Override
+            public void onAnimationEnd(Animation animation) {
+                _child.setVisibility(View.GONE);
+            }
+        });
     }
 
-    public abstract View onCreateView(LayoutInflater inflater, ViewGroup container);
+    public abstract View onCreateView(Context context, ViewGroup container);
+
+    @Override
+    public void onAdded() {
+        _clickBarrier.setOnClickListener(_this_onClick);
+    }
 
     @Override
     public View getView() {
@@ -69,29 +84,34 @@ public abstract class SimpleDialog implements Dialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         _root.setVisibility(View.VISIBLE);
+        _child.setVisibility(View.VISIBLE);
         if (animate) {
-            View child = _container.getChildAt(0);
+            _container.clearAnimation();
             _container.startAnimation(_bgFadeIn);
-            child.startAnimation(_fgFadeIn);
+            _child.clearAnimation();
+            _child.startAnimation(_fgFadeIn);
         }
     }
 
     @Override
     public void onRestoreDialogState(Parcelable savedState) {
-
     }
 
     @Override
     public Parcelable onSaveDialogState() {
-        return null;
+        return Bundle.EMPTY;
     }
 
     @Override
     public void dismiss(boolean animate) {
         if (animate) {
-            View child = _container.getChildAt(0);
+            _container.clearAnimation();
             _container.startAnimation(_bgFadeOut);
-            child.startAnimation(_fgFadeOut);
+            _child.clearAnimation();
+            _child.startAnimation(_fgFadeOut);
+        } else {
+            _child.setVisibility(View.GONE);
+            _root.setVisibility(View.GONE);
         }
     }
 

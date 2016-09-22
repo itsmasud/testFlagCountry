@@ -21,7 +21,7 @@
         android:text="@string/placeholder_paragraph" />
 
     <Button
-        android:id="@+id/ok_button"
+        android:id="@+id/primary_button"
         style="@style/DialogButton.v3"
         android:layout_width="wrap_content"
         android:layout_alignParentRight="true"
@@ -30,11 +30,11 @@
         android:text="OK" />
 
     <Button
-        android:id="@+id/cancel_button"
+        android:id="@+id/secondary_button"
         style="@style/DialogButton.v3"
         android:layout_width="wrap_content"
         android:layout_below="@+id/body_textview"
-        android:layout_toLeftOf="@+id/ok_button"
+        android:layout_toLeftOf="@+id/primary_button"
         android:text="CANCEL" />
 
 </RelativeLayout>

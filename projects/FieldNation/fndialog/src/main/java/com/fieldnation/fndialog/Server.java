@@ -36,15 +36,10 @@ class Server extends TopicClient implements Constants {
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             Bundle bundle = (Bundle) payload;
-            switch (topicId) {
-                case TOPIC_ID_SHOW_DIALOG:
-                    onShowDialog(bundle.getString(PARAM_DIALOG_CLASS_NAME), bundle.getClassLoader(), bundle.getBundle(PARAM_DIALOG_PARAMS));
-                    break;
-                case TOPIC_ID_DISMISS_DIALOG:
-                    onDismissDialog(bundle.getString(PARAM_DIALOG_CLASS_NAME));
-                    break;
-                default:
-                    break;
+            if (topicId.startsWith(TOPIC_ID_SHOW_DIALOG)) {
+                onShowDialog(bundle.getString(PARAM_DIALOG_CLASS_NAME), bundle.getClassLoader(), bundle.getBundle(PARAM_DIALOG_PARAMS));
+            } else if (topicId.startsWith(TOPIC_ID_DISMISS_DIALOG)) {
+                onDismissDialog(bundle.getString(PARAM_DIALOG_CLASS_NAME));
             }
         }
 

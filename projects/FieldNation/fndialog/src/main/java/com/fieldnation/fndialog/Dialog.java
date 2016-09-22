@@ -15,6 +15,23 @@ import android.view.View;
  * examples.
  */
 public interface Dialog {
+
+    /**
+     * All implementations of Dialog must have a cosntructor of the following form so that
+     * DialogManager can create it.
+     * @param context
+     * @param container
+     */
+    /**
+     * public OneButtonDialog(Context context, ViewGroup container) {
+     */
+
+    /**
+     * Called after the dialog has been added to the layout. This is when you want to add click
+     * listeners to your infalted views.
+     */
+    void onAdded();
+
     /**
      * @return the View that contains the dialog
      */

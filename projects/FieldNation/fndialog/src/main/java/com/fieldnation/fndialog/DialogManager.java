@@ -4,6 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.util.AttributeSet;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
 import com.fieldnation.fnlog.Log;
@@ -96,7 +97,6 @@ public class DialogManager extends FrameLayout implements Constants {
             if (holder != null) {
                 holder.params = params;
                 _lastDialog = holder;
-                _dialogs.put(className, holder);
                 holder.dialog.show(params, false);
                 if (dialogSavedState != null)
                     holder.dialog.onRestoreDialogState(dialogSavedState);
@@ -123,7 +123,7 @@ public class DialogManager extends FrameLayout implements Constants {
                 return _dialogs.get(className);
             }
 
-            Object object = clazz.getConstructor(Context.class).newInstance(getContext());
+            Object object = clazz.getConstructor(Context.class, ViewGroup.class).newInstance(getContext(), this);
             if (!(object instanceof Dialog)) {
                 return null;
             }
@@ -131,8 +131,12 @@ public class DialogManager extends FrameLayout implements Constants {
             Dialog dialog = (Dialog) object;
             addView(dialog.getView());
             dialog.getView().setVisibility(GONE);
+            dialog.onAdded();
 
-            return new DialogHolder(dialog);
+            DialogHolder holder = new DialogHolder(dialog);
+            _dialogs.put(className, holder);
+
+            return holder;
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -162,7 +166,6 @@ public class DialogManager extends FrameLayout implements Constants {
                     holder.dialog.show(params, true);
                     holder.params = params;
                     _lastDialog = holder;
-                    _dialogs.put(className, _lastDialog);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
