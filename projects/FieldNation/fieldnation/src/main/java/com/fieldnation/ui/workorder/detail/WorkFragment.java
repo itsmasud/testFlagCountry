@@ -28,10 +28,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.FileHelper;
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -46,6 +45,7 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -100,7 +100,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.Calendar;
 import java.util.LinkedList;
 import java.util.List;
@@ -433,6 +432,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
+        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
     }
 
     @Override
@@ -591,7 +591,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -674,7 +674,6 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckin() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity", GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
                     _gpsLocationService.getLocation());
@@ -686,8 +685,6 @@ public class WorkFragment extends WorkorderFragment {
     private void doCheckOut() {
         setLoading(true);
         _gpsLocationService.setListener(null);
-        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                GoogleAnalyticsTopicClient.EventAction.CHECKOUT, "WorkFragment", 1);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
                 WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
@@ -846,7 +843,7 @@ public class WorkFragment extends WorkorderFragment {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
-            Debug.logException(ex);
+            Log.logException(ex);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -864,14 +861,14 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(_workorder, false, true, false);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, true, false, false);
+            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
         }
     };
 
@@ -917,25 +914,23 @@ public class WorkFragment extends WorkorderFragment {
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
 
         @Override
-        public void onRequest(Workorder workorder, long milliseconds) {
-            long seconds = -1;
-            if (milliseconds > 0) {
-                seconds = milliseconds / 1000;
+        public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
+                WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                setLoading(true);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
-            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-            setLoading(true);
-
         }
 
         @Override
         public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
             try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkFragment", 1);
-                WorkOrderClient.actionEta(App.get(),
+                WorkorderClient.actionConfirmAssignment(App.get(),
                         workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
 
                 setLoading(true);
@@ -955,9 +950,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkFragment", 1);
-
             WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
                     reason, expirationInSeconds, pay, schedule, expenses);
             setLoading(true);
@@ -1051,26 +1043,6 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-//    private final EtaDialog.Listener _expiresDialog_listener = new EtaDialog.Listener() {
-//        @Override
-//        public void onOk(Workorder workorder, String dateTime) {
-//            long seconds = -1;
-//            if (dateTime != null) {
-//                try {
-//                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-//                } catch (ParseException e) {
-//                    Log.v(TAG, e);
-//                }
-//            }
-//
-//            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-//                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
-//            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-//            setLoading(true);
-//
-//        }
-//    };
-
     private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
         @Override
         public void onSignatureClick() {
@@ -1097,25 +1069,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK, "WorkFragment", 1);
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedFee() * 100));
-            } catch (Exception ex) {
-                // I don't expect this to ever fail, but it could. just a safe guard.
-                Log.v(TAG, ex);
-            }
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.COMPLETE_FN_EARNED_GROSS, "WorkFragment",
-                        (long) (_workorder.getExpectedPayment().getExpectedTotal() * 100));
-            } catch (Exception ex) {
-                // I don't expect this to ever fail, but it could. just a safe guard.
-                Log.v(TAG, ex);
-            }
-
             WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
@@ -1127,9 +1080,6 @@ public class WorkFragment extends WorkorderFragment {
         // TODO: I am not pretty sure about the following method
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkFragment", 1);
-
             WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
@@ -1296,9 +1246,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onAcknowledgeHold() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkFragment", 1);
-
             WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
 
             setLoading(true);
@@ -1311,9 +1258,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onViewPayment() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkFragment", 1);
-
             if (_workorder.getPaymentId() != null) {
                 PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
             } else {
@@ -1342,7 +1286,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, true, false, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_REQUEST);
             }
         }
 
@@ -1351,15 +1295,12 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
             }
         }
 
         @Override
         public void onWithdraw() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST, "WorkFragment", 1);
-
             WorkorderClient.actionWithdrawRequest(App.get(), _workorder.getWorkorderId());
         }
 
@@ -1370,9 +1311,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReadyToGo() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkFragment", 1);
-
             WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
         }
 
@@ -1381,7 +1319,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, false, true, false);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
             }
         }
 
@@ -1653,7 +1591,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _etaDialog.show(_workorder, false, true, false);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
         }
 
         @Override
@@ -1907,7 +1845,7 @@ public class WorkFragment extends WorkorderFragment {
     ScheduleSummaryView.Listener _editEta_listener = new ScheduleSummaryView.Listener() {
         @Override
         public void editEta() {
-            _etaDialog.show(_workorder, false, false, true);
+            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_EDIT);
 
         }
     };

@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.mapbox.MapboxDirections;
 import com.fieldnation.data.mapbox.MapboxRoute;
@@ -455,10 +454,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         Location location = _workorder.getLocation();
                         if (location != null) {
                             try {
-                                GoogleAnalyticsTopicClient
-                                        .dispatchEvent(getContext(), "WorkorderActivity",
-                                                GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                                "WorkFragment", 1);
                                 String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                                 String _uriString = "google.navigation:q=" + _fullAddress;
                                 Uri _uri = Uri.parse(_uriString);
@@ -482,10 +477,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
-                        GoogleAnalyticsTopicClient
-                                .dispatchEvent(getContext(), "WorkorderActivity",
-                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment", 1);
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);

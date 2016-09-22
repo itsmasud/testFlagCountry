@@ -10,11 +10,12 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Message;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.OverScrollListView;
@@ -95,11 +96,6 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
         super.onSaveInstanceState(outState);
     }
 
-
-    public String getGaLabel() {
-        return TAG_BASE;
-    }
-
     @Override
     public void onResume() {
         super.onResume();
@@ -110,7 +106,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
 
         setLoading(true);
 
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
+        Tracker.screen(App.get(), ScreenName.inboxMessages());
     }
 
     @Override
@@ -140,7 +136,7 @@ public class InboxMessagesListFragment extends Fragment implements TabActionBarF
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
+        Tracker.screen(App.get(), ScreenName.inboxMessages());
     }
 
     private void setLoading(boolean loading) {
