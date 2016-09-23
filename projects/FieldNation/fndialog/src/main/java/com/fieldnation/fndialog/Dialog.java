@@ -27,8 +27,8 @@ public interface Dialog {
      */
 
     /**
-     * Called after the dialog has been added to the layout. This is when you want to add click
-     * listeners to your infalted views.
+     * Called after the dialog has been added to the layout. This is when you should add click
+     * listeners to your inflated views.
      */
     void onAdded();
 

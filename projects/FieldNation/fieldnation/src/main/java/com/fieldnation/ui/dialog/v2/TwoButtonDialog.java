@@ -44,7 +44,7 @@ public class TwoButtonDialog extends SimpleDialog {
     }
 
     @Override
-    public View onCreateView(Context context, ViewGroup container) {
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = LayoutInflater.from(context).inflate(R.layout.dialog_v2_two_button, container, false);
 
         _titleTextView = (TextView) v.findViewById(R.id.title_textview);

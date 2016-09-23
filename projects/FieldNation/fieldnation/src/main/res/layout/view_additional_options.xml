@@ -88,7 +88,7 @@
                     <com.fieldnation.ui.IconFontTextView
                         android:id="@+id/payment_iconfont"
                         style="@style/OptionsMenuIcon"
-                        android:text="@string/icon_dollar" />
+                        android:text="@string/icon_glyphish_dollar" />
 
                     <TextView
                         style="@style/OptionsMenuTitle"

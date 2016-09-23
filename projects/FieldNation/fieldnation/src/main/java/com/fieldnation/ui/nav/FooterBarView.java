@@ -13,6 +13,7 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
 import com.fieldnation.ui.dialog.v2.OneButtonDialog;
 
 /**
@@ -101,7 +102,8 @@ public class FooterBarView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             //InboxActivity.startNew(v.getContext());
-            OneButtonDialog.Controller.show(App.get(), "This is a test title", "This is my body", "OK", true);
+            NewFeaturesDialog.Controller.show(App.get());
+            //OneButtonDialog.Controller.show(App.get(), "This is a test title", "This is my body", "OK", true);
         }
     };
 

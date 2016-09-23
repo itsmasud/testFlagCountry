@@ -232,7 +232,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.hold, R.anim.activity_slide_out_bottom);
+        overridePendingTransition(R.anim.hold, R.anim.fg_slide_out_bottom);
     }
 
     public void setListener(Listener listener) {
