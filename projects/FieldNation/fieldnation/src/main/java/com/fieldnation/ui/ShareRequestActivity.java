@@ -25,6 +25,7 @@ import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
@@ -160,6 +161,11 @@ public class ShareRequestActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

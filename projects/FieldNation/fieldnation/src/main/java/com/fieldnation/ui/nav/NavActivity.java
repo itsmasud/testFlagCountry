@@ -96,8 +96,8 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public DialogManager getDialogReceiver() {
-        return (DialogManager) findViewById(R.id.dialogReceiver);
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

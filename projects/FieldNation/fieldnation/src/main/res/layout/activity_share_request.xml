@@ -154,4 +154,10 @@
                 android:indeterminate="true" />
         </RelativeLayout>
     </RelativeLayout>
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
 </FrameLayout>

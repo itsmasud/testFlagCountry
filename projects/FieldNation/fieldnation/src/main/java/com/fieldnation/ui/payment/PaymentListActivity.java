@@ -8,6 +8,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.payment.PaymentClient;
@@ -57,6 +58,11 @@ public class PaymentListActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

@@ -98,9 +98,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     public abstract int getToolbarId();
 
-    public DialogManager getDialogReceiver() {
-        return null;
-    }
+    public abstract DialogManager getDialogManager();
 
     @Override
     protected void onResume() {
@@ -197,7 +195,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        DialogManager dialogManager = getDialogReceiver();
+        DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) {
             if (dialogManager.onBackPressed())
                 return;

@@ -10,6 +10,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -69,6 +70,11 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return 0;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return null;
     }
 
     @Override
