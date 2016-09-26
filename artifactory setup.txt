@@ -1,3 +1,5 @@
+How to get your dev environment talking to artifactory
+
 * Get a username/pass for Artifactory
 * Login to artifactory - get encrypted password
 * create the file <USER_HOME>/.gradle/gradle.properties
@@ -6,3 +8,5 @@
 artifactory_url=https://artifactory.fndev.net/artifactory/libs-release-local
 artifactory_username=michael.carver.dev
 artifactory_password=sdlkjfskl8frj8jslfjl9fjls94j
+
+Note: Your user will not have WRITE access to artifactory, only read. You will NOT be able to create/publish/modify artifacts, only read them.
