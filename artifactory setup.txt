@@ -1,5 +1,5 @@
 * Get a username/pass for Artifactory
-* Login - get encrypted password
+* Login to artifactory - get encrypted password
 * create the file <USER_HOME>/.gradle/gradle.properties
 * Put the following into gradle.properties
 
