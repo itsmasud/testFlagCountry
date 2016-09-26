@@ -103,9 +103,22 @@ public class TwoButtonDialog extends SimpleDialog {
         }
     };
 
+    public void onCancel() {
+    }
+
+    public void onPrimaryClick() {
+    }
+
+    public void onSecondaryClick() {
+    }
+
     public static class Controller extends com.fieldnation.fndialog.Controller {
         public Controller(Context context) {
             super(context, TwoButtonDialog.class);
+        }
+
+        public static void show(Context context, int titleResId, int bodyResId, int primaryButtonResId, int secondaryButtonResId, boolean isCancelable) {
+            show(context, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId), context.getString(secondaryButtonResId), isCancelable);
         }
 
         public static void show(Context context, String title, String body, String primaryButton, String secondaryButton, boolean isCancelable) {

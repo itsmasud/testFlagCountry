@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller.Listener;
+import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.EventDispatch;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -60,8 +61,6 @@ public class OneButtonDialog extends SimpleDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
-
-
         _titleTextView.setText(payload.getString(PARAM_TITLE));
         _bodyTextView.setText(payload.getString(PARAM_BODY));
         _primaryButton.setText(payload.getString(PARAM_BUTTON));
@@ -81,6 +80,8 @@ public class OneButtonDialog extends SimpleDialog {
         response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
         EventDispatch.dialogComplete(App.get(), OneButtonDialog.this, response);
         super.cancel();
+
+        onCancel();
     }
 
     private final View.OnClickListener _primaryButton_onClick = new View.OnClickListener() {
@@ -90,13 +91,29 @@ public class OneButtonDialog extends SimpleDialog {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
             EventDispatch.dialogComplete(App.get(), OneButtonDialog.this, response);
+
+            onPrimaryClick();
         }
     };
+
+    public void onPrimaryClick() {
+    }
+
+    public void onCancel() {
+    }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
             super(context, OneButtonDialog.class);
+        }
+
+        public Controller(Context context, Class<? extends Dialog> klass) {
+            super(context, klass);
+        }
+
+        public static void show(Context context, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+            show(context, context.getString(titleResId), context.getString(bodyResId), context.getString(buttonResId), isCancelable);
         }
 
         public static void show(Context context, String title, String body, String button, boolean isCancelable) {
