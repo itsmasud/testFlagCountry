@@ -16,7 +16,7 @@ allprojects {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
         maven {
-            url 'https://artifactory.fndev.net/artifactory/libs-release-local'
+            url artifactory_url
             credentials {
                 username = artifactory_username
                 password = artifactory_password
