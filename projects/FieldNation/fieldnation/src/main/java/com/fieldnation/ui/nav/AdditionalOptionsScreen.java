@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewStub;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -23,6 +22,7 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.NewFeatureActivity;
 import com.fieldnation.ui.ProfilePicView;
@@ -41,7 +41,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     // Ui
     private ProfilePicView _profilePicView;
     private TextView _profileNameTextView;
-    private ImageButton _profileExpandButton;
+    private IconFontButton _profileExpandButton;
     private ViewStub _stubProfileListView;
     private NavProfileDetailListView _profileListView = null;
 
@@ -91,7 +91,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profileNameTextView = (TextView) findViewById(R.id.name_textview);
         _profileNameTextView.setVisibility(GONE);
 
-        _profileExpandButton = (ImageButton) findViewById(R.id.profileexpand_button);
+        _profileExpandButton = (IconFontButton) findViewById(R.id.profileexpand_button);
         _profileExpandButton.setOnClickListener(_profileExpandButton_onClick);
 
         _stubProfileListView = (ViewStub) findViewById(R.id.stub_profile_detail_list);
