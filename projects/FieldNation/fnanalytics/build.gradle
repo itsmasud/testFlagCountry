@@ -23,5 +23,7 @@ dependencies {
     testCompile 'junit:junit:4.12'
 
     compile project(':fnjson')
-    compile project(':fnlog')
+
+    // FN Artifacts
+    compile 'com.fieldnation:fnlog:1.0.0'
 }

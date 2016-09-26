@@ -22,8 +22,10 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
 
-    compile project(':fnlog')
     compile project(':fnpigeon')
 
     compile 'com.android.support:design:22.2.1'
+
+    // FN Artifacts
+    compile 'com.fieldnation:fnlog:1.0.0'
 }
