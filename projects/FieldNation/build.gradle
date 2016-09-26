@@ -16,10 +16,10 @@ allprojects {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
         maven {
-            url artifactory_url
+            url af_release_url
             credentials {
-                username = artifactory_username
-                password = artifactory_password
+                username = af_release_user
+                password = af_release_pass
             }
         }
     }
