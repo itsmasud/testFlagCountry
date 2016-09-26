@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.EventDispatch;
 import com.fieldnation.fndialog.SimpleDialog;
 
@@ -115,6 +116,10 @@ public class TwoButtonDialog extends SimpleDialog {
     public static class Controller extends com.fieldnation.fndialog.Controller {
         public Controller(Context context) {
             super(context, TwoButtonDialog.class);
+        }
+
+        public Controller(Context context, Class<? extends Dialog> klass) {
+            super(context, klass);
         }
 
         public static void show(Context context, int titleResId, int bodyResId, int primaryButtonResId, int secondaryButtonResId, boolean isCancelable) {
