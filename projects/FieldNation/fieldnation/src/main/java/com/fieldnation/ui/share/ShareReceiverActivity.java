@@ -67,7 +67,6 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         _loadingLayout = findViewById(R.id.loading_layout);
         _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
         _loadingTextView = (TextView) findViewById(R.id.loading_title);
-
     }
 
     @Override
@@ -193,7 +192,6 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onSlotSelected(UploadSlot uploadSlot) {
             _selectedUploadSlot = uploadSlot;
-            // TODO animate!
             // TODO if file list == 1, then start upload and redirect to work order details
             if (_sharedFileList.length == 1) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
@@ -201,6 +199,7 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
                         _sharedFileList[0].getUri());
                 startWorkOrderDetails();
             } else {
+                // TODO animate!
                 _filePicker.setData(_selectedWorkOrder, _selectedUploadSlot, _sharedFileList);
                 _slotPicker.setVisibility(View.GONE);
                 _filePicker.setVisibility(View.VISIBLE);
