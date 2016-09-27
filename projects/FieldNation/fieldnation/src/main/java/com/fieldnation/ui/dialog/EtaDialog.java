@@ -45,11 +45,13 @@ public class EtaDialog extends DialogFragmentBase {
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_DURATION = "STATE_DURATION";
     private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
+    private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
     private static final String STATE_ETA_START_DATE = "STATE_ETA_START_DATE";
     private static final String STATE_ETA_START_DATE_SET = "STATE_ETA_START_DATE_SET";
     private static final String STATE_ETA_START_TIME_SET = "STATE_ETA_START_TIME_SET";
     private static final String STATE_NOTE = "STATE_NOTE";
 
+    public static final String DIALOG_STYLE_ACCEPT = "DIALOG_STYLE_ACCEPT";
     public static final String DIALOG_STYLE_REQUEST = "DIALOG_STYLE_REQUEST";
     public static final String DIALOG_STYLE_CONFIRM = "DIALOG_STYLE_CONFIRM";
     public static final String DIALOG_STYLE_EDIT = "DIALOG_STYLE_EDIT";
@@ -88,7 +90,7 @@ public class EtaDialog extends DialogFragmentBase {
     private Listener _listener;
     private Workorder _workorder;
     private Schedule _schedule;
-    private boolean _isEtaEnabled = false;
+    private boolean _isEtaSwitchState = false;
     private String _dialogStyle;
     private String _note;
     private boolean _isDateSet = false;
@@ -127,6 +129,9 @@ public class EtaDialog extends DialogFragmentBase {
                 _etaMilliseconds = savedInstanceState.getLong(STATE_ETA_START_DATE);
 
 
+            if (savedInstanceState.containsKey(STATE_ETA_SWITCH))
+                _isEtaSwitchState = savedInstanceState.getBoolean(STATE_ETA_SWITCH);
+
             if (savedInstanceState.containsKey(STATE_ETA_START_DATE_SET))
                 _isDateSet = savedInstanceState.getBoolean(STATE_ETA_START_DATE_SET);
 
@@ -156,6 +161,7 @@ public class EtaDialog extends DialogFragmentBase {
         if (_etaMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_ETA_START_DATE, _etaMilliseconds);
 
+        outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
         outState.putBoolean(STATE_ETA_START_DATE_SET, _isDateSet);
         outState.putBoolean(STATE_ETA_START_TIME_SET, _isTimeSet);
 
@@ -183,7 +189,6 @@ public class EtaDialog extends DialogFragmentBase {
             if (_isDateSet || _isTimeSet)
                 _etaStartDateTimeCalendar.setTimeInMillis(_etaMilliseconds);
         }
-
 
         populateUi();
     }
@@ -263,25 +268,32 @@ public class EtaDialog extends DialogFragmentBase {
             _okButton.setText(getString(R.string.btn_submit));
             _titleTextView.setText("Request " + _workorder.getWorkorderId());
             _requestLayout.setVisibility(View.VISIBLE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, false);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
             _etaSwitch.setVisibility(View.VISIBLE);
-            _etaSwitch.setChecked(false);
+            _etaSwitch.setChecked(_isEtaSwitchState);
 
         } else if (_dialogStyle.equals(DIALOG_STYLE_CONFIRM)) {
             _okButton.setText(getString(R.string.btn_confirm));
             _titleTextView.setText("Confirm " + _workorder.getWorkorderId());
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
-            _isEtaEnabled = true;
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
+//            _isEtaEnabled = true;
 
         } else if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
             _okButton.setText(getString(R.string.btn_save));
             _titleTextView.setText(getString(R.string.dialog_eta_title));
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
-            _isEtaEnabled = true;
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
+//            _isEtaEnabled = true;
+        } else if (_dialogStyle.equals(DIALOG_STYLE_ACCEPT)) {
+            _okButton.setText(getString(R.string.btn_accept));
+            _titleTextView.setText("Accept " + _workorder.getWorkorderId());
+            _requestLayout.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
+//            _isEtaEnabled = true;
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -432,7 +444,7 @@ public class EtaDialog extends DialogFragmentBase {
 
                 if (estimatedSchedule.getType() == Schedule.Type.EXACT) {
                     _etaStartDateButton.setEnabled(false);
-                    _etaStartDateButton.setEnabled(false);
+                    _etaStartTimeButton.setEnabled(false);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -670,9 +682,15 @@ public class EtaDialog extends DialogFragmentBase {
             if (_listener == null) return;
 
             if (_dialogStyle.equals(DIALOG_STYLE_REQUEST)) {
-                Log.e(TAG, "_isRequest");
-                _listener.onRequest(_workorder, _expiringDurationMilliseconds, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
-            } else if (_isEtaEnabled && isValidDate() && isValidTime()) {
+                if (_etaSwitch.isChecked()) {
+                    Log.e(TAG, "_isRequest: eta checked");
+                    _listener.onRequest(_workorder, _expiringDurationMilliseconds, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
+                } else {
+                    Log.e(TAG, "_isRequest: eta not checked");
+                    _listener.onRequest(_workorder, _expiringDurationMilliseconds);
+                }
+
+            } else if (isValidDate() && isValidTime()) {
                 Log.e(TAG, "_isConfirm or isEdit");
                 _listener.onConfirmEta(_workorder, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
             }
@@ -750,19 +768,22 @@ public class EtaDialog extends DialogFragmentBase {
     private Switch.OnCheckedChangeListener _switchOnclick_listener = new Switch.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//            _isEtaEnabled  = _isEtaSwitchState = isChecked;
+            Log.e(TAG, "inside _switchOnclick_listener");
+            _isEtaSwitchState = isChecked;
 
             if (isChecked) {
                 _etaLayout.setVisibility(View.VISIBLE);
-                _isEtaEnabled = true;
             } else {
                 _etaLayout.setVisibility(View.GONE);
-                _isEtaEnabled = false;
             }
         }
     };
 
 
     public interface Listener {
+
+        void onRequest(Workorder workorder, long expirationMilliseconds);
 
         void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note);
 

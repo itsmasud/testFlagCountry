@@ -780,6 +780,24 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
+        public void onRequest(Workorder workorder, long expirationMilliseconds) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
+
+                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
+                        GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
+                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
+                setLoading(true);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
         public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
             try {
                 long seconds = -1;

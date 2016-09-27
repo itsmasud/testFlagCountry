@@ -469,9 +469,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     // request
-    public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
-
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
         Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
+        WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds);
+    }
+
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
+        Debug.logCustom(new CustomEvent("Request").putCustomAttribute("Type", "Request"));
+        Log.e("WorkorderClient", "inside actionRequest");
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
 
