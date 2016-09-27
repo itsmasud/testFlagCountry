@@ -14,7 +14,7 @@
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:layout_alignParentRight">true</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:src">@drawable/ic_nav_arrow</item>
+        <item name="android:text">@string/icon_arrow_right</item>
     </style>
 
     <style name="OptionsTitle" parent="@style/Text_Body_1">

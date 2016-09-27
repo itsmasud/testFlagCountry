@@ -6,7 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.inbox.InboxActivity;
 
@@ -19,6 +22,13 @@ public class FooterBarView extends RelativeLayout {
     // Ui
     private IconFontTextView _inboxTextView;
     private IconFontTextView _menuTextView;
+    private IconFontTextView _unreadTextView;
+
+    // Service
+    private ProfileClient _profileClient;
+
+    // Data
+    private Profile _profile = null;
 
     public FooterBarView(Context context) {
         super(context);
@@ -43,8 +53,35 @@ public class FooterBarView extends RelativeLayout {
 
         _inboxTextView = (IconFontTextView) findViewById(R.id.inbox_textview);
         _inboxTextView.setOnClickListener(_inbox_onClick);
+
         _menuTextView = (IconFontTextView) findViewById(R.id.menu_textview);
         _menuTextView.setOnClickListener(_menu_onClick);
+
+        _unreadTextView = (IconFontTextView) findViewById(R.id.unread_textview);
+
+        _profileClient = new ProfileClient(_profile_listener);
+        _profileClient.connect(App.get());
+
+        populateUi();
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
+
+        super.onDetachedFromWindow();
+    }
+
+    private void populateUi() {
+        if (_inboxTextView == null)
+            return;
+
+        _unreadTextView.setVisibility(GONE);
+        if (_profile != null) {
+            if (_profile.getUnreadMessageCount() + _profile.getNewNotificationCount() > 0)
+                _unreadTextView.setVisibility(VISIBLE);
+        }
     }
 
     private final View.OnClickListener _inbox_onClick = new OnClickListener() {
@@ -58,6 +95,22 @@ public class FooterBarView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsActivity.startNew(getContext());
+        }
+    };
+
+    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profileClient.subGet(false);
+        }
+
+        @Override
+        public void onGet(Profile profile, boolean failed) {
+            if (profile == null || failed)
+                return;
+
+            _profile = profile;
+            populateUi();
         }
     };
 }
