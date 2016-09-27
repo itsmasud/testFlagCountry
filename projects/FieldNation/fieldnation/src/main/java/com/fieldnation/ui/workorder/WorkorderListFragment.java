@@ -760,8 +760,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     seconds = expirationMilliseconds / 1000;
                 }
 
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), "WorkorderActivity",
-                        GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkFragment", 1);
                 WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
                 setLoading(true);
 

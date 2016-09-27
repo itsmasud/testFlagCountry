@@ -278,22 +278,20 @@ public class EtaDialog extends DialogFragmentBase {
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
             _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
-//            _isEtaEnabled = true;
 
         } else if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
             _okButton.setText(getString(R.string.btn_save));
             _titleTextView.setText(getString(R.string.dialog_eta_title));
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
-//            _isEtaEnabled = true;
+            _etaLayout.setVisibility(View.VISIBLE);
+
         } else if (_dialogStyle.equals(DIALOG_STYLE_ACCEPT)) {
             _okButton.setText(getString(R.string.btn_accept));
             _titleTextView.setText("Accept " + _workorder.getWorkorderId());
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
             _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
-//            _isEtaEnabled = true;
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -434,6 +432,7 @@ public class EtaDialog extends DialogFragmentBase {
             final Schedule estimatedSchedule;
             if ((estimatedSchedule = _workorder.getEstimatedSchedule()) == null) return;
 
+            Log.e(TAG, "inside DIALOG_STYLE_EDIT");
             try {
                 _etaStartDateTimeCalendar = ISO8601.toCalendar(estimatedSchedule.getStartTime());
                 _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
@@ -769,7 +768,6 @@ public class EtaDialog extends DialogFragmentBase {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //            _isEtaEnabled  = _isEtaSwitchState = isChecked;
-            Log.e(TAG, "inside _switchOnclick_listener");
             _isEtaSwitchState = isChecked;
 
             if (isChecked) {
