@@ -3,8 +3,9 @@ package com.fieldnation.rpc.server;
 import android.content.Context;
 import android.net.Uri;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.Debug;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Timing;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
@@ -182,13 +183,18 @@ public class HttpJson {
             }
         } finally {
             if (timingKey != null) {
-                Debug.logCustom(new CustomEvent("WebTime").putCustomAttribute(timingKey, watch.finish()));
+                Tracker.timing(context,
+                        new Timing.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("Web Timing")
+                                .label(timingKey)
+                                .timing((int) watch.finish())
+                                .build());
                 Log.v(TAG, timingKey + " run time: " + watch.getTime());
             } else {
                 //Debug.logCustom(new CustomEvent("WebTime").putCustomAttribute("Unknown", watch.finish()));
                 Log.v(TAG, "run time: " + watch.getTime());
             }
-
         }
     }
 

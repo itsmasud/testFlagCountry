@@ -192,7 +192,6 @@
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
 
-
         <activity
             android:name=".ui.ShareRequestActivity"
             android:exported="true"
@@ -223,7 +222,6 @@
             android:name=".ui.RateBuyerActivity"
             android:exported="false"
             android:process=":frontside" />
-
 
         <service
             android:name=".service.auth.AuthService"
@@ -256,6 +254,10 @@
             android:process=":frontside" />
 
         <!--web/data-->
+        <service
+            android:name=".service.AnalyticsPassThroughService"
+            android:exported="false"
+            android:process=":frontside" />
         <service
             android:name=".service.auth.AuthTopicService"
             android:exported="false"

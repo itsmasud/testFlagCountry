@@ -3,7 +3,8 @@ package com.fieldnation.fnjson;
 import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
-import android.util.Log;
+
+import com.fieldnation.fnlog.Log;
 
 import java.io.Serializable;
 import java.text.ParseException;

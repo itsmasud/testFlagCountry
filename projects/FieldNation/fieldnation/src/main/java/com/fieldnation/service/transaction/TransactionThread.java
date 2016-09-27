@@ -8,7 +8,6 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
@@ -339,7 +338,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {
                 // no freaking clue
-                Debug.logException(ex);
+                Log.logException(ex);
                 Log.v(TAG, ex);
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());

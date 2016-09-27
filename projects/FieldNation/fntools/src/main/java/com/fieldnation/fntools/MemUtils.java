@@ -9,7 +9,8 @@ import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.media.ExifInterface;
 import android.os.Debug;
-import android.util.Log;
+
+import com.fieldnation.fnlog.Log;
 
 public class MemUtils {
     private static final String TAG = "MemUtils";

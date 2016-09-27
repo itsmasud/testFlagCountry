@@ -25,5 +25,5 @@ dependencies {
     compile project(':fnlog')
     compile project(':fntoast')
 
-    compile 'com.google.android.gms:play-services:7.8.0'
+    compile 'com.google.android.gms:play-services:8.3.0'
 }
