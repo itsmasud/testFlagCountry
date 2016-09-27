@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -14,9 +15,11 @@ import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.ArrayList;
 
@@ -40,6 +43,8 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
     private WorkorderClient _workorderClient;
 
     // Data
+    private WorkOrder _selectedWorkOrder;
+    private UploadSlot _selectedUploadSlot;
     private UploadingDocument[] _sharedFileList;
     private int _remainingCacheItems = 0;
 
@@ -169,6 +174,7 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onWorkOrderSelected(WorkOrder workOrder) {
+            _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder);
             // TODO animate!
             _workOrderPicker.setVisibility(View.GONE);
@@ -186,9 +192,19 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
 
         @Override
         public void onSlotSelected(UploadSlot uploadSlot) {
+            _selectedUploadSlot = uploadSlot;
             // TODO animate!
-            _slotPicker.setVisibility(View.GONE);
-            _filePicker.setVisibility(View.VISIBLE);
+            // TODO if file list == 1, then start upload and redirect to work order details
+            if (_sharedFileList.length == 1) {
+                WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
+                        _selectedUploadSlot.getSlotId(), _sharedFileList[0].getFileName(),
+                        _sharedFileList[0].getUri());
+                startWorkOrderDetails();
+            } else {
+                _filePicker.setData(_selectedWorkOrder, _selectedUploadSlot, _sharedFileList);
+                _slotPicker.setVisibility(View.GONE);
+                _filePicker.setVisibility(View.VISIBLE);
+            }
         }
     };
 
@@ -199,8 +215,25 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
             _filePicker.setVisibility(View.GONE);
             _slotPicker.setVisibility(View.VISIBLE);
         }
+
+        @Override
+        public void onSendFiles(UploadingDocument[] files) {
+            ToastClient.toast(App.get(), "Sending " + files.length + " files", Toast.LENGTH_SHORT);
+            for (UploadingDocument f : files) {
+                WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
+                        _selectedUploadSlot.getSlotId(), f.getFileName(), f.getUri());
+            }
+            startWorkOrderDetails();
+        }
     };
 
+    private void startWorkOrderDetails() {
+        Intent intent = WorkorderActivity.makeIntentShow(App.get(), _selectedWorkOrder.getId());
+        intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DELIVERABLES);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
