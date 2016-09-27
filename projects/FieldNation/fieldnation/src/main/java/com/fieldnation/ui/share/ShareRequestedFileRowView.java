@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.share;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -10,6 +10,7 @@ import android.widget.TextView;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadingDocument;
+import com.fieldnation.ui.IconFontTextView;
 
 /**
  * Created by shoaib.ahemd on Oct 07, 2015.

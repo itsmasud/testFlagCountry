@@ -193,7 +193,7 @@
             android:process=":frontside" />
 
         <activity
-            android:name=".ui.share.ShareRequestActivity"
+            android:name=".ui.share.ShareReceiverActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
             android:process=":frontside">
@@ -211,7 +211,7 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
-            android:process=":frontside"></activity>
+            android:process=":frontside" />
 
         <activity
             android:name=".ui.NewFeatureActivity"

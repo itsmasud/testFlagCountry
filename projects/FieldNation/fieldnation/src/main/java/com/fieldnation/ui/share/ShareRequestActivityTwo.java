@@ -41,8 +41,6 @@ import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.ShareRequestedFileRowView;
-import com.fieldnation.ui.ShareUploadSlotView;
 import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
@@ -366,7 +364,7 @@ public class ShareRequestActivityTwo extends AuthSimpleActivity {
 
         if (selectedFileNumber > 0) {
             _toolbar.getMenu().clear();
-            _toolbar.inflateMenu(R.menu.share_menu);
+            _toolbar.inflateMenu(R.menu.share);
             _sendMenuItem = (ActionMenuItemView) findViewById(R.id.send_menuitem);
             _sendMenuItem.setTextColor(Color.WHITE);
             _sendMenuItem.setTitle("Send (" + selectedFileNumber + ")");

@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.share;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -11,6 +11,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.ui.IconFontTextView;
 
 public class ShareUploadSlotView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("ShareUploadSlotView");
