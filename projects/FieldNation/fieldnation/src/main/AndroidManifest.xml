@@ -193,7 +193,7 @@
             android:process=":frontside" />
 
         <activity
-            android:name=".ui.ShareRequestActivity"
+            android:name=".ui.share.ShareRequestActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
             android:process=":frontside">
