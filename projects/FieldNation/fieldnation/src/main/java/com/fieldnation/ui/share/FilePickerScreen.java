@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
-import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.ui.RefreshView;
@@ -40,7 +39,7 @@ public class FilePickerScreen extends FrameLayout {
     // Data
     private WorkOrder _workOrder;
     private UploadSlot _slot;
-    private UploadingDocument[] _files;
+    private SharedFile[] _sharedFiles;
     private Listener _listener;
 
     public FilePickerScreen(Context context) {
@@ -66,7 +65,7 @@ public class FilePickerScreen extends FrameLayout {
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setTitle("Select files");
+        _toolbar.setTitle(R.string.select_files);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.share);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
@@ -84,10 +83,10 @@ public class FilePickerScreen extends FrameLayout {
         _listener = listener;
     }
 
-    public void setData(WorkOrder workOrder, UploadSlot slot, UploadingDocument[] files) {
+    public void setData(WorkOrder workOrder, UploadSlot slot, SharedFile[] sharedFiles) {
         _workOrder = workOrder;
         _slot = slot;
-        _files = files;
+        _sharedFiles = sharedFiles;
         populateUi();
 
         postDelayed(new Runnable() {
@@ -101,7 +100,7 @@ public class FilePickerScreen extends FrameLayout {
     private void populateMenu() {
         int selectedFileNumber = 0;
         for (int i = 0; i < _fileLayout.getChildCount(); i++) {
-            final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _fileLayout.getChildAt(i);
+            final FileRowView row = (FileRowView) _fileLayout.getChildAt(i);
             if (row.isChecked()) {
                 selectedFileNumber++;
             }
@@ -109,7 +108,7 @@ public class FilePickerScreen extends FrameLayout {
 
         if (selectedFileNumber > 0) {
             _sendMenu.setEnabled(true);
-            _sendMenu.setTitle("Send (" + selectedFileNumber + ")");
+            _sendMenu.setTitle(getResources().getString(R.string.send_num, selectedFileNumber));
         } else {
             _sendMenu.setTitle("");
             _sendMenu.setEnabled(false);
@@ -122,21 +121,21 @@ public class FilePickerScreen extends FrameLayout {
 
         _uploadSlotTextView.setText(_slot.getSlotName());
 
-        Runnable r = new ForLoopRunnable(_files.length, new Handler()) {
-            private final List<ShareRequestedFileRowView> _views = new LinkedList<>();
+        Runnable r = new ForLoopRunnable(_sharedFiles.length, new Handler()) {
+            private final List<FileRowView> _views = new LinkedList<>();
 
             @Override
             public void next(int i) throws Exception {
-                ShareRequestedFileRowView v = new ShareRequestedFileRowView(getContext());
-                v.setData(_files[i]);
-                v.setListener(_shareRequestedFileRowView_listener);
+                FileRowView v = new FileRowView(getContext());
+                v.setData(_sharedFiles[i]);
+                v.setListener(_fileRowView_listener);
                 _views.add(v);
             }
 
             @Override
             public void finish(int count) throws Exception {
                 _fileLayout.removeAllViews();
-                for (ShareRequestedFileRowView v : _views) {
+                for (FileRowView v : _views) {
                     _fileLayout.addView(v);
                 }
 
@@ -156,15 +155,15 @@ public class FilePickerScreen extends FrameLayout {
             if (item.getItemId() == R.id.send_menuitem) {
                 Log.d(TAG, "onMenuItemClick");
 
-                List<UploadingDocument> list = new LinkedList<>();
+                List<SharedFile> list = new LinkedList<>();
                 for (int i = 0; i < _fileLayout.getChildCount(); i++) {
-                    final ShareRequestedFileRowView row = (ShareRequestedFileRowView) _fileLayout.getChildAt(i);
-                    if (row.isChecked() && row.getUploadingDocument() != null) {
-                        list.add(row.getUploadingDocument());
+                    final FileRowView row = (FileRowView) _fileLayout.getChildAt(i);
+                    if (row.isChecked() && row.getSharedFile() != null) {
+                        list.add(row.getSharedFile());
                     }
                 }
                 if (_listener != null)
-                    _listener.onSendFiles(list.toArray(new UploadingDocument[list.size()]));
+                    _listener.onSendFiles(list.toArray(new SharedFile[list.size()]));
                 return true;
             }
             return false;
@@ -179,10 +178,10 @@ public class FilePickerScreen extends FrameLayout {
         }
     };
 
-    private final ShareRequestedFileRowView.Listener _shareRequestedFileRowView_listener = new ShareRequestedFileRowView.Listener() {
+    private final FileRowView.Listener _fileRowView_listener = new FileRowView.Listener() {
         @Override
-        public void onClick(ShareRequestedFileRowView view, UploadingDocument uploadingDocument) {
-            Log.v(TAG, "_shareRequestedFileRowView_listener.onClick");
+        public void onClick(FileRowView view, SharedFile sharedFile) {
+            Log.v(TAG, "_fileRowView_listener.onClick");
             view.changeCheckStatus();
 
             populateMenu();
@@ -193,6 +192,6 @@ public class FilePickerScreen extends FrameLayout {
     public interface Listener {
         void onBackPressed();
 
-        void onSendFiles(UploadingDocument[] files);
+        void onSendFiles(SharedFile[] sharedFiles);
     }
 }

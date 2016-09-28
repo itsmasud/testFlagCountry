@@ -18,7 +18,7 @@ import com.fieldnation.ui.search.SearchResultScreen;
  */
 
 public class WorkOrderPickerScreen extends FrameLayout {
-    private static final String TAG = "WorkOrderPicker";
+    private static final String TAG = "WorkOrderPickerScreen";
 
     private static final SavedSearchParams _searchParams =
             new SavedSearchParams()
@@ -57,7 +57,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _toolbar.setTitle("Select a work order");
+        _toolbar.setTitle(R.string.select_a_work_order);
 
         _workOrderScreen = (SearchResultScreen) findViewById(R.id.recyclerView);
         _workOrderScreen.setListener(_searchResultScreen_listener);

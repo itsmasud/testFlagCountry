@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -13,9 +15,9 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
-import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -27,8 +29,8 @@ import java.util.ArrayList;
  * Created by Michael on 9/27/2016.
  */
 
-public class ShareReceiverActivity extends AuthSimpleActivity {
-    public static final String TAG = "ShareReceiverActivity";
+public class ReceiverActivity extends AuthSimpleActivity {
+    public static final String TAG = "ReceiverActivity";
 
     // UI
     private WorkOrderPickerScreen _workOrderPicker;
@@ -45,8 +47,17 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
     // Data
     private WorkOrder _selectedWorkOrder;
     private UploadSlot _selectedUploadSlot;
-    private UploadingDocument[] _sharedFileList;
+    private SharedFile[] _sharedFiles;
     private int _remainingCacheItems = 0;
+
+    // Animations
+    private Animation _slideInLeft;
+    private Animation _slideInRight;
+    private Animation _slideOutLeft;
+    private Animation _slideOutRight;
+
+    private AnimationOutListener _animOutListener = new AnimationOutListener();
+    private AnimationInListener _animInListener = new AnimationInListener();
 
     @Override
     public int getLayoutResource() {
@@ -67,6 +78,15 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         _loadingLayout = findViewById(R.id.loading_layout);
         _loadingProgress = (ProgressBar) findViewById(R.id.loading_progress);
         _loadingTextView = (TextView) findViewById(R.id.loading_title);
+
+        _slideInLeft = AnimationUtils.loadAnimation(this, R.anim.activity_slide_in_left);
+        _slideInLeft.setAnimationListener(_animInListener);
+        _slideInRight = AnimationUtils.loadAnimation(this, R.anim.activity_slide_in_right);
+        _slideInRight.setAnimationListener(_animInListener);
+        _slideOutLeft = AnimationUtils.loadAnimation(this, R.anim.activity_slide_out_left);
+        _slideOutLeft.setAnimationListener(_animOutListener);
+        _slideOutRight = AnimationUtils.loadAnimation(this, R.anim.activity_slide_out_right);
+        _slideOutRight.setAnimationListener(_animOutListener);
     }
 
     @Override
@@ -115,15 +135,15 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
 
     private void loadSingleFile(Intent intent) {
         Uri fileUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
-        _sharedFileList = new UploadingDocument[1];
+        _sharedFiles = new SharedFile[1];
         _remainingCacheItems = 1;
         _loadingProgress.setIndeterminate(false);
         _loadingProgress.setMax(1);
         _loadingProgress.setProgress(0);
-        _loadingTextView.setText("Preparing files(0 of 1)");
+        _loadingTextView.setText(getString(R.string.preparing_files_num, 1, 1));
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
-            _sharedFileList[0] = new UploadingDocument(fileName, fileUri);
+            _sharedFiles[0] = new SharedFile(fileName, fileUri);
             WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
         }
     }
@@ -137,8 +157,8 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
             _loadingProgress.setIndeterminate(false);
             _loadingProgress.setMax(_remainingCacheItems);
             _loadingProgress.setProgress(0);
-            _loadingTextView.setText("Preparing files(0 of " + _remainingCacheItems + ")");
-            _sharedFileList = new UploadingDocument[fileUris.size()];
+            _loadingTextView.setText(getString(R.string.preparing_files_num, 1, _remainingCacheItems));
+            _sharedFiles = new SharedFile[fileUris.size()];
 
             for (int i = 0; i < fileUris.size(); i++) {
                 Log.v(TAG, "uris:" + fileUris.get(i));
@@ -146,7 +166,7 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
 
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
-                _sharedFileList[i] = new UploadingDocument(fileName, fileUris.get(i));
+                _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
                 WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
         }
@@ -157,12 +177,22 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         if (_workOrderPicker.getVisibility() == View.VISIBLE)
             super.onBackPressed();
         else if (_slotPicker.getVisibility() == View.VISIBLE) {
-            _workOrderPicker.setVisibility(View.VISIBLE);
-            _slotPicker.setVisibility(View.GONE);
+            animateSwap(_workOrderPicker, _slotPicker, true);
         } else if (_filePicker.getVisibility() == View.VISIBLE) {
-            _slotPicker.setVisibility(View.VISIBLE);
-            _filePicker.setVisibility(View.GONE);
+            animateSwap(_slotPicker, _filePicker, true);
         }
+    }
+
+    private void animateSwap(View inView, View outView, boolean backwards) {
+        _animInListener.view = inView;
+        _animOutListener.view = outView;
+        Animation inAnim = backwards ? _slideInLeft : _slideInRight;
+        Animation outAnim = backwards ? _slideOutRight : _slideOutLeft;
+        inView.setVisibility(View.VISIBLE);
+        inView.clearAnimation();
+        inView.startAnimation(inAnim);
+        outView.clearAnimation();
+        outView.startAnimation(outAnim);
     }
 
     private final WorkOrderPickerScreen.Listener _workOrderPicker_listener = new WorkOrderPickerScreen.Listener() {
@@ -175,34 +205,28 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         public void onWorkOrderSelected(WorkOrder workOrder) {
             _selectedWorkOrder = workOrder;
             _slotPicker.setWorkOrderId(workOrder);
-            // TODO animate!
-            _workOrderPicker.setVisibility(View.GONE);
-            _slotPicker.setVisibility(View.VISIBLE);
+            animateSwap(_slotPicker, _workOrderPicker, false);
         }
     };
 
     private final UploadSlotPickerScreen.Listener _slotPicker_listener = new UploadSlotPickerScreen.Listener() {
         @Override
         public void onBackPressed() {
-            // TODO animate!!
-            _slotPicker.setVisibility(View.GONE);
-            _workOrderPicker.setVisibility(View.VISIBLE);
+            animateSwap(_workOrderPicker, _slotPicker, true);
         }
 
         @Override
         public void onSlotSelected(UploadSlot uploadSlot) {
             _selectedUploadSlot = uploadSlot;
             // TODO if file list == 1, then start upload and redirect to work order details
-            if (_sharedFileList.length == 1) {
+            if (_sharedFiles.length == 1) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
-                        _selectedUploadSlot.getSlotId(), _sharedFileList[0].getFileName(),
-                        _sharedFileList[0].getUri());
+                        _selectedUploadSlot.getSlotId(), _sharedFiles[0].getFileName(),
+                        _sharedFiles[0].getUri());
                 startWorkOrderDetails();
             } else {
-                // TODO animate!
-                _filePicker.setData(_selectedWorkOrder, _selectedUploadSlot, _sharedFileList);
-                _slotPicker.setVisibility(View.GONE);
-                _filePicker.setVisibility(View.VISIBLE);
+                _filePicker.setData(_selectedWorkOrder, _selectedUploadSlot, _sharedFiles);
+                animateSwap(_filePicker, _slotPicker, false);
             }
         }
     };
@@ -210,17 +234,15 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
     private final FilePickerScreen.Listener _filePicker_listener = new FilePickerScreen.Listener() {
         @Override
         public void onBackPressed() {
-            // TODO animate!
-            _filePicker.setVisibility(View.GONE);
-            _slotPicker.setVisibility(View.VISIBLE);
+            animateSwap(_slotPicker, _filePicker, true);
         }
 
         @Override
-        public void onSendFiles(UploadingDocument[] files) {
-            ToastClient.toast(App.get(), "Sending " + files.length + " files", Toast.LENGTH_SHORT);
-            for (UploadingDocument f : files) {
+        public void onSendFiles(SharedFile[] sharedFiles) {
+            ToastClient.toast(App.get(), getString(R.string.sending_num_files, sharedFiles.length), Toast.LENGTH_SHORT);
+            for (SharedFile file : sharedFiles) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
-                        _selectedUploadSlot.getSlotId(), f.getFileName(), f.getUri());
+                        _selectedUploadSlot.getSlotId(), file.getFileName(), file.getUri());
             }
             startWorkOrderDetails();
         }
@@ -241,14 +263,44 @@ public class ShareReceiverActivity extends AuthSimpleActivity {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
             _remainingCacheItems--;
 
-            _loadingProgress.setProgress(_sharedFileList.length - _remainingCacheItems);
-            _loadingTextView.setText("Preparing files(" + (_sharedFileList.length - _remainingCacheItems) + " of " + _sharedFileList.length + ")");
+            _loadingProgress.setProgress(_sharedFiles.length - _remainingCacheItems);
+            _loadingTextView.setText(
+                    getString(R.string.preparing_files_num,
+                            _sharedFiles.length - _remainingCacheItems + 1,
+                            _sharedFiles.length));
             if (_remainingCacheItems == 0) {
                 _loadingLayout.setVisibility(View.GONE);
             }
         }
     };
+
+    private static class AnimationOutListener extends DefaultAnimationListener {
+        public View view;
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            view.clearAnimation();
+            view.setVisibility(View.GONE);
+        }
+    }
+
+    private static class AnimationInListener extends DefaultAnimationListener {
+        public View view;
+
+        @Override
+        public void onAnimationStart(Animation animation) {
+        }
+
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            view.clearAnimation();
+        }
+    }
 }

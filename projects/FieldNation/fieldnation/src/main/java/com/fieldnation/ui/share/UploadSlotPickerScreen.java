@@ -29,7 +29,7 @@ import java.util.List;
  */
 
 public class UploadSlotPickerScreen extends FrameLayout {
-    private static final String TAG = "TaskPicker";
+    private static final String TAG = "UploadSlotPickerScreen";
 
     // UI
     private Toolbar _toolbar;
@@ -67,7 +67,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
-        _toolbar.setTitle("Select a task");
+        _toolbar.setTitle(R.string.select_a_task);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _workOrderTitleTextView = (TextView) findViewById(R.id.workOrderTitle_textview);
@@ -124,7 +124,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
             final UploadSlot[] slots = workorder.getUploadSlots();
 
             if (slots == null || slots.length == 0) {
-                ToastClient.toast(App.get(), "Cannot upload to work order" + workorder.getTitle() + " please select another", Toast.LENGTH_LONG);
+                ToastClient.toast(App.get(), getResources().getString(R.string.cannot_upload_to_work_order_num, workorder.getTitle()), Toast.LENGTH_LONG);
                 if (_listener != null)
                     _listener.onBackPressed();
                 return;
@@ -132,11 +132,11 @@ public class UploadSlotPickerScreen extends FrameLayout {
 
             Runnable r = new ForLoopRunnable(slots.length, new Handler()) {
                 private final UploadSlot[] _slots = slots;
-                private final List<ShareUploadSlotView> _views = new LinkedList<>();
+                private final List<UploadSlotView> _views = new LinkedList<>();
 
                 @Override
                 public void next(int i) throws Exception {
-                    ShareUploadSlotView v = new ShareUploadSlotView(getContext());
+                    UploadSlotView v = new UploadSlotView(getContext());
                     v.setData(_slots[i]);
                     v.setListener(_shareUploadSlotView_listener);
                     _views.add(v);
@@ -145,7 +145,7 @@ public class UploadSlotPickerScreen extends FrameLayout {
                 @Override
                 public void finish(int count) throws Exception {
                     _uploadSlotLayout.removeAllViews();
-                    for (ShareUploadSlotView v : _views) {
+                    for (UploadSlotView v : _views) {
                         _uploadSlotLayout.addView(v);
                     }
                     _refreshView.refreshComplete();
@@ -156,8 +156,8 @@ public class UploadSlotPickerScreen extends FrameLayout {
         }
     };
 
-    private final ShareUploadSlotView.Listener _shareUploadSlotView_listener = new ShareUploadSlotView.Listener() {
-        public void onClick(ShareUploadSlotView view, UploadSlot slot) {
+    private final UploadSlotView.Listener _shareUploadSlotView_listener = new UploadSlotView.Listener() {
+        public void onClick(UploadSlotView view, UploadSlot slot) {
 
             if (!view.isChecked()) {
                 view.changeCheckStatus();

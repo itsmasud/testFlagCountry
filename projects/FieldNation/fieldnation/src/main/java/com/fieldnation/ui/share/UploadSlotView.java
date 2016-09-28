@@ -13,8 +13,8 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.ui.IconFontTextView;
 
-public class ShareUploadSlotView extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("ShareUploadSlotView");
+public class UploadSlotView extends RelativeLayout {
+    private final String TAG = UniqueTag.makeTag("UploadSlotView");
 
     // Ui
     private TextView _titleTextView;
@@ -29,17 +29,17 @@ public class ShareUploadSlotView extends RelativeLayout {
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public ShareUploadSlotView(Context context) {
+    public UploadSlotView(Context context) {
         super(context);
         init();
     }
 
-    public ShareUploadSlotView(Context context, AttributeSet attrs) {
+    public UploadSlotView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ShareUploadSlotView(Context context, AttributeSet attrs, int defStyle) {
+    public UploadSlotView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -112,11 +112,11 @@ public class ShareUploadSlotView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onClick(ShareUploadSlotView.this, _slot);
+                _listener.onClick(UploadSlotView.this, _slot);
         }
     };
 
     public interface Listener {
-        void onClick(ShareUploadSlotView view, UploadSlot slot);
+        void onClick(UploadSlotView view, UploadSlot slot);
     }
 }
