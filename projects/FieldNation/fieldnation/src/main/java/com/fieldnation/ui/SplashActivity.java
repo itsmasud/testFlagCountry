@@ -63,7 +63,7 @@ public class SplashActivity extends AuthSimpleActivity {
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
         final int reqHeight = fnLogo.getLayoutParams().height;
         fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
-        Log.v(TAG, "onCreate");
+        Log.v(TAG, "onFinishCreate");
     }
 
     @Override

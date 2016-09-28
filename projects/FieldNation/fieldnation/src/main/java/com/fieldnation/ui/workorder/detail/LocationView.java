@@ -121,7 +121,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
 
-        SimpleGps.with(App.get()).start(_gpsListener);
+        SimpleGps.with(getContext()).updateListener(_gpsListener).start(getContext());
 
         setVisibility(View.GONE);
 
@@ -142,7 +142,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_mapboxClient != null && _mapboxClient.isConnected()) {
             _mapboxClient.disconnect(App.get());
         }
-        SimpleGps.with(App.get()).stop();
+        SimpleGps.with(getContext()).stop();
         super.onDetachedFromWindow();
     }
 
@@ -488,7 +488,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
+    private final SimpleGps.LocationUpdateListener _gpsListener = new SimpleGps.LocationUpdateListener() {
         @Override
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");

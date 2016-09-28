@@ -158,14 +158,14 @@ public class SearchEditScreen extends RelativeLayout {
                     SearchResultsActivity.runSearch(getContext(), searchParams);
                     break;
                 case 1: // here
-                    SimpleGps.with(getContext()).start(new SimpleGps.Listener() {
+                    SimpleGps.with(getContext()).updateListener(new SimpleGps.LocationUpdateListener() {
                         @Override
                         public void onLocation(Location location) {
                             searchParams.location(location.getLatitude(), location.getLongitude());
                             SearchResultsActivity.runSearch(getContext(), searchParams);
                             SimpleGps.with(getContext()).stop();
                         }
-                    });
+                    }).start(getContext());
                     break;
                 case 2: // other
                     new AsyncTaskEx<String, Object, Address>() {

@@ -90,13 +90,13 @@ public class SearchResultScreen extends RelativeLayout {
             }
         });
 
-        SimpleGps.with(App.get()).start(new SimpleGps.Listener() {
+        SimpleGps.with(App.get()).updateListener(new SimpleGps.LocationUpdateListener() {
             @Override
             public void onLocation(Location location) {
                 SimpleGps.with(App.get()).stop();
                 _location = location;
             }
-        });
+        }).start(App.get());
     }
 
     @Override
