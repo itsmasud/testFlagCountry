@@ -240,6 +240,12 @@ public class ReceiverActivity extends AuthSimpleActivity {
         @Override
         public void onSendFiles(SharedFile[] sharedFiles) {
             ToastClient.toast(App.get(), getString(R.string.sending_num_files, sharedFiles.length), Toast.LENGTH_SHORT);
+
+            if (_selectedUploadSlot.getUploadedDocuments().length + sharedFiles.length > _selectedUploadSlot.getMaxFiles()) {
+                ToastClient.toast(App.get(), getString(R.string.please_select_fewer_than_num_files, _selectedUploadSlot.getMaxFiles() - _selectedUploadSlot.getUploadedDocuments().length), Toast.LENGTH_LONG);
+                return;
+            }
+
             for (SharedFile file : sharedFiles) {
                 WorkorderClient.uploadDeliverable(App.get(), _selectedWorkOrder.getId(),
                         _selectedUploadSlot.getSlotId(), file.getFileName(), file.getUri());

@@ -531,6 +531,7 @@
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
+    <string name="please_select_fewer_than_num_files">Please select fewer than %1$d files</string>
     <string name="post_visit">Post Visit</string>
     <string name="pre_visit">Pre Visit</string>
     <string name="preparing_files">Preparing files...</string>
