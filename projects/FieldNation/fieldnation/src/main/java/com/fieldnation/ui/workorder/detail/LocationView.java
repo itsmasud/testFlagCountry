@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -25,6 +26,7 @@ import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.mapbox.MapboxClient;
 import com.fieldnation.service.data.mapbox.Marker;
@@ -75,6 +77,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     // Services
     private MapboxClient _mapboxClient = null;
+    private SimpleGps _simpleGps;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -121,7 +124,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _mapboxClient = new MapboxClient(_mapboxClient_listener);
         _mapboxClient.connect(App.get());
 
-        SimpleGps.with(getContext()).updateListener(_gpsListener).start(getContext());
+        _simpleGps = new SimpleGps(getContext())
+                .updateListener(_gpsListener)
+                .start(getContext());
 
         setVisibility(View.GONE);
 
@@ -142,7 +147,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         if (_mapboxClient != null && _mapboxClient.isConnected()) {
             _mapboxClient.disconnect(App.get());
         }
-        SimpleGps.with(getContext()).stop();
+        _simpleGps.stop();
         super.onDetachedFromWindow();
     }
 
@@ -250,7 +255,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         // distance
         _distanceTextView.setVisibility(VISIBLE);
-        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+        if (!_simpleGps.isLocationEnabled()) {
             _distanceTextView.setText(R.string.cant_calc_miles);
         } else if (_directions != null) {
             double miles = 0.0;
@@ -294,7 +299,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _action = ACTION_MESSAGES;
             return;
         }
-        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+        if (!_simpleGps.isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -488,7 +493,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
     };
 
-    private final SimpleGps.LocationUpdateListener _gpsListener = new SimpleGps.LocationUpdateListener() {
+    private final SimpleGps.Listener _gpsListener = new SimpleGps.Listener() {
         @Override
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
@@ -497,6 +502,11 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _actionButton.setVisibility(VISIBLE);
             _action = ACTION_NAVIGATE;
             lookupMap();
+        }
+
+        @Override
+        public void onFail() {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
 

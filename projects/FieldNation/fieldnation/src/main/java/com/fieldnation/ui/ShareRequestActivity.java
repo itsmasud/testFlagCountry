@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,7 +26,7 @@ import com.fieldnation.data.workorder.UploadingDocument;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ForLoopRunnable;
@@ -71,7 +72,8 @@ public class ShareRequestActivity extends AuthSimpleActivity {
 
     // Data
     private WorkorderClient _workorderClient;
-    private GpsLocationService _gpsLocationService;
+    private SimpleGps _simpleGps;
+    private Location _lastLocation = null;
     private ActionMenuItemView _sendMenuItem;
     private WorkorderCardView _currentWorkOrderCardView = null;
     private int _cachedValuesleft = 0;
@@ -249,7 +251,19 @@ public class ShareRequestActivity extends AuthSimpleActivity {
         } else if (action.equals(Intent.ACTION_SEND)) {
             handleRequestSingleFile(intent);
         }
-        _gpsLocationService = new GpsLocationService(this);
+        _simpleGps = new SimpleGps(this)
+                .updateListener(new SimpleGps.Listener() {
+                    @Override
+                    public void onLocation(Location location) {
+                        _lastLocation = location;
+                        _simpleGps.stop();
+                    }
+
+                    @Override
+                    public void onFail() {
+                    }
+                })
+                .start(this);
     }
 
     private void handleRequestSingleFile(Intent intent) {
@@ -285,8 +299,8 @@ public class ShareRequestActivity extends AuthSimpleActivity {
 
     @Override
     protected void onPause() {
-        if (_gpsLocationService != null)
-            _gpsLocationService.stopLocationUpdates();
+        if (_simpleGps != null)
+            _simpleGps.stop();
 
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
@@ -419,11 +433,7 @@ public class ShareRequestActivity extends AuthSimpleActivity {
                 v = new WorkorderCardView(parent.getContext());
             }
 
-            if (_gpsLocationService != null && _gpsLocationService.getLocation() != null) {
-                v.setWorkorder(object, _gpsLocationService.getLocation());
-            } else {
-                v.setWorkorder(object, null);
-            }
+            v.setWorkorder(object, _lastLocation);
             v.setWorkorderSummaryListener(_wocv_listener);
 
             v.setDisplayMode(WorkorderCardView.MODE_NORMAL);

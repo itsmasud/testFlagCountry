@@ -190,10 +190,10 @@ public class HttpJson {
                                 .label(timingKey)
                                 .timing((int) watch.finish())
                                 .build());
-                Log.v(TAG, timingKey + " run time: " + watch.getTime());
+                Log.v(TAG, timingKey + " start time: " + watch.getTime());
             } else {
                 //Debug.logCustom(new CustomEvent("WebTime").putCustomAttribute("Unknown", watch.finish()));
-                Log.v(TAG, "run time: " + watch.getTime());
+                Log.v(TAG, "start time: " + watch.getTime());
             }
         }
     }

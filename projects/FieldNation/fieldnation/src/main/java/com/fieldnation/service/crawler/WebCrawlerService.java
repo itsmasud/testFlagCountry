@@ -86,7 +86,7 @@ public class WebCrawlerService extends Service {
 
         purgeOldData();
 
-        // we're not allowed to run, stop
+        // we're not allowed to start, stop
         if (!settings.getBoolean(getString(R.string.pref_key_sync_enabled), false)) {
             Log.v(TAG, "sync disabled, quiting");
             startActivityMonitor();

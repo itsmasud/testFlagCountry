@@ -13,8 +13,6 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
-import java.util.Hashtable;
-
 /**
  * Created by Michael on 9/28/2016.
  */
@@ -25,36 +23,24 @@ public class SimpleGps {
     public static final long ONE_SEC = 1000;
     public static final long ONE_MIN = ONE_SEC * 60;
 
-    // Data
-    private final String _key;
+    // Gps Api
     private final FusedLocationProviderApi _providerApi = LocationServices.FusedLocationApi;
     private LocationRequest _locationRequest = LocationRequest.create();
     private LocationManager _locationManager;
     private GoogleApiClient _gglApiClient;
+
+    // Data
     private boolean _isRunning = false;
-    private LocationUpdateListener _updateListener = null;
-    private LocationFailListener _failListener = null;
+    private Listener _listener = null;
 
     // Constructors
-    private static final Hashtable<String, SimpleGps> _clients = new Hashtable<>();
-
-    private SimpleGps(Context context) {
-        _key = context.getApplicationContext().toString();
-        _clients.put(_key, this);
+    public SimpleGps(Context context) {
         Log.v(TAG, "new SimpleGps()");
-        _locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
+        _locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         _locationRequest.setInterval(30000);
         _locationRequest.setFastestInterval(5000);
 
         _locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
-    }
-
-    public static SimpleGps with(Context context) {
-        String key = context.getApplicationContext().toString();
-        if (_clients.containsKey(key))
-            return _clients.get(key);
-
-        return new SimpleGps(context);
     }
 
     public boolean isLocationEnabled() {
@@ -62,13 +48,8 @@ public class SimpleGps {
                 || _locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
     }
 
-    public SimpleGps updateListener(LocationUpdateListener updateListener) {
-        _updateListener = updateListener;
-        return this;
-    }
-
-    public SimpleGps failListener(LocationFailListener failListener) {
-        _failListener = failListener;
+    public SimpleGps updateListener(Listener updateListener) {
+        _listener = updateListener;
         return this;
     }
 
@@ -149,8 +130,8 @@ public class SimpleGps {
             _gglApiClient.connect();
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            if (_failListener != null)
-                _failListener.onFail();
+            if (_listener != null)
+                _listener.onFail();
         }
         return this;
     }
@@ -158,15 +139,14 @@ public class SimpleGps {
     public SimpleGps stop() {
         Log.v(TAG, "stop");
         if (!_isRunning) {
-            _clients.remove(_key);
             return this;
         }
 
         if (_gglApiClient.isConnected()) {
             _providerApi.removeLocationUpdates(_gglApiClient, _locationUpdate_listener);
             _gglApiClient.disconnect();
+            _gglApiClient = null;
         }
-        _clients.remove(_key);
         _isRunning = false;
         return this;
     }
@@ -184,14 +164,14 @@ public class SimpleGps {
 
                 Location location = _providerApi.getLastLocation(_gglApiClient);
 
-                if (location != null && _updateListener != null) {
+                if (location != null && _listener != null) {
                     Log.v(TAG, location.toString());
-                    _updateListener.onLocation(location);
+                    _listener.onLocation(location);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
-                if (_failListener != null)
-                    _failListener.onFail();
+                if (_listener != null)
+                    _listener.onFail();
                 stop();
             }
         }
@@ -201,8 +181,8 @@ public class SimpleGps {
             if (!_isRunning)
                 return;
             Log.v(TAG, "onConnectionSuspended");
-            if (_failListener != null)
-                _failListener.onFail();
+            if (_listener != null)
+                _listener.onFail();
             stop();
         }
     };
@@ -213,8 +193,8 @@ public class SimpleGps {
             if (!_isRunning)
                 return;
             Log.v(TAG, "onConnectionFailed");
-            if (_failListener != null)
-                _failListener.onFail();
+            if (_listener != null)
+                _listener.onFail();
             stop();
         }
     };
@@ -226,18 +206,15 @@ public class SimpleGps {
                 return;
             Log.v(TAG, "onLocationChanged");
             Log.v(TAG, location.toString());
-            if (_updateListener != null)
-                _updateListener.onLocation(location);
+            if (_listener != null)
+                _listener.onLocation(location);
         }
     };
 
 
-    public interface LocationUpdateListener {
+    public interface Listener {
         void onLocation(Location location);
-    }
 
-    public interface LocationFailListener {
         void onFail();
     }
-
 }

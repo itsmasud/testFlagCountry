@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -17,6 +18,7 @@ import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -60,6 +62,7 @@ public class SearchEditScreen extends RelativeLayout {
 
     // Services
     private WorkorderClient _workorderClient;
+    private SimpleGps _simpleGps;
 
     // Data
     private Listener _listener;
@@ -125,6 +128,8 @@ public class SearchEditScreen extends RelativeLayout {
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
         }
+
+        _simpleGps = new SimpleGps(App.get());
     }
 
     @Override
@@ -158,12 +163,17 @@ public class SearchEditScreen extends RelativeLayout {
                     SearchResultsActivity.runSearch(getContext(), searchParams);
                     break;
                 case 1: // here
-                    SimpleGps.with(getContext()).updateListener(new SimpleGps.LocationUpdateListener() {
+                    _simpleGps.updateListener(new SimpleGps.Listener() {
                         @Override
                         public void onLocation(Location location) {
                             searchParams.location(location.getLatitude(), location.getLongitude());
                             SearchResultsActivity.runSearch(getContext(), searchParams);
-                            SimpleGps.with(getContext()).stop();
+                            _simpleGps.stop();
+                        }
+
+                        @Override
+                        public void onFail() {
+                            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
                         }
                     }).start(getContext());
                     break;
