@@ -224,6 +224,11 @@
             android:process=":frontside" />
 
         <service
+            android:name=".service.GpsTrackingService"
+            android:exported="false"
+            android:process=":frontside" />
+
+        <service
             android:name=".service.auth.AuthService"
             android:exported="true"
             android:process=":frontside">
