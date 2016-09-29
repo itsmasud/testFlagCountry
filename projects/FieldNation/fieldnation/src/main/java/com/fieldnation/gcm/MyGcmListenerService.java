@@ -43,6 +43,13 @@ public class MyGcmListenerService extends GcmListenerService {
     private static final String STAG = "MyGcmListenerService";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    //long Q = 400;
+    //long E = 200;
+    //long[] two_bits = new long[]{10, Q, 10, E, 10, E, 10, Q, 10, Q, Q, Q, 10, Q};
+    //long[] ff_boss_fight = new long[]{0, 50, 100, 50, 100, 50, 100, 400, 100, 300, 100, 350, 50, 200, 100, 100, 50, 600};
+    //long[] star_wars = new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500};
+    private static final long[] default_ringtone = new long[]{0, 500};
+
     /**
      * Called when message is received.
      *
@@ -50,7 +57,6 @@ public class MyGcmListenerService extends GcmListenerService {
      * @param data Data bundle containing message data as key/value pairs.
      *             For Set of keys use data.keySet().
      */
-    // [START receive_message]
     @Override
     public void onMessageReceived(String from, Bundle data) {
         String message = data.getString("message");
@@ -64,10 +70,77 @@ public class MyGcmListenerService extends GcmListenerService {
                         .action(EventAction.PUSH_NOTIFICATION)
                         .build());
 
-//        GlobalTopicClient.gcm(this, message);
-        sendNotification(message);
+        try {
+            GcmMessage gcmMessage = GcmMessage.fromJson(new JsonObject(message));
+            switch (gcmMessage.category) {
+                case "READY_TO_GO":
+                    handleReadyToGo(gcmMessage);
+                    break;
+                default:
+                    handleDefaultMessage(gcmMessage);
+                    break;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
     }
-    // [END receive_message]
+
+    private void handleDefaultMessage(GcmMessage gcmMessage) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_notif_logo);
+        builder.setContentTitle(gcmMessage.alert.title);
+        builder.setContentText(gcmMessage.alert.body);
+        builder.setVibrate(default_ringtone);
+        NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
+    }
+
+    private void handleReadyToGo(GcmMessage gcmMessage) {
+        // TODO, need to finish implementing this once we figure out how to send the other data
+/*
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setSmallIcon(R.drawable.ic_notif_logo);
+        builder.setContentTitle(gcmMessage.alert.title);
+        builder.setContentText(gcmMessage.alert.body);
+
+        Intent workorderIntent = new Intent(this, WorkorderActivity.class);
+        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, obj.getLong("workorder_id"));
+        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
+        PendingIntent workorderPi = PendingIntent.getActivity(this, 0, workorderIntent, 0);
+
+        builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
+                this, VISITED_EVENT, workorderPi));
+
+        if (negativeButton != null) {
+            builder.addAction(R.drawable.ic_notif_glass, negativeButton.getString("label"), workorderPi);
+        }
+
+        if (positiveButton != null) {
+            if (positiveButton.has("url") && positiveButton.getString("url").endsWith("confirm")) {
+                Log.v(TAG, "positiveButton1");
+                PendingIntent readyToGoPi = PendingIntent.getActivity(this, 0,
+                        WorkorderActivity.makeIntentConfirm(this, obj.getLong("workorder_id")), 0);
+
+                builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
+                        AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
+            } else {
+                Log.v(TAG, "positiveButton2");
+                PendingIntent readyToGoPi = PendingIntent.getService(this, 0,
+                        WorkorderTransactionBuilder.actionReadyIntent(this, obj.getLong("workorder_id")), 0);
+
+                builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
+                        AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
+            }
+        }
+
+        NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+        bigTextStyle.setBigContentTitle(gcmMessage.alert.title);
+        bigTextStyle.bigText(gcmMessage.alert.body + "\nWork order " + obj.getString("workorder_id"));
+        builder.setStyle(bigTextStyle);
+        builder.setPriority(NotificationCompat.PRIORITY_MAX);
+        builder.setVibrate(default_ringtone);
+        NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
+*/
+    }
 
     @Override
     public void onDestroy() {
@@ -144,16 +217,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 bigTextStyle.bigText(obj.getString("body") + "\nWork order " + obj.getString("workorder_id"));
                 builder.setStyle(bigTextStyle);
                 builder.setPriority(NotificationCompat.PRIORITY_MAX);
-
-//                long Q = 400;
-//                long E = 200;
-//                long[] two_bits = new long[]{10, Q, 10, E, 10, E, 10, Q, 10, Q, Q, Q, 10, Q};
-//                long[] ff_boss_fight = new long[]{0, 50, 100, 50, 100, 50, 100, 400, 100, 300, 100, 350, 50, 200, 100, 100, 50, 600};
-//                long[] star_wars = new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500};
-                long[] hard = new long[]{0, 500};
-
-                builder.setVibrate(hard);
-
+                builder.setVibrate(default_ringtone);
                 NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
             }
         } catch (Exception e) {
