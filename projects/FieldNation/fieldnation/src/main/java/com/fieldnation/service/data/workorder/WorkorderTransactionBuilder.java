@@ -507,17 +507,17 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
 
     // returns work order details
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
-        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         context.startService(intent);
     }
 
-    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         return action(context, workorderId, "POST", "assignment", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601 + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)),
                 WorkorderTransactionHandler.class,
-                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note));
+                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
     }
 
     public static void actionReady(Context context, long workorderId) {

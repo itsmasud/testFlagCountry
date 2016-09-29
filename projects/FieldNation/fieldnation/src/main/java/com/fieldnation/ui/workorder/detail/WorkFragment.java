@@ -945,10 +945,10 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
             try {
                 WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
 
                 setLoading(true);
 

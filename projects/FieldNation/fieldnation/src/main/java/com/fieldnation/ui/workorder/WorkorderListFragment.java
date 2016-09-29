@@ -786,11 +786,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _adapter.refreshPages();
         }
 
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
             //set loading mode
             try {
-                WorkOrderClient.actionEta(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                WorkorderClient.actionConfirmAssignment(App.get(),
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
                 _adapter.refreshPages();
             } catch (Exception ex) {
                 Log.v(TAG, ex);
