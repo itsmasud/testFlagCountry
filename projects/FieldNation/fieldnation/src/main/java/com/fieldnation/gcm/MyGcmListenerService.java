@@ -43,11 +43,11 @@ public class MyGcmListenerService extends GcmListenerService {
     private static final String STAG = "MyGcmListenerService";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    //long Q = 400;
-    //long E = 200;
-    //long[] two_bits = new long[]{10, Q, 10, E, 10, E, 10, Q, 10, Q, Q, Q, 10, Q};
-    //long[] ff_boss_fight = new long[]{0, 50, 100, 50, 100, 50, 100, 400, 100, 300, 100, 350, 50, 200, 100, 100, 50, 600};
-    //long[] star_wars = new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500};
+    //private static final long Q = 400;
+    //private static final long E = 200;
+    //private static final long[] two_bits = new long[]{10, Q, 10, E, 10, E, 10, Q, 10, Q, Q, Q, 10, Q};
+    //private static final long[] ff_boss_fight = new long[]{0, 50, 100, 50, 100, 50, 100, 400, 100, 300, 100, 350, 50, 200, 100, 100, 50, 600};
+    //private static final long[] star_wars = new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500};
     private static final long[] default_ringtone = new long[]{0, 500};
 
     /**
