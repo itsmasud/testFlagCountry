@@ -16,7 +16,7 @@ public class ProfileTransactionBuilder {
 
     public static void geo(Context context, double lat, double lon) {
         try {
-
+            JsonObject body = new JsonObject();
             JsonObject body = new JsonObject();
             body.put("lat", lat);
             body.put("lon", lon);
