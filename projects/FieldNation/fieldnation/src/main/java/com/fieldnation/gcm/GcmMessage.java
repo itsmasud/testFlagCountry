@@ -3,6 +3,8 @@ package com.fieldnation.gcm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -16,6 +18,7 @@ import com.fieldnation.fnlog.Log;
 public class GcmMessage implements Parcelable {
     public static final String TAG = "GcmMessage";
 
+    public Action[] actions;
     @Json
     public GcmAlert alert;
     @Json
@@ -26,8 +29,19 @@ public class GcmMessage implements Parcelable {
     public String category;
 
     public JsonObject toJson() {
+        return toJson(this);
+    }
+
+    public static JsonObject toJson(GcmMessage gcmMessage) {
         try {
-            return Serializer.serializeObject(this);
+            JsonObject obj = Serializer.serializeObject(gcmMessage);
+
+            if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
+                JsonArray ja = Action.toJsonArray(gcmMessage.actions);
+                obj.put("actions", ja);
+            }
+
+            return obj;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -36,7 +50,12 @@ public class GcmMessage implements Parcelable {
 
     public static GcmMessage fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(GcmMessage.class, json);
+            GcmMessage obj = Unserializer.unserializeObject(GcmMessage.class, json);
+
+            if (json.has("actions"))
+                obj.actions = Action.parseActions(json.getJsonArray("actions"));
+
+            return obj;
         } catch (Exception e) {
             e.printStackTrace();
             return null;

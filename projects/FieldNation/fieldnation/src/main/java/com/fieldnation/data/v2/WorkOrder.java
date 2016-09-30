@@ -121,14 +121,9 @@ public class WorkOrder implements Parcelable {
     public static JsonObject toJson(WorkOrder workOrder) {
         try {
             JsonObject obj = Serializer.serializeObject(workOrder);
-
-            if (workOrder.actions != null) {
-                JsonArray ja = new JsonArray();
+            if (workOrder.actions != null && workOrder.actions.length > 0) {
+                JsonArray ja = Action.toJsonArray(workOrder.actions);
                 obj.put("actions", ja);
-
-                for (Action a : workOrder.actions) {
-                    ja.add(a.toJson());
-                }
             }
             return obj;
         } catch (Exception ex) {

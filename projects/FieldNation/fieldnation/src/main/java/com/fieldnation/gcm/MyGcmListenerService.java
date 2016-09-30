@@ -26,6 +26,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonArray;
@@ -105,39 +106,55 @@ public class MyGcmListenerService extends GcmListenerService {
         // workOrderId
         // confirm or ready?
 
+        Action[] actions = gcmMessage.actions;
+        Action linkAction = null;
+        Action mainAction = null;
+        if (actions != null && actions.length > 0) {
+            for (Action action : actions) {
+                switch (action.getType()) {
+                    case VIEW:
+                        linkAction = action;
+                        break;
+                    case CONFIRM:
+                    case READY:
+                        mainAction = action;
+                        break;
+                }
+            }
+        }
+
+        if (linkAction == null || mainAction == null)
+            return;
+
         Intent workorderIntent = new Intent(this, WorkorderActivity.class);
-        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, obj.getLong("workorder_id"));
+        workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(linkAction.getId()));
         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
         PendingIntent workorderPi = PendingIntent.getActivity(this, 0, workorderIntent, 0);
 
         builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
                 this, VISITED_EVENT, workorderPi));
 
-        if (negativeButton != null) {
-            builder.addAction(R.drawable.ic_notif_glass, negativeButton.getString("label"), workorderPi);
-        }
+        builder.addAction(R.drawable.ic_notif_glass, "View", workorderPi);
 
-        if (positiveButton != null) {
-            if (positiveButton.has("url") && positiveButton.getString("url").endsWith("confirm")) {
-                Log.v(TAG, "positiveButton1");
-                PendingIntent readyToGoPi = PendingIntent.getActivity(this, 0,
-                        WorkorderActivity.makeIntentConfirm(this, obj.getLong("workorder_id")), 0);
+        if (mainAction.getType() == Action.ActionType.CONFIRM) {
+            Log.v(TAG, "positiveButton1");
+            PendingIntent readyToGoPi = PendingIntent.getActivity(this, 0,
+                    WorkorderActivity.makeIntentConfirm(this, Long.parseLong(mainAction.getId())), 0);
 
-                builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
-                        AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
-            } else {
-                Log.v(TAG, "positiveButton2");
-                PendingIntent readyToGoPi = PendingIntent.getService(this, 0,
-                        WorkorderTransactionBuilder.actionReadyIntent(this, obj.getLong("workorder_id")), 0);
+            builder.addAction(R.drawable.ic_notif_check, "Confirm",
+                    AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
+        } else if (mainAction.getType() == Action.ActionType.READY) {
+            Log.v(TAG, "positiveButton2");
+            PendingIntent readyToGoPi = PendingIntent.getService(this, 0,
+                    WorkorderTransactionBuilder.actionReadyIntent(this, Long.parseLong(mainAction.getId())), 0);
 
-                builder.addAction(R.drawable.ic_notif_check, positiveButton.getString("label"),
-                        AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
-            }
+            builder.addAction(R.drawable.ic_notif_check, "Ready",
+                    AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, readyToGoPi));
         }
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
         bigTextStyle.setBigContentTitle(gcmMessage.alert.title);
-        bigTextStyle.bigText(gcmMessage.alert.body + "\nWork order " + obj.getString("workorder_id"));
+        bigTextStyle.bigText(gcmMessage.alert.body + "\nWork order " + Long.parseLong(linkAction.getId()));
         builder.setStyle(bigTextStyle);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setVibrate(default_ringtone);

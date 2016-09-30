@@ -11,24 +11,46 @@ public class Action {
     private static final String TAG = "Action";
 
     private ActionType type;
+    private String object;
+    private String id;
+    private String[] ids;
 
     public Action() {
     }
 
-    public Action(JsonObject object) {
+    public Action(JsonObject json) {
         try {
-            this.type = ActionType.fromTypeString(object.getString("type"));
+            this.type = ActionType.fromTypeString(json.getString("type"));
+            object = json.getString("object");
+            if (json.has("id")) {
+                id = json.getString("id");
+            }
+            if (json.has("ids")) {
+                JsonArray ja = json.getJsonArray("ids");
+                ids = new String[ja.size()];
+                for (int i = 0; i < ja.size(); i++) {
+                    ids[i] = ja.getString(i);
+                }
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
     }
 
-    public Action(ActionType type) {
-        this.type = type;
-    }
-
     public ActionType getType() {
         return type;
+    }
+
+    public String getObject() {
+        return object;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public String[] getIds() {
+        return ids;
     }
 
     /*-*************************************-*/
@@ -39,10 +61,19 @@ public class Action {
 
         try {
             obj.put("type", this.type.typestring);
+            obj.put("object", object);
+            if (id != null)
+                obj.put("id", id);
+            if (ids != null && ids.length > 0) {
+                JsonArray ja = new JsonArray();
+                for (String s : ids) {
+                    ja.add(s);
+                }
+                obj.put("ids", ja);
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-
         return obj;
     }
 
@@ -74,6 +105,16 @@ public class Action {
         return null;
     }
 
+    public static JsonArray toJsonArray(Action[] actions) {
+        JsonArray ja = new JsonArray();
+        if (actions != null) {
+            for (Action action : actions) {
+                ja.add(action.toJson());
+            }
+        }
+        return ja;
+    }
+
     public enum ActionType {
         ON_MY_WAY("on_my_way"),
         REPORT_A_PROBLEM("report_a_problem"),
@@ -81,6 +122,8 @@ public class Action {
         CANCEL("cancel"),
         RESCHEDULE("reschedule"),
         CONFIRM("confirm"),
+        READY("ready"),
+        VIEW("view"),
         UNKNOWN("unknown");
 
         private String typestring;
