@@ -96,11 +96,14 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void handleReadyToGo(GcmMessage gcmMessage) {
         // TODO, need to finish implementing this once we figure out how to send the other data
-/*
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
         builder.setContentTitle(gcmMessage.alert.title);
         builder.setContentText(gcmMessage.alert.body);
+
+        // workOrderId
+        // confirm or ready?
 
         Intent workorderIntent = new Intent(this, WorkorderActivity.class);
         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, obj.getLong("workorder_id"));
@@ -139,7 +142,6 @@ public class MyGcmListenerService extends GcmListenerService {
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setVibrate(default_ringtone);
         NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
-*/
     }
 
     @Override
