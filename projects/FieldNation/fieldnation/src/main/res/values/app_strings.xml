@@ -324,12 +324,14 @@
 
     <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
+    <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
     <string name="add_profile">Add Profile</string>
     <string name="add_time">Add Time</string>
     <string name="amount">Amount</string>
     <string name="and">and</string>
+    <string name="app_version">App Version</string>
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="arrival_time">Arrival Time</string>
@@ -363,6 +365,7 @@
     <string name="company_name_hidden">Company Name Hidden</string>
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
+    <string name="contact_us">Contact Us</string>
     <string name="could_not_download_file">Could not download file</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="counter_offer_caps">COUNTER OFFER</string>
@@ -398,7 +401,6 @@
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
-    <string name="contact_us">Contact Us</string>
     <string name="dialog_release_note_title">What\'s new in Field Nation</string>
     <string name="feature_header_added_new">What we added</string>
     <string name="bugs_fixed_header">Bugs we fixed</string>
@@ -427,8 +429,9 @@
     <string name="inbox">Inbox</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
+    <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
-    <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
+    <string name="log_out">Log Out</string>
     <string name="looks_like_you_need_to_finish_setup">Looks like you need to finish setting up your account</string>
     <string name="manage_profiles">Manage Profiles</string>
     <string name="map_not_available">MAP NOT AVAILABLE</string>
@@ -454,6 +457,7 @@
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_location_provided_by_buyer">No location provided by buyer</string>
+    <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
     <string name="no_messages">No Messages</string>
     <string name="no_notifications">No Notifications</string>
     <string name="no_routed_work">No routed work</string>
@@ -513,6 +517,7 @@
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
+    <string name="payments">Payments</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
     <string name="payment_pending">Payment Pending</string>
@@ -530,6 +535,7 @@
     <string name="preparing_files">Preparing files...</string>
     <string name="price">Price</string>
     <string name="professionalism">Professionalism</string>
+    <string name="profile_information">Profile Information</string>
     <string name="providers_under_your_company">Providers under your company:</string>
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
@@ -553,6 +559,7 @@
     <string name="schedule_current">Current Schedule</string>
     <string name="schedule_original">Original Schedule</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
+    <string name="send_debug_log">Send Debug Log</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
     <string name="shipment_description">Shipment Description</string>
@@ -560,6 +567,7 @@
     <string name="sorry_to_hear_that">Sorry to hear that</string>
     <string name="sorry_to_hear_that_you_have_been_removed">Sorry to hear that. You have been removed from this work order.</string>
     <string name="start_time">Start Time</string>
+    <string name="support">Support</string>
     <string name="support_has_been_notified">Support has been notified. You may be contacted for follow up.</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
     <string name="tasks">Tasks</string>
