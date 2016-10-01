@@ -1800,7 +1800,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
             _tempUri = uri;
             _tempFile = null;
             _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));

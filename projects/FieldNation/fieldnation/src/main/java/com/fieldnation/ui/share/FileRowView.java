@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.share;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -9,13 +9,13 @@ import android.widget.TextView;
 
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.data.workorder.UploadingDocument;
+import com.fieldnation.ui.IconFontTextView;
 
 /**
  * Created by shoaib.ahemd on Oct 07, 2015.
  */
-public class ShareRequestedFileRowView extends RelativeLayout {
-    private static final String TAG = "ShareRequestedFileRowView";
+public class FileRowView extends RelativeLayout {
+    private static final String TAG = "FileRowView";
 
     // Ui
     private TextView _titleTextView;
@@ -24,30 +24,30 @@ public class ShareRequestedFileRowView extends RelativeLayout {
 
 
     // Data
-    private UploadingDocument _uploadingDocument;
+    private SharedFile _sharedFile;
     private Listener _listener;
     private boolean _checked = true;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
-    public ShareRequestedFileRowView(Context context) {
+    public FileRowView(Context context) {
         super(context);
         init();
     }
 
-    public ShareRequestedFileRowView(Context context, AttributeSet attrs) {
+    public FileRowView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public ShareRequestedFileRowView(Context context, AttributeSet attrs, int defStyle) {
+    public FileRowView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
 
     private void init() {
-        LayoutInflater.from(getContext()).inflate(R.layout.view_share_requested_file_row, this);
+        LayoutInflater.from(getContext()).inflate(R.layout.view_share_file_row, this);
 
         if (isInEditMode())
             return;
@@ -71,8 +71,8 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         _listener = listener;
     }
 
-    public UploadingDocument getUploadingDocument() {
-        return _uploadingDocument;
+    public SharedFile getSharedFile() {
+        return _sharedFile;
     }
 
     public void changeCheckStatus() {
@@ -80,9 +80,9 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         populateUi();
     }
 
-    public void setData(UploadingDocument uploadingDocument) {
+    public void setData(SharedFile sharedFile) {
         Log.v(TAG, "setData");
-        _uploadingDocument = uploadingDocument;
+        _sharedFile = sharedFile;
         populateUi();
     }
 
@@ -94,10 +94,10 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         if (_titleTextView == null)
             return;
 
-        if (_uploadingDocument == null)
+        if (_sharedFile == null)
             return;
 
-        _titleTextView.setText(_uploadingDocument.getFileName());
+        _titleTextView.setText(_sharedFile.getFileName());
 
         if (_checked) {
             _iconView.setText(getResources().getString(R.string.icon_task_done));
@@ -117,12 +117,12 @@ public class ShareRequestedFileRowView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_listener != null)
-                _listener.onClick(ShareRequestedFileRowView.this, _uploadingDocument);
+                _listener.onClick(FileRowView.this, _sharedFile);
         }
     };
 
 
     public interface Listener {
-        void onClick(ShareRequestedFileRowView view, UploadingDocument uploadingDocument);
+        void onClick(FileRowView view, SharedFile sharedFile);
     }
 }

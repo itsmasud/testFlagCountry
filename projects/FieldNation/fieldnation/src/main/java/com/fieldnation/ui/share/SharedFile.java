@@ -1,4 +1,4 @@
-package com.fieldnation.data.workorder;
+package com.fieldnation.ui.share;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -7,20 +7,20 @@ import android.os.Parcelable;
 
 import com.fieldnation.fnlog.Log;
 
-public class UploadingDocument implements Parcelable {
-    private static final String TAG = "UploadingDocument";
+public class SharedFile implements Parcelable {
+    private static final String TAG = "SharedFile";
 
     private String _fileName;
     private Uri _uri;
 
-    public UploadingDocument() {
+    public SharedFile() {
     }
 
-    public UploadingDocument(String fileName) {
+    public SharedFile(String fileName) {
         _fileName = fileName;
     }
 
-    public UploadingDocument(String fileName, Uri uri) {
+    public SharedFile(String fileName, Uri uri) {
         _fileName = fileName;
         _uri = uri;
     }
@@ -38,13 +38,13 @@ public class UploadingDocument implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<UploadingDocument> CREATOR = new Parcelable.Creator<UploadingDocument>() {
+    public static final Parcelable.Creator<SharedFile> CREATOR = new Parcelable.Creator<SharedFile>() {
 
         @Override
-        public UploadingDocument createFromParcel(Parcel source) {
+        public SharedFile createFromParcel(Parcel source) {
             try {
                 Bundle bundle = source.readBundle(getClass().getClassLoader());
-                return new UploadingDocument(bundle.getString("fileName"), (Uri) bundle.getParcelable("uri"));
+                return new SharedFile(bundle.getString("fileName"), (Uri) bundle.getParcelable("uri"));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -52,8 +52,8 @@ public class UploadingDocument implements Parcelable {
         }
 
         @Override
-        public UploadingDocument[] newArray(int size) {
-            return new UploadingDocument[size];
+        public SharedFile[] newArray(int size) {
+            return new SharedFile[size];
         }
     };
 
