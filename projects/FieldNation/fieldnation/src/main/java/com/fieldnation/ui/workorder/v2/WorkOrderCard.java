@@ -126,6 +126,10 @@ public class WorkOrderCard extends RelativeLayout {
         populateUi();
     }
 
+    public WorkOrder getWorkOrder() {
+        return _workOrder;
+    }
+
     private void populateUi() {
         if (_workOrder == null)
             return;
