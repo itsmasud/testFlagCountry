@@ -60,7 +60,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _toolbar.setTitle(R.string.select_a_work_order);
 
         _workOrderScreen = (SearchResultScreen) findViewById(R.id.recyclerView);
-        _workOrderScreen.setListener(_searchResultScreen_listener);
+        _workOrderScreen.setOnChildClickListener(_searchResultScreen_listener);
         _workOrderScreen.startSearch(_searchParams);
     }
 
@@ -68,7 +68,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
         _listener = listener;
     }
 
-    private final SearchResultScreen.Listener _searchResultScreen_listener = new SearchResultScreen.Listener() {
+    private final SearchResultScreen.OnClickListener _searchResultScreen_listener = new SearchResultScreen.OnClickListener() {
         @Override
         public void onWorkOrderClicked(WorkOrder workOrder) {
             if (_listener != null)

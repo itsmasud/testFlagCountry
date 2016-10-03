@@ -4,12 +4,22 @@
     android:layout_marginBottom="0dp"
     android:paddingBottom="10dp">
 
+    <CheckBox
+        android:id="@+id/checkbox"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="6dp"
+        android:text=""
+        android:visibility="gone" />
+
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/bundle_iconFont"
         android:layout_width="wrap_content"
         android:layout_height="24dp"
         android:layout_marginLeft="12dp"
         android:layout_marginTop="6dp"
+        android:layout_toRightOf="@+id/checkbox"
         android:gravity="center_vertical"
         android:text="@string/icon_bundle"
         android:textSize="20sp" />
@@ -139,20 +149,22 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/buttonbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/location_textview"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="horizontal"
-            android:paddingLeft="8dp">
+            android:paddingLeft="8dp"
+            android:visibility="gone">
 
             <com.fieldnation.ui.IconFontButton
                 android:id="@+id/left1_button"
@@ -180,32 +192,36 @@
         </LinearLayout>
 
         <Button
-            android:id="@+id/rightWhite_button"
+            android:id="@+id/action1_button"
             style="?attr/buttonWhiteStyle"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
-            android:text="THING 2" />
+            android:text="Report Issue"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
         <Button
-            android:id="@+id/rightOrange_button"
-            style="?attr/buttonOrangeStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:id="@+id/action2_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
-            android:text="THING 2"
-            android:visibility="gone" />
+            android:text="I'm running late!"
+            android:textSize="12sp"
+            android:visibility="visible" />
 
         <Button
-            android:id="@+id/rightGreen_button"
+            android:id="@+id/action3_button"
             style="?attr/buttonGreenStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginRight="4dp"
             android:layout_weight="1"
-            android:text="THING 2"
-            android:visibility="gone" />
+            android:text="On my way!"
+            android:textSize="12sp"
+            android:visibility="visible" />
     </LinearLayout>
 </RelativeLayout>

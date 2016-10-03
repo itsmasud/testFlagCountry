@@ -1,5 +1,6 @@
 package com.fieldnation;
 
+import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
 import android.app.PendingIntent;
@@ -13,6 +14,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.BatteryManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
@@ -37,6 +39,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -44,6 +47,7 @@ import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 
 import java.io.File;
 import java.net.URLConnection;
@@ -75,6 +79,7 @@ public class App extends Application {
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
+    public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
 
     private static App _context;
 
@@ -93,6 +98,9 @@ public class App extends Application {
 
     private static final int BYTES_IN_MB = 1024 * 1024;
     private static final int THRESHOLD_FREE_MB = 5;
+
+    private static int _runningActivities = 0;
+    private static boolean _app_starting = true;
 
     public static final SecureRandom secureRandom = new SecureRandom();
 
@@ -208,8 +216,63 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
+
+        registerActivityLifecycleCallbacks(_activityLifeCycle);
+
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
+
+    private final ActivityLifecycleCallbacks _activityLifeCycle = new ActivityLifecycleCallbacks() {
+        @Override
+        public void onActivityCreated(Activity activity, Bundle savedInstanceState) {
+            Log.v(TAG, "onActivityCreated");
+        }
+
+        @Override
+        public void onActivityStarted(Activity activity) {
+            Log.v(TAG, "onActivityStarted");
+            synchronized (TAG) {
+                _runningActivities++;
+            }
+            Log.v(TAG, "Runnig activities " + _runningActivities);
+
+            if (_app_starting /*&& needsConfirmation()*/) {
+                setNeedsConfirmation(false);
+                MyGcmListenerService.clearConfirmPush(App.this);
+                ConfirmActivity.startNew(App.this);
+            }
+        }
+
+        @Override
+        public void onActivityResumed(Activity activity) {
+            Log.v(TAG, "onActivityResumed");
+        }
+
+        @Override
+        public void onActivityPaused(Activity activity) {
+            Log.v(TAG, "onActivityPaused");
+        }
+
+        @Override
+        public void onActivityStopped(Activity activity) {
+            Log.v(TAG, "onActivityStopped");
+            synchronized (TAG) {
+                _runningActivities--;
+            }
+            Log.v(TAG, "Runnig activities " + _runningActivities);
+            _app_starting = _runningActivities == 0;
+        }
+
+        @Override
+        public void onActivitySaveInstanceState(Activity activity, Bundle outState) {
+            Log.v(TAG, "onActivitySaveInstanceState");
+        }
+
+        @Override
+        public void onActivityDestroyed(Activity activity) {
+            Log.v(TAG, "onActivityDestroyed");
+        }
+    };
 
     private Runnable _anrReport = new Runnable() {
         @Override
@@ -445,6 +508,18 @@ public class App extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
         edit.apply();
+    }
+
+    public void setNeedsConfirmation(boolean needsConfirmation) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_NEEDS_CONFIRMATION, needsConfirmation);
+        edit.apply();
+    }
+
+    public boolean needsConfirmation() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_NEEDS_CONFIRMATION, false) && _app_starting;
     }
 
     public void setReleaseNoteShownReminded() {

@@ -17,11 +17,13 @@
 package com.fieldnation.gcm;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
@@ -34,6 +36,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
 
@@ -43,6 +46,79 @@ public class MyGcmListenerService extends GcmListenerService {
     private static final String STAG = "MyGcmListenerService";
     private final String TAG = UniqueTag.makeTag(STAG);
 
+    private static final int CONFIRM_PUSH_NOTIFICATION = App.secureRandom.nextInt();
+
+    public static void clearConfirmPush(Context context) {
+        NotificationManagerCompat.from(context).cancel(CONFIRM_PUSH_NOTIFICATION);
+    }
+
+    private void handleLateAck(JsonObject obj) {
+        try {
+            String category = null;
+            if (obj.has("category"))
+                category = obj.getString("category");
+
+            if (category == null)
+                return;
+
+            // set the display flag
+            App.get().setNeedsConfirmation(true);
+            // send push notification
+            // TODO, need to finish this
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setSmallIcon(R.drawable.ic_notif_logo);
+            builder.setContentTitle("Field Nation");
+            builder.setContentText("Buyer has acknowledged your tardiness ... slacker");
+
+
+            NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();
+            bigTextStyle.setBigContentTitle("Field Nation");
+            bigTextStyle.bigText("Buyer has acknowledged your tardiness ... slacker");
+            builder.setStyle(bigTextStyle);
+            builder.setPriority(NotificationCompat.PRIORITY_MAX);
+
+            long[] hard = new long[]{0, 500};
+            builder.setVibrate(hard);
+            NotificationManagerCompat.from(this).notify(App.secureRandom.nextInt(), builder.build());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+
+    private void handleConfirm(JsonObject obj) {
+        try {
+            String category = null;
+            if (obj.has("category"))
+                category = obj.getString("category");
+
+            if (category == null)
+                return;
+
+            // set the display flag
+            App.get().setNeedsConfirmation(true);
+            // send push notification
+            // TODO, need to finish this
+            NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+            builder.setSmallIcon(R.drawable.ic_notif_logo);
+            builder.setContentTitle("Field Nation");
+            builder.setContentText("Please confirm tomorrow's work schedule before 10am today!");
+
+            Intent bodyIntent = ConfirmActivity.startNewIntent(this);
+            PendingIntent bodyPi = PendingIntent.getActivity(this, 0, bodyIntent, 0);
+            builder.setContentIntent(bodyPi);
+
+            builder.setPriority(NotificationCompat.PRIORITY_MAX);
+
+            long[] hard = new long[]{0, 500};
+            builder.setVibrate(hard);
+            NotificationManagerCompat.from(this).notify(CONFIRM_PUSH_NOTIFICATION, builder.build());
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
     /**
      * Called when message is received.
      *

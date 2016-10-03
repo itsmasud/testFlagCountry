@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -35,6 +36,7 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String TAG = "WorkOrderCard";
 
     // Ui
+    private CheckBox _checkBox;
     private IconFontTextView _bundleIconFont;
     private TextView _titleTextView;
     private TextView _companyNameTextView;
@@ -59,8 +61,10 @@ public class WorkOrderCard extends RelativeLayout {
     private Button _rightGreenButton;
 
     // Data
+    private boolean _enableCheckbox = false;
     private WorkOrder _workOrder;
     private Location _location;
+    private Listener _listener;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -83,6 +87,8 @@ public class WorkOrderCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
+        _checkBox = (CheckBox) findViewById(R.id.checkbox);
+        _checkBox.setOnClickListener(_checkbox_onClick);
         _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_iconFont);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
@@ -126,6 +132,21 @@ public class WorkOrderCard extends RelativeLayout {
         populateUi();
     }
 
+    public void enableCheckbox(boolean enable) {
+        _enableCheckbox = enable;
+
+        if (_checkBox != null)
+            _checkBox.setVisibility(_enableCheckbox ? VISIBLE : GONE);
+    }
+
+    public void setChecked(boolean checked) {
+        _checkBox.setEnabled(checked);
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
     public WorkOrder getWorkOrder() {
         return _workOrder;
     }
@@ -136,6 +157,8 @@ public class WorkOrderCard extends RelativeLayout {
 
         if (_rightGreenButton == null)
             return;
+
+        _checkBox.setVisibility(_enableCheckbox ? VISIBLE : GONE);
 
         if (_workOrder.isBundle())
             _bundleIconFont.setVisibility(VISIBLE);
@@ -243,7 +266,7 @@ public class WorkOrderCard extends RelativeLayout {
                 _priceRightTextView.setLayoutParams(params);
 
                 _priceLeftTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusLeftTextView.setText(getResources().getString(R.string.first_time_hours, pay.getUnits()));
+                _statusLeftTextView.setText(getResources().getString(R.string.first_time_hours, pay.getUnits() + ""));
                 _priceRightTextView.setText(misc.toCurrency(pay.getAdditionalAmount()));
                 _statusRightTextView.setText(R.string.hourly_after);
                 break;
@@ -305,6 +328,15 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
+    private final CheckBox.OnClickListener _checkbox_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null) {
+                _listener.onChecked(WorkOrderCard.this, _workOrder, _checkBox.isChecked());
+            }
+        }
+    };
+
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -315,4 +347,8 @@ public class WorkOrderCard extends RelativeLayout {
                     R.anim.activity_slide_out_left);
         }
     };
+
+    public interface Listener {
+        void onChecked(WorkOrderCard view, WorkOrder workorder, boolean isChecked);
+    }
 }
