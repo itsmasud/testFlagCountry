@@ -151,6 +151,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _sharedFiles[0] = new SharedFile(fileName, fileUri);
             WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
+        } else {
+            Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -175,6 +178,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
                 _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
                 WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
+        } else {
+            Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
