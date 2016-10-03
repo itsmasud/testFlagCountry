@@ -15,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
@@ -96,6 +97,11 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
