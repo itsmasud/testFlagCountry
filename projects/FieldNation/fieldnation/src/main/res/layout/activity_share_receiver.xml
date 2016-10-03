@@ -22,6 +22,11 @@
         android:layout_height="match_parent"
         android:visibility="gone" />
 
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
     <RelativeLayout
         android:id="@+id/loading_layout"
         android:layout_width="match_parent"
