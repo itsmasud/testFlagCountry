@@ -340,6 +340,7 @@
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
     <string name="block_reason">Block Reason</string>
+    <string name="cannot_upload_to_work_order_num">Cannot upload to work order %1$s please select another</string>
     <string name="decline_reason">Decline Reason</string>
     <string name="bundle">Bundle</string>
     <string name="buyer_has_been_notified">Buyer has been notified. You may be contacted for follow up.</string>
@@ -531,9 +532,11 @@
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
+    <string name="please_select_fewer_than_num_files">Please select fewer than %1$d files</string>
     <string name="post_visit">Post Visit</string>
     <string name="pre_visit">Pre Visit</string>
     <string name="preparing_files">Preparing files...</string>
+    <string name="preparing_files_num">Preparing files (%1$d of %2$d)</string>
     <string name="price">Price</string>
     <string name="professionalism">Professionalism</string>
     <string name="profile_information">Profile Information</string>
@@ -559,8 +562,13 @@
     <string name="schedule_open_range_format2">%1$s\ - %2$s</string>
     <string name="schedule_current">Current Schedule</string>
     <string name="schedule_original">Original Schedule</string>
+    <string name="select_a_task">Select a task</string>
+    <string name="select_a_work_order">Select a work order</string>
+    <string name="select_files">Select files</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
+    <string name="send_num">Send (%1$d)</string>
     <string name="send_debug_log">Send Debug Log</string>
+    <string name="sending_num_files">Sending %1$d files</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
     <string name="shipment_description">Shipment Description</string>

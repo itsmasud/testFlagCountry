@@ -740,7 +740,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 onDeliveraleCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
                 try {
-                    onDeliveraleCacheEnd(
+                    onDeliverableCacheEnd(
                             (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
                             ((Bundle) payload).getString(PARAM_FILE));
                 } catch (Exception ex) {
@@ -752,7 +752,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         public void onDeliveraleCacheStart(Uri uri) {
         }
 
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
         }
 
         private void preUploadDeliverable(Bundle payload) {

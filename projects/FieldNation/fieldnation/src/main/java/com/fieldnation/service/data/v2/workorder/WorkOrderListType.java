@@ -27,7 +27,14 @@ public enum WorkOrderListType {
             SavedSearchParams.Status.REQUESTED, SavedSearchParams.Status.COUNTER_OFFER}),
 
     ROUTED("routed", SavedSearchParams.ListType.AVAILABLE, new SavedSearchParams.Status[]{
-            SavedSearchParams.Status.ROUTED});
+            SavedSearchParams.Status.ROUTED}),
+
+    ATTACHABLE("attachable", SavedSearchParams.ListType.ASSIGNED, new SavedSearchParams.Status[]{
+            SavedSearchParams.Status.IN_PROGRESS, SavedSearchParams.Status.ON_HOLD_ACK,
+            SavedSearchParams.Status.CONFIRMED, SavedSearchParams.Status.CONFIRMED_ETA,
+            SavedSearchParams.Status.READY_TO_GO, SavedSearchParams.Status.CHECKED_IN,
+            SavedSearchParams.Status.CHECKED_OUT,});
+
 
     private final String param;
     private final SavedSearchParams.Status[] statuses;

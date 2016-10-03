@@ -49,6 +49,7 @@ public class SearchResultScreen extends RelativeLayout {
     // Data
     private SavedSearchParams _searchParams;
     private Location _location;
+    private Listener _listener;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -135,6 +136,10 @@ public class SearchResultScreen extends RelativeLayout {
         getPage(0);
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
@@ -199,7 +204,12 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
-            return new WorkOrderHolder(new WorkOrderCard(parent.getContext()));
+            WorkOrderCard card = new WorkOrderCard(parent.getContext());
+
+            if (_listener != null)
+                card.setOnClickListener(_card_onClick);
+
+            return new WorkOrderHolder(card);
         }
 
         @Override
@@ -209,4 +219,16 @@ public class SearchResultScreen extends RelativeLayout {
             v.setData(object, _location);
         }
     };
+
+    private final View.OnClickListener _card_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    public interface Listener {
+        void onWorkOrderClicked(WorkOrder workOrder);
+    }
 }
