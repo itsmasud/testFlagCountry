@@ -368,6 +368,7 @@
     <string name="confirm_schedule">Confirm schedule</string>
     <string name="contact_us">Contact Us</string>
     <string name="could_not_download_file">Could not download file</string>
+    <string name="could_not_get_gps_location">Could not get GPS location</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="counter_offer_caps">COUNTER OFFER</string>
     <string name="contacts">CONTACTS</string>

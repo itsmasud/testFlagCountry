@@ -16,6 +16,10 @@ import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 
+/**
+ * This class is deprecated, please use SimpleGps instead.
+ */
+@Deprecated
 public class GpsLocationService {
     private static final String TAG = "GpsLocationService";
 
