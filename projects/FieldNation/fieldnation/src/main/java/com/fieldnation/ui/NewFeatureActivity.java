@@ -10,7 +10,6 @@ import android.webkit.WebView;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 
@@ -74,7 +73,7 @@ public class NewFeatureActivity extends Activity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.hold, R.anim.activity_slide_out_bottom);
+        overridePendingTransition(R.anim.hold, R.anim.fg_slide_out_bottom);
     }
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {

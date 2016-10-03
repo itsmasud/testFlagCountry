@@ -23,6 +23,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.Stopwatch;
@@ -181,6 +182,11 @@ public class SignOffActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return 0;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

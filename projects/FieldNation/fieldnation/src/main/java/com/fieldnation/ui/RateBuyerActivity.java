@@ -17,6 +17,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -119,6 +120,11 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return 0;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
@@ -232,7 +238,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     @Override
     public void finish() {
         super.finish();
-        overridePendingTransition(R.anim.hold, R.anim.activity_slide_out_bottom);
+        overridePendingTransition(R.anim.hold, R.anim.fg_slide_out_bottom);
     }
 
     public void setListener(Listener listener) {
