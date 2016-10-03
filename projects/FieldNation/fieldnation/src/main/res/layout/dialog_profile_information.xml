@@ -87,7 +87,8 @@
                     style="@style/Text_Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="3dp"
                     android:text="Phone" />
 
                 <LinearLayout
@@ -157,7 +158,8 @@
                     style="@style/Text_Caption"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="3dp"
                     android:text="Address 1" />
 
                 <EditText
@@ -173,9 +175,11 @@
                     android:id="@+id/address_2_textview"
                     style="@style/Text_Caption"
                     android:layout_width="match_parent"
+                    android:layout_marginBottom="3dp"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/address_1_edittext"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginLeft="8dp"
                     android:text="Address 2" />
 
                 <EditText
@@ -193,7 +197,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@+id/address_2_edittext"
-                    android:layout_marginLeft="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginBottom="3dp"
+                    android:layout_marginTop="10dp"
                     android:text="City" />
 
                 <EditText
@@ -225,6 +231,7 @@
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/address_2_edittext"
                             android:layout_marginLeft="4dp"
+                            android:layout_marginTop="10dp"
                             android:text="State" />
 
                         <Button
@@ -255,8 +262,11 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/address_2_edittext"
-                            android:layout_marginLeft="4dp"
-                            android:text="Zipcode" />
+                            android:layout_marginLeft="8dp"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginBottom="8dp"
+                            android:text="Zipcode"
+                            android:id="@+id/textView" />
 
                         <EditText
                             android:id="@+id/zip_code_edittext"
