@@ -21,6 +21,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
+import com.fieldnation.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UpdateDialog;
@@ -39,6 +40,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
+    private ProfileInformationDialog _profileInformationDialog;
     private TermsAndConditionsDialog _termsAndConditionsDialog;
 
     // Services
@@ -87,6 +89,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _notProviderDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":NOT_SUPPORTED");
         _contactUsDialog = ContactUsDialog.getInstance(getSupportFragmentManager(), TAG);
+        _profileInformationDialog = ProfileInformationDialog.getInstance(getSupportFragmentManager(), TAG);
 
         onFinishCreate(savedInstanceState);
     }
@@ -305,6 +308,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
+            _globalClient.subShowProfileInformationDialog();
             //_globalClient.subNetworkState();
         }
 
@@ -332,6 +336,15 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         public void onShowContactUsDialog(String source) {
             try {
                 _contactUsDialog.show(source);
+            } catch (Exception ex) {
+                Log.logException(ex);
+            }
+        }
+
+        @Override
+        public void onShowProfileInformationDialog(String source) {
+            try {
+                _profileInformationDialog.show(source);
             } catch (Exception ex) {
                 Log.logException(ex);
             }

@@ -45,6 +45,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private ViewStub _stubProfileListView;
     private NavProfileDetailListView _profileListView = null;
 
+    private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
     private View _logoutMenu;
@@ -97,6 +98,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _stubProfileListView = (ViewStub) findViewById(R.id.stub_profile_detail_list);
 
         _linkContainerView = findViewById(R.id.link_container);
+
+        _profileMenu = findViewById(R.id.profile_view);
+        _profileMenu.setOnClickListener(_profile_onClick);
 
         _paymentMenu = findViewById(R.id.payments_menu);
         _paymentMenu.setOnClickListener(_payment_onClick);
@@ -290,6 +294,13 @@ public class AdditionalOptionsScreen extends RelativeLayout {
                 setProfileListViewVisibility(GONE);
                 _linkContainerView.setVisibility(View.VISIBLE);
             }
+        }
+    };
+
+    private final View.OnClickListener _profile_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            GlobalTopicClient.showProfileInformationDialog(getContext(), "LeftNavDrawer");
         }
     };
 

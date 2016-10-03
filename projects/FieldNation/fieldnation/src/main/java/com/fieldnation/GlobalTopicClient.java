@@ -105,6 +105,21 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         return register(TOPIC_ID_SHOW_CONTACT_US);
     }
 
+    // ContactUs dialog
+    public static void showProfileInformationDialog(Context context, String source) {
+        if (context == null)
+            return;
+
+        Bundle bundle = new Bundle();
+        bundle.putString(PARAM_PROFILE_INFO_DIALOG_SOURCE, source);
+
+        TopicService.dispatchEvent(context, TOPIC_ID_SHOW_PROFILE_INFO_DIALOG, bundle, Sticky.NONE);
+    }
+
+    public boolean subShowProfileInformationDialog() {
+        return register(TOPIC_ID_SHOW_PROFILE_INFO_DIALOG);
+    }
+
     // NETWORK STATE
     public static void networkDisconnected(Context context) {
         Log.v(STAG, "networkDisconnected");
@@ -212,6 +227,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_ID_SHOW_CONTACT_US:
                     onShowContactUsDialog(((Bundle) payload).getString(PARAM_CONTACT_US_SOURCE));
                     break;
+                case TOPIC_ID_SHOW_PROFILE_INFO_DIALOG:
+                    onShowProfileInformationDialog(((Bundle) payload).getString(PARAM_PROFILE_INFO_DIALOG_SOURCE));
+                    break;
                 case TOPIC_ID_SHOW_LOADING:
                     setLoading(((Bundle) payload).getBoolean(PARAM_IS_LOADING));
                     break;
@@ -254,6 +272,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         }
 
         public void onShowContactUsDialog(String source) {
+        }
+
+        public void onShowProfileInformationDialog(String source) {
         }
 
         public void onNetworkDisconnected() {
