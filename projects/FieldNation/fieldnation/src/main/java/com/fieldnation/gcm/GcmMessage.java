@@ -18,15 +18,19 @@ import com.fieldnation.fnlog.Log;
 public class GcmMessage implements Parcelable {
     public static final String TAG = "GcmMessage";
 
-    public Action[] actions;
     @Json
-    public GcmAlert alert;
+    public String title;
+    @Json
+    public String body;
     @Json
     public String sound;
-    @Json(name = "custom_data")
-    public String customData;
+    @Json
+    public Integer badge;
     @Json
     public String category;
+
+    public Action[] primaryActions;
+    public Action[] secondaryActions;
 
     public JsonObject toJson() {
         return toJson(this);
@@ -36,9 +40,14 @@ public class GcmMessage implements Parcelable {
         try {
             JsonObject obj = Serializer.serializeObject(gcmMessage);
 
-            if (gcmMessage.actions != null && gcmMessage.actions.length > 0) {
-                JsonArray ja = Action.toJsonArray(gcmMessage.actions);
-                obj.put("actions", ja);
+            if (gcmMessage.primaryActions != null && gcmMessage.primaryActions.length > 0) {
+                JsonArray ja = Action.toJsonArray(gcmMessage.primaryActions);
+                obj.put("actions.primary", ja);
+            }
+
+            if (gcmMessage.secondaryActions != null && gcmMessage.secondaryActions.length > 0) {
+                JsonArray ja = Action.toJsonArray(gcmMessage.secondaryActions);
+                obj.put("actions.secondary", ja);
             }
 
             return obj;
@@ -52,8 +61,14 @@ public class GcmMessage implements Parcelable {
         try {
             GcmMessage obj = Unserializer.unserializeObject(GcmMessage.class, json);
 
-            if (json.has("actions"))
-                obj.actions = Action.parseActions(json.getJsonArray("actions"));
+            if (json.has("actions")) {
+                if (json.has("actions.primary")) {
+                    obj.primaryActions = Action.parseActions(json.getJsonArray("actions.primary"));
+                }
+                if (json.has("action.secondary")) {
+                    obj.secondaryActions = Action.parseActions(json.getJsonArray("actions.secondary"));
+                }
+            }
 
             return obj;
         } catch (Exception e) {

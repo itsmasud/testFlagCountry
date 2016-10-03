@@ -13,7 +13,6 @@ public class Action {
     private ActionType type;
     private String object;
     private String id;
-    private String[] ids;
 
     public Action() {
     }
@@ -24,13 +23,6 @@ public class Action {
             object = json.getString("object");
             if (json.has("id")) {
                 id = json.getString("id");
-            }
-            if (json.has("ids")) {
-                JsonArray ja = json.getJsonArray("ids");
-                ids = new String[ja.size()];
-                for (int i = 0; i < ja.size(); i++) {
-                    ids[i] = ja.getString(i);
-                }
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -49,9 +41,6 @@ public class Action {
         return id;
     }
 
-    public String[] getIds() {
-        return ids;
-    }
 
     /*-*************************************-*/
     /*-			JSON Implementation			-*/
@@ -64,13 +53,6 @@ public class Action {
             obj.put("object", object);
             if (id != null)
                 obj.put("id", id);
-            if (ids != null && ids.length > 0) {
-                JsonArray ja = new JsonArray();
-                for (String s : ids) {
-                    ja.add(s);
-                }
-                obj.put("ids", ja);
-            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -89,19 +89,19 @@ public class MyGcmListenerService extends GcmListenerService {
     private void handleDefaultMessage(GcmMessage gcmMessage) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
-        builder.setContentTitle(gcmMessage.alert.title);
-        builder.setContentText(gcmMessage.alert.body);
+        builder.setContentTitle(gcmMessage.title);
+        builder.setContentText(gcmMessage.body);
         builder.setVibrate(default_ringtone);
         NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
     }
 
-    private void handleReadyToGo(GcmMessage gcmMessage) {
+    private void buildPushNotification(GcmMessage gcmMessage) {
         // TODO, need to finish implementing this once we figure out how to send the other data
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
-        builder.setContentTitle(gcmMessage.alert.title);
-        builder.setContentText(gcmMessage.alert.body);
+        builder.setContentTitle(gcmMessage.title);
+        builder.setContentText(gcmMessage.body);
 
         // workOrderId
         // confirm or ready?
