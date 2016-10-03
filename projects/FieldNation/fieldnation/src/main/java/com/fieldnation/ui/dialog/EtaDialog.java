@@ -1,6 +1,5 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,7 +9,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.DatePicker;
@@ -32,6 +30,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 
 import java.text.DateFormatSymbols;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -45,11 +44,13 @@ public class EtaDialog extends DialogFragmentBase {
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_DURATION = "STATE_DURATION";
     private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
+    private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
     private static final String STATE_ETA_START_DATE = "STATE_ETA_START_DATE";
     private static final String STATE_ETA_START_DATE_SET = "STATE_ETA_START_DATE_SET";
     private static final String STATE_ETA_START_TIME_SET = "STATE_ETA_START_TIME_SET";
     private static final String STATE_NOTE = "STATE_NOTE";
 
+    public static final String DIALOG_STYLE_ACCEPT = "DIALOG_STYLE_ACCEPT";
     public static final String DIALOG_STYLE_REQUEST = "DIALOG_STYLE_REQUEST";
     public static final String DIALOG_STYLE_CONFIRM = "DIALOG_STYLE_CONFIRM";
     public static final String DIALOG_STYLE_EDIT = "DIALOG_STYLE_EDIT";
@@ -57,6 +58,8 @@ public class EtaDialog extends DialogFragmentBase {
     private final static int MIN_JOB_DURATION = 900000;
     private final static int MIN_EXPIRING_DURATION = 900000;
     private final static int INVALID_NUMBER = -1;
+    private final int ONE_DAY = 86400000;
+
 
     // Ui
     private TextView _titleTextView;
@@ -88,7 +91,7 @@ public class EtaDialog extends DialogFragmentBase {
     private Listener _listener;
     private Workorder _workorder;
     private Schedule _schedule;
-    private boolean _isEtaEnabled = false;
+    private boolean _isEtaSwitchState = false;
     private String _dialogStyle;
     private String _note;
     private boolean _isDateSet = false;
@@ -99,6 +102,7 @@ public class EtaDialog extends DialogFragmentBase {
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationMilliseconds = INVALID_NUMBER;
     private boolean _clear = false;
+    private boolean _hasMidnightSupport = false;
 
 
     /*-*************************************-*/
@@ -126,6 +130,9 @@ public class EtaDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_ETA_START_DATE))
                 _etaMilliseconds = savedInstanceState.getLong(STATE_ETA_START_DATE);
 
+
+            if (savedInstanceState.containsKey(STATE_ETA_SWITCH))
+                _isEtaSwitchState = savedInstanceState.getBoolean(STATE_ETA_SWITCH);
 
             if (savedInstanceState.containsKey(STATE_ETA_START_DATE_SET))
                 _isDateSet = savedInstanceState.getBoolean(STATE_ETA_START_DATE_SET);
@@ -156,6 +163,7 @@ public class EtaDialog extends DialogFragmentBase {
         if (_etaMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_ETA_START_DATE, _etaMilliseconds);
 
+        outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
         outState.putBoolean(STATE_ETA_START_DATE_SET, _isDateSet);
         outState.putBoolean(STATE_ETA_START_TIME_SET, _isTimeSet);
 
@@ -183,7 +191,6 @@ public class EtaDialog extends DialogFragmentBase {
             if (_isDateSet || _isTimeSet)
                 _etaStartDateTimeCalendar.setTimeInMillis(_etaMilliseconds);
         }
-
 
         populateUi();
     }
@@ -217,7 +224,7 @@ public class EtaDialog extends DialogFragmentBase {
         _etaStartTimePicker = new TimePickerDialog(getActivity(), _etaStartTime_onSet, _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY), _etaStartDateTimeCalendar.get(Calendar.MINUTE), false);
 
         _durationDialog = DurationDialog.getInstance(_fm, TAG);
-        _durationDialog.setListener(_duration_listener);
+        _durationDialog.setListener(_jobDuration_listener);
 
         _expiryDialog = DurationDialog.getInstance(_fm, TAG);
         _expiryDialog.setListener(_expiry_listener);
@@ -263,25 +270,31 @@ public class EtaDialog extends DialogFragmentBase {
             _okButton.setText(getString(R.string.btn_submit));
             _titleTextView.setText("Request " + _workorder.getWorkorderId());
             _requestLayout.setVisibility(View.VISIBLE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, false);
+            _switchOnclick_listener.onCheckedChanged(_etaSwitch, _isEtaSwitchState);
             _etaSwitch.setVisibility(View.VISIBLE);
-            _etaSwitch.setChecked(false);
+            _etaSwitch.setChecked(_isEtaSwitchState);
 
         } else if (_dialogStyle.equals(DIALOG_STYLE_CONFIRM)) {
             _okButton.setText(getString(R.string.btn_confirm));
             _titleTextView.setText("Confirm " + _workorder.getWorkorderId());
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
-            _isEtaEnabled = true;
+            _etaLayout.setVisibility(View.VISIBLE);
 
         } else if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
             _okButton.setText(getString(R.string.btn_save));
             _titleTextView.setText(getString(R.string.dialog_eta_title));
             _requestLayout.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, true);
-            _isEtaEnabled = true;
+            _etaLayout.setVisibility(View.VISIBLE);
+
+        } else if (_dialogStyle.equals(DIALOG_STYLE_ACCEPT)) {
+            _okButton.setText(getString(R.string.btn_accept));
+            _titleTextView.setText("Accept " + _workorder.getWorkorderId());
+            _requestLayout.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
+
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -392,7 +405,27 @@ public class EtaDialog extends DialogFragmentBase {
 
     private void populateEtaLayout() {
 
-        if (_dialogStyle.equals(DIALOG_STYLE_REQUEST) || _dialogStyle.equals(DIALOG_STYLE_CONFIRM)) {
+        if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
+
+            final Schedule estimatedSchedule;
+            if ((estimatedSchedule = _workorder.getEstimatedSchedule()) == null) return;
+
+            try {
+                _etaStartDateTimeCalendar = ISO8601.toCalendar(estimatedSchedule.getStartTime());
+                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
+                _etaStartTimeButton.setText(DateUtils.formatTimeLong(ISO8601.toCalendar(estimatedSchedule.getStartTime())));
+                _noteEditText.setText(estimatedSchedule.getNote());
+
+                setDuration(_durationMilliseconds > INVALID_NUMBER ? _durationMilliseconds : MIN_JOB_DURATION);
+
+                if (estimatedSchedule.getType() == Schedule.Type.EXACT) {
+                    _etaStartDateButton.setEnabled(false);
+                    _etaStartTimeButton.setEnabled(false);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        } else {
 
             try {
                 if (_isDateSet)
@@ -413,26 +446,6 @@ public class EtaDialog extends DialogFragmentBase {
                 if (_schedule.getType() == Schedule.Type.EXACT) {
                     _etaStartDateButton.setEnabled(false);
                     _etaStartTimeButton.setEnabled(false);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        } else if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
-
-            final Schedule estimatedSchedule;
-            if ((estimatedSchedule = _workorder.getEstimatedSchedule()) == null) return;
-
-            try {
-                _etaStartDateTimeCalendar = ISO8601.toCalendar(estimatedSchedule.getStartTime());
-                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
-                _etaStartTimeButton.setText(DateUtils.formatTimeLong(ISO8601.toCalendar(estimatedSchedule.getStartTime())));
-                _noteEditText.setText(estimatedSchedule.getNote());
-
-                setDuration(_durationMilliseconds > INVALID_NUMBER ? _durationMilliseconds : MIN_JOB_DURATION);
-
-                if (estimatedSchedule.getType() == Schedule.Type.EXACT) {
-                    _etaStartDateButton.setEnabled(false);
-                    _etaStartDateButton.setEnabled(false);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -469,13 +482,30 @@ public class EtaDialog extends DialogFragmentBase {
                 Calendar etaEndDateTimeCalendar = GregorianCalendar.getInstance();
                 etaEndDateTimeCalendar.setTimeInMillis(_etaStartDateTimeCalendar.getTimeInMillis() + _durationMilliseconds);
 
+                // midnight support
+                if (_schedule.getType() == Schedule.Type.BUSINESS_HOURS &&
+                        scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY) >= scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY)) {
+                    _hasMidnightSupport = true;
+                    scheduleEndDateCalendar.setTimeInMillis(scheduleEndDateCalendar.getTimeInMillis() + ONE_DAY);
+                }
+
                 if ((scheduleStartDateCalendar.getTimeInMillis() > etaEndDateTimeCalendar.getTimeInMillis())
                         || (scheduleEndDateCalendar.getTimeInMillis() < etaEndDateTimeCalendar.getTimeInMillis())) {
-                    _etaStartDateTimeCalendar = scheduleStartDateCalendar;
-                    _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(scheduleStartDateCalendar));
-                    _etaStartTimeButton.setText(DateUtils.formatTimeLong(scheduleStartDateCalendar));
 
-                    ToastClient.toast(App.get(), getString(R.string.toast_choose_date_between_schedule), Toast.LENGTH_LONG);
+                    // midnight support
+                    if (_hasMidnightSupport && DateUtils.isSameDay(scheduleEndDateCalendar, etaEndDateTimeCalendar)) {
+                        return true;
+                    }
+
+                    _etaStartDateTimeCalendar.set(
+                            scheduleStartDateCalendar.get(Calendar.YEAR),
+                            scheduleStartDateCalendar.get(Calendar.MONTH),
+                            scheduleStartDateCalendar.get(Calendar.DAY_OF_MONTH),
+                            _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY),
+                            _etaStartDateTimeCalendar.get(Calendar.MINUTE));
+                    setEtaLayoutWithEtaCalendar();
+
+                    ToastClient.toast(App.get(), getString(R.string.toast_pick_date_between_schedule), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -505,6 +535,7 @@ public class EtaDialog extends DialogFragmentBase {
                 Calendar endTimeCalendar = Calendar.getInstance();
 
                 if (_schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
+
                     startTimeCalendar.set(
                             _etaStartDateTimeCalendar.get(Calendar.YEAR),
                             _etaStartDateTimeCalendar.get(Calendar.MONTH),
@@ -526,6 +557,11 @@ public class EtaDialog extends DialogFragmentBase {
                             scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY),
                             scheduleEndDateCalendar.get(Calendar.MINUTE));
 
+                    // midnight support
+                    if (scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY) >= scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY)) {
+                        _hasMidnightSupport = true;
+                        scheduleEndDateCalendar.setTimeInMillis(scheduleEndDateCalendar.getTimeInMillis() + ONE_DAY);
+                    }
 
                 } else if (_schedule.getType() == Schedule.Type.OPEN_RAGE) {
                     startTimeCalendar.set(
@@ -548,47 +584,72 @@ public class EtaDialog extends DialogFragmentBase {
                             scheduleEndDateCalendar.get(Calendar.DAY_OF_MONTH),
                             scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY),
                             scheduleEndDateCalendar.get(Calendar.MINUTE));
-
                 }
 
+                START_TIME_CHECKING:
+                {
+                    if ((startTimeCalendar.getTimeInMillis() < scheduleStartDateCalendar.getTimeInMillis()) ||
+                            (startTimeCalendar.getTimeInMillis() > _etaStartDateTimeCalendar.getTimeInMillis()
+                                    && DateUtils.returnMinutes(startTimeCalendar.getTimeInMillis()) != DateUtils.returnMinutes(_etaStartDateTimeCalendar.getTimeInMillis()))) {
 
-                if ((startTimeCalendar.getTimeInMillis() < scheduleStartDateCalendar.getTimeInMillis()) ||
-                        (startTimeCalendar.getTimeInMillis() > _etaStartDateTimeCalendar.getTimeInMillis()
-                                && DateUtils.returnMinutes(startTimeCalendar.getTimeInMillis()) != DateUtils.returnMinutes(_etaStartDateTimeCalendar.getTimeInMillis()))) {
+                        if (_hasMidnightSupport && !DateUtils.isSameDay(_etaStartDateTimeCalendar, scheduleStartDateCalendar))
+                            break START_TIME_CHECKING;
 
+                        if (_hasMidnightSupport)
+                            _etaStartDateTimeCalendar.set(
+                                    _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                                    _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                                    _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                                    0,
+                                    0);
+                        else _etaStartDateTimeCalendar.set(
+                                _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                                _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                                _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                                scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY),
+                                scheduleStartDateCalendar.get(Calendar.MINUTE));
+                        setEtaLayoutWithEtaCalendar();
 
-                    _etaStartTimeButton.setText(DateUtils.formatTimeLong(scheduleStartDateCalendar));
+                        ToastClient.toast(App.get(), getString(R.string.toast_pick_time_between_schedule), Toast.LENGTH_LONG);
+                        _handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                _etaStartTimePicker.show();
+                            }
+                        }, 100);
+                        return false;
+                    }
 
-                    _etaStartDateTimeCalendar.set(_etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH),
-                            _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY), scheduleStartDateCalendar.get(Calendar.MINUTE));
-
-                    ToastClient.toast(App.get(), getString(R.string.toast_choose_time_between_schedule), Toast.LENGTH_LONG);
-                    _handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            _etaStartTimePicker.show();
-                        }
-                    }, 100);
-                    return false;
                 }
 
 
                 long endTimeWithDuration = endTimeCalendar.getTimeInMillis() + _durationMilliseconds;
                 endTimeCalendar.setTimeInMillis(endTimeWithDuration);
-
-                if (endTimeWithDuration > scheduleEndDateCalendar.getTimeInMillis()
-                        && endTimeWithDuration > endHourCalendar.getTimeInMillis()) {
-
-//                Log.e(TAG, "end time validation failed");
-//                Log.e(TAG, "endTimeCalendar: " + DateUtils.formatDateTimeLong(endTimeCalendar));
+//                Log.e(TAG, "end time validation starts");
+//                Log.v(TAG, "endTimeCalendar: " + DateUtils.formatDateTimeLong(endTimeCalendar));
 
 
-                    _etaStartTimeButton.setText(DateUtils.formatTimeLong(scheduleStartDateCalendar));
+                if ((endTimeCalendar.getTimeInMillis() > scheduleEndDateCalendar.getTimeInMillis()
+                        && DateUtils.returnMinutes(endTimeCalendar.getTimeInMillis()) != DateUtils.returnMinutes(scheduleEndDateCalendar.getTimeInMillis()))
+                        || (endTimeCalendar.getTimeInMillis() > endHourCalendar.getTimeInMillis()
+                        && DateUtils.returnMinutes(endTimeCalendar.getTimeInMillis()) != DateUtils.returnMinutes(endHourCalendar.getTimeInMillis()))) {
 
-                    _etaStartDateTimeCalendar.set(_etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH),
-                            _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY), scheduleStartDateCalendar.get(Calendar.MINUTE));
+                    if (_hasMidnightSupport)
+                        _etaStartDateTimeCalendar.set(
+                                _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                                _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                                _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                                0,
+                                0);
+                    else _etaStartDateTimeCalendar.set(
+                            _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                            _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                            _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                            scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY),
+                            scheduleStartDateCalendar.get(Calendar.MINUTE));
+                    setEtaLayoutWithEtaCalendar();
 
-                    ToastClient.toast(App.get(), getString(R.string.toast_choose_time_between_schedule), Toast.LENGTH_LONG);
+                    ToastClient.toast(App.get(), getString(R.string.toast_pick_time_between_schedule), Toast.LENGTH_LONG);
                     _handler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
@@ -605,7 +666,26 @@ public class EtaDialog extends DialogFragmentBase {
         return true;
     }
 
+    private void resetEtaLayout() {
+        try {
+            _etaStartDateTimeCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+            _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
+            _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStartDateTimeCalendar));
+            setDuration(MIN_JOB_DURATION);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
 
+    private void setEtaLayoutWithEtaCalendar() {
+        try {
+            _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
+            _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStartDateTimeCalendar));
+            setDuration(MIN_JOB_DURATION);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
 
 
 	/*-*************************-*/
@@ -670,11 +750,18 @@ public class EtaDialog extends DialogFragmentBase {
             if (_listener == null) return;
 
             if (_dialogStyle.equals(DIALOG_STYLE_REQUEST)) {
-                Log.e(TAG, "_isRequest");
-                _listener.onRequest(_workorder, _expiringDurationMilliseconds, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
-            } else if (_isEtaEnabled && isValidDate() && isValidTime()) {
-                Log.e(TAG, "_isConfirm or isEdit");
-                _listener.onConfirmEta(_workorder, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
+                if (_etaSwitch.isChecked()) {
+                    _listener.onRequest(_workorder, _expiringDurationMilliseconds, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
+                } else {
+                    _listener.onRequest(_workorder, _expiringDurationMilliseconds);
+                }
+
+            } else if (isValidDate() && isValidTime()) {
+                if (_dialogStyle.equals(DIALOG_STYLE_EDIT)) {
+                    _listener.onConfirmEta(_workorder, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim(), true);
+                } else {
+                    _listener.onConfirmEta(_workorder, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim(), false);
+                }
             }
 
             dismiss();
@@ -702,7 +789,7 @@ public class EtaDialog extends DialogFragmentBase {
         }
     };
 
-    private final DurationDialog.Listener _duration_listener = new DurationDialog.Listener() {
+    private final DurationDialog.Listener _jobDuration_listener = new DurationDialog.Listener() {
         @Override
         public void onOk(long timeMilliseconds) {
             if (timeMilliseconds < MIN_JOB_DURATION) {
@@ -710,6 +797,8 @@ public class EtaDialog extends DialogFragmentBase {
                 ToastClient.toast(App.get(), getString(R.string.toast_minimum_job_duration), Toast.LENGTH_LONG);
                 return;
             }
+
+            _etaStartDateTimeCalendar.setTimeInMillis(_etaStartDateTimeCalendar.getTimeInMillis() + timeMilliseconds);
 
             if (isValidDate() && isValidTime()) {
                 _durationMilliseconds = timeMilliseconds;
@@ -750,13 +839,13 @@ public class EtaDialog extends DialogFragmentBase {
     private Switch.OnCheckedChangeListener _switchOnclick_listener = new Switch.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//            _isEtaEnabled  = _isEtaSwitchState = isChecked;
+            _isEtaSwitchState = isChecked;
 
             if (isChecked) {
                 _etaLayout.setVisibility(View.VISIBLE);
-                _isEtaEnabled = true;
             } else {
                 _etaLayout.setVisibility(View.GONE);
-                _isEtaEnabled = false;
             }
         }
     };
@@ -764,9 +853,11 @@ public class EtaDialog extends DialogFragmentBase {
 
     public interface Listener {
 
+        void onRequest(Workorder workorder, long expirationMilliseconds);
+
         void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note);
 
-        void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note);
+        void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta);
 
         void onCancel(Workorder workorder);
 

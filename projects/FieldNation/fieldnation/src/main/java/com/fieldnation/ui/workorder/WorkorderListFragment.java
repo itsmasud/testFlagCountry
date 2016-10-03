@@ -753,6 +753,22 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
         @Override
+        public void onRequest(Workorder workorder, long expirationMilliseconds) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
+
+                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
+                setLoading(true);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
         public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
             try {
                 long seconds = -1;
@@ -770,11 +786,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             _adapter.refreshPages();
         }
 
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
             //set loading mode
             try {
-                WorkOrderClient.actionEta(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                WorkorderClient.actionConfirmAssignment(App.get(),
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
                 _adapter.refreshPages();
             } catch (Exception ex) {
                 Log.v(TAG, ex);

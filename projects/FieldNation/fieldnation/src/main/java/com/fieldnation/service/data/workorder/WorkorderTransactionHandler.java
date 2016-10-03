@@ -148,13 +148,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         try {
             JsonObject obj = new JsonObject("action", "pAssignment");
             obj.put("workorderId", workorderId);
             obj.put("startTimeIso8601", startTimeIso8601);
             obj.put("endTimeIso8601", endTimeIso8601);
             obj.put("note", note);
+            obj.put("isEditEta", isEditEta);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -434,7 +435,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, workorderId, "assignment", false);
 
-        ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+        boolean isEditEta = params.getBoolean("isEditEta");
+
+        if (!isEditEta)
+            ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+        else
+            ToastClient.snackbar(context, "Success! Edited ETA is saved.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
 
         return handleDetails(context, transaction, params, resultData);
     }
@@ -908,10 +915,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         String startTimeIso8601 = params.getString("startTimeIso8601");
         String endTimeIso8601 = params.getString("endTimeIso8601");
         String note = params.getString("note");
+        boolean isEditEta = params.getBoolean("isEditEta");
 
         WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
+        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
         ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
