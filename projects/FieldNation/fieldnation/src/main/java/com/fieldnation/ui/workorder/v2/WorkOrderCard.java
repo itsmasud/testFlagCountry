@@ -56,9 +56,9 @@ public class WorkOrderCard extends RelativeLayout {
     private IconFontButton _left2Button;
     private IconFontButton _left3Button;
 
-    private Button _rightWhiteButton;
-    private Button _rightOrangeButton;
-    private Button _rightGreenButton;
+    private Button _action1Button;
+    private Button _action2Button;
+    private Button _action3Button;
 
     // Data
     private boolean _enableCheckbox = false;
@@ -113,14 +113,14 @@ public class WorkOrderCard extends RelativeLayout {
         _left3Button = (IconFontButton) findViewById(R.id.left3_button);
         _left3Button.setOnClickListener(_left3_onClick);
 
-        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
-        _rightWhiteButton.setOnClickListener(_right_onClick);
+        _action1Button = (Button) findViewById(R.id.action1_button);
+        _action1Button.setOnClickListener(_right_onClick);
 
-        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
-        _rightOrangeButton.setOnClickListener(_right_onClick);
+        _action2Button = (Button) findViewById(R.id.action2_button);
+        _action2Button.setOnClickListener(_right_onClick);
 
-        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
-        _rightGreenButton.setOnClickListener(_right_onClick);
+        _action3Button = (Button) findViewById(R.id.action3_button);
+        _action3Button.setOnClickListener(_right_onClick);
 
         setOnClickListener(_this_onClick);
     }
@@ -155,7 +155,7 @@ public class WorkOrderCard extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_rightGreenButton == null)
+        if (_action1Button == null)
             return;
 
         _checkBox.setVisibility(_enableCheckbox ? VISIBLE : GONE);

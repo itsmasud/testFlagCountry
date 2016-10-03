@@ -9,6 +9,17 @@
         android:layout_width="match_parent"
         android:layout_alignParentTop="true" />
 
+    <Button
+        android:id="@+id/reset_button"
+        style="?attr/buttonGreenStyle"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/inbox_textview"
+        android:text="RESET"
+        android:visibility="visible" />
+
+
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/inbox_textview"
         android:layout_width="48dp"
@@ -29,10 +40,10 @@
         android:layout_marginRight="8dp"
         android:gravity="center"
         android:padding="0dp"
-        android:visibility="gone"
         android:text="@string/icon_circle"
         android:textColor="@color/fn_brandcolor"
-        android:textSize="10sp" />
+        android:textSize="10sp"
+        android:visibility="gone" />
 
 
     <com.fieldnation.ui.IconFontTextView

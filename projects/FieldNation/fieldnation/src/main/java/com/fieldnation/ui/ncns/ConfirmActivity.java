@@ -74,6 +74,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _confirmButton.setOnClickListener(_confirmButton_onClick);
         _confirmButton.setEnabled(false);
 
+        findViewById(R.id.skip_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
+
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
         _recyclerView.setCheckboxEnabled(true);
         _recyclerView.setOnChildCheckChangedListener(_recycler_onCheckChanged);
@@ -141,6 +148,11 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean canLaunchConfirmActivity() {
+        return false;
+    }
+
+    @Override
     public void onProfile(Profile profile) {
     }
 
@@ -184,13 +196,13 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
         Intent intent = new Intent(context, ConfirmActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
     }
 
     public static Intent startNewIntent(Context context) {
         Intent intent = new Intent(context, ConfirmActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
 }
