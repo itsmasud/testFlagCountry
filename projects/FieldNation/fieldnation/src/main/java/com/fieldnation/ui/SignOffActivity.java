@@ -190,6 +190,11 @@ public class SignOffActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean canLaunchConfirmActivity() {
+        return false;
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         Stopwatch stopwatch = new Stopwatch();
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);

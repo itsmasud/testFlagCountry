@@ -6,6 +6,24 @@ import com.fieldnation.data.v2.SavedSearchParams;
  * Created by Michael on 8/8/2016.
  */
 public enum WorkOrderListType {
+    CONFIRM_TOMORROW("assigned", SavedSearchParams.ListType.ASSIGNED, new SavedSearchParams.Status[]{
+            SavedSearchParams.Status.TOMORROW}),
+    TODAYS_WORK("assigned", SavedSearchParams.ListType.ASSIGNED, new SavedSearchParams.Status[]{
+//            SavedSearchParams.Status.IN_PROGRESS, SavedSearchParams.Status.ON_HOLD,
+//            SavedSearchParams.Status.ON_HOLD_ACK, SavedSearchParams.Status.NEEDS_READY_TO_GO,
+//            SavedSearchParams.Status.UNCONFIRMED, SavedSearchParams.Status.READY_TO_GO,
+//            SavedSearchParams.Status.CONFIRMED, SavedSearchParams.Status.CONFIRMED_ETA,
+//            SavedSearchParams.Status.CHECKED_IN, SavedSearchParams.Status.CHECKED_OUT,
+            SavedSearchParams.Status.TODAY
+    }),
+    TOMORROWS_WORK("assigned", SavedSearchParams.ListType.ASSIGNED, new SavedSearchParams.Status[]{
+//            SavedSearchParams.Status.IN_PROGRESS, SavedSearchParams.Status.ON_HOLD,
+//            SavedSearchParams.Status.ON_HOLD_ACK, SavedSearchParams.Status.NEEDS_READY_TO_GO,
+//            SavedSearchParams.Status.CONFIRMED, SavedSearchParams.Status.UNCONFIRMED,
+//            SavedSearchParams.Status.CONFIRMED_ETA, SavedSearchParams.Status.READY_TO_GO,
+//            SavedSearchParams.Status.CHECKED_IN, SavedSearchParams.Status.CHECKED_OUT,
+            SavedSearchParams.Status.TOMORROW
+    }),
     ASSIGNED("assigned", SavedSearchParams.ListType.ASSIGNED, new SavedSearchParams.Status[]{
             SavedSearchParams.Status.IN_PROGRESS, SavedSearchParams.Status.ON_HOLD,
             SavedSearchParams.Status.ON_HOLD_ACK, SavedSearchParams.Status.NEEDS_READY_TO_GO,

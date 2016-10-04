@@ -55,8 +55,10 @@ public class SavedSearchParams implements Parcelable {
         CHECKED_OUT("checked_out"),
         PENDING_REVIEW("pending_review"),
         APPROVED("approved"),
-        PAID("paid");
-
+        PAID("paid"),
+        TODAY("today"),
+        TOMORROW("tomorrow");
+        
         private final String _callString;
 
         Status(String callString) {

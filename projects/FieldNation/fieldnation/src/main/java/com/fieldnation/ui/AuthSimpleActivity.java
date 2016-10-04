@@ -17,6 +17,7 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -25,6 +26,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -113,6 +115,20 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _notProviderDialog.setData(getString(R.string.user_not_supported),
                 getString(R.string.buyer_not_supported),
                 getString(R.string.btn_ok), _notProvider_listener);
+
+        if (App.get().needsConfirmation() && canLaunchConfirmActivity()) {
+            launchConfirmActivity();
+        }
+    }
+
+    public boolean canLaunchConfirmActivity() {
+        return true;
+    }
+    
+    private void launchConfirmActivity() {
+        MyGcmListenerService.clearConfirmPush(this);
+        App.get().setNeedsConfirmation(false);
+        ConfirmActivity.startNew(this);
     }
 
     @Override

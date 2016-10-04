@@ -107,6 +107,11 @@ public class SplashActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean canLaunchConfirmActivity() {
+        return false;
+    }
+
+    @Override
     protected void onStop() {
         try {
             if (_globalClient != null && _globalClient.isConnected())

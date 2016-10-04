@@ -230,6 +230,11 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean canLaunchConfirmActivity() {
+        return false;
+    }
+
+    @Override
     protected void onStop() {
         _clear = true;
         super.onStop();

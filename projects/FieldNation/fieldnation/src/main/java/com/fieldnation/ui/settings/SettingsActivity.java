@@ -49,6 +49,11 @@ public class SettingsActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public boolean canLaunchConfirmActivity() {
+        return false;
+    }
+
+    @Override
     public void onProfile(Profile profile) {
     }
 
