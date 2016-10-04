@@ -43,14 +43,22 @@ public class Profile implements Parcelable {
     private Integer _newNotificationCount;
     @Json(name = "phone")
     private String _phone;
+    @Json(name = "phoneExt")
+    private String _phoneExt;
     @Json(name = "photo")
     private Photo _photo;
     @Json(name = "rating")
     private Double _rating;
     @Json(name = "ratingsTotal")
     private Integer _ratingsTotal;
+    @Json(name = "address1")
+    private String _address1;
+    @Json(name = "address2")
+    private String _address2;
     @Json(name = "state")
     private String _state;
+    @Json(name = "zip")
+    private String _zip;
     @Json(name = "tagline")
     private String _tagline;
     @Json(name = "tosRequiredBy")
@@ -136,6 +144,10 @@ public class Profile implements Parcelable {
         return _phone;
     }
 
+    public String getPhoneExt() {
+        return _phoneExt;
+    }
+
     public Photo getPhoto() {
         return _photo;
     }
@@ -148,8 +160,20 @@ public class Profile implements Parcelable {
         return _ratingsTotal;
     }
 
+    public String getAddress1() {
+        return _address1;
+    }
+
+    public String getAddress2() {
+        return _address2;
+    }
+
     public String getState() {
         return _state;
+    }
+
+    public String getZip() {
+        return _zip;
     }
 
     public String getTagline() {
