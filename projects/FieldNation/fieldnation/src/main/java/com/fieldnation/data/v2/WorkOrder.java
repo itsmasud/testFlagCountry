@@ -10,9 +10,6 @@ import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.ISO8601;
-
-import java.util.Comparator;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -79,37 +76,6 @@ public class WorkOrder implements Parcelable {
     public int hashCode() {
         return (int) (long) id;
     }
-
-    public static Comparator<WorkOrder> getTimeComparator() {
-        return _timeComparator;
-    }
-
-    private static final Comparator<WorkOrder> _timeComparator = new Comparator<WorkOrder>() {
-        @Override
-        public int compare(WorkOrder lhs, WorkOrder rhs) {
-            try {
-                long l = 0;
-                if (lhs.getSchedule().getBegin() != null)
-                    l = ISO8601.toUtc(lhs.getSchedule().getBegin());
-
-                long r = 0;
-                if (rhs.getSchedule().getBegin() != null)
-                    r = ISO8601.toUtc(rhs.getSchedule().getBegin());
-
-                if (l < r)
-                    return -1;
-                else if (l > r)
-                    return 1;
-                else
-                    return 0;
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return 0;
-        }
-    };
-
 
     /*-*************************************-*/
     /*-			JSON Implementation			-*/

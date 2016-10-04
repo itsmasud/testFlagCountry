@@ -23,6 +23,7 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
+import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
@@ -200,25 +201,10 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final TimeHeaderAdapter<WorkOrder> _adapter = new TimeHeaderAdapter<WorkOrder>(WorkOrder.class) {
+    private final PagingAdapter<WorkOrder> _adapter = new PagingAdapter<WorkOrder>(WorkOrder.class) {
         @Override
         public void requestPage(int page, boolean allowCache) {
             getPage(page);
-        }
-
-        @Override
-        public Comparator<WorkOrder> getTimeComparator() {
-            return WorkOrder.getTimeComparator();
-        }
-
-        @Override
-        public Calendar getObjectTime(WorkOrder object) {
-            try {
-                return ISO8601.toCalendar(object.getSchedule().getBegin());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return null;
         }
 
         @Override
@@ -228,7 +214,7 @@ public class SearchResultScreen extends RelativeLayout {
             if (_onClickListener != null)
                 card.setOnClickListener(_card_onClick);
 
-            card.enableCheckbox(_checkBoxEnabled);
+            //card.enableCheckbox(_checkBoxEnabled);
             card.setListener(_workOrderCard_listener);
 
             return new WorkOrderHolder(card);
@@ -239,8 +225,8 @@ public class SearchResultScreen extends RelativeLayout {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
             v.setData(object, _location);
-            if (_checkWork.contains(object.getId()))
-                v.setChecked(true);
+//            if (_checkWork.contains(object.getId()))
+//                v.setChecked(true);
         }
     };
 
