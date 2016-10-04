@@ -298,15 +298,18 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns an error/success message
-    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
+    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type, Integer delayInSeconds) {
         if (misc.isEmptyOrNull(explanation)) {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "type=" + type.value);
+                    "type=" + type.value
+                            + (delayInSeconds == null ? "" : "&delay=" + delayInSeconds));
         } else {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "explanation=" + misc.escapeForURL(explanation) + "&type=" + type.value);
+                    "explanation=" + misc.escapeForURL(explanation)
+                            + "&type=" + type.value
+                            + (delayInSeconds == null ? "" : "&delay=" + delayInSeconds));
         }
     }
 

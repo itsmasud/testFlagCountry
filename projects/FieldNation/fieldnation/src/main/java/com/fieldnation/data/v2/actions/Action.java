@@ -106,6 +106,7 @@ public class Action {
         CONFIRM("confirm"),
         READY("ready"),
         VIEW("view"),
+        NEEDS_CONFIRM("needs_confirm"),
         UNKNOWN("unknown");
 
         private String typestring;
