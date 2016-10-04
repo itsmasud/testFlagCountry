@@ -481,15 +481,22 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note));
     }
 
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        context.startService(
+                actionRequestIntent(context, workorderId, expireInSeconds, null, null, null));
+    }
+
     public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         String body = null;
 
-        body = "start_time=" + startTime
-                + "&end_time=" + endTime
+        body = (misc.isEmptyOrNull(startTime) ? "" : "start_time=" + startTime)
+                + (misc.isEmptyOrNull(endTime) ? "" : "&end_time=" + endTime)
                 + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note));
 
         if (expireInSeconds != -1) {
-            body = "&expiration=" + expireInSeconds;
+            if (!misc.isEmptyOrNull(body))
+                body += "&expiration=" + expireInSeconds;
+            else body = "expiration=" + expireInSeconds;
         }
 
         return action(context, workorderId, "POST", "request", null,
@@ -500,17 +507,17 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
 
     // returns work order details
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
-        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note);
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         context.startService(intent);
     }
 
-    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         return action(context, workorderId, "POST", "assignment", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601 + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)),
                 WorkorderTransactionHandler.class,
-                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note));
+                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
     }
 
     public static void actionReady(Context context, long workorderId) {

@@ -1,141 +1,152 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_content"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:layout_above="@+id/footer_view"
-    android:layout_alignParentTop="true">
+    android:layout_height="match_parent">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
-
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            style="?attr/fnToolbarStyle"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:layout_scrollFlags="scroll|enterAlways"
-            app:theme="@style/FieldNation.Material.ToolBar" />
-    </android.support.design.widget.AppBarLayout>
-
-    <android.support.v4.widget.NestedScrollView
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/main_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:animateLayoutChanges="true"
-        android:padding="8dp"
-        android:scrollbarStyle="outsideOverlay"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_above="@+id/footer_view"
+        android:layout_alignParentTop="true">
 
-        <LinearLayout
-            android:id="@+id/container"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:fitsSystemWindows="true"
+            android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
 
-            <ImageView
-                android:id="@+id/company_imageview"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="?attr/fnToolbarStyle"
                 android:layout_width="match_parent"
-                android:layout_height="64dp"
-                android:layout_marginBottom="8dp"
-                android:scaleType="fitStart"
-                android:visibility="gone" />
+                android:layout_height="?attr/actionBarSize"
+                app:layout_scrollFlags="scroll|enterAlways"
+                app:theme="@style/FieldNation.Material.ToolBar" />
+        </android.support.design.widget.AppBarLayout>
 
-            <TextView
-                android:id="@+id/title_textview"
-                style="@style/WorkorderDetail_ProjectTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_phrase" />
-
-            <TextView
-                android:id="@+id/description_textview"
-                style="@style/WorkorderDetail_Field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/placeholder_paragraph" />
-
-            <View
-                android:id="@+id/time_divider"
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent" />
-
-            <TextView
-                android:id="@+id/time_textview"
-                style="@style/WorkorderDetail_FieldTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/time_logged" />
+        <android.support.v4.widget.NestedScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:animateLayoutChanges="true"
+            android:padding="8dp"
+            android:scrollbarStyle="outsideOverlay"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
             <LinearLayout
-                android:id="@+id/time_list"
+                android:id="@+id/container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                android:orientation="vertical">
 
-            <View
-                android:id="@+id/tasks_divider"
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent" />
+                <ImageView
+                    android:id="@+id/company_imageview"
+                    android:layout_width="match_parent"
+                    android:layout_height="64dp"
+                    android:layout_marginBottom="8dp"
+                    android:scaleType="fitStart"
+                    android:visibility="gone" />
 
-            <TextView
-                android:id="@+id/tasks_textview"
-                style="@style/WorkorderDetail_FieldTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/tasks" />
+                <TextView
+                    android:id="@+id/title_textview"
+                    style="@style/WorkorderDetail_ProjectTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/placeholder_phrase" />
 
-            <LinearLayout
-                android:id="@+id/tasks_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+                <TextView
+                    android:id="@+id/description_textview"
+                    style="@style/WorkorderDetail_Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/placeholder_paragraph" />
 
-            <View
-                android:id="@+id/closingnotes_divider"
-                style="@style/WorkorderDetail_Separator"
-                android:layout_width="match_parent" />
+                <View
+                    android:id="@+id/time_divider"
+                    style="@style/WorkorderDetail_Separator"
+                    android:layout_width="match_parent" />
 
-            <TextView
-                android:id="@+id/closingnoteslabel_textview"
-                style="@style/WorkorderDetail_FieldTitle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/closing_notes" />
+                <TextView
+                    android:id="@+id/time_textview"
+                    style="@style/WorkorderDetail_FieldTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/time_logged" />
 
-            <TextView
-                android:id="@+id/closingnotes_textview"
-                style="@style/WorkorderDetail_Field"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/time_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
 
-            <com.fieldnation.ui.SignatureView
-                android:id="@+id/signature_view"
-                android:layout_width="match_parent"
-                android:layout_height="96dp"
-                android:background="@color/fn_clickable_bg" />
+                <View
+                    android:id="@+id/tasks_divider"
+                    style="@style/WorkorderDetail_Separator"
+                    android:layout_width="match_parent" />
 
-            <TextView
-                android:id="@+id/name_textview"
-                style="?attr/tileTextStatusStyle"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/name_cap" />
+                <TextView
+                    android:id="@+id/tasks_textview"
+                    style="@style/WorkorderDetail_FieldTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/tasks" />
 
-            <Button
-                android:id="@+id/done_button"
-                style="?attr/buttonDefaultStyle"
-                android:layout_width="150dp"
-                android:layout_gravity="right"
-                android:layout_marginBottom="8dp"
-                android:layout_marginTop="16dp"
-                android:text="@string/btn_done" />
-        </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+                <LinearLayout
+                    android:id="@+id/tasks_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
 
-</android.support.design.widget.CoordinatorLayout>
+                <View
+                    android:id="@+id/closingnotes_divider"
+                    style="@style/WorkorderDetail_Separator"
+                    android:layout_width="match_parent" />
+
+                <TextView
+                    android:id="@+id/closingnoteslabel_textview"
+                    style="@style/WorkorderDetail_FieldTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/closing_notes" />
+
+                <TextView
+                    android:id="@+id/closingnotes_textview"
+                    style="@style/WorkorderDetail_Field"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+                <com.fieldnation.ui.SignatureView
+                    android:id="@+id/signature_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="96dp"
+                    android:background="@color/fn_clickable_bg" />
+
+                <TextView
+                    android:id="@+id/name_textview"
+                    style="?attr/tileTextStatusStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/name_cap" />
+
+                <Button
+                    android:id="@+id/done_button"
+                    style="?attr/buttonDefaultStyle"
+                    android:layout_width="150dp"
+                    android:layout_gravity="right"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="16dp"
+                    android:text="@string/btn_done" />
+            </LinearLayout>
+        </android.support.v4.widget.NestedScrollView>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

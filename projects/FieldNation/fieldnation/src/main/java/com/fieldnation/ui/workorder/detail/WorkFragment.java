@@ -913,6 +913,23 @@ public class WorkFragment extends WorkorderFragment {
 
     private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
 
+
+        @Override
+        public void onRequest(Workorder workorder, long expirationMilliseconds) {
+            try {
+                long seconds = -1;
+                if (expirationMilliseconds > 0) {
+                    seconds = expirationMilliseconds / 1000;
+                }
+
+                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
+                setLoading(true);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
         @Override
         public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
             try {
@@ -928,10 +945,10 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note) {
+        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
             try {
                 WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
+                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
 
                 setLoading(true);
 
@@ -1295,7 +1312,7 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_ACCEPT);
             }
         }
 
@@ -1800,7 +1817,7 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
             _tempUri = uri;
             _tempFile = null;
             _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));

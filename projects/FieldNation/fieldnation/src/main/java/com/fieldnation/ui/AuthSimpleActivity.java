@@ -13,6 +13,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
@@ -23,7 +24,7 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.ui.dialog.v2.UpdateDialog;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -35,7 +36,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // UI
-    private UpdateDialog _updateDialog;
     private OneButtonDialog _notProviderDialog;
     private TwoButtonDialog _coiWarningDialog;
     private ContactUsDialog _contactUsDialog;
@@ -78,8 +78,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             TAG = UniqueTag.makeTag(TAG_BASE);
         }
 
-        _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
-
         _termsAndConditionsDialog = TermsAndConditionsDialog.getInstance(getSupportFragmentManager(), TAG);
 
         _coiWarningDialog = TwoButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":COI");
@@ -96,6 +94,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public abstract void onFinishCreate(Bundle savedInstanceState);
 
     public abstract int getToolbarId();
+
+    public abstract DialogManager getDialogManager();
 
     @Override
     protected void onResume() {
@@ -189,6 +189,16 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     public abstract void onProfile(Profile profile);
+
+    @Override
+    public void onBackPressed() {
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) {
+            if (dialogManager.onBackPressed())
+                return;
+        }
+        super.onBackPressed();
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -316,11 +326,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            try {
-                _updateDialog.show();
-            } catch (Exception ex) {
-                Log.logException(ex);
-            }
+            UpdateDialog.Controller.show(App.get());
         }
 
         @Override

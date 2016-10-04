@@ -18,6 +18,7 @@ import com.fieldnation.data.workorder.Signature;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.ForLoopRunnable;
@@ -171,6 +172,11 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

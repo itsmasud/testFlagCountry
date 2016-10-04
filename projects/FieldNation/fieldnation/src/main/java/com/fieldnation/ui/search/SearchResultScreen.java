@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -16,6 +17,7 @@ import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
@@ -42,10 +44,12 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Service
     private WorkOrderClient _workOrderClient;
+    private SimpleGps _simpleGps;
 
     // Data
     private SavedSearchParams _searchParams;
     private Location _location;
+    private Listener _listener;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -90,14 +94,23 @@ public class SearchResultScreen extends RelativeLayout {
             }
         });
 
-        SimpleGps.with(App.get()).start(new SimpleGps.Listener() {
-            @Override
-            public void onLocation(Location location) {
-                SimpleGps.with(App.get()).stop();
-                _location = location;
-            }
-        });
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .start(App.get());
     }
+
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(Location location) {
+            _location = location;
+            _simpleGps.stop();
+        }
+
+        @Override
+        public void onFail() {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+    };
 
     @Override
     protected void onDetachedFromWindow() {
@@ -121,6 +134,10 @@ public class SearchResultScreen extends RelativeLayout {
         _searchParams = searchParams;
         _adapter.clear();
         getPage(0);
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -187,7 +204,12 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
-            return new WorkOrderHolder(new WorkOrderCard(parent.getContext()));
+            WorkOrderCard card = new WorkOrderCard(parent.getContext());
+
+            if (_listener != null)
+                card.setOnClickListener(_card_onClick);
+
+            return new WorkOrderHolder(card);
         }
 
         @Override
@@ -197,4 +219,16 @@ public class SearchResultScreen extends RelativeLayout {
             v.setData(object, _location);
         }
     };
+
+    private final View.OnClickListener _card_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    public interface Listener {
+        void onWorkOrderClicked(WorkOrder workOrder);
+    }
 }

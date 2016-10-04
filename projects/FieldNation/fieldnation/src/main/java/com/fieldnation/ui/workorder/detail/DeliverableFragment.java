@@ -702,8 +702,8 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
-            Log.v(TAG, "onDeliveraleCacheEnd");
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
+            Log.v(TAG, "onDeliverableCacheEnd");
 
             _tempUri = uri;
             _tempFile = null;

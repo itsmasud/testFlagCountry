@@ -379,8 +379,8 @@ public class ActionBarTopView extends LinearLayout {
         public void onClick(View v) {
             Tracker.event(App.get(),
                     new Event.Builder()
-                            .category(EventCategory.WORK_ORDER)
                             .action(EventAction.REQUEST)
+                            .category(EventCategory.WORK_ORDER)
                             .property(EventProperty.WORK_ORDER_ID)
                             .label(_workorder.getWorkorderId() + "")
                             .addContext(new SpUIContext.Builder()
