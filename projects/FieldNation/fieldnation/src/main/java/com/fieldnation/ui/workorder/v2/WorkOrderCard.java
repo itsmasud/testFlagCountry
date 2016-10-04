@@ -17,6 +17,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
@@ -48,9 +49,7 @@ public class WorkOrderCard extends RelativeLayout {
     private TextView _time2TextView;
     private TextView _locationTextView;
     private TextView _distanceTextView;
-    private IconFontButton _secondary1Button;
-    private IconFontButton _secondary2Button;
-    private IconFontButton _secondary3Button;
+    private IconFontButton[] _secondaryButtons = new IconFontButton[3];
     private IconFontButton _locationButton;
     private Button _primaryButton;
 
@@ -93,9 +92,9 @@ public class WorkOrderCard extends RelativeLayout {
         _locationTextView = (TextView) findViewById(R.id.location_textview);
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-        _secondary1Button = (IconFontButton) findViewById(R.id.secondary1_button);
-        _secondary2Button = (IconFontButton) findViewById(R.id.secondary2_button);
-        _secondary3Button = (IconFontButton) findViewById(R.id.secondary3_button);
+        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
+        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
+        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
         _locationButton = (IconFontButton) findViewById(R.id.location_button);
         _locationButton.setOnClickListener(_locationButton_onClick);
         _primaryButton = (Button) findViewById(R.id.primary_button);
@@ -126,11 +125,12 @@ public class WorkOrderCard extends RelativeLayout {
             return;
 
         _titleTextView.setText(_workOrder.getTitle());
-        _workTypeTextView.setText(""); // TODO, we don't have work order type data yet
+        _workTypeTextView.setText(_workOrder.getType().toUpperCase());
 
         populateLocation();
         populatePay();
         populateTime();
+        populateButtons();
     }
 
     private void populateTime() {
@@ -275,28 +275,109 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
-    private final View.OnClickListener _right_onClick = new OnClickListener() {
+    private void populateButtons() {
+        // Primary actions
+
+        _primaryButton.setVisibility(GONE);
+        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
+            Action action = _workOrder.getPrimaryActions()[0];
+
+            switch (action.getType()) {
+                case CONFIRM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_confirm_onClick);
+                    _primaryButton.setText("Confirm");
+                    break;
+                case ON_MY_WAY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_onMyWay_onClick);
+                    _primaryButton.setText("On My Way");
+                    break;
+                case READY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_readyToGo_onClick);
+                    _primaryButton.setText("Ready to Go");
+                    break;
+                case REPORT_PROBLEM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_reportProblem_onClick);
+                    _primaryButton.setText("Report Problem");
+                    break;
+                default:
+                    break;
+            }
+        }
+
+
+        _secondaryButtons[0].setVisibility(GONE);
+        _secondaryButtons[1].setVisibility(GONE);
+        _secondaryButtons[2].setVisibility(GONE);
+        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
+            for (int i = 0; i < _workOrder.getPrimaryActions().length && i < _secondaryButtons.length; i++) {
+                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
+            }
+        }
+    }
+
+    private void populateSecondaryButton(IconFontButton button, Action action) {
+        switch (action.getType()) {
+            case PHONE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone);
+                button.setOnClickListener(_phone_onClick);
+                break;
+            case RUNNING_LATE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_stop_watch);
+                button.setOnClickListener(_runningLate_onClick);
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_alerts_solid);
+                button.setOnClickListener(_reportProblem_onClick);
+                break;
+            default:
+                button.setVisibility(GONE);
+                break;
+        }
+    }
+
+    private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left1_onClick = new OnClickListener() {
+    private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left2_onClick = new OnClickListener() {
+    private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left3_onClick = new OnClickListener() {
+    private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _phone_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 

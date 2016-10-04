@@ -17,11 +17,15 @@ import com.fieldnation.fnlog.Log;
 public class WorkOrder implements Parcelable {
     private static final String TAG = "WorkOrder";
 
-    private Action[] actions;
+    private Action[] _primaryActions;
+    private Action[] _secondaryActions;
+
     @Json
     private Long id;
     @Json
     private String title;
+    @Json
+    private String type;
     @Json
     private Org org;
     @Json
@@ -36,16 +40,16 @@ public class WorkOrder implements Parcelable {
     public WorkOrder() {
     }
 
-    public Action[] getActions() {
-        return actions;
-    }
-
     public Long getId() {
         return id;
     }
 
     public String getTitle() {
         return title;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public Org getOrg() {
@@ -72,6 +76,14 @@ public class WorkOrder implements Parcelable {
         return pay;
     }
 
+    public Action[] getPrimaryActions() {
+        return _primaryActions;
+    }
+
+    public Action[] getSecondaryActions() {
+        return _secondaryActions;
+    }
+
     @Override
     public int hashCode() {
         return (int) (long) id;
@@ -85,31 +97,42 @@ public class WorkOrder implements Parcelable {
     }
 
     public static JsonObject toJson(WorkOrder workOrder) {
+        JsonObject obj = null;
         try {
-            JsonObject obj = Serializer.serializeObject(workOrder);
-            if (workOrder.actions != null && workOrder.actions.length > 0) {
-                JsonArray ja = Action.toJsonArray(workOrder.actions);
-                obj.put("actions", ja);
+            obj = Serializer.serializeObject(workOrder);
+
+            if (workOrder._primaryActions != null && workOrder._primaryActions.length > 0) {
+                JsonArray ja = Action.toJsonArray(workOrder._primaryActions);
+                obj.put("actions.primary", ja);
             }
-            return obj;
+
+            if (workOrder._secondaryActions != null && workOrder._secondaryActions.length > 0) {
+                JsonArray ja = Action.toJsonArray(workOrder._secondaryActions);
+                obj.put("actions.secondary", ja);
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return null;
         }
+        return obj;
     }
 
     public static WorkOrder fromJson(JsonObject json) {
+        WorkOrder wo = null;
         try {
-            WorkOrder wo = Unserializer.unserializeObject(WorkOrder.class, json);
+            wo = Unserializer.unserializeObject(WorkOrder.class, json);
 
-            if (json.has("actions"))
-                wo.actions = Action.parseActions(json.getJsonArray("actions"));
-
-            return wo;
+            if (json.has("actions")) {
+                if (json.has("actions.primary")) {
+                    wo._primaryActions = Action.parseActions(json.getJsonArray("actions.primary"));
+                }
+                if (json.has("action.secondary")) {
+                    wo._secondaryActions = Action.parseActions(json.getJsonArray("actions.secondary"));
+                }
+            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return null;
         }
+        return wo;
     }
 
     /*-*********************************************-*/

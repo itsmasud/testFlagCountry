@@ -5,7 +5,7 @@
 
     <TextView
         android:id="@+id/amount_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="2dp"
@@ -48,7 +48,7 @@
         android:layout_below="@id/amount_textview"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:background="@color/fn_brandcolor" />
+        android:background="@color/fn_brandcolor_50" />
 
     <TextView
         android:id="@+id/title_textview"
@@ -119,6 +119,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date_textview"
+        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="8dp"
         android:text="Rancho Santa Margarita, CA" />
@@ -141,11 +142,11 @@
         android:layout_height="36dp"
         android:layout_below="@+id/location_textview"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
         android:minWidth="0dp"
         android:padding="0dp"
         android:text="@string/icon_missing"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary2_button"
@@ -154,12 +155,12 @@
         android:layout_height="36dp"
         android:layout_below="@+id/location_textview"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary1_button"
         android:minWidth="0dp"
         android:padding="0dp"
         android:text="@string/icon_missing"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary3_button"
@@ -168,12 +169,12 @@
         android:layout_height="36dp"
         android:layout_below="@+id/location_textview"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary2_button"
         android:minWidth="0dp"
         android:padding="0dp"
         android:text="@string/icon_missing"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/location_button"
@@ -182,12 +183,12 @@
         android:layout_height="36dp"
         android:layout_below="@+id/location_textview"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="6dp"
+        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary3_button"
         android:minWidth="0dp"
         android:padding="0dp"
         android:text="@string/icon_glyphish_map_pin"
-        android:textSize="16sp" />
+        android:textSize="18sp" />
 
     <Button
         android:id="@+id/primary_button"
