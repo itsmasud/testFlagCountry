@@ -7,6 +7,7 @@ import android.os.Bundle;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.ui.AuthSimpleActivity;
@@ -37,6 +38,11 @@ public class SearchResultsActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override

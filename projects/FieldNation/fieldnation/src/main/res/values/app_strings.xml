@@ -121,8 +121,8 @@
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
-    <string name="toast_choose_date_between_schedule">Please pick a date in between schedule.</string>
-    <string name="toast_choose_time_between_schedule">Please pick a time in between schedule.</string>
+    <string name="toast_pick_date_between_schedule">Please pick a date in between schedule.</string>
+    <string name="toast_pick_time_between_schedule">Please pick a time in between schedule.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
@@ -368,6 +368,7 @@
     <string name="confirm_schedule">Confirm schedule</string>
     <string name="contact_us">Contact Us</string>
     <string name="could_not_download_file">Could not download file</string>
+    <string name="could_not_get_gps_location">Could not get GPS location</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="counter_offer_caps">COUNTER OFFER</string>
     <string name="contacts">CONTACTS</string>

@@ -7,6 +7,7 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.DialogManager;
 
 /**
  * Created by Michael Carver on 1/30/2015.
@@ -40,6 +41,11 @@ public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
     @Override
     public int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     public abstract void loadFragments();

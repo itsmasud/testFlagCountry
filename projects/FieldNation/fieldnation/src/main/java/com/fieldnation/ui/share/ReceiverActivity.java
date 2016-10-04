@@ -15,6 +15,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
@@ -99,6 +100,11 @@ public class ReceiverActivity extends AuthSimpleActivity {
     }
 
     @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
+    }
+
+    @Override
     protected void onStart() {
         super.onStart();
 
@@ -145,6 +151,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _sharedFiles[0] = new SharedFile(fileName, fileUri);
             WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
+        } else {
+            Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 
@@ -169,6 +178,9 @@ public class ReceiverActivity extends AuthSimpleActivity {
                 _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
                 WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
+        } else {
+            Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
+            finish();
         }
     }
 

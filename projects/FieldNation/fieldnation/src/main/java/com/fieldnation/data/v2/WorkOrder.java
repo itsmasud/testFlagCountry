@@ -3,11 +3,13 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.fnlog.Log;
+import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 
 import java.util.Comparator;
@@ -18,6 +20,7 @@ import java.util.Comparator;
 public class WorkOrder implements Parcelable {
     private static final String TAG = "WorkOrder";
 
+    private Action[] actions;
     @Json
     private Long id;
     @Json
@@ -34,6 +37,10 @@ public class WorkOrder implements Parcelable {
     private Pay pay;
 
     public WorkOrder() {
+    }
+
+    public Action[] getActions() {
+        return actions;
     }
 
     public Long getId() {
@@ -113,7 +120,12 @@ public class WorkOrder implements Parcelable {
 
     public static JsonObject toJson(WorkOrder workOrder) {
         try {
-            return Serializer.serializeObject(workOrder);
+            JsonObject obj = Serializer.serializeObject(workOrder);
+            if (workOrder.actions != null && workOrder.actions.length > 0) {
+                JsonArray ja = Action.toJsonArray(workOrder.actions);
+                obj.put("actions", ja);
+            }
+            return obj;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -122,7 +134,12 @@ public class WorkOrder implements Parcelable {
 
     public static WorkOrder fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(WorkOrder.class, json);
+            WorkOrder wo = Unserializer.unserializeObject(WorkOrder.class, json);
+
+            if (json.has("actions"))
+                wo.actions = Action.parseActions(json.getJsonArray("actions"));
+
+            return wo;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -158,74 +175,5 @@ public class WorkOrder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
-    }
-
-
-    /*-*****************************************-*/
-    /*-			Status Implementation			-*/
-    /*-*****************************************-*/
-    public static class Status implements Parcelable {
-        private static final String TAG = "Status";
-
-        @Json
-        private String primary;
-        @Json
-        private String secondary;
-
-        public Status() {
-        }
-
-        public JsonObject toJson() {
-            return toJson(this);
-        }
-
-        public static JsonObject toJson(Status status) {
-            try {
-                return Serializer.serializeObject(status);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
-        }
-
-        public static Status fromJson(JsonObject json) {
-            try {
-                return Unserializer.unserializeObject(Status.class, json);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
-        }
-
-        /*-*********************************************-*/
-        /*-			Parcelable Implementation			-*/
-        /*-*********************************************-*/
-        public static final Parcelable.Creator<Status> CREATOR = new Parcelable.Creator<Status>() {
-
-            @Override
-            public Status createFromParcel(Parcel source) {
-                try {
-                    return Status.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    return null;
-                }
-            }
-
-            @Override
-            public Status[] newArray(int size) {
-                return new Status[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(toJson(), flags);
-        }
     }
 }

@@ -37,7 +37,7 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.data.profile.ProfileService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.ui.dialog.UpdateDialog;
+import com.fieldnation.ui.dialog.v2.UpdateDialog;
 
 /**
  * Provides an authentication UI for the field nation user. This will be called
@@ -56,7 +56,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private Button _signupButton;
     private Button _loginButton;
     private Button _forgotButton;
-    private UpdateDialog _updateDialog;
     private View _stiltView;
     private TextView _versionTextView;
 
@@ -118,8 +117,6 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         _fadeout = AnimationUtils.loadAnimation(this, R.anim.fade_out);
         _fadeout.setAnimationListener(_fadeout_listener);
-
-        _updateDialog = UpdateDialog.getInstance(getSupportFragmentManager(), TAG);
 
         _authcomplete = false;
 
@@ -191,7 +188,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            _updateDialog.show();
+            UpdateDialog.Controller.show(App.get());
         }
     };
 
