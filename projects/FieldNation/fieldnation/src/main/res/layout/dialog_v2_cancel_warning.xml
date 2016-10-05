@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog.v3"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/title_textview"
+            style="?attr/dialogTitleStyle"
+            android:layout_centerHorizontal="true"
+            android:text="Warning!"
+            android:textColor="@color/fn_red"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/body_textview"
+            style="@style/DialogBody.v3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title_textview"
+            android:layout_centerHorizontal="true"
+            android:gravity="center"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            android:text="Canceling this job will lead to terrible, horrible, no good consequences and significant penalties\n(you may even be eaten by a Grue)!" />
+
+        <ImageView
+            android:id="@+id/toc_imageview"
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_alignParentLeft="true"
+            android:layout_below="@+id/body_textview"
+            android:layout_marginBottom="15dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/toc"
+            android:visibility="visible" />
+
+
+        <Button
+            android:id="@+id/review_tos_button"
+            style="?attr/buttonGrayStyle"
+            android:layout_below="@+id/toc_imageview"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginTop="20dp"
+            android:text="@string/btn_review_toc" />
+
+        <Button
+            android:id="@+id/cancelWork_button"
+            style="?attr/buttonFlatStyle"
+            android:layout_width="match_parent"
+            android:layout_below="@id/review_tos_button"
+            android:text="Accept penalty and cancel job" />
+
+        <Button
+            android:id="@+id/accept_button"
+            style="?attr/dialogOkButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/cancelWork_button"
+            android:text="Nevermind, I'll do the work" />
+
+    </RelativeLayout>
+</ScrollView>
