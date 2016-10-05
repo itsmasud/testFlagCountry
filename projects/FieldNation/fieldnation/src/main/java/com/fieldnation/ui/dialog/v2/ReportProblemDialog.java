@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -46,6 +47,8 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
     // Ui
+    private TextView _titleTextView;
+    private ProgressBar _loadingBar;
     private HintSpinner _primarySpinner;
     private HintSpinner _secondarySpinner;
     private TextInputLayout _explanationLayout;
@@ -75,6 +78,8 @@ public class ReportProblemDialog extends SimpleDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_report_problem, container, false);
 
+        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+        _loadingBar = (ProgressBar) v.findViewById(R.id.loadingBar);
         _primarySpinner = (HintSpinner) v.findViewById(R.id.primary_spinner);
         _secondarySpinner = (HintSpinner) v.findViewById(R.id.secondary_spinner);
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
@@ -98,12 +103,36 @@ public class ReportProblemDialog extends SimpleDialog {
 
     @Override
     public void show(Bundle payload, boolean animate) {
+        setLoading(true);
+        _workorder = null;
         _workOrderId = payload.getLong(PARAM_WORKORDER_ID);
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
         WorkorderClient.get(App.get(), _workOrderId, false);
         populateUi();
         super.show(payload, animate);
+    }
+
+    private void setLoading(boolean loading) {
+        if (loading) {
+            _titleTextView.setVisibility(View.GONE);
+            _loadingBar.setVisibility(View.VISIBLE);
+            _primarySpinner.setVisibility(View.GONE);
+            _secondarySpinner.setVisibility(View.GONE);
+            _explanationLayout.setVisibility(View.GONE);
+            _noteTextView.setVisibility(View.GONE);
+            _cancelButton.setVisibility(View.GONE);
+            _okButton.setVisibility(View.GONE);
+        } else {
+            _titleTextView.setVisibility(View.VISIBLE);
+            _loadingBar.setVisibility(View.GONE);
+            _primarySpinner.setVisibility(View.VISIBLE);
+            _secondarySpinner.setVisibility(View.GONE);
+            _explanationLayout.setVisibility(View.VISIBLE);
+            _noteTextView.setVisibility(View.VISIBLE);
+            _cancelButton.setVisibility(View.VISIBLE);
+            _okButton.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -224,6 +253,8 @@ public class ReportProblemDialog extends SimpleDialog {
 
         if (_workorder == null)
             return;
+
+        setLoading(false);
 
         { // put in a block to limit the scope of pList
             ReportProblemType[] pList = ReportProblemListFactory.getPrimaryList(_workorder);

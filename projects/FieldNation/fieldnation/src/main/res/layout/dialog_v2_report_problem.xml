@@ -12,6 +12,15 @@
         android:layout_height="wrap_content"
         android:text="@string/there_is_a_problem" />
 
+    <ProgressBar
+        android:id="@+id/loadingBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="24dp"
+        android:layout_marginTop="24dp"
+        android:indeterminate="true" />
+
     <com.fieldnation.ui.HintSpinner
         android:id="@+id/primary_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
@@ -63,14 +72,14 @@
 
     <Button
         android:id="@+id/cancel_button"
-        style="?attr/dialogCancelButtonStyle"
+        style="@style/DialogButton.v3"
         android:layout_below="@+id/note_textview"
         android:layout_toLeftOf="@+id/ok_button"
         android:text="@string/btn_cancel" />
 
     <Button
         android:id="@+id/ok_button"
-        style="?attr/dialogOkButtonStyle"
+        style="@style/DialogButton.v3"
         android:layout_alignParentRight="true"
         android:layout_below="@id/note_textview"
         android:layout_marginRight="8dp"

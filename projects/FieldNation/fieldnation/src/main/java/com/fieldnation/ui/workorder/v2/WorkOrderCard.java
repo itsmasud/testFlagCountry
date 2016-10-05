@@ -275,34 +275,35 @@ public class WorkOrderCard extends RelativeLayout {
     private void populateButtons() {
         // Primary actions
         _primaryButton.setVisibility(GONE);
-//        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
-        Action action = new Action(Action.ActionType.REPORT_PROBLEM); //_workOrder.getPrimaryActions()[0];
+        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
+            // Action action = new Action(Action.ActionType.REPORT_PROBLEM);
+            Action action = _workOrder.getPrimaryActions()[0];
 
-        switch (action.getType()) {
-            case CONFIRM:
-                _primaryButton.setVisibility(VISIBLE);
-                _primaryButton.setOnClickListener(_confirm_onClick);
-                _primaryButton.setText("Confirm");
-                break;
-            case ON_MY_WAY:
-                _primaryButton.setVisibility(VISIBLE);
-                _primaryButton.setOnClickListener(_onMyWay_onClick);
-                _primaryButton.setText("On My Way");
-                break;
-            case READY:
-                _primaryButton.setVisibility(VISIBLE);
-                _primaryButton.setOnClickListener(_readyToGo_onClick);
-                _primaryButton.setText("Ready to Go");
-                break;
-            case REPORT_PROBLEM:
-                _primaryButton.setVisibility(VISIBLE);
-                _primaryButton.setOnClickListener(_reportProblem_onClick);
-                _primaryButton.setText("Report Problem");
-                break;
-            default:
-                break;
+            switch (action.getType()) {
+                case CONFIRM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_confirm_onClick);
+                    _primaryButton.setText("Confirm");
+                    break;
+                case ON_MY_WAY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_onMyWay_onClick);
+                    _primaryButton.setText("On My Way");
+                    break;
+                case READY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_readyToGo_onClick);
+                    _primaryButton.setText("Ready to Go");
+                    break;
+                case REPORT_PROBLEM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_reportProblem_onClick);
+                    _primaryButton.setText("Report Problem");
+                    break;
+                default:
+                    break;
+            }
         }
-//        }
 
         _secondaryButtons[0].setVisibility(GONE);
         _secondaryButtons[1].setVisibility(GONE);

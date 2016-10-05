@@ -39,7 +39,6 @@
             android:src="@drawable/toc"
             android:visibility="visible" />
 
-
         <Button
             android:id="@+id/review_tos_button"
             style="?attr/buttonGrayStyle"
@@ -51,14 +50,14 @@
 
         <Button
             android:id="@+id/cancelWork_button"
-            style="?attr/buttonFlatStyle"
+            style="@style/DialogButton.v3"
             android:layout_width="match_parent"
             android:layout_below="@id/review_tos_button"
             android:text="Accept penalty and cancel job" />
 
         <Button
             android:id="@+id/accept_button"
-            style="?attr/dialogOkButtonStyle"
+            style="@style/DialogButton.v3"
             android:layout_width="match_parent"
             android:layout_alignParentRight="true"
             android:layout_below="@id/cancelWork_button"
