@@ -304,6 +304,9 @@ public class WorkOrderCard extends RelativeLayout {
                     break;
             }
         }
+        _primaryButton.setVisibility(VISIBLE);
+        _primaryButton.setOnClickListener(_reportProblem_onClick);
+        _primaryButton.setText("Report Problem");
 
         _secondaryButtons[0].setVisibility(GONE);
         _secondaryButtons[1].setVisibility(GONE);
@@ -313,6 +316,9 @@ public class WorkOrderCard extends RelativeLayout {
                 populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
             }
         }
+
+        populateSecondaryButton(_secondaryButtons[0], new Action(Action.ActionType.REPORT_PROBLEM));
+        populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
     }
 
     // other icons
@@ -366,7 +372,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // Todo need an onmyway action
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
         }
     };
 

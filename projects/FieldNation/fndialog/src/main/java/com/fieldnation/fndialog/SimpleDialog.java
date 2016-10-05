@@ -31,6 +31,9 @@ public abstract class SimpleDialog implements Dialog {
     private Animation _fgFadeIn;
     private Animation _fgFadeOut;
 
+    // Listeners
+    private DismissListener _listener;
+
     public SimpleDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -50,6 +53,8 @@ public abstract class SimpleDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
+                if (_listener != null)
+                    _listener.onDismissed(SimpleDialog.this);
             }
         });
 
@@ -109,12 +114,19 @@ public abstract class SimpleDialog implements Dialog {
         } else {
             _child.setVisibility(View.GONE);
             _root.setVisibility(View.GONE);
+            if (_listener != null)
+                _listener.onDismissed(this);
         }
     }
 
     @Override
     public void cancel() {
         dismiss(true);
+    }
+
+    @Override
+    public void setDismissListener(DismissListener listener) {
+        _listener = listener;
     }
 
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {

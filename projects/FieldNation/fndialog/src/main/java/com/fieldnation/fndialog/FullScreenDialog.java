@@ -30,6 +30,9 @@ public abstract class FullScreenDialog implements Dialog {
     private Animation _fgSlideIn;
     private Animation _fgSlideOut;
 
+    // Listener
+    private DismissListener _listener;
+
     public FullScreenDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -48,6 +51,8 @@ public abstract class FullScreenDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
+                if (_listener != null)
+                    _listener.onDismissed(FullScreenDialog.this);
             }
         });
 
@@ -89,7 +94,6 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void onRestoreDialogState(Parcelable savedState) {
-
     }
 
     @Override
@@ -107,7 +111,14 @@ public abstract class FullScreenDialog implements Dialog {
         } else {
             _child.setVisibility(View.GONE);
             _root.setVisibility(View.GONE);
+            if (_listener != null)
+                _listener.onDismissed(this);
         }
+    }
+
+    @Override
+    public void setDismissListener(DismissListener listener) {
+        _listener = listener;
     }
 
     @Override
