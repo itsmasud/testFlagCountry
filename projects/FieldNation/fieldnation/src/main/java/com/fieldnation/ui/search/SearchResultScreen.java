@@ -18,18 +18,14 @@ import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
 import com.fieldnation.ui.worecycler.PagingAdapter;
-import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
 
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -52,8 +48,6 @@ public class SearchResultScreen extends RelativeLayout {
     private SavedSearchParams _searchParams;
     private Location _location;
     private OnClickListener _onClickListener;
-    private OnCheckChangeListener _onCheckChangeListener;
-    private boolean _checkBoxEnabled = false;
 
     // Todo make persistent?
     private Hashtable<Long, WorkOrder> _checkWork = new Hashtable<>();
@@ -148,14 +142,6 @@ public class SearchResultScreen extends RelativeLayout {
         _onClickListener = listener;
     }
 
-    public void setOnChildCheckChangedListener(OnCheckChangeListener listener) {
-        _onCheckChangeListener = listener;
-    }
-
-    public void setCheckboxEnabled(boolean enabled) {
-        _checkBoxEnabled = enabled;
-    }
-
     public Hashtable<Long, WorkOrder> getCheckWorkorders() {
         return _checkWork;
     }
@@ -214,9 +200,6 @@ public class SearchResultScreen extends RelativeLayout {
             if (_onClickListener != null)
                 card.setOnClickListener(_card_onClick);
 
-            //card.enableCheckbox(_checkBoxEnabled);
-            card.setListener(_workOrderCard_listener);
-
             return new WorkOrderHolder(card);
         }
 
@@ -225,22 +208,6 @@ public class SearchResultScreen extends RelativeLayout {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
             v.setData(object, _location);
-//            if (_checkWork.contains(object.getId()))
-//                v.setChecked(true);
-        }
-    };
-
-    private final WorkOrderCard.Listener _workOrderCard_listener = new WorkOrderCard.Listener() {
-        @Override
-        public void onChecked(WorkOrderCard view, WorkOrder workOrder, boolean isChecked) {
-            if (isChecked) {
-                _checkWork.put(workOrder.getId(), workOrder);
-            } else {
-                _checkWork.remove(workOrder.getId());
-            }
-
-            if (_onCheckChangeListener != null)
-                _onCheckChangeListener.onChecked(_checkWork);
         }
     };
 
@@ -254,9 +221,5 @@ public class SearchResultScreen extends RelativeLayout {
 
     public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);
-    }
-
-    public interface OnCheckChangeListener {
-        void onChecked(Hashtable<Long, WorkOrder> workorders);
     }
 }

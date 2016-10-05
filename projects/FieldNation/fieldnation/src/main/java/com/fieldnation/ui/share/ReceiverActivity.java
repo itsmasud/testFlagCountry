@@ -127,11 +127,6 @@ public class ReceiverActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public boolean canLaunchConfirmActivity() {
-        return false;
-    }
-
-    @Override
     protected void onPause() {
         super.onPause();
     }

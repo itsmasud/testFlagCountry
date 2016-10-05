@@ -115,20 +115,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _notProviderDialog.setData(getString(R.string.user_not_supported),
                 getString(R.string.buyer_not_supported),
                 getString(R.string.btn_ok), _notProvider_listener);
-
-        if (App.get().needsConfirmation() && canLaunchConfirmActivity()) {
-            launchConfirmActivity();
-        }
-    }
-
-    public boolean canLaunchConfirmActivity() {
-        return true;
-    }
-    
-    private void launchConfirmActivity() {
-        MyGcmListenerService.clearConfirmPush(this);
-        App.get().setNeedsConfirmation(false);
-        ConfirmActivity.startNew(this);
     }
 
     @Override

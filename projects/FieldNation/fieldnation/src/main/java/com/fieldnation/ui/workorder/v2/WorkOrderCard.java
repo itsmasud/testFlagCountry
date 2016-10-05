@@ -8,7 +8,6 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -53,11 +52,9 @@ public class WorkOrderCard extends RelativeLayout {
     private IconFontButton _locationButton;
     private Button _primaryButton;
 
-
     // Data
     private WorkOrder _workOrder;
     private Location _location;
-    private Listener _listener;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -107,10 +104,6 @@ public class WorkOrderCard extends RelativeLayout {
         _location = location;
 
         populateUi();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     public WorkOrder getWorkOrder() {
@@ -406,15 +399,6 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final CheckBox.OnClickListener _checkbox_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null) {
-//                _listener.onChecked(WorkOrderCard.this, _workOrder, _checkBox.isChecked());
-            }
-        }
-    };
-
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -425,8 +409,4 @@ public class WorkOrderCard extends RelativeLayout {
                     R.anim.activity_slide_out_left);
         }
     };
-
-    public interface Listener {
-        void onChecked(WorkOrderCard view, WorkOrder workorder, boolean isChecked);
-    }
 }
