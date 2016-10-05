@@ -5,37 +5,34 @@
     </item>
 
     <item
-        android:left="@dimen/card_shadow_left"
         android:bottom="@dimen/card_shadow_bottom"
+        android:left="@dimen/card_shadow_left"
         android:right="@dimen/card_shadow_right"
         android:top="@dimen/card_shadow_top">
         <shape>
             <padding
-                android:top="@dimen/card_gradient_padding"
+                android:bottom="@dimen/card_gradient_padding"
                 android:left="@dimen/card_gradient_padding"
                 android:right="@dimen/card_gradient_padding"
-                android:bottom="@dimen/card_gradient_padding" />
+                android:top="@dimen/card_gradient_padding" />
 
             <gradient
                 android:angle="-90"
-                android:startColor="@color/card_gradient_top"
                 android:centerColor="@color/card_gradient_center"
-                android:endColor="@color/card_gradient_bottom" />
-
-            <corners android:radius="@dimen/card_gradient_corner_radius" />
+                android:endColor="@color/card_gradient_bottom"
+                android:startColor="@color/card_gradient_top" />
         </shape>
     </item>
 
 
     <!-- Background -->
     <item
-        android:left="@dimen/card_shadow_left"
         android:bottom="@dimen/card_shadow_bottom"
+        android:left="@dimen/card_shadow_left"
         android:right="@dimen/card_shadow_right"
         android:top="@dimen/card_shadow_top">
         <shape>
             <solid android:color="@color/card_fill" />
-            <corners android:radius="@dimen/card_corner_radius" />
         </shape>
     </item>
 </layer-list>

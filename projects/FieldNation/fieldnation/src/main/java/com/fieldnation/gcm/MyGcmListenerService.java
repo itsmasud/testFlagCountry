@@ -127,16 +127,16 @@ public class MyGcmListenerService extends GcmListenerService {
                                 WorkorderActivity.makeIntentConfirm(this, Long.parseLong(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }
+                    case "tomorrow": {
+                        App.get().setNeedsConfirmation(true);
+                        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                                ConfirmActivity.startNewIntent(this), 0);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                    }
                     default:
                         break;
                 }
                 break;
-            }
-            case NEEDS_CONFIRM: {
-                App.get().setNeedsConfirmation(true);
-                PendingIntent pi = PendingIntent.getActivity(this, 0,
-                        ConfirmActivity.startNewIntent(this), 0);
-                return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
             }
         }
         return null;

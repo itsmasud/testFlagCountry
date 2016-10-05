@@ -32,6 +32,7 @@ public class misc {
     private static final String HEXES = "0123456789ABCDEF";
     private static final NumberFormat _currencyFormat = NumberFormat.getCurrencyInstance();
     private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
+    private static final NumberFormat _maxOneDecimal = new DecimalFormat("#.#");
 
 
     public static Location locationFromCoordinates(double lat, double lon) {
@@ -88,6 +89,28 @@ public class misc {
         return _currencyFormat.format(money);
     }
 
+    public static String toShortCurrency(double money) {
+        StringBuilder sb = new StringBuilder(_currencyFormat.getCurrency().getSymbol());
+
+        // 1 digit- 1.00
+        if (money < 10) {
+            sb.append(_maxTwoDecimal.format(money));
+
+            // 2-3 digits 10, 123
+        } else if (money < 1000) {
+            sb.append((int) money);
+
+            // 4 digits 9.0K
+        } else if (money < 10000) {
+            sb.append(_maxOneDecimal.format(money / 1000)).append("K");
+
+            // 5-6 digits 100K, 10K
+        } else if (money < 1000000) {
+            sb.append((int) (money / 1000)).append("K");
+        }
+
+        return sb.toString();
+    }
 
     public static String toCurrencyTrim(double money) {
         String curr = _currencyFormat.format(money);

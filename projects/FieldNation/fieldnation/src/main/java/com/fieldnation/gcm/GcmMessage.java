@@ -37,8 +37,9 @@ public class GcmMessage implements Parcelable {
     }
 
     public static JsonObject toJson(GcmMessage gcmMessage) {
+        JsonObject obj = null;
         try {
-            JsonObject obj = Serializer.serializeObject(gcmMessage);
+            obj = Serializer.serializeObject(gcmMessage);
 
             if (gcmMessage.primaryActions != null && gcmMessage.primaryActions.length > 0) {
                 JsonArray ja = Action.toJsonArray(gcmMessage.primaryActions);
@@ -49,17 +50,16 @@ public class GcmMessage implements Parcelable {
                 JsonArray ja = Action.toJsonArray(gcmMessage.secondaryActions);
                 obj.put("actions.secondary", ja);
             }
-
-            return obj;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return obj;
     }
 
     public static GcmMessage fromJson(JsonObject json) {
+        GcmMessage obj = null;
         try {
-            GcmMessage obj = Unserializer.unserializeObject(GcmMessage.class, json);
+            obj = Unserializer.unserializeObject(GcmMessage.class, json);
 
             if (json.has("actions")) {
                 if (json.has("actions.primary")) {
@@ -69,12 +69,10 @@ public class GcmMessage implements Parcelable {
                     obj.secondaryActions = Action.parseActions(json.getJsonArray("actions.secondary"));
                 }
             }
-
-            return obj;
         } catch (Exception e) {
             e.printStackTrace();
-            return null;
         }
+        return obj;
     }
 
     /*-*********************************************-*/
