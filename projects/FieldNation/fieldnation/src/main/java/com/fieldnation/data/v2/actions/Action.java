@@ -17,6 +17,10 @@ public class Action {
     public Action() {
     }
 
+    public Action(ActionType type) {
+        this.type = type;
+    }
+
     public Action(JsonObject json) {
         try {
             this.type = ActionType.fromTypeString(json.getString("type"));

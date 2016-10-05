@@ -80,7 +80,7 @@ public class ReportIssueDialog extends SimpleDialog {
     private final View.OnClickListener _reportOther_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO show report problem dialog on work order
+            ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
 
