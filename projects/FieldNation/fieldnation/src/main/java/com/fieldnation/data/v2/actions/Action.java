@@ -20,7 +20,10 @@ public class Action {
     public Action(JsonObject json) {
         try {
             this.type = ActionType.fromTypeString(json.getString("type"));
-            object = json.getString("object");
+
+            if (json.has("object"))
+                object = json.getString("object");
+
             if (json.has("id")) {
                 id = json.getString("id");
             }
@@ -50,9 +53,13 @@ public class Action {
 
         try {
             obj.put("type", this.type.typestring);
-            obj.put("object", object);
+
+            if (object != null)
+                obj.put("object", object);
+
             if (id != null)
                 obj.put("id", id);
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -98,16 +105,18 @@ public class Action {
     }
 
     public enum ActionType {
-        ON_MY_WAY("on_my_way"),
-        REPORT_A_PROBLEM("report_a_problem"),
-        RUNNING_LATE("running_late"),
-        CANCEL("cancel"),
-        RESCHEDULE("reschedule"),
         CONFIRM("confirm"),
+        ON_MY_WAY("on_my_way"),
+        PHONE("phone"),
+        RUNNING_LATE("running_late"),
         READY("ready"),
+        REPORT_PROBLEM("report_problem"),
         VIEW("view"),
-        NEEDS_CONFIRM("needs_confirm"),
         UNKNOWN("unknown");
+
+        //CANCEL("cancel"),
+        //RESCHEDULE("reschedule"),
+
 
         private String typestring;
 

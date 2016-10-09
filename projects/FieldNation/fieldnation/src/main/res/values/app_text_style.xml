@@ -61,6 +61,11 @@
         <item name="android:alpha">0.54</item>
     </style>
 
+    <style name="Text_Caption_Small">
+        <item name="android:textSize">10sp</item>
+        <item name="android:alpha">0.54</item>
+    </style>
+
     <style name="Text_Menu">
         <item name="android:textSize">14sp</item>
         <item name="android:alpha">0.87</item>

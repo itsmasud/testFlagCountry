@@ -82,8 +82,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
         });
 
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
-        _recyclerView.setCheckboxEnabled(true);
-        _recyclerView.setOnChildCheckChangedListener(_recycler_onCheckChanged);
 
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
         _ccw.setAnimationListener(_ccw_animationListener);
@@ -148,11 +146,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public boolean canLaunchConfirmActivity() {
-        return false;
-    }
-
-    @Override
     public void onProfile(Profile profile) {
     }
 
@@ -183,13 +176,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
             NavActivity.startNew(App.get());
             finish();
-        }
-    };
-
-    private final SearchResultScreen.OnCheckChangeListener _recycler_onCheckChanged = new SearchResultScreen.OnCheckChangeListener() {
-        @Override
-        public void onChecked(Hashtable<Long, WorkOrder> checks) {
-            _confirmButton.setEnabled(checks.size() > 0);
         }
     };
 

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
@@ -18,9 +19,11 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
 
 /**
@@ -93,6 +96,16 @@ public class NavActivity extends AuthSimpleActivity {
 
         _recyclerView.startSearch(_currentSearch);
         NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+
+        if (App.get().needsConfirmation()) {
+            launchConfirmActivity();
+        }
+    }
+
+    private void launchConfirmActivity() {
+        MyGcmListenerService.clearConfirmPush(this);
+        App.get().setNeedsConfirmation(false);
+        ConfirmActivity.startNew(this);
     }
 
     @Override

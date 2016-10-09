@@ -210,11 +210,6 @@ public class SignatureDisplayActivity extends AuthSimpleActivity {
     }
 
     @Override
-    public boolean canLaunchConfirmActivity() {
-        return false;
-    }
-
-    @Override
     protected void onStop() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
