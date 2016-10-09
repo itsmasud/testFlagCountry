@@ -584,5 +584,11 @@ public class DateUtils {
         return millisenonds / 60000;
     }
 
+    public static Calendar ceilUptoMinutes(Calendar calendar){
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar;
+    }
+
 
 }
