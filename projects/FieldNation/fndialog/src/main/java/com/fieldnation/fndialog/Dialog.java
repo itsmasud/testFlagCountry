@@ -78,7 +78,6 @@ public interface Dialog {
      */
     void cancel();
 
-
     void setDismissListener(DismissListener listener);
 
     interface DismissListener {

@@ -123,6 +123,6 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void cancel() {
-        dismiss(true);
+
     }
 }

@@ -121,7 +121,6 @@ public abstract class SimpleDialog implements Dialog {
 
     @Override
     public void cancel() {
-        dismiss(true);
     }
 
     @Override
@@ -133,7 +132,7 @@ public abstract class SimpleDialog implements Dialog {
         @Override
         public void onClick(View v) {
             if (isCancelable())
-                cancel();
+                dismiss(true);
         }
     };
 }

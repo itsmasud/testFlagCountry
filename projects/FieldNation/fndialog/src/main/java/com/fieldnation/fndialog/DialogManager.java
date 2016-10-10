@@ -61,7 +61,7 @@ public class DialogManager extends FrameLayout implements Constants {
         if (_dialogStack.size() > 0) {
             Bundle[] bundles = new Bundle[_dialogStack.size()];
             for (int i = 0; i < _dialogStack.size(); i++) {
-                bundles[i] = _dialogStack.get(i).saveState();
+                bundles[_dialogStack.size() - i - 1] = _dialogStack.get(i).saveState();
             }
             savedInstance.putParcelableArray("dialogs", bundles);
         }
@@ -84,26 +84,62 @@ public class DialogManager extends FrameLayout implements Constants {
                 ClassLoader classLoader = bundle.getClassLoader();
                 Bundle params = bundle.getBundle("params");
 
-                DialogHolder holder = getDialogHolder(className, classLoader);
+                DialogHolder holder = makeDialogHolder(className, classLoader);
                 if (holder != null) {
                     holder.params = params;
                     holder.savedState = dialogSavedState;
+                    push(holder);
                 }
-            }
-
-            if (_dialogStack.size() > 0) {
-                showDialog(_dialogStack.get(_dialogStack.size() - 1));
             }
         }
     }
 
-    private void showDialog(DialogHolder dialogHolder) {
-        dialogHolder.dialog.show(dialogHolder.params, false);
+    // adds a new dialog to the stack
+    private void push(DialogHolder dialogHolder) {
+        // add the new dialog to the stack
+        _dialogStack.add(0, dialogHolder);
+        // add it to the container
+        addView(dialogHolder.dialog.getView());
+        dialogHolder.dialog.onAdded();
+        // call show
+        dialogHolder.dialog.show(dialogHolder.params, true);
+        // call restoreDialogState
         if (dialogHolder.savedState != null)
             dialogHolder.dialog.onRestoreDialogState(dialogHolder.savedState);
+    }
 
-        dialogHolder.dialog.setDismissListener(_dismissListener);
-        _dialogStack.add(dialogHolder);
+    // starts the pop process
+    private void pop() {
+        if (_dialogStack.size() > 0) {
+            // remove current view from the stack
+            DialogHolder dh = _dialogStack.get(0);
+            // remove from the container
+            dh.dialog.dismiss(true);
+        }
+
+    }
+
+    private void remove(Dialog dialog) {
+        // find the holder
+        DialogHolder holder = null;
+        for (int i = 0; i < _dialogStack.size(); i++) {
+            if (_dialogStack.get(i).dialog.equals(dialog)) {
+                holder = _dialogStack.get(i);
+                _dialogStack.remove(i);
+                break;
+            }
+        }
+
+        // remove the view
+        if (holder != null) {
+            removeView(holder.dialog.getView());
+        }
+
+        // find the top view
+        if (_dialogStack.size() > 0) {
+            DialogHolder dh = _dialogStack.get(0);
+            dh.dialog.show(dh.params, false);
+        }
     }
 
     /**
@@ -113,14 +149,10 @@ public class DialogManager extends FrameLayout implements Constants {
      */
     public boolean onBackPressed() {
         if (_dialogStack.size() > 0) {
-            DialogHolder dh = _dialogStack.get(_dialogStack.size() - 1);
+            DialogHolder dh = _dialogStack.get(0);
             if (dh.dialog.isCancelable() && dh.dialog.getView().getVisibility() == VISIBLE) {
                 dh.dialog.cancel();
-                _dialogStack.remove(_dialogStack.size() - 1);
-                // TODO need to remove the view from the stack
-                if (_dialogStack.size() > 0) {
-                    showDialog(_dialogStack.get(_dialogStack.size() - 1));
-                }
+                pop();
                 return true;
             }
         }
@@ -137,7 +169,7 @@ public class DialogManager extends FrameLayout implements Constants {
         _dialogReceiver.connect(ContextProvider.get());
     }
 
-    private DialogHolder getDialogHolder(String className, ClassLoader classLoader) {
+    private DialogHolder makeDialogHolder(String className, ClassLoader classLoader) {
         try {
             Class<?> clazz = classLoader.loadClass(className);
 
@@ -147,10 +179,8 @@ public class DialogManager extends FrameLayout implements Constants {
             }
 
             Dialog dialog = (Dialog) object;
-            addView(dialog.getView());
+            dialog.setDismissListener(_dismissListener);
             dialog.getView().setVisibility(GONE);
-            dialog.onAdded();
-
             DialogHolder holder = new DialogHolder(dialog);
 
             return holder;
@@ -177,11 +207,11 @@ public class DialogManager extends FrameLayout implements Constants {
         @Override
         public void onShowDialog(String className, ClassLoader classLoader, Bundle params) {
             try {
-                DialogHolder holder = getDialogHolder(className, classLoader);
+                DialogHolder holder = makeDialogHolder(className, classLoader);
 
                 if (holder != null) {
                     holder.params = params;
-                    showDialog(holder);
+                    push(holder);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -199,13 +229,7 @@ public class DialogManager extends FrameLayout implements Constants {
     private final Dialog.DismissListener _dismissListener = new Dialog.DismissListener() {
         @Override
         public void onDismissed(Dialog dialog) {
-            for (int i = 0; i < _dialogStack.size(); i++) {
-                DialogHolder holder = _dialogStack.get(i);
-                if (holder.dialog == dialog) {
-                    _dialogStack.remove(i);
-                    removeView(holder.dialog.getView());
-                }
-            }
+            remove(dialog);
         }
     };
 
