@@ -284,22 +284,22 @@ public class WorkOrderCard extends RelativeLayout {
                 case CONFIRM:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_confirm_onClick);
-                    _primaryButton.setText("Confirm");
+                    _primaryButton.setText(R.string.btn_confirm);
                     break;
                 case ON_MY_WAY:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_onMyWay_onClick);
-                    _primaryButton.setText("On My Way");
+                    _primaryButton.setText(R.string.btn_on_my_way);
                     break;
                 case READY:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_readyToGo_onClick);
-                    _primaryButton.setText("Ready to Go");
+                    _primaryButton.setText(R.string.btn_ready_to_go);
                     break;
                 case REPORT_PROBLEM:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_reportProblem_onClick);
-                    _primaryButton.setText("Report Problem");
+                    _primaryButton.setText(R.string.btn_report_problem);
                     break;
                 default:
                     break;

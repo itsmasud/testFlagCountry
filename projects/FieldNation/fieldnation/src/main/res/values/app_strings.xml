@@ -81,6 +81,7 @@
     <string name="btn_not_now">NOT NOW</string>
     <string name="btn_ok">OK</string>
     <string name="btn_on_hold">ON HOLD</string>
+    <string name="btn_on_my_way">ON MY WAY</string>
     <string name="btn_payments">PAYMENTS</string>
     <string name="btn_read_less">READ LESS</string>
     <string name="btn_read_more">READ MORE</string>

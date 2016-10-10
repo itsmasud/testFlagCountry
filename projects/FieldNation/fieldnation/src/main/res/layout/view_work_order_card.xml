@@ -168,6 +168,7 @@
         android:layout_below="@+id/location_textview"
         android:layout_marginBottom="8dp"
         android:layout_marginRight="8dp"
+        android:minWidth="130dp"
         android:text="@string/placeholder_phrase" />
 
 </RelativeLayout>
