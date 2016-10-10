@@ -10,7 +10,10 @@ import android.widget.Button;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
@@ -18,6 +21,8 @@ import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
+
+import java.util.List;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -53,6 +58,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         _doneButton.setOnClickListener(_doneButton_onClick);
 
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
+        _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
@@ -112,6 +118,30 @@ public class ConfirmActivity extends AuthSimpleActivity {
     public void onBackPressed() {
         // do nothing, you're stuck here.... muhahahah
     }
+
+    private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
+        @Override
+        public void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders) {
+            _doneButton.setVisibility(View.VISIBLE);
+
+            if (envelope == null || envelope.getTotal() == 0) {
+                _doneButton.setVisibility(View.VISIBLE);
+                return;
+            }
+
+            for (WorkOrder wo : workOrders) {
+                Action[] actions = wo.getPrimaryActions();
+                if (actions != null) {
+                    for (Action a : actions) {
+                        if (a.getType() == Action.ActionType.CONFIRM) {
+                            _doneButton.setVisibility(View.GONE);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    };
 
     private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
         @Override

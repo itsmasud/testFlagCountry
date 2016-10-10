@@ -49,6 +49,7 @@ public class SearchResultScreen extends RelativeLayout {
     private SavedSearchParams _searchParams;
     private Location _location;
     private OnClickListener _onClickListener;
+    private OnWorkOrderListReceivedListener _onListReceivedListener;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -144,6 +145,10 @@ public class SearchResultScreen extends RelativeLayout {
         _onClickListener = listener;
     }
 
+    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
+        _onListReceivedListener = listener;
+    }
+
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
@@ -161,6 +166,9 @@ public class SearchResultScreen extends RelativeLayout {
         public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
             if (!_searchParams.toKey().equals(searchParams.toKey()))
                 return;
+
+            if (_onListReceivedListener != null)
+                _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
 
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
@@ -232,5 +240,9 @@ public class SearchResultScreen extends RelativeLayout {
 
     public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);
+    }
+
+    public interface OnWorkOrderListReceivedListener {
+        void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders);
     }
 }

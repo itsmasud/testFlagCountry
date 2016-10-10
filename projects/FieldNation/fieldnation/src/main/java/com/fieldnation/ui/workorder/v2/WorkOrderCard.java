@@ -308,12 +308,12 @@ public class WorkOrderCard extends RelativeLayout {
         _secondaryButtons[1].setVisibility(GONE);
         _secondaryButtons[2].setVisibility(GONE);
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            for (int i = 0; i < _workOrder.getPrimaryActions().length && i < _secondaryButtons.length; i++) {
+            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
                 populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
             }
         }
-//        populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
-        populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
+        //populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
+        //populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
     }
 
     // other icons
