@@ -10,7 +10,8 @@ import android.widget.FrameLayout;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 
-import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael on 9/6/2016.
@@ -26,8 +27,7 @@ public class DialogManager extends FrameLayout implements Constants {
     private Server _dialogReceiver;
 
     // Stores the instantiated dialogs
-    private DialogHolder _lastDialog = null;
-    private Hashtable<String, DialogHolder> _dialogs = new Hashtable<>();
+    private List<DialogHolder> _dialogStack = new LinkedList<>();
 
     public DialogManager(Context context) {
         super(context);
@@ -58,26 +58,14 @@ public class DialogManager extends FrameLayout implements Constants {
 
         Bundle savedInstance = new Bundle();
         savedInstance.putParcelable("super", super.onSaveInstanceState());
-        if (_lastDialog != null && _lastDialog.dialog.getView().getVisibility() == VISIBLE)
-            savedInstance.putBundle("lastDialog", _lastDialog.saveState());
-
-        return savedInstance;
-    }
-
-    /**
-     * Should be called tby the activity that owns this view
-     *
-     * @return true if the button event was handled, false if not
-     */
-    public boolean onBackPressed() {
-        if (_lastDialog != null) {
-            if (_lastDialog.dialog.isCancelable() && _lastDialog.dialog.getView().getVisibility() == VISIBLE) {
-                _lastDialog.dialog.cancel();
-                return true;
+        if (_dialogStack.size() > 0) {
+            Bundle[] bundles = new Bundle[_dialogStack.size()];
+            for (int i = 0; i < _dialogStack.size(); i++) {
+                bundles[_dialogStack.size() - i - 1] = _dialogStack.get(i).saveState();
             }
+            savedInstance.putParcelableArray("dialogs", bundles);
         }
-
-        return false;
+        return savedInstance;
     }
 
     @Override
@@ -86,22 +74,89 @@ public class DialogManager extends FrameLayout implements Constants {
         Bundle savedInstance = (Bundle) state;
         super.onRestoreInstanceState(savedInstance.getParcelable("super"));
 
-        if (savedInstance.containsKey("lastDialog")) {
-            Bundle lastDialogState = savedInstance.getBundle("lastDialog");
-            Parcelable dialogSavedState = lastDialogState.getParcelable("savedState");
-            String className = lastDialogState.getString("className");
-            ClassLoader classLoader = lastDialogState.getClassLoader();
-            Bundle params = lastDialogState.getBundle("params");
+        if (savedInstance.containsKey("dialogs")) {
+            Parcelable[] bundles = savedInstance.getParcelableArray("dialogs");
 
-            DialogHolder holder = getDialogHolder(className, classLoader);
-            if (holder != null) {
-                holder.params = params;
-                _lastDialog = holder;
-                holder.dialog.show(params, false);
-                if (dialogSavedState != null)
-                    holder.dialog.onRestoreDialogState(dialogSavedState);
+            for (int i = 0; i < bundles.length; i++) {
+                Bundle bundle = (Bundle) bundles[i];
+                Parcelable dialogSavedState = bundle.getParcelable("savedState");
+                String className = bundle.getString("className");
+                ClassLoader classLoader = bundle.getClassLoader();
+                Bundle params = bundle.getBundle("params");
+
+                DialogHolder holder = makeDialogHolder(className, classLoader);
+                if (holder != null) {
+                    holder.params = params;
+                    holder.savedState = dialogSavedState;
+                    push(holder);
+                }
             }
         }
+    }
+
+    // adds a new dialog to the stack
+    private void push(DialogHolder dialogHolder) {
+        // add the new dialog to the stack
+        _dialogStack.add(0, dialogHolder);
+        // add it to the container
+        addView(dialogHolder.dialog.getView());
+        dialogHolder.dialog.onAdded();
+        // call show
+        dialogHolder.dialog.show(dialogHolder.params, true);
+        // call restoreDialogState
+        if (dialogHolder.savedState != null)
+            dialogHolder.dialog.onRestoreDialogState(dialogHolder.savedState);
+    }
+
+    // starts the pop process
+    private void pop() {
+        if (_dialogStack.size() > 0) {
+            // remove current view from the stack
+            DialogHolder dh = _dialogStack.get(0);
+            // remove from the container
+            dh.dialog.dismiss(true);
+        }
+
+    }
+
+    private void remove(Dialog dialog) {
+        // find the holder
+        DialogHolder holder = null;
+        for (int i = 0; i < _dialogStack.size(); i++) {
+            if (_dialogStack.get(i).dialog.equals(dialog)) {
+                holder = _dialogStack.get(i);
+                _dialogStack.remove(i);
+                break;
+            }
+        }
+
+        // remove the view
+        if (holder != null) {
+            removeView(holder.dialog.getView());
+        }
+
+        // find the top view
+        if (_dialogStack.size() > 0) {
+            DialogHolder dh = _dialogStack.get(0);
+            dh.dialog.show(dh.params, false);
+        }
+    }
+
+    /**
+     * Should be called tby the activity that owns this view
+     *
+     * @return true if the button event was handled, false if not
+     */
+    public boolean onBackPressed() {
+        if (_dialogStack.size() > 0) {
+            DialogHolder dh = _dialogStack.get(0);
+            if (dh.dialog.isCancelable() && dh.dialog.getView().getVisibility() == VISIBLE) {
+                dh.dialog.cancel();
+                pop();
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -114,14 +169,9 @@ public class DialogManager extends FrameLayout implements Constants {
         _dialogReceiver.connect(ContextProvider.get());
     }
 
-    private DialogHolder getDialogHolder(String className, ClassLoader classLoader) {
+    private DialogHolder makeDialogHolder(String className, ClassLoader classLoader) {
         try {
             Class<?> clazz = classLoader.loadClass(className);
-
-            // check if we have it already, if so, update the params, and return
-            if (_dialogs.containsKey(className)) {
-                return _dialogs.get(className);
-            }
 
             Object object = clazz.getConstructor(Context.class, ViewGroup.class).newInstance(getContext(), this);
             if (!(object instanceof Dialog)) {
@@ -129,12 +179,9 @@ public class DialogManager extends FrameLayout implements Constants {
             }
 
             Dialog dialog = (Dialog) object;
-            addView(dialog.getView());
+            dialog.setDismissListener(_dismissListener);
             dialog.getView().setVisibility(GONE);
-            dialog.onAdded();
-
             DialogHolder holder = new DialogHolder(dialog);
-            _dialogs.put(className, holder);
 
             return holder;
         } catch (Exception ex) {
@@ -160,12 +207,11 @@ public class DialogManager extends FrameLayout implements Constants {
         @Override
         public void onShowDialog(String className, ClassLoader classLoader, Bundle params) {
             try {
-                DialogHolder holder = getDialogHolder(className, classLoader);
+                DialogHolder holder = makeDialogHolder(className, classLoader);
 
                 if (holder != null) {
-                    holder.dialog.show(params, true);
                     holder.params = params;
-                    _lastDialog = holder;
+                    push(holder);
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
@@ -174,15 +220,24 @@ public class DialogManager extends FrameLayout implements Constants {
 
         @Override
         public void onDismissDialog(String className) {
-            if (_dialogs.containsKey(className)) {
-                _dialogs.get(className).dialog.dismiss(true);
-            }
+//            if (_dialogs.containsKey(className)) {
+//                _dialogs.get(className).dialog.dismiss(true);
+//            }
+        }
+    };
+
+    private final Dialog.DismissListener _dismissListener = new Dialog.DismissListener() {
+        @Override
+        public void onDismissed(Dialog dialog) {
+            remove(dialog);
         }
     };
 
     private static class DialogHolder {
         public Dialog dialog;
         public Bundle params;
+
+        public Parcelable savedState;
 
         DialogHolder(Dialog dialog) {
             this.dialog = dialog;

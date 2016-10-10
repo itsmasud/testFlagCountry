@@ -77,4 +77,10 @@ public interface Dialog {
      * Called when the dialog is canceled. Usually triggered by the back button.
      */
     void cancel();
+
+    void setDismissListener(DismissListener listener);
+
+    interface DismissListener {
+        void onDismissed(Dialog dialog);
+    }
 }
