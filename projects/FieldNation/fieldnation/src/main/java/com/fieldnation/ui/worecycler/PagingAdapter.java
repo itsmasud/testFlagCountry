@@ -64,19 +64,22 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         }
 
         List<T> newList = new LinkedList<>();
-        for (int i = 0; i < list.size(); i++) {
-            ids.add(list.get(i).hashCode());
-            newList.add(list.get(i));
-        }
-
         for (int i = 0; i < _objects.size(); i++) {
             T object = _objects.get(i);
-
             if (!ids.contains(object.hashCode())) {
                 ids.add(object.hashCode());
                 newList.add(object);
             }
         }
+
+        for (int i = 0; i < list.size(); i++) {
+            T object = list.get(i);
+            if (!ids.contains(object.hashCode())) {
+                ids.add(object.hashCode());
+                newList.add(object);
+            }
+        }
+
         _objects = newList;
 
         rebuildList();

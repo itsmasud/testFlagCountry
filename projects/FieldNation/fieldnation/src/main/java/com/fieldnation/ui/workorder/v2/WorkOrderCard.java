@@ -275,7 +275,9 @@ public class WorkOrderCard extends RelativeLayout {
     private void populateButtons() {
         // Primary actions
         _primaryButton.setVisibility(GONE);
-        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
+        if (_workOrder.getPrimaryActions() != null
+                && _workOrder.getPrimaryActions().length > 0
+                && _workOrder.getPrimaryActions()[0] != null) {
             Action action = _workOrder.getPrimaryActions()[0];
 
             switch (action.getType()) {
@@ -395,7 +397,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _messageBuyer_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO bring to messages tab of wo details?
+            WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
         }
     };
 
