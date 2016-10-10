@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/Dialog.v3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/DialogTitle.v3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Running Late" />
+
+    <TextView
+        android:id="@+id/body_textview"
+        style="?attr/dialogBodyStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/title_textview"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="" />
+
+    <Button
+        android:id="@+id/time1_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/body_textview"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="5 minutes" />
+
+    <Button
+        android:id="@+id/time2_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/time1_button"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="10 minutes" />
+
+    <Button
+        android:id="@+id/time3_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/time2_button"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="15 minutes" />
+
+    <Button
+        android:id="@+id/other_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/time3_button"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="Other"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/call_button"
+        style="?attr/buttonWhiteStyle"
+        android:layout_width="match_parent"
+        android:layout_below="@+id/other_button"
+        android:layout_marginLeft="24dp"
+        android:layout_marginRight="24dp"
+        android:text="Call Buyer"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/cancel_button"
+        style="@style/DialogButton.v3"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/call_button"
+        android:layout_marginRight="8dp"
+        android:text="@string/btn_cancel" />
+
+</RelativeLayout>

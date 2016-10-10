@@ -187,7 +187,7 @@
         android:layout_toRightOf="@id/secondary3_button"
         android:minWidth="0dp"
         android:padding="0dp"
-        android:text="@string/icon_glyphish_map_pin"
+        android:text="@string/icon_map_location_solid"
         android:textSize="18sp" />
 
     <Button

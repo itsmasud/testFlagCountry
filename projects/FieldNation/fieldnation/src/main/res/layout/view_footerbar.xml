@@ -17,7 +17,7 @@
         android:layout_marginRight="8dp"
         android:layout_toLeftOf="@+id/inbox_textview"
         android:text="RESET"
-        android:visibility="gone" />
+        android:visibility="visible" />
 
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/inbox_textview"
