@@ -121,8 +121,7 @@
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
-    <string name="toast_pick_date_between_schedule">Please pick a date in between schedule.</string>
-    <string name="toast_pick_time_between_schedule">Please pick a time in between schedule.</string>
+    <string name="toast_pick_date_time_between_schedule">Please pick date and time in between schedule.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
