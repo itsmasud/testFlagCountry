@@ -62,6 +62,13 @@ public class FooterBarView extends RelativeLayout {
 
         _unreadTextView = (IconFontTextView) findViewById(R.id.unread_textview);
 
+        findViewById(R.id.reset_button).setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                App.get().setNeedsConfirmation(true);
+            }
+        });
+
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(App.get());
 

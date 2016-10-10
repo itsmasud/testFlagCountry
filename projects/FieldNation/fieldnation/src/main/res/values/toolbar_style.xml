@@ -16,4 +16,11 @@
     <style name="toolbarTabListContainerStyle">
         <item name="android:layout_height">@dimen/toolbarTabHeight</item>
     </style>
+
+    <style name="toolbarConfirmStyle">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/toolbarHeight</item>
+        <item name="android:background">#FF0000FF</item>
+        <item name="android:textSize">12sp</item>
+    </style>
 </resources>

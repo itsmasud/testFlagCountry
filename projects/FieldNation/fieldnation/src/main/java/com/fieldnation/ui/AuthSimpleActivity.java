@@ -17,6 +17,7 @@ import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -26,6 +27,7 @@ import com.fieldnation.ui.dialog.ProfileInformationDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 
 /**
  * Created by Michael on 8/19/2016.

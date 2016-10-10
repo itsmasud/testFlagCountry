@@ -43,6 +43,10 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
+            android:name=".ui.ncns.ConfirmActivity"
+            android:exported="false"
+            android:process=":frontside" />
+        <activity
             android:name=".ui.search.SearchResultsActivity"
             android:exported="false"
             android:process=":frontside" />

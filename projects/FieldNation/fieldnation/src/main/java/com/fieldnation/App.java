@@ -75,6 +75,7 @@ public class App extends Application {
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
+    public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
 
     private static App _context;
 
@@ -208,6 +209,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
+
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
@@ -445,6 +447,18 @@ public class App extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
         edit.apply();
+    }
+
+    public void setNeedsConfirmation(boolean needsConfirmation) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_NEEDS_CONFIRMATION, needsConfirmation);
+        edit.apply();
+    }
+
+    public boolean needsConfirmation() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_NEEDS_CONFIRMATION, false);
     }
 
     public void setReleaseNoteShownReminded() {

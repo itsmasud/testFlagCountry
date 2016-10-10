@@ -26,7 +26,6 @@ public class SplashActivity extends AuthSimpleActivity {
 
     private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
-    private static final String STATE_SHOWING_DIALOG = "STATE_SHOWING_DIALOG";
 
     private Profile _profile = null;
     private boolean _isAuth = false;

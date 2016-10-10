@@ -18,17 +18,15 @@ import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
-import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
+import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
 
-import java.util.Calendar;
-import java.util.Comparator;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -49,7 +47,11 @@ public class SearchResultScreen extends RelativeLayout {
     // Data
     private SavedSearchParams _searchParams;
     private Location _location;
-    private Listener _listener;
+    private OnClickListener _onClickListener;
+
+    // Todo make persistent?
+    private Hashtable<Long, WorkOrder> _checkWork = new Hashtable<>();
+
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -136,8 +138,12 @@ public class SearchResultScreen extends RelativeLayout {
         getPage(0);
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
+    public void setOnChildClickListener(OnClickListener listener) {
+        _onClickListener = listener;
+    }
+
+    public Hashtable<Long, WorkOrder> getCheckWorkorders() {
+        return _checkWork;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -181,32 +187,17 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final TimeHeaderAdapter<WorkOrder> _adapter = new TimeHeaderAdapter<WorkOrder>(WorkOrder.class) {
+    private final PagingAdapter<WorkOrder> _adapter = new PagingAdapter<WorkOrder>(WorkOrder.class) {
         @Override
         public void requestPage(int page, boolean allowCache) {
             getPage(page);
         }
 
         @Override
-        public Comparator<WorkOrder> getTimeComparator() {
-            return WorkOrder.getTimeComparator();
-        }
-
-        @Override
-        public Calendar getObjectTime(WorkOrder object) {
-            try {
-                return ISO8601.toCalendar(object.getSchedule().getBegin());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return null;
-        }
-
-        @Override
         public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
             WorkOrderCard card = new WorkOrderCard(parent.getContext());
 
-            if (_listener != null)
+            if (_onClickListener != null)
                 card.setOnClickListener(_card_onClick);
 
             return new WorkOrderHolder(card);
@@ -220,15 +211,15 @@ public class SearchResultScreen extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _card_onClick = new OnClickListener() {
+    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+            if (_onClickListener != null)
+                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
         }
     };
 
-    public interface Listener {
+    public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);
     }
 }

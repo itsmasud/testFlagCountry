@@ -1,27 +1,29 @@
 package com.fieldnation.ui.workorder.v2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.text.SimpleDateFormat;
@@ -35,28 +37,20 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String TAG = "WorkOrderCard";
 
     // Ui
-    private IconFontTextView _bundleIconFont;
+    private TextView _amountTextView;
+    private TextView _payTypeTextView;
+    private TextView _workTypeTextView;
     private TextView _titleTextView;
-    private TextView _companyNameTextView;
+    private TextView _dateTextView;
     private TextView _timeTextView;
+    private TextView _hyphenTextView;
+    private TextView _date2TextView;
+    private TextView _time2TextView;
     private TextView _locationTextView;
-    private TextView _workOrderIdTextView;
-
-    private LinearLayout _payLeftLayout;
-    private TextView _priceLeftTextView;
-    private TextView _statusLeftTextView;
-
-    private LinearLayout _payRightLayout;
-    private TextView _priceRightTextView;
-    private TextView _statusRightTextView;
-
-    private IconFontButton _left1Button;
-    private IconFontButton _left2Button;
-    private IconFontButton _left3Button;
-
-    private Button _rightWhiteButton;
-    private Button _rightOrangeButton;
-    private Button _rightGreenButton;
+    private TextView _distanceTextView;
+    private IconFontButton[] _secondaryButtons = new IconFontButton[3];
+    private IconFontButton _locationButton;
+    private Button _primaryButton;
 
     // Data
     private WorkOrder _workOrder;
@@ -83,38 +77,24 @@ public class WorkOrderCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_iconFont);
+        _amountTextView = (TextView) findViewById(R.id.amount_textview);
+        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
+        _dateTextView = (TextView) findViewById(R.id.date_textview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _hyphenTextView = (TextView) findViewById(R.id.hyphen_textview);
+        _time2TextView = (TextView) findViewById(R.id.time2_textview);
+        _date2TextView = (TextView) findViewById(R.id.date2_textview);
         _locationTextView = (TextView) findViewById(R.id.location_textview);
-        _workOrderIdTextView = (TextView) findViewById(R.id.workorderId_textview);
+        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-        _payLeftLayout = (LinearLayout) findViewById(R.id.payLeft_layout);
-        _priceLeftTextView = (TextView) findViewById(R.id.priceLeft_textview);
-        _statusLeftTextView = (TextView) findViewById(R.id.statusLeft_textview);
-
-        _payRightLayout = (LinearLayout) findViewById(R.id.payRight_layout);
-        _priceRightTextView = (TextView) findViewById(R.id.priceRight_textview);
-        _statusRightTextView = (TextView) findViewById(R.id.statusRight_textview);
-
-        _left1Button = (IconFontButton) findViewById(R.id.left1_button);
-        _left1Button.setOnClickListener(_left1_onClick);
-
-        _left2Button = (IconFontButton) findViewById(R.id.left2_button);
-        _left2Button.setOnClickListener(_left2_onClick);
-
-        _left3Button = (IconFontButton) findViewById(R.id.left3_button);
-        _left3Button.setOnClickListener(_left3_onClick);
-
-        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
-        _rightWhiteButton.setOnClickListener(_right_onClick);
-
-        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
-        _rightOrangeButton.setOnClickListener(_right_onClick);
-
-        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
-        _rightGreenButton.setOnClickListener(_right_onClick);
+        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
+        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
+        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
+        _locationButton = (IconFontButton) findViewById(R.id.location_button);
+        _locationButton.setOnClickListener(_locationButton_onClick);
+        _primaryButton = (Button) findViewById(R.id.primary_button);
 
         setOnClickListener(_this_onClick);
     }
@@ -134,53 +114,89 @@ public class WorkOrderCard extends RelativeLayout {
         if (_workOrder == null)
             return;
 
-        if (_rightGreenButton == null)
+        if (_primaryButton == null)
             return;
 
-        if (_workOrder.isBundle())
-            _bundleIconFont.setVisibility(VISIBLE);
-        else
-            _bundleIconFont.setVisibility(GONE);
-
         _titleTextView.setText(_workOrder.getTitle());
-        _companyNameTextView.setText(_workOrder.getOrg().getName());
-        _workOrderIdTextView.setText("WO " + _workOrder.getId());
+        _workTypeTextView.setText(_workOrder.getType().toUpperCase());
 
         populateLocation();
         populatePay();
-        populateButtons();
         populateTime();
+        populateButtons();
     }
 
     private void populateTime() {
+        _timeTextView.setVisibility(VISIBLE);
+        _dateTextView.setVisibility(VISIBLE);
+        _hyphenTextView.setVisibility(GONE);
+        _time2TextView.setVisibility(GONE);
+        _date2TextView.setVisibility(GONE);
         if (_workOrder.getSchedule() != null) {
             if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+                // estimated
                 try {
                     Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
                     _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
                 }
 
+                // exact
             } else if (_workOrder.getSchedule().getExact() != null) {
                 try {
                     Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
                     _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
                 }
 
+                // range
             } else if (_workOrder.getSchedule().getRange() != null) {
-                try {
-                    Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
-                    Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
-                    _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
-                                    + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                if (_workOrder.getSchedule().getRange().getType().equals("business")) {
+                    // business
+                    try {
+                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                        _timeTextView.setText(
+                                new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
+                                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+
+                        _dateTextView.setText(
+                                new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                                        + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(scal.getTime()));
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        _timeTextView.setVisibility(GONE);
+                        _dateTextView.setVisibility(GONE);
+                    }
+
+                } else {
+                    // normal range
+                    try {
+                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                        _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
+                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
+                        _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                        _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                        _hyphenTextView.setVisibility(VISIBLE);
+                        _time2TextView.setVisibility(VISIBLE);
+                        _date2TextView.setVisibility(VISIBLE);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        _timeTextView.setVisibility(GONE);
+                        _dateTextView.setVisibility(GONE);
+                    }
                 }
             } else {
                 _timeTextView.setText("");
@@ -190,118 +206,196 @@ public class WorkOrderCard extends RelativeLayout {
 
     private void populateLocation() {
         com.fieldnation.data.v2.Location location = _workOrder.getLocation();
-        if (location == null)
+        if (location == null) {
             _locationTextView.setText(R.string.remote_work);
-        else {
+            _distanceTextView.setVisibility(GONE);
+            _locationButton.setVisibility(GONE);
+        } else {
             if (location.getGeo() == null || _location == null) {
-                _locationTextView.setText(location.getFullAddressOneLine());
+                _locationTextView.setText(location.getCityState());
+                _distanceTextView.setVisibility(GONE);
+                _locationButton.setVisibility(VISIBLE);
             } else {
                 try {
                     Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
                     Position myLoc = new Position(_location.getLongitude(), _location.getLatitude());
-                    _locationTextView.setText(location.getFullAddressOneLine() + " (" + myLoc.distanceTo(siteLoc) + "mi)");
+                    _locationTextView.setText(location.getCityState());
+                    _distanceTextView.setVisibility(VISIBLE);
+                    _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi");
+                    _locationButton.setVisibility(VISIBLE);
                 } catch (Exception ex) {
-                    //Log.v(TAG, ex);
-                    _locationTextView.setText(location.getFullAddressOneLine());
+                    _locationTextView.setText(location.getCityState());
+                    _distanceTextView.setVisibility(GONE);
+                    _locationButton.setVisibility(VISIBLE);
                 }
             }
         }
     }
 
     private void populatePay() {
-        _payLeftLayout.setVisibility(GONE);
-        if (_workOrder.getPay() == null) {
-            _payRightLayout.setVisibility(INVISIBLE);
+        if (_workOrder.getPay() == null || _workOrder.getPay().getType() == null) {
+            _payTypeTextView.setVisibility(GONE);
+            _amountTextView.setVisibility(GONE);
             return;
         }
 
         Pay pay = _workOrder.getPay();
-        if (misc.isEmptyOrNull(pay.getType())) {
-            Log.v(TAG, "PAY TYPE IS BAD!!! " + _workOrder.getId());
-            _payRightLayout.setVisibility(INVISIBLE);
-            return;
-        }
 
-        LinearLayout.LayoutParams params;
-        params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
-        params.gravity = Gravity.RIGHT;
-        _statusRightTextView.setLayoutParams(params);
-        params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
-        params.gravity = Gravity.RIGHT;
-        _priceRightTextView.setLayoutParams(params);
+        _payTypeTextView.setVisibility(VISIBLE);
+        _amountTextView.setVisibility(VISIBLE);
 
         switch (pay.getType()) {
-            case "blended":
-                _payLeftLayout.setVisibility(VISIBLE);
-                _payRightLayout.setVisibility(VISIBLE);
-
-                params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
-                params.gravity = Gravity.LEFT;
-                _statusRightTextView.setLayoutParams(params);
-                params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
-                params.gravity = Gravity.LEFT;
-                _priceRightTextView.setLayoutParams(params);
-
-                _priceLeftTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusLeftTextView.setText(getResources().getString(R.string.first_time_hours, pay.getUnits()));
-                _priceRightTextView.setText(misc.toCurrency(pay.getAdditionalAmount()));
-                _statusRightTextView.setText(R.string.hourly_after);
-                break;
             case "fixed":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.fixed);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("FIXED");
                 break;
             case "hourly":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.hourly);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("/ HOURLY");
+                break;
+            case "blended":
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount() * pay.getUnits() + pay.getAdditionalAmount()));
+                _payTypeTextView.setText("BLENDED");
                 break;
             case "device":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.per_device);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("/ DEVICE");
                 break;
             default:
-                Log.v(TAG, "PAY TYPE:" + pay.getType());
+                _payTypeTextView.setVisibility(GONE);
+                _amountTextView.setVisibility(GONE);
                 break;
         }
     }
 
     private void populateButtons() {
-        //* Assigned
-        // location
-        // chat
-        // alert?
+        // Primary actions
+
+        _primaryButton.setVisibility(GONE);
+        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
+            Action action = _workOrder.getPrimaryActions()[0];
+
+            switch (action.getType()) {
+                case CONFIRM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_confirm_onClick);
+                    _primaryButton.setText("Confirm");
+                    break;
+                case ON_MY_WAY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_onMyWay_onClick);
+                    _primaryButton.setText("On My Way");
+                    break;
+                case READY:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_readyToGo_onClick);
+                    _primaryButton.setText("Ready to Go");
+                    break;
+                case REPORT_PROBLEM:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_reportProblem_onClick);
+                    _primaryButton.setText("Report Problem");
+                    break;
+                default:
+                    break;
+            }
+        }
 
 
+        _secondaryButtons[0].setVisibility(GONE);
+        _secondaryButtons[1].setVisibility(GONE);
+        _secondaryButtons[2].setVisibility(GONE);
+        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
+            for (int i = 0; i < _workOrder.getPrimaryActions().length && i < _secondaryButtons.length; i++) {
+                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
+            }
+        }
     }
 
-    private final View.OnClickListener _right_onClick = new OnClickListener() {
+    private void populateSecondaryButton(IconFontButton button, Action action) {
+        switch (action.getType()) {
+            case PHONE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone);
+                button.setOnClickListener(_phone_onClick);
+                break;
+            case RUNNING_LATE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_stop_watch);
+                button.setOnClickListener(_runningLate_onClick);
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_alerts_solid);
+                button.setOnClickListener(_reportProblem_onClick);
+                break;
+            default:
+                button.setVisibility(GONE);
+                break;
+        }
+    }
+
+    private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left1_onClick = new OnClickListener() {
+    private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left2_onClick = new OnClickListener() {
+    private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
         }
     };
 
-    private final View.OnClickListener _left3_onClick = new OnClickListener() {
+    private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
 
+        }
+    };
+
+    private final View.OnClickListener _phone_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _locationButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder != null) {
+                com.fieldnation.data.v2.Location location = _workOrder.getLocation();
+                if (location != null) {
+                    try {
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(_uri);
+                        ActivityResultClient.startActivity(App.get(), intent);
+                    } catch (Exception e) {
+                        Log.v(TAG, e);
+                        ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
+                    }
+                }
+            }
         }
     };
 

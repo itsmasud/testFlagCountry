@@ -17,11 +17,13 @@
 package com.fieldnation.gcm;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationManagerCompat;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
@@ -34,10 +36,9 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.AnalyticsPassThroughService;
 import com.fieldnation.service.data.workorder.WorkorderTransactionBuilder;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.google.android.gms.gcm.GcmListenerService;
-
-import java.util.Random;
 
 public class MyGcmListenerService extends GcmListenerService {
     private static final String STAG = "MyGcmListenerService";
@@ -54,6 +55,12 @@ public class MyGcmListenerService extends GcmListenerService {
             .category(EventCategory.GCM)
             .action(EventAction.PUSH_NOTIFICATION_INTERACTED)
             .build();
+
+    private static final int CONFIRM_PUSH_NOTIFICATION = App.secureRandom.nextInt();
+
+    public static void clearConfirmPush(Context context) {
+        NotificationManagerCompat.from(context).cancel(CONFIRM_PUSH_NOTIFICATION);
+    }
 
     /**
      * Called when message is received.
@@ -118,6 +125,12 @@ public class MyGcmListenerService extends GcmListenerService {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getActivity(this, 0,
                                 WorkorderActivity.makeIntentConfirm(this, Long.parseLong(action.getId())), 0);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                    }
+                    case "tomorrow": {
+                        App.get().setNeedsConfirmation(true);
+                        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                                ConfirmActivity.startNewIntent(this), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }
                     default:
@@ -197,6 +210,17 @@ public class MyGcmListenerService extends GcmListenerService {
         builder.setStyle(bigTextStyle);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setVibrate(default_ringtone);
-        NotificationManagerCompat.from(this).notify(new Random().nextInt(), builder.build());
+
+        int id = 0;
+        switch (gcmMessage.category) {
+            case "CONFIRM_SCHEDULE":
+                id = CONFIRM_PUSH_NOTIFICATION;
+                break;
+            default:
+                id = App.secureRandom.nextInt();
+                break;
+        }
+
+        NotificationManagerCompat.from(this).notify(id, builder.build());
     }
 }
