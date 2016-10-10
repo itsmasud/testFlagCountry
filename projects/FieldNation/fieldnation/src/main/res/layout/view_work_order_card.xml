@@ -134,61 +134,32 @@
         android:layout_toRightOf="@+id/location_textview"
         android:text="19 mi" />
 
-
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary1_button"
-        style="@style/Material.Button.Flat"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:minWidth="0dp"
-        android:padding="0dp"
-        android:text="@string/icon_missing"
-        android:textSize="18sp" />
+        android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary2_button"
-        style="@style/Material.Button.Flat"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary1_button"
-        android:minWidth="0dp"
-        android:padding="0dp"
-        android:text="@string/icon_missing"
-        android:textSize="18sp" />
+        android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary3_button"
-        style="@style/Material.Button.Flat"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary2_button"
-        android:minWidth="0dp"
-        android:padding="0dp"
-        android:text="@string/icon_missing"
-        android:textSize="18sp" />
+        android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/location_button"
-        style="@style/Material.Button.Flat"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
+        style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
         android:layout_toRightOf="@id/secondary3_button"
-        android:minWidth="0dp"
-        android:padding="0dp"
-        android:text="@string/icon_map_location_solid"
-        android:textSize="18sp" />
+        android:text="@string/icon_map_location_solid" />
 
     <Button
         android:id="@+id/primary_button"
