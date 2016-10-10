@@ -19,6 +19,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
@@ -26,7 +27,6 @@ import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
 
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -43,15 +43,12 @@ public class SearchResultScreen extends RelativeLayout {
     // Service
     private WorkOrderClient _workOrderClient;
     private SimpleGps _simpleGps;
+    private WorkorderClient _workorderClientV1;
 
     // Data
     private SavedSearchParams _searchParams;
     private Location _location;
     private OnClickListener _onClickListener;
-
-    // Todo make persistent?
-    private Hashtable<Long, WorkOrder> _checkWork = new Hashtable<>();
-
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -86,6 +83,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+        _workorderClientV1 = new WorkorderClient(_workorderClientV1_listener);
+        _workorderClientV1.connect(App.get());
 
         _adapter.clear();
 
@@ -119,6 +118,9 @@ public class SearchResultScreen extends RelativeLayout {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
 
+        if (_workorderClientV1 != null && _workorderClientV1.isConnected())
+            _workorderClientV1.disconnect(App.get());
+
         super.onDetachedFromWindow();
     }
 
@@ -140,10 +142,6 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void setOnChildClickListener(OnClickListener listener) {
         _onClickListener = listener;
-    }
-
-    public Hashtable<Long, WorkOrder> getCheckWorkorders() {
-        return _checkWork;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -184,6 +182,19 @@ public class SearchResultScreen extends RelativeLayout {
                 _unavailableView.setVisibility(VISIBLE);
             else
                 _unavailableView.setVisibility(GONE);
+        }
+    };
+
+    private final WorkorderClient.Listener _workorderClientV1_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderClientV1.subActions();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            getPage(0);
+            _refreshView.startRefreshing();
         }
     };
 

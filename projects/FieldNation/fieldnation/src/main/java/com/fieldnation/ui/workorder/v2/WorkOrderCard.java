@@ -276,7 +276,6 @@ public class WorkOrderCard extends RelativeLayout {
         // Primary actions
         _primaryButton.setVisibility(GONE);
         if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
-            // Action action = new Action(Action.ActionType.REPORT_PROBLEM);
             Action action = _workOrder.getPrimaryActions()[0];
 
             switch (action.getType()) {
@@ -304,9 +303,6 @@ public class WorkOrderCard extends RelativeLayout {
                     break;
             }
         }
-        _primaryButton.setVisibility(VISIBLE);
-        _primaryButton.setOnClickListener(_reportProblem_onClick);
-        _primaryButton.setText("Report Problem");
 
         _secondaryButtons[0].setVisibility(GONE);
         _secondaryButtons[1].setVisibility(GONE);
@@ -316,9 +312,8 @@ public class WorkOrderCard extends RelativeLayout {
                 populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
             }
         }
-
-        populateSecondaryButton(_secondaryButtons[0], new Action(Action.ActionType.REPORT_PROBLEM));
-        populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
+//        populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
+        populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
     }
 
     // other icons
@@ -342,7 +337,7 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
             case REPORT_PROBLEM:
                 button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_alerts_solid);
+                button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
             default:
