@@ -3,19 +3,28 @@ package com.fieldnation.ui.dialog.v2;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.FullScreenDialog;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -51,6 +60,7 @@ public class EtaDialog extends FullScreenDialog {
     private final int ONE_DAY = 86400000;
 
     // Ui
+    private Toolbar _toolbar;
     private Button _expirationButton;
     private RelativeLayout _requestLayout;
     private TextView _scheduleTextView;
@@ -61,8 +71,11 @@ public class EtaDialog extends FullScreenDialog {
     private Button _durationButton;
     private EditText _noteEditText;
 
+    // Dialogs
     private DatePickerDialog _etaStartDatePicker;
     private TimePickerDialog _etaStartTimePicker;
+    private DurationDialog.Controller _durationDialog;
+    private DurationDialog.Controller _expiryDialog;
 
     // Data
     private Calendar _scheduledStartDateTimeCalendar;
@@ -92,14 +105,12 @@ public class EtaDialog extends FullScreenDialog {
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
+        _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
         _etaStartDateTimeCalendar = Calendar.getInstance();
 
         _requestLayout = (RelativeLayout) v.findViewById(R.id.request_layout);
-//        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _expirationButton = (Button) v.findViewById(R.id.expiration_button);
-
-//        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-//        _okButton = (Button) v.findViewById(R.id.ok_button);
 
         _etaStartDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
 
@@ -107,14 +118,14 @@ public class EtaDialog extends FullScreenDialog {
 
         _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
 
-//        _etaStartTimePicker = new TimePickerDialog(context, _etaStartTime_onSet, _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY), _etaStartDateTimeCalendar.get(Calendar.MINUTE), false);
-//        _etaStartDatePicker = new DatePickerDialog(context, _etaStartDate_onSet, _etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH), _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH));
+        _etaStartTimePicker = new TimePickerDialog(context, _etaStartTime_onSet, _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY), _etaStartDateTimeCalendar.get(Calendar.MINUTE), false);
+        _etaStartDatePicker = new DatePickerDialog(context, _etaStartDate_onSet, _etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH), _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH));
 
-//        _durationDialog = DurationDialog.getInstance(_fm, TAG);
-//        _durationDialog.setListener(_jobDuration_listener);
+        _durationDialog = new DurationDialog.Controller(App.get(), TAG + ".DurationDialog");
+        _durationDialog.setListener(_durationDialog_listener);
 
-//        _expiryDialog = DurationDialog.getInstance(_fm, TAG);
-//        _expiryDialog.setListener(_expiry_listener);
+        _expiryDialog = new DurationDialog.Controller(App.get(), TAG + ".ExpiryDialog");
+        _expiryDialog.setListener(_expiryDialog_listener);
 
         _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
         _etaSwitch = (Switch) v.findViewById(R.id.enableEta_switch);
@@ -127,13 +138,13 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onAdded() {
         super.onAdded();
-//        _expirationButton.setOnClickListener(_expiringButton_onClick);
-//        _cancelButton.setOnClickListener(_cancel_onClick);
-//        _okButton.setOnClickListener(_ok_onClick);
-//        _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
-//        _durationButton.setOnClickListener(_duration_onClick);
-//        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
-//        _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
+        _expirationButton.setOnClickListener(_expiringButton_onClick);
+        _cancelButton.setOnClickListener(_cancel_onClick);
+        _okButton.setOnClickListener(_ok_onClick);
+        _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
+        _durationButton.setOnClickListener(_duration_onClick);
+        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
+        _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
     }
 
     @Override
@@ -193,4 +204,246 @@ public class EtaDialog extends FullScreenDialog {
             _note = savedState.getString(STATE_NOTE);
         super.onRestoreDialogState(savedState);
     }
+
+    private boolean isValidDate() {
+        if (isSelectedEtaPastDay()) return false;
+        if (_schedule.getType() == Schedule.Type.EXACT) return true;
+
+        try {
+            _etaStartDateTimeCalendar = DateUtils.ceilUptoMinutes(_etaStartDateTimeCalendar);
+            Calendar scheduleStartDateCalendar = ISO8601.toCalendar(_schedule.getStartTime());
+            Calendar scheduleEndDateCalendar = ISO8601.toCalendar(_schedule.getEndTime());
+            Calendar etaEndDateCalendar = Calendar.getInstance();
+            etaEndDateCalendar.set(_etaStartDateTimeCalendar.get(Calendar.YEAR),
+                    _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                    _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
+
+            // midnight support
+            if (_schedule.getType() == Schedule.Type.BUSINESS_HOURS &&
+                    scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY) >= scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY)) {
+                _hasMidnightSupport = true;
+                scheduleEndDateCalendar.setTimeInMillis(scheduleEndDateCalendar.getTimeInMillis() + ONE_DAY);
+            } else {
+                _hasMidnightSupport = false;
+            }
+
+            if ((scheduleStartDateCalendar.getTimeInMillis() > etaEndDateCalendar.getTimeInMillis())
+                    || (scheduleEndDateCalendar.getTimeInMillis() < etaEndDateCalendar.getTimeInMillis())) {
+
+                // midnight support
+                if (_hasMidnightSupport && DateUtils.isSameDay(scheduleEndDateCalendar, _etaStartDateTimeCalendar)) {
+                    return true;
+                }
+
+                ToastClient.toast(App.get(), R.string.toast_pick_date_time_between_schedule, Toast.LENGTH_LONG);
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _etaStartDatePicker.show();
+                    }
+                }, 100);
+                return false;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+        return true;
+    }
+
+    private boolean isValidTime() {
+        if (isSelectedEtaPastDay()) return false;
+
+        if (_schedule.getType() == Schedule.Type.EXACT) return true;
+
+        try {
+            _etaStartDateTimeCalendar = DateUtils.ceilUptoMinutes(_etaStartDateTimeCalendar);
+            Calendar scheduleStartDateCalendar = DateUtils.ceilUptoMinutes(ISO8601.toCalendar(_schedule.getStartTime()));
+            Calendar scheduleEndDateCalendar = DateUtils.ceilUptoMinutes(ISO8601.toCalendar(_schedule.getEndTime()));
+
+            Calendar startTimeCalendar = DateUtils.ceilUptoMinutes(Calendar.getInstance());
+            Calendar endHourCalendar = DateUtils.ceilUptoMinutes(Calendar.getInstance());
+            Calendar endTimeCalendar = DateUtils.ceilUptoMinutes(Calendar.getInstance());
+
+            if (_schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
+
+                startTimeCalendar.set(
+                        _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                        _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                        _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                        scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY),
+                        scheduleStartDateCalendar.get(Calendar.MINUTE));
+                startTimeCalendar = DateUtils.ceilUptoMinutes(startTimeCalendar);
+
+                endTimeCalendar.setTimeInMillis(_etaStartDateTimeCalendar.getTimeInMillis() + _durationMilliseconds);
+                endTimeCalendar = DateUtils.ceilUptoMinutes(endTimeCalendar);
+
+                endHourCalendar.set(
+                        _etaStartDateTimeCalendar.get(Calendar.YEAR),
+                        _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                        _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH),
+                        scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY),
+                        scheduleEndDateCalendar.get(Calendar.MINUTE));
+                endHourCalendar = DateUtils.ceilUptoMinutes(endHourCalendar);
+
+                // midnight support
+                if (scheduleStartDateCalendar.get(Calendar.HOUR_OF_DAY) >= scheduleEndDateCalendar.get(Calendar.HOUR_OF_DAY)) {
+                    _hasMidnightSupport = true;
+                    scheduleEndDateCalendar.setTimeInMillis(scheduleEndDateCalendar.getTimeInMillis() + ONE_DAY);
+                    scheduleEndDateCalendar = DateUtils.ceilUptoMinutes(scheduleEndDateCalendar);
+
+                    Calendar calNight12am = Calendar.getInstance();
+                    Calendar calDay12pm = Calendar.getInstance();
+
+                    calNight12am.set(_etaStartDateTimeCalendar.get(Calendar.YEAR),
+                            _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                            _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), 0, 0);
+                    calNight12am = DateUtils.ceilUptoMinutes(calNight12am);
+                    calDay12pm.set(_etaStartDateTimeCalendar.get(Calendar.YEAR),
+                            _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                            _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), 12, 0);
+                    calDay12pm = DateUtils.ceilUptoMinutes(calDay12pm);
+
+                    if ((_etaStartDateTimeCalendar.getTimeInMillis() >= calNight12am.getTimeInMillis())
+                            && _etaStartDateTimeCalendar.getTimeInMillis() < calDay12pm.getTimeInMillis()) {
+                        startTimeCalendar.setTimeInMillis(endHourCalendar.getTimeInMillis() - ONE_DAY);
+                        startTimeCalendar = DateUtils.ceilUptoMinutes(startTimeCalendar);
+                    }
+
+                    if (_etaStartDateTimeCalendar.getTimeInMillis() > calDay12pm.getTimeInMillis()) {
+                        endHourCalendar.setTimeInMillis(endHourCalendar.getTimeInMillis() + ONE_DAY);
+                        endHourCalendar = DateUtils.ceilUptoMinutes(endHourCalendar);
+                    }
+
+                } else {
+                    _hasMidnightSupport = false;
+                }
+
+
+            } else if (_schedule.getType() == Schedule.Type.OPEN_RAGE) {
+                startTimeCalendar = DateUtils.ceilUptoMinutes(scheduleStartDateCalendar);
+                endTimeCalendar.setTimeInMillis(_etaStartDateTimeCalendar.getTimeInMillis() + _durationMilliseconds);
+                endTimeCalendar = DateUtils.ceilUptoMinutes(endTimeCalendar);
+                endHourCalendar = DateUtils.ceilUptoMinutes(scheduleEndDateCalendar);
+            }
+//                Log.e(TAG, "start time validation starts");
+//                Log.v(TAG, "startTimeCalendar: " + DateUtils.formatDateTimeLong(startTimeCalendar));
+
+            if ((startTimeCalendar.getTimeInMillis() < scheduleStartDateCalendar.getTimeInMillis()) ||
+                    (startTimeCalendar.getTimeInMillis() > _etaStartDateTimeCalendar.getTimeInMillis())) {
+                ToastClient.toast(App.get(), R.string.toast_pick_date_time_between_schedule, Toast.LENGTH_LONG);
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _etaStartTimePicker.show();
+                    }
+                }, 100);
+                return false;
+            }
+
+            if ((endTimeCalendar.getTimeInMillis() > scheduleEndDateCalendar.getTimeInMillis())
+                    || (endTimeCalendar.getTimeInMillis() > endHourCalendar.getTimeInMillis())) {
+                ToastClient.toast(App.get(), R.string.toast_pick_date_time_between_schedule, Toast.LENGTH_LONG);
+                _handler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        _etaStartTimePicker.show();
+                    }
+                }, 100);
+                return false;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+
+
+        return true;
+    }
+
+    private boolean isSelectedEtaPastDay() {
+        if (DateUtils.isBeforeToday(_etaStartDateTimeCalendar)) {
+            ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
+            _handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    _etaStartDatePicker.show();
+                }
+            }, 100);
+            return true;
+        }
+        return false;
+    }
+
+    private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DurationDialog.Controller.show(App.get(), TAG + ".ExpiryDialog");
+        }
+    };
+
+    private final DatePickerDialog.OnDateSetListener _etaStartDate_onSet = new DatePickerDialog.OnDateSetListener() {
+        @Override
+        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+            Calendar tempEtaDateTimeCal = DateUtils.ceilUptoMinutes(_etaStartDateTimeCalendar);
+            _etaStartDateTimeCalendar.set(year, monthOfYear, dayOfMonth);
+            _etaStartDateTimeCalendar = DateUtils.ceilUptoMinutes(_etaStartDateTimeCalendar);
+
+            if (isSelectedEtaPastDay()) {
+                _etaStartDateTimeCalendar = tempEtaDateTimeCal;
+                return;
+            }
+
+            if (isValidDate()) {
+                _isDateSet = true;
+                _etaMilliseconds = _etaStartDateTimeCalendar.getTimeInMillis();
+                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
+            } else {
+                _etaStartDateTimeCalendar = tempEtaDateTimeCal;
+            }
+        }
+    };
+
+
+    private final TimePickerDialog.OnTimeSetListener _etaStartTime_onSet = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            Calendar tempEtaCal = DateUtils.ceilUptoMinutes(_etaStartDateTimeCalendar);
+            _etaStartDateTimeCalendar.set(_etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH),
+                    _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            if (isValidTime()) {
+                _isTimeSet = true;
+                _etaMilliseconds = _etaStartDateTimeCalendar.getTimeInMillis();
+                _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStartDateTimeCalendar));
+            } else {
+                _etaStartDateTimeCalendar = tempEtaCal;
+            }
+
+        }
+    };
+
+    private final DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
+        @Override
+        public void onOk(long milliseconds) {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
+
+    private final DurationDialog.ControllerListener _expiryDialog_listener = new DurationDialog.ControllerListener() {
+        @Override
+        public void onOk(long milliseconds) {
+
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
+
 }
