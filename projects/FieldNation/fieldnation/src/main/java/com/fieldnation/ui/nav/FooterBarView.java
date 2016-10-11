@@ -13,6 +13,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.dialog.v2.DurationDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
 
 /**
@@ -65,7 +66,8 @@ public class FooterBarView extends RelativeLayout {
         findViewById(R.id.reset_button).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.get().setNeedsConfirmation(true);
+                //App.get().setNeedsConfirmation(true);
+                DurationDialog.Controller.show(App.get());
             }
         });
 

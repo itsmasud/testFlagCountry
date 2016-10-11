@@ -18,15 +18,34 @@
         <item name="android:background">@null</item>
     </style>
 
+    <style name="DurationNumberPad.v2" parent="Material.Button.Raised.White">
+        <item name="android:layout_marginLeft">8dp</item>
+        <item name="android:layout_marginRight">8dp</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:layout_width">48dp</item>
+        <item name="android:layout_height">48dp</item>
+        <item name="android:background">@null</item>
+    </style>
+
     <style name="DurationNumberPadSpacer">
         <item name="android:layout_width">64dp</item>
         <item name="android:layout_height">64dp</item>
         <item name="android:layout_margin">5dp</item>
     </style>
 
+    <style name="DurationNumberPadSpacer.v2">
+        <item name="android:layout_width">36dp</item>
+        <item name="android:layout_height">36dp</item>
+        <item name="android:layout_margin">5dp</item>
+    </style>
+
     <style name="DurationNumber">
         <item name="android:textSize">34sp</item>
         <item name="android:textAppearance">?android:attr/textAppearanceLarge</item>
+    </style>
+
+    <style name="DurationNumber.v2" parent="@style/Text_Title">
+        <item name="android:textSize">24sp</item>
     </style>
 
     <style name="DurationMarker">

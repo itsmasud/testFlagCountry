@@ -18,7 +18,6 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.dialog.DatePickerDialog;
-import com.fieldnation.ui.dialog.DurationDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 
 import java.util.Calendar;
@@ -64,8 +63,6 @@ public class EtaDialog extends FullScreenDialog {
 
     private DatePickerDialog _etaStartDatePicker;
     private TimePickerDialog _etaStartTimePicker;
-    private DurationDialog _durationDialog;
-    private DurationDialog _expiryDialog;
 
     // Data
     private Calendar _scheduledStartDateTimeCalendar;
@@ -98,34 +95,30 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateTimeCalendar = Calendar.getInstance();
 
         _requestLayout = (RelativeLayout) v.findViewById(R.id.request_layout);
-        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
+//        _titleTextView = (TextView) v.findViewById(R.id.title_textview);
         _expirationButton = (Button) v.findViewById(R.id.expiration_button);
 
-
-        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _okButton = (Button) v.findViewById(R.id.ok_button);
+//        _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+//        _okButton = (Button) v.findViewById(R.id.ok_button);
 
         _etaStartDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);
-        _durationButton.setOnClickListener(_duration_onClick);
 
         _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
 
-        _etaStartDatePicker = new DatePickerDialog(context, _etaStartDate_onSet, _etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH), _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH));
-        _etaStartTimePicker = new TimePickerDialog(context, _etaStartTime_onSet, _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY), _etaStartDateTimeCalendar.get(Calendar.MINUTE), false);
+//        _etaStartTimePicker = new TimePickerDialog(context, _etaStartTime_onSet, _etaStartDateTimeCalendar.get(Calendar.HOUR_OF_DAY), _etaStartDateTimeCalendar.get(Calendar.MINUTE), false);
+//        _etaStartDatePicker = new DatePickerDialog(context, _etaStartDate_onSet, _etaStartDateTimeCalendar.get(Calendar.YEAR), _etaStartDateTimeCalendar.get(Calendar.MONTH), _etaStartDateTimeCalendar.get(Calendar.DAY_OF_MONTH));
 
-        _durationDialog = DurationDialog.getInstance(_fm, TAG);
-        _durationDialog.setListener(_jobDuration_listener);
+//        _durationDialog = DurationDialog.getInstance(_fm, TAG);
+//        _durationDialog.setListener(_jobDuration_listener);
 
-        _expiryDialog = DurationDialog.getInstance(_fm, TAG);
-        _expiryDialog.setListener(_expiry_listener);
+//        _expiryDialog = DurationDialog.getInstance(_fm, TAG);
+//        _expiryDialog.setListener(_expiry_listener);
 
         _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
         _etaSwitch = (Switch) v.findViewById(R.id.enableEta_switch);
-        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
         _etaStartTimeButton = (Button) v.findViewById(R.id.etaStartTime_button);
-        _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
 
         return v;
@@ -134,12 +127,13 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onAdded() {
         super.onAdded();
-        _expirationButton.setOnClickListener(_expiringButton_onClick);
-
-        _cancelButton.setOnClickListener(_cancel_onClick);
-        _okButton.setOnClickListener(_ok_onClick);
-        _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
-
+//        _expirationButton.setOnClickListener(_expiringButton_onClick);
+//        _cancelButton.setOnClickListener(_cancel_onClick);
+//        _okButton.setOnClickListener(_ok_onClick);
+//        _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
+//        _durationButton.setOnClickListener(_duration_onClick);
+//        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
+//        _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
     }
 
     @Override
