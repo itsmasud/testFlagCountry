@@ -140,14 +140,14 @@ public class RunningLateDialog extends SimpleDialog {
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, RunningLateDialog.class);
+            super(context, RunningLateDialog.class, null);
         }
 
         public static void show(Context context, WorkOrder workOrder) {
             Bundle params = new Bundle();
             params.putParcelable(PARAM_WORKORDER, workOrder);
 
-            show(context, RunningLateDialog.class, params);
+            show(context, null, RunningLateDialog.class, params);
         }
     }
 

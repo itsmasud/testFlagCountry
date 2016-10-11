@@ -6,7 +6,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -15,6 +14,7 @@ import com.fieldnation.R;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontButton;
 
 /**
  * Created by Michael on 10/11/2016.
@@ -22,6 +22,12 @@ import com.fieldnation.fntools.misc;
 
 public class DurationDialog extends SimpleDialog {
     private static final String TAG = "DurationDialog";
+
+    // Params
+    private static final String PARAM_RESULT = "result";
+    private static final int PARAM_RESULT_OK = 0;
+    private static final int PARAM_RESULT_CANCEL = 1;
+    private static final String PARAM_VALUE = "value";
 
     // State
     private static final String STATE_NUMBER = "STATE_NUMBER";
@@ -35,10 +41,9 @@ public class DurationDialog extends SimpleDialog {
 
     private Button _okButton;
     private Button _cancelButton;
-    private ImageView _deleteButton;
+    private IconFontButton _deleteButton;
 
     // Data
-    private com.fieldnation.ui.dialog.DurationDialog.Listener _listener;
     private String _number = "";
 
 
@@ -68,7 +73,7 @@ public class DurationDialog extends SimpleDialog {
 
         _okButton = (Button) v.findViewById(R.id.ok_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
-        _deleteButton = (ImageView) v.findViewById(R.id.delete_imageview);
+        _deleteButton = (IconFontButton) v.findViewById(R.id.delete_imageview);
 
         return v;
     }
@@ -95,7 +100,7 @@ public class DurationDialog extends SimpleDialog {
     @Override
     public void onRestoreDialogState(Bundle savedState) {
         if (savedState.containsKey(STATE_NUMBER))
-            _number = savedState.getString(_number);
+            _number = savedState.getString(STATE_NUMBER);
         super.onRestoreDialogState(savedState);
         populateUi();
     }
@@ -137,12 +142,16 @@ public class DurationDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             try {
-                if (_listener != null) {
-                    long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
-                    seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
-                    seconds += Long.parseLong(_minTextView.getText() + "") * 60;
-                    _listener.onOk(seconds * 1000);
-                }
+                long seconds = Long.parseLong(_dayTextView.getText() + "") * 86400;
+                seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
+                seconds += Long.parseLong(_minTextView.getText() + "") * 60;
+
+                Bundle response = new Bundle();
+                response.putInt(PARAM_RESULT, PARAM_RESULT_OK);
+                response.putLong(PARAM_VALUE, seconds * 1000);
+                onResult(response);
+
+
                 dismiss(true);
             } catch (Exception ex) {
                 ToastClient.toast(App.get(), "Invalid number, please try again.", Toast.LENGTH_LONG);
@@ -153,8 +162,9 @@ public class DurationDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onCancel();
+            Bundle response = new Bundle();
+            response.putInt(PARAM_RESULT, PARAM_RESULT_CANCEL);
+            onResult(response);
             dismiss(true);
         }
     };
@@ -171,13 +181,30 @@ public class DurationDialog extends SimpleDialog {
     };
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context) {
-            super(context, DurationDialog.class);
+        public Controller(Context context, String uid) {
+            super(context, DurationDialog.class, uid);
         }
 
-        public static void show(Context context) {
-            show(context, DurationDialog.class, null);
+        public static void show(Context context, String uid) {
+            show(context, uid, DurationDialog.class, null);
         }
+    }
+
+    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+        @Override
+        public void onComplete(Bundle response) {
+            switch (response.getInt(PARAM_RESULT)) {
+                case PARAM_RESULT_OK:
+                    onOk(response.getLong(PARAM_VALUE));
+                    break;
+                case PARAM_RESULT_CANCEL:
+                    onCancel();
+                    break;
+            }
+        }
+
+        public abstract void onOk(long milliseconds);
+
+        public abstract void onCancel();
     }
 }

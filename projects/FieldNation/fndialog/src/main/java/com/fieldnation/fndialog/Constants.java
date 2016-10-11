@@ -11,4 +11,5 @@ interface Constants {
     String PARAM_DIALOG_CLASS_NAME = "className";
     String PARAM_DIALOG_PARAMS = "params";
     String PARAM_DIALOG_RESPONSE = "response";
+    String PARAM_DIALOG_UID = "uid";
 }

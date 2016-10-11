@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ContextProvider;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
     // Stores the instantiated dialogs
     private List<DialogHolder> _dialogStack = new LinkedList<>();
+    private Hashtable<String, DialogHolder> _holderLookup = new Hashtable<>();
 
     public DialogManager(Context context) {
         super(context);
@@ -83,11 +85,13 @@ public class DialogManager extends FrameLayout implements Constants {
                 String className = bundle.getString("className");
                 ClassLoader classLoader = bundle.getClassLoader();
                 Bundle params = bundle.getBundle("params");
+                String uid = bundle.getString("uid");
 
                 DialogHolder holder = makeDialogHolder(className, classLoader);
                 if (holder != null) {
                     holder.params = params;
                     holder.savedState = dialogSavedState;
+                    holder.uid = uid;
                     push(holder);
                 }
             }
@@ -98,6 +102,8 @@ public class DialogManager extends FrameLayout implements Constants {
     private void push(DialogHolder dialogHolder) {
         // add the new dialog to the stack
         _dialogStack.add(0, dialogHolder);
+        if (dialogHolder.uid != null)
+            _holderLookup.put(dialogHolder.uid, dialogHolder);
         // add it to the container
         addView(dialogHolder.dialog.getView());
         dialogHolder.dialog.onAdded();
@@ -125,6 +131,8 @@ public class DialogManager extends FrameLayout implements Constants {
         for (int i = 0; i < _dialogStack.size(); i++) {
             if (_dialogStack.get(i).dialog.equals(dialog)) {
                 holder = _dialogStack.get(i);
+                if (holder.uid != null)
+                    _holderLookup.remove(holder.uid);
                 _dialogStack.remove(i);
                 break;
             }
@@ -180,6 +188,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
             Dialog dialog = (Dialog) object;
             dialog.setDismissListener(_dismissListener);
+            dialog.setResultListener(_resultListener);
             dialog.getView().setVisibility(GONE);
             DialogHolder holder = new DialogHolder(dialog);
 
@@ -205,12 +214,13 @@ public class DialogManager extends FrameLayout implements Constants {
         }
 
         @Override
-        public void onShowDialog(String className, ClassLoader classLoader, Bundle params) {
+        public void onShowDialog(String uid, String className, ClassLoader classLoader, Bundle params) {
             try {
                 DialogHolder holder = makeDialogHolder(className, classLoader);
 
                 if (holder != null) {
                     holder.params = params;
+                    holder.uid = uid;
                     push(holder);
                 }
             } catch (Exception ex) {
@@ -219,10 +229,10 @@ public class DialogManager extends FrameLayout implements Constants {
         }
 
         @Override
-        public void onDismissDialog(String className) {
-//            if (_dialogs.containsKey(className)) {
-//                _dialogs.get(className).dialog.dismiss(true);
-//            }
+        public void onDismissDialog(String uid) {
+            if (uid != null && _holderLookup.containsKey(uid)) {
+                _holderLookup.get(uid).dialog.dismiss(true);
+            }
         }
     };
 
@@ -233,10 +243,24 @@ public class DialogManager extends FrameLayout implements Constants {
         }
     };
 
+    private final Dialog.ResultListener _resultListener = new Dialog.ResultListener() {
+        @Override
+        public void onResult(Dialog dialog, Bundle response) {
+            for (int i = 0; i < _dialogStack.size(); i++) {
+                DialogHolder dh = _dialogStack.get(i);
+                if (dh.dialog.equals(dialog)) {
+                    Client.dialogResult(getContext(), dh.uid, dialog, response);
+                    return;
+                }
+            }
+        }
+    };
+
+
     private static class DialogHolder {
         public Dialog dialog;
         public Bundle params;
-
+        public String uid;
         public Bundle savedState;
 
         DialogHolder(Dialog dialog) {
@@ -251,6 +275,7 @@ public class DialogManager extends FrameLayout implements Constants {
             savedState.putString("className", dialog.getClass().getName());
             savedState.setClassLoader(dialog.getClass().getClassLoader());
             savedState.putBundle("params", params);
+            savedState.putString("uid", uid);
             return savedState;
         }
     }

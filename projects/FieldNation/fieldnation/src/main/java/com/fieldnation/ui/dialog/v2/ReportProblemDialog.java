@@ -487,13 +487,13 @@ public class ReportProblemDialog extends SimpleDialog {
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context, Class<? extends Dialog> klass) {
-            super(context, klass);
+            super(context, klass, null);
         }
 
         public static void show(Context context, long workOrderId) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORKORDER_ID, workOrderId);
-            show(context, ReportProblemDialog.class, params);
+            show(context, null, ReportProblemDialog.class, params);
         }
     }
 }
