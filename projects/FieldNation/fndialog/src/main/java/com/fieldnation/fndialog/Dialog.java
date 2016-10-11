@@ -1,7 +1,6 @@
 package com.fieldnation.fndialog;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 
 /**
@@ -56,7 +55,7 @@ public interface Dialog {
      *
      * @param savedState the state that was returned from onSaveDialogState()
      */
-    void onRestoreDialogState(Parcelable savedState);
+    void onRestoreDialogState(Bundle savedState);
 
     /**
      * Called before dismiss if saving the state for screen orientation change or other similar
@@ -64,7 +63,7 @@ public interface Dialog {
      *
      * @return The state of the dialog
      */
-    Parcelable onSaveDialogState();
+    void onSaveDialogState(Bundle outState);
 
     /**
      * Called when the dialog should go away

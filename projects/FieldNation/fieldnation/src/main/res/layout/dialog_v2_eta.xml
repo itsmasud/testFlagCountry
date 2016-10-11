@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        style="@style/Dialog.v3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dialogBg_Material">
+
+            <RelativeLayout
+                android:id="@+id/request_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:background="@color/dialogBg_Material"
+                android:paddingLeft="@dimen/dialogGutter"
+                android:paddingRight="@dimen/dialogGutter"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/requestExpire_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/when_does_this_request_expire" />
+
+                <Button
+                    android:id="@+id/expiration_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/requestExpire_textview"
+                    android:text="@string/btn_never" />
+
+                <View
+                    android:id="@+id/divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/expiration_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/scheduleTitle_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/request_layout"
+                android:layout_gravity="center"
+                android:layout_marginTop="16dp"
+                android:paddingLeft="@dimen/dialogGutter"
+                android:paddingRight="@dimen/dialogGutter"
+                android:text="@string/schedule_current" />
+
+
+            <TextView
+                android:id="@+id/schedule_textview"
+                style="?attr/dialogCaptionStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/scheduleTitle_textview"
+                android:layout_marginBottom="16dp"
+                android:paddingLeft="@dimen/dialogGutter"
+                android:paddingRight="@dimen/dialogGutter"
+                android:text="Arrival time must be between\n\tTuesday, March 4, 2014 at 11:00 am and \n\tTuesday, March 4, 2014 at 11:00 am CST" />
+
+
+            <Switch
+                android:id="@+id/enableEta_switch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/schedule_textview"
+                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:paddingLeft="@dimen/dialogGutter"
+                android:paddingRight="@dimen/dialogGutter"
+                android:text="@string/switch_text_set_eta" />
+
+            <RelativeLayout
+                android:id="@+id/eta_layout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_below="@+id/enableEta_switch"
+                android:background="@color/dialogBg_Material"
+                android:paddingLeft="@dimen/dialogGutter"
+                android:paddingRight="@dimen/dialogGutter"
+                android:visibility="visible">
+
+
+                <TextView
+                    android:id="@+id/etaStartDate_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/tv_date" />
+
+                <Button
+                    android:id="@+id/etaStartDate_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/etaStartDate_textview"
+                    android:text="@string/placeholder_date_long" />
+
+                <View
+                    android:id="@+id/etaStartDate_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/etaStartDate_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
+
+                <TextView
+                    android:id="@+id/etaStartTime_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etaStartDate_divider"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/tv_start_time" />
+
+                <Button
+                    android:id="@+id/etaStartTime_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/etaStartTime_textview"
+                    android:text="@string/placeholder_time_long" />
+
+                <View
+                    android:id="@+id/etaStartTime_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/etaStartTime_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
+                <TextView
+                    android:id="@+id/jobDuration_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/etaStartTime_divider"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/job_duration" />
+
+                <Button
+                    android:id="@+id/duration_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/jobDuration_textview"
+                    android:text="@string/placeholder_word" />
+
+                <View
+                    android:id="@+id/duration_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/duration_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
+                <EditText
+                    android:id="@+id/note_edittext"
+                    style="@style/EditText"
+                    android:layout_width="match_parent"
+                    android:layout_below="@+id/duration_divider"
+                    android:hint="@string/hint_text_optional_details"
+                    android:textSize="16dp"
+                    android:visibility="visible" />
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

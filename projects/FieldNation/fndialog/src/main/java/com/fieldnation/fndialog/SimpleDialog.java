@@ -2,7 +2,6 @@ package com.fieldnation.fndialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,12 +95,11 @@ public abstract class SimpleDialog implements Dialog {
     }
 
     @Override
-    public void onRestoreDialogState(Parcelable savedState) {
+    public void onRestoreDialogState(Bundle savedState) {
     }
 
     @Override
-    public Parcelable onSaveDialogState() {
-        return Bundle.EMPTY;
+    public void onSaveDialogState(Bundle outState) {
     }
 
     @Override

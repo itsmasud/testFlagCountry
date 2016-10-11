@@ -79,7 +79,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
             for (int i = 0; i < bundles.length; i++) {
                 Bundle bundle = (Bundle) bundles[i];
-                Parcelable dialogSavedState = bundle.getParcelable("savedState");
+                Bundle dialogSavedState = bundle.getBundle("savedState");
                 String className = bundle.getString("className");
                 ClassLoader classLoader = bundle.getClassLoader();
                 Bundle params = bundle.getBundle("params");
@@ -237,7 +237,7 @@ public class DialogManager extends FrameLayout implements Constants {
         public Dialog dialog;
         public Bundle params;
 
-        public Parcelable savedState;
+        public Bundle savedState;
 
         DialogHolder(Dialog dialog) {
             this.dialog = dialog;
@@ -245,7 +245,9 @@ public class DialogManager extends FrameLayout implements Constants {
 
         Bundle saveState() {
             Bundle savedState = new Bundle();
-            savedState.putParcelable("savedState", dialog.onSaveDialogState());
+            Bundle dialogState = new Bundle();
+            dialog.onSaveDialogState(dialogState);
+            savedState.putParcelable("savedState", dialogState);
             savedState.putString("className", dialog.getClass().getName());
             savedState.setClassLoader(dialog.getClass().getClassLoader());
             savedState.putBundle("params", params);

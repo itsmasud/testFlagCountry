@@ -2,7 +2,6 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.TextInputLayout;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -144,31 +143,26 @@ public class ReportProblemDialog extends SimpleDialog {
     }
 
     @Override
-    public void onRestoreDialogState(Parcelable savedState) {
+    public void onRestoreDialogState(Bundle savedState) {
         super.onRestoreDialogState(savedState);
 
-        if (!(savedState instanceof Bundle))
+        if (savedState == null)
             return;
 
-        Bundle savedInstanceState = (Bundle) savedState;
+        if (savedState.containsKey(STATE_PRIMARY_POS))
+            _primaryPosition = savedState.getInt(STATE_PRIMARY_POS);
 
-        if (savedInstanceState == null)
-            return;
+        if (savedState.containsKey(STATE_SECONDARY_POS))
+            _secondaryPosition = savedState.getInt(STATE_SECONDARY_POS);
 
-        if (savedInstanceState.containsKey(STATE_PRIMARY_POS))
-            _primaryPosition = savedInstanceState.getInt(STATE_PRIMARY_POS);
+        if (savedState.containsKey(STATE_WORKORDER))
+            _workorder = (Workorder) savedState.getParcelable(STATE_WORKORDER);
 
-        if (savedInstanceState.containsKey(STATE_SECONDARY_POS))
-            _secondaryPosition = savedInstanceState.getInt(STATE_SECONDARY_POS);
+        if (savedState.containsKey(STATE_SELECTED_PROBLEM))
+            _selectedProblem = ReportProblemType.values()[savedState.getInt(STATE_SELECTED_PROBLEM)];
 
-        if (savedInstanceState.containsKey(STATE_WORKORDER))
-            _workorder = (Workorder) savedInstanceState.getParcelable(STATE_WORKORDER);
-
-        if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
-            _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];
-
-        if (savedInstanceState.containsKey(STATE_OK_ENABLED))
-            _okButton.setEnabled(savedInstanceState.getBoolean(STATE_OK_ENABLED));
+        if (savedState.containsKey(STATE_OK_ENABLED))
+            _okButton.setEnabled(savedState.getBoolean(STATE_OK_ENABLED));
 
         if (_workorder != null) {
             _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
@@ -201,8 +195,7 @@ public class ReportProblemDialog extends SimpleDialog {
     }
 
     @Override
-    public Parcelable onSaveDialogState() {
-        Bundle outState = new Bundle();
+    public void onSaveDialogState(Bundle outState) {
         outState.putInt(STATE_PRIMARY_POS, _primaryPosition);
         outState.putInt(STATE_SECONDARY_POS, _secondaryPosition);
         if (_workorder != null)
@@ -212,7 +205,7 @@ public class ReportProblemDialog extends SimpleDialog {
         if (_okButton != null)
             outState.putBoolean(STATE_OK_ENABLED, _okButton.isEnabled());
 
-        return super.onSaveDialogState();
+        super.onSaveDialogState(outState);
     }
 
     private HintSpinner getPrimarySpinner() {
