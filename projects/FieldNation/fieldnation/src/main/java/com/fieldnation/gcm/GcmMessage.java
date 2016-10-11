@@ -3,8 +3,7 @@ package com.fieldnation.gcm;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.data.v2.actions.Action;
-import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.data.v2.actions.ActionContainer;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -28,51 +27,32 @@ public class GcmMessage implements Parcelable {
     public Integer badge;
     @Json
     public String category;
+    @Json(name = "actions")
+    public ActionContainer actions;
 
-    public Action[] primaryActions;
-    public Action[] secondaryActions;
-
+    /*-*************************************-*/
+    /*-			JSON Implementation			-*/
+    /*-*************************************-*/
     public JsonObject toJson() {
         return toJson(this);
     }
 
-    public static JsonObject toJson(GcmMessage gcmMessage) {
-        JsonObject obj = null;
+    public static JsonObject toJson(GcmMessage schedule) {
         try {
-            obj = Serializer.serializeObject(gcmMessage);
-
-            if (gcmMessage.primaryActions != null && gcmMessage.primaryActions.length > 0) {
-                JsonArray ja = Action.toJsonArray(gcmMessage.primaryActions);
-                obj.put("actions.primary", ja);
-            }
-
-            if (gcmMessage.secondaryActions != null && gcmMessage.secondaryActions.length > 0) {
-                JsonArray ja = Action.toJsonArray(gcmMessage.secondaryActions);
-                obj.put("actions.secondary", ja);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return Serializer.serializeObject(schedule);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
         }
-        return obj;
     }
 
     public static GcmMessage fromJson(JsonObject json) {
-        GcmMessage obj = null;
         try {
-            obj = Unserializer.unserializeObject(GcmMessage.class, json);
-
-            if (json.has("actions")) {
-                if (json.has("actions.primary")) {
-                    obj.primaryActions = Action.parseActions(json.getJsonArray("actions.primary"));
-                }
-                if (json.has("action.secondary")) {
-                    obj.secondaryActions = Action.parseActions(json.getJsonArray("actions.secondary"));
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+            return Unserializer.unserializeObject(GcmMessage.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
         }
-        return obj;
     }
 
     /*-*********************************************-*/

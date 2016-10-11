@@ -157,14 +157,16 @@ public class MyGcmListenerService extends GcmListenerService {
         PendingIntent secondaryIntent = null;
         Action secondaryAction = null;
 
-        if (gcmMessage.primaryActions != null && gcmMessage.primaryActions.length > 0) {
-            primaryAction = gcmMessage.primaryActions[0];
-            primaryIntent = getIntentFromAction(primaryAction);
-        }
+        if (gcmMessage.actions != null) {
+            if (gcmMessage.actions.getPrimary() != null && gcmMessage.actions.getPrimary().length > 0) {
+                primaryAction = gcmMessage.actions.getPrimary()[0];
+                primaryIntent = getIntentFromAction(primaryAction);
+            }
 
-        if (gcmMessage.secondaryActions != null && gcmMessage.secondaryActions.length > 0) {
-            secondaryAction = gcmMessage.secondaryActions[0];
-            secondaryIntent = getIntentFromAction(secondaryAction);
+            if (gcmMessage.actions.getSecondary() != null && gcmMessage.actions.getSecondary().length > 0) {
+                secondaryAction = gcmMessage.actions.getSecondary()[0];
+                secondaryIntent = getIntentFromAction(secondaryAction);
+            }
         }
 
         // no buttons

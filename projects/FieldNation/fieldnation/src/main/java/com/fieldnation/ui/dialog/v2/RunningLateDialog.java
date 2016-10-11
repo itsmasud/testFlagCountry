@@ -57,7 +57,7 @@ public class RunningLateDialog extends SimpleDialog {
         _callButton = (Button) v.findViewById(R.id.call_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
 
-        return null;
+        return v;
     }
 
     @Override

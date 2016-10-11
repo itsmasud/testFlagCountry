@@ -4,7 +4,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.data.v2.actions.Action;
-import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.data.v2.actions.ActionContainer;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -16,9 +16,6 @@ import com.fieldnation.fnlog.Log;
  */
 public class WorkOrder implements Parcelable {
     private static final String TAG = "WorkOrder";
-
-    private Action[] _primaryActions;
-    private Action[] _secondaryActions;
 
     @Json
     private Long id;
@@ -36,6 +33,8 @@ public class WorkOrder implements Parcelable {
     private Schedule schedule;
     @Json
     private Pay pay;
+    @Json(name = "actions")
+    private ActionContainer actions;
 
     public WorkOrder() {
     }
@@ -77,11 +76,17 @@ public class WorkOrder implements Parcelable {
     }
 
     public Action[] getPrimaryActions() {
-        return _primaryActions;
+        if (actions == null)
+            return null;
+
+        return actions.getPrimary();
     }
 
     public Action[] getSecondaryActions() {
-        return _secondaryActions;
+        if (actions == null)
+            return null;
+
+        return actions.getSecondary();
     }
 
     @Override
@@ -100,16 +105,6 @@ public class WorkOrder implements Parcelable {
         JsonObject obj = null;
         try {
             obj = Serializer.serializeObject(workOrder);
-
-            if (workOrder._primaryActions != null && workOrder._primaryActions.length > 0) {
-                JsonArray ja = Action.toJsonArray(workOrder._primaryActions);
-                obj.put("actions.primary", ja);
-            }
-
-            if (workOrder._secondaryActions != null && workOrder._secondaryActions.length > 0) {
-                JsonArray ja = Action.toJsonArray(workOrder._secondaryActions);
-                obj.put("actions.secondary", ja);
-            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -120,15 +115,6 @@ public class WorkOrder implements Parcelable {
         WorkOrder wo = null;
         try {
             wo = Unserializer.unserializeObject(WorkOrder.class, json);
-
-            if (json.has("actions")) {
-                if (json.has("actions.primary")) {
-                    wo._primaryActions = Action.parseActions(json.getJsonArray("actions.primary"));
-                }
-                if (json.has("action.secondary")) {
-                    wo._secondaryActions = Action.parseActions(json.getJsonArray("actions.secondary"));
-                }
-            }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
