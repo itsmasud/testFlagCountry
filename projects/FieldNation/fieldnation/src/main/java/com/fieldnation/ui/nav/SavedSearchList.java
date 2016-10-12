@@ -28,7 +28,7 @@ import java.util.List;
 public class SavedSearchList extends LinearLayout {
     private static final String TAG = "SavedSearchList";
 
-    private static final SavedSearchParams[] defaults = new SavedSearchParams[]{
+    public static final SavedSearchParams[] defaults = new SavedSearchParams[]{
             new SavedSearchParams()
                     .type(WorkOrderListType.TODAYS_WORK.getType())
                     .status(WorkOrderListType.TODAYS_WORK.getStatuses())

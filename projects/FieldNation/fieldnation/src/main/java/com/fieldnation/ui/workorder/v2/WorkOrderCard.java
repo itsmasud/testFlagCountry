@@ -275,50 +275,47 @@ public class WorkOrderCard extends RelativeLayout {
     private void populateButtons() {
         // Primary actions
         _primaryButton.setVisibility(GONE);
-        if (_workOrder.getPrimaryActions() != null && _workOrder.getPrimaryActions().length > 0 && _workOrder.getPrimaryActions()[0] != null) {
-            // Action action = new Action(Action.ActionType.REPORT_PROBLEM);
+        if (_workOrder.getPrimaryActions() != null
+                && _workOrder.getPrimaryActions().length > 0
+                && _workOrder.getPrimaryActions()[0] != null) {
             Action action = _workOrder.getPrimaryActions()[0];
 
             switch (action.getType()) {
                 case CONFIRM:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_confirm_onClick);
-                    _primaryButton.setText("Confirm");
+                    _primaryButton.setText(R.string.btn_confirm);
                     break;
                 case ON_MY_WAY:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_onMyWay_onClick);
-                    _primaryButton.setText("On My Way");
+                    _primaryButton.setText(R.string.btn_on_my_way);
                     break;
                 case READY:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_readyToGo_onClick);
-                    _primaryButton.setText("Ready to Go");
+                    _primaryButton.setText(R.string.btn_ready_to_go);
                     break;
                 case REPORT_PROBLEM:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_reportProblem_onClick);
-                    _primaryButton.setText("Report Problem");
+                    _primaryButton.setText(R.string.btn_report_problem);
                     break;
                 default:
                     break;
             }
         }
-        _primaryButton.setVisibility(VISIBLE);
-        _primaryButton.setOnClickListener(_reportProblem_onClick);
-        _primaryButton.setText("Report Problem");
 
         _secondaryButtons[0].setVisibility(GONE);
         _secondaryButtons[1].setVisibility(GONE);
         _secondaryButtons[2].setVisibility(GONE);
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            for (int i = 0; i < _workOrder.getPrimaryActions().length && i < _secondaryButtons.length; i++) {
+            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
                 populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
             }
         }
-
-        populateSecondaryButton(_secondaryButtons[0], new Action(Action.ActionType.REPORT_PROBLEM));
-        populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
+        //populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
+        //populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
     }
 
     // other icons
@@ -342,7 +339,7 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
             case REPORT_PROBLEM:
                 button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_alerts_solid);
+                button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
             default:
@@ -400,7 +397,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _messageBuyer_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO bring to messages tab of wo details?
+            WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
         }
     };
 

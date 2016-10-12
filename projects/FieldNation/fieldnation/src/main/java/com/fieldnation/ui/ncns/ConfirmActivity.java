@@ -3,32 +3,26 @@ package com.fieldnation.ui.ncns;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.Button;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.v2.ListEnvelope;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DefaultAnimationListener;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
 
-import java.util.Calendar;
-import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Created by Michael on 10/3/2016.
@@ -42,13 +36,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     // Ui
     private SearchResultScreen _recyclerView;
     private Toolbar _toolbar;
-    private CoordinatorLayout _layout;
-    private AppBarLayout _appBarLayout;
-    private Button _confirmButton;
-
-    // Animations
-    private Animation _ccw;
-    private Animation _cw;
+    private Button _doneButton;
 
     // Data
     private SavedSearchParams _currentSearch = null;
@@ -63,30 +51,14 @@ public class ConfirmActivity extends AuthSimpleActivity {
         super.onCreate(savedInstanceState);
         Log.v(TAG, "onCreate");
 
-        _layout = (CoordinatorLayout) findViewById(R.id.main_content);
-
-        _appBarLayout = (AppBarLayout) findViewById(R.id.appbar);
-
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
 
-        _confirmButton = (Button) findViewById(R.id.confirm_button);
-        _confirmButton.setOnClickListener(_confirmButton_onClick);
-        _confirmButton.setEnabled(false);
-
-        findViewById(R.id.skip_button).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+        _doneButton = (Button) findViewById(R.id.done_button);
+        _doneButton.setOnClickListener(_doneButton_onClick);
 
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
-
-        _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
-        _ccw.setAnimationListener(_ccw_animationListener);
-        _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
-        _cw.setAnimationListener(_ccw_animationListener);
+        _recyclerView.setOnWorkOrderListReceivedListener(_workOrderList_listener);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
@@ -124,13 +96,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
         super.onRestoreInstanceState(savedInstanceState);
     }
 
-    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            _ccw.cancel();
-        }
-    };
-
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
     }
@@ -142,7 +107,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     public DialogManager getDialogManager() {
-        return null;
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
@@ -154,28 +119,34 @@ public class ConfirmActivity extends AuthSimpleActivity {
         // do nothing, you're stuck here.... muhahahah
     }
 
-    private final View.OnClickListener _confirmButton_onClick = new View.OnClickListener() {
+    private final SearchResultScreen.OnWorkOrderListReceivedListener _workOrderList_listener = new SearchResultScreen.OnWorkOrderListReceivedListener() {
         @Override
-        public void onClick(View v) {
-            Hashtable<Long, WorkOrder> checks = _recyclerView.getCheckWorkorders();
+        public void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders) {
+            _doneButton.setVisibility(View.VISIBLE);
 
-            for (Long woId : checks.keySet()) {
-                WorkOrder wo = checks.get(woId);
-
-                try {
-                    Calendar cal = ISO8601.toCalendar(wo.getSchedule().getExact());
-                    cal.add(Calendar.HOUR, 1);
-
-                    WorkorderClient.actionConfirmAssignment(App.get(), woId,
-                            wo.getSchedule().getBegin(), ISO8601.fromCalendar(cal), null, false);
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+            if (envelope == null || envelope.getTotal() == 0) {
+                _doneButton.setVisibility(View.VISIBLE);
+                return;
             }
 
+            for (WorkOrder wo : workOrders) {
+                Action[] actions = wo.getPrimaryActions();
+                if (actions != null) {
+                    for (Action a : actions) {
+                        if (a.getType() == Action.ActionType.CONFIRM) {
+                            _doneButton.setVisibility(View.GONE);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    };
+
+    private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
             NavActivity.startNew(App.get());
-            finish();
         }
     };
 

@@ -2,6 +2,9 @@ package com.fieldnation.data.v2.actions;
 
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
@@ -10,20 +13,23 @@ import com.fieldnation.fnlog.Log;
 public class Action {
     private static final String TAG = "Action";
 
-    private ActionType type;
+    @Json
+    private String type;
+    @Json
     private String object;
+    @Json
     private String id;
 
     public Action() {
     }
 
     public Action(ActionType type) {
-        this.type = type;
+        this.type = type.typestring;
     }
 
     public Action(JsonObject json) {
         try {
-            this.type = ActionType.fromTypeString(json.getString("type"));
+            this.type = json.getString("type");
 
             if (json.has("object"))
                 object = json.getString("object");
@@ -37,7 +43,7 @@ public class Action {
     }
 
     public ActionType getType() {
-        return type;
+        return ActionType.fromTypeString(type);
     }
 
     public String getObject() {
@@ -53,59 +59,35 @@ public class Action {
     /*-			JSON Implementation			-*/
     /*-*************************************-*/
     public JsonObject toJson() {
-        JsonObject obj = new JsonObject();
-
-        try {
-            obj.put("type", this.type.typestring);
-
-            if (object != null)
-                obj.put("object", object);
-
-            if (id != null)
-                obj.put("id", id);
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        return obj;
+        return toJson(this);
     }
 
-    public static Action[] parseActions(JsonArray objects) {
+    public static JsonObject toJson(Action schedule) {
+        try {
+            return Serializer.serializeObject(schedule);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Action fromJson(JsonObject json) {
+        try {
+            return Unserializer.unserializeObject(Action.class, json);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
+    public static Action[] fromJson(JsonArray objects) {
         Action[] actions = new Action[objects.size()];
 
         for (int i = 0; i < objects.size(); i++) {
-            actions[i] = parseAction(objects.getJsonObject(i));
+            actions[i] = fromJson(objects.getJsonObject(i));
         }
 
         return actions;
-    }
-
-    public static Action parseAction(JsonObject object) {
-        try {
-            if (!object.has("type"))
-                return null;
-
-            ActionType type = ActionType.fromTypeString(object.getString("type"));
-
-            switch (type) {
-                default:
-                    return new Action(object);
-            }
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        return null;
-    }
-
-    public static JsonArray toJsonArray(Action[] actions) {
-        JsonArray ja = new JsonArray();
-        if (actions != null) {
-            for (Action action : actions) {
-                ja.add(action.toJson());
-            }
-        }
-        return ja;
     }
 
     public enum ActionType {

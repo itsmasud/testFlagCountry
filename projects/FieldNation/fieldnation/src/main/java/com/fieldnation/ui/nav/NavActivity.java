@@ -20,7 +20,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
@@ -88,10 +87,7 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         if (_currentSearch == null) {
-            _currentSearch = new SavedSearchParams()
-                    .type(WorkOrderListType.ASSIGNED.getType())
-                    .status(WorkOrderListType.ASSIGNED.getStatuses())
-                    .title("Assigned");
+            _currentSearch = SavedSearchList.defaults[0];
         }
 
         _recyclerView.startSearch(_currentSearch);

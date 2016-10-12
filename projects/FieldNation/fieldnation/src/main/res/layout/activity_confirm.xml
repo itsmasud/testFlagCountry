@@ -57,26 +57,20 @@
             android:layout_width="match_parent"
             android:layout_alignParentTop="true" />
 
-
         <Button
-            android:id="@+id/skip_button"
-            style="?attr/buttonGreenStyle"
-            android:layout_width="wrap_content"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_toLeftOf="@+id/confirm_button"
-            android:text="SKIP"
-            android:visibility="gone" />
-
-        <Button
-            android:id="@+id/confirm_button"
+            android:id="@+id/done_button"
             style="?attr/buttonGreenStyle"
             android:layout_width="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
-            android:text="CONFIRM"
+            android:text="@string/btn_done"
             android:visibility="visible" />
 
     </RelativeLayout>
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 </RelativeLayout>
