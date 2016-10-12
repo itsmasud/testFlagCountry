@@ -58,6 +58,7 @@ public class EtaDialog extends DialogFragmentBase {
     private final static int INVALID_NUMBER = -1;
     private final int ONE_DAY = 86400000;
 
+
     // Ui
     private TextView _titleTextView;
     private Button _expirationButton;
@@ -71,6 +72,7 @@ public class EtaDialog extends DialogFragmentBase {
     private Button _etaStartTimeButton;
     private Button _durationButton;
     private EditText _noteEditText;
+
 
     private DatePickerDialog _etaStartDatePicker;
     private TimePickerDialog _etaStartTimePicker;
@@ -313,8 +315,12 @@ public class EtaDialog extends DialogFragmentBase {
     }
 
     private void setDuration(long timeMilliseconds) {
-        _durationMilliseconds = timeMilliseconds;
-        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        if (timeMilliseconds == INVALID_NUMBER) {
+            _durationButton.setText("");
+        } else {
+            _durationMilliseconds = timeMilliseconds;
+            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        }
     }
 
     private void setExpiringDuration(long timeMilliseconds) {
@@ -438,7 +444,7 @@ public class EtaDialog extends DialogFragmentBase {
                 _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
                 _etaStartTimeButton.setText(DateUtils.formatTimeLong(ISO8601.toCalendar(_estimatedSchedule.getStartTime())));
 
-                setDuration(_durationMilliseconds > INVALID_NUMBER ? _durationMilliseconds : MIN_JOB_DURATION);
+                setDuration(_durationMilliseconds);
 
                 if (_estimatedSchedule.getType() == Schedule.Type.EXACT) {
                     _etaStartDateButton.setEnabled(false);
@@ -453,11 +459,12 @@ public class EtaDialog extends DialogFragmentBase {
                 _scheduledStartDateTimeCalendar = ISO8601.toCalendar(_schedule.getStartTime());
 
                 if (_clear) {
+                    _durationMilliseconds = INVALID_NUMBER;
                     _etaStartDateTimeCalendar = _scheduledStartDateTimeCalendar;
                     _etaMilliseconds = _etaStartDateTimeCalendar.getTimeInMillis();
                     _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_scheduledStartDateTimeCalendar));
                     _etaStartTimeButton.setText(DateUtils.formatTimeLong(_scheduledStartDateTimeCalendar));
-                    setDuration(MIN_JOB_DURATION);
+                    setDuration(_durationMilliseconds);
                     _noteEditText.setText("");
                     _noteEditText.setHint(getString(R.string.hint_text_optional_details));
 
@@ -470,7 +477,7 @@ public class EtaDialog extends DialogFragmentBase {
 
                     _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStartDateTimeCalendar));
                     _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStartDateTimeCalendar));
-                    setDuration(_durationMilliseconds > INVALID_NUMBER ? _durationMilliseconds : MIN_JOB_DURATION);
+                    setDuration(_durationMilliseconds);
 
                     if (!misc.isEmptyOrNull(_note)) {
                         _noteEditText.setText(_note);
@@ -743,6 +750,11 @@ public class EtaDialog extends DialogFragmentBase {
 
             if (!isValidDate() || !isValidTime()) return;
 
+            if (_durationMilliseconds == INVALID_NUMBER) {
+                ToastClient.toast(App.get(), getString(R.string.toast_job_duration_empty), Toast.LENGTH_LONG);
+                return;
+            }
+
             if (_dialogStyle.equals(DIALOG_STYLE_REQUEST)) {
                 if (_etaSwitch.isChecked()) {
                     _listener.onRequest(_workorder, _expiringDurationMilliseconds, ISO8601.fromCalendar(_etaStartDateTimeCalendar), _durationMilliseconds, _noteEditText.getText().toString().trim());
@@ -785,7 +797,6 @@ public class EtaDialog extends DialogFragmentBase {
         @Override
         public void onOk(long timeMilliseconds) {
             if (timeMilliseconds < MIN_JOB_DURATION) {
-                setDuration(MIN_JOB_DURATION);
                 ToastClient.toast(App.get(), getString(R.string.toast_minimum_job_duration), Toast.LENGTH_LONG);
                 return;
             }
