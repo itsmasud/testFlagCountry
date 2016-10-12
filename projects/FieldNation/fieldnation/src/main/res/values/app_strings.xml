@@ -122,6 +122,7 @@
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
     <string name="toast_pick_date_time_between_schedule">Please pick date and time in between schedule.</string>
+    <string name="toast_job_duration_empty">Please fill up job duration.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
