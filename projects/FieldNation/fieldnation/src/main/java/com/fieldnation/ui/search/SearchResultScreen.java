@@ -19,6 +19,7 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
@@ -26,7 +27,6 @@ import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
 
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -43,15 +43,13 @@ public class SearchResultScreen extends RelativeLayout {
     // Service
     private WorkOrderClient _workOrderClient;
     private SimpleGps _simpleGps;
+    private WorkorderClient _workorderClientV1;
 
     // Data
     private SavedSearchParams _searchParams;
     private Location _location;
     private OnClickListener _onClickListener;
-
-    // Todo make persistent?
-    private Hashtable<Long, WorkOrder> _checkWork = new Hashtable<>();
-
+    private OnWorkOrderListReceivedListener _onListReceivedListener;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -86,6 +84,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+        _workorderClientV1 = new WorkorderClient(_workorderClientV1_listener);
+        _workorderClientV1.connect(App.get());
 
         _adapter.clear();
 
@@ -119,6 +119,9 @@ public class SearchResultScreen extends RelativeLayout {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
 
+        if (_workorderClientV1 != null && _workorderClientV1.isConnected())
+            _workorderClientV1.disconnect(App.get());
+
         super.onDetachedFromWindow();
     }
 
@@ -142,8 +145,8 @@ public class SearchResultScreen extends RelativeLayout {
         _onClickListener = listener;
     }
 
-    public Hashtable<Long, WorkOrder> getCheckWorkorders() {
-        return _checkWork;
+    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
+        _onListReceivedListener = listener;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -163,6 +166,9 @@ public class SearchResultScreen extends RelativeLayout {
         public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
             if (!_searchParams.toKey().equals(searchParams.toKey()))
                 return;
+
+            if (_onListReceivedListener != null)
+                _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
 
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
@@ -184,6 +190,19 @@ public class SearchResultScreen extends RelativeLayout {
                 _unavailableView.setVisibility(VISIBLE);
             else
                 _unavailableView.setVisibility(GONE);
+        }
+    };
+
+    private final WorkorderClient.Listener _workorderClientV1_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderClientV1.subActions();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            getPage(0);
+            _refreshView.startRefreshing();
         }
     };
 
@@ -221,5 +240,9 @@ public class SearchResultScreen extends RelativeLayout {
 
     public interface OnClickListener {
         void onWorkOrderClicked(WorkOrder workOrder);
+    }
+
+    public interface OnWorkOrderListReceivedListener {
+        void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders);
     }
 }
