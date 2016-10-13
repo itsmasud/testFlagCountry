@@ -16,6 +16,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
+import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnlog.Log;
@@ -171,7 +172,7 @@ public class WorkOrderCard extends RelativeLayout {
 
                 // range
             } else if (_workOrder.getSchedule().getRange() != null) {
-                if (_workOrder.getSchedule().getRange().getType().equals("business")) {
+                if (_workOrder.getSchedule().getRange().getType() == Range.Type.BUSINESS) {
                     // business
                     try {
                         Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
