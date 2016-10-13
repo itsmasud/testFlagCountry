@@ -144,12 +144,6 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart.get(Calendar.YEAR),
                 _etaStart.get(Calendar.MONTH),
                 _etaStart.get(Calendar.DAY_OF_MONTH));
-
-        _durationDialog = new DurationDialog.Controller(App.get(), UID_DURATION_DIALOG);
-        _durationDialog.setListener(_durationDialog_listener);
-
-        _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
-        _expiryDialog.setListener(_expiryDialog_listener);
         return v;
     }
 
@@ -168,6 +162,12 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
         _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _durationButton.setOnClickListener(_duration_onClick);
+
+        _durationDialog = new DurationDialog.Controller(App.get(), UID_DURATION_DIALOG);
+        _durationDialog.setListener(_durationDialog_listener);
+
+        _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
+        _expiryDialog.setListener(_expiryDialog_listener);
     }
 
     @Override
@@ -619,7 +619,6 @@ public class EtaDialog extends FullScreenDialog {
 
         @Override
         public void onCancel() {
-
         }
     };
 
@@ -633,7 +632,8 @@ public class EtaDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (!isValidDay() || !isValidTime()) return true;
+            if (!isValidDay() || !isValidTime())
+                return true;
 
             if (_durationMilliseconds == INVALID_NUMBER) {
                 ToastClient.toast(App.get(), R.string.toast_job_duration_empty, Toast.LENGTH_LONG);
@@ -713,5 +713,4 @@ public class EtaDialog extends FullScreenDialog {
             show(context, uid, EtaDialog.class, params);
         }
     }
-
 }

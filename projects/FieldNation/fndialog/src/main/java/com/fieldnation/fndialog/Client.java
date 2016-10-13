@@ -78,7 +78,7 @@ class Client extends TopicClient implements Constants {
         public void onEvent(String topicId, Parcelable payload) {
             Bundle bundle = (Bundle) payload;
 
-            if (bundle.containsKey(PARAM_DIALOG_UID) && bundle.getStringArrayList(PARAM_DIALOG_UID) != null) {
+            if (getUid() != null && bundle.containsKey(PARAM_DIALOG_UID) && bundle.getString(PARAM_DIALOG_UID) != null) {
                 String uid = bundle.getString(PARAM_DIALOG_UID);
                 if (!uid.equals(getUid()))
                     return;

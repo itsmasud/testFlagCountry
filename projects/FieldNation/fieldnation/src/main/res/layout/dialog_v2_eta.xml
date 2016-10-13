@@ -126,7 +126,6 @@
                     android:layout_marginRight="4dp"
                     android:background="@color/fn_material_spinner_bottom_line" />
 
-
                 <TextView
                     android:id="@+id/etaStartTime_textview"
                     style="@style/Text_Caption"
@@ -164,7 +163,7 @@
                     android:id="@+id/duration_button"
                     style="@style/SpinnerButton"
                     android:layout_below="@+id/jobDuration_textview"
-                    android:text="@string/placeholder_word" />
+                    android:text="" />
 
                 <View
                     android:id="@+id/duration_divider"
