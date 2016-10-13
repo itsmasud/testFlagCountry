@@ -103,7 +103,6 @@
                 android:paddingRight="@dimen/dialogGutter"
                 android:visibility="visible">
 
-
                 <TextView
                     android:id="@+id/etaStartDate_textview"
                     style="@style/Text_Caption"

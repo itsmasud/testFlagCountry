@@ -505,6 +505,19 @@ public class DateUtils {
         return c.getTime();
     }
 
+    public static Calendar clearTime(Calendar date) {
+        if (date == null) {
+            return null;
+        }
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(date.getTimeInMillis());
+        c.set(Calendar.HOUR_OF_DAY, 0);
+        c.set(Calendar.MINUTE, 0);
+        c.set(Calendar.SECOND, 0);
+        c.set(Calendar.MILLISECOND, 0);
+        return c;
+    }
+
     /** Determines whether or not a date has any time values (hour, minute,
      * seconds or millisecondsReturns the given date with the time values cleared. */
 
@@ -584,11 +597,9 @@ public class DateUtils {
         return millisenonds / 60000;
     }
 
-    public static Calendar ceilUptoMinutes(Calendar calendar){
+    public static Calendar ceilUptoMinutes(Calendar calendar) {
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         return calendar;
     }
-
-
 }

@@ -26,6 +26,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportIssueDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -351,14 +352,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             try {
-                Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
-                cal.add(Calendar.HOUR, 1);
-
-                WorkorderClient.actionConfirmAssignment(
-                        App.get(), _workOrder.getId(), _workOrder.getSchedule().getExact(),
-                        ISO8601.fromCalendar(cal), null, false);
-
                 GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
                 ex.printStackTrace();

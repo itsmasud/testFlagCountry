@@ -34,11 +34,13 @@ public class Range implements Parcelable {
     }
 
     /**
-     *
      * @return range or business
      */
-    public String getType() {
-        return type;
+    public Type getType() {
+        if (type.equals("range"))
+            return Type.RANGE;
+
+        return Type.BUSINESS;
     }
 
     /*-*************************************-*/
@@ -95,5 +97,9 @@ public class Range implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
+    }
+
+    public enum Type {
+        BUSINESS, RANGE;
     }
 }
