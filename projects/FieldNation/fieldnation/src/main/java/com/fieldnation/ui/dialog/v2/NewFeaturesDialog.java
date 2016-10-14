@@ -75,15 +75,15 @@ public class NewFeaturesDialog extends FullScreenDialog {
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, NewFeaturesDialog.class);
+            super(context, NewFeaturesDialog.class, null);
         }
 
         public static void show(Context context) {
-            show(context, NewFeaturesDialog.class, null);
+            show(context, null, NewFeaturesDialog.class, null);
         }
 
         public static void dismiss(Context context) {
-            dismiss(context, NewFeaturesDialog.class);
+            dismiss(context, null);
         }
     }
 }

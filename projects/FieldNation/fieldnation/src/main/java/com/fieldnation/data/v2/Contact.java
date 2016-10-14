@@ -10,37 +10,44 @@ import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 
 /**
- * Created by Michael on 8/19/2016.
+ * Created by Michael on 10/13/2016.
  */
-public class Range implements Parcelable {
-    private static final String TAG = "Range";
 
-    @Json
-    private String end;
-    @Json
-    private String begin;
-    @Json
-    private String type; //range or business
+public class Contact implements Parcelable {
+    private static final String TAG = "Contact";
 
-    public Range() {
+    @Json(name = "email")
+    private String email;
+    @Json(name = "phone_number")
+    private String phoneNumber;
+    @Json(name = "note")
+    private String note;
+    @Json(name = "phone_ext")
+    private String phoneExt;
+    @Json(name = "role")
+    private String role;
+
+    public Contact() {
     }
 
-    public String getEnd() {
-        return end;
+    public String getEmail() {
+        return email;
     }
 
-    public String getBegin() {
-        return begin;
+    public String getNote() {
+        return note;
     }
 
-    /**
-     * @return range or business
-     */
-    public Type getType() {
-        if (type.equals("range"))
-            return Type.RANGE;
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
 
-        return Type.BUSINESS;
+    public String getPhoneExt() {
+        return phoneExt;
+    }
+
+    public String getRole() {
+        return role;
     }
 
     /*-*************************************-*/
@@ -50,18 +57,18 @@ public class Range implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(Range range) {
+    public static JsonObject toJson(Contact contact) {
         try {
-            return Serializer.serializeObject(range);
+            return Serializer.serializeObject(contact);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
         }
     }
 
-    public static Range fromJson(JsonObject json) {
+    public static Contact fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(Range.class, json);
+            return Unserializer.unserializeObject(Contact.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -71,12 +78,12 @@ public class Range implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<Range> CREATOR = new Parcelable.Creator<Range>() {
+    public static final Parcelable.Creator<Contact> CREATOR = new Parcelable.Creator<Contact>() {
 
         @Override
-        public Range createFromParcel(Parcel source) {
+        public Contact createFromParcel(Parcel source) {
             try {
-                return Range.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return Contact.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -84,8 +91,8 @@ public class Range implements Parcelable {
         }
 
         @Override
-        public Range[] newArray(int size) {
-            return new Range[size];
+        public Contact[] newArray(int size) {
+            return new Contact[size];
         }
     };
 
@@ -97,9 +104,5 @@ public class Range implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
-    }
-
-    public enum Type {
-        BUSINESS, RANGE;
     }
 }

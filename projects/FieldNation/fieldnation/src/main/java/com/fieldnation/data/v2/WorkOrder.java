@@ -35,6 +35,9 @@ public class WorkOrder implements Parcelable {
     private Pay pay;
     @Json(name = "actions")
     private ActionContainer actions;
+    @Json(name = "contacts")
+    private Contact[] contacts;
+
 
     public WorkOrder() {
     }
@@ -87,6 +90,10 @@ public class WorkOrder implements Parcelable {
             return null;
 
         return actions.getSecondary();
+    }
+
+    public Contact[] getContacts() {
+        return contacts;
     }
 
     @Override

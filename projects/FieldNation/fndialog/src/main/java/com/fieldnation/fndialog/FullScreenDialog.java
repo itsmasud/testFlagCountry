@@ -2,7 +2,6 @@ package com.fieldnation.fndialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,7 +30,8 @@ public abstract class FullScreenDialog implements Dialog {
     private Animation _fgSlideOut;
 
     // Listener
-    private DismissListener _listener;
+    private DismissListener _dismissListener;
+    private ResultListener _resultListener;
 
     public FullScreenDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -51,8 +51,8 @@ public abstract class FullScreenDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
-                if (_listener != null)
-                    _listener.onDismissed(FullScreenDialog.this);
+                if (_dismissListener != null)
+                    _dismissListener.onDismissed(FullScreenDialog.this);
             }
         });
 
@@ -68,6 +68,10 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void onAdded() {
+    }
+
+    @Override
+    public void onRemoved() {
     }
 
     @Override
@@ -93,12 +97,11 @@ public abstract class FullScreenDialog implements Dialog {
     }
 
     @Override
-    public void onRestoreDialogState(Parcelable savedState) {
+    public void onRestoreDialogState(Bundle savedState) {
     }
 
     @Override
-    public Parcelable onSaveDialogState() {
-        return Bundle.EMPTY;
+    public void onSaveDialogState(Bundle outState) {
     }
 
     @Override
@@ -111,18 +114,27 @@ public abstract class FullScreenDialog implements Dialog {
         } else {
             _child.setVisibility(View.GONE);
             _root.setVisibility(View.GONE);
-            if (_listener != null)
-                _listener.onDismissed(this);
+            if (_dismissListener != null)
+                _dismissListener.onDismissed(this);
         }
     }
 
     @Override
     public void setDismissListener(DismissListener listener) {
-        _listener = listener;
+        _dismissListener = listener;
     }
 
     @Override
     public void cancel() {
+    }
 
+    @Override
+    public void setResultListener(ResultListener listener) {
+        _resultListener = listener;
+    }
+
+    public void onResult(Bundle response) {
+        if (_resultListener != null)
+            _resultListener.onResult(this, response);
     }
 }

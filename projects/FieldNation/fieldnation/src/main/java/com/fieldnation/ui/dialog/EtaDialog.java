@@ -485,8 +485,6 @@ public class EtaDialog extends DialogFragmentBase {
                         _noteEditText.setText("");
                         _noteEditText.setHint(getString(R.string.hint_text_optional_details));
                     }
-
-
                 }
 
                 if (_schedule.getType() == Schedule.Type.EXACT) {

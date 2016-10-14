@@ -1,7 +1,6 @@
 package com.fieldnation.fndialog;
 
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.View;
 
 /**
@@ -33,6 +32,12 @@ public interface Dialog {
     void onAdded();
 
     /**
+     * Called after the view has been removed from the layout. The entire dialog is about to be
+     * destroyed, so use this call to clean up anything that you might need to.
+     */
+    void onRemoved();
+
+    /**
      * @return the View that contains the dialog
      */
     View getView();
@@ -56,7 +61,7 @@ public interface Dialog {
      *
      * @param savedState the state that was returned from onSaveDialogState()
      */
-    void onRestoreDialogState(Parcelable savedState);
+    void onRestoreDialogState(Bundle savedState);
 
     /**
      * Called before dismiss if saving the state for screen orientation change or other similar
@@ -64,7 +69,7 @@ public interface Dialog {
      *
      * @return The state of the dialog
      */
-    Parcelable onSaveDialogState();
+    void onSaveDialogState(Bundle outState);
 
     /**
      * Called when the dialog should go away
@@ -82,5 +87,11 @@ public interface Dialog {
 
     interface DismissListener {
         void onDismissed(Dialog dialog);
+    }
+
+    void setResultListener(ResultListener listener);
+
+    interface ResultListener {
+        void onResult(Dialog dialog, Bundle response);
     }
 }

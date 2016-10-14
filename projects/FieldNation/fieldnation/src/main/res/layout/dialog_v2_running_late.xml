@@ -65,8 +65,7 @@
         android:layout_below="@+id/other_button"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="Call Buyer"
-        android:visibility="gone" />
+        android:text="Call Buyer" />
 
     <Button
         android:id="@+id/cancel_button"

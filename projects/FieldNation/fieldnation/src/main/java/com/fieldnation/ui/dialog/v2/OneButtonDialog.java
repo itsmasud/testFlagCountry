@@ -8,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller.Listener;
 import com.fieldnation.fndialog.Dialog;
-import com.fieldnation.fndialog.EventDispatch;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 
@@ -78,7 +76,7 @@ public class OneButtonDialog extends SimpleDialog {
     public void cancel() {
         Bundle response = new Bundle();
         response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
-        EventDispatch.dialogComplete(App.get(), OneButtonDialog.this, response);
+        onResult(response);
         super.cancel();
 
         onCancel();
@@ -90,8 +88,7 @@ public class OneButtonDialog extends SimpleDialog {
             Log.v(TAG, "_primaryButton_onClick");
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
-            EventDispatch.dialogComplete(App.get(), OneButtonDialog.this, response);
-
+            onResult(response);
             onPrimaryClick();
         }
     };
@@ -104,30 +101,31 @@ public class OneButtonDialog extends SimpleDialog {
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
-        public Controller(Context context) {
-            super(context, OneButtonDialog.class);
+        public Controller(Context context, String uid) {
+            super(context, OneButtonDialog.class, uid);
         }
 
-        public Controller(Context context, Class<? extends Dialog> klass) {
-            super(context, klass);
+        public Controller(Context context, Class<? extends Dialog> klass, String uid) {
+            super(context, klass, uid);
         }
 
-        public static void show(Context context, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
-            show(context, context.getString(titleResId), context.getString(bodyResId), context.getString(buttonResId), isCancelable);
+        public static void show(Context context, String uid, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+            show(context, uid, context.getString(titleResId), context.getString(bodyResId),
+                    context.getString(buttonResId), isCancelable);
         }
 
-        public static void show(Context context, String title, String body, String button, boolean isCancelable) {
+        public static void show(Context context, String uid, String title, String body, String button, boolean isCancelable) {
             Bundle params = new Bundle();
             params.putString(PARAM_TITLE, title);
             params.putString(PARAM_BODY, body);
             params.putString(PARAM_BUTTON, button);
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
 
-            show(context, OneButtonDialog.class, params);
+            show(context, uid, OneButtonDialog.class, params);
         }
 
-        public static void dismiss(Context context) {
-            dismiss(context, OneButtonDialog.class);
+        public static void dismiss(Context context, String uid) {
+            dismiss(context, uid);
         }
     }
 

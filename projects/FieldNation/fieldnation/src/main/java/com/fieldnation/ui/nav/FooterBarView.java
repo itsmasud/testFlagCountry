@@ -6,13 +6,16 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.dialog.v2.DurationDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
 
 /**
@@ -28,6 +31,7 @@ public class FooterBarView extends RelativeLayout {
 
     // Service
     private ProfileClient _profileClient;
+    private DurationDialog.Controller _durationDialog;
 
     // Data
     private Profile _profile = null;
@@ -65,20 +69,37 @@ public class FooterBarView extends RelativeLayout {
         findViewById(R.id.reset_button).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.get().setNeedsConfirmation(true);
+                //App.get().setNeedsConfirmation(true);
+                DurationDialog.Controller.show(App.get(), TAG + ":DurationDialog");
             }
         });
 
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(App.get());
 
+        _durationDialog = new DurationDialog.Controller(App.get(), TAG + ".DurationDialog");
+        _durationDialog.setListener(_durationDialog_listener);
         populateUi();
     }
+
+    private DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
+        @Override
+        public void onOk(long milliseconds) {
+            ToastClient.toast(App.get(), "IT WORKS!!!" + milliseconds, Toast.LENGTH_SHORT);
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
 
     @Override
     protected void onDetachedFromWindow() {
         if (_profileClient != null && _profileClient.isConnected())
             _profileClient.disconnect(App.get());
+
+        if (_durationDialog != null) _durationDialog.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }
