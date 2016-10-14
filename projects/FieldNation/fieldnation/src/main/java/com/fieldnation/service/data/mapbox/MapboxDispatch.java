@@ -11,7 +11,7 @@ import com.fieldnation.fnpigeon.TopicService;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxDispatch implements MapboxConstants {
-    private static final String TAG = "MapboxDispatch";
+    private static final String TAG = "GmapsDispatch";
 
     public static void directions(Context context, long workorderId, byte[] directions) {
         Log.v(TAG, "directions");

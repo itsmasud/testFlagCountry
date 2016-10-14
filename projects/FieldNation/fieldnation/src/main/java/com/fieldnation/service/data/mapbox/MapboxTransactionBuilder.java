@@ -12,7 +12,7 @@ import com.fieldnation.service.transaction.WebTransactionBuilder;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxTransactionBuilder implements MapboxConstants {
-    private static final String TAG = "MapboxTransactionBuilder";
+    private static final String TAG = "GmapsTransactionBuilder";
 
     public static void getDirections(Context context, long workorderId, Position... positions) {
         Log.v(TAG, "getDirections");

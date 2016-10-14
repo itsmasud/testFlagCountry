@@ -13,7 +13,7 @@ import com.fieldnation.fnjson.annotations.Json;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxDirections implements Parcelable {
-    private static final String TAG = "MapboxDirections";
+    private static final String TAG = "GmapsDirections";
 
     @Json(name = "code")
     private String _code;

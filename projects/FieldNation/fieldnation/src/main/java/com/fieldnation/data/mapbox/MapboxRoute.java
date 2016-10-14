@@ -13,7 +13,7 @@ import com.fieldnation.fnjson.annotations.Json;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxRoute implements Parcelable {
-    private static final String TAG = "MapboxRoute";
+    private static final String TAG = "GmapsRoute";
 
     @Json(name = "distance")
     private Double _distance;

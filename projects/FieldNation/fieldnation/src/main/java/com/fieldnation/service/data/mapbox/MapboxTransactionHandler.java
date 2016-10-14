@@ -14,7 +14,7 @@ import java.text.ParseException;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxTransactionHandler extends WebTransactionHandler implements MapboxConstants {
-    private static final String TAG = "MapboxTransactionHandler";
+    private static final String TAG = "GmapsTransactionHandler";
 
     public static byte[] pDirections(long workorderId) {
         try {

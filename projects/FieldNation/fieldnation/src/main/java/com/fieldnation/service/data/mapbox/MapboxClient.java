@@ -17,7 +17,7 @@ import com.fieldnation.fntools.UniqueTag;
  * Created by Michael on 6/22/2016.
  */
 public class MapboxClient extends TopicClient implements MapboxConstants {
-    private static final String STAG = "MapboxClient";
+    private static final String STAG = "GmapsClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
     public MapboxClient(Listener listener) {
