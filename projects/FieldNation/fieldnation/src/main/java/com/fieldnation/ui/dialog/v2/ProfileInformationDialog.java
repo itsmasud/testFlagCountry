@@ -1,46 +1,33 @@
-package com.fieldnation.ui.dialog;
+package com.fieldnation.ui.dialog.v2;
 
-import android.content.DialogInterface;
+import android.content.Context;
+import android.content.Intent;
+import android.graphics.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
-import android.support.v4.app.FragmentManager;
-import android.text.Editable;
-import android.text.TextWatcher;
+import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.help.HelpClient;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.ui.HintArrayAdapter;
-import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.ProfilePicView;
-
-import org.w3c.dom.Text;
 
 import java.lang.ref.WeakReference;
 
 /**
- * Created by Shoaib on 10/01/2016.
+ * Created by Shoaib on 13/01/2016.
  */
-public class ProfileInformationDialog extends DialogFragmentBase {
+public class ProfileInformationDialog extends FullScreenDialog {
     private static final String TAG = "ProfileInformationDialog";
 
     // State
@@ -48,6 +35,7 @@ public class ProfileInformationDialog extends DialogFragmentBase {
     private static final String STATE_SOURCE = "ProfileInformationDialog:Source";
 
     // Ui
+    private View _root;
     private ProfilePicView _picView;
     private TextView _profileIdTextView;
     private TextView _profileNameTextView;
@@ -59,9 +47,6 @@ public class ProfileInformationDialog extends DialogFragmentBase {
     private Button _stateButton;
     private EditText _zipCodeEditText;
 
-    private PicChooserDialog _picChooserDialog;
-
-
     // Data
     private Listener _listener;
     private String _source;
@@ -70,81 +55,47 @@ public class ProfileInformationDialog extends DialogFragmentBase {
     private WeakReference<Drawable> _profilePic = null;
     private boolean _clear = false;
 
+    public ProfileInformationDialog(Context context, ViewGroup container) {
+        super(context, container);
+    }
+
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-    public static ProfileInformationDialog getInstance(FragmentManager fm, String tag) {
-        Log.v(TAG, "getInstance");
-        return getInstance(fm, tag, ProfileInformationDialog.class);
-    }
+//    public static ProfileInformationDialog getInstance(FragmentManager fm, String tag) {
+//        Log.v(TAG, "getInstance");
+//        return getInstance(fm, tag, ProfileInformationDialog.class);
+//    }
+
+//    @Override
+//    public void onCreate(Bundle savedInstanceState) {
+//        Log.v(TAG, "onCreate");
+//        super.onCreate(savedInstanceState);
+//        setStyle(STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
+//    }
+
+//    @Override
+//    public void onSaveInstanceState(Bundle outState) {
+//        Log.v(TAG, "onSaveInstanceState");
+//        super.onSaveInstanceState(outState);
+//    }
+
 
     @Override
-    public void onCreate(Bundle savedInstanceState) {
-        Log.v(TAG, "onCreate");
-        super.onCreate(savedInstanceState);
-        setStyle(STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
-    }
+    public void onAdded() {
+        super.onAdded();
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        Log.v(TAG, "onSaveInstanceState");
-//        if (_explanationEditText != null && !misc.isEmptyOrNull(_explanationEditText.getText().toString())) {
-//            _message = _explanationEditText.getText().toString();
-//            outState.putString(STATE_MESSAGE, _message);
-//        }
-        super.onSaveInstanceState(outState);
-    }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        Log.v(TAG, "onCreateView");
-        View v = inflater.inflate(R.layout.dialog_profile_information, container, false);
-
-        _picView = (ProfilePicView) v.findViewById(R.id.pic_view);
-        _picView.setProfilePic(R.drawable.missing_circle);
-        _picView.setOnClickListener(_pic_onClick);
-
-        _profileIdTextView = (TextView) v.findViewById(R.id.profile_id_textview);
-        _profileNameTextView = (TextView) v.findViewById(R.id.profile_name_textview);
-        _phoneNoEditText = (EditText) v.findViewById(R.id.phone_edittext);
-        _phoneNoExtEditText = (EditText) v.findViewById(R.id.phone_ext_edittext);
-        _address1EditText = (EditText) v.findViewById(R.id.address_1_edittext);
-        _address2EditText = (EditText) v.findViewById(R.id.address_2_edittext);
-        _cityEditText = (EditText) v.findViewById(R.id.city_edittext);
-        _stateButton = (Button) v.findViewById(R.id.state_button);
-        _zipCodeEditText = (EditText) v.findViewById(R.id.zip_code_edittext);
-
-        _picChooserDialog = PicChooserDialog.getInstance(getFragmentManager(), TAG);
-
-        getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
-
-        return v;
-    }
-
-    @Override
-    public void onViewStateRestored(Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        Log.v(TAG, "onViewStateRestored");
-        if (savedInstanceState != null) {
-//            if (savedInstanceState.containsKey(STATE_MESSAGE))
-//                _message = savedInstanceState.getString(STATE_MESSAGE);
-//            if (savedInstanceState.containsKey(STATE_SOURCE))
-//                _source = savedInstanceState.getString(STATE_SOURCE);
-        } else {
-            _clear = true;
-        }
-    }
-
-    @Override
-    public void onResume() {
-        Log.v(TAG, "onResume");
-        super.onResume();
 //        if (_clear) {
 //            _explanationEditText.setText("");
 //            _explanationEditText.setHint(getString(R.string.dialog_explanation_default));
 //            _clear = false;
 //            return;
 //        }
+
+        _picView.setOnClickListener(_pic_onClick);
+
+        PicChooserDialog.setListener(_picChooserDialog_listener);
 
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
@@ -156,16 +107,32 @@ public class ProfileInformationDialog extends DialogFragmentBase {
     }
 
     @Override
-    public void onDismiss(DialogInterface dialogFragment) {
-//        Log.e(TAG, "onDismiss");
-        super.onDismiss(dialogFragment);
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        Log.v(TAG, "onCreateView");
+        _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
+
+        _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
+        _picView.setProfilePic(R.drawable.missing_circle);
+
+        _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
+        _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
+        _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
+        _phoneNoExtEditText = (EditText) _root.findViewById(R.id.phone_ext_edittext);
+        _address1EditText = (EditText) _root.findViewById(R.id.address_1_edittext);
+        _address2EditText = (EditText) _root.findViewById(R.id.address_2_edittext);
+        _cityEditText = (EditText) _root.findViewById(R.id.city_edittext);
+        _stateButton = (Button) _root.findViewById(R.id.state_button);
+        _zipCodeEditText = (EditText) _root.findViewById(R.id.zip_code_edittext);
+
+        return _root;
     }
 
-    public void show(String source) {
-        _source = source;
-        _clear = true;
-        super.show();
-    }
+
+//    public void show(String source) {
+//        _source = source;
+//        _clear = true;
+//        super.show();
+//    }
 
     public void setListener(Listener listener) {
         _listener = listener;
@@ -231,6 +198,9 @@ public class ProfileInformationDialog extends DialogFragmentBase {
         }
     }
 
+    /*-*****************************-*/
+    /*-				Events			-*/
+    /*-*****************************-*/
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
@@ -253,11 +223,41 @@ public class ProfileInformationDialog extends DialogFragmentBase {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
-            _picChooserDialog.show();
-
+            PicChooserDialog.Controller.show(App.get());
         }
     };
+
+
+
+    private PicChooserDialog.Listener _picChooserDialog_listener = new PicChooserDialog.Listener() {
+        @Override
+        public void onCamera() {
+            Log.e(TAG, "inside _picChooserDialog_listener#onCamera");
+        }
+
+        @Override
+        public void onGallery() {
+            Log.e(TAG, "inside _picChooserDialog_listener#onGallery");
+        }
+    };
+
+    public static abstract class Controller extends com.fieldnation.fndialog.Controller {
+
+        public Controller(Context context) {
+            super(context, ProfileInformationDialog.class);
+        }
+
+        public static void show(Context context) {
+            show(context, ProfileInformationDialog.class, null);
+        }
+
+        public static void dismiss(Context context) {
+            dismiss(context, ProfileInformationDialog.class);
+        }
+    }
+
+
+
 
 
     public interface Listener {
