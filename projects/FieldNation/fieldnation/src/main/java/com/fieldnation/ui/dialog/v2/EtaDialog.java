@@ -171,6 +171,13 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onRemoved() {
+        super.onRemoved();
+        if (_durationDialog != null) _durationDialog.disconnect(App.get());
+        if (_expiryDialog != null) _expiryDialog.disconnect(App.get());
+    }
+
+    @Override
     public void show(Bundle params, boolean animate) {
         _schedule = params.getParcelable(PARAM_SCHEDULE);
         _dialogType = params.getString(PARAM_DIALOG_TYPE);

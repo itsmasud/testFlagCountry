@@ -64,6 +64,7 @@ public class DialogManager extends FrameLayout implements Constants {
             Bundle[] bundles = new Bundle[_dialogStack.size()];
             for (int i = 0; i < _dialogStack.size(); i++) {
                 bundles[_dialogStack.size() - i - 1] = _dialogStack.get(i).saveState();
+                _dialogStack.get(i).dialog.onRemoved();
             }
             savedInstance.putParcelableArray("dialogs", bundles);
         }
@@ -141,6 +142,7 @@ public class DialogManager extends FrameLayout implements Constants {
         // remove the view
         if (holder != null) {
             removeView(holder.dialog.getView());
+            holder.dialog.onRemoved();
         }
 
         // find the top view

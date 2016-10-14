@@ -75,6 +75,10 @@ public abstract class SimpleDialog implements Dialog {
     }
 
     @Override
+    public void onRemoved() {
+    }
+
+    @Override
     public View getView() {
         return _root;
     }

@@ -32,6 +32,12 @@ public interface Dialog {
     void onAdded();
 
     /**
+     * Called after the view has been removed from the layout. The entire dialog is about to be
+     * destroyed, so use this call to clean up anything that you might need to.
+     */
+    void onRemoved();
+
+    /**
      * @return the View that contains the dialog
      */
     View getView();
