@@ -8,10 +8,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Dialog;
-import com.fieldnation.fndialog.EventDispatch;
 import com.fieldnation.fndialog.SimpleDialog;
 
 /**
@@ -77,7 +75,7 @@ public class TwoButtonDialog extends SimpleDialog {
     public void cancel() {
         Bundle response = new Bundle();
         response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
-        EventDispatch.dialogComplete(App.get(), TwoButtonDialog.this, response);
+        onResult(response);
         super.cancel();
     }
 
@@ -91,7 +89,7 @@ public class TwoButtonDialog extends SimpleDialog {
         public void onClick(View v) {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
-            EventDispatch.dialogComplete(App.get(), TwoButtonDialog.this, response);
+            onResult(response);
         }
     };
 
@@ -100,7 +98,7 @@ public class TwoButtonDialog extends SimpleDialog {
         public void onClick(View v) {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_SECONDARY);
-            EventDispatch.dialogComplete(App.get(), TwoButtonDialog.this, response);
+            onResult(response);
         }
     };
 
@@ -114,19 +112,19 @@ public class TwoButtonDialog extends SimpleDialog {
     }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context) {
-            super(context, TwoButtonDialog.class);
+        public Controller(Context context, String uid) {
+            super(context, TwoButtonDialog.class, uid);
         }
 
-        public Controller(Context context, Class<? extends Dialog> klass) {
-            super(context, klass);
+        public Controller(Context context, Class<? extends Dialog> klass, String uid) {
+            super(context, klass, uid);
         }
 
-        public static void show(Context context, int titleResId, int bodyResId, int primaryButtonResId, int secondaryButtonResId, boolean isCancelable) {
-            show(context, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId), context.getString(secondaryButtonResId), isCancelable);
+        public static void show(Context context, String uid, int titleResId, int bodyResId, int primaryButtonResId, int secondaryButtonResId, boolean isCancelable) {
+            show(context, uid, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId), context.getString(secondaryButtonResId), isCancelable);
         }
 
-        public static void show(Context context, String title, String body, String primaryButton, String secondaryButton, boolean isCancelable) {
+        public static void show(Context context, String uid, String title, String body, String primaryButton, String secondaryButton, boolean isCancelable) {
             Bundle params = new Bundle();
             params.putString(PARAM_TITLE, title);
             params.putString(PARAM_BODY, body);
@@ -134,11 +132,11 @@ public class TwoButtonDialog extends SimpleDialog {
             params.putString(PARAM_SECONDARY_BUTTON, secondaryButton);
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
 
-            show(context, TwoButtonDialog.class, params);
+            show(context, uid, TwoButtonDialog.class, params);
         }
 
-        public static void dismiss(Context context) {
-            dismiss(context, TwoButtonDialog.class);
+        public static void dismiss(Context context, String uid) {
+            dismiss(context, uid);
         }
     }
 

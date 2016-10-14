@@ -99,14 +99,14 @@ public class CancelWarningDialog extends FullScreenDialog {
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, CancelWarningDialog.class);
+            super(context, CancelWarningDialog.class, null);
         }
 
         public static void show(Context context, WorkOrder workOrder) {
             Bundle params = new Bundle();
             params.putParcelable(PARAM_WORKORDER, workOrder);
 
-            show(context, CancelWarningDialog.class, params);
+            show(context, null, CancelWarningDialog.class, params);
         }
     }
 }

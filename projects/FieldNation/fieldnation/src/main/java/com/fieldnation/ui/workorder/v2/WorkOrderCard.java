@@ -14,7 +14,9 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
+import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnlog.Log;
@@ -26,6 +28,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportIssueDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -52,7 +55,9 @@ public class WorkOrderCard extends RelativeLayout {
     private TextView _time2TextView;
     private TextView _locationTextView;
     private TextView _distanceTextView;
-    private IconFontButton[] _secondaryButtons = new IconFontButton[3];
+    private IconFontButton _contactButton;
+    private IconFontButton _optionalButton;
+    private IconFontButton _reportProblemButton;
     private IconFontButton _locationButton;
     private Button _primaryButton;
 
@@ -93,9 +98,10 @@ public class WorkOrderCard extends RelativeLayout {
         _locationTextView = (TextView) findViewById(R.id.location_textview);
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
-        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
-        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
+        _contactButton = (IconFontButton) findViewById(R.id.contact_button);
+
+        _optionalButton = (IconFontButton) findViewById(R.id.secondary1_button);
+        _reportProblemButton = (IconFontButton) findViewById(R.id.reportproblem_button);
         _locationButton = (IconFontButton) findViewById(R.id.location_button);
         _locationButton.setOnClickListener(_locationButton_onClick);
         _primaryButton = (Button) findViewById(R.id.primary_button);
@@ -166,7 +172,7 @@ public class WorkOrderCard extends RelativeLayout {
 
                 // range
             } else if (_workOrder.getSchedule().getRange() != null) {
-                if (_workOrder.getSchedule().getRange().getType().equals("business")) {
+                if (_workOrder.getSchedule().getRange().getType() == Range.Type.BUSINESS) {
                     // business
                     try {
                         Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
@@ -306,14 +312,31 @@ public class WorkOrderCard extends RelativeLayout {
             }
         }
 
-        _secondaryButtons[0].setVisibility(GONE);
-        _secondaryButtons[1].setVisibility(GONE);
-        _secondaryButtons[2].setVisibility(GONE);
+        if (_workOrder.getContacts() == null || _workOrder.getContacts().length == 0) {
+            _contactButton.setText(R.string.icon_chat_solid);
+            _contactButton.setOnClickListener(_messageBuyer_onClick);
+        } else {
+            _contactButton.setText(R.string.icon_phone_solid);
+            _contactButton.setOnClickListener(_phone_onClick);
+        }
+        _reportProblemButton.setVisibility(VISIBLE);
+        _reportProblemButton.setText(R.string.icon_problem_solid);
+        _reportProblemButton.setOnClickListener(_reportProblem_onClick);
+
+        _optionalButton.setVisibility(GONE);
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
-                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
+            for (int i = 0; i < _workOrder.getSecondaryActions().length; i++) {
+                if (_workOrder.getSecondaryActions()[i].getType() == Action.ActionType.RUNNING_LATE) {
+                    populateSecondaryButton(_optionalButton, _workOrder.getSecondaryActions()[i]);
+                    break;
+                }
             }
         }
+//        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
+//            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
+//                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
+//            }
+//        }
         //populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
         //populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
     }
@@ -327,21 +350,18 @@ public class WorkOrderCard extends RelativeLayout {
     // time-issue-solid
     private void populateSecondaryButton(IconFontButton button, Action action) {
         switch (action.getType()) {
-            case PHONE:
-                button.setVisibility(VISIBLE);
-                button.setText(R.string.icon_phone_solid);
-                button.setOnClickListener(_phone_onClick);
-                break;
             case RUNNING_LATE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_time_issue_solid);
                 button.setOnClickListener(_runningLate_onClick);
                 break;
+/*
             case REPORT_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
+*/
             default:
                 button.setVisibility(GONE);
                 break;
@@ -351,14 +371,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             try {
-                Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
-                cal.add(Calendar.HOUR, 1);
-
-                WorkorderClient.actionConfirmAssignment(
-                        App.get(), _workOrder.getId(), _workOrder.getSchedule().getExact(),
-                        ISO8601.fromCalendar(cal), null, false);
-
                 GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -390,7 +404,15 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _phone_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            // Todo call buyer
+            try {
+                Contact contact = _workOrder.getContacts()[0];
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + contact.getPhoneNumber()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(callIntent);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 

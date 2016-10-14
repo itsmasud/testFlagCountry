@@ -33,11 +33,11 @@ public class UpdateDialog extends OneButtonDialog {
 
     public static abstract class Controller extends OneButtonDialog.Controller {
         public Controller(Context context) {
-            super(context, UpdateDialog.class);
+            super(context, UpdateDialog.class, null);
         }
 
         public static void show(Context context) {
-            show(context, R.string.dialog_update_title, R.string.dialog_update_message,
+            show(context, null, R.string.dialog_update_title, R.string.dialog_update_message,
                     R.string.btn_update_now, true);
         }
     }

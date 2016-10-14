@@ -1,6 +1,8 @@
 package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +13,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
@@ -74,6 +78,7 @@ public class RunningLateDialog extends SimpleDialog {
         _otherButton.setOnClickListener(_other_onClick);
         _callButton.setOnClickListener(_call_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
+
     }
 
     @Override
@@ -103,6 +108,12 @@ public class RunningLateDialog extends SimpleDialog {
             ex.printStackTrace();
         }
 
+        if (_workOrder.getContacts() == null || _workOrder.getContacts().length == 0) {
+            _callButton.setVisibility(View.GONE);
+        } else {
+            _callButton.setVisibility(View.VISIBLE);
+        }
+
         super.show(payload, animate);
     }
 
@@ -125,7 +136,15 @@ public class RunningLateDialog extends SimpleDialog {
     private final View.OnClickListener _call_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            // TODO need to implement call buyer
+            try {
+                Contact contact = _workOrder.getContacts()[0];
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + contact.getPhoneNumber()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                App.get().startActivity(callIntent);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
     };
 
@@ -140,14 +159,14 @@ public class RunningLateDialog extends SimpleDialog {
     public static class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, RunningLateDialog.class);
+            super(context, RunningLateDialog.class, null);
         }
 
         public static void show(Context context, WorkOrder workOrder) {
             Bundle params = new Bundle();
             params.putParcelable(PARAM_WORKORDER, workOrder);
 
-            show(context, RunningLateDialog.class, params);
+            show(context, null, RunningLateDialog.class, params);
         }
     }
 

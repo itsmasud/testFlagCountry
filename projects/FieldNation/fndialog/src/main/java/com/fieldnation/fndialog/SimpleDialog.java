@@ -2,7 +2,6 @@ package com.fieldnation.fndialog;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +31,8 @@ public abstract class SimpleDialog implements Dialog {
     private Animation _fgFadeOut;
 
     // Listeners
-    private DismissListener _listener;
+    private DismissListener _dismissListener;
+    private ResultListener _resultListener;
 
     public SimpleDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
@@ -53,8 +53,8 @@ public abstract class SimpleDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
-                if (_listener != null)
-                    _listener.onDismissed(SimpleDialog.this);
+                if (_dismissListener != null)
+                    _dismissListener.onDismissed(SimpleDialog.this);
             }
         });
 
@@ -71,6 +71,11 @@ public abstract class SimpleDialog implements Dialog {
     @Override
     public void onAdded() {
         _clickBarrier.setOnClickListener(_this_onClick);
+        _container.setClickable(true);
+    }
+
+    @Override
+    public void onRemoved() {
     }
 
     @Override
@@ -96,12 +101,11 @@ public abstract class SimpleDialog implements Dialog {
     }
 
     @Override
-    public void onRestoreDialogState(Parcelable savedState) {
+    public void onRestoreDialogState(Bundle savedState) {
     }
 
     @Override
-    public Parcelable onSaveDialogState() {
-        return Bundle.EMPTY;
+    public void onSaveDialogState(Bundle outState) {
     }
 
     @Override
@@ -114,8 +118,8 @@ public abstract class SimpleDialog implements Dialog {
         } else {
             _child.setVisibility(View.GONE);
             _root.setVisibility(View.GONE);
-            if (_listener != null)
-                _listener.onDismissed(this);
+            if (_dismissListener != null)
+                _dismissListener.onDismissed(this);
         }
     }
 
@@ -125,7 +129,7 @@ public abstract class SimpleDialog implements Dialog {
 
     @Override
     public void setDismissListener(DismissListener listener) {
-        _listener = listener;
+        _dismissListener = listener;
     }
 
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
@@ -135,4 +139,14 @@ public abstract class SimpleDialog implements Dialog {
                 dismiss(true);
         }
     };
+
+    @Override
+    public void setResultListener(ResultListener listener) {
+        _resultListener = listener;
+    }
+
+    public void onResult(Bundle response) {
+        if (_resultListener != null)
+            _resultListener.onResult(this, response);
+    }
 }
