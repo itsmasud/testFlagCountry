@@ -87,7 +87,12 @@ public class MultipartUtility {
 
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        StreamUtils.copyStream(inputStream, outputStream, length, 1000);
+        StreamUtils.copyStream(inputStream, outputStream, length, 1000, new StreamUtils.ProgressListener() {
+            @Override
+            public void progress(long bytesCopied) {
+                Log.v(TAG, "Copy progress " + bytesCopied);
+            }
+        });
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
 
@@ -109,7 +114,12 @@ public class MultipartUtility {
         InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        StreamUtils.copyStream(inputStream, outputStream, -1, 1000);
+        StreamUtils.copyStream(inputStream, outputStream, -1, 1000, new StreamUtils.ProgressListener() {
+            @Override
+            public void progress(long bytesCopied) {
+                Log.v(TAG, "Copy progress " + bytesCopied);
+            }
+        });
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
         writer.append(LINE_FEED);

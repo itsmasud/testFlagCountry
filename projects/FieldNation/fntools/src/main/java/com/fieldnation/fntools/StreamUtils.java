@@ -10,8 +10,17 @@ import java.io.OutputStream;
  */
 public class StreamUtils {
 
+    public interface ProgressListener {
+        void progress(long bytesCopied);
+    }
+
     public static void copyStream(InputStream source, OutputStream dest, int expectedSize,
                                   long timeoutInMilli) throws IOException {
+        copyStream(source, dest, expectedSize, timeoutInMilli, null);
+    }
+
+    public static void copyStream(InputStream source, OutputStream dest, int expectedSize,
+                                  long timeoutInMilli, ProgressListener listener) throws IOException {
         int read = 0;
         int pos = 0;
         int size = expectedSize;
@@ -21,6 +30,8 @@ public class StreamUtils {
         boolean error = false;
         boolean timedOut = false;
         boolean complete = false;
+
+        long listenerTimeOut = 0;
 
         try {
             packet = DataUtils.allocPacket();
@@ -33,7 +44,12 @@ public class StreamUtils {
                     read = source.read(packet, 0, 1024);
                     if (read > 0) {
                         pos += read;
-
+                        if (listener != null) {
+                            if (System.currentTimeMillis() > listenerTimeOut) {
+                                listener.progress(pos);
+                                listenerTimeOut = System.currentTimeMillis() + 500;
+                            }
+                        }
                         dest.write(packet, 0, read);
                         timeout = System.currentTimeMillis() + timeoutInMilli;
                     } else if (read == 0) {
@@ -75,6 +91,7 @@ public class StreamUtils {
 
             throw new IOException("Error, could not read entire stream!");
         } finally {
+            if (listener != null) listener.progress(pos);
             DataUtils.freePacket(packet);
         }
     }
