@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- GMaps -->
+    <string name="gmap_apiKey">AIzaSyB36Xfpw8rgno7WPMvndm2vz4wqwZ7aSBc</string>
+
     <!-- Mapbox -->
     <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>
     <string name="mapbox_mapid">jacobbeasley.ggg811om</string>

@@ -28,9 +28,10 @@ import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.gmaps.GmapsClient;
 import com.fieldnation.service.data.mapbox.MapboxClient;
-import com.fieldnation.service.data.mapbox.Marker;
-import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.service.data.gmaps.Marker;
+import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
@@ -391,7 +392,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_inpreciseMarkerUrl));
                 } else {
-                    MapboxClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
+                    GmapsClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
                     end = new Marker(geo.getLongitude(), geo.getLatitude(),
                             getContext().getString(R.string.mapbox_endMarkerUrl));
                 }
@@ -419,7 +420,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             int width = (_mapImageView.getWidth() * 180) / _mapImageView.getHeight();
             int height = 180;
 
-            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
+            GmapsClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
                     width, height);
         } else {
             _mapUnavailable = true;
