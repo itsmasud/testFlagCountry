@@ -14,6 +14,7 @@ import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
@@ -27,6 +28,7 @@ import okhttp3.MultipartBody;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+import okio.BufferedSink;
 
 /**
  * Created by Michael Carver on 3/6/2015.
@@ -178,7 +180,7 @@ public class FnHttp {
                             String filename = fo.getString("filename");
                             String contentType = fo.getString("contentType");
 
-                            bodyBuilder.addFormDataPart(key,filename,RequestBody.create(MediaType.parse(contentType),))
+                            bodyBuilder.addFormDataPart(key, filename, RequestBody.create(MediaType.parse(contentType), ))
                             util.addFilePart(key, filename, Uri.parse(uri), contentType);
                         }
                     }
@@ -217,6 +219,48 @@ public class FnHttp {
                 Log.v(TAG, timingKey + " run time: " + watch.getTime());
             } else {
                 Log.v(TAG, "run time: " + watch.getTime());
+            }
+        }
+    }
+
+    public class InputStreamRequestBody extends RequestBody {
+
+        private InputStream inputStream;
+        private MediaType mediaType;
+
+        public static RequestBody create(final MediaType mediaType, final InputStream inputStream) {
+
+
+            return new InputStreamRequestBody(inputStream, mediaType);
+        }
+
+        private InputStreamRequestBody(InputStream inputStream, MediaType mediaType) {
+            this.inputStream = inputStream;
+            this.mediaType = mediaType;
+        }
+
+        @Override
+        public MediaType contentType() {
+            return mediaType;
+        }
+
+        @Override
+        public long contentLength() {
+            try {
+                return inputStream.available();
+            } catch (IOException e) {
+                return 0;
+            }
+        }
+
+        @Override
+        public void writeTo(BufferedSink sink) throws IOException {
+            Source source = null;
+            try {
+                source = Okio.source(inputStream);
+                sink.writeAll(source);
+            } finally {
+                Util.closeQuietly(source);
             }
         }
     }
