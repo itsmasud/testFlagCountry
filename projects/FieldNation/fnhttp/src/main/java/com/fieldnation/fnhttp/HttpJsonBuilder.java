@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.fnhttp;
 
 import android.net.Uri;
 
@@ -30,7 +30,6 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_MULTIPART_FIELDS = "multipart.fields";
     public static final String PARAM_WEB_BODY_SOID = "bodySoID";
     public static final String PARAM_WEB_BODY = "body";
-    public static final String PARAM_DO_NOT_READ = "doNotRead";
 
     private static final SecureRandom _random = new SecureRandom();
 /*
@@ -97,12 +96,6 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(timingKey))
             request.put(PARAM_TIMING_KEY, timingKey);
-        return this;
-    }
-
-    public HttpJsonBuilder doNotRead() throws ParseException {
-        getRequest();
-        request.put(PARAM_DO_NOT_READ, true);
         return this;
     }
 

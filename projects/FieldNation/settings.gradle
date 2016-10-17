@@ -1,1 +1,1 @@
-include ':fieldnation', ':fnlog', ':fntools', ':fnjson', ':fnpigeon', ':fnstore', ':fntoast', ':fngps', ':fndialog', ':fnanalytics'
+include ':fieldnation', ':fnlog', ':fntools', ':fnjson', ':fnpigeon', ':fnstore', ':fntoast', ':fngps', ':fndialog', ':fnanalytics', ':fnhttp'
