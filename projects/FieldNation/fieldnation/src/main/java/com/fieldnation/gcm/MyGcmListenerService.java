@@ -16,6 +16,7 @@
 
 package com.fieldnation.gcm;
 
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
@@ -223,6 +224,8 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
         }
 
-        NotificationManagerCompat.from(this).notify(id, builder.build());
+        Notification notification = builder.build();
+        notification.flags = Notification.FLAG_AUTO_CANCEL;
+        NotificationManagerCompat.from(this).notify(id, notification);
     }
 }
