@@ -78,6 +78,11 @@ public class PicChooserDialog extends SimpleDialog {
 
     }
 
+    @Override
+    public void onRemoved() {
+        super.onRemoved();
+    }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
@@ -123,15 +128,15 @@ public class PicChooserDialog extends SimpleDialog {
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, PicChooserDialog.class);
+            super(context, PicChooserDialog.class, null);
         }
 
         public static void show(Context context) {
-            show(context, PicChooserDialog.class, null);
+            show(context, null, PicChooserDialog.class, null);
         }
 
         public static void dismiss(Context context) {
-            dismiss(context, PicChooserDialog.class);
+            dismiss(context, null);
         }
     }
 

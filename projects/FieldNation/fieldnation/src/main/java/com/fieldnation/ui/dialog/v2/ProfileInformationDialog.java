@@ -1,11 +1,19 @@
 package com.fieldnation.ui.dialog.v2;
 
+import android.app.Activity;
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.graphics.Bitmap;
 import android.graphics.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,11 +26,21 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
+
+import static android.app.Activity.RESULT_OK;
+import static com.fieldnation.service.activityresult.ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES;
+import static com.fieldnation.service.activityresult.ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES;
 
 /**
  * Created by Shoaib on 13/01/2016.
@@ -35,6 +53,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private static final String STATE_SOURCE = "ProfileInformationDialog:Source";
 
     // Ui
+    private Toolbar _toolbar;
     private View _root;
     private ProfilePicView _picView;
     private TextView _profileIdTextView;
@@ -54,6 +73,10 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
     private boolean _clear = false;
+    private ActivityResultClient _activityResultClient;
+    File _tempFile = null;
+
+
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -62,36 +85,13 @@ public class ProfileInformationDialog extends FullScreenDialog {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
-//    public static ProfileInformationDialog getInstance(FragmentManager fm, String tag) {
-//        Log.v(TAG, "getInstance");
-//        return getInstance(fm, tag, ProfileInformationDialog.class);
-//    }
-
-//    @Override
-//    public void onCreate(Bundle savedInstanceState) {
-//        Log.v(TAG, "onCreate");
-//        super.onCreate(savedInstanceState);
-//        setStyle(STYLE_NO_TITLE, android.R.style.Theme_DeviceDefault_Light_NoActionBar_Fullscreen);
-//    }
-
-//    @Override
-//    public void onSaveInstanceState(Bundle outState) {
-//        Log.v(TAG, "onSaveInstanceState");
-//        super.onSaveInstanceState(outState);
-//    }
-
 
     @Override
     public void onAdded() {
         super.onAdded();
-
-
-//        if (_clear) {
-//            _explanationEditText.setText("");
-//            _explanationEditText.setHint(getString(R.string.dialog_explanation_default));
-//            _clear = false;
-//            return;
-//        }
+        Log.e(TAG, "onAdded");
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
 
@@ -100,6 +100,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
 
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
 
         _profile = App.get().getProfile();
         populateUi();
@@ -107,9 +109,23 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
     @Override
+    public void onRemoved() {
+        super.onRemoved();
+        Log.e(TAG, "onRemoved");
+        if (_photos != null && _photos.isConnected())
+            _photos.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
+
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         Log.v(TAG, "onCreateView");
         _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
+
+        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
 
         _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -128,18 +144,12 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
 
-//    public void show(String source) {
-//        _source = source;
-//        _clear = true;
-//        super.show();
-//    }
-
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-
     private void populateUi() {
+        Log.v(TAG, "populateUi");
 
         if (_profile == null) return;
 
@@ -198,9 +208,40 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     }
 
+
+    private void dispatchTakePictureIntent() {
+        Intent src = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (src.resolveActivity(App.get().getPackageManager()) != null) {
+            File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
+                    + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+            _tempFile = temppath;
+
+            // removed because this doesn't work on my motorola
+            src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+            ActivityResultClient.startActivityForResult(App.get(), src, RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+
+        }
+    }
+
+
+    private void getImageFromGallery() {
+        Intent src = new Intent(Intent.ACTION_PICK,
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        ActivityResultClient.startActivityForResult(App.get(), src, RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+
+    }
+
+
     /*-*****************************-*/
     /*-				Events			-*/
     /*-*****************************-*/
+
+    private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            dismiss(true);
+        }
+    };
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
@@ -228,36 +269,72 @@ public class ProfileInformationDialog extends FullScreenDialog {
     };
 
 
-
     private PicChooserDialog.Listener _picChooserDialog_listener = new PicChooserDialog.Listener() {
         @Override
         public void onCamera() {
-            Log.e(TAG, "inside _picChooserDialog_listener#onCamera");
+            dispatchTakePictureIntent();
         }
 
         @Override
         public void onGallery() {
-            Log.e(TAG, "inside _picChooserDialog_listener#onGallery");
+            getImageFromGallery();
         }
     };
+
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
+        @Override
+        public void onConnected() {
+            _activityResultClient.subOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+            _activityResultClient.subOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            try {
+
+                if ((requestCode != RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
+                        && requestCode != RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
+                        || resultCode != RESULT_OK) {
+                    return;
+                }
+
+                _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+                _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+//                setLoading(true);
+
+                if (requestCode == RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES && resultCode == RESULT_OK) {
+                    _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), _picView.getWidth()));
+                    return;
+                }
+
+                if (requestCode == RESULT_CODE_GET_ATTACHMENT_DELIVERABLES && resultCode == RESULT_OK) {
+                    _tempFile = new File(FileUtils.getFilePathFromUri(App.get(), data.getData()));
+                    _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), _picView.getWidth()));
+                }
+
+
+            } catch (Exception ex) {
+                Log.logException(ex);
+                Log.e(TAG, ex.getMessage());
+            }
+        }
+    };
+
 
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, ProfileInformationDialog.class);
+            super(context, ProfileInformationDialog.class, null);
         }
 
         public static void show(Context context) {
-            show(context, ProfileInformationDialog.class, null);
+            show(context, null, ProfileInformationDialog.class, null);
         }
 
         public static void dismiss(Context context) {
-            dismiss(context, ProfileInformationDialog.class);
+            dismiss(context, null);
         }
     }
-
-
-
 
 
     public interface Listener {
