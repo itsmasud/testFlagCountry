@@ -2,10 +2,11 @@ package com.fieldnation.rpc.server;
 
 import android.net.Uri;
 
-import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.misc;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -71,12 +72,12 @@ public class MultipartUtility {
 
     public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
         Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + length + ","
-                + App.guessContentTypeFromName(filename) + ")");
+                + misc.guessContentTypeFromName(filename) + ")");
 
         writer.append("--").append(boundary).append(LINE_FEED);
         writer.append("Content-Disposition: form-data; name=\"").append(fieldName)
                 .append("\"; filename=\"").append(filename).append("\"").append(LINE_FEED);
-        writer.append("Content-Type: ").append(App.guessContentTypeFromName(filename)).append(LINE_FEED);
+        writer.append("Content-Type: ").append(misc.guessContentTypeFromName(filename)).append(LINE_FEED);
         writer.append("Content-Transfer-Encoding: binary").append(LINE_FEED);
 
         if (length > 0) {
@@ -111,7 +112,7 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
-        InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
+        InputStream inputStream = ContextProvider.get().getContentResolver().openInputStream(uri);
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
         StreamUtils.copyStream(inputStream, outputStream, -1, 1000, new StreamUtils.ProgressListener() {

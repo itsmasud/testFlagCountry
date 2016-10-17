@@ -44,7 +44,6 @@
         android:textSize="10sp"
         android:visibility="gone" />
 
-
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/menu_textview"
         android:layout_width="48dp"

@@ -20,6 +20,7 @@ import com.fieldnation.fnlog.Log;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import java.net.URLConnection;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -34,7 +35,14 @@ public class misc {
     private static final NumberFormat _maxTwoDecimal = new DecimalFormat("#.##");
     private static final NumberFormat _maxOneDecimal = new DecimalFormat("#.#");
 
-
+    public static String guessContentTypeFromName(String url) {
+        try {
+            return URLConnection.guessContentTypeFromName(url);
+        } catch (Exception ex) {
+        }
+        return "application/octet-stream";
+    }
+    
     public static Location locationFromCoordinates(double lat, double lon) {
         Location loc = new Location("reverseGeocoded");
         loc.setLatitude(lat);

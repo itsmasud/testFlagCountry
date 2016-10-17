@@ -1,6 +1,5 @@
 package com.fieldnation.rpc.server;
 
-import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;

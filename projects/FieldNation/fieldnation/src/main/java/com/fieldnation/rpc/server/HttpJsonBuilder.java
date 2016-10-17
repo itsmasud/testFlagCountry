@@ -2,11 +2,9 @@ package com.fieldnation.rpc.server;
 
 import android.net.Uri;
 
-import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnstore.StoredObject;
-import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.fntools.misc;
 
 import java.security.SecureRandom;
@@ -188,7 +186,7 @@ public class HttpJsonBuilder {
         JsonObject f = new JsonObject();
         f.put("filename", filename);
         f.put("soid", obj.getId());
-        f.put("contentType", App.guessContentTypeFromName(filename));
+        f.put("contentType", misc.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;
     }
@@ -198,7 +196,7 @@ public class HttpJsonBuilder {
         JsonObject f = new JsonObject();
         f.put("uri", uri.toString());
         f.put("filename", filename);
-        f.put("contentType", App.guessContentTypeFromName(filename));
+        f.put("contentType", misc.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;
     }
