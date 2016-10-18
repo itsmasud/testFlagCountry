@@ -316,7 +316,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
-            _globalClient.subShowProfileInformationDialog();
             //_globalClient.subNetworkState();
         }
 
@@ -340,15 +339,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         public void onShowContactUsDialog(String source) {
             try {
                 _contactUsDialog.show(source);
-            } catch (Exception ex) {
-                Log.logException(ex);
-            }
-        }
-
-        @Override
-        public void onShowProfileInformationDialog(String source) {
-            try {
-                ProfileInformationDialog.Controller.show(App.get());
             } catch (Exception ex) {
                 Log.logException(ex);
             }
