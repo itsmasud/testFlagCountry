@@ -6,8 +6,8 @@
     <!--<string name="auth_default_username">travis.emslander+evan@fieldnation.com</string>-->
     <!--<string name="auth_default_username">iossc</string>-->
     <!--<string name="auth_default_username">TravisFakeCo</string>-->
-    <string name="auth_default_username"></string>
-    <string name="auth_default_password"></string>
+    <string name="auth_default_username">NCNSprovider5@fieldnation.com</string>
+    <string name="auth_default_password">NCNSprovider5</string>
     <string name="auth_fn_grant_type">password</string>
     <string name="auth_fn_client_id">demoapp</string>
     <string name="auth_fn_client_secret">demopass</string>
