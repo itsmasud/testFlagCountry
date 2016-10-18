@@ -17,10 +17,10 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.fntools.misc;
 
 import java.util.ArrayList;
 
@@ -142,6 +142,11 @@ public class SearchEditText extends RelativeLayout {
         @Override
         public void onConnected() {
             _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_VOICE_REQUEST);
+        }
+
+        @Override
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
 
         @Override

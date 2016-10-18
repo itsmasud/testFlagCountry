@@ -1,17 +1,10 @@
 package com.fieldnation.ui.dialog.v2;
 
-import android.app.Activity;
-import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Camera;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -30,9 +23,7 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;
@@ -75,7 +66,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private boolean _clear = false;
     private ActivityResultClient _activityResultClient;
     File _tempFile = null;
-
 
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
@@ -286,6 +276,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
         public void onConnected() {
             _activityResultClient.subOnActivityResult(RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             _activityResultClient.subOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+        }
+
+        @Override
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
 
         @Override

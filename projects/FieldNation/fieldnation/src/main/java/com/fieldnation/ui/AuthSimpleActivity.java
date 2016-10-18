@@ -24,7 +24,6 @@ import com.fieldnation.ui.dialog.ContactUsDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
-import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
 import com.fieldnation.ui.dialog.v2.UpdateDialog;
 
 /**
@@ -114,6 +113,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         _notProviderDialog.setData(getString(R.string.user_not_supported),
                 getString(R.string.buyer_not_supported),
                 getString(R.string.btn_ok), _notProvider_listener);
+
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onResume();
     }
 
     @Override
@@ -130,6 +132,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
+
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onPause();
 
         super.onPause();
     }
