@@ -303,6 +303,7 @@ public class ReportProblemDialog extends SimpleDialog {
 
         switch (_selectedProblem) {
             case CANNOT_MAKE_ASSIGNMENT:
+                // TODO, PQAP warning should go here.
                 _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
                 _noteTextView.setVisibility(View.VISIBLE);
                 _explanationEditText.requestFocus();

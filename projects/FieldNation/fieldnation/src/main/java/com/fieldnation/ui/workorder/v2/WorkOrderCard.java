@@ -29,7 +29,7 @@ import com.fieldnation.service.data.mapbox.Position;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
-import com.fieldnation.ui.dialog.v2.ReportIssueDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 
@@ -397,7 +397,8 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            ReportIssueDialog.Controller.show(App.get(), _workOrder);
+            //ReportIssueDialog.Controller.show(App.get(), _workOrder);
+            ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
 
