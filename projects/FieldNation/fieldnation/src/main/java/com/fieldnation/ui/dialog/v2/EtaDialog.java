@@ -10,11 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -52,7 +50,6 @@ public class EtaDialog extends FullScreenDialog {
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
     private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
-    private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
     private static final String STATE_NOTE = "STATE_NOTE";
 
     // Params
@@ -78,9 +75,6 @@ public class EtaDialog extends FullScreenDialog {
 
     private TextView _scheduleTextView;
 
-    private Switch _etaSwitch;
-
-    private RelativeLayout _etaLayout;
     private Button _etaStartDateButton;
     private Button _etaStartTimeButton;
     private Button _durationButton;
@@ -127,9 +121,7 @@ public class EtaDialog extends FullScreenDialog {
         // schedule description
         _scheduleTextView = (TextView) v.findViewById(R.id.schedule_textview);
 
-        _etaSwitch = (Switch) v.findViewById(R.id.enableEta_switch);
         // ETA layout
-        _etaLayout = (RelativeLayout) v.findViewById(R.id.eta_layout);
         _etaStartDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
         _etaStartTimeButton = (Button) v.findViewById(R.id.etaStartTime_button);
         _durationButton = (Button) v.findViewById(R.id.duration_button);
@@ -158,7 +150,6 @@ public class EtaDialog extends FullScreenDialog {
 
         _expirationButton.setOnClickListener(_expiringButton_onClick);
 
-        _etaSwitch.setOnCheckedChangeListener(_switchOnclick_listener);
         _etaStartDateButton.setOnClickListener(_etaStartDate_onClick);
         _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _durationButton.setOnClickListener(_duration_onClick);
@@ -184,7 +175,12 @@ public class EtaDialog extends FullScreenDialog {
         _workOrderId = params.getLong(PARAM_WORK_ORDER_ID);
 
         try {
-            _etaStart = ISO8601.toCalendar(_schedule.getExact());
+            if (_schedule.getExact() != null) {
+                _etaStart = ISO8601.toCalendar(_schedule.getExact());
+            } else {
+                _etaStart = ISO8601.toCalendar(_schedule.getRange().getBegin());
+            }
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -205,8 +201,6 @@ public class EtaDialog extends FullScreenDialog {
             outState.putLong(STATE_EXPIRATION_DURATION, _expiringDurationMilliseconds);
 
         // ETA stuff
-        outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
-
         if (_durationMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_DURATION, _durationMilliseconds);
 
@@ -222,11 +216,6 @@ public class EtaDialog extends FullScreenDialog {
             _expiringDurationMilliseconds = savedState.getLong(STATE_EXPIRATION_DURATION);
 
         // ETA stuff
-        if (savedState.containsKey(STATE_ETA_SWITCH)) {
-            boolean s = savedState.getBoolean(STATE_ETA_SWITCH);
-            _etaSwitch.setChecked(s);
-            _switchOnclick_listener.onCheckedChanged(_etaSwitch, s);
-        }
 
         if (savedState.containsKey(STATE_DURATION))
             _durationMilliseconds = savedState.getLong(STATE_DURATION);
@@ -252,35 +241,28 @@ public class EtaDialog extends FullScreenDialog {
             _toolbar.setTitle("Request " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
             _expirationLayout.setVisibility(View.VISIBLE);
-            _etaSwitch.setVisibility(View.VISIBLE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
             _toolbar.setTitle("Confirm " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
             _expirationLayout.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
             _toolbar.setTitle(R.string.dialog_eta_title);
             _finishMenu.setTitle(App.get().getString(R.string.btn_save));
             _expirationLayout.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
             _toolbar.setTitle("Accept " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
-            _etaLayout.setVisibility(View.VISIBLE);
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
         if (scheduleDisplayText == null) {
             _scheduleTextView.setVisibility(View.GONE);
         } else
-            _scheduleTextView.setText(getScheduleDisplayText());
+            _scheduleTextView.setText(scheduleDisplayText);
 
         _noteEditText.post(new Runnable() {
             @Override
@@ -520,18 +502,6 @@ public class EtaDialog extends FullScreenDialog {
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
-    private Switch.OnCheckedChangeListener _switchOnclick_listener = new Switch.OnCheckedChangeListener() {
-        @Override
-        public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-            if (isChecked) {
-                _etaLayout.setVisibility(View.VISIBLE);
-            } else {
-                _etaLayout.setVisibility(View.GONE);
-            }
-        }
-    };
-
-
     private final View.OnClickListener _etaStartTime_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -654,13 +624,9 @@ public class EtaDialog extends FullScreenDialog {
             }
 
             if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-                if (_etaSwitch.isChecked()) {
-                    onRequest(_workOrderId, _expiringDurationMilliseconds,
-                            ISO8601.fromCalendar(_etaStart), _durationMilliseconds,
-                            _noteEditText.getText().toString().trim());
-                } else {
-                    onRequest(_workOrderId, _expiringDurationMilliseconds);
-                }
+                onRequest(_workOrderId, _expiringDurationMilliseconds,
+                        ISO8601.fromCalendar(_etaStart), _durationMilliseconds,
+                        _noteEditText.getText().toString().trim());
 
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
                 onConfirmEta(_workOrderId, ISO8601.fromCalendar(_etaStart),
@@ -672,19 +638,6 @@ public class EtaDialog extends FullScreenDialog {
             return true;
         }
     };
-
-    private void onRequest(long workOrderId, long expirationMilliseconds) {
-        try {
-            long seconds = -1;
-            if (expirationMilliseconds > 0) {
-                seconds = expirationMilliseconds / 1000;
-            }
-            WorkorderClient.actionRequest(App.get(), workOrderId, seconds);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-        dismiss(true);
-    }
 
     private void onRequest(long workOrderId, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
         try {
