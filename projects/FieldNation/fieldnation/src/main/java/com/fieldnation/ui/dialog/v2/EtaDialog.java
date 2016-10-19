@@ -183,6 +183,11 @@ public class EtaDialog extends FullScreenDialog {
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
         _workOrderId = params.getLong(PARAM_WORK_ORDER_ID);
 
+        try {
+            _etaStart = ISO8601.toCalendar(_schedule.getExact());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
         super.show(params, animate);
 
         if (_schedule.getRange() == null) {
@@ -191,6 +196,7 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         populateUi();
+        populateEta();
     }
 
     @Override
