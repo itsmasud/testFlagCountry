@@ -129,11 +129,11 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         String handlerName = null;
         HttpResult result = null;
 
-        int notifId = 0;
-        NotificationDefinition notifStart = null;
-        NotificationDefinition notifSuccess = null;
-        NotificationDefinition notifFailed = null;
-        NotificationDefinition notifRetry = null;
+        int notifId = trans.getNotificationId();
+        NotificationDefinition notifStart = trans.getStartNotification();
+        NotificationDefinition notifSuccess = trans.getSuccessNotification();
+        NotificationDefinition notifFailed = trans.getFailedNotification();
+        NotificationDefinition notifRetry = trans.getRetryNotification();
 
         try {
             // apply authentication if needed
@@ -166,15 +166,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 auth.applyToRequest(request);
             }
 
-
-            if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
-                notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
-                notifStart = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_START));
-                notifSuccess = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS));
-                notifFailed = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED));
-                notifRetry = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY));
-                generateNotification(notifId, notifStart);
-            }
+            generateNotification(notifId, notifStart);
 
             Log.v(TAG, request.display());
 
@@ -362,7 +354,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
     }
 
     protected static void generateNotification(int notifyId, NotificationDefinition notif) {
-        if (notif == null)
+        if (notif == null || notifyId == 0)
             return;
 
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.get())

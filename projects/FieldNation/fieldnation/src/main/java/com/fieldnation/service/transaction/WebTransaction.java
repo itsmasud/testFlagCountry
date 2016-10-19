@@ -8,9 +8,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
+
+import java.text.ParseException;
 
 /**
  * Created by Michael Carver on 3/3/2015.
@@ -30,6 +33,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private long _queueTime;
     private boolean _wifiRequired;
     private boolean _track;
+
+    private int _notificationId;
+    private byte[] _notifStart;
+    private byte[] _notifSuccess;
+    private byte[] _notifFailed;
+    private byte[] _notifRetry;
 
     public enum State {
         BUILDING, IDLE, WORKING
@@ -54,6 +63,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = cursor.getString(Column.KEY.getIndex());
         _wifiRequired = cursor.getInt(Column.WIFI_REQUIRED.getIndex()) == 1;
         _track = cursor.getInt(Column.TRACK.getIndex()) == 1;
+
+        _notificationId = cursor.getInt(Column.NOTIF_ID.getIndex());
+        _notifStart = cursor.getBlob(Column.NOTIF_START.getIndex());
+        _notifSuccess = cursor.getBlob(Column.NOTIF_SUCCESS.getIndex());
+        _notifFailed = cursor.getBlob(Column.NOTIF_FAILED.getIndex());
+        _notifRetry = cursor.getBlob(Column.NOTIF_RETRY.getIndex());
     }
 
     public WebTransaction(Bundle bundle) {
@@ -72,6 +87,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = bundle.getString(PARAM_KEY);
         _wifiRequired = bundle.getBoolean(PARAM_WIFI_REQUIRED);
         _track = bundle.getBoolean(PARAM_TRACK);
+
+        _notificationId = bundle.getInt(PARAM_NOTIFICATION_ID, 0);
+        _notifStart = bundle.getByteArray(PARAM_NOTIFICATION_START);
+        _notifSuccess = bundle.getByteArray(PARAM_NOTIFICATION_SUCCESS);
+        _notifFailed = bundle.getByteArray(PARAM_NOTIFICATION_FAILED);
+        _notifRetry = bundle.getByteArray(PARAM_NOTIFICATION_RETRY);
     }
 
     public Bundle toBundle() {
@@ -90,6 +111,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
         bundle.putBoolean(PARAM_TRACK, _track);
+
+        bundle.putInt(PARAM_NOTIFICATION_ID, _notificationId);
+        bundle.putByteArray(PARAM_NOTIFICATION_START, _notifStart);
+        bundle.putByteArray(PARAM_NOTIFICATION_SUCCESS, _notifSuccess);
+        bundle.putByteArray(PARAM_NOTIFICATION_FAILED, _notifFailed);
+        bundle.putByteArray(PARAM_NOTIFICATION_RETRY, _notifRetry);
         return bundle;
     }
 
@@ -178,6 +205,70 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public boolean isTracked() {
         return _track;
+    }
+
+    public int getNotificationId() {
+        return _notificationId;
+    }
+
+    public NotificationDefinition getStartNotification() {
+        if (_notifStart == null)
+            return null;
+        try {
+            return NotificationDefinition.fromJson(new JsonObject(_notifStart));
+        } catch (ParseException e) {
+            Log.v(TAG, e);
+        }
+        return null;
+    }
+
+    public void setStartNotification(NotificationDefinition notif) {
+        _notifStart = notif.toJson().toByteArray();
+    }
+
+    public void setSuccessNotification(NotificationDefinition notif) {
+        _notifSuccess = notif.toJson().toByteArray();
+    }
+
+    public void setFailedNotification(NotificationDefinition notif) {
+        _notifFailed = notif.toJson().toByteArray();
+    }
+
+    public void setRetryNotification(NotificationDefinition notif) {
+        _notifRetry = notif.toJson().toByteArray();
+    }
+
+    public NotificationDefinition getSuccessNotification() {
+        if (_notifSuccess == null)
+            return null;
+        try {
+            return NotificationDefinition.fromJson(new JsonObject(_notifSuccess));
+        } catch (ParseException e) {
+            Log.v(TAG, e);
+        }
+        return null;
+    }
+
+    public NotificationDefinition getFailedNotification() {
+        if (_notifFailed == null)
+            return null;
+        try {
+            return NotificationDefinition.fromJson(new JsonObject(_notifFailed));
+        } catch (ParseException e) {
+            Log.v(TAG, e);
+        }
+        return null;
+    }
+
+    public NotificationDefinition getRetryNotification() {
+        if (_notifRetry == null)
+            return null;
+        try {
+            return NotificationDefinition.fromJson(new JsonObject(_notifRetry));
+        } catch (ParseException e) {
+            Log.v(TAG, e);
+        }
+        return null;
     }
 
     public void requeue() {
@@ -332,6 +423,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.WIFI_REQUIRED.getName(), obj._wifiRequired ? 1 : 0);
         v.put(Column.TRACK.getName(), obj._track ? 1 : 0);
 
+        v.put(Column.NOTIF_ID.getName(), obj._notificationId);
+        v.put(Column.NOTIF_START.getName(), obj._notifStart);
+        v.put(Column.NOTIF_SUCCESS.getName(), obj._notifSuccess);
+        v.put(Column.NOTIF_FAILED.getName(), obj._notifFailed);
+        v.put(Column.NOTIF_RETRY.getName(), obj._notifRetry);
+
         boolean success = false;
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
@@ -348,7 +445,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     }
 
     public static WebTransaction put(Priority priority, String key, boolean useAuth,
-                                     boolean isSync, byte[] request, boolean wifiRequired, boolean track, String handlerName, byte[] handlerParams) {
+                                     boolean isSync, byte[] request, boolean wifiRequired,
+                                     boolean track, String handlerName, byte[] handlerParams) {
 //        Log.v(TAG, "put(" + key + ")");
         ContentValues v = new ContentValues();
         v.put(Column.HANDLER.getName(), handlerName);
@@ -362,6 +460,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.QUEUE_TIME.getName(), 0);
         v.put(Column.WIFI_REQUIRED.getName(), wifiRequired ? 1 : 0);
         v.put(Column.TRACK.getName(), track ? 1 : 0);
+        v.put(Column.NOTIF_ID.getName(), 0);
 
         long id = -1;
         synchronized (TAG) {

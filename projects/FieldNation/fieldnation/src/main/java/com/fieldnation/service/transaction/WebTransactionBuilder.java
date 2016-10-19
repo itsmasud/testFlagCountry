@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 
@@ -75,6 +76,16 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     public WebTransactionBuilder handlerParams(byte[] params) {
         intent.putExtra(PARAM_HANDLER_PARAMS, params);
+        return this;
+    }
+
+    public WebTransactionBuilder notify(NotificationDefinition start, NotificationDefinition success,
+                                        NotificationDefinition failed, NotificationDefinition retry) {
+        intent.putExtra(PARAM_NOTIFICATION_ID, App.secureRandom.nextInt());
+        intent.putExtra(PARAM_NOTIFICATION_START, start.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_SUCCESS, success.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_FAILED, failed.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_RETRY, retry.toJson().toByteArray());
         return this;
     }
 

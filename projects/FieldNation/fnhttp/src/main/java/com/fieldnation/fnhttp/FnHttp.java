@@ -27,8 +27,6 @@ public class FnHttp {
 
     public static Request buildRequest(Context context, JsonObject json) throws Exception {
         String path = "";
-        String timingKey = null;
-        Stopwatch watch = new Stopwatch(true);
         String protocol = "";
         String params = "";
         String hostname = "";
@@ -49,9 +47,6 @@ public class FnHttp {
         }
         if (json.has(HttpJsonBuilder.PARAM_WEB_METHOD)) {
             method = json.getString(HttpJsonBuilder.PARAM_WEB_METHOD);
-        }
-        if (json.has(HttpJsonBuilder.PARAM_TIMING_KEY)) {
-            timingKey = json.getString(HttpJsonBuilder.PARAM_TIMING_KEY);
         }
 
         JsonObject headers = null;
