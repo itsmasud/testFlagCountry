@@ -58,9 +58,39 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
     }
 
     public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
-        action(context, workOrderId, "on-my-way", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                lat == null ? "" : "{\"lat\"=" + lat + ", \"lon\"=" + lon + "}");
+        App.get().setInteractedWorkorder();
+        try {
+            JsonObject _action = new JsonObject();
+            _action.put("_action[0].action", "on-my-way");
+
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .timingKey("POST/api/rest/v2/workorders/[workorderId]/on-my-way")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/on-my-way")
+                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
+
+            if (lat != null && lon != null) {
+                http.body("{\"lat\"=" + lat + ", \"lon\"=" + lon + "}");
+            }
+
+            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkOrderTransactionHandler.class)
+                    .handlerParams(WorkOrderTransactionHandler.pAction(workOrderId, "on-my-way"))
+                    .useAuth(true)
+                    .key("Workorders/" + workOrderId + "/on-my-way")
+                    .request(http)
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workOrderId,
+                            "merges",
+                            _action.toByteArray()));
+
+            context.startService(builder.makeIntent());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
     }
 
     /*-*********************************-*/
