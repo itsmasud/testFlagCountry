@@ -72,7 +72,7 @@ public class ReportIssueDialog extends SimpleDialog {
     private final View.OnClickListener cancelWork_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            CancelWarningDialog.Controller.show(App.get(), _workOrder);
+            //CancelWarningDialog.Controller.show(App.get(), _workOrder, );
             dismiss(true);
         }
     };

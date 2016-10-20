@@ -91,6 +91,7 @@ public class Action {
     }
 
     public enum ActionType {
+        ACCEPT("accept"),
         CONFIRM("confirm"),
         ON_MY_WAY("on_my_way"),
         PHONE("phone"),

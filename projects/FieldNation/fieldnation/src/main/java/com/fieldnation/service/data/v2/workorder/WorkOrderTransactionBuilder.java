@@ -53,8 +53,14 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         action(context, workorderId, "confirm-eta", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "start_time=" + startTime
-                + "&end_time=" + endTime
-                + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)));
+                        + "&end_time=" + endTime
+                        + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)));
+    }
+
+    public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
+        action(context, workOrderId, "on-my-way", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                lat == null ? "" : "{\"lat\"=" + lat + ", \"lon\"=" + lon + "}");
     }
 
     /*-*********************************-*/
