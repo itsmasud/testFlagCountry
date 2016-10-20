@@ -1,7 +1,10 @@
 package com.fieldnation.ui.dialog.v2;
 
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -23,7 +26,9 @@ import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.ui.v2.AppPickerPackage;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;
@@ -38,10 +43,8 @@ import static com.fieldnation.service.activityresult.ActivityResultConstants.RES
  */
 public class ProfileInformationDialog extends FullScreenDialog {
     private static final String TAG = "ProfileInformationDialog";
+    private static final String UID_APP_PICKER_DIALOG = TAG + ".AppPickerDialog";
 
-    // State
-    private static final String STATE_MESSAGE = "ProfileInformationDialog:Message";
-    private static final String STATE_SOURCE = "ProfileInformationDialog:Source";
 
     // Ui
     private Toolbar _toolbar;
@@ -58,14 +61,13 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private EditText _zipCodeEditText;
 
     // Data
-    private Listener _listener;
-    private String _source;
     private Profile _profile;
     private PhotoClient _photos;
     private WeakReference<Drawable> _profilePic = null;
     private boolean _clear = false;
     private ActivityResultClient _activityResultClient;
     File _tempFile = null;
+    private AppPickerDialog.Controller _appPickerDialog;
 
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
@@ -80,12 +82,16 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onAdded() {
         super.onAdded();
         Log.e(TAG, "onAdded");
+        _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
 
-        PicChooserDialog.setListener(_picChooserDialog_listener);
+
+        _appPickerDialog = new AppPickerDialog.Controller(App.get(), UID_APP_PICKER_DIALOG);
+        _appPickerDialog.setListener(_appPickerDialog_listener);
+
 
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
@@ -131,11 +137,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _zipCodeEditText = (EditText) _root.findViewById(R.id.zip_code_edittext);
 
         return _root;
-    }
-
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     private void populateUi() {
@@ -214,9 +215,14 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
 
-    private void getImageFromGallery() {
-        Intent src = new Intent(Intent.ACTION_PICK,
-                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+    private void getImageFromPhotoApp() {
+
+//        Intent src = new Intent(Intent.ACTION_PICK,
+//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+        Intent src = new Intent(Intent.ACTION_PICK);
+        src.addCategory(Intent.CATEGORY_OPENABLE);
+        src.setType("image/*");
         ActivityResultClient.startActivityForResult(App.get(), src, RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
 
     }
@@ -254,22 +260,23 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            PicChooserDialog.Controller.show(App.get());
+
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("*/*");
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            AppPickerDialog.addIntent(intent, "Get Content");
+
+            if (App.get().getPackageManager().hasSystemFeature(
+                    PackageManager.FEATURE_CAMERA)) {
+                intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                AppPickerDialog.addIntent(intent, "Take Picture");
+            }
+            AppPickerDialog.Controller.show(App.get(), UID_APP_PICKER_DIALOG);
+
+
         }
     };
 
-
-    private PicChooserDialog.Listener _picChooserDialog_listener = new PicChooserDialog.Listener() {
-        @Override
-        public void onCamera() {
-            dispatchTakePictureIntent();
-        }
-
-        @Override
-        public void onGallery() {
-            getImageFromGallery();
-        }
-    };
 
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
@@ -316,6 +323,48 @@ public class ProfileInformationDialog extends FullScreenDialog {
     };
 
 
+    private final AppPickerDialog.ControllerListener _appPickerDialog_listener = new AppPickerDialog.ControllerListener() {
+
+        @Override
+        public void onOk(AppPickerPackage pack) {
+            Intent src = pack.intent;
+            if (pack == null) {
+                Log.e(TAG, "pack is null");
+            }
+            if (pack.intent == null) {
+                Log.e(TAG, "pack.intent is null");
+            }
+            if (pack.resolveInfo == null) {
+                Log.e(TAG, "pack.resolveInfo is null");
+            }
+            if (pack.appName == null) {
+                Log.e(TAG, "pack.appName is null");
+            }
+
+
+            ResolveInfo info = pack.resolveInfo;
+
+            src.setComponent(new ComponentName(
+                    info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
+
+            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
+                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+            } else {
+                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                _tempFile = temppath;
+                Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
+
+                // removed because this doesn't work on my motorola
+                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+            }
+        }
+    };
+
+
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
@@ -332,11 +381,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
 
-    public interface Listener {
-        void onOk(String message);
-
-        void onCancel();
-    }
+//    public interface Listener {
+//        void onOk(String message);
+//
+//        void onCancel();
+//    }
 
 
 }
