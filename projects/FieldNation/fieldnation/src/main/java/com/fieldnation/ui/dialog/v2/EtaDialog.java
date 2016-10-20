@@ -2,7 +2,6 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -85,9 +84,6 @@ public class EtaDialog extends FullScreenDialog {
     private TimePickerDialog _etaStartTimePicker;
     private DurationDialog.Controller _durationDialog;
     private DurationDialog.Controller _expiryDialog;
-
-    // Data
-    private final Handler _handler = new Handler();
 
     // Passed data
     private String _dialogType;
@@ -175,7 +171,9 @@ public class EtaDialog extends FullScreenDialog {
         _workOrderId = params.getLong(PARAM_WORK_ORDER_ID);
 
         try {
-            if (_schedule.getExact() != null) {
+            if (_schedule.getEstimate() != null && _schedule.getEstimate().getArrival() != null) {
+                _etaStart = ISO8601.toCalendar(_schedule.getEstimate().getArrival());
+            } else if (_schedule.getExact() != null) {
                 _etaStart = ISO8601.toCalendar(_schedule.getExact());
             } else {
                 _etaStart = ISO8601.toCalendar(_schedule.getRange().getBegin());
@@ -192,7 +190,6 @@ public class EtaDialog extends FullScreenDialog {
         }
 
         populateUi();
-        populateEta();
     }
 
     @Override
@@ -225,8 +222,7 @@ public class EtaDialog extends FullScreenDialog {
 
         super.onRestoreDialogState(savedState);
 
-        // Restore some UI
-        populateEta();
+        // UI
         populateUi();
     }
 
@@ -270,25 +266,90 @@ public class EtaDialog extends FullScreenDialog {
                 misc.hideKeyboard(_noteEditText);
             }
         });
-    }
-
-    private void populateEta() {
-        setExpiringDuration(_expiringDurationMilliseconds);
 
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
-        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+
+        if (_durationMilliseconds == INVALID_NUMBER) {
+            _durationButton.setText("");
+        } else {
+            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        }
+
+        if (_expiringDurationMilliseconds == INVALID_NUMBER) {
+            _expirationButton.setText(R.string.btn_never);
+        } else {
+            _expirationButton.setText(misc.convertMsToHuman(_expiringDurationMilliseconds));
+        }
     }
 
-    private boolean passesMidnight() {
-        if (!misc.isEmptyOrNull(_schedule.getExact()))
+    private boolean isValidEta(Calendar arrival) {
+        if (_schedule.getExact() != null)
+            return true;
+        else if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
+            return isWithinBusinessHours(arrival, _schedule);
+        } else if (_schedule.getRange().getType() == Range.Type.RANGE) {
+            return isWithinRange(arrival, _schedule);
+        }
+        return true;
+    }
+
+    private static boolean isWithinBusinessHours(Calendar arrival, Schedule schedule) {
+        try {
+            // strategy: test if arrival is within the range at all. If it is,
+            // then constrain the check to within a single day, and see if the time falls within that day
+            if (passesMidnight(schedule)) {
+                Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
+                Calendar ecal = ISO8601.toCalendar(schedule.getRange().getEnd());
+                ecal.add(Calendar.DAY_OF_MONTH, 1);
+
+                if (arrival.getTimeInMillis() < scal.getTimeInMillis() || arrival.getTimeInMillis() > ecal.getTimeInMillis()) {
+                    return false;
+                }
+
+                // move to first day
+                arrival.set(Calendar.DAY_OF_MONTH, scal.get(Calendar.DAY_OF_MONTH));
+                // if too early, then bump a day
+                if (arrival.getTimeInMillis() < scal.getTimeInMillis()) {
+                    arrival.add(Calendar.DAY_OF_MONTH, 1);
+                    // move ecal to the same day. check if arrival is within the end time
+                    ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
+                    if (arrival.getTimeInMillis() <= ecal.getTimeInMillis())
+                        return true;
+                } else {
+                    return true;
+                }
+
+            } else {
+                Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
+                Calendar ecal = ISO8601.toCalendar(schedule.getRange().getEnd());
+
+                if (scal.getTimeInMillis() > arrival.getTimeInMillis() || ecal.getTimeInMillis() < arrival.getTimeInMillis()) {
+                    return false;
+                }
+                // arrival is within the start and end days, constrain check to the day of
+
+                scal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
+                ecal.set(Calendar.DAY_OF_MONTH, arrival.get(Calendar.DAY_OF_MONTH));
+
+                if (scal.getTimeInMillis() <= arrival.getTimeInMillis() && ecal.getTimeInMillis() >= arrival.getTimeInMillis())
+                    return true;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return false;
+    }
+
+    private static boolean passesMidnight(Schedule schedule) {
+        if (!misc.isEmptyOrNull(schedule.getExact()))
             return false;
 
         try {
             // is business or range
-            if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
-                Calendar scal = ISO8601.toCalendar(_schedule.getRange().getBegin());
-                Calendar ecal = ISO8601.toCalendar(_schedule.getRange().getEnd());
+            if (schedule.getRange().getType() == Range.Type.BUSINESS) {
+                Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
+                Calendar ecal = ISO8601.toCalendar(schedule.getRange().getEnd());
 
                 // end time is earlier in the day than start. that means it crosses midnight
                 return scal.get(Calendar.HOUR_OF_DAY) >= ecal.get(Calendar.HOUR_OF_DAY);
@@ -299,145 +360,21 @@ public class EtaDialog extends FullScreenDialog {
         return false;
     }
 
-    // a valid date is defined as
-    // not in the past
-    //
-    //
-    private boolean isValidDay() {
-        // clamp start time
-        Calendar etaStart = DateUtils.clearTime(_etaStart);
-
-        if (isSelectedEtaBeforeToday()) {
-            ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
-            _handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _etaStartDatePicker.show();
-                }
-            }, 100);
-            return false;
-        }
-
-        // is exact work order
-        if (!misc.isEmptyOrNull(_schedule.getExact()))
-            return true;
-
-        boolean result = false;
+    private static boolean isWithinRange(Calendar arrival, Schedule schedule) {
         try {
-            // start is already in the future. just need to clamp it to end date
-            if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
-                Calendar ecal = DateUtils.clearTime(ISO8601.toCalendar(_schedule.getRange().getEnd()));
-                // if passes midnight, then add 1 day
-                if (passesMidnight()) {
-                    ecal.add(Calendar.DAY_OF_YEAR, 1);
-                }
-                // return true if eta start day <= end day
-                result = etaStart.getTimeInMillis() <= ecal.getTimeInMillis();
-            } else { // RANGE
-                // assume the date range doesn't care about midnight
-                // return true if eta day <= end day
-                Calendar ecal = DateUtils.clearTime(ISO8601.toCalendar(_schedule.getRange().getEnd()));
-                result = etaStart.getTimeInMillis() <= ecal.getTimeInMillis();
+            Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
+            Calendar ecal = ISO8601.toCalendar(schedule.getRange().getEnd());
 
+            // if arrival is anytime between the range, then we're good
+            if (arrival.getTimeInMillis() >= scal.getTimeInMillis() && arrival.getTimeInMillis() <= ecal.getTimeInMillis()) {
+                return true;
             }
+
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
 
-        if (!result) {
-            ToastClient.toast(App.get(), R.string.toast_pick_date_time_between_schedule, Toast.LENGTH_LONG);
-            _handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _etaStartDatePicker.show();
-                }
-            }, 100);
-
-        }
-        return result;
-    }
-
-    private boolean isValidTime() {
-        // in the past, not valid
-        if (isSelectedEtaBeforeToday()) {
-            ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
-            _handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _etaStartDatePicker.show();
-                }
-            }, 100);
-            return false;
-        }
-
-        // exact time, can't change. so it's valid
-        if (!misc.isEmptyOrNull(_schedule.getExact()))
-            return true;
-
-        boolean result = false;
-        // we don't need to worry about dates here, just the time part
-        Calendar etaStart = Calendar.getInstance();
-        etaStart.setTimeInMillis(_etaStart.getTimeInMillis());
-        Calendar etaEnd = Calendar.getInstance();
-        etaEnd.setTimeInMillis(etaStart.getTimeInMillis() + _durationMilliseconds);
-        try {
-            // if business hours
-            if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
-                Calendar scal = ISO8601.toCalendar(_schedule.getRange().getBegin());
-                Calendar ecal = ISO8601.toCalendar(_schedule.getRange().getEnd());
-                // if passes midnight, then
-                if (passesMidnight()) {
-                    // if etaStart time > end time and less than start time... then it is within the section that is not allowed. This is an easier test!
-                    result = !(etaStart.get(Calendar.HOUR_OF_DAY) > ecal.get(Calendar.HOUR_OF_DAY)
-                            && etaEnd.get(Calendar.HOUR_OF_DAY) < scal.get(Calendar.HOUR_OF_DAY));
-                } else {
-                    result = etaStart.get(Calendar.HOUR_OF_DAY) > scal.get(Calendar.HOUR_OF_DAY)
-                            && etaEnd.get(Calendar.HOUR_OF_DAY) < ecal.get(Calendar.HOUR_OF_DAY);
-                }
-            } else {
-                // TODO else handle range...
-                result = true;
-            }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        if (!result) {
-            ToastClient.toast(App.get(), R.string.toast_pick_date_time_between_schedule, Toast.LENGTH_LONG);
-            _handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    _etaStartTimePicker.show();
-                }
-            }, 100);
-        }
-        return result;
-    }
-
-    private boolean isSelectedEtaBeforeToday() {
-        // is the date in the past?
-        if (DateUtils.isBeforeToday(_etaStart)) {
-            return true;
-        }
         return false;
-    }
-
-    private void setDuration(long timeMilliseconds) {
-        if (timeMilliseconds == INVALID_NUMBER) {
-            _durationButton.setText("");
-        } else {
-            _durationMilliseconds = timeMilliseconds;
-            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
-        }
-    }
-
-    private void setExpiringDuration(long timeMilliseconds) {
-        if (timeMilliseconds == INVALID_NUMBER) {
-            _expirationButton.setText(R.string.btn_never);
-        } else {
-            _expiringDurationMilliseconds = timeMilliseconds;
-            _expirationButton.setText(misc.convertMsToHuman(_expiringDurationMilliseconds));
-        }
     }
 
     private String getScheduleDisplayText() {
@@ -512,11 +449,16 @@ public class EtaDialog extends FullScreenDialog {
     private final TimePickerDialog.OnTimeSetListener _etaStartTime_onSet = new TimePickerDialog.OnTimeSetListener() {
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            _etaStart.set(_etaStart.get(Calendar.YEAR), _etaStart.get(Calendar.MONTH),
+            Calendar test = (Calendar) _etaStart.clone();
+            test.set(_etaStart.get(Calendar.YEAR), _etaStart.get(Calendar.MONTH),
                     _etaStart.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
-            if (isValidTime()) {
-                _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
+            if (isValidEta(test)) {
+                _etaStart = test;
+                populateUi();
+            } else {
+                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                // TODO, pop the dialog again?
             }
         }
     };
@@ -531,21 +473,15 @@ public class EtaDialog extends FullScreenDialog {
     private final DatePickerDialog.OnDateSetListener _etaStartDate_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            _etaStart.set(year, monthOfYear, dayOfMonth);
+            Calendar test = (Calendar) _etaStart.clone();
+            test.set(year, monthOfYear, dayOfMonth);
 
-            if (isSelectedEtaBeforeToday()) {
-                ToastClient.toast(App.get(), R.string.toast_previous_date_not_allowed, Toast.LENGTH_LONG);
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        _etaStartDatePicker.show();
-                    }
-                }, 100);
-                return;
-            }
-
-            if (isValidDay()) {
-                _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
+            if (isValidEta(test)) {
+                _etaStart = test;
+                populateUi();
+            } else {
+                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                // TODO, pop the dialog again?
             }
         }
     };
@@ -564,16 +500,8 @@ public class EtaDialog extends FullScreenDialog {
                 ToastClient.toast(App.get(), R.string.toast_minimum_job_duration, Toast.LENGTH_LONG);
                 return;
             }
-            long tempJobDuration = _durationMilliseconds;
-
             _durationMilliseconds = milliseconds;
-
-            if (isValidDay() && isValidTime()) {
-                _durationButton.setText(misc.convertMsToHuman(milliseconds));
-            } else {
-                _durationMilliseconds = tempJobDuration;
-                setDuration(_durationMilliseconds);
-            }
+            populateUi();
         }
 
         @Override
@@ -592,12 +520,11 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onOk(long milliseconds) {
             if (milliseconds < MIN_EXPIRING_DURATION) {
-                setExpiringDuration(INVALID_NUMBER);
                 ToastClient.toast(App.get(), R.string.toast_minimum_expiring_duration, Toast.LENGTH_LONG);
                 return;
             }
             _expiringDurationMilliseconds = milliseconds;
-            _expirationButton.setText(misc.convertMsToHuman(milliseconds));
+            populateUi();
         }
 
         @Override
@@ -615,8 +542,10 @@ public class EtaDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            if (!isValidDay() || !isValidTime())
+            if (!isValidEta(_etaStart)) {
+                ToastClient.toast(App.get(), "Please enter a valid eta.", Toast.LENGTH_SHORT);
                 return true;
+            }
 
             if (_durationMilliseconds == INVALID_NUMBER) {
                 ToastClient.toast(App.get(), R.string.toast_job_duration_empty, Toast.LENGTH_LONG);
@@ -627,19 +556,22 @@ public class EtaDialog extends FullScreenDialog {
                 onRequest(_workOrderId, _expiringDurationMilliseconds,
                         ISO8601.fromCalendar(_etaStart), _durationMilliseconds,
                         _noteEditText.getText().toString().trim());
+                dismiss(true);
 
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
                 onConfirmEta(_workOrderId, ISO8601.fromCalendar(_etaStart),
                         _durationMilliseconds, _noteEditText.getText().toString().trim(), true);
+                dismiss(true);
             } else {
                 onConfirmEta(_workOrderId, ISO8601.fromCalendar(_etaStart),
                         _durationMilliseconds, _noteEditText.getText().toString().trim(), false);
+                dismiss(true);
             }
             return true;
         }
     };
 
-    private void onRequest(long workOrderId, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
+    private static void onRequest(long workOrderId, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
         try {
             long seconds = -1;
             if (expirationMilliseconds > 0) {
@@ -651,10 +583,9 @@ public class EtaDialog extends FullScreenDialog {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        dismiss(true);
     }
 
-    private void onConfirmEta(long workOrderId, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
+    private static void onConfirmEta(long workOrderId, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
         //set loading mode
         try {
             WorkorderClient.actionConfirmAssignment(App.get(),
@@ -662,7 +593,6 @@ public class EtaDialog extends FullScreenDialog {
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        dismiss(true);
     }
 
     public abstract static class Controller extends com.fieldnation.fndialog.Controller {
@@ -671,12 +601,12 @@ public class EtaDialog extends FullScreenDialog {
             super(context, EtaDialog.class, uid);
         }
 
-        public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
+        public static void show(Context context, long workOrderId, Schedule schedule, String dialogType) {
             Bundle params = new Bundle();
             params.putParcelable(PARAM_SCHEDULE, schedule);
             params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, EtaDialog.class, params);
+            show(context, null, EtaDialog.class, params);
         }
     }
 }

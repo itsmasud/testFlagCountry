@@ -371,7 +371,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             try {
                 GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
@@ -456,6 +456,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+//            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             ActivityResultClient.startActivity(
                     App.get(),
                     WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),

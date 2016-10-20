@@ -922,7 +922,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
+        ToastClient.snackbar(context, "Unable to accept work order. " + resultData.getString(),
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
         return Result.CONTINUE;
