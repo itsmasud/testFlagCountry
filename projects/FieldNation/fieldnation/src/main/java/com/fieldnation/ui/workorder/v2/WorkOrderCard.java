@@ -295,8 +295,8 @@ public class WorkOrderCard extends RelativeLayout {
                     break;
                 case CONFIRM:
                     _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_confirm_onClick);
-                    _primaryButton.setText(R.string.btn_confirm);
+                    _primaryButton.setOnClickListener(_accept_onClick);
+                    _primaryButton.setText("ACCEPT");
                     break;
                 case ON_MY_WAY:
                     _primaryButton.setVisibility(VISIBLE);
@@ -413,7 +413,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //ReportIssueDialog.Controller.show(App.get(), _workOrder);
             ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
