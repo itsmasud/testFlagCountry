@@ -201,6 +201,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClientV1_listener.onAction " + workorderId + ", " + action + ", " + failed);
             getPage(0);
             _refreshView.startRefreshing();
         }

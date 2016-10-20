@@ -116,6 +116,9 @@ public class DurationDialog extends SimpleDialog {
         if (_dayTextView == null)
             return;
 
+        while (_number.length() > 0 && _number.charAt(0) == '0')
+            _number = _number.substring(1);
+
         String padded = _number;
 
         if (padded.length() < 6)
