@@ -46,6 +46,7 @@ public class GmapsTransactionBuilder implements GmapsConstants {
 //        }
 //    }
 
+    // result: https://maps.googleapis.com/maps/api/staticmap?markers=color:red%7C%7C23.8758898,90.3841423&markers=color:red%7C%7C45.0815,-93.4059&size=432x180&maptype=roadmap&format=png&key=AIzaSyCeb9sNAn7lDagc6VKR6bb12g4CSZQRDj0
     public static void getStaticMapClassic(Context context, long workorderId, int width, int height, Marker start, Marker end) {
         Log.v(TAG, "getStaticMapClassic");
         try {
