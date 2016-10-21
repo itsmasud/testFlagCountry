@@ -7,15 +7,17 @@ import com.fieldnation.fntools.misc;
  */
 public class Marker extends Position {
 
-    private final String _url;
+    // result: markers=color:red%7C%7C23.8759457,90.3839746
 
-    public Marker(double longitude, double latitude, String url) {
-        super(longitude, latitude);
-        this._url = url;
+    private final String _markerParam;
+
+    public Marker(double latitude, double longitude, String url) {
+        super(latitude, longitude);
+        this._markerParam = url;
     }
 
     @Override
     public String toString() {
-        return "url-" + misc.escapeForURL(_url) + "(" + super.toString() + ")";
+        return "markers=" + misc.escapeForURL(_markerParam) + super.toString();
     }
 }

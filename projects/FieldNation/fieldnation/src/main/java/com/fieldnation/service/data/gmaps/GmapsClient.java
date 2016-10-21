@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.data.mapbox.MapboxDirections;
+import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -30,7 +30,7 @@ public class GmapsClient extends TopicClient implements GmapsConstants {
     }
 
     public static void getDirections(Context context, long workorderId, Position... positions) {
-        GmapsTransactionBuilder.getDirections(context, workorderId, positions);
+//        GmapsTransactionBuilder.getDirections(context, workorderId, positions);
     }
 
     public boolean subDirections(long workorderId) {
@@ -62,16 +62,16 @@ public class GmapsClient extends TopicClient implements GmapsConstants {
 
         private void preOnDirections(Bundle bundle) {
             Log.v(STAG, "preOnDirections");
-            new AsyncTaskEx<Bundle, Object, MapboxDirections>() {
+            new AsyncTaskEx<Bundle, Object, GmapsDirections>() {
                 private long _workorderId;
 
                 @Override
-                protected MapboxDirections doInBackground(Bundle... params) {
+                protected GmapsDirections doInBackground(Bundle... params) {
                     try {
                         _workorderId = params[0].getLong(PARAM_WORKORDER_ID);
                         byte[] data = params[0].getByteArray(PARAM_DIRECTIONS);
 
-                        return MapboxDirections.fromJson(new JsonObject(data));
+                        return GmapsDirections.fromJson(new JsonObject(data));
                     } catch (Exception ex) {
                         Log.v(STAG, ex);
                     }
@@ -79,13 +79,13 @@ public class GmapsClient extends TopicClient implements GmapsConstants {
                 }
 
                 @Override
-                protected void onPostExecute(MapboxDirections directions) {
+                protected void onPostExecute(GmapsDirections directions) {
                     onDirections(_workorderId, directions);
                 }
             }.executeEx(bundle);
         }
 
-        public void onDirections(long workorderId, MapboxDirections directions) {
+        public void onDirections(long workorderId, GmapsDirections directions) {
         }
 
         private void preOnStaticMapClassic(Bundle bundle) {

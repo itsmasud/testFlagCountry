@@ -25,7 +25,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
