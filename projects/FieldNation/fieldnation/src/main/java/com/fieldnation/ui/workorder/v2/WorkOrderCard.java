@@ -38,6 +38,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
 
+this is a syntax error
+
 /**
  * Created by Michael on 7/26/2016.
  */
