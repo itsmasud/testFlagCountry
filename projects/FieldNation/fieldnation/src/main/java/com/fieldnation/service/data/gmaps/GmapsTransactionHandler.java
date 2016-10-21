@@ -1,9 +1,9 @@
-package com.fieldnation.service.data.mapbox;
+package com.fieldnation.service.data.gmaps;
 
 import android.content.Context;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -11,10 +11,10 @@ import com.fieldnation.service.transaction.WebTransactionHandler;
 import java.text.ParseException;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxTransactionHandler extends WebTransactionHandler implements MapboxConstants {
-    private static final String TAG = "MapboxTransactionHandler";
+public class GmapsTransactionHandler extends WebTransactionHandler implements GmapsConstants {
+    private static final String TAG = "GmapsTransactionHandler";
 
     public static byte[] pDirections(long workorderId) {
         try {
@@ -63,12 +63,12 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
 
     private Result handleDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleDirections");
-        MapboxDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
+        GmapsDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
         return Result.CONTINUE;
     }
 
     private Result handleStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
+        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
         return Result.CONTINUE;
     }
 
@@ -89,7 +89,7 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
     }
 
     private Result handleStaticMapClassicFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
+        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
         return Result.CONTINUE;
     }
 

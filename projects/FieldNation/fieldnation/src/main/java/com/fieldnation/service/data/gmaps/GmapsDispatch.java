@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.mapbox;
+package com.fieldnation.service.data.gmaps;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -8,10 +8,10 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicService;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxDispatch implements MapboxConstants {
-    private static final String TAG = "MapboxDispatch";
+public class GmapsDispatch implements GmapsConstants {
+    private static final String TAG = "GmapsDispatch";
 
     public static void directions(Context context, long workorderId, byte[] directions) {
         Log.v(TAG, "directions");

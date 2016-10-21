@@ -1,21 +1,21 @@
-package com.fieldnation.service.data.mapbox;
+package com.fieldnation.service.data.gmaps;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/21/2016.
  */
 public class Position {
 
     public final double longitude;
     public final double latitude;
 
-    public Position(double longitude, double latitude) {
+    public Position(double latitude, double longitude) {
         this.longitude = longitude;
         this.latitude = latitude;
     }
 
     @Override
     public String toString() {
-        return longitude + "," + latitude;
+        return latitude + "," + longitude;
     }
 
     public static final float DEG2RAD = (float) (Math.PI / 180.0);
