@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -26,7 +25,8 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 public class CancelWarningDialog extends FullScreenDialog {
     private static final String TAG = "CancelWarningDialog";
 
-    private static final String PARAM_WORKORDER = "workOrder";
+    private static final String PARAM_WORKORDER_ID = "workOrder";
+    private static final String PARAM_EXPLANATION = "eplanation";
 
     // Ui
     private Button _reviewTosButton;
@@ -34,7 +34,8 @@ public class CancelWarningDialog extends FullScreenDialog {
     private Button _acceptButton;
 
     // Data
-    private WorkOrder _workOrder;
+    private long _workOrderId;
+    private String _explanation;
 
     public CancelWarningDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -62,7 +63,9 @@ public class CancelWarningDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle params, boolean animate) {
-        _workOrder = params.getParcelable(PARAM_WORKORDER);
+        _workOrderId = params.getLong(PARAM_WORKORDER_ID);
+        _explanation = params.getString(PARAM_EXPLANATION);
+
         super.show(params, animate);
     }
 
@@ -84,7 +87,7 @@ public class CancelWarningDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             ToastClient.toast(App.get(), "Cancel notification sent", Toast.LENGTH_SHORT);
-            WorkorderClient.actionReportProblem(App.get(), _workOrder.getId(), "", ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
+            WorkorderClient.actionReportProblem(App.get(), _workOrderId, _explanation, ReportProblemType.CANNOT_MAKE_ASSIGNMENT);
             dismiss(true);
         }
     };
@@ -102,10 +105,10 @@ public class CancelWarningDialog extends FullScreenDialog {
             super(context, CancelWarningDialog.class, null);
         }
 
-        public static void show(Context context, WorkOrder workOrder) {
+        public static void show(Context context, long workOrderId, String explanation) {
             Bundle params = new Bundle();
-            params.putParcelable(PARAM_WORKORDER, workOrder);
-
+            params.putLong(PARAM_WORKORDER_ID, workOrderId);
+            params.putString(PARAM_EXPLANATION, explanation);
             show(context, null, CancelWarningDialog.class, params);
         }
     }

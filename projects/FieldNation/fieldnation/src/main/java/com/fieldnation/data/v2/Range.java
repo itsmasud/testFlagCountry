@@ -43,6 +43,18 @@ public class Range implements Parcelable {
         return Type.BUSINESS;
     }
 
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public void setBegin(String begin) {
+        this.begin = begin;
+    }
+
+    public void setType(Type type) {
+        this.type = type.name().toLowerCase();
+    }
+
     /*-*************************************-*/
     /*-			JSON Implementation			-*/
     /*-*************************************-*/

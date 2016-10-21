@@ -51,7 +51,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
@@ -75,7 +74,6 @@ import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
-import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkCompleteDialog;
@@ -91,6 +89,7 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -144,7 +143,6 @@ public class WorkFragment extends WorkorderFragment {
     private AcceptBundleDialog _acceptBundleWOExpiresDialog;
     private AppPickerDialog _appDialog;
     private ClosingNotesDialog _closingDialog;
-    private EtaDialog _etaDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
@@ -215,7 +213,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _locView = (LocationView) view.findViewById(R.id.location_view);
         _scheduleView = (ScheduleSummaryView) view.findViewById(R.id.schedule_view);
-        _scheduleView.setListener(_editEta_listener);
 
         _payView = (PaymentView) view.findViewById(R.id.payment_view);
         _payView.setListener(_paymentView_listener);
@@ -358,7 +355,6 @@ public class WorkFragment extends WorkorderFragment {
         _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _etaDialog = EtaDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
@@ -390,7 +386,6 @@ public class WorkFragment extends WorkorderFragment {
         _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
         _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
         _closingDialog.setListener(_closingNotes_onOk);
-        _etaDialog.setListener(_etaDialog_listener);
         _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
@@ -591,7 +586,8 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
         }
@@ -861,14 +857,16 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
     };
 
     private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
     };
 
@@ -909,58 +907,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCancel() {
         }
-    };
-
-    private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
-
-
-        @Override
-        public void onRequest(Workorder workorder, long expirationMilliseconds) {
-            try {
-                long seconds = -1;
-                if (expirationMilliseconds > 0) {
-                    seconds = expirationMilliseconds / 1000;
-                }
-
-                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
-            try {
-                long seconds = -1;
-                if (expirationMilliseconds > 0) {
-                    seconds = expirationMilliseconds / 1000;
-                }
-                WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
-                setLoading(true);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
-            try {
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
-
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
     };
 
     private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
@@ -1303,7 +1249,8 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOExpiresDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_REQUEST);
+                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -1312,7 +1259,8 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_ACCEPT);
+                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
         }
 
@@ -1336,7 +1284,8 @@ public class WorkFragment extends WorkorderFragment {
             if (_workorder.isBundle()) {
                 _acceptBundleWOConfirmDialog.show(_workorder);
             } else {
-                _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             }
         }
 
@@ -1608,7 +1557,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -1856,14 +1806,6 @@ public class WorkFragment extends WorkorderFragment {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-        }
-    };
-
-    ScheduleSummaryView.Listener _editEta_listener = new ScheduleSummaryView.Listener() {
-        @Override
-        public void editEta() {
-            _etaDialog.show(_workorder, EtaDialog.DIALOG_STYLE_EDIT);
-
         }
     };
 }

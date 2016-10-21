@@ -51,12 +51,16 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         return register(TOPIC_ID_SEARCH);
     }
 
-    public static void actionDecline(Context context, long workorderId, int declineReasonId, String declineExplanation) {
-        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, declineExplanation);
+    public static void actionDecline(Context context, long workOrderId, int declineReasonId, String declineExplanation) {
+        WorkOrderTransactionBuilder.actionDecline(context, workOrderId, declineReasonId, declineExplanation);
     }
 
-    public static void actionEta(Context context, long workorderId, String startTime, String endTime, String note) {
-        WorkOrderTransactionBuilder.actionEta(context, workorderId, startTime, endTime, note);
+    public static void actionEta(Context context, long workOrderId, String startTime, String endTime, String note) {
+        WorkOrderTransactionBuilder.actionEta(context, workOrderId, startTime, endTime, note);
+    }
+
+    public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
+        WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
     }
 
 

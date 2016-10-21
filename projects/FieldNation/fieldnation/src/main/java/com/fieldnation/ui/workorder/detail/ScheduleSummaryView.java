@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
@@ -15,6 +16,7 @@ import com.fieldnation.data.workorder.WorkorderStatus;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -31,10 +33,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private TextView _date2TextView;
     private Button _addButton;
 
-
     // Data
     private Workorder _workorder;
-    private Listener _listener;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -73,10 +73,6 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
         refresh();
-    }
-
-    public void setListener(Listener listener) {
-        _listener = listener;
     }
 
     private void refresh() {
@@ -170,12 +166,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.editEta();
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
     };
-
-    public interface Listener {
-        void editEta();
-    }
 }

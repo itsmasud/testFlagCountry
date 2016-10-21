@@ -303,7 +303,6 @@ public class ReportProblemDialog extends SimpleDialog {
 
         switch (_selectedProblem) {
             case CANNOT_MAKE_ASSIGNMENT:
-                // TODO, PQAP warning should go here.
                 _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
                 _noteTextView.setVisibility(View.VISIBLE);
                 _explanationEditText.requestFocus();
@@ -401,8 +400,9 @@ public class ReportProblemDialog extends SimpleDialog {
 
             switch (_selectedProblem) {
                 case CANNOT_MAKE_ASSIGNMENT:
-                    ToastClient.toast(App.get(), R.string.sorry_to_hear_that_you_have_been_removed, Toast.LENGTH_LONG);
-                    break;
+                    CancelWarningDialog.Controller.show(App.get(), _workorder.getWorkorderId(), explanation);
+                    dismiss(false);
+                    return;
 
                 case WILL_BE_LATE:
                     ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);

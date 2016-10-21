@@ -7,10 +7,8 @@ import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
 
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Created by Michael on 10/4/2016.
@@ -22,7 +20,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     private static final Object RATEME = new Object();
 
     private RateMeView _rateMeView = null;
-    private List<T> _objects = new LinkedList<>();
+    private List<List<T>> _pages = new LinkedList<>();
     private Class<T> _objectType;
     private List<Object> _displayList = new LinkedList<>();
     private int _rateMePosition = 5;
@@ -39,7 +37,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
 
     public void clear() {
         Log.v(TAG, "clear");
-        _objects.clear();
+        _pages.clear();
         _displayList.clear();
         _onLastPage = false;
         notifyDataSetChanged();
@@ -56,31 +54,17 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     }
 
     public void addObjects(int page, List<T> list) {
-        Set<Integer> ids = new HashSet<>();
 
         if (list == null || list.size() == 0) {
             _onLastPage = true;
             return;
         }
 
-        List<T> newList = new LinkedList<>();
-        for (int i = 0; i < _objects.size(); i++) {
-            T object = _objects.get(i);
-            if (!ids.contains(object.hashCode())) {
-                ids.add(object.hashCode());
-                newList.add(object);
-            }
-        }
+        // we have a page, if there are not enough pages, we fill in the gaps with nulls
+        while (page >= _pages.size())
+            _pages.add(null);
 
-        for (int i = 0; i < list.size(); i++) {
-            T object = list.get(i);
-            if (!ids.contains(object.hashCode())) {
-                ids.add(object.hashCode());
-                newList.add(object);
-            }
-        }
-
-        _objects = newList;
+        _pages.set(page, list);
 
         rebuildList();
     }
@@ -88,15 +72,16 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     private void rebuildList() {
         // Build the real list
         _displayList.clear();
+        int location = 0;
         try {
-            _displayList.add(_objects.get(0));
-            for (int i = 1; i < _objects.size(); i++) {
-                T object = _objects.get(i);
-
-                _displayList.add(object);
-
-                if (i == _rateMePosition && _showRateMe) {
-                    _displayList.add(RATEME);
+            for (List<T> page : _pages) {
+                if (page != null) {
+                    for (T t : page) {
+                        location++;
+                        _displayList.add(t);
+                        if (location == _rateMePosition && _showRateMe)
+                            _displayList.add(RATEME);
+                    }
                 }
             }
         } catch (Exception ex) {
