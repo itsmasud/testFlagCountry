@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.mapbox;
+package com.fieldnation.service.data.gmaps;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -6,7 +6,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.data.mapbox.MapboxDirections;
+import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
@@ -14,13 +14,13 @@ import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxClient extends TopicClient implements MapboxConstants {
-    private static final String STAG = "MapboxClient";
+public class GmapsClient extends TopicClient implements GmapsConstants {
+    private static final String STAG = "GmapsClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    public MapboxClient(Listener listener) {
+    public GmapsClient(Listener listener) {
         super(listener);
     }
 
@@ -30,7 +30,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
     }
 
     public static void getDirections(Context context, long workorderId, Position... positions) {
-        MapboxTransactionBuilder.getDirections(context, workorderId, positions);
+//        GmapsTransactionBuilder.getDirections(context, workorderId, positions);
     }
 
     public boolean subDirections(long workorderId) {
@@ -39,7 +39,7 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
     }
 
     public static void getStaticMapClassic(Context context, long workorderId, Marker start, Marker end, int width, int height) {
-        MapboxTransactionBuilder.getStaticMapClassic(context, workorderId, width, height, start, end);
+        GmapsTransactionBuilder.getStaticMapClassic(context, workorderId, width, height, start, end);
     }
 
     public boolean subStaticMapClassic(long workorderId) {
@@ -62,16 +62,16 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
 
         private void preOnDirections(Bundle bundle) {
             Log.v(STAG, "preOnDirections");
-            new AsyncTaskEx<Bundle, Object, MapboxDirections>() {
+            new AsyncTaskEx<Bundle, Object, GmapsDirections>() {
                 private long _workorderId;
 
                 @Override
-                protected MapboxDirections doInBackground(Bundle... params) {
+                protected GmapsDirections doInBackground(Bundle... params) {
                     try {
                         _workorderId = params[0].getLong(PARAM_WORKORDER_ID);
                         byte[] data = params[0].getByteArray(PARAM_DIRECTIONS);
 
-                        return MapboxDirections.fromJson(new JsonObject(data));
+                        return GmapsDirections.fromJson(new JsonObject(data));
                     } catch (Exception ex) {
                         Log.v(STAG, ex);
                     }
@@ -79,13 +79,13 @@ public class MapboxClient extends TopicClient implements MapboxConstants {
                 }
 
                 @Override
-                protected void onPostExecute(MapboxDirections directions) {
+                protected void onPostExecute(GmapsDirections directions) {
                     onDirections(_workorderId, directions);
                 }
             }.executeEx(bundle);
         }
 
-        public void onDirections(long workorderId, MapboxDirections directions) {
+        public void onDirections(long workorderId, GmapsDirections directions) {
         }
 
         private void preOnStaticMapClassic(Bundle bundle) {
