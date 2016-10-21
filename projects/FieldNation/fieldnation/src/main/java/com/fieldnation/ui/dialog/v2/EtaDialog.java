@@ -184,11 +184,6 @@ public class EtaDialog extends FullScreenDialog {
         }
         super.show(params, animate);
 
-        if (_schedule.getRange() == null) {
-            _etaStartDateButton.setEnabled(false);
-            _etaStartTimeButton.setEnabled(false);
-        }
-
         populateUi();
     }
 
@@ -280,6 +275,14 @@ public class EtaDialog extends FullScreenDialog {
             _expirationButton.setText(R.string.btn_never);
         } else {
             _expirationButton.setText(misc.convertMsToHuman(_expiringDurationMilliseconds));
+        }
+
+        if (_schedule.getRange() == null) {
+            _etaStartDateButton.setEnabled(false);
+            _etaStartTimeButton.setEnabled(false);
+        } else {
+            _etaStartDateButton.setEnabled(true);
+            _etaStartTimeButton.setEnabled(true);
         }
     }
 
