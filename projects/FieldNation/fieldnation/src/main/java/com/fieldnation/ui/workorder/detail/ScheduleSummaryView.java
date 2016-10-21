@@ -167,7 +167,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         @Override
         public void onClick(View v) {
             EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
-                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
         }
     };
 }
