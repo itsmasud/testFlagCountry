@@ -385,11 +385,6 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
-            try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
         }
     };
 
@@ -400,6 +395,12 @@ public class WorkOrderCard extends RelativeLayout {
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
             else
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
+
+            try {
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 10800000); // 3 hours
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     };
 
