@@ -7,12 +7,12 @@
     <string name="gmap_endMarkerUrl">color:blue|</string>
 
     <!-- Mapbox -->
-    <!--<string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>-->
-    <!--<string name="mapbox_mapid">jacobbeasley.ggg811om</string>-->
-    <!--<string name="mapbox_startMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/mylocation.png</string>-->
-    <!--<string name="mapbox_endMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/redpin.png</string>-->
-    <!--<string name="mapbox_inpreciseMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>-->
-    <!--<string name="mapbox_reddot">http://fieldnation.s3.amazonaws.com/mapbox/reddot.png</string>-->
+    <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>
+    <string name="mapbox_mapid">jacobbeasley.ggg811om</string>
+    <string name="mapbox_startMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/mylocation.png</string>
+    <string name="mapbox_endMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/redpin.png</string>
+    <string name="mapbox_inpreciseMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>
+    <string name="mapbox_reddot">http://fieldnation.s3.amazonaws.com/mapbox/reddot.png</string>
 
     <!-- GCM -->
     <string name="gcm_senderid">179310690338</string>
