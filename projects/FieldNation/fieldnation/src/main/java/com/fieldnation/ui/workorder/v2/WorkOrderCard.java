@@ -26,6 +26,7 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
@@ -287,10 +288,15 @@ public class WorkOrderCard extends RelativeLayout {
             Action action = _workOrder.getPrimaryActions()[0];
 
             switch (action.getType()) {
+                case ACCEPT:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_accept_onClick);
+                    _primaryButton.setText("ACCEPT");
+                    break;
                 case CONFIRM:
                     _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_confirm_onClick);
-                    _primaryButton.setText(R.string.btn_confirm);
+                    _primaryButton.setOnClickListener(_accept_onClick);
+                    _primaryButton.setText("ACCEPT");
                     break;
                 case ON_MY_WAY:
                     _primaryButton.setVisibility(VISIBLE);
@@ -300,7 +306,7 @@ public class WorkOrderCard extends RelativeLayout {
                 case READY:
                     _primaryButton.setVisibility(VISIBLE);
                     _primaryButton.setOnClickListener(_readyToGo_onClick);
-                    _primaryButton.setText(R.string.btn_ready_to_go);
+                    _primaryButton.setText("CONFIRM");
                     break;
                 case REPORT_PROBLEM:
                     _primaryButton.setVisibility(VISIBLE);
@@ -368,10 +374,17 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
+    private final View.OnClickListener _accept_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+        }
+    };
+
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
             try {
                 GpsTrackingService.start(App.get(), System.currentTimeMillis() + 7200000); // 2 hours
             } catch (Exception ex) {
@@ -383,7 +396,10 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+            if (_location != null)
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
+            else
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
         }
     };
 
@@ -397,7 +413,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            //ReportIssueDialog.Controller.show(App.get(), _workOrder);
             ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
@@ -456,6 +471,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+//            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             ActivityResultClient.startActivity(
                     App.get(),
                     WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),

@@ -23,11 +23,9 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.LeavingActivity;
@@ -39,13 +37,13 @@ import com.fieldnation.ui.UnavailableCardView;
 import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.EtaDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 
@@ -157,7 +155,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
         _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _etaDialog = EtaDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
@@ -238,7 +235,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _etaDialog.setListener(_etaDialog_listener);
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
@@ -600,7 +596,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (workorder.isBundle()) {
                 _acceptBundleDialog.show(workorder);
             } else {
-                _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
+                EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                        workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -645,7 +642,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -683,7 +681,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -730,7 +729,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
         @Override
         public void onOk(Workorder workorder) {
-            _etaDialog.show(workorder, EtaDialog.DIALOG_STYLE_REQUEST);
+            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
     };
 
@@ -749,58 +749,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         public void onCancel() {
             setLoading(false);
         }
-    };
-
-    private final EtaDialog.Listener _etaDialog_listener = new EtaDialog.Listener() {
-        @Override
-        public void onRequest(Workorder workorder, long expirationMilliseconds) {
-            try {
-                long seconds = -1;
-                if (expirationMilliseconds > 0) {
-                    seconds = expirationMilliseconds / 1000;
-                }
-
-                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds);
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onRequest(Workorder workorder, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
-            try {
-                long seconds = -1;
-                if (expirationMilliseconds > 0) {
-                    seconds = expirationMilliseconds / 1000;
-                }
-
-                // request the workorder
-                WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-
-            // notify the UI
-            _adapter.refreshPages();
-        }
-
-        public void onConfirmEta(Workorder workorder, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
-            //set loading mode
-            try {
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
-                _adapter.refreshPages();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
     };
 
     private final CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {

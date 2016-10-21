@@ -37,7 +37,6 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
@@ -212,8 +211,6 @@ public class App extends Application {
         // new Thread(_anrReport).start();
 
         Log.v(TAG, "onCreate time: " + mwatch.finish());
-
-        GpsTrackingService.start(this, 60 * 60 * 1000 + System.currentTimeMillis());
     }
 
     private Runnable _anrReport = new Runnable() {
