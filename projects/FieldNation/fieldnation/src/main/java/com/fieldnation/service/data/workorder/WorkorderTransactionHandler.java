@@ -709,6 +709,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     @Override
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
+            try {
+                Log.v(TAG, "Error message: " + resultData.getString());
+            } catch (Exception ex) {
+
+            }
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             switch (action) {

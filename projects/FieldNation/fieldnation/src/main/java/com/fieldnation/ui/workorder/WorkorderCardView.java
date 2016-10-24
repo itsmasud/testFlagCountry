@@ -23,7 +23,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.IconFontTextView;
 
 import java.text.SimpleDateFormat;

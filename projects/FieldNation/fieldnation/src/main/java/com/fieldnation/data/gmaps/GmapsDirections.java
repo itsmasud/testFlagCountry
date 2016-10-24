@@ -1,34 +1,34 @@
-package com.fieldnation.data.mapbox;
+package com.fieldnation.data.gmaps;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxDirections implements Parcelable {
-    private static final String TAG = "MapboxDirections";
+public class GmapsDirections implements Parcelable {
+    private static final String TAG = "GmapsDirections";
 
     @Json(name = "code")
     private String _code;
 
     @Json(name = "routes")
-    private MapboxRoute[] _routes;
+    private GmapsRoute[] _routes;
 
-    public MapboxDirections() {
+    public GmapsDirections() {
     }
 
     public String getCode() {
         return _code;
     }
 
-    public MapboxRoute[] getRoutes() {
+    public GmapsRoute[] getRoutes() {
         return _routes;
     }
 
@@ -36,7 +36,7 @@ public class MapboxDirections implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(MapboxDirections workorder) {
+    public static JsonObject toJson(GmapsDirections workorder) {
         try {
             return Serializer.serializeObject(workorder);
         } catch (Exception ex) {
@@ -45,9 +45,9 @@ public class MapboxDirections implements Parcelable {
         }
     }
 
-    public static MapboxDirections fromJson(JsonObject json) {
+    public static GmapsDirections fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(MapboxDirections.class, json);
+            return Unserializer.unserializeObject(GmapsDirections.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -57,12 +57,12 @@ public class MapboxDirections implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Creator<MapboxDirections> CREATOR = new Creator<MapboxDirections>() {
+    public static final Creator<GmapsDirections> CREATOR = new Creator<GmapsDirections>() {
 
         @Override
-        public MapboxDirections createFromParcel(Parcel source) {
+        public GmapsDirections createFromParcel(Parcel source) {
             try {
-                return MapboxDirections.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
+                return GmapsDirections.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
             } catch (Exception ex) {
                 Log.v(TAG, ex);
                 return null;
@@ -70,8 +70,8 @@ public class MapboxDirections implements Parcelable {
         }
 
         @Override
-        public MapboxDirections[] newArray(int size) {
-            return new MapboxDirections[size];
+        public GmapsDirections[] newArray(int size) {
+            return new GmapsDirections[size];
         }
     };
 

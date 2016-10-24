@@ -1,19 +1,19 @@
-package com.fieldnation.data.mapbox;
+package com.fieldnation.data.gmaps;
 
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxRoute implements Parcelable {
-    private static final String TAG = "MapboxRoute";
+public class GmapsRoute implements Parcelable {
+    private static final String TAG = "GmapsRoute";
 
     @Json(name = "distance")
     private Double _distance;
@@ -21,7 +21,7 @@ public class MapboxRoute implements Parcelable {
     @Json(name = "duration")
     private Double _duration;
 
-    public MapboxRoute() {
+    public GmapsRoute() {
     }
 
     public double getDistance() {
@@ -49,7 +49,7 @@ public class MapboxRoute implements Parcelable {
         return toJson(this);
     }
 
-    public static JsonObject toJson(MapboxRoute workorder) {
+    public static JsonObject toJson(GmapsRoute workorder) {
         try {
             return Serializer.serializeObject(workorder);
         } catch (Exception ex) {
@@ -58,9 +58,9 @@ public class MapboxRoute implements Parcelable {
         }
     }
 
-    public static MapboxRoute fromJson(JsonObject json) {
+    public static GmapsRoute fromJson(JsonObject json) {
         try {
-            return Unserializer.unserializeObject(MapboxRoute.class, json);
+            return Unserializer.unserializeObject(GmapsRoute.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return null;
@@ -70,12 +70,12 @@ public class MapboxRoute implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Creator<MapboxRoute> CREATOR = new Creator<MapboxRoute>() {
+    public static final Creator<GmapsRoute> CREATOR = new Creator<GmapsRoute>() {
 
         @Override
-        public MapboxRoute createFromParcel(Parcel source) {
+        public GmapsRoute createFromParcel(Parcel source) {
             try {
-                return MapboxRoute.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
+                return GmapsRoute.fromJson((JsonObject) (source.readParcelable(JsonObject.class.getClassLoader())));
             } catch (Exception e) {
                 Log.v(TAG, e);
             }
@@ -83,8 +83,8 @@ public class MapboxRoute implements Parcelable {
         }
 
         @Override
-        public MapboxRoute[] newArray(int size) {
-            return new MapboxRoute[size];
+        public GmapsRoute[] newArray(int size) {
+            return new GmapsRoute[size];
         }
     };
 
