@@ -138,7 +138,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
                 Action[] actions = wo.getPrimaryActions();
                 if (actions != null) {
                     for (Action a : actions) {
-                        if (a.getType() == Action.ActionType.CONFIRM) {
+                        if (a.getType() == Action.ActionType.READY) {
                             _doneButton.setVisibility(View.GONE);
                             return;
                         }
@@ -151,6 +151,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
     private final View.OnClickListener _doneButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            App.get().setNeedsConfirmation(false);
             NavActivity.startNew(App.get());
         }
     };
