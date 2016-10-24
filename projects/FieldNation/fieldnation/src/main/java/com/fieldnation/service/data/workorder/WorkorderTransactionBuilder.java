@@ -492,14 +492,29 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         String body = null;
 
-        body = (misc.isEmptyOrNull(startTime) ? "" : "start_time=" + startTime)
-                + (misc.isEmptyOrNull(endTime) ? "" : "&end_time=" + endTime)
-                + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note));
+        if (!misc.isEmptyOrNull(startTime)) {
+            body = "start_time=" + startTime;
+        }
+
+        if (!misc.isEmptyOrNull(endTime)) {
+            if (body == null)
+                body = "end_time=" + endTime;
+            else
+                body += "&end_time=" + endTime;
+        }
+
+        if (!misc.isEmptyOrNull(note)) {
+            if (body == null)
+                body = "note=" + misc.escapeForURL(note);
+            else
+                body += "&note=" + misc.escapeForURL(note);
+        }
 
         if (expireInSeconds != -1) {
-            if (!misc.isEmptyOrNull(body))
+            if (body == null)
+                body = "expiration=" + expireInSeconds;
+            else
                 body += "&expiration=" + expireInSeconds;
-            else body = "expiration=" + expireInSeconds;
         }
 
         return action(context, workorderId, "POST", "request", null,
@@ -516,9 +531,27 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        String body = null;
+
+        if (!misc.isEmptyOrNull(startTimeIso8601))
+            body = "start_time=" + startTimeIso8601;
+
+        if (!misc.isEmptyOrNull(endTimeIso8601)) {
+            if (body == null)
+                body = "end_time=" + endTimeIso8601;
+            else
+                body += "&end_time=" + endTimeIso8601;
+        }
+
+        if (!misc.isEmptyOrNull(note)) {
+            if (body == null)
+                body = "note=" + misc.escapeForURL(note);
+            else
+                body += "&note=" + misc.escapeForURL(note);
+        }
+
         return action(context, workorderId, "POST", "assignment", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601 + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)),
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
     }

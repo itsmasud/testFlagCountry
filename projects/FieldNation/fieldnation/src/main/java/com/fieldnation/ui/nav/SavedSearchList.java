@@ -30,10 +30,6 @@ public class SavedSearchList extends LinearLayout {
 
     public static final SavedSearchParams[] defaults = new SavedSearchParams[]{
             new SavedSearchParams()
-                    .type(WorkOrderListType.CONFIRM_TOMORROW.getType())
-                    .status(WorkOrderListType.CONFIRM_TOMORROW.getStatuses())
-                    .title("Confirm Tomorrow's Work"),
-            new SavedSearchParams()
                     .type(WorkOrderListType.TODAYS_WORK.getType())
                     .status(WorkOrderListType.TODAYS_WORK.getStatuses())
                     .title("Today's Work"),
