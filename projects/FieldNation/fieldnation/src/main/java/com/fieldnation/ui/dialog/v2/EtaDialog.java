@@ -123,21 +123,22 @@ public class EtaDialog extends FullScreenDialog {
         _durationButton = (Button) v.findViewById(R.id.duration_button);
         _noteEditText = (EditText) v.findViewById(R.id.note_edittext);
 
-        // Dialog setup, start them off with today
-        _etaStartTimePicker = new TimePickerDialog(context, _etaStartTime_onSet,
-                _etaStart.get(Calendar.HOUR_OF_DAY),
-                _etaStart.get(Calendar.MINUTE), false);
-
-        _etaStartDatePicker = new DatePickerDialog(context, _etaStartDate_onSet,
-                _etaStart.get(Calendar.YEAR),
-                _etaStart.get(Calendar.MONTH),
-                _etaStart.get(Calendar.DAY_OF_MONTH));
         return v;
     }
 
     @Override
     public void onAdded() {
         super.onAdded();
+        // Dialog setup, start them off with today
+        _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
+                _etaStart.get(Calendar.HOUR_OF_DAY),
+                _etaStart.get(Calendar.MINUTE), false);
+
+        _etaStartDatePicker = new DatePickerDialog(_expirationLayout.getContext(), _etaStartDate_onSet,
+                _etaStart.get(Calendar.YEAR),
+                _etaStart.get(Calendar.MONTH),
+                _etaStart.get(Calendar.DAY_OF_MONTH));
+
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
         _toolbar.inflateMenu(R.menu.dialog);
@@ -298,6 +299,8 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     private static boolean isWithinBusinessHours(Calendar arrival, Schedule schedule) {
+        // make a copy so we don't mess it up
+        arrival = (Calendar) arrival.clone();
         try {
             // strategy: test if arrival is within the range at all. If it is,
             // then constrain the check to within a single day, and see if the time falls within that day

@@ -6,17 +6,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.DurationDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 
 /**
  * Created by Michael on 8/31/2016.
@@ -68,7 +66,8 @@ public class FooterBarView extends RelativeLayout {
         findViewById(R.id.reset_button).setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.get().setNeedsConfirmation(true);
+//                App.get().setNeedsConfirmation(true);
+                ConfirmActivity.startNew(App.get());
             }
         });
 

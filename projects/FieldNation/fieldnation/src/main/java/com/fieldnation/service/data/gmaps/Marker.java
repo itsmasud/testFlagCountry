@@ -14,10 +14,11 @@ public class Marker extends Position {
     public Marker(double latitude, double longitude, String url) {
         super(latitude, longitude);
         this._markerParam = url;
+        //_iconUrl = iconUrl;
     }
 
     @Override
     public String toString() {
-        return "markers=" + misc.escapeForURL(_markerParam) + super.toString();
+        return "markers=" + misc.escapeForURL(_markerParam) + "|" + super.toString();
     }
 }

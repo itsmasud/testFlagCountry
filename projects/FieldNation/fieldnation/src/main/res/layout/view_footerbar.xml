@@ -16,8 +16,8 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_toLeftOf="@+id/inbox_textview"
-        android:text="NCNS"
-        android:visibility="gone" />
+        android:text="TEST"
+        android:visibility="visible" />
 
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/inbox_textview"

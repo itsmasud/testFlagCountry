@@ -71,7 +71,6 @@ public class ConfirmActivity extends AuthSimpleActivity {
                     .title("Confirm Tomorrow's Work");
         }
 
-        _recyclerView.startSearch(_currentSearch);
         setTitle("Please confirm tomorrow's work orders");
     }
 
@@ -98,6 +97,12 @@ public class ConfirmActivity extends AuthSimpleActivity {
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        _recyclerView.startSearch(_currentSearch);
     }
 
     @Override
