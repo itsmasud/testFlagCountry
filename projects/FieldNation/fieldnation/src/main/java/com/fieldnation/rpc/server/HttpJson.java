@@ -28,11 +28,11 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public interface Listener {
-        void onProgress(long pos, long size, long time);
+    public interface ProgressListener {
+        void progress(long pos, long size, long time);
     }
 
-    public static HttpResult run(Context context, JsonObject request, Listener listener) throws Exception {
+    public static HttpResult run(Context context, JsonObject request, final ProgressListener progress) throws Exception {
         String path = "";
         String timingKey = null;
         Stopwatch watch = new Stopwatch(true);
@@ -142,7 +142,7 @@ public class HttpJson {
                             if (so.isFile()) {
                                 InputStream fin = new FileInputStream(sourceFile);
                                 try {
-                                    util.addFilePart(key, filename, fin, (int) sourceFile.length());
+                                    util.addFilePart(key, filename, fin, (int) sourceFile.length(), progress);
                                 } finally {
                                     fin.close();
                                 }
@@ -154,7 +154,7 @@ public class HttpJson {
                             String filename = fo.getString("filename");
                             String contentType = fo.getString("contentType");
 
-                            util.addFilePart(key, filename, Uri.parse(uri), contentType);
+                            util.addFilePart(key, filename, Uri.parse(uri), contentType, progress);
                         }
                     }
                     util.finish();
@@ -162,11 +162,21 @@ public class HttpJson {
 
             } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {
                 long soid = request.getLong(HttpJsonBuilder.PARAM_WEB_BODY_SOID);
-                StoredObject so = StoredObject.get(context, soid);
+                final StoredObject so = StoredObject.get(context, soid);
                 conn.setDoOutput(true);
                 OutputStream out = conn.getOutputStream();
                 if (so.isFile()) {
-                    StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100);
+                    if (progress != null) {
+                        final long startTime = System.currentTimeMillis();
+                        StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, new StreamUtils.ProgressListener() {
+                            @Override
+                            public void progress(int position) {
+                                progress.progress(position, so.getFile().length(), System.currentTimeMillis() - startTime);
+                            }
+                        });
+                    } else {
+                        StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, null);
+                    }
                 } else {
                     out.write(so.getData());
                 }
