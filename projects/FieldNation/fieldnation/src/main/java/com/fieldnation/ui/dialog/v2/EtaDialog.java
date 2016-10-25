@@ -295,6 +295,14 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
 
+        if (_schedule.getRange() == null) {
+            _etaStartDateButton.setEnabled(false);
+            _etaStartTimeButton.setEnabled(false);
+        } else {
+            _etaStartDateButton.setEnabled(true);
+            _etaStartTimeButton.setEnabled(true);
+        }
+
         if (_durationMilliseconds == INVALID_NUMBER) {
             _durationButton.setText("");
         } else {
@@ -306,17 +314,9 @@ public class EtaDialog extends FullScreenDialog {
         } else {
             _expirationButton.setText(misc.convertMsToHuman(_expiringDurationMilliseconds));
         }
-
-        if (_schedule.getRange() == null) {
-            _etaStartDateButton.setEnabled(false);
-            _etaStartTimeButton.setEnabled(false);
-        } else {
-            _etaStartDateButton.setEnabled(true);
-            _etaStartTimeButton.setEnabled(true);
-        }
     }
 
-    private boolean isValidEta(Calendar arrival) {
+    private boolean isValidEta(final Calendar arrival) {
         if (_schedule.getExact() != null)
             return true;
         else if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
@@ -327,9 +327,9 @@ public class EtaDialog extends FullScreenDialog {
         return true;
     }
 
-    private static boolean isWithinBusinessHours(Calendar arrival, Schedule schedule) {
+    private static boolean isWithinBusinessHours(final Calendar eta, final Schedule schedule) {
         // make a copy so we don't mess it up
-        arrival = (Calendar) arrival.clone();
+        Calendar arrival = (Calendar) eta.clone();
         try {
             // strategy: test if arrival is within the range at all. If it is,
             // then constrain the check to within a single day, and see if the time falls within that day
@@ -376,7 +376,7 @@ public class EtaDialog extends FullScreenDialog {
         return false;
     }
 
-    private static boolean passesMidnight(Schedule schedule) {
+    private static boolean passesMidnight(final Schedule schedule) {
         if (!misc.isEmptyOrNull(schedule.getExact()))
             return false;
 
@@ -395,7 +395,7 @@ public class EtaDialog extends FullScreenDialog {
         return false;
     }
 
-    private static boolean isWithinRange(Calendar arrival, Schedule schedule) {
+    private static boolean isWithinRange(final Calendar arrival, final Schedule schedule) {
         try {
             Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
             Calendar ecal = ISO8601.toCalendar(schedule.getRange().getEnd());
@@ -485,30 +485,6 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    private final View.OnClickListener _etaStartTime_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            _etaStartTimePicker.show();
-        }
-    };
-
-    private final TimePickerDialog.OnTimeSetListener _etaStartTime_onSet = new TimePickerDialog.OnTimeSetListener() {
-        @Override
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            Calendar test = (Calendar) _etaStart.clone();
-            test.set(_etaStart.get(Calendar.YEAR), _etaStart.get(Calendar.MONTH),
-                    _etaStart.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
-
-            if (isValidEta(test)) {
-                _etaStart = test;
-                populateUi();
-            } else {
-                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
-                // TODO, pop the dialog again?
-            }
-        }
-    };
-
     private final View.OnClickListener _etaStartDate_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -521,6 +497,30 @@ public class EtaDialog extends FullScreenDialog {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             Calendar test = (Calendar) _etaStart.clone();
             test.set(year, monthOfYear, dayOfMonth);
+
+            if (isValidEta(test)) {
+                _etaStart = test;
+                populateUi();
+            } else {
+                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                // TODO, pop the dialog again?
+            }
+        }
+    };
+
+    private final View.OnClickListener _etaStartTime_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            _etaStartTimePicker.show();
+        }
+    };
+
+    private final TimePickerDialog.OnTimeSetListener _etaStartTime_onSet = new TimePickerDialog.OnTimeSetListener() {
+        @Override
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            Calendar test = (Calendar) _etaStart.clone();
+            test.set(test.get(Calendar.YEAR), test.get(Calendar.MONTH),
+                    test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             if (isValidEta(test)) {
                 _etaStart = test;
@@ -623,7 +623,7 @@ public class EtaDialog extends FullScreenDialog {
                         _durationMilliseconds,
                         _noteEditText.getText().toString().trim(),
                         false);
-                
+
                 dismiss(true);
             }
             return true;
