@@ -19,6 +19,7 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.Schedule;
@@ -179,6 +180,7 @@ public class EtaDialog extends FullScreenDialog {
 
     @Override
     public void show(Bundle params, boolean animate) {
+        Log.v(TAG, "Show");
         _schedule = params.getParcelable(PARAM_SCHEDULE);
         _dialogType = params.getString(PARAM_DIALOG_TYPE);
         _workOrderId = params.getLong(PARAM_WORK_ORDER_ID);
@@ -248,9 +250,16 @@ public class EtaDialog extends FullScreenDialog {
         if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
             _toolbar.setTitle("Request " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
-            _expirationLayout.setVisibility(View.VISIBLE);
-            _etaSwitch.setVisibility(View.VISIBLE);
-            _etaSwitchLabel.setVisibility(View.VISIBLE);
+
+            if (BuildConfig.FLAVOR.equals("NCNS")) {
+                _etaSwitch.setChecked(true);
+                _etaSwitchLabel.setVisibility(View.GONE);
+                _etaSwitch.setVisibility(View.GONE);
+            } else {
+                _expirationLayout.setVisibility(View.VISIBLE);
+                _etaSwitch.setVisibility(View.VISIBLE);
+                _etaSwitchLabel.setVisibility(View.VISIBLE);
+            }
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
             _toolbar.setTitle("Confirm " + _workOrderId);
@@ -275,8 +284,9 @@ public class EtaDialog extends FullScreenDialog {
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
-            _etaSwitch.setVisibility(View.VISIBLE);
-            _etaSwitchLabel.setVisibility(View.VISIBLE);
+            _etaSwitch.setChecked(true);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
