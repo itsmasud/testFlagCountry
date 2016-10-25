@@ -556,8 +556,24 @@ public class EtaDialog extends FullScreenDialog {
                 ToastClient.toast(App.get(), R.string.toast_minimum_job_duration, Toast.LENGTH_LONG);
                 return;
             }
-            _durationMilliseconds = milliseconds;
-            populateUi();
+
+            if (_schedule.getExact() != null) {
+                _durationMilliseconds = milliseconds;
+                populateUi();
+            } else if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
+                Calendar test = Calendar.getInstance();
+                test.setTimeInMillis(_etaStart.getTimeInMillis() + milliseconds);
+
+                if (isWithinBusinessHours(test, _schedule)) {
+                    _durationMilliseconds = milliseconds;
+                    populateUi();
+                } else {
+                    ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
+                }
+            } else {
+                _durationMilliseconds = milliseconds;
+                populateUi();
+            }
         }
 
         @Override
