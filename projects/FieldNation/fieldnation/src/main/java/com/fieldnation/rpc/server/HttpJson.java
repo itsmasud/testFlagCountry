@@ -28,7 +28,11 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public static HttpResult run(Context context, JsonObject request) throws Exception {
+    public interface Listener {
+        void onProgress(long pos, long size, long time);
+    }
+
+    public static HttpResult run(Context context, JsonObject request, Listener listener) throws Exception {
         String path = "";
         String timingKey = null;
         Stopwatch watch = new Stopwatch(true);
