@@ -26,16 +26,6 @@ public class UploadTrackerClient implements UploadTrackerConstants {
         context.startService(intent);
     }
 
-    public static void uploadProgress(Context context, long pos, long size, long time) {
-        Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadProgress Debug Log")));
-        Intent intent = new Intent(context, UploadTracker.class);
-        intent.setAction(ACTION_PROGRESS);
-        intent.putExtra(PARAM_POS, pos);
-        intent.putExtra(PARAM_SIZE, size);
-        intent.putExtra(PARAM_TIME, time);
-        context.startService(intent);
-    }
-
     public static void uploadRequeued(Context context) {
         Log.v(TAG, DebugUtils.getStackTrace(new Exception("uploadRequeued Debug Log")));
         Intent intent = new Intent(context, UploadTracker.class);

@@ -342,8 +342,6 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.uploadDeliverableProgress(context, workorderId, slotId, filename, pos, size, time);
 
-        UploadTrackerClient.uploadStarted(context);
-
         return Result.CONTINUE;
     }
 

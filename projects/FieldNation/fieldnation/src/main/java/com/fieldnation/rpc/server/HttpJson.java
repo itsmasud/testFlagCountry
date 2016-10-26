@@ -32,6 +32,10 @@ public class HttpJson {
         void progress(long pos, long size, long time);
     }
 
+    public static HttpResult run(Context context, JsonObject request) throws Exception {
+        return run(context, request, null);
+    }
+
     public static HttpResult run(Context context, JsonObject request, final ProgressListener progress) throws Exception {
         String path = "";
         String timingKey = null;
