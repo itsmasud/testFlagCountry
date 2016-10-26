@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <nine-patch android:src="@drawable/card_shadow" />
+    </item>
+
+    <item
+        android:bottom="@dimen/card_shadow_bottom"
+        android:left="@dimen/card_shadow_left"
+        android:right="@dimen/card_shadow_right"
+        android:top="@dimen/card_shadow_top">
+        <shape>
+            <padding
+                android:bottom="@dimen/card_gradient_padding"
+                android:left="0dp"
+                android:right="0dp"
+                android:top="0dp" />
+
+            <gradient
+                android:angle="-90"
+                android:centerColor="@color/card_gradient_center"
+                android:endColor="@color/fn_accent_color"
+                android:startColor="@color/card_gradient_top" />
+        </shape>
+    </item>
+
+
+    <!-- Background -->
+    <item
+        android:bottom="@dimen/card_shadow_bottom"
+        android:left="@dimen/card_shadow_left"
+        android:right="@dimen/card_shadow_right"
+        android:top="@dimen/card_shadow_top">
+        <shape>
+            <solid android:color="@color/card_fill" />
+        </shape>
+    </item>
+</layer-list>
