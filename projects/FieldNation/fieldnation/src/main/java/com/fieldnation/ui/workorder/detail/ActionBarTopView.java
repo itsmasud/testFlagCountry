@@ -23,6 +23,7 @@ import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";
@@ -103,25 +104,36 @@ public class ActionBarTopView extends LinearLayout {
         switch (substatus) {
             case AVAILABLE:
                 inflate();
-                // not interested
-                // request
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_not_interested);
-                _leftWhiteButton.setOnClickListener(_notInterested_onClick);
-                _rightWhiteButton.setVisibility(VISIBLE);
-                _rightWhiteButton.setText(R.string.btn_request);
-                _rightWhiteButton.setOnClickListener(_request_onClick);
+                if (_workorder.isBundle()) {
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_view_bundle);
+                    _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
+                } else {
+                    // not interested, request
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_not_interested);
+                    _leftWhiteButton.setOnClickListener(_notInterested_onClick);
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_request);
+                    _rightWhiteButton.setOnClickListener(_request_onClick);
+                }
                 setVisibility(View.VISIBLE);
                 break;
             case ROUTED:
                 inflate();
-                // not interested, accept work
-                _leftWhiteButton.setVisibility(VISIBLE);
-                _leftWhiteButton.setText(R.string.btn_not_interested);
-                _leftWhiteButton.setOnClickListener(_notInterested_onClick);
-                _rightOrangeButton.setVisibility(VISIBLE);
-                _rightOrangeButton.setText(R.string.btn_accept);
-                _rightOrangeButton.setOnClickListener(_confirmAssignment_onClick);
+                if (_workorder.isBundle()) {
+                    _rightWhiteButton.setVisibility(VISIBLE);
+                    _rightWhiteButton.setText(R.string.btn_view_bundle);
+                    _rightWhiteButton.setOnClickListener(_viewBundle_onClick);
+                } else {
+                    // not interested, accept work
+                    _leftWhiteButton.setVisibility(VISIBLE);
+                    _leftWhiteButton.setText(R.string.btn_not_interested);
+                    _leftWhiteButton.setOnClickListener(_notInterested_onClick);
+                    _rightOrangeButton.setVisibility(VISIBLE);
+                    _rightOrangeButton.setText(R.string.btn_accept);
+                    _rightOrangeButton.setOnClickListener(_confirmAssignment_onClick);
+                }
                 setVisibility(View.VISIBLE);
                 break;
             case COUNTEROFFERED:
@@ -371,6 +383,13 @@ public class ActionBarTopView extends LinearLayout {
             if (_listener != null) {
                 _listener.onNotInterested();
             }
+        }
+    };
+
+    private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
     };
 

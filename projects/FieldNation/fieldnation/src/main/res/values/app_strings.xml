@@ -102,6 +102,7 @@
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_all">VIEW ALL</string>
+    <string name="btn_view_bundle">VIEW BUNDLE</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_view_payment">VIEW PAYMENT</string>

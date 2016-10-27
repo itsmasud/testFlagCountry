@@ -89,9 +89,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
         _standardInstructionTextView = (TextView) findViewById(R.id.standardInstructions_textview);
         _standardInstructionTextView.setOnClickListener(_standardInstructions_onClick);
 
-        _bundleWarningTextView = (TextView) findViewById(R.id.bundlewarning_textview);
-        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
-
         _readMoreButton = (Button) findViewById(R.id.readMore_button);
         _readMoreButton.setOnClickListener(_readMore_onClick);
 
@@ -185,13 +182,6 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
                 _descriptionShortLayout.setVisibility(View.VISIBLE);
                 _readMoreButton.setText(R.string.btn_read_more);
             }
-        }
-    };
-
-    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
     };
 
