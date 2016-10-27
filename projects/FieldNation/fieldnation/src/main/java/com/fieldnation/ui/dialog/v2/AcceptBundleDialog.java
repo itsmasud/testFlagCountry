@@ -217,6 +217,7 @@ public class AcceptBundleDialog extends SimpleDialog {
         @Override
         public void onOk(long milliseconds) {
             _expiration = milliseconds;
+            populateUi();
         }
 
         @Override
