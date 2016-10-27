@@ -145,13 +145,11 @@ public class WorkFragment extends WorkorderFragment {
     // Dialogs
     private AppPickerDialog _appDialog;
     private ClosingNotesDialog _closingDialog;
-    private ConfirmDialog _confirmDialog;
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
     private DeviceCountDialog _deviceCountDialog;
     private DiscountDialog _discountDialog;
-    private ExpiresDialog _expiresDialog;
     private ExpenseDialog _expenseDialog;
     private MarkCompleteDialog _markCompleteDialog;
     private ShipmentAddDialog _shipmentAddDialog;
@@ -357,14 +355,12 @@ public class WorkFragment extends WorkorderFragment {
         super.onAttach(activity);
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
@@ -388,12 +384,10 @@ public class WorkFragment extends WorkorderFragment {
 
         _deviceCountDialog.setListener(_deviceCountListener);
         _closingDialog.setListener(_closingNotes_onOk);
-        _confirmDialog.setListener(_confirmListener);
         _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
         _discountDialog.setListener(_discountDialog_listener);
         _expenseDialog.setListener(_expenseDialog_listener);
-        _expiresDialog.setListener(_expiresDialog_listener);
         _customFieldDialog.setListener(_customFieldDialog_listener);
         _appDialog.setListener(_appdialog_listener);
         _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
