@@ -1330,12 +1330,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirm() {
-            if (_workorder.isBundle()) {
-                _acceptBundleWOConfirmDialog.show(_workorder);
-            } else {
-                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
-                        _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
-            }
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
