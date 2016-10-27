@@ -67,7 +67,6 @@ import com.fieldnation.ui.SignOffActivity;
 import com.fieldnation.ui.SignatureCardView;
 import com.fieldnation.ui.SignatureDisplayActivity;
 import com.fieldnation.ui.SignatureListView;
-import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.AppPickerDialog;
 import com.fieldnation.ui.dialog.ClosingNotesDialog;
 import com.fieldnation.ui.dialog.ConfirmDialog;
@@ -92,6 +91,7 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -143,8 +143,6 @@ public class WorkFragment extends WorkorderFragment {
     private RefreshView _refreshView;
 
     // Dialogs
-    private AcceptBundleDialog _acceptBundleWOConfirmDialog;
-    private AcceptBundleDialog _acceptBundleWOExpiresDialog;
     private AppPickerDialog _appDialog;
     private ClosingNotesDialog _closingDialog;
     private ConfirmDialog _confirmDialog;
@@ -357,8 +355,6 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        _acceptBundleWOConfirmDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOConfirmDialog");
-        _acceptBundleWOExpiresDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG + "._acceptBundleWOExpiresDialog");
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
         _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
@@ -391,8 +387,6 @@ public class WorkFragment extends WorkorderFragment {
                 _locationLoadingDialog_listener);
 
         _deviceCountDialog.setListener(_deviceCountListener);
-        _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
-        _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
         _closingDialog.setListener(_closingNotes_onOk);
         _confirmDialog.setListener(_confirmListener);
         _counterOfferDialog.setListener(_counterOffer_listener);
@@ -863,21 +857,6 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************************-*/
     /*-				Dialog Listeners				-*/
     /*-*********************************************-*/
-    private final AcceptBundleDialog.Listener _acceptBundleDialogConfirmListener = new AcceptBundleDialog.Listener() {
-
-        @Override
-        public void onOk(Workorder workorder) {
-            _confirmDialog.show(_workorder, workorder.getSchedule());
-        }
-    };
-
-    private final AcceptBundleDialog.Listener _acceptBundleDialogExpiresListener = new AcceptBundleDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
-        }
-    };
-
     private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
 
         @Override
@@ -1296,7 +1275,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onRequest() {
             if (_workorder.isBundle()) {
-                _acceptBundleWOExpiresDialog.show(_workorder);
+                AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
+                        _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
                         _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
@@ -1306,7 +1286,8 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConfirmAssignment() {
             if (_workorder.isBundle()) {
-                _acceptBundleWOConfirmDialog.show(_workorder);
+                AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
+                        _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
                         _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
