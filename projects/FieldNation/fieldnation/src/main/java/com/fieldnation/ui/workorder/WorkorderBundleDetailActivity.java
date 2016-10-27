@@ -13,6 +13,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -33,10 +34,11 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final int WEB_GET_BUNDLE = 1;
 
     // UI
-    private ListView _listview;
     private TextView _distanceTextView;
     private TextView _dateTextView;
-    private Button _requestButton;
+    private Button _notInterestedButton;
+    private Button _okButton;
+    private ListView _listview;
 
     // Data
     private long _workorderId = 0;
@@ -72,15 +74,13 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             return;
         }
 
-        _listview = (ListView) findViewById(R.id.items_listview);
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _requestButton = (Button) findViewById(R.id.request_button);
-        _requestButton.setOnClickListener(_request_onClick);
-//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
-
-//        _loadingLayout.setVisibility(View.VISIBLE);
-        // TODO put into wait mode
+        _notInterestedButton = (Button) findViewById(R.id.notInterested_button);
+        _notInterestedButton.setOnClickListener(_notInterested_onClick);
+        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_ok_onClick);
+        _listview = (ListView) findViewById(R.id.items_listview);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     public DialogManager getDialogManager() {
-        return null;
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
@@ -111,8 +111,21 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
-
     }
+
+    private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
+
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+
+        }
+    };
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
@@ -128,16 +141,25 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
                 return;
             }
             _woBundle = bundle;
-            NumberFormat form = NumberFormat.getNumberInstance();
-            form.setMinimumFractionDigits(1);
-            form.setMaximumFractionDigits(1);
+            Workorder wo = bundle.getWorkorder()[0];
 
             try {
-                _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
+                _distanceTextView.setText("");
             } catch (Exception ex) {
             }
             try {
-                _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
+                if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
+                    _okButton.setText("REQUEST (" + _woBundle.getWorkorder().length + ")");
+                    _okButton.setVisibility(View.VISIBLE);
+                    _notInterestedButton.setVisibility(View.VISIBLE);
+                } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+                    _okButton.setText("ACCEPT (" + _woBundle.getWorkorder().length + ")");
+                    _okButton.setVisibility(View.VISIBLE);
+                    _notInterestedButton.setVisibility(View.VISIBLE);
+                } else {
+                    _notInterestedButton.setVisibility(View.GONE);
+                    _okButton.setVisibility(View.GONE);
+                }
             } catch (Exception ex) {
             }
             try {
@@ -150,14 +172,6 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             _listview.setAdapter(_adapter);
 
 //            _loadingLayout.setVisibility(View.GONE);
-        }
-    };
-
-    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
         }
     };
 

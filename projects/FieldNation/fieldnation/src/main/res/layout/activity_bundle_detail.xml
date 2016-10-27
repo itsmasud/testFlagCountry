@@ -1,63 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        style="?attr/fnToolbarStyle"
+    <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_scrollFlags="scroll|enterAlways"
-        app:theme="@style/FieldNation.Material.ToolBar" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/fn_primary"
-        android:baselineAligned="false"
-        android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="?attr/fnToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/FieldNation.Material.ToolBar" />
 
-        <LinearLayout
-            android:layout_width="wrap_content"
+        <RelativeLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="0.75"
-            android:orientation="vertical">
+            android:background="@color/fn_primary"
+            android:baselineAligned="false"
+            android:orientation="horizontal"
+            android:paddingBottom="8dp"
+            android:paddingLeft="16dp"
+            android:paddingRight="16dp"
+            android:paddingTop="8dp">
 
-            <LinearLayout
+            <com.fieldnation.ui.IconFontTextView
+                android:id="@+id/bundle_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal">
+                android:layout_marginRight="4dp"
+                android:text="@string/icon_bundle"
+                android:textColor="@color/fn_white_text"
+                android:textSize="24sp" />
 
-                <com.fieldnation.ui.IconFontTextView
-                    android:id="@+id/bundle_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:text="@string/icon_bundle"
-                    android:textColor="@color/fn_white_text"
-                    android:textSize="24sp" />
-
-                <TextView
-                    style="@style/Text_Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/bundle"
-                    android:textColor="@color/fn_white_text" />
-            </LinearLayout>
+            <TextView
+                android:id="@+id/title_textview"
+                style="@style/Text_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/bundle_imageview"
+                android:maxLines="1"
+                android:text="@string/bundle"
+                android:textColor="@color/fn_white_text" />
 
             <TextView
                 android:id="@+id/distance_textview"
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/title_textview"
+                android:text="@string/placeholder_phrase"
                 android:textColor="@color/fn_white_text" />
 
             <TextView
@@ -65,27 +60,38 @@
                 style="@style/Text_Body_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_below="@+id/distance_textview"
+                android:layout_marginBottom="8dp"
+                android:text="@string/placeholder_phrase"
                 android:textColor="@color/fn_white_text" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.25"
-            android:orientation="vertical">
 
             <Button
-                android:id="@+id/request_button"
+                android:id="@+id/notInterested_button"
                 style="?attr/buttonWhiteStyle"
-                android:visibility="gone" />
-        </LinearLayout>
+                android:layout_below="@+id/date_textview"
+                android:layout_toLeftOf="@+id/ok_button"
+                android:text="@string/btn_not_interested"
+                android:visibility="visible" />
+
+            <Button
+                android:id="@+id/ok_button"
+                style="?attr/buttonWhiteStyle"
+                android:layout_alignParentRight="true"
+                android:layout_below="@+id/date_textview"
+                android:text="@string/btn_accept"
+                android:visibility="visible" />
+        </RelativeLayout>
+
+        <ListView
+            android:id="@+id/items_listview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:divider="@null"
+            android:dividerHeight="0dp" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/items_listview"
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        android:dividerHeight="0dp" />
-</LinearLayout>
+        android:layout_height="match_parent" />
+</RelativeLayout>
