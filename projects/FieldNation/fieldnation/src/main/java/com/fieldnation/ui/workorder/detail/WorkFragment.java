@@ -230,6 +230,9 @@ public class WorkFragment extends WorkorderFragment {
 
         _exView = (ExpectedPaymentView) view.findViewById(R.id.expected_pay_view);
 
+        _bundleWarningTextView = (TextView) view.findViewById(R.id.bundlewarning2_textview);
+        _bundleWarningTextView.setOnClickListener(_bundle_onClick);
+
         _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
@@ -1743,6 +1746,14 @@ public class WorkFragment extends WorkorderFragment {
                         }
                     });
             _yesNoDialog.show();
+        }
+    };
+
+    private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
+            setLoading(true);
         }
     };
 

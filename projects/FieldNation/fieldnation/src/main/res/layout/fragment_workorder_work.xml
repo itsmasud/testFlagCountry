@@ -109,6 +109,16 @@
                 android:id="@+id/expected_pay_view"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
+
+            <TextView
+                android:id="@+id/bundlewarning2_textview"
+                style="@style/TextViewLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:text="@string/view_bundle_details"
+                android:visibility="gone" />
         </LinearLayout>
     </com.fieldnation.ui.OverScrollView>
 
