@@ -236,6 +236,23 @@ public class WorkorderDispatch implements WorkorderConstants {
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
     }
 
+    public static void uploadDeliverableProgress(Context context, long workorderId, long slotId, String filename, long pos, long size, long time) {
+        Log.v(TAG, "uploadDeliverableProgress");
+
+        Bundle bundle = new Bundle();
+        bundle.putLong(PARAM_WORKORDER_ID, workorderId);
+        bundle.putLong(PARAM_UPLOAD_SLOT_ID, slotId);
+        bundle.putString(PARAM_FILE_NAME, filename);
+        bundle.putLong(PARAM_POS, pos);
+        bundle.putLong(PARAM_SIZE, size);
+        bundle.putLong(PARAM_TIME, time);
+
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE_PROGRESS;
+        topicId += "/" + workorderId + "/" + slotId;
+
+        TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
+    }
+
     public static void cacheDeliverableStart(Context context, Uri uri) {
         Log.v(TAG, "cacheDeliverableStart");
         Bundle bundle = new Bundle();

@@ -673,6 +673,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId);
     }
 
+    public boolean subDeliverableProgress(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE_PROGRESS;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId);
+    }
+
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
     }
@@ -742,10 +750,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preListTasks((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preAction((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE_PROGRESS)) {
+                preUploadDeliverableProgress((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
                 preUploadDeliverable((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
-                onDeliveraleCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
+                onDeliverableCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
                 try {
                     onDeliverableCacheEnd(
@@ -757,10 +767,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
         }
 
-        public void onDeliveraleCacheStart(Uri uri) {
+        public void onDeliverableCacheStart(Uri uri) {
         }
 
         public void onDeliverableCacheEnd(Uri uri, String filename) {
+        }
+
+        private void preUploadDeliverableProgress(Bundle payload) {
+            onUploadDeliverableProgress(
+                    payload.getLong(PARAM_WORKORDER_ID),
+                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                    payload.getString(PARAM_FILE_NAME),
+                    payload.getLong(PARAM_POS),
+                    payload.getLong(PARAM_SIZE),
+                    payload.getLong(PARAM_TIME));
+        }
+
+        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
+
         }
 
         private void preUploadDeliverable(Bundle payload) {

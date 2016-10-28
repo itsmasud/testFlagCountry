@@ -70,13 +70,22 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         start();
     }
 
+    private static class MyProgressListener implements HttpJson.ProgressListener {
+        public WebTransaction trans;
+
+        public void MyProgressListener() {
+        }
+
+        @Override
+        public void progress(long pos, long size, long time) {
+            WebTransactionHandler.transactionProgress(App.get(), trans.getHandlerName(), trans, pos, size, time);
+        }
+    }
+
+    private final MyProgressListener _http_progress = new MyProgressListener();
+
     @Override
     public boolean doWork() {
-        //if (_isFirstThread) {
-        //    Log.v(TAG, "Trans Count: " + WebTransaction.count());
-        //    Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
-        //}
-
         // try to get a transaction
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
@@ -185,7 +194,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
 
             // **** perform request ****
-            result = HttpJson.run(_service, request);
+            _http_progress.trans = trans;
+            result = HttpJson.run(_service, request, _http_progress);
 
             // debug output
             try {

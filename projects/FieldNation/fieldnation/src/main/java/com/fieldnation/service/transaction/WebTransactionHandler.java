@@ -62,22 +62,19 @@ public abstract class WebTransactionHandler {
         return Result.DELETE;
     }
 
-/*
-    public static Result requeueTransaction(Context context, String handlerName, WebTransaction transaction) {
+    public static void transactionProgress(Context context, String handlerName, WebTransaction transaction, long pos, long size, long time) {
         try {
             Class<?> clazz = context.getClassLoader().loadClass(handlerName);
 
             WebTransactionHandler handler = (WebTransactionHandler) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            return handler.handleRequeued(context, transaction);
+            handler.handleProgress(context, transaction, pos, size, time);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.DELETE;
     }
-*/
 
     public Result handleStart(Context context, WebTransaction transaction) {
         return Result.CONTINUE;
@@ -87,12 +84,8 @@ public abstract class WebTransactionHandler {
         return Result.CONTINUE;
     }
 
-/*
-    public Result handleRequeued(Context context, WebTransaction transaction) {
-        return Result.CONTINUE;
-    }
-*/
-
     public abstract Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable);
 
+    public void handleProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
+    }
 }
