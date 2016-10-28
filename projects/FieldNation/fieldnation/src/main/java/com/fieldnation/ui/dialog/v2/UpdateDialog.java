@@ -21,14 +21,16 @@ public class UpdateDialog extends OneButtonDialog {
     }
 
     @Override
-    public void onPrimaryClick() {
+    public boolean onPrimaryClick() {
         Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
         ActivityResultClient.startActivity(App.get(), new Intent(Intent.ACTION_VIEW).setData(marketUri));
+        return false;
     }
 
     @Override
-    public void onCancel() {
+    public boolean onCancel() {
         GlobalTopicClient.appShutdown(App.get());
+        return false;
     }
 
     public static abstract class Controller extends OneButtonDialog.Controller {

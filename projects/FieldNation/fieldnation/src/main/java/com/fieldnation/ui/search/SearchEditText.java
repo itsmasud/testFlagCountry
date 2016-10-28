@@ -145,6 +145,11 @@ public class SearchEditText extends RelativeLayout {
         }
 
         @Override
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
+        }
+
+        @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             if (resultCode == Activity.RESULT_OK) {
                 ArrayList matches = data.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS);
