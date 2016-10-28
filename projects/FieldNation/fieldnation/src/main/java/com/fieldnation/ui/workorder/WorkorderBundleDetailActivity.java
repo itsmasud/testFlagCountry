@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,6 +23,8 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
+import com.fieldnation.ui.dialog.v2.DeclineDialog;
 
 import java.text.NumberFormat;
 
@@ -31,11 +34,13 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderBundleDetailActivity:workorder_id";
     public static final String INTENT_FIELD_BUNDLE_ID = "WorkorderBundleDetailActivity:bundle_id";
 
+    // Dialog tags
+    private static final String DIALOG_DECLINE = TAG + ".DeclineDialog";
+
     private static final int WEB_GET_BUNDLE = 1;
 
     // UI
-    private TextView _distanceTextView;
-    private TextView _dateTextView;
+    private LinearLayout _buttonToolbar;
     private Button _notInterestedButton;
     private Button _okButton;
     private ListView _listview;
@@ -74,8 +79,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             return;
         }
 
-        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
+        _buttonToolbar = (LinearLayout) findViewById(R.id.button_toolbar);
         _notInterestedButton = (Button) findViewById(R.id.notInterested_button);
         _notInterestedButton.setOnClickListener(_notInterested_onClick);
         _okButton = (Button) findViewById(R.id.ok_button);
@@ -116,14 +120,27 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            DeclineDialog.Controller.show(App.get(), DIALOG_DECLINE,
+                    _woBundle.getWorkorder().length,
+                    _woBundle.getWorkorder()[0].getWorkorderId(),
+                    _woBundle.getWorkorder()[0].getCompanyId());
         }
     };
 
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Workorder wo = _woBundle.getWorkorder()[0];
 
+            if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
+                AcceptBundleDialog.Controller.show(App.get(), _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length, wo.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
+            } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+                AcceptBundleDialog.Controller.show(App.get(), _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length, wo.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
+            } else {
+                // do nothing
+            }
         }
     };
 
@@ -144,34 +161,20 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             Workorder wo = bundle.getWorkorder()[0];
 
             try {
-                _distanceTextView.setText("");
-            } catch (Exception ex) {
-            }
-            try {
                 if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
                     _okButton.setText("REQUEST (" + _woBundle.getWorkorder().length + ")");
-                    _okButton.setVisibility(View.VISIBLE);
-                    _notInterestedButton.setVisibility(View.VISIBLE);
+                    _buttonToolbar.setVisibility(View.VISIBLE);
                 } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
                     _okButton.setText("ACCEPT (" + _woBundle.getWorkorder().length + ")");
-                    _okButton.setVisibility(View.VISIBLE);
-                    _notInterestedButton.setVisibility(View.VISIBLE);
+                    _buttonToolbar.setVisibility(View.VISIBLE);
                 } else {
-                    _notInterestedButton.setVisibility(View.GONE);
-                    _okButton.setVisibility(View.GONE);
+                    _buttonToolbar.setVisibility(View.GONE);
                 }
-            } catch (Exception ex) {
-            }
-            try {
-                _dateTextView.setText("Range " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
             } catch (Exception ex) {
             }
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
-
             _listview.setAdapter(_adapter);
-
-//            _loadingLayout.setVisibility(View.GONE);
         }
     };
 

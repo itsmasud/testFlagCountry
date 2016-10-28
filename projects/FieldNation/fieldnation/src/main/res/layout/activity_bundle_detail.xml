@@ -16,60 +16,24 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:theme="@style/FieldNation.Material.ToolBar" />
 
-        <RelativeLayout
+        <LinearLayout
+            android:id="@+id/button_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/fn_primary"
-            android:baselineAligned="false"
             android:orientation="horizontal"
             android:paddingBottom="8dp"
-            android:paddingLeft="16dp"
-            android:paddingRight="16dp"
-            android:paddingTop="8dp">
-
-            <com.fieldnation.ui.IconFontTextView
-                android:id="@+id/bundle_imageview"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="4dp"
-                android:text="@string/icon_bundle"
-                android:textColor="@color/fn_white_text"
-                android:textSize="24sp" />
-
-            <TextView
-                android:id="@+id/title_textview"
-                style="@style/Text_Title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@+id/bundle_imageview"
-                android:maxLines="1"
-                android:text="@string/bundle"
-                android:textColor="@color/fn_white_text" />
-
-            <TextView
-                android:id="@+id/distance_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/title_textview"
-                android:text="@string/placeholder_phrase"
-                android:textColor="@color/fn_white_text" />
-
-            <TextView
-                android:id="@+id/date_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/distance_textview"
-                android:layout_marginBottom="8dp"
-                android:text="@string/placeholder_phrase"
-                android:textColor="@color/fn_white_text" />
+            android:paddingLeft="8dp"
+            android:paddingRight="8dp"
+            android:paddingTop="8dp"
+            android:visibility="gone">
 
             <Button
                 android:id="@+id/notInterested_button"
                 style="?attr/buttonWhiteStyle"
                 android:layout_below="@+id/date_textview"
                 android:layout_toLeftOf="@+id/ok_button"
+                android:layout_weight="1"
                 android:text="@string/btn_not_interested"
                 android:visibility="visible" />
 
@@ -78,9 +42,10 @@
                 style="?attr/buttonWhiteStyle"
                 android:layout_alignParentRight="true"
                 android:layout_below="@+id/date_textview"
+                android:layout_weight="1"
                 android:text="@string/btn_accept"
                 android:visibility="visible" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <ListView
             android:id="@+id/items_listview"
