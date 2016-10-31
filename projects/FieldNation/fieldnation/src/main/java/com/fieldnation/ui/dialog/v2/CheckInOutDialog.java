@@ -210,7 +210,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             String[] deviceArray = null;
             if (_maxDevice >= 0) {
                 deviceArray = new String[_maxDevice + 1];
-                for (int i = 0; i < _maxDevice; i++) {
+                for (int i = 0; i <= _maxDevice; i++) {
                     deviceArray[i] = String.valueOf(i);
                 }
             }
