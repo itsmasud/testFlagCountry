@@ -390,6 +390,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            misc.hideKeyboard(_okButton);
             Log.v(TAG, "problem1=" + _primaryPosition + ", problem2=" + _secondaryPosition);
 
             String explanation = null;
