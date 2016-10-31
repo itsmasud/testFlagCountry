@@ -160,6 +160,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _workOrderClient.subSearch();
+            _workOrderClient.subActions();
         }
 
         @Override
@@ -190,6 +191,13 @@ public class SearchResultScreen extends RelativeLayout {
                 _unavailableView.setVisibility(VISIBLE);
             else
                 _unavailableView.setVisibility(GONE);
+        }
+
+        @Override
+        public void onAction(long workOrderId, String action, boolean failed) {
+            getPage(0);
+            _adapter.clear();
+            _refreshView.startRefreshing();
         }
     };
 
