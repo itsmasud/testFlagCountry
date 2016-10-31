@@ -489,32 +489,62 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/
-    public static void actionCheckin(Context context, long workorderId) {
-        WorkorderTransactionBuilder.actionCheckin(context, workorderId);
+//    public static void actionCheckin(Context context, long workorderId) {
+//        WorkorderTransactionBuilder.actionCheckin(context, workorderId);
+//    }
+
+    public static void actionCheckin(Context context, long workorderId, String dateTime) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId, dateTime);
     }
 
-    public static void actionCheckin(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
+//    public static void actionCheckin(Context context, long workorderId, Location location) {
+//        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
+//    }
+
+    public static void actionCheckin(Context context, long workorderId, String dateTime, Location location) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location, dateTime);
     }
 
     /*-*******************************************-*/
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
-    public static void actionCheckout(Context context, long workorderId) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId);
+//    public static void actionCheckout(Context context, long workorderId) {
+//        WorkorderTransactionBuilder.actionCheckout(context, workorderId);
+//    }
+//
+//    public static void actionCheckout(Context context, long workorderId, Location location) {
+//        WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
+//    }
+//
+//    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+//        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
+//    }
+//
+//    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+//        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
+//    }
+
+    public static void actionCheckout(Context context, long workorderId, String dateTime) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime);
     }
 
-    public static void actionCheckout(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, location);
     }
 
-    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, deviceCount);
     }
 
-    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId,dateTime, deviceCount, location);
     }
+
+
+
+
+
+
 
     /*-*****************************************-*/
     /*-             workorder bundle            -*/

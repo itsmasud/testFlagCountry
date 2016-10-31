@@ -43,6 +43,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -424,9 +425,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         setLoading(true);
         _adapter.notifyDataSetChanged();
         if (getLocationService().hasLocation()) {
-            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation());
+            CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+//            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation());
         } else {
-            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
+            CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(),_deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+//            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
         }
 //        _adapter.refreshPages();
     }
@@ -441,21 +444,28 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(),
-                        _currentWorkorder.getWorkorderId(),
-                        _deviceCount,
-                        getLocationService().getLocation());
+//                WorkorderClient.actionCheckout(App.get(),
+//                        _currentWorkorder.getWorkorderId(),
+//                        _deviceCount,
+//                        getLocationService().getLocation());
+
+                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
             } else {
-                WorkorderClient.actionCheckout(App.get(),
-                        _currentWorkorder.getWorkorderId(),
-                        getLocationService().getLocation());
+//                WorkorderClient.actionCheckout(App.get(),
+//                        _currentWorkorder.getWorkorderId(),
+//                        getLocationService().getLocation());
+                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
             }
 
         } else {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount);
+                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+//                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount);
             } else {
-                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId());
+                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+//                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId());
             }
 //            _adapter.refreshPages();
         }

@@ -89,6 +89,7 @@ import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TermsScrollingDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.WorkLogDialog;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -146,7 +147,7 @@ public class WorkFragment extends WorkorderFragment {
     private CounterOfferDialog _counterOfferDialog;
     private CustomFieldDialog _customFieldDialog;
     private DeclineDialog _declineDialog;
-    private DeviceCountDialog _deviceCountDialog;
+//    private DeviceCountDialog _deviceCountDialog;
     private DiscountDialog _discountDialog;
     private ExpenseDialog _expenseDialog;
     private MarkCompleteDialog _markCompleteDialog;
@@ -358,7 +359,7 @@ public class WorkFragment extends WorkorderFragment {
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _customFieldDialog = CustomFieldDialog.getInstance(getFragmentManager(), TAG);
         _declineDialog = DeclineDialog.getInstance(getFragmentManager(), TAG);
-        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
+//        _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _discountDialog = DiscountDialog.getInstance(getFragmentManager(), TAG);
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
@@ -382,7 +383,7 @@ public class WorkFragment extends WorkorderFragment {
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _deviceCountDialog.setListener(_deviceCountListener);
+//        _deviceCountDialog.setListener(_deviceCountListener);
         _acceptBundleWOConfirmDialog.setListener(_acceptBundleDialogConfirmListener);
         _acceptBundleWOExpiresDialog.setListener(_acceptBundleDialogExpiresListener);
         _closingDialog.setListener(_closingNotes_onOk);
@@ -629,7 +630,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void startCheckin() {
-        Log.v(TAG, "startCheckin");
+        Log.e(TAG, "startCheckin");
         // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
@@ -649,7 +650,7 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void startCheckOut() {
-        Log.v(TAG, "startCheckOut");
+        Log.e(TAG, "startCheckOut");
         _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
@@ -668,33 +669,62 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckin() {
+        Log.e(TAG, "doCheckin");
         setLoading(true);
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
-                    _gpsLocationService.getLocation());
+//            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
+//                    _gpsLocationService.getLocation());
+
+            CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+
+
         } else {
-            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId());
+//            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId());
+            CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+
         }
     }
 
     private void doCheckOut() {
+        Log.e(TAG, "doCheckOut");
         setLoading(true);
+
+        Pay pay = _workorder.getPay();
+        if (pay != null && pay.isPerDeviceRate()) {
+            _deviceCount = pay.getMaxDevice();
+            Log.e(TAG, "_deviceCount: " + _deviceCount);
+        }
+
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
+            Log.e(TAG, "hasLocation");
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-                        _deviceCount, _gpsLocationService.getLocation());
+                Log.e(TAG, "if-type-1");
+                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
+//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
+//                        _deviceCount, _gpsLocationService.getLocation());
             } else {
-                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-                        _gpsLocationService.getLocation());
+                Log.e(TAG, "if-type-2");
+                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
+//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
+//                        _gpsLocationService.getLocation());
             }
         } else {
+            Log.e(TAG, "inside else");
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-                        _deviceCount);
+                Log.e(TAG, "if-type-3");
+                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
+//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
+//                        _deviceCount);
             } else {
-                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId());
+                Log.e(TAG, "if-type-4");
+                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+
+//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId());
             }
         }
     }
@@ -967,18 +997,18 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, int count) {
-            _deviceCount = count;
-            startCheckOut();
-        }
-
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
+//    private final DeviceCountDialog.Listener _deviceCountListener = new DeviceCountDialog.Listener() {
+//        @Override
+//        public void onOk(Workorder workorder, int count) {
+//            _deviceCount = count;
+//            startCheckOut();
+//        }
+//
+//        @Override
+//        public void onCancel() {
+//            setLoading(false);
+//        }
+//    };
 
     private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
         @Override
@@ -1198,13 +1228,13 @@ public class WorkFragment extends WorkorderFragment {
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onCheckOut() {
-            Pay pay = _workorder.getPay();
-            if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
-                setLoading(true);
-            } else {
+//            Pay pay = _workorder.getPay();
+//            if (pay != null && pay.isPerDeviceRate()) {
+////                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
+//                setLoading(true);
+//            } else {
                 startCheckOut();
-            }
+//            }
         }
 
         @Override
@@ -1543,7 +1573,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onCheckout(Task task) {
             Pay pay = _workorder.getPay();
             if (pay != null && pay.isPerDeviceRate()) {
-                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
+//                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
                 setLoading(true);
             } else {
                 startCheckOut();
