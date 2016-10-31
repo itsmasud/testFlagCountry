@@ -34,7 +34,6 @@ import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
-import com.fieldnation.ui.dialog.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
@@ -43,6 +42,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
@@ -71,7 +71,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
-    private AcceptBundleDialog _acceptBundleDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
@@ -155,7 +154,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
-        _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
@@ -238,7 +236,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
-        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _reportProblemDialog.setListener(_reportProblem_listener);
 
@@ -426,10 +423,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _adapter.notifyDataSetChanged();
         if (getLocationService().hasLocation()) {
             CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-//            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation());
         } else {
             CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(),_deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-//            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
         }
 //        _adapter.refreshPages();
     }
@@ -444,28 +439,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
-//                WorkorderClient.actionCheckout(App.get(),
-//                        _currentWorkorder.getWorkorderId(),
-//                        _deviceCount,
-//                        getLocationService().getLocation());
-
                 CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
             } else {
-//                WorkorderClient.actionCheckout(App.get(),
-//                        _currentWorkorder.getWorkorderId(),
-//                        getLocationService().getLocation());
                 CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
             }
 
         } else {
             if (_deviceCount > -1) {
                 CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-//                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount);
             } else {
                 CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-//                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId());
             }
 //            _adapter.refreshPages();
         }
@@ -604,7 +587,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleDialog.show(workorder);
+                AcceptBundleDialog.Controller.show(App.get(), workorder.getBundleId(),
+                        workorder.getBundleCount(), workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
                         workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
@@ -736,14 +720,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*****************************************-*/
     /*-				Events Dialogs				-*/
     /*-*****************************************-*/
-    private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder) {
-            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
-                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
-        }
-    };
-
     private final DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {

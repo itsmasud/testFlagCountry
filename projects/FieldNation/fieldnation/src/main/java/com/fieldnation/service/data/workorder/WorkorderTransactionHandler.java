@@ -18,6 +18,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.service.data.v2.workorder.WorkOrderDispatch;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
@@ -312,6 +313,34 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
         UploadTrackerClient.uploadStarted(context);
+
+        return Result.CONTINUE;
+    }
+    /*-************************************-*/
+    /*-             Progress               -*/
+    /*-************************************-*/
+
+    @Override
+    public void handleProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadDeliverable":
+                    handleProgressUploadDeliverable(context, transaction, params, pos, size, time);
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private Result handleProgressUploadDeliverable(Context context, WebTransaction transaction, JsonObject params, long pos, long size, long time) throws ParseException {
+        long workorderId = params.getLong("workorderId");
+        long slotId = params.getLong("slotId");
+        String filename = params.getString("filename");
+
+        WorkorderDispatch.uploadDeliverableProgress(context, workorderId, slotId, filename, pos, size, time);
 
         return Result.CONTINUE;
     }

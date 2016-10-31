@@ -133,6 +133,18 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         populateUi();
     }
 
+    public void setProgress(Integer progress) {
+        if (_progressBar == null)
+            return;
+
+        if (progress == null)
+            _progressBar.setIndeterminate(true);
+
+        _progressBar.setIndeterminate(false);
+        _progressBar.setMax(100);
+        _progressBar.setProgress(progress);
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
