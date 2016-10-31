@@ -382,7 +382,6 @@ public class WorkFragment extends WorkorderFragment {
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _deviceCountDialog.setListener(_deviceCountListener);
         _closingDialog.setListener(_closingNotes_onOk);
         _counterOfferDialog.setListener(_counterOffer_listener);
         _declineDialog.setListener(_declineDialog_listener);
