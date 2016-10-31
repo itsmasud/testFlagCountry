@@ -100,7 +100,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
-        _deviceNumberLayout = (RelativeLayout) v.findViewById(R.id.deviceNumber_layout);
+        _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
         _startDateButton = (Button) v.findViewById(R.id.startDate_button);
         _startTimeButton = (Button) v.findViewById(R.id.startTime_button);
         _spinner = (HintSpinner) v.findViewById(R.id.spinner);
@@ -129,7 +129,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
-//        _spinner.setOnItemSelectedListener(_spinner_selected);
+        _spinner.setOnItemSelectedListener(_spinner_selected);
 
     }
 
@@ -216,7 +216,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             }
 
             HintArrayAdapter adapter = HintArrayAdapter.createFromArray(
-                    _startDateButton.getContext(),
+                    _spinner.getContext(),
                     deviceArray,
                     R.layout.view_spinner_item);
 
@@ -247,7 +247,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             test.set(year, monthOfYear, dayOfMonth);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), "Future timelog is not allowed.", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), "You cannot select future date and time.", Toast.LENGTH_SHORT);
                 _startDatePicker.show();
 
             } else {
@@ -274,7 +274,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), "Future timelog is not allowed.", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), "You cannot select future date and time.", Toast.LENGTH_SHORT);
                 _startTimePicker.show();
             } else {
                 _startCalendar = test;
@@ -282,14 +282,6 @@ public class CheckInOutDialog extends FullScreenDialog {
             }
         }
     };
-
-    private final View.OnClickListener deviceNumber_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            DurationDialog.Controller.show(App.get(), UID_DURATION_DIALOG);
-        }
-    };
-
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
@@ -302,6 +294,10 @@ public class CheckInOutDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
+            if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
+                _itemSelectedPosition = 0;
+            }
+
             if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
                 if (_location != null)
                     onCheckin(_workorderId, ISO8601.fromCalendar(_startCalendar), _location);
@@ -309,14 +305,15 @@ public class CheckInOutDialog extends FullScreenDialog {
 
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                 if (_location != null) {
-                    if (_maxDevice >= INVALID_NUMBER)
-                        onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _maxDevice, _location);
+                    if (_itemSelectedPosition >= INVALID_NUMBER)
+                        onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition, _location);
                     else onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _location);
 
-                } else if (_maxDevice >= INVALID_NUMBER) {
+                } else if (_itemSelectedPosition >= INVALID_NUMBER) {
                     if (_location != null)
-                        onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _maxDevice, _location);
-                    else onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _maxDevice);
+                        onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition, _location);
+                    else
+                        onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition);
 
                 } else
                     onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar));
@@ -381,15 +378,11 @@ public class CheckInOutDialog extends FullScreenDialog {
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _itemSelectedPosition = position;
             Log.v(TAG, "onItemSelected");
-//            if (_okButton != null)
-//                _okButton.setEnabled(true);
         }
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
             Log.v(TAG, "onNothingSelected");
-//            if (_okButton != null)
-//                _okButton.setEnabled(false);
         }
     };
 
@@ -402,7 +395,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         // with location
         public static void show(Context context, long workorderId, Location location, String dialogType) {
-            Log.e(TAG, "show type-1");
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putParcelable(PARAM_LOCATION, location);
@@ -412,7 +404,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         // with location + max device
         public static void show(Context context, long workorderId, Location location, int maxDevice, String dialogType) {
-            Log.e(TAG, "show type-2");
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putParcelable(PARAM_LOCATION, location);
@@ -423,7 +414,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         // with max device but no location
         public static void show(Context context, long workorderId, int maxDevice, String dialogType) {
-            Log.e(TAG, "show type-3");
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
@@ -432,13 +422,10 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         public static void show(Context context, long workorderId, String dialogType) {
-            Log.e(TAG, "show type-4");
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
             show(context, null, CheckInOutDialog.class, params);
         }
-
-
     }
 }

@@ -630,7 +630,6 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void startCheckin() {
-        Log.e(TAG, "startCheckin");
         // everything is awsome. checkin
         _gpsLocationService.setListener(_gps_checkInListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
@@ -650,7 +649,6 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void startCheckOut() {
-        Log.e(TAG, "startCheckOut");
         _gpsLocationService.setListener(_gps_checkOutListener);
         if (!_gpsLocationService.isLocationServicesEnabled()) {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
@@ -669,62 +667,36 @@ public class WorkFragment extends WorkorderFragment {
     }
 
     private void doCheckin() {
-        Log.e(TAG, "doCheckin");
-        setLoading(true);
+//        setLoading(true);
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-//            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId(),
-//                    _gpsLocationService.getLocation());
-
             CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
-
-
         } else {
-//            WorkorderClient.actionCheckin(App.get(), _workorder.getWorkorderId());
             CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
 
         }
     }
 
     private void doCheckOut() {
-        Log.e(TAG, "doCheckOut");
-        setLoading(true);
+//        setLoading(true);
 
         Pay pay = _workorder.getPay();
         if (pay != null && pay.isPerDeviceRate()) {
             _deviceCount = pay.getMaxDevice();
-            Log.e(TAG, "_deviceCount: " + _deviceCount);
         }
 
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-            Log.e(TAG, "hasLocation");
             if (_deviceCount > -1) {
-                Log.e(TAG, "if-type-1");
                 CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
-//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-//                        _deviceCount, _gpsLocationService.getLocation());
             } else {
-                Log.e(TAG, "if-type-2");
                 CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
-//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-//                        _gpsLocationService.getLocation());
             }
         } else {
-            Log.e(TAG, "inside else");
             if (_deviceCount > -1) {
-                Log.e(TAG, "if-type-3");
                 CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
-//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId(),
-//                        _deviceCount);
             } else {
-                Log.e(TAG, "if-type-4");
                 CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
-
-//                WorkorderClient.actionCheckout(App.get(), _workorder.getWorkorderId());
             }
         }
     }

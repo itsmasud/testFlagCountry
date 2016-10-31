@@ -97,22 +97,6 @@
                         android:layout_marginLeft="4dp"
                         android:text="@string/number_of_device_completed" />
 
-                    <!--<Button-->
-                    <!--android:id="@+id/deviceNumber_button"-->
-                    <!--style="@style/SpinnerButton"-->
-                    <!--android:layout_below="@+id/deviceNumber_textview"-->
-                    <!--android:hint="Please select" />-->
-
-                    <!--<View-->
-                    <!--android:id="@+id/deviceNumber_divider"-->
-                    <!--style="@style/DividerSpinnerFull"-->
-                    <!--android:layout_below="@+id/deviceNumber_button"-->
-                    <!--android:layout_marginBottom="8dp"-->
-                    <!--android:layout_marginLeft="4dp"-->
-                    <!--android:layout_marginRight="4dp"-->
-                    <!--android:background="@color/fn_material_spinner_bottom_line" />-->
-
-
                     <com.fieldnation.ui.HintSpinner
                         android:id="@+id/spinner"
                         style="@style/Widget.AppCompat.Spinner.DropDown"
