@@ -85,19 +85,6 @@ public class FooterBarView extends RelativeLayout {
         super.onDetachedFromWindow();
     }
 
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        Log.v(TAG, "onRestoreInstanceState");
-        // todo... need to load some sort of unique key so that the controller can resync with the dialog
-        super.onRestoreInstanceState(state);
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Log.v(TAG, "onSaveInstanceState");
-        return super.onSaveInstanceState();
-    }
-
     private void populateUi() {
         if (_inboxTextView == null)
             return;

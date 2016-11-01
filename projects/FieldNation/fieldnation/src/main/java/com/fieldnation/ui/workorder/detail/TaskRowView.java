@@ -4,11 +4,13 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Task;
@@ -24,6 +26,7 @@ public class TaskRowView extends RelativeLayout {
     // Ui
     private IconFontTextView _iconView;
     private TextView _descriptionTextView;
+    private ProgressBar _progressBar;
 
     // Data
     private Workorder _workorder;
@@ -54,6 +57,7 @@ public class TaskRowView extends RelativeLayout {
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
+        _progressBar = (ProgressBar) findViewById(R.id.progress_view);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -84,6 +88,21 @@ public class TaskRowView extends RelativeLayout {
         }
 
         populateUi();
+    }
+
+    public void setProgress(Integer progress) {
+        if (_progressBar == null)
+            return;
+
+        _progressBar.setVisibility(VISIBLE);
+        if (progress == null) {
+            _progressBar.setIndeterminate(true);
+            return;
+        }
+
+        _progressBar.setIndeterminate(false);
+        _progressBar.setMax(100);
+        _progressBar.setProgress(progress);
     }
 
     private void populateUi() {
@@ -164,6 +183,7 @@ public class TaskRowView extends RelativeLayout {
             return;
 
         _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _task.getSlotId());
+        _workorderClient.subDeliverableProgress(_workorder.getWorkorderId(), _task.getSlotId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -180,6 +200,20 @@ public class TaskRowView extends RelativeLayout {
                 _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading: " + filename);
             } else {
                 _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + filename);
+                _progressBar.setVisibility(GONE);
+            }
+        }
+
+        @Override
+        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
+            Double percent = pos * 1.0 / size;
+
+            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
+
+            int prog = (int) (pos * 100 / size);
+
+            if (_progressBar != null && prog >= _progressBar.getProgress()) {
+                setProgress(prog);
             }
         }
     };

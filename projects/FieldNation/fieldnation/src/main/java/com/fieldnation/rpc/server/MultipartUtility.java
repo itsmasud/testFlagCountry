@@ -69,7 +69,7 @@ public class MultipartUtility {
         writer.flush();
     }
 
-    public void addFilePart(String fieldName, String filename, InputStream inputStream, int length) throws IOException {
+    public void addFilePart(String fieldName, String filename, InputStream inputStream, final int length, final HttpJson.ProgressListener listener) throws IOException {
         Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + length + ","
                 + App.guessContentTypeFromName(filename) + ")");
 
@@ -85,9 +85,21 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
+        final long startTime = System.currentTimeMillis();
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        StreamUtils.copyStream(inputStream, outputStream, length, 1000);
+
+        if (listener != null) {
+            StreamUtils.copyStream(inputStream, outputStream, length, 1000, new StreamUtils.ProgressListener() {
+                @Override
+                public void progress(int position) {
+                    if (listener != null)
+                        listener.progress(position, length, System.currentTimeMillis() - startTime);
+                }
+            });
+        } else {
+            StreamUtils.copyStream(inputStream, outputStream, length, 1000, null);
+        }
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
 
@@ -95,7 +107,7 @@ public class MultipartUtility {
         writer.flush();
     }
 
-    public void addFilePart(String fieldName, String filename, Uri uri, String contentType) throws IOException {
+    public void addFilePart(String fieldName, String filename, Uri uri, String contentType, final HttpJson.ProgressListener listener) throws IOException {
         Log.v(TAG, "addFilePart(" + fieldName + "," + filename + "," + contentType + ")");
 
         writer.append("--").append(boundary).append(LINE_FEED);
@@ -106,10 +118,24 @@ public class MultipartUtility {
         writer.append(LINE_FEED);
         writer.flush();
 
-        InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
+        final long startTime = System.currentTimeMillis();
+        final InputStream inputStream = App.get().getContentResolver().openInputStream(uri);
+        final int inputSize = inputStream.available();
+
         Stopwatch stopwatch = new Stopwatch(true);
         Log.v(TAG, "Start upload....");
-        StreamUtils.copyStream(inputStream, outputStream, -1, 1000);
+        if (listener != null) {
+            StreamUtils.copyStream(inputStream, outputStream, -1, 1000, new StreamUtils.ProgressListener() {
+                @Override
+                public void progress(int position) {
+                    if (listener != null)
+                        listener.progress(position, inputSize, System.currentTimeMillis() - startTime);
+                }
+            });
+        } else {
+            StreamUtils.copyStream(inputStream, outputStream, -1, 1000, null);
+        }
+
         Log.v(TAG, "Finish upload...." + stopwatch.finish());
         outputStream.flush();
         writer.append(LINE_FEED);

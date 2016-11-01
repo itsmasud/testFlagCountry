@@ -160,6 +160,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onConnected() {
             _workOrderClient.subSearch();
+            _workOrderClient.subActions();
         }
 
         @Override
@@ -191,6 +192,13 @@ public class SearchResultScreen extends RelativeLayout {
             else
                 _unavailableView.setVisibility(GONE);
         }
+
+        @Override
+        public void onAction(long workOrderId, String action, boolean failed) {
+            getPage(0);
+            _adapter.clear();
+            _refreshView.startRefreshing();
+        }
     };
 
     private final WorkorderClient.Listener _workorderClientV1_listener = new WorkorderClient.Listener() {
@@ -202,6 +210,7 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             Log.v(TAG, "_workorderClientV1_listener.onAction " + workorderId + ", " + action + ", " + failed);
+            _adapter.clear();
             getPage(0);
             _refreshView.startRefreshing();
         }

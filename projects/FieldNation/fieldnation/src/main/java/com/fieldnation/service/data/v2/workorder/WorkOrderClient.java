@@ -63,6 +63,10 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
     }
 
+    public boolean subActions() {
+        return register(TOPIC_ID_ACTION_COMPLETE);
+    }
+
 
     /*-**********************************-*/
     /*-             Listener             -*/

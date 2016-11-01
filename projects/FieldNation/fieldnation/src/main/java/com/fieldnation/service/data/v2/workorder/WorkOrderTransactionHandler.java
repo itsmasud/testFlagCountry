@@ -71,42 +71,14 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
         WorkOrderDispatch.action(context, workorderId, action, false);
-//        WorkOrderClient.listTasks(context, workorderId, false);
-
-//        if (action.equals("acknowledge-hold")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("closing-notes")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("complete")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("decline")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("delete_request")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("DELETE_LOG")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("incomplete")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("messages/new")) {
-//            WorkorderClient.listMessages(context, workorderId, false, false);
-//        } else if (action.equals("pay-change")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("ready")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else {
-//            WorkorderClient.get(context, workorderId, false);
-//        }
-
         return Result.CONTINUE;
     }
 
     private Result resultSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "resultSearch");
-
         WorkOrderDispatch.search(context,
                 SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
                 resultData.getByteArray(), false);
-
         return Result.CONTINUE;
     }
 

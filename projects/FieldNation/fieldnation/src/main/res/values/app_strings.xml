@@ -102,6 +102,7 @@
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_all">VIEW ALL</string>
+    <string name="btn_view_bundle">VIEW BUNDLE</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_view_payment">VIEW PAYMENT</string>
@@ -141,6 +142,7 @@
     <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
     <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
     <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
+    <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -432,6 +434,8 @@
     <string name="inbox">Inbox</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
+    <string name="number_of_device_completed">Device Completed</string>
+    <string name="spinner_hint_please_select">Please select</string>
     <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
     <string name="log_out">Log Out</string>
@@ -867,6 +871,8 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="title_check_in">Check In</string>
+    <string name="title_check_out">Check Out</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>

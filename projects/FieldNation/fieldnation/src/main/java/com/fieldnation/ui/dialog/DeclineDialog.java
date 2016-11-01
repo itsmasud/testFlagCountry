@@ -54,7 +54,6 @@ public class DeclineDialog extends DialogFragmentBase {
     private static int DECLINE_REASON_OTHER = 7;
     private boolean _clear = false;
 
-
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -73,7 +72,6 @@ public class DeclineDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         View v = inflater.inflate(R.layout.dialog_decline, container, false);
-
 
         _declineSpinner = (HintSpinner) v.findViewById(R.id.decline_spinner);
         _declineSpinner.setOnItemSelectedListener(_spinnerDecline_selected);
