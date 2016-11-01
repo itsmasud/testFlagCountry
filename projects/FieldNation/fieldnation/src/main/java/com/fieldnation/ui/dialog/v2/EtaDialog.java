@@ -4,6 +4,11 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
+import android.text.Spannable;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -73,6 +78,7 @@ public class EtaDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
 
+    private TextView _termsWarningTextView;
     private RelativeLayout _expirationLayout;
     private Button _expirationButton;
 
@@ -117,6 +123,8 @@ public class EtaDialog extends FullScreenDialog {
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+
+        _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
 
         // Expiration stuff
         _expirationLayout = (RelativeLayout) v.findViewById(R.id.request_layout); // expiration layout
@@ -169,6 +177,10 @@ public class EtaDialog extends FullScreenDialog {
 
         _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
         _expiryDialog.setListener(_expiryDialog_listener);
+
+        _etaSwitch.setChecked(true);
+
+        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -261,6 +273,11 @@ public class EtaDialog extends FullScreenDialog {
                 _etaSwitchLabel.setVisibility(View.VISIBLE);
             }
 
+            SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
+            spanned.setSpan(_testClickableSpan, 54, 85, spanned.getSpanFlags(_testClickableSpan));
+            _termsWarningTextView.setText(spanned);
+            _termsWarningTextView.setVisibility(View.VISIBLE);
+
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
             _toolbar.setTitle("Confirm " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_confirm));
@@ -269,6 +286,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+            _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
             _toolbar.setTitle(R.string.dialog_eta_title);
@@ -278,6 +296,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitch.setVisibility(View.GONE);
             _etaSwitchLabel.setVisibility(View.GONE);
+            _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
             _toolbar.setTitle("Accept " + _workOrderId);
@@ -287,6 +306,11 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+
+            SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
+            spanned.setSpan(_testClickableSpan, 53, 84, spanned.getSpanFlags(_testClickableSpan));
+            _termsWarningTextView.setText(spanned);
+            _termsWarningTextView.setVisibility(View.VISIBLE);
         }
 
         final String scheduleDisplayText = getScheduleDisplayText();
@@ -484,6 +508,14 @@ public class EtaDialog extends FullScreenDialog {
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
+    private final ClickableSpan _testClickableSpan = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
+                    R.string.dialog_terms_body, R.string.btn_ok, true);
+        }
+    };
+
     private final CompoundButton.OnCheckedChangeListener _switch_onChange = new CompoundButton.OnCheckedChangeListener() {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

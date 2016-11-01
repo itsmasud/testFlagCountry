@@ -27,10 +27,21 @@
             android:layout_height="wrap_content"
             android:background="@color/dialogBg_Material">
 
+            <TextView
+                android:id="@+id/termswarning_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginTop="8dp"
+                android:text="By accepting this bundle you are agreeing to our" />
+
             <RelativeLayout
                 android:id="@+id/request_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_below="@+id/termswarning_textview"
                 android:layout_marginTop="16dp"
                 android:background="@color/dialogBg_Material"
                 android:paddingLeft="@dimen/dialogGutter"

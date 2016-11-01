@@ -2,6 +2,9 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
+import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,6 +100,8 @@ public class AcceptBundleDialog extends SimpleDialog {
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
         _expirationButton.setOnClickListener(_expiration_okClick);
+
+        _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
     @Override
@@ -120,20 +125,29 @@ public class AcceptBundleDialog extends SimpleDialog {
 
     private void populateUi() {
         switch (_type) {
-            case TYPE_ACCEPT:
+            case TYPE_ACCEPT: {
                 _titleTextView.setText("Accept Bundle");
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you accept this bundle you are accepting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(false);
-                _termsWarningTextView.setText("By accepting this bundle you are agreeing to our");
                 _okButton.setText(R.string.btn_accept);
+
+                SpannableString spanned = new SpannableString("By accepting this bundle you are agreeing to our Work Order Terms and Conditions");
+                spanned.setSpan(_testClickableSpan, 49, 80, spanned.getSpanFlags(_testClickableSpan));
+                _termsWarningTextView.setText(spanned);
+                _termsWarningTextView.setVisibility(View.VISIBLE);
+
                 break;
-            case TYPE_REQUEST:
+            }
+            case TYPE_REQUEST: {
                 _titleTextView.setText("Request Bundle");
                 _bodyTextView.setText("This is a bundle of " + _bundleSize + " work orders. If you request this bundle you are requesting all " + _bundleSize + " work orders.");
                 setExpirationVisibility(true);
-                _termsWarningTextView.setText("By requesting this bundle you are agreeing to our");
                 _okButton.setText(R.string.btn_request);
 
+                SpannableString spanned = new SpannableString("By requesting this bundle you are agreeing to our Work Order Terms and Conditions");
+                spanned.setSpan(_testClickableSpan, 50, 81, spanned.getSpanFlags(_testClickableSpan));
+                _termsWarningTextView.setText(spanned);
+                _termsWarningTextView.setVisibility(View.VISIBLE);
 
                 if (_expiration > 0) {
                     _expirationButton.setText(misc.convertMsToHuman(_expiration));
@@ -141,6 +155,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                     _expirationButton.setText("NEVER");
                 }
                 break;
+            }
         }
     }
 
@@ -162,6 +177,14 @@ public class AcceptBundleDialog extends SimpleDialog {
         _dividerView.setVisibility(visible ? View.VISIBLE : View.GONE);
         _expiresTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
+
+    private final ClickableSpan _testClickableSpan = new ClickableSpan() {
+        @Override
+        public void onClick(View widget) {
+            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
+                    R.string.dialog_terms_body, R.string.btn_ok, true);
+        }
+    };
 
     private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
         @Override
