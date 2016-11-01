@@ -64,7 +64,6 @@ public class DialogManager extends FrameLayout implements Constants {
             Bundle[] bundles = new Bundle[_dialogStack.size()];
             for (int i = 0; i < _dialogStack.size(); i++) {
                 bundles[_dialogStack.size() - i - 1] = _dialogStack.get(i).saveState();
-                _dialogStack.get(i).dialog.onRemoved();
             }
             savedInstance.putParcelableArray("dialogs", bundles);
         }
@@ -147,8 +146,8 @@ public class DialogManager extends FrameLayout implements Constants {
 
         // find the top view
         if (_dialogStack.size() > 0) {
-            DialogHolder dh = _dialogStack.get(0);
-            dh.dialog.show(dh.params, false);
+            //DialogHolder dh = _dialogStack.get(0);
+            //dh.dialog.show(dh.params, false);
         }
     }
 
@@ -169,14 +168,20 @@ public class DialogManager extends FrameLayout implements Constants {
         return false;
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
+    public void onResume() {
+        Log.v(TAG, "onResume");
         if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
         _dialogReceiver = new Server(_dialogReceiver_listener);
         _dialogReceiver.connect(ContextProvider.get());
+    }
+
+    public void onPause() {
+        Log.v(TAG, "onPause");
+        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+            _dialogReceiver.disconnect(ContextProvider.get());
+        }
     }
 
     private DialogHolder makeDialogHolder(String className, ClassLoader classLoader) {

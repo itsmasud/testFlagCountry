@@ -359,6 +359,11 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
+        }
+
+        @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             Log.v(TAG, "_activityResultClient_listener.onActivityResult");
             try {

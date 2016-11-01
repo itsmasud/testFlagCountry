@@ -173,6 +173,8 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     public static abstract class ResultListener extends TopicClient.Listener {
         private static final String TAG = "ActivityResultClient.ResultListener";
 
+        public abstract ActivityResultClient getClient();
+
         @Override
         public void onEvent(String topicId, Parcelable payload) {
             if (topicId.startsWith(TOPIC_ID_ON_ACTIVITY_RESULT)) {
@@ -181,6 +183,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         }
 
         private void preOnActivityResult(Bundle bundle) {
+            getClient().clearOnActivityResult(bundle.getInt(PARAM_REQUEST_CODE));
             onActivityResult(
                     bundle.getInt(PARAM_REQUEST_CODE),
                     bundle.getInt(PARAM_RESULT_CODE),
