@@ -3,6 +3,7 @@ package com.fieldnation.rpc.server;
 import android.content.Context;
 import android.net.Uri;
 
+import com.fieldnation.BuildConfig;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.fnanalytics.Timing;
 import com.fieldnation.fnanalytics.Tracker;
@@ -100,6 +101,8 @@ public class HttpJson {
             conn.setUseCaches(false);
             conn.setRequestProperty("Pragma", "no-cache");
             conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
+            conn.setRequestProperty("X-App-Platform", "Android");
 
             if (headers != null) {
                 Iterator<String> e = headers.keys();
