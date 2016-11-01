@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        style="?attr/fnToolbarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:theme="@style/FieldNation.Material.ToolBar" />
+
+    <ScrollView
+        style="@style/Dialog.v3"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/toolbar"
+        android:paddingBottom="@dimen/dialogActionBarPadding">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/dialogBg_Material">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="16dp"
+                android:visibility="visible">
+
+                <TextView
+                    android:id="@+id/startDate_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/tv_date" />
+
+                <Button
+                    android:id="@+id/startDate_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/startDate_textview"
+                    android:text="@string/placeholder_date_long" />
+
+                <View
+                    android:id="@+id/startDate_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/startDate_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
+                <TextView
+                    android:id="@+id/startTime_textview"
+                    style="@style/Text_Caption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/startDate_divider"
+                    android:layout_marginLeft="4dp"
+                    android:text="@string/tv_start_time" />
+
+                <Button
+                    android:id="@+id/startTime_button"
+                    style="@style/SpinnerButton"
+                    android:layout_below="@+id/startTime_textview"
+                    android:text="@string/placeholder_time_long" />
+
+                <View
+                    android:id="@+id/startTime_divider"
+                    style="@style/DividerSpinnerFull"
+                    android:layout_below="@+id/startTime_button"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginRight="4dp"
+                    android:background="@color/fn_material_spinner_bottom_line" />
+
+
+                <RelativeLayout
+                    android:id="@+id/deviceNumber_layout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_below="@+id/startTime_divider">
+
+                    <TextView
+                        android:id="@+id/deviceNumber_textview"
+                        style="@style/Text_Caption"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="4dp"
+                        android:text="@string/number_of_device_completed" />
+
+                    <com.fieldnation.ui.HintSpinner
+                        android:id="@+id/spinner"
+                        style="@style/Widget.AppCompat.Spinner.DropDown"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/deviceNumber_textview"
+                        android:layout_marginBottom="5dp"
+                        android:hint="@string/spinner_hint_please_select"
+                        android:visibility="visible" />
+
+                    <View
+                        android:id="@+id/spinner_divider"
+                        style="@style/DividerSpinnerFull"
+                        android:layout_below="@+id/spinner"
+                        android:layout_marginBottom="8dp"
+                        android:layout_marginLeft="4dp"
+                        android:layout_marginRight="4dp"
+                        android:background="@color/fn_material_spinner_bottom_line" />
+
+                </RelativeLayout>
+            </RelativeLayout>
+        </RelativeLayout>
+    </ScrollView>
+</RelativeLayout>

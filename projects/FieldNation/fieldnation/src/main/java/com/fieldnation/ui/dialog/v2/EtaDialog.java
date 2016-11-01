@@ -512,8 +512,19 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart = test;
                 populateUi();
             } else {
+                // need to check.. if this is business hours, and is within the last day + 1, then clear start time
                 ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
-                // TODO, pop the dialog again?
+
+                if (_schedule.getExact() == null && _schedule.getRange() != null && _schedule.getRange().getType() == Range.Type.BUSINESS) {
+                    if (passesMidnight(_schedule)) {
+                        test.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                        if (isValidEta(test)) {
+                            _etaStart = test;
+                            populateUi();
+                            _etaStartTimeButton.setText("");
+                        }
+                    }
+                }
             }
         }
     };
@@ -673,8 +684,7 @@ public class EtaDialog extends FullScreenDialog {
     private static void onConfirmEta(long workOrderId, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
         //set loading mode
         try {
-            WorkorderClient.actionConfirmAssignment(App.get(),
-                    workOrderId, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
+            WorkorderClient.actionConfirmAssignment(App.get(), workOrderId, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

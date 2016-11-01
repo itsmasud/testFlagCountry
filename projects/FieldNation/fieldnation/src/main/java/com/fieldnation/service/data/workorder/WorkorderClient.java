@@ -489,32 +489,39 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-******************************************-*/
     /*-             workorder checkin            -*/
     /*-******************************************-*/
-    public static void actionCheckin(Context context, long workorderId) {
-        WorkorderTransactionBuilder.actionCheckin(context, workorderId);
+    public static void actionCheckin(Context context, long workorderId, String dateTime) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId, dateTime);
     }
 
-    public static void actionCheckin(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location);
+    public static void actionCheckin(Context context, long workorderId, String dateTime, Location location) {
+        WorkorderTransactionBuilder.actionCheckin(context, workorderId, location, dateTime);
     }
 
     /*-*******************************************-*/
     /*-             workorder checkout            -*/
     /*-*******************************************-*/
-    public static void actionCheckout(Context context, long workorderId) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId);
+
+    public static void actionCheckout(Context context, long workorderId, String dateTime) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime);
     }
 
-    public static void actionCheckout(Context context, long workorderId, Location location) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, location);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, location);
     }
 
-    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, deviceCount);
     }
 
-    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId, deviceCount, location);
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId,dateTime, deviceCount, location);
     }
+
+
+
+
+
+
 
     /*-*****************************************-*/
     /*-             workorder bundle            -*/
@@ -673,6 +680,14 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         return register(topicId);
     }
 
+    public boolean subDeliverableProgress(long workorderId, long uploadSlotId) {
+        String topicId = TOPIC_ID_UPLOAD_DELIVERABLE_PROGRESS;
+
+        topicId += "/" + workorderId + "/" + uploadSlotId;
+
+        return register(topicId);
+    }
+
     public static void deleteDeliverable(Context context, long workorderId, long workorderUploadId) {
         WorkorderTransactionBuilder.deleteDeliverable(context, workorderId, workorderUploadId);
     }
@@ -742,10 +757,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preListTasks((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_ACTION_COMPLETE)) {
                 preAction((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE_PROGRESS)) {
+                preUploadDeliverableProgress((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
                 preUploadDeliverable((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
-                onDeliveraleCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
+                onDeliverableCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
             } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
                 try {
                     onDeliverableCacheEnd(
@@ -757,10 +774,24 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
             }
         }
 
-        public void onDeliveraleCacheStart(Uri uri) {
+        public void onDeliverableCacheStart(Uri uri) {
         }
 
         public void onDeliverableCacheEnd(Uri uri, String filename) {
+        }
+
+        private void preUploadDeliverableProgress(Bundle payload) {
+            onUploadDeliverableProgress(
+                    payload.getLong(PARAM_WORKORDER_ID),
+                    payload.getLong(PARAM_UPLOAD_SLOT_ID),
+                    payload.getString(PARAM_FILE_NAME),
+                    payload.getLong(PARAM_POS),
+                    payload.getLong(PARAM_SIZE),
+                    payload.getLong(PARAM_TIME));
+        }
+
+        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
+
         }
 
         private void preUploadDeliverable(Bundle payload) {

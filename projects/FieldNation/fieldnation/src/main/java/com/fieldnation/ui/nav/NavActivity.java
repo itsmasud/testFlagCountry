@@ -89,6 +89,11 @@ public class NavActivity extends AuthSimpleActivity {
         if (_currentSearch == null) {
             _currentSearch = SavedSearchList.defaults[0];
         }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
         _recyclerView.startSearch(_currentSearch);
         NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
@@ -205,7 +210,6 @@ public class NavActivity extends AuthSimpleActivity {
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
-        // misc.printStackTrace("startNew");
         Intent intent = new Intent(context, NavActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

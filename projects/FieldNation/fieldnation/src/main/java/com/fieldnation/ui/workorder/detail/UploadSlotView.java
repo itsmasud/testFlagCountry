@@ -24,6 +24,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -40,7 +41,8 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
     // Data
     private Workorder _workorder;
     private UploadSlot _slot;
-    private final Set<String> _uploadingFiles = new HashSet<>();
+    private final HashSet<String> _uploadingFiles = new HashSet<>();
+    private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
     private UploadedDocumentView.Listener _docListener;
     private long _profileId;
     private WorkorderClient _workorderClient;
@@ -128,69 +130,48 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
             if (_docsList.getChildCount() == 0) {
                 _loadingProgressBar.setVisibility(VISIBLE);
-                _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
-                    private final List<Object> _docs = files;
-                    private final List<UploadedDocumentView> _views = new LinkedList<>();
-
-                    @Override
-                    public void next(int i) throws Exception {
-                        UploadedDocumentView v = new UploadedDocumentView(getContext());
-                        if (_docs.get(i) instanceof UploadedDocument) {
-                            UploadedDocument doc = (UploadedDocument) _docs.get(i);
-                            v.setListener(_docListener);
-                            v.setData(_workorder, _profileId, doc);
-                        } else {
-                            v.setUploading((String) (_uploadingFiles.toArray()[i]));
-                            v.setListener(null);
-                        }
-                        _views.add(v);
-                    }
-
-                    @Override
-                    public void finish(int count) throws Exception {
-                        _loadingProgressBar.setVisibility(GONE);
-                        _docsList.removeAllViews();
-                        for (UploadedDocumentView v : _views) {
-                            _docsList.addView(v);
-                        }
-                    }
-                };
-                post(_docsRunnable);
-            } else {
-                _docsRunnable = new ForLoopRunnable(files.size(), new Handler()) {
-                    private final List<Object> _docs = files;
-                    private final List<UploadedDocumentView> _views = new LinkedList<>();
-
-                    @Override
-                    public void next(int i) throws Exception {
-                        UploadedDocumentView v = null;
-                        if (i < _docsList.getChildCount()) {
-                            v = (UploadedDocumentView) _docsList.getChildAt(i);
-                        } else {
-                            v = new UploadedDocumentView(getContext());
-                            //_docsList.addView(v);
-                        }
-                        if (_docs.get(i) instanceof UploadedDocument) {
-                            UploadedDocument doc = (UploadedDocument) _docs.get(i);
-                            v.setListener(_docListener);
-                            v.setData(_workorder, _profileId, doc);
-                        } else {
-                            v.setUploading((String) (_uploadingFiles.toArray()[i]));
-                            v.setListener(null);
-                        }
-                        _views.add(v);
-                    }
-
-                    @Override
-                    public void finish(int count) throws Exception {
-                        _docsList.removeAllViews();
-                        for (UploadedDocumentView v : _views) {
-                            _docsList.addView(v);
-                        }
-                    }
-                };
-                post(_docsRunnable);
             }
+            _docsRunnable = new ForLoopRunnable(files.size(), new Handler(), 50) {
+                private final List<Object> _docs = files;
+                private final List<UploadedDocumentView> _views = new LinkedList<>();
+                private final String[] uploadingFileNames = _uploadingFiles.toArray(new String[_uploadingFiles.size()]);
+
+                @Override
+                public void next(int i) throws Exception {
+                    UploadedDocumentView v = null;
+                    if (i < _docsList.getChildCount()) {
+                        v = (UploadedDocumentView) _docsList.getChildAt(i);
+                    } else {
+                        v = new UploadedDocumentView(getContext());
+                        //_docsList.addView(v);
+                    }
+                    if (_docs.get(i) instanceof UploadedDocument) {
+                        UploadedDocument doc = (UploadedDocument) _docs.get(i);
+                        v.setListener(_docListener);
+                        v.setData(_workorder, _profileId, doc);
+                    } else {
+                        v.setUploading(uploadingFileNames[i]);
+                        v.setListener(null);
+                        if (_uploadingProgress.containsKey(uploadingFileNames[i])) {
+                            v.setProgress(_uploadingProgress.get(uploadingFileNames[i]));
+                        } else {
+                            v.setProgress(null);
+                        }
+                    }
+                    _views.add(v);
+                }
+
+                @Override
+                public void finish(int count) throws Exception {
+                    _loadingProgressBar.setVisibility(GONE);
+                    _docsList.removeAllViews();
+                    for (UploadedDocumentView v : _views) {
+                        _docsList.addView(v);
+                    }
+                }
+            };
+            post(_docsRunnable);
+            //}
         } else {
             _docsList.removeAllViews();
         }
@@ -201,12 +182,6 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
         } else {
             _noDocsTextView.setVisibility(GONE);
         }
-
-//        if (files.size() == 0 && !_workorder.canChangeDeliverables()) {
-//            setVisibility(View.GONE);
-//        } else {
-//            setVisibility(View.VISIBLE);
-//        }
     }
 
     private void populateUi() {
@@ -236,6 +211,7 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
         Log.v(TAG, "subscribe, " + _workorder.getWorkorderId() + ", " + _slot.getSlotId());
         _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _slot.getSlotId());
+        _workorderClient.subDeliverableProgress(_workorder.getWorkorderId(), _slot.getSlotId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -247,15 +223,28 @@ public class UploadSlotView extends RelativeLayout implements PhotoReceiver {
 
         @Override
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed);
+            Log.v(TAG, "onUploadDeliverable(" + workorderId + "," + slotId + "," + filename + "," + isComplete + "," + failed + ")");
             if (slotId == _slot.getSlotId()) {
                 if (failed || isComplete) {
                     _uploadingFiles.remove(filename);
+                    _uploadingProgress.remove(filename);
                 } else {
                     _uploadingFiles.add(filename);
                     populateUi();
                 }
             }
+        }
+
+        @Override
+        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
+//            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + pos + "," + size + "," + time + ")");
+
+            Double percent = pos * 1.0 / size;
+
+            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
+
+            _uploadingProgress.put(filename, (int) (pos * 100 / size));
+            populateUi();
         }
     };
 }
