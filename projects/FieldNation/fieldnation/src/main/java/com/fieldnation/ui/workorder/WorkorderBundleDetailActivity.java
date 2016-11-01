@@ -148,6 +148,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onConnected() {
             _workorderClient.subBundle();
+            _workorderClient.subActions();
         }
 
         @Override
@@ -175,6 +176,11 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
             _listview.setAdapter(_adapter);
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            WorkorderClient.getBundle(App.get(), _bundleId);
         }
     };
 
