@@ -91,6 +91,20 @@ public class Action {
     }
 
     public enum ActionType {
+//        MESSAGE("message"),
+//        CALL("call"),
+//        REPORT_PROBLEM("report_a_problem"),
+//        MAP("map"),
+//        MARK_READY_TO_GO("mark_ready_to_go"),
+//        CONFIRM("confirm"),
+//        CHECK_IN("check_in"),
+//        CHECK_OUT("check_out"),
+//        CHECK_IN_AGAIN("check_in_again"),
+//        MARK_COMPLETE("mark_complete"),
+//        ACKNOWLEDGE_HOLD("acknowledge_hold"),
+//        REVIEW_UPDATE("review_update"),
+//        REQUEST("request"),
+
         ACCEPT("accept"),
         CONFIRM("confirm"),
         ON_MY_WAY("on_my_way"),
