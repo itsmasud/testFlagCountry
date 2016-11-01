@@ -142,6 +142,7 @@
     <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
     <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
     <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
+    <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -870,6 +871,8 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="title_check_in">Check In</string>
+    <string name="title_check_out">Check Out</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>
