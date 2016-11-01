@@ -57,8 +57,7 @@ public class WorkOrderCard extends RelativeLayout {
     private TextView _locationTextView;
     private TextView _distanceTextView;
     private IconFontButton _contactButton;
-    private IconFontButton _optionalButton;
-    private IconFontButton _reportProblemButton;
+    private IconFontButton[] _secondaryButtons = new IconFontButton[2];
     private IconFontButton _locationButton;
     private Button _primaryButton;
 
@@ -101,8 +100,8 @@ public class WorkOrderCard extends RelativeLayout {
 
         _contactButton = (IconFontButton) findViewById(R.id.contact_button);
 
-        _optionalButton = (IconFontButton) findViewById(R.id.secondary1_button);
-        _reportProblemButton = (IconFontButton) findViewById(R.id.reportproblem_button);
+        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
+        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
         _locationButton = (IconFontButton) findViewById(R.id.location_button);
         _locationButton.setOnClickListener(_locationButton_onClick);
         _primaryButton = (Button) findViewById(R.id.primary_button);
@@ -325,26 +324,11 @@ public class WorkOrderCard extends RelativeLayout {
             _contactButton.setText(R.string.icon_phone_solid);
             _contactButton.setOnClickListener(_phone_onClick);
         }
-        _reportProblemButton.setVisibility(VISIBLE);
-        _reportProblemButton.setText(R.string.icon_problem_solid);
-        _reportProblemButton.setOnClickListener(_reportProblem_onClick);
-
-        _optionalButton.setVisibility(GONE);
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            for (int i = 0; i < _workOrder.getSecondaryActions().length; i++) {
-                if (_workOrder.getSecondaryActions()[i].getType() == Action.ActionType.RUNNING_LATE) {
-                    populateSecondaryButton(_optionalButton, _workOrder.getSecondaryActions()[i]);
-                    break;
-                }
+            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
+                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
             }
         }
-//        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-//            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
-//                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
-//            }
-//        }
-        //populateSecondaryButton(_secondaryButtons[1], new Action(Action.ActionType.RUNNING_LATE));
-        //populateSecondaryButton(_secondaryButtons[2], new Action(Action.ActionType.REPORT_PROBLEM));
     }
 
     // other icons
@@ -361,13 +345,11 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setText(R.string.icon_time_issue_solid);
                 button.setOnClickListener(_runningLate_onClick);
                 break;
-/*
             case REPORT_PROBLEM:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
                 break;
-*/
             default:
                 button.setVisibility(GONE);
                 break;

@@ -148,7 +148,7 @@
         android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
-        android:id="@+id/reportproblem_button"
+        android:id="@+id/secondary2_button"
         style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
         android:layout_toRightOf="@+id/secondary1_button"
@@ -158,7 +158,7 @@
         android:id="@+id/location_button"
         style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_toRightOf="@+id/reportproblem_button"
+        android:layout_toRightOf="@+id/secondary2_button"
         android:text="@string/icon_map_location_solid" />
 
     <Button
