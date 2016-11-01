@@ -13,9 +13,6 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.accounting.Workorder;
-import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -50,7 +47,6 @@ public class AcceptBundleDialog extends SimpleDialog {
     private Button _expirationButton;
     private View _dividerView;
     private TextView _termsWarningTextView;
-    private Button _termsButton;
     private Button _viewBundleButton;
     private Button _cancelButton;
     private Button _okButton;
@@ -80,7 +76,6 @@ public class AcceptBundleDialog extends SimpleDialog {
         _dividerView = v.findViewById(R.id.divider);
         _expirationButton = (Button) v.findViewById(R.id.expiration_button);
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
-        _termsButton = (Button) v.findViewById(R.id.terms_button);
         _viewBundleButton = (Button) v.findViewById(R.id.viewbundle_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _okButton = (Button) v.findViewById(R.id.ok_button);
@@ -95,7 +90,6 @@ public class AcceptBundleDialog extends SimpleDialog {
 
         super.onAdded();
 
-        _termsButton.setOnClickListener(_terms_onClick);
         _viewBundleButton.setOnClickListener(_viewBundle_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
@@ -132,7 +126,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                 _okButton.setText(R.string.btn_accept);
 
                 SpannableString spanned = new SpannableString("By accepting this bundle you are agreeing to our Work Order Terms and Conditions");
-                spanned.setSpan(_testClickableSpan, 49, 80, spanned.getSpanFlags(_testClickableSpan));
+                spanned.setSpan(_terms_onClick, 49, 80, spanned.getSpanFlags(_terms_onClick));
                 _termsWarningTextView.setText(spanned);
                 _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -145,7 +139,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                 _okButton.setText(R.string.btn_request);
 
                 SpannableString spanned = new SpannableString("By requesting this bundle you are agreeing to our Work Order Terms and Conditions");
-                spanned.setSpan(_testClickableSpan, 50, 81, spanned.getSpanFlags(_testClickableSpan));
+                spanned.setSpan(_terms_onClick, 50, 81, spanned.getSpanFlags(_terms_onClick));
                 _termsWarningTextView.setText(spanned);
                 _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -178,17 +172,9 @@ public class AcceptBundleDialog extends SimpleDialog {
         _expiresTextView.setVisibility(visible ? View.VISIBLE : View.GONE);
     }
 
-    private final ClickableSpan _testClickableSpan = new ClickableSpan() {
+    private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
-                    R.string.dialog_terms_body, R.string.btn_ok, true);
-        }
-    };
-
-    private final View.OnClickListener _terms_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
             OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }

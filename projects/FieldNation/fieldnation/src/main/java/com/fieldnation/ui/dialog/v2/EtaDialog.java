@@ -4,9 +4,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.internal.view.menu.ActionMenuItemView;
 import android.support.v7.widget.Toolbar;
-import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.Spanned;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
 import android.view.LayoutInflater;
@@ -274,7 +272,7 @@ public class EtaDialog extends FullScreenDialog {
             }
 
             SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
-            spanned.setSpan(_testClickableSpan, 54, 85, spanned.getSpanFlags(_testClickableSpan));
+            spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
 
@@ -308,7 +306,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setVisibility(View.GONE);
 
             SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
-            spanned.setSpan(_testClickableSpan, 53, 84, spanned.getSpanFlags(_testClickableSpan));
+            spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));
             _termsWarningTextView.setText(spanned);
             _termsWarningTextView.setVisibility(View.VISIBLE);
         }
@@ -508,7 +506,7 @@ public class EtaDialog extends FullScreenDialog {
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
-    private final ClickableSpan _testClickableSpan = new ClickableSpan() {
+    private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
             OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
