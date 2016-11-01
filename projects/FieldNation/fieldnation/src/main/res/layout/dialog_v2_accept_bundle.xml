@@ -81,7 +81,8 @@
         android:layout_below="@+id/terms_button"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
-        android:text="VIEW BUNDLE" />
+        android:text="VIEW BUNDLE"
+        android:visibility="gone" />
 
     <Button
         android:id="@+id/cancel_button"
