@@ -56,9 +56,7 @@ public class WorkOrderCard extends RelativeLayout {
     private TextView _time2TextView;
     private TextView _locationTextView;
     private TextView _distanceTextView;
-    private IconFontButton _contactButton;
-    private IconFontButton[] _secondaryButtons = new IconFontButton[2];
-    private IconFontButton _locationButton;
+    private IconFontButton[] _secondaryButtons = new IconFontButton[4];
     private Button _primaryButton;
 
     // Data
@@ -98,12 +96,12 @@ public class WorkOrderCard extends RelativeLayout {
         _locationTextView = (TextView) findViewById(R.id.location_textview);
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-        _contactButton = (IconFontButton) findViewById(R.id.contact_button);
 
         _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
         _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
-        _locationButton = (IconFontButton) findViewById(R.id.location_button);
-        _locationButton.setOnClickListener(_locationButton_onClick);
+        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
+        _secondaryButtons[3] = (IconFontButton) findViewById(R.id.secondary4_button);
+
         _primaryButton = (Button) findViewById(R.id.primary_button);
 
         setOnClickListener(_this_onClick);
@@ -219,12 +217,10 @@ public class WorkOrderCard extends RelativeLayout {
         if (location == null) {
             _locationTextView.setText(R.string.remote_work);
             _distanceTextView.setVisibility(GONE);
-            _locationButton.setVisibility(GONE);
         } else {
             if (location.getGeo() == null || _location == null) {
                 _locationTextView.setText(location.getCityState());
                 _distanceTextView.setVisibility(GONE);
-                _locationButton.setVisibility(VISIBLE);
             } else {
                 try {
                     Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
@@ -232,11 +228,9 @@ public class WorkOrderCard extends RelativeLayout {
                     _locationTextView.setText(location.getCityState());
                     _distanceTextView.setVisibility(VISIBLE);
                     _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi");
-                    _locationButton.setVisibility(VISIBLE);
                 } catch (Exception ex) {
                     _locationTextView.setText(location.getCityState());
                     _distanceTextView.setVisibility(GONE);
-                    _locationButton.setVisibility(VISIBLE);
                 }
             }
         }
@@ -317,18 +311,78 @@ public class WorkOrderCard extends RelativeLayout {
                     _primaryButton.setOnClickListener(_reportProblem_onClick);
                     _primaryButton.setText(R.string.btn_report_problem);
                     break;
+/*
+                case MARK_COMPLETE:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_complete_onClick);
+                    _primaryButton.setText("COMPLETE");
+                    break;
+*/
+/*
+                case MARK_INCOMPLETE:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_incomplete_onClick);
+                    _primaryButton.setText("INCOMPLETE");
+                    break;
+*/
+/*
+                case CHECK_IN:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_checkIn_onClick);
+                    _primaryButton.setText("CHECK IN");
+                    break;
+*/
+/*
+                case CHECK_OUT:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_checkOut_onClick);
+                    _primaryButton.setText("CHECK OUT");
+                    break;
+*/
+/*
+                case REQUEST:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_request_onClick);
+                    _primaryButton.setText("REQUEST");
+                    break;
+*/
+/*
+                case WITHDRAW:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_withdraw_onClick);
+                    _primaryButton.setText("WITHDRAW");
+                    break;
+*/
+/*
+                case VIEW_PAYMENT:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_viewPayment_onClick);
+                    _primaryButton.setText("VIEW PAYMENT");
+                    break;
+*/
+/*
+                case VIEW_BUNDLE:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_viewBundle_onClick);
+                    _primaryButton.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+                    break;
+*/
+/*
+                case ACK_HOLD:
+                    _primaryButton.setVisibility(VISIBLE);
+                    _primaryButton.setOnClickListener(_ackHold_onClick);
+                    _primaryButton.setText("ACKNOWLEDGE HOLD");
+                    break;
+*/
                 default:
                     break;
             }
         }
 
-        if (_workOrder.getContacts() == null || _workOrder.getContacts().length == 0) {
-            _contactButton.setText(R.string.icon_chat_solid);
-            _contactButton.setOnClickListener(_messageBuyer_onClick);
-        } else {
-            _contactButton.setText(R.string.icon_phone_solid);
-            _contactButton.setOnClickListener(_phone_onClick);
+        for (Button button : _secondaryButtons) {
+            button.setVisibility(GONE);
         }
+
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
             for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
                 populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
@@ -345,6 +399,13 @@ public class WorkOrderCard extends RelativeLayout {
     // time-issue-solid
     private void populateSecondaryButton(IconFontButton button, Action action) {
         switch (action.getType()) {
+/*
+            case DECLINE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_circle_x_solid);
+                button.setOnClickListener(_decline_onClick);
+                break;
+*/
             case RUNNING_LATE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_time_issue_solid);
@@ -354,6 +415,21 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_problem_solid);
                 button.setOnClickListener(_reportProblem_onClick);
+                break;
+            case PHONE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone_solid);
+                button.setOnClickListener(_phone_onClick);
+                break;
+            case MESSAGE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_chat_solid);
+                button.setOnClickListener(_message_onClick);
+                break;
+            case MAP:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_map_location_solid);
+                button.setOnClickListener(_map_onClick);
                 break;
             default:
                 button.setVisibility(GONE);
@@ -420,7 +496,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _messageBuyer_onClick = new OnClickListener() {
+    private final View.OnClickListener _message_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
             WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
@@ -434,7 +510,7 @@ public class WorkOrderCard extends RelativeLayout {
         }
     };
 
-    private final View.OnClickListener _locationButton_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _map_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             if (_workOrder != null) {

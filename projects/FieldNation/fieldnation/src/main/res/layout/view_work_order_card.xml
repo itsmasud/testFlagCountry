@@ -135,16 +135,9 @@
         android:text="19 mi" />
 
     <com.fieldnation.ui.IconFontButton
-        android:id="@+id/contact_button"
-        style="@style/WorkOrderCard.Button.Secondary"
-        android:layout_below="@+id/location_textview"
-        android:text="@string/icon_missing" />
-
-    <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary1_button"
         style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
-        android:layout_toRightOf="@+id/contact_button"
         android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
@@ -155,10 +148,17 @@
         android:text="@string/icon_missing" />
 
     <com.fieldnation.ui.IconFontButton
-        android:id="@+id/location_button"
+        android:id="@+id/secondary3_button"
         style="@style/WorkOrderCard.Button.Secondary"
         android:layout_below="@+id/location_textview"
         android:layout_toRightOf="@+id/secondary2_button"
+        android:text="@string/icon_missing" />
+
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/secondary4_button"
+        style="@style/WorkOrderCard.Button.Secondary"
+        android:layout_below="@+id/location_textview"
+        android:layout_toRightOf="@+id/secondary3_button"
         android:text="@string/icon_map_location_solid" />
 
     <Button
