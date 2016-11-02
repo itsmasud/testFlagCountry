@@ -336,7 +336,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
 
-    public static void actionCheckout(Context context, long workorderId, String dateTime ) {
+    public static void actionCheckout(Context context, long workorderId, String dateTime) {
         context.startService(action(
                 context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
@@ -380,14 +380,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
-
-
-
-
-
-
-
-
 
 
     // returns the full work order details

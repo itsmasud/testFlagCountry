@@ -91,31 +91,31 @@ public class Action {
     }
 
     public enum ActionType {
-        PHONE("phone"),
-        RUNNING_LATE("running_late"),
-        REPORT_PROBLEM("report_problem"),
-        MAP("map"),
-        CONFIRM("confirm"),
-        CHECK_IN("check_in"),
-        ON_MY_WAY("on_my_way"),
-        MESSAGE("message"),
-        REVIEW_UPDATE("review_update"),
-        MARK_READY_TO_GO("mark_ready_to_go"),
-        CHECK_OUT("check_out"),
-        CHECK_IN_AGAIN("check_in_again"),
-        MARK_COMPLETE("mark_complete"),
-        ACKNOWLEDGE_HOLD("acknowledge_hold"),
-        NOT_INTERESTED("not_interested"),
         ACCEPT("accept"),
-        VIEW_BUNDLE("view_bundle"),
-        REQUEST("request"),
-        WITHDRAW("withdraw"),
-        WITHDRAW_COUNTER_OFFER("withdraw_counter_offer"),
+        ACK_HOLD("ack_hold"),
+        ACK_UPDATE("ack_update"),
+        CHECK_IN("check_in"),
+        CHECK_OUT("check_out"),
+        CONFIRM("confirm"),
+        DECLINE("decline"),
+        MAP("map"),
+        MARK_COMPLETE("mark_complete"),
         MARK_INCOMPLETE("mark_incomplete"),
+        MESSAGE("message"),
+        ON_MY_WAY("on_my_way"),
+        PHONE("phone"),
+        READY("ready"), // NCNS ready confirm
+        READY_TO_GO("ready_to_go"), // normal ready to go system
+        REPORT_PROBLEM("report_problem"),
+        REQUEST("request"),
+
+        RUNNING_LATE("running_late"),
+        VIEW("view"),
+        VIEW_BUNDLE("view_bundle"),
         VIEW_PAYMENT("view_payment"),
+        WITHDRAW("withdraw"),
 
         // Push notifications
-        VIEW("view"),
         NOT_SUPPORTED(null);
 
 
