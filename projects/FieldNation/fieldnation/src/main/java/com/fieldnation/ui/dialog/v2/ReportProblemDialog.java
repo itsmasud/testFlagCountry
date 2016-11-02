@@ -156,7 +156,7 @@ public class ReportProblemDialog extends SimpleDialog {
             _secondaryPosition = savedState.getInt(STATE_SECONDARY_POS);
 
         if (savedState.containsKey(STATE_WORKORDER))
-            _workorder = (Workorder) savedState.getParcelable(STATE_WORKORDER);
+            _workorder = savedState.getParcelable(STATE_WORKORDER);
 
         if (savedState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = ReportProblemType.values()[savedState.getInt(STATE_SELECTED_PROBLEM)];

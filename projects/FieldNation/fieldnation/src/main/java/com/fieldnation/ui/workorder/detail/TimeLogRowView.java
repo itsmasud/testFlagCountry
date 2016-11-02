@@ -7,10 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 

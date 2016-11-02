@@ -112,6 +112,6 @@ public class Range implements Parcelable {
     }
 
     public enum Type {
-        BUSINESS, RANGE;
+        BUSINESS, RANGE
     }
 }

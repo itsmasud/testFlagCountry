@@ -14,8 +14,8 @@ import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 

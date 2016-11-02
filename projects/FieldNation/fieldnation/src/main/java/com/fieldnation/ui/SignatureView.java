@@ -12,14 +12,14 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.caverock.androidsvg.SVG;
-import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.shortstraw.Point;
 import com.fieldnation.shortstraw.Shape;
-import com.fieldnation.fntools.Stopwatch;
 
 import java.io.ByteArrayOutputStream;
 import java.util.LinkedList;

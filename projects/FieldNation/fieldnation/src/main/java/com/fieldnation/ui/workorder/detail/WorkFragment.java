@@ -73,7 +73,6 @@ import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.CustomFieldDialog;
 import com.fieldnation.ui.dialog.DeclineDialog;
-import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
@@ -1207,7 +1206,7 @@ public class WorkFragment extends WorkorderFragment {
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onCheckOut() {
-                startCheckOut();
+            startCheckOut();
         }
 
         @Override
@@ -1432,7 +1431,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
-            if ((long) shipment.getUserId() != App.getProfileId()) {
+            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
                 ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
                 return;
             }

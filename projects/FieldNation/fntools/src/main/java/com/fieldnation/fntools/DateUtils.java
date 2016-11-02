@@ -343,11 +343,9 @@ public class DateUtils {
         Calendar dayAfter = Calendar.getInstance();
         dayAfter.add(Calendar.DAY_OF_YEAR, 2);
 
-        if (cal1.getTimeInMillis() >= (tomorrow.getTimeInMillis() / 86400000) * 86400000
-                && cal1.getTimeInMillis() < (dayAfter.getTimeInMillis() / 86400000) * 86400000)
-            return true;
+        return cal1.getTimeInMillis() >= (tomorrow.getTimeInMillis() / 86400000) * 86400000
+                && cal1.getTimeInMillis() < (dayAfter.getTimeInMillis() / 86400000) * 86400000;
 
-        return false;
     }
 
     /**
@@ -543,10 +541,7 @@ public class DateUtils {
         if (c.get(Calendar.SECOND) > 0) {
             return true;
         }
-        if (c.get(Calendar.MILLISECOND) > 0) {
-            return true;
-        }
-        return false;
+        return c.get(Calendar.MILLISECOND) > 0;
     }
 
     /**

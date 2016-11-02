@@ -20,12 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.fntools.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";

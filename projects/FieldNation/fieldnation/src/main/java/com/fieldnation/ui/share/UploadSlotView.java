@@ -7,10 +7,10 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.UploadSlot;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.IconFontTextView;
 
 public class UploadSlotView extends RelativeLayout {
