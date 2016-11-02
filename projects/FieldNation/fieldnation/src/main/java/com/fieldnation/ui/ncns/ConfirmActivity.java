@@ -138,7 +138,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
                 Action[] actions = wo.getPrimaryActions();
                 if (actions != null) {
                     for (Action a : actions) {
-                        if (a.getType() == Action.ActionType.READY) {
+                        if (a.getType() == Action.ActionType.MARK_READY_TO_GO) {
                             _doneButton.setVisibility(View.GONE);
                             return;
                         }

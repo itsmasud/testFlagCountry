@@ -108,7 +108,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 break;
             }
 
-            case READY: {
+            case MARK_READY_TO_GO: {
                 switch (action.getObject()) {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getService(this, 0,
@@ -198,7 +198,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 case CONFIRM:
                     primaryButtonText = "Confirm";
                     break;
-                case READY:
+                case MARK_READY_TO_GO:
                     primaryButtonText = "Ready";
                     break;
             }

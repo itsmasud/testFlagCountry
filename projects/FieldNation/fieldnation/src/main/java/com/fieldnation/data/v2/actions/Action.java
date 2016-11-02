@@ -24,7 +24,7 @@ public class Action {
     }
 
     public Action(ActionType type) {
-        this.type = type.typestring;
+        this.type = type.typeString;
     }
 
     public Action(JsonObject json) {
@@ -91,46 +91,46 @@ public class Action {
     }
 
     public enum ActionType {
-//        MESSAGE("message"),
-//        CALL("call"),
-//        REPORT_PROBLEM("report_a_problem"),
-//        MAP("map"),
-//        MARK_READY_TO_GO("mark_ready_to_go"),
-//        CONFIRM("confirm"),
-//        CHECK_IN("check_in"),
-//        CHECK_OUT("check_out"),
-//        CHECK_IN_AGAIN("check_in_again"),
-//        MARK_COMPLETE("mark_complete"),
-//        ACKNOWLEDGE_HOLD("acknowledge_hold"),
-//        REVIEW_UPDATE("review_update"),
-//        REQUEST("request"),
-
-        ACCEPT("accept"),
-        CONFIRM("confirm"),
-        ON_MY_WAY("on_my_way"),
         PHONE("phone"),
         RUNNING_LATE("running_late"),
-        READY("ready"),
         REPORT_PROBLEM("report_problem"),
+        MAP("map"),
+        CONFIRM("confirm"),
+        CHECK_IN("check_in"),
+        ON_MY_WAY("on_my_way"),
+        MESSAGE("message"),
+        REVIEW_UPDATE("review_update"),
+        MARK_READY_TO_GO("mark_ready_to_go"),
+        CHECK_OUT("check_out"),
+        CHECK_IN_AGAIN("check_in_again"),
+        MARK_COMPLETE("mark_complete"),
+        ACKNOWLEDGE_HOLD("acknowledge_hold"),
+        NOT_INTERESTED("not_interested"),
+        ACCEPT("accept"),
+        VIEW_BUNDLE("view_bundle"),
+        REQUEST("request"),
+        WITHDRAW("withdraw"),
+        WITHDRAW_COUNTER_OFFER("withdraw_counter_offer"),
+        MARK_INCOMPLETE("mark_incomplete"),
+        VIEW_PAYMENT("view_payment"),
+
+        // Push notifications
         VIEW("view"),
-        UNKNOWN("unknown");
-
-        //CANCEL("cancel"),
-        //RESCHEDULE("reschedule"),
+        NOT_SUPPORTED(null);
 
 
-        private String typestring;
+        private String typeString;
 
         ActionType(String type) {
-            this.typestring = type;
+            this.typeString = type;
         }
 
         public static ActionType fromTypeString(String typeString) {
             for (int i = 0; i < values().length; i++) {
-                if (values()[i].typestring.equals(typeString))
+                if (values()[i].typeString.equals(typeString))
                     return values()[i];
             }
-            return UNKNOWN;
+            return NOT_SUPPORTED;
         }
     }
 }
