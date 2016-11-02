@@ -118,7 +118,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             _secondaryPosition = savedInstanceState.getInt(STATE_SECONDARY_POS);
 
         if (savedInstanceState.containsKey(STATE_WORKORDER))
-            _workorder = (Workorder) savedInstanceState.getParcelable(STATE_WORKORDER);
+            _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
         if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];

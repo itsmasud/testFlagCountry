@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;

@@ -8,8 +8,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.util.List;
 

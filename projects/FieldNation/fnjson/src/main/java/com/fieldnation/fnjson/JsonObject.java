@@ -480,7 +480,7 @@ public class JsonObject implements Parcelable {
             String key = e.next();
             Object value = src.get(key);
 
-            if (has(key) && overwrite || !has(key)) {
+            if (!has(key) || overwrite) {
                 if (copy) {
                     try {
                         if (value instanceof JsonObject)

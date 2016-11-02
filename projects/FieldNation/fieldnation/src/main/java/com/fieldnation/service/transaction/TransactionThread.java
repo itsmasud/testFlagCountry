@@ -176,12 +176,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
 
 
-            if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
-                notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
-                notifStart = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_START));
-                notifSuccess = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS));
-                notifFailed = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED));
-                notifRetry = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY));
+            if (trans.getNotificationId() != -1) {
+                notifId = trans.getNotificationId();
+                notifStart = trans.getNotificationStart();
+                notifSuccess = trans.getNotificationSuccess();
+                notifFailed = trans.getNotificationFailed();
+                notifRetry = trans.getNotificationRetry();
                 generateNotification(notifId, notifStart);
             }
 

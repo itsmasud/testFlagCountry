@@ -14,8 +14,8 @@ import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.ExpenseCounterOfferView;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.ExpenseCounterOfferView;
 
 /**
  * Created by Michael Carver on 6/5/2015.

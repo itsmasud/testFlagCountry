@@ -1,7 +1,6 @@
 package com.fieldnation.ui.nav;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

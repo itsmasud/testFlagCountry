@@ -3,11 +3,11 @@ package com.fieldnation.data.mapbox;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 6/22/2016.

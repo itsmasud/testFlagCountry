@@ -17,7 +17,7 @@ import java.util.WeakHashMap;
 class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 3;
+    private static final int TABLE_VER = 4;
     public static final String TABLE_NAME = "transactions";
 
     private static final WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
@@ -34,7 +34,13 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         KEY(8, "key", "text", true),
         QUEUE_TIME(9, "queue_time", "integer not null", true),
         WIFI_REQUIRED(10, "wifi_req", "integer not null", true),
-        TRACK(11, "track", "integer not null");
+        TRACK(11, "track", "integer not null"),
+
+        NOTIF_ID(12, "notif_id", "integer"),
+        NOTIF_START(13, "notif_start", "integer"),
+        NOTIF_SUCCESS(14, "notif_success", "integer"),
+        NOTIF_FAILED(15, "notif_failed", "integer"),
+        NOTIF_RETRY(16, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;
