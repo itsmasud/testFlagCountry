@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
@@ -63,7 +64,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
     private Button _startDateButton;
     private Button _startTimeButton;
-    //    private Button _deviceNumberButton;
+    private TextView _startTimeTextView;
     private View _deviceNumberLayout;
     private HintSpinner _spinner;
 
@@ -101,6 +102,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
+        _startTimeTextView = (TextView) v.findViewById(R.id.startTime_textview);
         _startDateButton = (Button) v.findViewById(R.id.startDate_button);
         _startTimeButton = (Button) v.findViewById(R.id.startTime_button);
         _spinner = (HintSpinner) v.findViewById(R.id.spinner);
@@ -193,9 +195,11 @@ public class CheckInOutDialog extends FullScreenDialog {
             return;
 
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
-            _toolbar.setTitle("Check In ");
+            _toolbar.setTitle(getView().getResources().getString(R.string.title_check_in));
+            _startTimeTextView.setText(getView().getResources().getString(R.string.start_time));
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
-            _toolbar.setTitle("Check Out ");
+            _toolbar.setTitle(getView().getResources().getString(R.string.title_check_out));
+            _startTimeTextView.setText(getView().getResources().getString(R.string.end_time));
         }
         _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
@@ -247,7 +251,7 @@ public class CheckInOutDialog extends FullScreenDialog {
             test.set(year, monthOfYear, dayOfMonth);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), "You cannot select future date and time.", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
                 _startDatePicker.show();
 
             } else {
@@ -274,7 +278,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                     test.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
 
             if (test.getTimeInMillis() > System.currentTimeMillis()) {
-                ToastClient.toast(App.get(), "You cannot select future date and time.", Toast.LENGTH_SHORT);
+                ToastClient.toast(App.get(), getView().getResources().getString(R.string.toast_future_datetime_not_allowed), Toast.LENGTH_SHORT);
                 _startTimePicker.show();
             } else {
                 _startCalendar = test;

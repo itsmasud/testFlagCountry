@@ -210,7 +210,11 @@ public class TaskRowView extends RelativeLayout {
 
             Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
 
-            setProgress((int) (pos * 100 / size));
+            int prog = (int) (pos * 100 / size);
+
+            if (_progressBar != null && prog >= _progressBar.getProgress()) {
+                setProgress(prog);
+            }
         }
     };
 
