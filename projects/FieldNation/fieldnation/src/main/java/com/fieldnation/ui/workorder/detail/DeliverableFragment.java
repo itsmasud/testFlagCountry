@@ -604,7 +604,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);

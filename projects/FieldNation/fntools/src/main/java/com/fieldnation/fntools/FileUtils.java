@@ -16,11 +16,20 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URLConnection;
 
 /**
  * Created by Michael on 3/10/2016.
  */
 public class FileUtils {
+
+    public static String guessContentTypeFromName(String url) {
+        try {
+            return URLConnection.guessContentTypeFromName(url);
+        } catch (Exception ex) {
+        }
+        return "application/octet-stream";
+    }
 
     public static void copyDirectoryTree(File sourceDir, File destDir) throws IOException {
 
