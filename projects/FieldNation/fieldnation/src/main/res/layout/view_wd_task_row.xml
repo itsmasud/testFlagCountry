@@ -41,5 +41,6 @@
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:indeterminate="true"
+        android:max="100"
         android:visibility="gone" />
 </LinearLayout>
