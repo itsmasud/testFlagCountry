@@ -90,10 +90,10 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
         intent.putExtra(PARAM_NOTIFICATION_ID, App.secureRandom.nextInt(Integer.MAX_VALUE));
 
-        intent.putExtra(PARAM_NOTIFICATION_START, start.toJson());
-        intent.putExtra(PARAM_NOTIFICATION_SUCCESS, success.toJson());
-        intent.putExtra(PARAM_NOTIFICATION_FAILED, failed.toJson());
-        intent.putExtra(PARAM_NOTIFICATION_RETRY, retry.toJson());
+        intent.putExtra(PARAM_NOTIFICATION_START, start.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_SUCCESS, success.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_FAILED, failed.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_RETRY, retry.toJson().toByteArray());
 
         return this;
     }
