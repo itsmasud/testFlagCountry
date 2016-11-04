@@ -301,9 +301,15 @@ public class EtaDialog extends FullScreenDialog {
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
-            _etaSwitch.setChecked(true);
-            _etaSwitchLabel.setVisibility(View.GONE);
-            _etaSwitch.setVisibility(View.GONE);
+            if (BuildConfig.FLAVOR.equals("NCNS")) {
+                _etaSwitch.setChecked(true);
+                _etaSwitchLabel.setVisibility(View.GONE);
+                _etaSwitch.setVisibility(View.GONE);
+            } else {
+                _expirationLayout.setVisibility(View.VISIBLE);
+                _etaSwitch.setVisibility(View.VISIBLE);
+                _etaSwitchLabel.setVisibility(View.VISIBLE);
+            }
 
             SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));
@@ -668,57 +674,52 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
 
-            if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-                onRequest(_workOrderId,
-                        _expiringDurationMilliseconds,
-                        ISO8601.fromCalendar(_etaStart),
-                        _durationMilliseconds,
-                        _noteEditText.getText().toString().trim());
-                dismiss(true);
-
-            } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
-                onConfirmEta(_workOrderId,
-                        ISO8601.fromCalendar(_etaStart),
-                        _durationMilliseconds,
-                        _noteEditText.getText().toString().trim(),
-                        true);
-
-                dismiss(true);
-            } else {
-                onConfirmEta(_workOrderId,
-                        ISO8601.fromCalendar(_etaStart),
-                        _durationMilliseconds,
-                        _noteEditText.getText().toString().trim(),
-                        false);
-
-                dismiss(true);
+            try {
+                if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
+                    if (_etaSwitch.isChecked()) {
+                        String startDate = ISO8601.fromCalendar(_etaStart);
+                        WorkorderClient.actionRequest(
+                                App.get(),
+                                _workOrderId,
+                                _expiringDurationMilliseconds,
+                                startDate,
+                                ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                _noteEditText.getText().toString().trim());
+                    } else {
+                        WorkorderClient.actionRequest(
+                                App.get(),
+                                _workOrderId,
+                                _expiringDurationMilliseconds,
+                                null, null,
+                                _noteEditText.getText().toString().trim());
+                    }
+                    dismiss(true);
+                } else {
+                    if (_etaSwitch.isChecked()) {
+                        String startDate = ISO8601.fromCalendar(_etaStart);
+                        WorkorderClient.actionConfirmAssignment(
+                                App.get(),
+                                _workOrderId,
+                                startDate,
+                                ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                _noteEditText.getText().toString().trim(),
+                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                    } else {
+                        WorkorderClient.actionConfirmAssignment(
+                                App.get(),
+                                _workOrderId,
+                                null, null,
+                                _noteEditText.getText().toString().trim(),
+                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                    }
+                    dismiss(true);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
             return true;
         }
     };
-
-    private static void onRequest(long workOrderId, long expirationMilliseconds, String startDate, long durationMilliseconds, String note) {
-        try {
-            long seconds = -1;
-            if (expirationMilliseconds > 0) {
-                seconds = expirationMilliseconds / 1000;
-            }
-
-            // request the workorder
-            WorkorderClient.actionRequest(App.get(), workOrderId, seconds, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onConfirmEta(long workOrderId, String startDate, long durationMilliseconds, String note, boolean isEditEta) {
-        //set loading mode
-        try {
-            WorkorderClient.actionConfirmAssignment(App.get(), workOrderId, startDate, ISO8601.getEndDate(startDate, durationMilliseconds), note, isEditEta);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
 
     public abstract static class Controller extends com.fieldnation.fndialog.Controller {
 

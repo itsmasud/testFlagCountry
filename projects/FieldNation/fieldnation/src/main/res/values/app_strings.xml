@@ -434,7 +434,7 @@
     <string name="inbox">Inbox</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
-    <string name="number_of_device_completed">Device Completed</string>
+    <string name="number_of_device_completed">Devices Completed</string>
     <string name="spinner_hint_please_select">Please select</string>
     <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
