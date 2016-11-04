@@ -33,6 +33,7 @@ import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -276,106 +277,14 @@ public class WorkOrderCard extends RelativeLayout {
         // Primary actions
         _primaryButton.setVisibility(GONE);
         if (_workOrder.getPrimaryActions() != null
-                && _workOrder.getPrimaryActions().length > 0
-                && _workOrder.getPrimaryActions()[0] != null) {
-            Action action = _workOrder.getPrimaryActions()[0];
+                && _workOrder.getPrimaryActions().length > 0) {
 
-            switch (action.getType()) {
-                case ACCEPT:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_accept_onClick);
-                    _primaryButton.setText("ACCEPT");
-                    break;
-                case CONFIRM:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_accept_onClick);
-                    _primaryButton.setText("ACCEPT");
-                    break;
-                case ON_MY_WAY:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_onMyWay_onClick);
-                    _primaryButton.setText(R.string.btn_on_my_way);
-                    break;
-                case READY:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_readyToGo_onClick);
-                    _primaryButton.setText("CONFIRM");
-                    break;
-                case READY_TO_GO:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_readyToGo_onClick);
-                    _primaryButton.setText("READY");
-                    break;
-                case REPORT_PROBLEM:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_reportProblem_onClick);
-                    _primaryButton.setText(R.string.btn_report_problem);
-                    break;
-/*
-                case MARK_COMPLETE:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_complete_onClick);
-                    _primaryButton.setText("COMPLETE");
-                    break;
-*/
-/*
-                case MARK_INCOMPLETE:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_incomplete_onClick);
-                    _primaryButton.setText("INCOMPLETE");
-                    break;
-*/
-/*
-                case CHECK_IN:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_checkIn_onClick);
-                    _primaryButton.setText("CHECK IN");
-                    break;
-*/
-/*
-                case CHECK_OUT:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_checkOut_onClick);
-                    _primaryButton.setText("CHECK OUT");
-                    break;
-*/
-/*
-                case REQUEST:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_request_onClick);
-                    _primaryButton.setText("REQUEST");
-                    break;
-*/
-/*
-                case WITHDRAW:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_withdraw_onClick);
-                    _primaryButton.setText("WITHDRAW");
-                    break;
-*/
-/*
-                case VIEW_PAYMENT:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_viewPayment_onClick);
-                    _primaryButton.setText("VIEW PAYMENT");
-                    break;
-*/
-/*
-                case VIEW_BUNDLE:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_viewBundle_onClick);
-                    _primaryButton.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
-                    break;
-*/
-/*
-                case ACK_HOLD:
-                    _primaryButton.setVisibility(VISIBLE);
-                    _primaryButton.setOnClickListener(_ackHold_onClick);
-                    _primaryButton.setText("ACKNOWLEDGE HOLD");
-                    break;
-*/
-                default:
-                    break;
+            Action[] actions = _workOrder.getPrimaryActions();
+            if (actions != null) {
+                for (Action action : actions) {
+                    if (populatePrimaryButton(_primaryButton, action))
+                        break;
+                }
             }
         }
 
@@ -390,6 +299,103 @@ public class WorkOrderCard extends RelativeLayout {
         }
     }
 
+    private boolean populatePrimaryButton(Button button, Action action) {
+        switch (action.getType()) {
+            case ACCEPT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_accept_onClick);
+                button.setText("ACCEPT");
+                break;
+            case CONFIRM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_accept_onClick);
+                button.setText("ACCEPT");
+                break;
+            case ON_MY_WAY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_onMyWay_onClick);
+                button.setText(R.string.btn_on_my_way);
+                break;
+            case READY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("CONFIRM");
+                break;
+            case READY_TO_GO:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("READY");
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_reportProblem_onClick);
+                button.setText(R.string.btn_report_problem);
+                break;
+/*
+                case MARK_COMPLETE:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_complete_onClick);
+                    button.setText("COMPLETE");
+                    break;
+*/
+/*
+                case MARK_INCOMPLETE:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_incomplete_onClick);
+                    button.setText("INCOMPLETE");
+                    break;
+*/
+/*
+                case CHECK_IN:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_checkIn_onClick);
+                    button.setText("CHECK IN");
+                    break;
+*/
+/*
+                case CHECK_OUT:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_checkOut_onClick);
+                    button.setText("CHECK OUT");
+                    break;
+*/
+            case REQUEST:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_request_onClick);
+                button.setText("REQUEST");
+                break;
+/*
+                case WITHDRAW:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_withdraw_onClick);
+                    button.setText("WITHDRAW");
+                    break;
+*/
+/*
+                case VIEW_PAYMENT:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_viewPayment_onClick);
+                    button.setText("VIEW PAYMENT");
+                    break;
+*/
+            case VIEW_BUNDLE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_viewBundle_onClick);
+                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+                break;
+/*
+                case ACK_HOLD:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_ackHold_onClick);
+                    button.setText("ACKNOWLEDGE HOLD");
+                    break;
+*/
+            default:
+                return false;
+        }
+        return true;
+    }
+
     // other icons
     // phone-solid
     // map-location-solid
@@ -397,7 +403,7 @@ public class WorkOrderCard extends RelativeLayout {
     // circle-x-solid
     // problem-solid
     // time-issue-solid
-    private void populateSecondaryButton(IconFontButton button, Action action) {
+    private boolean populateSecondaryButton(IconFontButton button, Action action) {
         switch (action.getType()) {
 /*
             case DECLINE:
@@ -433,9 +439,17 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
             default:
                 button.setVisibility(GONE);
-                break;
+                return false;
         }
+        return true;
     }
+
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+        }
+    };
 
     private final View.OnClickListener _accept_onClick = new OnClickListener() {
         @Override
@@ -464,6 +478,13 @@ public class WorkOrderCard extends RelativeLayout {
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
+        }
+    };
+
+    private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getId(), _workOrder.getBundle().getId());
         }
     };
 
