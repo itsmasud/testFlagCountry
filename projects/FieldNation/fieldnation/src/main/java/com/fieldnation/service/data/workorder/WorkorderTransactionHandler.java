@@ -23,6 +23,7 @@ import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
@@ -491,6 +492,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckIn(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
+        CheckInOutDialog.Controller.dismiss(App.get());
 
         WorkorderDispatch.action(context, workorderId, "checkin", false);
         try {
@@ -515,6 +517,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckOut(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
+        CheckInOutDialog.Controller.dismiss(App.get());
 
         WorkorderDispatch.action(context, workorderId, "checkout", false);
         try {
@@ -754,6 +757,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
+                    break;
+                case "pCheckIn":
+                    ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
+                    break;
+                case "pCheckOut":
+                    ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
                     break;
                 case "pAction":
                     WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);

@@ -111,6 +111,9 @@ import java.util.List;
 public class WorkFragment extends WorkorderFragment {
     private static final String TAG = "WorkFragment";
 
+    // Dialog tags
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
+
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
     private static final String STATE_TASKS = "WorkFragment:STATE_TASKS";
@@ -429,6 +432,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void setWorkorder(Workorder workorder) {
+        Log.e(TAG, "setWorkorder");
         _workorder = workorder;
         subscribeData();
         requestTasks();
@@ -449,6 +453,9 @@ public class WorkFragment extends WorkorderFragment {
 
         if (getActivity() == null)
             return;
+
+        setLoading(true);
+
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
             _sumView.setWorkorder(_workorder);
@@ -641,7 +648,7 @@ public class WorkFragment extends WorkorderFragment {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
         }
-        setLoading(true);
+//        setLoading(true);
     }
 
     private void startCheckOut() {
@@ -659,16 +666,16 @@ public class WorkFragment extends WorkorderFragment {
             // location is disabled, or failed. ask for them to be enabled
             Log.v(TAG, "Should not be here");
         }
-        setLoading(true);
+//        setLoading(true);
     }
 
     private void doCheckin() {
 //        setLoading(true);
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-            CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
 
         }
     }
@@ -684,15 +691,15 @@ public class WorkFragment extends WorkorderFragment {
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         } else {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }
     }
@@ -1207,7 +1214,7 @@ public class WorkFragment extends WorkorderFragment {
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onCheckOut() {
-                startCheckOut();
+            startCheckOut();
         }
 
         @Override

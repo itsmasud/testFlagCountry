@@ -41,8 +41,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private static final String TAG = "CheckInOutDialog";
 
     // Dialog Uids
-    private static final String UID_EXIPRY_DIALOG = TAG + ".ExpiryDialog";
-    private static final String UID_DURATION_DIALOG = TAG + ".DurationDialog";
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
 
     // State
     private static final String STATE_DURATION = "STATE_DURATION";
@@ -322,7 +321,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                 } else
                     onCheckout(_workorderId, ISO8601.fromCalendar(_startCalendar));
             }
-            dismiss(true);
+//            dismiss(true);
             return true;
         }
     };
@@ -398,38 +397,42 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
 
         // with location
-        public static void show(Context context, long workorderId, Location location, String dialogType) {
+        public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putParcelable(PARAM_LOCATION, location);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, null, CheckInOutDialog.class, params);
+            show(context, uid, CheckInOutDialog.class, params);
         }
 
         // with location + max device
-        public static void show(Context context, long workorderId, Location location, int maxDevice, String dialogType) {
+        public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putParcelable(PARAM_LOCATION, location);
             params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, null, CheckInOutDialog.class, params);
+            show(context, uid, CheckInOutDialog.class, params);
         }
 
         // with max device but no location
-        public static void show(Context context, long workorderId, int maxDevice, String dialogType) {
+        public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
             params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-            show(context, null, CheckInOutDialog.class, params);
+            show(context, uid, CheckInOutDialog.class, params);
         }
 
-        public static void show(Context context, long workorderId, String dialogType) {
+        public static void show(Context context, String uid, long workorderId, String dialogType) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORK_ORDER_ID, workorderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, null, CheckInOutDialog.class, params);
+            show(context, uid, CheckInOutDialog.class, params);
+        }
+
+        public static void dismiss(Context context) {
+            dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
         }
     }
 }
