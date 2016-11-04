@@ -61,6 +61,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
+    // Dialog tags
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
+
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
@@ -422,9 +425,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         setLoading(true);
         _adapter.notifyDataSetChanged();
         if (getLocationService().hasLocation()) {
-            CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(),_deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(),_deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         }
 //        _adapter.refreshPages();
     }
@@ -439,16 +442,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 
         } else {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(),DIALOG_CHECK_IN_CHECK_OUT,  _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 //            _adapter.refreshPages();
         }
