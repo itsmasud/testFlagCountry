@@ -293,8 +293,16 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            for (int i = 0; i < _workOrder.getSecondaryActions().length && i < _secondaryButtons.length; i++) {
-                populateSecondaryButton(_secondaryButtons[i], _workOrder.getSecondaryActions()[i]);
+            int i = 0;
+            int j = 0;
+            Action[] actions = _workOrder.getSecondaryActions();
+            while (i < actions.length && j < _secondaryButtons.length) {
+                Action action = actions[0];
+
+                if (populateSecondaryButton(_secondaryButtons[j], action)) {
+                    j++;
+                }
+                i++;
             }
         }
     }
