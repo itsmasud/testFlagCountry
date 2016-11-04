@@ -228,7 +228,7 @@ public class ToastClient extends TopicClient {
                 return;
 
             try {
-                //_snackbar.dismiss();
+                _snackbar.dismiss();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
