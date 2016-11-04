@@ -18,7 +18,6 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.data.v2.workorder.WorkOrderDispatch;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;

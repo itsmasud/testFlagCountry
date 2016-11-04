@@ -10,8 +10,8 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.IncreaseRequestInfo;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.IconFontTextView;
 
 /**
  * Created by Michael on 6/3/2016.

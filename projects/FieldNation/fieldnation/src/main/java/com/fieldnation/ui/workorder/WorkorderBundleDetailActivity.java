@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -16,17 +15,12 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
-
-import java.text.NumberFormat;
 
 public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderBundleDetailActivity";
@@ -148,6 +142,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onConnected() {
             _workorderClient.subBundle();
+            _workorderClient.subActions();
         }
 
         @Override
@@ -175,6 +170,11 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
             _listview.setAdapter(_adapter);
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            WorkorderClient.getBundle(App.get(), _bundleId);
         }
     };
 

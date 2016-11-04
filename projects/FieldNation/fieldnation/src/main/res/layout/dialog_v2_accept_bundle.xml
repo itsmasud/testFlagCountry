@@ -59,26 +59,10 @@
         android:text="By accepting this bundle you are agreeing to our" />
 
     <Button
-        android:id="@+id/terms_button"
-        style="@style/Material.Button.Flat"
-        android:layout_width="wrap_content"
-        android:layout_height="36dp"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/termswarning_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:paddingLeft="0dp"
-        android:paddingRight="0dp"
-        android:text="Work Order Terms and Conditions" />
-
-    <Button
         android:id="@+id/viewbundle_button"
         style="@style/DialogButton.v3"
         android:layout_alignParentLeft="true"
-        android:layout_below="@+id/terms_button"
+        android:layout_below="@+id/termswarning_textview"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:text="VIEW BUNDLE"
@@ -87,7 +71,7 @@
     <Button
         android:id="@+id/cancel_button"
         style="@style/DialogButton.v3"
-        android:layout_below="@+id/terms_button"
+        android:layout_below="@+id/termswarning_textview"
         android:layout_marginRight="8dp"
         android:layout_toLeftOf="@+id/ok_button"
         android:text="@string/btn_cancel" />
@@ -96,7 +80,7 @@
         android:id="@+id/ok_button"
         style="@style/DialogButton.v3"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/terms_button"
+        android:layout_below="@+id/termswarning_textview"
         android:layout_marginRight="8dp"
         android:text="@string/btn_accept" />
 

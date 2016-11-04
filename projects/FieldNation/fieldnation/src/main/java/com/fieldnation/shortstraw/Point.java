@@ -1,7 +1,7 @@
 package com.fieldnation.shortstraw;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by michael.carver on 12/3/2014.

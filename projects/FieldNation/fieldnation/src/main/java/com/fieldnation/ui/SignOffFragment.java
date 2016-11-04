@@ -12,17 +12,17 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.ForLoopRunnable;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.LoggedWork;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.workorder.detail.TimeLogRowView;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.ForLoopRunnable;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.workorder.detail.TimeLogRowView;
 
 import java.util.Random;
 

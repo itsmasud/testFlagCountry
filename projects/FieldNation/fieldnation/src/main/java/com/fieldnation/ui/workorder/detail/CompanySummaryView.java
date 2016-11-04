@@ -7,12 +7,12 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.BuyerRating;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.StarView;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.StarView;
 
 /**
  * Created by Michael Carver on 5/22/2015.

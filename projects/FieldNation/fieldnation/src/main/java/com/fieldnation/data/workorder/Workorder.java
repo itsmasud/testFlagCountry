@@ -386,7 +386,7 @@ public class Workorder implements Parcelable {
 
     public boolean isW2Workorder() {
         if (_w2 == null) return false;
-        return _w2 == 1 ? true : false;
+        return _w2 == 1;
     }
 
     public Long getWorkorderId() {
@@ -657,7 +657,7 @@ public class Workorder implements Parcelable {
     }
 
     public boolean isWorkLogged() {
-        return _loggedWorkExists == 0 ? false : true;
+        return _loggedWorkExists != 0;
     }
 
     public void dispatchOnChange() {

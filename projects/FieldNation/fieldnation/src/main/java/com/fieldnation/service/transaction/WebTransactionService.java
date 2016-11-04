@@ -173,7 +173,12 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                         extras.getBoolean(PARAM_WIFI_REQUIRED),
                         extras.getBoolean(PARAM_TRACK),
                         extras.getString(PARAM_HANDLER_NAME),
-                        extras.getByteArray(PARAM_HANDLER_PARAMS));
+                        extras.getByteArray(PARAM_HANDLER_PARAMS),
+                        extras.getInt(PARAM_NOTIFICATION_ID),
+                        extras.getByteArray(PARAM_NOTIFICATION_START),
+                        extras.getByteArray(PARAM_NOTIFICATION_SUCCESS),
+                        extras.getByteArray(PARAM_NOTIFICATION_RETRY),
+                        extras.getByteArray(PARAM_NOTIFICATION_FAILED));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
                     UploadTrackerClient.uploadQueued(App.get());

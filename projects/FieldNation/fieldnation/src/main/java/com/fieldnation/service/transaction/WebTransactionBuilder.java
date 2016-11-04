@@ -5,9 +5,11 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
+import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 
+import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -29,6 +31,11 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         intent.putExtra(PARAM_IS_SYNC, false);
         intent.putExtra(PARAM_WIFI_REQUIRED, false);
         intent.putExtra(PARAM_TRACK, false);
+        intent.putExtra(PARAM_NOTIFICATION_ID, -1);
+        intent.putExtra(PARAM_NOTIFICATION_START, (byte[]) null);
+        intent.putExtra(PARAM_NOTIFICATION_SUCCESS, (byte[]) null);
+        intent.putExtra(PARAM_NOTIFICATION_FAILED, (byte[]) null);
+        intent.putExtra(PARAM_NOTIFICATION_RETRY, (byte[]) null);
     }
 
     public static WebTransactionBuilder builder(Context context) {
@@ -75,6 +82,19 @@ public class WebTransactionBuilder implements WebTransactionConstants {
 
     public WebTransactionBuilder handlerParams(byte[] params) {
         intent.putExtra(PARAM_HANDLER_PARAMS, params);
+        return this;
+    }
+
+    public WebTransactionBuilder notify(NotificationDefinition start, NotificationDefinition success,
+                                        NotificationDefinition failed, NotificationDefinition retry) throws ParseException {
+
+        intent.putExtra(PARAM_NOTIFICATION_ID, App.secureRandom.nextInt(Integer.MAX_VALUE));
+
+        intent.putExtra(PARAM_NOTIFICATION_START, start.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_SUCCESS, success.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_FAILED, failed.toJson().toByteArray());
+        intent.putExtra(PARAM_NOTIFICATION_RETRY, retry.toJson().toByteArray());
+
         return this;
     }
 

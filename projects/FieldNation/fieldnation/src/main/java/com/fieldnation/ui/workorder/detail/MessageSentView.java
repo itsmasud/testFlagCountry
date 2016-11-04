@@ -8,9 +8,9 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Message;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 public class MessageSentView extends RelativeLayout {
