@@ -293,12 +293,14 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
         if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
-            int i = 0;
-            int j = 0;
+            int i = 0; // action index
+            int j = 0; // button index
+            // assign supported actions to buttons until no more actions or no more buttons
             Action[] actions = _workOrder.getSecondaryActions();
             while (i < actions.length && j < _secondaryButtons.length) {
-                Action action = actions[0];
+                Action action = actions[i];
 
+                // only if the action has been assigned do we move to the next button
                 if (populateSecondaryButton(_secondaryButtons[j], action)) {
                     j++;
                 }
