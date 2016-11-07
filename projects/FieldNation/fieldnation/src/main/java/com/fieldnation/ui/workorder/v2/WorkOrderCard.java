@@ -29,6 +29,7 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
@@ -363,6 +364,16 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setOnClickListener(_withdraw_onClick);
                 button.setText("WITHDRAW");
                 break;
+            case CHECK_IN:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkIn_onClick);
+                button.setText("CHECK IN");
+                break;
+            case CHECK_OUT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkOut_onClick);
+                button.setText("CHECK OUT");
+                break;
 /*
                 case MARK_COMPLETE:
                     button.setVisibility(VISIBLE);
@@ -375,20 +386,6 @@ public class WorkOrderCard extends RelativeLayout {
                     button.setVisibility(VISIBLE);
                     button.setOnClickListener(_incomplete_onClick);
                     button.setText("INCOMPLETE");
-                    break;
-*/
-/*
-                case CHECK_IN:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_checkIn_onClick);
-                    button.setText("CHECK IN");
-                    break;
-*/
-/*
-                case CHECK_OUT:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_checkOut_onClick);
-                    button.setText("CHECK OUT");
                     break;
 */
 /*              // don't have a payment id in the current data structure
@@ -454,6 +451,32 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _checkIn_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            }
+        }
+    };
+
+    private final View.OnClickListener _checkOut_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            }
         }
     };
 
