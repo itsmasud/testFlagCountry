@@ -2,6 +2,9 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/21/2016.
@@ -25,6 +29,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private static final String PARAM_SECONDARY_BUTTON = "buttonSecondary";
     private static final String PARAM_CANCELABLE = "cancelable";
     private static final String PARAM_RESPONSE = "response";
+    private static final String PARAM_EXTRA_DATA = "extraData";
     private static final int PARAM_RESPONSE_PRIMARY = 0;
     private static final int PARAM_RESPONSE_SECONDARY = 1;
     private static final int PARAM_RESPONSE_CANCEL = 2;
@@ -37,6 +42,7 @@ public class TwoButtonDialog extends SimpleDialog {
 
     // Data
     private boolean _isCancelable = true;
+    private Parcelable _extraData = null;
 
     public TwoButtonDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -64,11 +70,29 @@ public class TwoButtonDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         _titleTextView.setText(payload.getString(PARAM_TITLE));
-        _bodyTextView.setText(payload.getString(PARAM_BODY));
+
+        String body = payload.getString(PARAM_BODY);
+        try {
+            _bodyTextView.setText(misc.linkifyHtml(body, Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            _bodyTextView.setText(body);
+        }
         _primaryButton.setText(payload.getString(PARAM_PRIMARY_BUTTON));
         _secondaryButton.setText(payload.getString(PARAM_SECONDARY_BUTTON));
         _isCancelable = payload.getBoolean(PARAM_CANCELABLE);
+        _extraData = payload.getParcelable(PARAM_EXTRA_DATA);
+
         super.show(payload, animate);
+    }
+
+    public Parcelable getExtraData() {
+        return _extraData;
+    }
+
+    @Override
+    public boolean isCancelable() {
+        return _isCancelable;
     }
 
     @Override
@@ -77,11 +101,9 @@ public class TwoButtonDialog extends SimpleDialog {
         response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
         onResult(response);
         super.cancel();
-    }
 
-    @Override
-    public boolean isCancelable() {
-        return _isCancelable;
+        if (onCancel())
+            dismiss(true);
     }
 
     private final View.OnClickListener _primary_onClick = new View.OnClickListener() {
@@ -90,6 +112,8 @@ public class TwoButtonDialog extends SimpleDialog {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
             onResult(response);
+            if (onPrimaryClick())
+                dismiss(true);
         }
     };
 
@@ -99,16 +123,21 @@ public class TwoButtonDialog extends SimpleDialog {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_SECONDARY);
             onResult(response);
+            if (onSecondaryClick())
+                dismiss(true);
         }
     };
 
-    public void onCancel() {
+    public boolean onCancel() {
+        return true;
     }
 
-    public void onPrimaryClick() {
+    public boolean onPrimaryClick() {
+        return true;
     }
 
-    public void onSecondaryClick() {
+    public boolean onSecondaryClick() {
+        return true;
     }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
@@ -120,17 +149,23 @@ public class TwoButtonDialog extends SimpleDialog {
             super(context, klass, uid);
         }
 
-        public static void show(Context context, String uid, int titleResId, int bodyResId, int primaryButtonResId, int secondaryButtonResId, boolean isCancelable) {
-            show(context, uid, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId), context.getString(secondaryButtonResId), isCancelable);
+        public static void show(Context context, String uid, int titleResId, int bodyResId, int primaryButtonResId,
+                                int secondaryButtonResId, boolean isCancelable, Parcelable extraData) {
+
+            show(context, uid, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId),
+                    context.getString(secondaryButtonResId), isCancelable, extraData);
         }
 
-        public static void show(Context context, String uid, String title, String body, String primaryButton, String secondaryButton, boolean isCancelable) {
+        public static void show(Context context, String uid, String title, String body, String primaryButton,
+                                String secondaryButton, boolean isCancelable, Parcelable extraData) {
+
             Bundle params = new Bundle();
             params.putString(PARAM_TITLE, title);
             params.putString(PARAM_BODY, body);
             params.putString(PARAM_PRIMARY_BUTTON, primaryButton);
             params.putString(PARAM_SECONDARY_BUTTON, secondaryButton);
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
+            params.putParcelable(PARAM_EXTRA_DATA, extraData);
 
             show(context, uid, TwoButtonDialog.class, params);
         }
