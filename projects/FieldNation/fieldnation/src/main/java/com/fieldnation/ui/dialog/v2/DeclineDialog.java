@@ -143,7 +143,7 @@ public class DeclineDialog extends SimpleDialog {
     private void populateUi() {
         switch (_type) {
             case TYPE_BUNDLE:
-                _bodyTextView.setText("This bundle and all " + _bundleSize + " work orders will be hidden from your available and routed work order lists");
+                _bodyTextView.setText("You are about to decline " + _bundleSize + " work orders and they will be removed from the work order list.");
                 break;
             case TYPE_WORK_ORDER:
                 _bodyTextView.setText("This work order will be hidden from your available and routed work order lists");
