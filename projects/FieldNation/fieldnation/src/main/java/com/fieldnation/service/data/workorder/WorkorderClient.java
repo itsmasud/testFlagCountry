@@ -514,27 +514,23 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     }
 
     public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
-        WorkorderTransactionBuilder.actionCheckout(context, workorderId,dateTime, deviceCount, location);
+        WorkorderTransactionBuilder.actionCheckout(context, workorderId, dateTime, deviceCount, location);
     }
-
-
-
-
-
 
 
     /*-*****************************************-*/
     /*-             workorder bundle            -*/
     /*-*****************************************-*/
     public static void getBundle(Context context, long bundleId) {
-        getBundle(context, bundleId, false);
+        getBundle(context, bundleId, true, false);
     }
 
-    public static void getBundle(Context context, long bundleId, boolean isSync) {
+    public static void getBundle(Context context, long bundleId, boolean allowCache, boolean isSync) {
         Intent intent = new Intent(context, WorkorderService.class);
         intent.putExtra(PARAM_ACTION, PARAM_ACTION_GET_BUNDLE);
         intent.putExtra(PARAM_WORKORDER_ID, bundleId);
         intent.putExtra(PARAM_IS_SYNC, isSync);
+        intent.putExtra(PARAM_ALLOW_CACHE, allowCache);
         context.startService(intent);
     }
 

@@ -137,7 +137,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             _notInterestedButton.setEnabled(false);
             _okButton.setEnabled(false);
         } else {
-            _refreshView.refreshFailed();
+            _refreshView.refreshComplete();
             _notInterestedButton.setEnabled(true);
             _okButton.setEnabled(true);
         }
@@ -253,7 +253,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             setLoading(true);
-            WorkorderClient.getBundle(App.get(), _bundleId);
+            WorkorderClient.getBundle(App.get(), _bundleId, false, false);
         }
     };
 
