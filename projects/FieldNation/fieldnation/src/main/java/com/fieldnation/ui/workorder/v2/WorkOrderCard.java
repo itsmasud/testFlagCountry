@@ -374,18 +374,16 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setOnClickListener(_checkOut_onClick);
                 button.setText("CHECK OUT");
                 break;
+            case MARK_INCOMPLETE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_incomplete_onClick);
+                button.setText("INCOMPLETE");
+                break;
 /*
                 case MARK_COMPLETE:
                     button.setVisibility(VISIBLE);
                     button.setOnClickListener(_complete_onClick);
                     button.setText("COMPLETE");
-                    break;
-*/
-/*
-                case MARK_INCOMPLETE:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_incomplete_onClick);
-                    button.setText("INCOMPLETE");
                     break;
 */
 /*              // don't have a payment id in the current data structure
@@ -446,6 +444,13 @@ public class WorkOrderCard extends RelativeLayout {
         }
         return true;
     }
+
+    private final View.OnClickListener _incomplete_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderClient.actionIncomplete(App.get(), _workOrder.getId());
+        }
+    };
 
     private final View.OnClickListener _ackHold_onClick = new OnClickListener() {
         @Override
