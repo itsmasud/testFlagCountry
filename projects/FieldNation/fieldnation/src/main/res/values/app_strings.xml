@@ -446,6 +446,7 @@
     <string name="invalid_address">INVALID ADDRESS</string>
     <string name="contact_wo_manager">Contact work order manager</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
+    <string name="mark_as_incomplete_full_warning">You are about to mark this work order as incomplete.\n\nWould you like to continue?</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>

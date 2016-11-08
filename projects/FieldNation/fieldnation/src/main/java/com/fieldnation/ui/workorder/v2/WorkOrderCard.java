@@ -29,9 +29,12 @@ import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
+import com.fieldnation.ui.dialog.v2.DeclineDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
+import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
@@ -341,6 +344,41 @@ public class WorkOrderCard extends RelativeLayout {
                 button.setOnClickListener(_reportProblem_onClick);
                 button.setText(R.string.btn_report_problem);
                 break;
+            case REQUEST:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_request_onClick);
+                button.setText("REQUEST");
+                break;
+            case VIEW_BUNDLE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_viewBundle_onClick);
+                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+                break;
+            case ACK_HOLD:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_ackHold_onClick);
+                button.setText("ACKNOWLEDGE HOLD");
+                break;
+            case WITHDRAW:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_withdraw_onClick);
+                button.setText("WITHDRAW");
+                break;
+            case CHECK_IN:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkIn_onClick);
+                button.setText("CHECK IN");
+                break;
+            case CHECK_OUT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkOut_onClick);
+                button.setText("CHECK OUT");
+                break;
+            case MARK_INCOMPLETE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_incomplete_onClick);
+                button.setText("INCOMPLETE");
+                break;
 /*
                 case MARK_COMPLETE:
                     button.setVisibility(VISIBLE);
@@ -348,56 +386,11 @@ public class WorkOrderCard extends RelativeLayout {
                     button.setText("COMPLETE");
                     break;
 */
-/*
-                case MARK_INCOMPLETE:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_incomplete_onClick);
-                    button.setText("INCOMPLETE");
-                    break;
-*/
-/*
-                case CHECK_IN:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_checkIn_onClick);
-                    button.setText("CHECK IN");
-                    break;
-*/
-/*
-                case CHECK_OUT:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_checkOut_onClick);
-                    button.setText("CHECK OUT");
-                    break;
-*/
-            case REQUEST:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_request_onClick);
-                button.setText("REQUEST");
-                break;
-/*
-                case WITHDRAW:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_withdraw_onClick);
-                    button.setText("WITHDRAW");
-                    break;
-*/
-/*
+/*              // don't have a payment id in the current data structure
                 case VIEW_PAYMENT:
                     button.setVisibility(VISIBLE);
                     button.setOnClickListener(_viewPayment_onClick);
                     button.setText("VIEW PAYMENT");
-                    break;
-*/
-            case VIEW_BUNDLE:
-                button.setVisibility(VISIBLE);
-                button.setOnClickListener(_viewBundle_onClick);
-                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
-                break;
-/*
-                case ACK_HOLD:
-                    button.setVisibility(VISIBLE);
-                    button.setOnClickListener(_ackHold_onClick);
-                    button.setText("ACKNOWLEDGE HOLD");
                     break;
 */
             default:
@@ -415,13 +408,11 @@ public class WorkOrderCard extends RelativeLayout {
     // time-issue-solid
     private boolean populateSecondaryButton(IconFontButton button, Action action) {
         switch (action.getType()) {
-/*
             case DECLINE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_circle_x_solid);
                 button.setOnClickListener(_decline_onClick);
                 break;
-*/
             case RUNNING_LATE:
                 button.setVisibility(VISIBLE);
                 button.setText(R.string.icon_time_issue_solid);
@@ -454,6 +445,46 @@ public class WorkOrderCard extends RelativeLayout {
         return true;
     }
 
+    private final View.OnClickListener _incomplete_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderClient.actionIncomplete(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _ackHold_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _checkIn_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            }
+        }
+    };
+
+    private final View.OnClickListener _checkOut_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            }
+        }
+    };
+
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -472,6 +503,13 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _decline_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DeclineDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getOrg().getId());
         }
     };
 
@@ -524,6 +562,13 @@ public class WorkOrderCard extends RelativeLayout {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
+        }
+    };
+
+    private final View.OnClickListener _withdraw_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WithdrawRequestDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
 
