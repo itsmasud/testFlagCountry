@@ -32,6 +32,7 @@ import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
@@ -448,7 +449,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderClient.actionIncomplete(App.get(), _workOrder.getId());
+            MarkIncompleteWarningDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
 
