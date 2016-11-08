@@ -218,8 +218,9 @@ public class WorkorderService extends MultiThreadedService implements WorkorderC
         Log.v(TAG, "getBundle");
         long bundleId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (!isSync) {
+        if (allowCache && !isSync) {
             StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_BUNDLE, bundleId);
             if (obj != null) {
                 try {

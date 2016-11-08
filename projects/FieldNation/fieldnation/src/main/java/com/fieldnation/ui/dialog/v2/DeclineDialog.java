@@ -200,17 +200,17 @@ public class DeclineDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        Bundle payload = new Bundle();
-        payload.putString("ACTION", "CANCEL");
-        onResult(payload);
+        Bundle response = new Bundle();
+        response.putString("ACTION", "CANCEL");
+        onResult(response);
         super.cancel();
     }
 
     private void onDeclined() {
-        Bundle payload = new Bundle();
-        payload.putString("ACTION", "DECLINED");
-        payload.putLong(PARAM_WORK_ORDER_ID, _workOrderId);
-        onResult(payload);
+        Bundle response = new Bundle();
+        response.putString("ACTION", "DECLINED");
+        response.putLong(PARAM_WORK_ORDER_ID, _workOrderId);
+        onResult(response);
     }
 
     /*-*********************************-*/
