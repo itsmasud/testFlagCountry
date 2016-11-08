@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -47,7 +48,6 @@ public class AcceptBundleDialog extends SimpleDialog {
     private Button _expirationButton;
     private View _dividerView;
     private TextView _termsWarningTextView;
-    private Button _viewBundleButton;
     private Button _cancelButton;
     private Button _okButton;
 
@@ -76,7 +76,6 @@ public class AcceptBundleDialog extends SimpleDialog {
         _dividerView = v.findViewById(R.id.divider);
         _expirationButton = (Button) v.findViewById(R.id.expiration_button);
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
-        _viewBundleButton = (Button) v.findViewById(R.id.viewbundle_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
         _okButton = (Button) v.findViewById(R.id.ok_button);
 
@@ -90,7 +89,6 @@ public class AcceptBundleDialog extends SimpleDialog {
 
         super.onAdded();
 
-        _viewBundleButton.setOnClickListener(_viewBundle_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
         _expirationButton.setOnClickListener(_expiration_okClick);
@@ -180,17 +178,18 @@ public class AcceptBundleDialog extends SimpleDialog {
         }
     };
 
-    private final View.OnClickListener _viewBundle_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            WorkorderBundleDetailActivity.startNew(App.get(), _workOrderId, _bundleId);
-            dismiss(true);
-        }
-    };
+    @Override
+    public void cancel() {
+        super.cancel();
+        Bundle response = new Bundle();
+        response.putString("ACTION", "CANCEL");
+        onResult(response);
+    }
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            cancel();
             dismiss(true);
         }
     };
@@ -198,9 +197,13 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            Bundle response = new Bundle();
+
             switch (_type) {
                 case TYPE_ACCEPT:
+                    response.putString("ACTION", "ACCEPTED");
                     WorkorderClient.actionConfirmAssignment(App.get(), _workOrderId, null, null, null, false);
+                    onResult(response);
                     break;
                 case TYPE_REQUEST:
                     if (_expiration > -1) {
@@ -208,9 +211,10 @@ public class AcceptBundleDialog extends SimpleDialog {
                     } else {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, _expiration);
                     }
+                    response.putString("ACTION", "REQUESTED");
+                    onResult(response);
                     break;
             }
-
             dismiss(true);
         }
     };
@@ -235,10 +239,27 @@ public class AcceptBundleDialog extends SimpleDialog {
         }
     };
 
-    public static abstract class Controller extends com.fieldnation.fndialog.Controller {
+    public static class Controller extends com.fieldnation.fndialog.Controller {
 
-        public Controller(Context context) {
-            super(context, AcceptBundleDialog.class, null);
+        public Controller(Context context, String uid) {
+            super(context, AcceptBundleDialog.class, uid);
+        }
+
+        /**
+         * @param context     Application context
+         * @param uid         the uid of the dialog
+         * @param bundleId    The id of the bundle we're worried about
+         * @param bundleSize  The number of work orders in the bundle
+         * @param workOrderId An id of one of the work orders in the bundle.
+         * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
+         */
+        public static void show(Context context, String uid, long bundleId, int bundleSize, long workOrderId, int type) {
+            Bundle bundle = new Bundle();
+            bundle.putLong(PARAM_BUNDLE_ID, bundleId);
+            bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+            bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
+            bundle.putInt(PARAM_TYPE, type);
+            show(context, uid, AcceptBundleDialog.class, bundle);
         }
 
         /**
@@ -256,5 +277,28 @@ public class AcceptBundleDialog extends SimpleDialog {
             bundle.putInt(PARAM_TYPE, type);
             show(context, null, AcceptBundleDialog.class, bundle);
         }
+    }
+
+    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+        @Override
+        public void onComplete(Bundle response) {
+            switch (response.getString("ACTION")) {
+                case "REQUESTED":
+                    onRequested();
+                    break;
+                case "ACCEPTED":
+                    onAccepted();
+                    break;
+                case "CANCEL":
+                    onCanceled();
+                    break;
+            }
+        }
+
+        public abstract void onRequested();
+
+        public abstract void onAccepted();
+
+        public abstract void onCanceled();
     }
 }

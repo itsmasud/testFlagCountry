@@ -433,6 +433,27 @@ public class EtaDialog extends FullScreenDialog {
         return false;
     }
 
+
+    private boolean isLastDaySelected(final Calendar eta) {
+        if (!misc.isEmptyOrNull(_schedule.getExact()))
+            return false;
+
+        try {
+            // is business or range
+            if (_schedule.getRange().getType() == Range.Type.RANGE) {
+                Calendar scal = ISO8601.toCalendar(_schedule.getRange().getBegin());
+                Calendar ecal = ISO8601.toCalendar(_schedule.getRange().getEnd());
+
+                // if the last day selected
+                return eta.get(Calendar.DAY_OF_MONTH) == ecal.get(Calendar.DAY_OF_MONTH);
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+        return false;
+    }
+
+
     private static boolean isWithinRange(final Calendar arrival, final Schedule schedule) {
         try {
             Calendar scal = ISO8601.toCalendar(schedule.getRange().getBegin());
@@ -561,6 +582,20 @@ public class EtaDialog extends FullScreenDialog {
                         }
                     }
                 }
+
+                if (_schedule.getExact() == null && _schedule.getRange() != null && _schedule.getRange().getType() == Range.Type.RANGE) {
+                    if (isLastDaySelected(test)) {
+                        test.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                        if (isValidEta(test)) {
+                            _etaStart = test;
+                            populateUi();
+                            _etaStartTimeButton.setText("");
+                        }
+                    }
+                }
+
+
+
             }
         }
     };
@@ -617,10 +652,21 @@ public class EtaDialog extends FullScreenDialog {
                 } else {
                     ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
                 }
-            } else {
-                _durationMilliseconds = milliseconds;
-                populateUi();
+            } else if (_schedule.getRange().getType() == Range.Type.RANGE) {
+                Calendar test = Calendar.getInstance();
+                test.setTimeInMillis(_etaStart.getTimeInMillis() + milliseconds);
+
+                if (isWithinRange(test, _schedule)) {
+                    _durationMilliseconds = milliseconds;
+                    populateUi();
+                } else {
+                    ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
+                }
             }
+//            else {
+//                _durationMilliseconds = milliseconds;
+//                populateUi();
+//            }
         }
 
         @Override

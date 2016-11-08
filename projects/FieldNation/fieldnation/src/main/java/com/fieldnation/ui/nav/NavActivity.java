@@ -87,7 +87,7 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         if (_currentSearch == null) {
-            _currentSearch = SavedSearchList.defaults[0];
+            _currentSearch = SavedSearchList.getDefaults(App.get().getProfile())[0];
         }
     }
 

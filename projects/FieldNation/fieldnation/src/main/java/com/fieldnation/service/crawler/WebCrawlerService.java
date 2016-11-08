@@ -393,7 +393,7 @@ public class WebCrawlerService extends Service {
                 WorkorderClient.get(WebCrawlerService.this, workorder.getWorkorderId(), false, true);
                 if (workorder.getBundleId() != null && workorder.getBundleId() > 0) {
                     incRequestCounter(1);
-                    WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), true);
+                    WorkorderClient.getBundle(WebCrawlerService.this, workorder.getBundleId(), false, true);
                 }
             }
             Log.v(TAG, "onWorkorderList, done");

@@ -888,6 +888,12 @@
         <item>Routed</item>
     </string-array>
 
+    <string-array name="search_status_nomp">
+        <item>Assigned</item>
+        <item>Canceled</item>
+        <item>Completed</item>
+    </string-array>
+
     <string-array name="search_location">
         <item>Profile Address</item>
         <item>My Location</item>

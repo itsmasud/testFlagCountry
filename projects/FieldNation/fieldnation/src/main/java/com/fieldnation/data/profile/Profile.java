@@ -9,6 +9,7 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 public class Profile implements Parcelable {
     private static final String TAG = "Profile";
@@ -37,7 +38,7 @@ public class Profile implements Parcelable {
     private Profile[] _managedProviders;
     @Json(name = "marketplaceStatusOn")
     private Boolean _marketplaceStatusOn;
-    @Json(name = "marketplaceStatusReason ")
+    @Json(name = "marketplaceStatusReason")
     private String _marketplaceStatusReason;
     @Json(name = "newNotificationCount")
     private Integer _newNotificationCount;
@@ -177,6 +178,13 @@ public class Profile implements Parcelable {
             return _canRequestWorkOnMarketplace;
         }
         return true;
+    }
+
+    public boolean canViewMarketPlaceWork() {
+        if (misc.isEmptyOrNull(_marketplaceStatusReason))
+            return true;
+
+        return !_marketplaceStatusReason.equals("KEEP_PRIVATE");
     }
 
 
