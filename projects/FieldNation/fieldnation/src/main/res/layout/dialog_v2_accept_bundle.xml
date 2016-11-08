@@ -59,16 +59,6 @@
         android:text="By accepting this bundle you are agreeing to our" />
 
     <Button
-        android:id="@+id/viewbundle_button"
-        style="@style/DialogButton.v3"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/termswarning_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:text="VIEW BUNDLE"
-        android:visibility="gone" />
-
-    <Button
         android:id="@+id/cancel_button"
         style="@style/DialogButton.v3"
         android:layout_below="@+id/termswarning_textview"

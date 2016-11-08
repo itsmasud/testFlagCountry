@@ -19,6 +19,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
 
@@ -29,15 +30,15 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_BUNDLE_ID = "WorkorderBundleDetailActivity:bundle_id";
 
     // Dialog tags
-    private static final String DIALOG_DECLINE = TAG + ".DeclineDialog";
-
-    private static final int WEB_GET_BUNDLE = 1;
+    private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
+    private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".AcceptBundleDialog";
 
     // UI
     private LinearLayout _buttonToolbar;
     private Button _notInterestedButton;
     private Button _okButton;
     private ListView _listview;
+    private RefreshView _refreshView;
 
     // Data
     private long _workorderId = 0;
@@ -45,6 +46,8 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private WorkorderClient _workorderClient;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
+    private AcceptBundleDialog.Controller _acceptBundleDialog;
+    private DeclineDialog.Controller _declineDialog;
 
     @Override
     public int getLayoutResource() {
@@ -79,6 +82,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         _okButton = (Button) findViewById(R.id.ok_button);
         _okButton.setOnClickListener(_ok_onClick);
         _listview = (ListView) findViewById(R.id.items_listview);
+        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
     }
 
     @Override
@@ -94,8 +98,16 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        setLoading(true);
+
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+
+        _acceptBundleDialog = new AcceptBundleDialog.Controller(App.get(), UID_DIALOG_ACCEPT_BUNDLE);
+        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+
+        _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
+        _declineDialog.setListener(_declineDialog_listener);
 
         WorkorderClient.getBundle(this, _bundleId);
     }
@@ -104,7 +116,31 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_acceptBundleDialog != null)
+            _acceptBundleDialog.disconnect(App.get());
+
+        if (_declineDialog != null)
+            _declineDialog.disconnect(App.get());
+
         super.onPause();
+    }
+
+    private void setLoading(boolean isloading) {
+        if (isloading) {
+            _refreshView.post(new Runnable() {
+                @Override
+                public void run() {
+                    _refreshView.startRefreshing();
+                }
+            });
+            _notInterestedButton.setEnabled(false);
+            _okButton.setEnabled(false);
+        } else {
+            _refreshView.refreshFailed();
+            _notInterestedButton.setEnabled(true);
+            _okButton.setEnabled(true);
+        }
     }
 
     @Override
@@ -114,7 +150,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DeclineDialog.Controller.show(App.get(), DIALOG_DECLINE,
+            DeclineDialog.Controller.show(App.get(), UID_DIALOG_DECLINE,
                     _woBundle.getWorkorder().length,
                     _woBundle.getWorkorder()[0].getWorkorderId(),
                     _woBundle.getWorkorder()[0].getCompanyId());
@@ -127,14 +163,55 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             Workorder wo = _woBundle.getWorkorder()[0];
 
             if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
-                AcceptBundleDialog.Controller.show(App.get(), _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length, wo.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
+                AcceptBundleDialog.Controller.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_REQUEST);
+
             } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-                AcceptBundleDialog.Controller.show(App.get(), _woBundle.getBundleId(),
-                        _woBundle.getWorkorder().length, wo.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
+                AcceptBundleDialog.Controller.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 // do nothing
             }
+        }
+    };
+
+    private final AcceptBundleDialog.ControllerListener _acceptBundleDialog_listener = new AcceptBundleDialog.ControllerListener() {
+
+        @Override
+        public void onRequested() {
+            setLoading(true);
+        }
+
+        @Override
+        public void onAccepted() {
+            setLoading(true);
+        }
+
+        @Override
+        public void onCanceled() {
+            // don't care
+        }
+    };
+
+    private final DeclineDialog.ControllerListener _declineDialog_listener = new DeclineDialog.ControllerListener() {
+        @Override
+        public void onDeclined(long workOrderId) {
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+
         }
     };
 
@@ -170,10 +247,12 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
             _listview.setAdapter(_adapter);
+            setLoading(false);
         }
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
+            setLoading(true);
             WorkorderClient.getBundle(App.get(), _bundleId);
         }
     };
