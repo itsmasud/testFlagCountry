@@ -242,12 +242,12 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
                 } else {
                     _buttonToolbar.setVisibility(View.GONE);
                 }
+                setLoading(false);
             } catch (Exception ex) {
             }
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
             _listview.setAdapter(_adapter);
-            setLoading(false);
         }
 
         @Override
