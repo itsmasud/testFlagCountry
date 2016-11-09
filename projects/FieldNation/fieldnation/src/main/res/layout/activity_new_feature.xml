@@ -48,7 +48,7 @@
             android:text="@string/feature_header_added_new"
             android:textColor="@color/fn_dark_text_50"
             android:textSize="16dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <WebView
             android:id="@+id/addedNew_webview"
@@ -61,7 +61,7 @@
             android:paddingRight="16dp"
             android:paddingTop="16dp"
             android:text=""
-            android:visibility="visible" />
+            android:visibility="gone" />
 
 
         <TextView
@@ -75,7 +75,7 @@
             android:text="@string/bugs_fixed_header"
             android:textColor="@color/fn_dark_text_50"
             android:textSize="16dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <WebView
             android:id="@+id/bugFixed_webview"
@@ -87,7 +87,7 @@
             android:paddingRight="16dp"
             android:paddingTop="16dp"
             android:text=""
-            android:visibility="visible" />
+            android:visibility="gone" />
 
 
         <TextView
@@ -101,7 +101,7 @@
             android:text="@string/feature_wroking_on"
             android:textColor="@color/fn_dark_text_50"
             android:textSize="16dp"
-            android:visibility="visible" />
+            android:visibility="gone" />
 
         <WebView
             android:id="@+id/workingOnFeature_webview"
@@ -113,7 +113,7 @@
             android:paddingRight="16dp"
             android:paddingTop="16dp"
             android:text=""
-            android:visibility="visible" />
+            android:visibility="gone" />
 
     </RelativeLayout>
 </com.fieldnation.ui.OverScrollView>

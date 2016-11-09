@@ -19,6 +19,10 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 public class NewFeatureActivity extends Activity {
     private static final String TAG = "NewFeatureActivity";
 
+    private static final boolean SHOW_WHATS_NEW = true;
+    private static final boolean SHOW_BUGS = false;
+    private static final boolean SHOW_FEATURES = false;
+
     // Ui
     private TextView _addedNewTextView;
     private WebView _addedNewWebView;
@@ -56,18 +60,38 @@ public class NewFeatureActivity extends Activity {
         int fontSize = getResources().getInteger(R.integer.textSizeReleaseNote);
         WebSettings webSettings = null;
 
-        webSettings = _addedNewWebView.getSettings();
-        _addedNewWebView.loadData(getString(R.string.added_new_feature), "text/html", "utf-8");
-        webSettings.setDefaultFontSize(fontSize);
+        if (SHOW_WHATS_NEW) {
+            _addedNewTextView.setVisibility(View.VISIBLE);
+            _addedNewWebView.setVisibility(View.VISIBLE);
+            webSettings = _addedNewWebView.getSettings();
+            _addedNewWebView.loadData(getString(R.string.added_new_feature), "text/html", "utf-8");
+            webSettings.setDefaultFontSize(fontSize);
+        } else {
+            _addedNewTextView.setVisibility(View.GONE);
+            _addedNewWebView.setVisibility(View.GONE);
+        }
 
-        _bugFixedWebView.loadData(getString(R.string.bugs_fixed), "text/html", "utf-8");
-        webSettings = _bugFixedWebView.getSettings();
-        webSettings.setDefaultFontSize(fontSize);
+        if (SHOW_BUGS) {
+            _bugFixedTextView.setVisibility(View.VISIBLE);
+            _bugFixedWebView.setVisibility(View.VISIBLE);
+            _bugFixedWebView.loadData(getString(R.string.bugs_fixed), "text/html", "utf-8");
+            webSettings = _bugFixedWebView.getSettings();
+            webSettings.setDefaultFontSize(fontSize);
+        } else {
+            _bugFixedTextView.setVisibility(View.GONE);
+            _bugFixedWebView.setVisibility(View.GONE);
+        }
 
-        _workingOnFeatureWebView.loadData(getString(R.string.working_on_feature), "text/html", "utf-8");
-        webSettings = _workingOnFeatureWebView.getSettings();
-        webSettings.setDefaultFontSize(fontSize);
-
+        if (SHOW_FEATURES) {
+            _workingOnFeatureTextView.setVisibility(View.VISIBLE);
+            _workingOnFeatureWebView.setVisibility(View.VISIBLE);
+            _workingOnFeatureWebView.loadData(getString(R.string.working_on_feature), "text/html", "utf-8");
+            webSettings = _workingOnFeatureWebView.getSettings();
+            webSettings.setDefaultFontSize(fontSize);
+        } else {
+            _workingOnFeatureTextView.setVisibility(View.GONE);
+            _workingOnFeatureWebView.setVisibility(View.GONE);
+        }
     }
 
     @Override
