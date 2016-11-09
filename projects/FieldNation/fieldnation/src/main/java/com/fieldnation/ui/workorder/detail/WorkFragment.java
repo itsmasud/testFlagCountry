@@ -1548,13 +1548,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCheckout(Task task) {
-            Pay pay = _workorder.getPay();
-            if (pay != null && pay.isPerDeviceRate()) {
-//                _deviceCountDialog.show(_workorder, pay.getMaxDevice());
-                setLoading(true);
-            } else {
                 startCheckOut();
-            }
         }
 
         @Override
