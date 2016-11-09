@@ -186,7 +186,7 @@ public class WorkOrderCard extends RelativeLayout {
 
                         _dateTextView.setText(
                                 new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
-                                        + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(scal.getTime()));
+                                        + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
                     } catch (Exception ex) {
                         Log.v(TAG, ex);
                         _timeTextView.setVisibility(GONE);
