@@ -225,7 +225,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 break;
             case CARRIER_FEDEX:
             case CARRIER_UPS:
-            case CARRIER_USPS:
+            case CARRIER_USPS: getCarrierSpinner().setSelection(_carrierPosition);
             default:
                 _carrierLayout.setVisibility(View.GONE);
                 break;
