@@ -45,7 +45,7 @@
                     style="@style/EditText"
                     android:layout_width="match_parent"
                     android:hint="@string/hint_text_decline_spinner"
-                    android:visibility="visible" />
+                    android:visibility="gone" />
             </LinearLayout>
 
             <CheckBox
