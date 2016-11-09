@@ -69,8 +69,10 @@ public class NewFeaturesDialog extends FullScreenDialog {
         if (SHOW_WHATS_NEW) {
             _newTextView.setVisibility(View.VISIBLE);
             _newWebView.setVisibility(View.VISIBLE);
-            webSettings = _newWebView.getSettings();
             _newWebView.loadData(context.getString(R.string.added_new_feature), "text/html", "utf-8");
+            webSettings = _newWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setDomStorageEnabled(true);
             webSettings.setDefaultFontSize(fontSize);
         } else {
             _newTextView.setVisibility(View.GONE);
@@ -82,6 +84,8 @@ public class NewFeaturesDialog extends FullScreenDialog {
             _fixedWebView.setVisibility(View.VISIBLE);
             _fixedWebView.loadData(context.getString(R.string.bugs_fixed), "text/html", "utf-8");
             webSettings = _fixedWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setDomStorageEnabled(true);
             webSettings.setDefaultFontSize(fontSize);
         } else {
             _fixedTextView.setVisibility(View.GONE);
@@ -93,6 +97,8 @@ public class NewFeaturesDialog extends FullScreenDialog {
             _nextWebView.setVisibility(View.VISIBLE);
             _nextWebView.loadData(context.getString(R.string.working_on_feature), "text/html", "utf-8");
             webSettings = _nextWebView.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+            webSettings.setDomStorageEnabled(true);
             webSettings.setDefaultFontSize(fontSize);
         } else {
             _nextTextView.setVisibility(View.GONE);
@@ -104,6 +110,7 @@ public class NewFeaturesDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             cancel();
+            dismiss(true);
         }
     };
 
