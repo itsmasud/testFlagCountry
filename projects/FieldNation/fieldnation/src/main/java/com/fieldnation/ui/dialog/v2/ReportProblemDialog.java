@@ -452,6 +452,7 @@ public class ReportProblemDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             dismiss(true);
+            misc.hideKeyboard(v);
         }
     };
 
