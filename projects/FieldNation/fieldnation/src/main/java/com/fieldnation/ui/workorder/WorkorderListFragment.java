@@ -427,7 +427,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (getLocationService().hasLocation()) {
             CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(),_deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(),CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         }
 //        _adapter.refreshPages();
     }
