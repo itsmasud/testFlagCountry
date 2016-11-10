@@ -122,7 +122,6 @@ public class DialogManager extends FrameLayout implements Constants {
             // remove from the container
             dh.dialog.dismiss(true);
         }
-
     }
 
     private void remove(Dialog dialog) {

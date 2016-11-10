@@ -110,6 +110,6 @@ public class NewFeatureActivity extends Activity {
     public static void startNew(Context context) {
         Intent intent = new Intent(context, NewFeatureActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        ActivityResultClient.startActivity(context, intent, R.anim.activity_slide_in_bottom, R.anim.hold);
+        context.startActivity(intent);
     }
 }

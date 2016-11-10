@@ -41,6 +41,7 @@
                 android:layout_below="@+id/new_textview"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
+                android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
 
@@ -64,6 +65,7 @@
                 android:layout_below="@+id/fixed_textview"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
+                android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
 
@@ -85,6 +87,7 @@
                 android:layout_below="@+id/next_textview"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
+                android:minHeight="16dp"
                 android:text=""
                 android:visibility="gone" />
 
