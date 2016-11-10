@@ -13,9 +13,12 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 
@@ -202,7 +205,17 @@ public class ReasonCoView extends RelativeLayout {
     private final DatePickerDialog.OnDateSetListener _date_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            _pickerCal.set(year, monthOfYear, dayOfMonth);
+            Calendar todayCal = Calendar.getInstance();
+            Calendar test = (Calendar) _pickerCal.clone();
+            test.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+
+            if (test.get(Calendar.DAY_OF_MONTH) < todayCal.get(Calendar.DAY_OF_MONTH)) {
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
+                return;
+            } else {
+                _pickerCal = test;
+            }
+
 
             if (!_timePicker.isShowing())
                 _timePicker.show();
@@ -213,8 +226,16 @@ public class ReasonCoView extends RelativeLayout {
 
         @Override
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            _pickerCal.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
+            Calendar test = (Calendar) _pickerCal.clone();
+            test.set(_pickerCal.get(Calendar.YEAR), _pickerCal.get(Calendar.MONTH),
                     _pickerCal.get(Calendar.DAY_OF_MONTH), hourOfDay, minute);
+
+            if (test.getTimeInMillis() < System.currentTimeMillis()) {
+                ToastClient.toast(App.get(), getResources().getString(R.string.toast_previous_date_not_allowed), Toast.LENGTH_LONG);
+                return;
+            } else {
+                _pickerCal = test;
+            }
 
             _expirationDate = (Calendar) _pickerCal.clone();
             _expires = true;
