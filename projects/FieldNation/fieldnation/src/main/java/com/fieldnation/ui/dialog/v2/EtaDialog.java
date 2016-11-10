@@ -569,33 +569,30 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart = test;
                 populateUi();
             } else {
-                // need to check.. if this is business hours, and is within the last day + 1, then clear start time
-                ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
-
-                if (_schedule.getExact() == null && _schedule.getRange() != null && _schedule.getRange().getType() == Range.Type.BUSINESS) {
-                    if (passesMidnight(_schedule)) {
-                        test.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
+                // the time field might need to be cleared.
+                try {
+                    test = ISO8601.toCalendar(_schedule.getRange().getBegin());
+                    test.set(year, monthOfYear, dayOfMonth);
+                    if (isValidEta(test)) {
+                        ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
+                        _etaStart = test;
+                        populateUi();
+                        _etaStartTimeButton.setText("");
+                    } else {
+                        test = ISO8601.toCalendar(_schedule.getRange().getEnd());
+                        test.set(year, monthOfYear, dayOfMonth);
                         if (isValidEta(test)) {
+                            ToastClient.toast(App.get(), "Please select a time within the schedule", Toast.LENGTH_SHORT);
                             _etaStart = test;
                             populateUi();
                             _etaStartTimeButton.setText("");
+                        } else {
+                            ToastClient.toast(App.get(), "Please select a date within the schedule", Toast.LENGTH_SHORT);
                         }
                     }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
                 }
-
-                if (_schedule.getExact() == null && _schedule.getRange() != null && _schedule.getRange().getType() == Range.Type.RANGE) {
-                    if (isLastDaySelected(test)) {
-                        test.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
-                        if (isValidEta(test)) {
-                            _etaStart = test;
-                            populateUi();
-                            _etaStartTimeButton.setText("");
-                        }
-                    }
-                }
-
-
-
             }
         }
     };
@@ -642,31 +639,17 @@ public class EtaDialog extends FullScreenDialog {
             if (_schedule.getExact() != null) {
                 _durationMilliseconds = milliseconds;
                 populateUi();
-            } else if (_schedule.getRange().getType() == Range.Type.BUSINESS) {
+            } else {
                 Calendar test = Calendar.getInstance();
                 test.setTimeInMillis(_etaStart.getTimeInMillis() + milliseconds);
 
-                if (isWithinBusinessHours(test, _schedule)) {
-                    _durationMilliseconds = milliseconds;
-                    populateUi();
-                } else {
-                    ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
-                }
-            } else if (_schedule.getRange().getType() == Range.Type.RANGE) {
-                Calendar test = Calendar.getInstance();
-                test.setTimeInMillis(_etaStart.getTimeInMillis() + milliseconds);
-
-                if (isWithinRange(test, _schedule)) {
+                if (isValidEta(test)) {
                     _durationMilliseconds = milliseconds;
                     populateUi();
                 } else {
                     ToastClient.toast(App.get(), "Please select a duration within the range", Toast.LENGTH_LONG);
                 }
             }
-//            else {
-//                _durationMilliseconds = milliseconds;
-//                populateUi();
-//            }
         }
 
         @Override
