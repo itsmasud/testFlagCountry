@@ -496,7 +496,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _accept_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
         }
     };
 
