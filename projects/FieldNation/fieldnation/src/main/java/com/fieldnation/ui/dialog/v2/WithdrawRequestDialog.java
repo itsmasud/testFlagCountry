@@ -41,7 +41,7 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
             Bundle extraData = new Bundle();
             extraData.putLong("workOrderId", workOrderId);
 
-            show(context, null, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
+            show(context, null, WithdrawRequestDialog.class, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
                     R.string.btn_yes, R.string.btn_no, true, extraData);
         }
     }

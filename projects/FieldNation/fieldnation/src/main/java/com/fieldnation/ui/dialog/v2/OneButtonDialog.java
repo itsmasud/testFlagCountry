@@ -124,18 +124,27 @@ public class OneButtonDialog extends SimpleDialog {
         }
 
         public static void show(Context context, String uid, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
-            show(context, uid, context.getString(titleResId), context.getString(bodyResId),
+            show(context, uid, OneButtonDialog.class, context.getString(titleResId), context.getString(bodyResId),
+                    context.getString(buttonResId), isCancelable);
+        }
+
+        public static void show(Context context, String uid, Class<? extends Dialog> klass, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+            show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
                     context.getString(buttonResId), isCancelable);
         }
 
         public static void show(Context context, String uid, String title, String body, String button, boolean isCancelable) {
+            show(context, uid, OneButtonDialog.class, title, body, button, isCancelable);
+        }
+
+        public static void show(Context context, String uid, Class<? extends Dialog> klass, String title, String body, String button, boolean isCancelable) {
             Bundle params = new Bundle();
             params.putString(PARAM_TITLE, title);
             params.putString(PARAM_BODY, body);
             params.putString(PARAM_BUTTON, button);
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
 
-            show(context, uid, OneButtonDialog.class, params);
+            show(context, uid, klass, params);
         }
 
         public static void dismiss(Context context, String uid) {

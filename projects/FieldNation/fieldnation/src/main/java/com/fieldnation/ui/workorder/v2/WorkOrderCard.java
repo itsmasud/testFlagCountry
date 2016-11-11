@@ -323,7 +323,7 @@ public class WorkOrderCard extends RelativeLayout {
             case CONFIRM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_accept_onClick);
-                button.setText("ACCEPT");
+                button.setText("CONFIRM");
                 break;
             case ON_MY_WAY:
                 button.setVisibility(VISIBLE);

@@ -11,7 +11,7 @@
         android:gravity="center"
         android:orientation="vertical"
         android:padding="16dp"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:id="@+id/title_textview"
@@ -19,15 +19,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="No work found" />
-
-        <TextView
-            android:id="@+id/caption_textview"
-            style="@style/Text_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
-            android:text="Try changing your search settings" />
-
     </LinearLayout>
 
     <com.fieldnation.ui.OverScrollRecyclerView

@@ -149,14 +149,33 @@ public class TwoButtonDialog extends SimpleDialog {
             super(context, klass, uid);
         }
 
-        public static void show(Context context, String uid, int titleResId, int bodyResId, int primaryButtonResId,
-                                int secondaryButtonResId, boolean isCancelable, Parcelable extraData) {
+        public static void show(Context context, String uid, int titleResId, int bodyResId,
+                                int primaryButtonResId, int secondaryButtonResId, boolean isCancelable,
+                                Parcelable extraData) {
 
-            show(context, uid, context.getString(titleResId), context.getString(bodyResId), context.getString(primaryButtonResId),
-                    context.getString(secondaryButtonResId), isCancelable, extraData);
+            show(context, uid, TwoButtonDialog.class, titleResId, bodyResId, primaryButtonResId,
+                    secondaryButtonResId, isCancelable, extraData);
         }
 
-        public static void show(Context context, String uid, String title, String body, String primaryButton,
+        public static void show(Context context, String uid, Class<? extends Dialog> klass,
+                                int titleResId, int bodyResId, int primaryButtonResId,
+                                int secondaryButtonResId, boolean isCancelable, Parcelable extraData) {
+
+            show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
+                    context.getString(primaryButtonResId), context.getString(secondaryButtonResId),
+                    isCancelable, extraData);
+        }
+
+        public static void show(Context context, String uid, String title, String body,
+                                String primaryButton, String secondaryButton, boolean isCancelable,
+                                Parcelable extraData) {
+
+            show(context, uid, TwoButtonDialog.class, title, body, primaryButton, secondaryButton,
+                    isCancelable, extraData);
+        }
+
+        public static void show(Context context, String uid, Class<? extends Dialog> klass,
+                                String title, String body, String primaryButton,
                                 String secondaryButton, boolean isCancelable, Parcelable extraData) {
 
             Bundle params = new Bundle();
@@ -167,7 +186,7 @@ public class TwoButtonDialog extends SimpleDialog {
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
             params.putParcelable(PARAM_EXTRA_DATA, extraData);
 
-            show(context, uid, TwoButtonDialog.class, params);
+            show(context, uid, klass, params);
         }
 
         public static void dismiss(Context context, String uid) {
