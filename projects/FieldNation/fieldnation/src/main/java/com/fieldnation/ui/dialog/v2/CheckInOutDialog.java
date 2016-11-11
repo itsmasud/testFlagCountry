@@ -373,6 +373,7 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClient_listener.onAction()");
             _workorderClient.clearTopic(WorkorderConstants.TOPIC_ID_ACTION_COMPLETE);
             setLoading(false);
             if (failed) {
