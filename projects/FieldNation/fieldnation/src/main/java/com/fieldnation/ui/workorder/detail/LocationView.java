@@ -188,6 +188,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
+            _actionButton.setVisibility(GONE);
             _mapLayout.setVisibility(GONE);
             _noLocationTextView.setVisibility(VISIBLE);
             _distanceTextView.setVisibility(GONE);
@@ -500,9 +501,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _actionButton.setText(R.string.icon_car);
-            _actionButton.setVisibility(VISIBLE);
-            _action = ACTION_NAVIGATE;
             lookupMap();
         }
 
