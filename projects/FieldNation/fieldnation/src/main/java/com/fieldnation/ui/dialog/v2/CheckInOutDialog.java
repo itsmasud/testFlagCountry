@@ -273,7 +273,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final DatePickerDialog.OnDateSetListener _startDate_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-
             Calendar test = (Calendar) _startCalendar.clone();
             test.set(year, monthOfYear, dayOfMonth);
 
@@ -285,8 +284,6 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar = test;
                 populateUi();
             }
-
-
         }
     };
 
@@ -386,7 +383,6 @@ public class CheckInOutDialog extends FullScreenDialog {
     };
 
     public abstract static class Controller extends com.fieldnation.fndialog.Controller {
-
         public Controller(Context context, String uid) {
             super(context, CheckInOutDialog.class, uid);
         }
