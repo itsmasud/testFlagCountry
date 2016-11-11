@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -25,6 +26,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.dialog.DatePickerDialog;
@@ -258,7 +260,6 @@ public class CheckInOutDialog extends FullScreenDialog {
         return _spinner;
     }
 
-
     /*-*************************************-*/
     /*-             Ui Events               -*/
     /*-*************************************-*/
@@ -353,56 +354,6 @@ public class CheckInOutDialog extends FullScreenDialog {
             return true;
         }
     };
-
-
-    private static void onCheckin(long workOrderId, String startDate, Location location) {
-        try {
-            WorkorderClient.actionCheckin(App.get(), workOrderId, startDate, location);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onCheckin(long workOrderId, String startDate) {
-        try {
-            WorkorderClient.actionCheckin(App.get(), workOrderId, startDate);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onCheckout(long workOrderId, String startDate, int maxDevice, Location location) {
-        try {
-            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, maxDevice, location);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onCheckout(long workOrderId, String startDate, int maxDevice) {
-        try {
-            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, maxDevice);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onCheckout(long workOrderId, String startDate, Location location) {
-        try {
-            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, location);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private static void onCheckout(long workOrderId, String startDate) {
-        try {
-            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
 
     private final AdapterView.OnItemSelectedListener _spinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
