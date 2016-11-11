@@ -322,7 +322,7 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
             case CONFIRM:
                 button.setVisibility(VISIBLE);
-                button.setOnClickListener(_accept_onClick);
+                button.setOnClickListener(_confirm_onClick);
                 button.setText("CONFIRM");
                 break;
             case ON_MY_WAY:
@@ -503,7 +503,9 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+//            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+
         }
     };
 
