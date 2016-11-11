@@ -420,6 +420,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         public void onConnected() {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
+            _workorderClient.subActions();
             getData(true);
         }
 
@@ -453,6 +454,11 @@ public class WorkorderActivity extends AuthSimpleActivity {
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
             populateUi();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            WorkorderClient.get(App.get(), workorderId, false, false);
         }
     };
 
