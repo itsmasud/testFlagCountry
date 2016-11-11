@@ -39,7 +39,7 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
             Bundle extraData = new Bundle();
             extraData.putLong("workOrderId", workOrderId);
 
-            show(context, null, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
+            show(context, null, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
                     R.string.btn_continue, R.string.btn_cancel, true, extraData);
         }
     }

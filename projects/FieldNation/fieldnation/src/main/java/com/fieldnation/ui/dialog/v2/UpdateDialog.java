@@ -39,7 +39,7 @@ public class UpdateDialog extends OneButtonDialog {
         }
 
         public static void show(Context context) {
-            show(context, null, R.string.dialog_update_title, R.string.dialog_update_message,
+            show(context, null, UpdateDialog.class, R.string.dialog_update_title, R.string.dialog_update_message,
                     R.string.btn_update_now, true);
         }
     }

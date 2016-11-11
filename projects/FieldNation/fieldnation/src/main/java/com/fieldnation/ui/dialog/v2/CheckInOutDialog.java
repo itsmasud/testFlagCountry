@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
@@ -26,7 +25,6 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
 import com.fieldnation.ui.dialog.DatePickerDialog;
@@ -99,6 +97,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
         _startCalendar = Calendar.getInstance();
+
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
@@ -172,7 +171,8 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (params.containsKey(PARAM_LOCATION))
             _location = params.getParcelable(PARAM_LOCATION);
 
-        if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) && _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
+        if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) &&
+                _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
             _deviceNumberLayout.setVisibility(View.VISIBLE);
             _maxDevice = params.getInt(PARAM_MAX_DEVICE_NUMBER);
             getSpinner();
@@ -187,7 +187,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         populateUi();
     }
-
 
     @Override
     public void onSaveDialogState(Bundle outState) {
@@ -273,6 +272,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final DatePickerDialog.OnDateSetListener _startDate_onSet = new DatePickerDialog.OnDateSetListener() {
         @Override
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
             Calendar test = (Calendar) _startCalendar.clone();
             test.set(year, monthOfYear, dayOfMonth);
 
@@ -284,6 +284,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar = test;
                 populateUi();
             }
+
+
         }
     };
 
@@ -321,6 +323,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private final Toolbar.OnMenuItemClickListener _menu_onClick = new Toolbar.OnMenuItemClickListener() {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
+
             if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
                 _itemSelectedPosition = 0;
             }
@@ -350,6 +353,56 @@ public class CheckInOutDialog extends FullScreenDialog {
             return true;
         }
     };
+
+
+    private static void onCheckin(long workOrderId, String startDate, Location location) {
+        try {
+            WorkorderClient.actionCheckin(App.get(), workOrderId, startDate, location);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private static void onCheckin(long workOrderId, String startDate) {
+        try {
+            WorkorderClient.actionCheckin(App.get(), workOrderId, startDate);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private static void onCheckout(long workOrderId, String startDate, int maxDevice, Location location) {
+        try {
+            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, maxDevice, location);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private static void onCheckout(long workOrderId, String startDate, int maxDevice) {
+        try {
+            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, maxDevice);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private static void onCheckout(long workOrderId, String startDate, Location location) {
+        try {
+            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate, location);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private static void onCheckout(long workOrderId, String startDate) {
+        try {
+            WorkorderClient.actionCheckout(App.get(), workOrderId, startDate);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
 
     private final AdapterView.OnItemSelectedListener _spinner_selected = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -382,6 +435,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     };
 
     public abstract static class Controller extends com.fieldnation.fndialog.Controller {
+
         public Controller(Context context, String uid) {
             super(context, CheckInOutDialog.class, uid);
         }
