@@ -147,7 +147,8 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (params.containsKey(PARAM_LOCATION))
             _location = params.getParcelable(PARAM_LOCATION);
 
-        if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) && _dialogType == CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT) {
+        if (params.containsKey(PARAM_MAX_DEVICE_NUMBER) &&
+                _dialogType.equals(CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT)) {
             _deviceNumberLayout.setVisibility(View.VISIBLE);
             _maxDevice = params.getInt(PARAM_MAX_DEVICE_NUMBER);
             getSpinner();
