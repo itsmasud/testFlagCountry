@@ -22,7 +22,6 @@ import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
@@ -491,10 +490,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckIn(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
-        CheckInOutDialog.Controller.dismiss(App.get());
-
-        WorkorderDispatch.action(context, workorderId, "checkin", false);
         try {
+            WorkorderDispatch.action(context, workorderId, "checkin", false);
             WorkorderClient.listTasks(context, workorderId, false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
@@ -505,10 +502,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
                 ToastClient.snackbar(context, "Checkin failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                WorkorderDispatch.action(context, workorderId, "checkin", true);
                 return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
+            WorkorderDispatch.action(context, workorderId, "checkin", true);
             return Result.DELETE;
         }
     }
@@ -516,11 +515,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckOut(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
-        CheckInOutDialog.Controller.dismiss(App.get());
-
-        WorkorderDispatch.action(context, workorderId, "checkout", false);
         try {
             WorkorderClient.listTasks(context, workorderId, false);
+            WorkorderDispatch.action(context, workorderId, "checkout", false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -531,10 +528,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
                 ToastClient.snackbar(context, "Checkout failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 Log.v(TAG, "Sent snackbar");
+                WorkorderDispatch.action(context, workorderId, "checkout", true);
                 return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
+            WorkorderDispatch.action(context, workorderId, "checkout", true);
             return Result.DELETE;
         }
     }
@@ -758,9 +757,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
                     break;
                 case "pCheckIn":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), "checkin", true);
                     ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
                     break;
                 case "pCheckOut":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), "checkout", true);
                     ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
                     break;
                 case "pAction":
