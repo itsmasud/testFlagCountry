@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -11,10 +12,12 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 public class TaskShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.TaskShipmentAddDialog";
@@ -36,6 +39,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private Workorder _workorder;
     private String _title;
     private long _taskId;
+    private Activity _activity;
 
 
     /*-*****************************-*/
@@ -123,6 +127,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         if (_workorder == null)
             return;
 
+        _activity = getActivity();
         try {
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             _shipmentsLayout.removeAllViews();
@@ -141,6 +146,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         } catch (Exception ex) {
         }
     }
+
+
 
     /*-*************************-*/
     /*-			Events			-*/
@@ -166,6 +173,11 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
         @Override
         public void onScan() {
+            if (_listener != null) {
+                _listener.onScan();
+            }
+
+
         }
     };
 
@@ -216,6 +228,9 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+
+        void onScan();
+
 
     }
 
