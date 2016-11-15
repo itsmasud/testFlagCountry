@@ -19,7 +19,7 @@
         android:layout_below="@+id/title_textview"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="You are about to accept a bundle of 10 workorders" />
+        android:text="This is a bundle of 10 work orders. If you accept this bundle you are accepting all 10 work orders." />
 
     <TextView
         android:id="@+id/expires_textview"
@@ -56,7 +56,7 @@
         android:layout_below="@+id/divider"
         android:layout_marginLeft="24dp"
         android:layout_marginRight="24dp"
-        android:text="By accepting this bundle you are agreeing to our" />
+        android:text="By accepting this bundle you are agreeing to our Work Order Terms and Conditions" />
 
     <Button
         android:id="@+id/cancel_button"
