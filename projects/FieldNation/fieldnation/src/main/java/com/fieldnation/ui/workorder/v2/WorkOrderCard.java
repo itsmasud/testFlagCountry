@@ -463,7 +463,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _checkIn_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
                 CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
@@ -476,7 +476,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _checkOut_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_workOrder.getPay().getType().equals("device")) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
                 CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
