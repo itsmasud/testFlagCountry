@@ -1139,6 +1139,16 @@ public class WorkFragment extends WorkorderFragment {
                     shipToSite, carrier, carrierName, trackingId, taskId);
             setLoading(true);
         }
+
+        @Override
+        public void onScan() {
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
+            integrator.setCameraId(0);
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan();
+        }
     };
 
     private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
