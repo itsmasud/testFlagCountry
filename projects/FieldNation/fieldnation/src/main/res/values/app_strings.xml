@@ -628,7 +628,7 @@
     <string name="wo_id_x">WO ID: %1$s</string>
     <string name="wo_x">WO %1$s</string>
     <string name="work_complete">Work Complete</string>
-    <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
+    <string name="workorder_no_permission">The work order you are trying to view is unavailable.</string>
     <string name="workorder_not_found">The work order you are looking for has been assigned to another provider, canceled, or does not exist.</string>
     <string name="work_order_search">Work Order Search</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
