@@ -39,7 +39,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private Workorder _workorder;
     private String _title;
     private long _taskId;
-    private Activity _activity;
 
 
     /*-*****************************-*/
@@ -127,7 +126,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         if (_workorder == null)
             return;
 
-        _activity = getActivity();
         try {
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             _shipmentsLayout.removeAllViews();
