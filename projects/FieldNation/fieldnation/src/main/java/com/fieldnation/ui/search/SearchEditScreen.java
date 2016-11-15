@@ -43,21 +43,13 @@ public class SearchEditScreen extends RelativeLayout {
             10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
 
-    private WorkOrderListType[] TYPES = null;
-
-    private static final WorkOrderListType[] TYPES_MP = new WorkOrderListType[]{
+    private static final WorkOrderListType[] TYPES = new WorkOrderListType[]{
             WorkOrderListType.ASSIGNED,
             WorkOrderListType.AVAILABLE,
             WorkOrderListType.CANCELED,
             WorkOrderListType.COMPLETED,
             WorkOrderListType.REQUESTED,
             WorkOrderListType.ROUTED
-    };
-
-    private static final WorkOrderListType[] TYPES_NOMP = new WorkOrderListType[]{
-            WorkOrderListType.ASSIGNED,
-            WorkOrderListType.CANCELED,
-            WorkOrderListType.COMPLETED
     };
 
     // UI
@@ -100,12 +92,6 @@ public class SearchEditScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        if (App.get().getProfile() != null && !App.get().getProfile().canViewMarketPlaceWork()) {
-            TYPES = TYPES_NOMP;
-        } else {
-            TYPES = TYPES_MP;
-        }
-
         _loadingView = (RefreshView) findViewById(R.id.loading_view);
 
         _searchEditText = (SearchEditText) findViewById(R.id.searchedittext);
@@ -114,21 +100,10 @@ public class SearchEditScreen extends RelativeLayout {
         _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
 
-        HintArrayAdapter adapter = null;
-        if (App.get().getProfile() != null && !App.get().getProfile().canViewMarketPlaceWork()) {
-            adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status_nomp,
-                    R.layout.view_spinner_item);
-        } else {
-            adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status,
-                    R.layout.view_spinner_item);
-        }
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
-        if (App.get().getProfile() != null && !App.get().getProfile().canViewMarketPlaceWork()) {
-            _statusSpinner.setSelection(0);
-        } else {
-            _statusSpinner.setSelection(1);
-        }
+        _statusSpinner.setSelection(0);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
