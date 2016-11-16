@@ -30,14 +30,7 @@ import java.util.List;
 public class SavedSearchList extends LinearLayout {
     private static final String TAG = "SavedSearchList";
 
-    public static SavedSearchParams[] getDefaults(Profile profile) {
-        if (profile != null && !profile.canViewMarketPlaceWork()) {
-            return defaults_nomp;
-        }
-        return defaults_mp;
-    }
-
-    private static final SavedSearchParams[] defaults_mp = new SavedSearchParams[]{
+    public static final SavedSearchParams[] defaults = new SavedSearchParams[]{
             new SavedSearchParams()
                     .type(WorkOrderListType.TODAYS_WORK.getType())
                     .status(WorkOrderListType.TODAYS_WORK.getStatuses())
@@ -73,29 +66,6 @@ public class SavedSearchList extends LinearLayout {
                     .title("Routed")
     };
 
-    private static final SavedSearchParams[] defaults_nomp = new SavedSearchParams[]{
-            new SavedSearchParams()
-                    .type(WorkOrderListType.TODAYS_WORK.getType())
-                    .status(WorkOrderListType.TODAYS_WORK.getStatuses())
-                    .title("Today's Work"),
-            new SavedSearchParams()
-                    .type(WorkOrderListType.TOMORROWS_WORK.getType())
-                    .status(WorkOrderListType.TOMORROWS_WORK.getStatuses())
-                    .title("Tomorrow's Work"),
-            new SavedSearchParams()
-                    .type(WorkOrderListType.ASSIGNED.getType())
-                    .status(WorkOrderListType.ASSIGNED.getStatuses())
-                    .title("Assigned"),
-            new SavedSearchParams()
-                    .type(WorkOrderListType.CANCELED.getType())
-                    .status(WorkOrderListType.CANCELED.getStatuses())
-                    .title("Canceled"),
-            new SavedSearchParams()
-                    .type(WorkOrderListType.COMPLETED.getType())
-                    .status(WorkOrderListType.COMPLETED.getStatuses())
-                    .title("Completed")
-    };
-
     // Data
     private OnHideListener _onHideListener;
     private OnShowListener _onShowListener;
@@ -121,8 +91,6 @@ public class SavedSearchList extends LinearLayout {
             return;
 
         setOrientation(VERTICAL);
-
-        SavedSearchParams[] defaults = getDefaults(App.get().getProfile());
 
         for (int i = 0; i < defaults.length; i++) {
             TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.view_saved_search_row, null);

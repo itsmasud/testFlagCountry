@@ -180,14 +180,6 @@ public class Profile implements Parcelable {
         return true;
     }
 
-    public boolean canViewMarketPlaceWork() {
-        if (misc.isEmptyOrNull(_marketplaceStatusReason))
-            return true;
-
-        return !_marketplaceStatusReason.equals("KEEP_PRIVATE");
-    }
-
-
     public JsonObject toJson() {
         return toJson(this);
     }
