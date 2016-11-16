@@ -201,4 +201,12 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         intent.putExtras(transaction.toBundle());
         context.startService(intent);
     }
+
+    public static Intent makeQueueTransactionIntent(Context context, WebTransaction transaction) {
+        Intent intent = new Intent(context, WebTransactionService.class);
+        intent.putExtras(transaction.toBundle());
+        return intent;
+    }
+
+
 }

@@ -6,7 +6,8 @@ import android.content.Intent;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Shoaib on 7/4/2015.
@@ -31,19 +32,21 @@ public class HelpTransactionBuilder {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey("POST/api/rest/v1/help/feedback")
                     .path("/api/rest/v1/help/feedback");
 
             http.body(body);
             http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
-            return WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST/api/rest/v1/help/feedback")
                     .priority(Priority.LOW)
                     .handler(HelpTransactionHandler.class)
                     .handlerParams(HelpTransactionHandler.pContactUs(message, internalTeam, uri, extraData, extraType))
                     .useAuth(true)
                     .request(http)
-                    .makeIntent();
+                    .build();
+
+            return WebTransactionService.makeQueueTransactionIntent(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

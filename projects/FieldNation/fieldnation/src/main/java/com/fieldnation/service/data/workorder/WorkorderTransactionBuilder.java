@@ -19,7 +19,9 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
+import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionService;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.io.File;
@@ -33,7 +35,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void get(Context context, long workorderId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/details")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pDetails(workorderId))
@@ -43,9 +46,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/details")
                             .path("/api/rest/v1/workorder/" + workorderId + "/details"))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -53,7 +57,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void list(Context context, WorkorderDataSelector selector, int page, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/" + selector.getCall())
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pList(page, selector))
@@ -63,10 +68,11 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/" + selector.getCall())
                             .path("/api/rest/v1/workorder/" + selector.getCall())
                             .urlParams("?page=" + page))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -77,14 +83,14 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/notifications")
                     .path("/api/rest/v1/workorder/" + workorderId + "/notifications");
 
             if (isRead) {
                 builder.urlParams("?mark_read=1");
             }
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/notifications")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pAlertList(workorderId, isRead))
@@ -92,7 +98,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .useAuth(true)
                     .isSyncCall(isSync)
                     .request(builder)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -100,7 +108,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void listTasks(Context context, long workorderId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/tasks")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pTaskList(workorderId))
@@ -110,9 +119,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/tasks")
                             .path("/api/rest/v1/workorder/" + workorderId + "/tasks"))
-                    .send();
+                    .build();
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -120,7 +129,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void getBundle(Context context, long bundleId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/bundle/[bundleId]")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pGetBundle(bundleId))
@@ -130,9 +140,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/bundle/[bundleId]")
                             .path("/api/rest/v1/workorder/bundle/" + bundleId))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -173,7 +184,6 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method(method)
-                    .timingKey(timingKey)
                     .path("/api/rest/v1/workorder/" + workorderId + "/" + action);
 
             if (params != null) {
@@ -188,14 +198,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                 }
             }
 
-            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
+            WebTransaction.Builder builder = new WebTransaction.Builder()
+                    .timingKey(timingKey)
                     .priority(Priority.HIGH)
                     .handler(clazz)
                     .handlerParams(handlerParams)
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)
-                    .transform(Transform.makeTransformQuery(
+                    .addTransform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
@@ -204,7 +215,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             if (useKey)
                 builder.key("Workorder/" + workorderId + "/" + action);
 
-            return builder.makeIntent();
+            return WebTransactionService.makeQueueTransactionIntent(context, builder.build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -213,7 +224,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     public static void sendAcknowledge(Context context, long workorderId, String action) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pAction(workorderId, action))
@@ -222,7 +233,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             .protocol("https")
                             .method("GET")
                             .path("/api/rest/v1/workorder/" + workorderId + "/" + action))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -575,7 +588,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             JsonObject _action = new JsonObject();
             _action.put("_action[0].action", "withdraw-request");
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/withdraw-request")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_request"))
@@ -583,14 +597,15 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/withdraw-request")
                             .path("/api/rest/v1/workorder/" + workorderId + "/withdraw-request"))
-                    .transform(Transform.makeTransformQuery(
+                    .addTransform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
                             _action.toByteArray()))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -614,13 +629,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/rate")
                     .path("/api/rest/v1/workorder/" + workorderId + "/rate");
 
             http.body(body);
             http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
-            return WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST/api/rest/v1/workorder/[workorderId]/rate")
                     .priority(Priority.LOW)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pRating(
@@ -628,7 +643,9 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                             recommendBuyer, otherComments, workorderId))
                     .useAuth(true)
                     .request(http)
-                    .makeIntent();
+                    .build();
+
+            return WebTransactionService.makeQueueTransactionIntent(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -641,7 +658,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-************************************-*/
     public static void getSignature(Context context, long workorderId, long signatureId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pGetSignature(workorderId, signatureId))
@@ -651,9 +669,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -662,7 +681,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns signature list
     public static void deleteSignature(Context context, long workorderId, long signatureId) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                     .priority(Priority.HIGH)
                     .handler(WorkorderTransactionHandler.class)
                     .handlerParams(WorkorderTransactionHandler.pAction(workorderId, "delete_signature"))
@@ -670,9 +690,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("DELETE")
-                            .timingKey("DELETE/api/rest/v1/workorder/[workorderId]/signature/[signatureId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/signature/" + signatureId))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -721,7 +742,8 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     /*-**************************************-*/
     public static void getDeliverable(Context context, long workorderId, long deliverableId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/workorder/[workorderId]/deliverables/[deliverableId]")
                     .priority(Priority.HIGH)
                     .handler(DeliverableTransactionHandler.class)
                     .handlerParams(DeliverableTransactionHandler.pGet(workorderId, deliverableId))
@@ -731,9 +753,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/api/rest/v1/workorder/[workorderId]/deliverables/[deliverableId]")
                             .path("/api/rest/v1/workorder/" + workorderId + "/deliverables/" + deliverableId))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
