@@ -4,12 +4,16 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Timing;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
@@ -198,13 +202,13 @@ public class OAuth implements Parcelable {
                                      String clientId, String clientSecret, String username,
                                      String password) throws Exception {
 
+        Stopwatch stopwatch = new Stopwatch(true);
         HttpJsonBuilder builder = new HttpJsonBuilder()
                 .method("POST")
                 .protocol("https")
                 .host(host)
                 .path(path)
                 .urlParams("?as_provider=1")
-                .timingKey("POST" + path)
                 .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED)
                 .body("grant_type=" + grantType +
                         "&client_id=" + clientId +
@@ -213,6 +217,16 @@ public class OAuth implements Parcelable {
                         "&password=" + misc.escapeForURL(password));
 
         HttpResult result = HttpJson.run(App.get(), builder.build());
+
+        Tracker.timing(App.get(),
+                new Timing.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category("Web Timing")
+                        .label("POST" + path)
+                        .timing((int) stopwatch.finish())
+                        .build());
+
+        Log.v(TAG, "POST" + path + " run time: " + stopwatch.getTime());
 
         Log.v(TAG, result.getResponseCode() + "");
         Log.v(TAG, result.getResponseMessage());

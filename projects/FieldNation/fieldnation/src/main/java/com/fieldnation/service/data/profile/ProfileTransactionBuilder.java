@@ -7,7 +7,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -18,7 +19,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
     public static void get(Context context, long profileId, boolean isSync) {
         try {
             HttpJsonBuilder http = new HttpJsonBuilder()
-                    .timingKey("GET/api/rest/v1/profile/")
                     .protocol("https")
                     .method("GET");
 
@@ -28,7 +28,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                 http.path("/api/rest/v1/profile");
             }
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/profile/")
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pGet(profileId))
@@ -36,7 +37,9 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                     .isSyncCall(isSync)
                     .useAuth(true)
                     .request(http)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -44,7 +47,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
     public static void listNotifications(Context context, int page, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/profile/notifications")
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pListNotifications(page))
@@ -55,10 +59,11 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .timingKey("GET/api/rest/v1/profile/notifications")
                                     .path("/api/rest/v1/profile/notifications")
                                     .urlParams("?page=" + page)
-                    ).send();
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -66,7 +71,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
     public static void listMessages(Context context, int page, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/profile/messages")
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pListMessages(page))
@@ -77,10 +83,11 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .timingKey("GET/api/rest/v1/profile/messages")
                                     .path("/api/rest/v1/profile/messages")
                                     .urlParams("?page=" + page)
-                    ).send();
+                    ).build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -88,7 +95,8 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
     public static void switchUser(Context context, long userId) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/profile/[userId]/switch")
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pSwitchUser(userId))
@@ -98,9 +106,9 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .timingKey("GET/api/rest/v1/profile/[userId]/switch")
                                     .path("/api/rest/v1/profile/" + userId + "/switch")
-                    ).send();
+                    ).build();
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -117,7 +125,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey(timingKey)
                     .path("/api/rest/v1/profile/" + profileId + "/" + action);
 
             if (params != null) {
@@ -132,14 +139,17 @@ public class ProfileTransactionBuilder implements ProfileConstants {
                 }
             }
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey(timingKey)
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pAction(profileId, action))
                     .useAuth(true)
                     .key("Profile/" + profileId + "/" + action)
                     .request(http)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -162,7 +172,6 @@ public class ProfileTransactionBuilder implements ProfileConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey("POST/api/rest/v1/api/record")
                     .path("/api/rest/v1/api/record");
 
             JsonObject body = new JsonObject();
@@ -176,14 +185,17 @@ public class ProfileTransactionBuilder implements ProfileConstants {
 
             http.header(HttpJsonBuilder.HEADER_CONTENT_TYPE, "application/json");
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("POST/api/rest/v1/api/record")
                     .priority(Priority.HIGH)
                     .handler(ProfileTransactionHandler.class)
                     .handlerParams(ProfileTransactionHandler.pAction(0, "register_device"))
                     .useAuth(true)
                     .key("Profile/RegisterDevice")
                     .request(http)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

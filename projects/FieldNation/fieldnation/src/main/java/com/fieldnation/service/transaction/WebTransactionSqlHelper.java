@@ -17,7 +17,7 @@ import java.util.WeakHashMap;
 class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 4;
+    private static final int TABLE_VER = 5; // last update: 11-16-2016
     public static final String TABLE_NAME = "transactions";
 
     private static final WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
@@ -35,12 +35,12 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
         QUEUE_TIME(9, "queue_time", "integer not null", true),
         WIFI_REQUIRED(10, "wifi_req", "integer not null", true),
         TRACK(11, "track", "integer not null"),
-
-        NOTIF_ID(12, "notif_id", "integer"),
-        NOTIF_START(13, "notif_start", "integer"),
-        NOTIF_SUCCESS(14, "notif_success", "integer"),
-        NOTIF_FAILED(15, "notif_failed", "integer"),
-        NOTIF_RETRY(16, "notif_retry", "integer"),;
+        TIMING_KEY(12, "timing_key", "text"),
+        NOTIF_ID(13, "notif_id", "integer"),
+        NOTIF_START(14, "notif_start", "integer"),
+        NOTIF_SUCCESS(15, "notif_success", "integer"),
+        NOTIF_FAILED(16, "notif_failed", "integer"),
+        NOTIF_RETRY(17, "notif_retry", "integer"),;
 
         private final int _index;
         private final String _name;
@@ -134,6 +134,12 @@ class WebTransactionSqlHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
+        onCreate(db);
+    }
+
+    @Override
+    public void onDowngrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME + ";");
         onCreate(db);
     }

@@ -19,7 +19,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 

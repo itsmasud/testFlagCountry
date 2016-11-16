@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Created by Michael Carver on 3/6/2015.
  */
-public class WebTransactionBuilder implements WebTransactionConstants {
+class WebTransactionBuilder implements WebTransactionConstants {
 
     private final Context context;
     private final Intent intent;
@@ -85,11 +85,14 @@ public class WebTransactionBuilder implements WebTransactionConstants {
         return this;
     }
 
+    public WebTransactionBuilder timingKey(String timingKey) throws ParseException {
+        intent.putExtra(PARAM_TIMING_KEY, timingKey);
+        return this;
+    }
+
     public WebTransactionBuilder notify(NotificationDefinition start, NotificationDefinition success,
                                         NotificationDefinition failed, NotificationDefinition retry) throws ParseException {
-
         intent.putExtra(PARAM_NOTIFICATION_ID, App.secureRandom.nextInt(Integer.MAX_VALUE));
-
         intent.putExtra(PARAM_NOTIFICATION_START, start.toJson().toByteArray());
         intent.putExtra(PARAM_NOTIFICATION_SUCCESS, success.toJson().toByteArray());
         intent.putExtra(PARAM_NOTIFICATION_FAILED, failed.toJson().toByteArray());
@@ -99,14 +102,14 @@ public class WebTransactionBuilder implements WebTransactionConstants {
     }
 
     // transforms
-    private void getTransforms() {
+    private void makeTransforms() {
         if (transforms == null) {
             transforms = new LinkedList<>();
         }
     }
 
     public WebTransactionBuilder transform(Bundle transform) {
-        getTransforms();
+        makeTransforms();
         transforms.add(transform);
         return this;
     }
