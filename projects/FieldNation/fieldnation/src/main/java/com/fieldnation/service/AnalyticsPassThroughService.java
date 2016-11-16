@@ -21,19 +21,21 @@ public class AnalyticsPassThroughService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
-        try {
-            Tracker.event(this, (Event) intent.getParcelableExtra("event"));
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+        if (intent != null) {
+            try {
+                Tracker.event(this, (Event) intent.getParcelableExtra("event"));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            try {
+                ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, 0, new Intent());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
-        try {
-            ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, 0, new Intent());
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
     }
 
     @Nullable
