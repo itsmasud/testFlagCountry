@@ -858,8 +858,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }
@@ -945,8 +950,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }
@@ -965,8 +975,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Unable to accept work order. " + resultData.getString(),
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Unable to accept work order. " + resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }
