@@ -20,7 +20,12 @@ public class AnalyticsPassThroughService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
-        Tracker.event(this, (Event) intent.getParcelableExtra("event"));
+
+        try {
+            Tracker.event(this, (Event) intent.getParcelableExtra("event"));
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
 
         try {
             ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, 0, new Intent());
