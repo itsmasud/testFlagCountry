@@ -34,7 +34,6 @@ public abstract class WebTransactionListener {
     }
 
     public Result onComplete(Context context, WebTransaction transaction, HttpResult result, Throwable throwable) {
-
         JsonObject request = null;
         try {
             request = new JsonObject(transaction.getRequestString());
@@ -44,9 +43,7 @@ public abstract class WebTransactionListener {
         }
 
         if (result != null) {
-            if (!result.isFile() && (result.getString() != null
-                    && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
-
+            if (!result.isFile() && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
                 Log.v(TAG, "Reauth");
                 AuthTopicClient.invalidateCommand(context);
                 AuthTopicClient.requestCommand(context);
@@ -56,11 +53,7 @@ public abstract class WebTransactionListener {
                 // Bad request
                 // need to report this
                 // need to re-auth?
-                if (result.getString() != null
-                        && result.getString().contains("You don't have permission to see this workorder")) {
-                    return Result.DELETE;
-
-                } else if (result.getResponseMessage().contains("Bad Request")) {
+                if (result.getResponseMessage().contains("Bad Request")) {
                     return Result.DELETE;
 
                 } else {
@@ -104,26 +97,31 @@ public abstract class WebTransactionListener {
         if (throwable != null) {
             if (throwable instanceof MalformedURLException || throwable instanceof FileNotFoundException) {
                 return Result.DELETE;
+
             } else if (throwable instanceof SecurityException || throwable instanceof UnknownHostException) {
                 return Result.DELETE;
-            } else if (throwable instanceof SSLProtocolException || throwable instanceof ConnectException
-                    || throwable instanceof SocketTimeoutException || throwable instanceof EOFException) {
+
+            } else if (throwable instanceof SSLProtocolException || throwable instanceof ConnectException || throwable instanceof SocketTimeoutException || throwable instanceof EOFException) {
                 return Result.RETRY;
+
             } else if (throwable instanceof SSLException) {
                 if (throwable.getMessage().contains("Broken pipe")) {
                     Log.v(TAG, "6");
                     return Result.RETRY;
+
                 } else {
                     Log.v(TAG, "7");
                     return Result.RETRY;
                 }
             } else if (throwable instanceof IOException) {
                 return Result.RETRY;
+
             } else if (throwable instanceof Exception) {
                 Log.v(TAG, "9");
                 Log.v(TAG, throwable);
                 if (throwable.getMessage() != null && throwable.getMessage().contains("ETIMEDOUT")) {
                     return Result.RETRY;
+
                 } else {
                     // no freaking clue
                     Log.logException(throwable);
