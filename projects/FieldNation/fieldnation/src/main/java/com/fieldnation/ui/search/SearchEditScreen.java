@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;

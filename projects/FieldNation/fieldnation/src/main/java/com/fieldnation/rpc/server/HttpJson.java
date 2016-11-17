@@ -4,13 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 
 import com.fieldnation.BuildConfig;
-import com.fieldnation.analytics.AnswersWrapper;
-import com.fieldnation.fnanalytics.Timing;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
-import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.fntools.misc;
 

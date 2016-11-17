@@ -9,7 +9,6 @@ import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
-import com.fieldnation.fntools.misc;
 
 public class Profile implements Parcelable {
     private static final String TAG = "Profile";

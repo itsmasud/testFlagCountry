@@ -11,7 +11,6 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 
 /**
  * Created by shoaib.ahmed on 08/02/2016.

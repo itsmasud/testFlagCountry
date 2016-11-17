@@ -12,8 +12,6 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.FullScreenDialog;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by Michael on 9/23/2016.
  */

@@ -2,7 +2,6 @@ package com.fieldnation.service.transaction;
 
 import android.content.Context;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpResult;
 
 /**

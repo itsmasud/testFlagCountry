@@ -7,7 +7,6 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 
 /**

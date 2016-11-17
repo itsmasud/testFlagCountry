@@ -13,11 +13,9 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 /**
  * Created by mc on 10/27/16.

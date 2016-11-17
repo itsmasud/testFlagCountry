@@ -24,7 +24,6 @@ import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
-import com.fieldnation.ui.NewFeatureActivity;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
