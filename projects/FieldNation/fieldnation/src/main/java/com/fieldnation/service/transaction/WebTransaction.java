@@ -269,9 +269,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return _notifRetry;
     }
 
-    public void requeue() {
+    public void requeue(long retryTime) {
         setState(State.IDLE);
-        setQueueTime(System.currentTimeMillis());
+        setQueueTime(System.currentTimeMillis() + retryTime);
         save();
 
         if (isTracked())
@@ -411,7 +411,13 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.LSITENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
-        v.put(Column.STATE.getName(), obj._state.ordinal());
+        
+        if (obj._state != null) {
+            v.put(Column.STATE.getName(), obj._state.ordinal());
+        } else {
+            v.put(Column.STATE.getName(), State.BUILDING.ordinal());
+        }
+
         if (obj._requestString != null) {
             v.put(Column.REQUEST.getName(), obj._requestString.getBytes());
         }

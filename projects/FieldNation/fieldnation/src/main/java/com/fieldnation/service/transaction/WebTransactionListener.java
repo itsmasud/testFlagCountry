@@ -10,9 +10,7 @@ import com.fieldnation.rpc.server.HttpResult;
 public abstract class WebTransactionListener {
     private static final String TAG = "WebTransactionListener";
 
-    public enum Result {
-        RETRY, CONTINUE, DELETE
-    }
+    public enum Result {RETRY, CONTINUE, DELETE}
 
     public Result onStart(Context context, WebTransaction transaction) {
         return Result.CONTINUE;

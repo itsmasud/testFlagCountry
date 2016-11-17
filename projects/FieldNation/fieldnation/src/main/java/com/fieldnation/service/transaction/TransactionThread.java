@@ -48,6 +48,9 @@ public class TransactionThread extends ThreadManager.ManagedThread {
     private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 
+    private static final long RETRY_SHORT = 5000;
+    private static final long RETRY_LONG = 30000;
+
     private final WebTransactionService _service;
 
     private boolean _syncThread = false;
@@ -110,7 +113,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         WebTransaction trans = null;
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(), _syncThread ? Priority.LOW : Priority.NORMAL);
+            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
+                    _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {
             ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
@@ -156,20 +160,20 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
                 if (auth == null) {
                     AuthTopicClient.requestCommand(App.get());
-                    trans.requeue();
+                    trans.requeue(RETRY_SHORT);
                     return false;
                 }
 
                 if (auth.getAccessToken() == null) {
                     Log.v(TAG, "accessToken is null");
                     AuthTopicClient.invalidateCommand(App.get());
-                    trans.requeue();
+                    trans.requeue(RETRY_SHORT);
                     return false;
                 }
 
                 if (!_service.isAuthenticated()) {
                     Log.v(TAG, "skip no auth");
-                    trans.requeue();
+                    trans.requeue(RETRY_SHORT);
                     return false;
                 }
 
@@ -218,8 +222,9 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             // **** Error handling ****
             // check for invalid auth
-            if (!result.isFile()
-                    && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
+            if (!result.isFile() && (result.getString() != null
+                    && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
+
                 Log.v(TAG, "Reauth");
                 AuthTopicClient.invalidateCommand(_service);
                 transRequeueNetworkDown(trans, notifId, notifRetry);
@@ -230,14 +235,17 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 // Bad request
                 // need to report this
                 // need to re-auth?
-                if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
+                if (result.getString() != null
+                        && result.getString().contains("You don't have permission to see this workorder")) {
                     WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     return true;
+
                 } else if (result.getResponseMessage().contains("Bad Request")) {
                     WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     return true;
+
                 } else {
                     Log.v(TAG, "1");
                     AuthTopicClient.invalidateCommand(_service);
@@ -254,6 +262,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                     transRequeueNetworkDown(trans, notifId, notifRetry);
                     AuthTopicClient.requestCommand(_service);
                     return true;
+
                 } else {
                     WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
@@ -295,8 +304,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             GlobalTopicClient.networkConnected(_service);
 
             if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(
-                        _service, handlerName, trans, result);
+                WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(_service, handlerName, trans, result);
 
                 switch (wresult) {
                     case DELETE:
@@ -304,10 +312,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                         WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                         WebTransaction.delete(trans.getId());
                         break;
+
                     case CONTINUE:
                         generateNotification(notifId, notifSuccess);
                         WebTransaction.delete(trans.getId());
                         break;
+
                     case RETRY:
                         Log.v(TAG, "3");
                         transRequeueNetworkDown(trans, notifId, notifRetry);
@@ -391,7 +401,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             Thread.sleep(5000);
         } catch (InterruptedException e) {
         }
-        trans.requeue();
+        trans.requeue(RETRY_LONG);
     }
 
     protected static void generateNotification(int notifyId, NotificationDefinition notif) {
