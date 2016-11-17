@@ -45,7 +45,7 @@ public class HelpTransactionListener extends WebTransactionListener {
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
-                    handleContactUs(context, transaction, resultData, params);
+                    onCompleteContactUs(context, transaction, resultData, params);
                     break;
             }
             return super.onComplete(context, transaction, resultData);
@@ -55,7 +55,7 @@ public class HelpTransactionListener extends WebTransactionListener {
         return Result.DELETE;
     }
 
-    private Result handleContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+    private Result onCompleteContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
 
         ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
 
@@ -73,7 +73,7 @@ public class HelpTransactionListener extends WebTransactionListener {
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
-                    handleContactUsFail(context, transaction, resultData, params);
+                    onFailContactUs(context, transaction, resultData, params);
                     break;
             }
             return super.onComplete(context, transaction, resultData);
@@ -83,7 +83,7 @@ public class HelpTransactionListener extends WebTransactionListener {
         return Result.CONTINUE;
     }
 
-    private Result handleContactUsFail(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+    private Result onFailContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
         try {
             Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
                     params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),

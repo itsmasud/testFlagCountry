@@ -49,9 +49,9 @@ public class PaymentTransactionListener extends WebTransactionListener implement
 
             switch (action) {
                 case "pList":
-                    return handleList(context, transaction, resultData, obj);
+                    return onCompleteList(context, transaction, resultData, obj);
                 case "pGet":
-                    return handleGet(context, transaction, resultData, obj);
+                    return onCompleteGet(context, transaction, resultData, obj);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -81,8 +81,8 @@ public class PaymentTransactionListener extends WebTransactionListener implement
     }
 
 
-    private Result handleList(Context context, WebTransaction transaction, HttpResult resultData,
-                              JsonObject params) throws ParseException {
+    private Result onCompleteList(Context context, WebTransaction transaction, HttpResult resultData,
+                                  JsonObject params) throws ParseException {
         int page = params.getInt("page");
         byte[] data = resultData.getByteArray();
 
@@ -92,8 +92,8 @@ public class PaymentTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData,
-                             JsonObject params) throws ParseException {
+    private Result onCompleteGet(Context context, WebTransaction transaction, HttpResult resultData,
+                                 JsonObject params) throws ParseException {
         long paymentId = params.getLong("paymentId");
 
         byte[] data = resultData.getByteArray();

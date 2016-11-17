@@ -54,9 +54,9 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
             String action = params.getString("action");
             switch (action) {
                 case "pAction":
-                    return resultAction(context, transaction, params, resultData);
+                    return onCompleteAction(context, transaction, params, resultData);
                 case "pSearch":
-                    return resultSearch(context, transaction, params, resultData);
+                    return onCompleteSearch(context, transaction, params, resultData);
                 default:
                     break;
             }
@@ -66,16 +66,16 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         return Result.CONTINUE;
     }
 
-    private Result resultAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "resultAction");
+    private Result onCompleteAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "onCompleteAction");
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
         WorkOrderDispatch.action(context, workorderId, action, false);
         return Result.CONTINUE;
     }
 
-    private Result resultSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "resultSearch");
+    private Result onCompleteSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "onCompleteSearch");
         WorkOrderDispatch.search(context,
                 SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
                 resultData.getByteArray(), false);
@@ -92,9 +92,9 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
             String action = params.getString("action");
             switch (action) {
                 case "pAction":
-                    return failAction(context, transaction, params, resultData);
+                    return onFailAction(context, transaction, params, resultData);
                 case "pSearch":
-                    return failSearch(context, transaction, params, resultData);
+                    return onFailSearch(context, transaction, params, resultData);
                 default:
                     break;
             }
@@ -104,8 +104,8 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         return Result.CONTINUE;
     }
 
-    private Result failAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "failAction");
+    private Result onFailAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "onFailAction");
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
 
@@ -114,8 +114,8 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         return Result.CONTINUE;
     }
 
-    private Result failSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "failSearch");
+    private Result onFailSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+        Log.v(TAG, "onFailSearch");
 
         WorkOrderDispatch.search(context,
                 SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);

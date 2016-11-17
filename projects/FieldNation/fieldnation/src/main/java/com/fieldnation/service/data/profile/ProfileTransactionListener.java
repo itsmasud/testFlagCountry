@@ -86,15 +86,15 @@ public class ProfileTransactionListener extends WebTransactionListener implement
 
             switch (action) {
                 case "pGet":
-                    return handleGet(context, transaction, resultData, params);
+                    return onCompleteGet(context, transaction, resultData, params);
                 case "pListNotifications":
-                    return handleListNotifications(context, transaction, resultData, params);
+                    return onCompleteListNotifications(context, transaction, resultData, params);
                 case "pListMessages":
-                    return handleListMessages(context, transaction, resultData, params);
+                    return onCompleteListMessages(context, transaction, resultData, params);
                 case "pSwitchUser":
-                    return handleSwitchUser(context, transaction, resultData, params);
+                    return onCompleteSwitchUser(context, transaction, resultData, params);
                 case "pAction":
-                    return handleAction(context, transaction, resultData, params);
+                    return onCompleteAction(context, transaction, resultData, params);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -130,8 +130,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "handleGet");
+    private Result onCompleteGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "onCompleteGet");
         // store object
         byte[] data = resultData.getByteArray();
         long profileId = params.getLong("profileId");
@@ -144,8 +144,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "handleListNotifications");
+    private Result onCompleteListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "onCompleteListNotifications");
         int page = params.getInt("page");
         // store object
         byte[] pagedata = resultData.getByteArray();
@@ -157,8 +157,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "handleListMessages");
+    private Result onCompleteListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "onCompleteListMessages");
         int page = params.getInt("page");
         // store object
         byte[] pagedata = resultData.getByteArray();
@@ -170,8 +170,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "handleAction");
+    private Result onCompleteAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "onCompleteAction");
 
         long profileId = params.getLong("profileId");
         String action = params.getString("param");
@@ -181,8 +181,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    private Result handleSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "handleSwitchUser");
+    private Result onCompleteSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+        Log.v(TAG, "onCompleteSwitchUser");
 
         long userId = params.getLong("userId");
 
