@@ -374,8 +374,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                             + (allowSync ? "" : " AND is_sync = 0")
                             + (allowAuth ? "" : " AND use_auth = 0")
                             + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
-                    GET_NEXT_PARAMS,
-                    null, null, GET_NEXT_SORT, "1");
+                    GET_NEXT_PARAMS, null, null, GET_NEXT_SORT, "1");
             try {
                 if (cursor.moveToFirst()) {
                     obj = new WebTransaction(cursor);
@@ -399,8 +398,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             int rowcount = db.update(
-                    WebTransactionSqlHelper.TABLE_NAME,
-                    v, Column.STATE + "=" + State.WORKING.ordinal() + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
+                    WebTransactionSqlHelper.TABLE_NAME, v,
+                    Column.STATE + "=" + State.WORKING.ordinal()
+                            + " OR " + Column.STATE + "=" + State.BUILDING.ordinal(), null);
             Log.v(TAG, "Orphans saved: " + rowcount);
         }
     }
