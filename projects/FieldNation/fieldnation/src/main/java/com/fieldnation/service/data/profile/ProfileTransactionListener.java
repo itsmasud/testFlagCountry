@@ -10,7 +10,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
 import java.text.ParseException;
@@ -18,8 +18,8 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileTransactionHandler extends WebTransactionHandler implements ProfileConstants {
-    private static final String TAG = "ProfileWebTransactionHandler";
+public class ProfileTransactionListener extends WebTransactionListener implements ProfileConstants {
+    private static final String TAG = "ProfileTransactionListener";
 
     public static byte[] pGet(long profileId) {
         try {
@@ -78,10 +78,10 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
     }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
-        Log.v(TAG, "handleResult");
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+        Log.v(TAG, "onComplete");
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
 
             switch (action) {
@@ -98,15 +98,15 @@ public class ProfileTransactionHandler extends WebTransactionHandler implements 
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.REQUEUE;
+            return Result.RETRY;
         }
         return Result.CONTINUE;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
 
             switch (action) {

@@ -20,8 +20,8 @@ public class PhotoTransactionBuilder implements PhotoConstants {
                     .timingKey("GET/ProfilePhotoDownload")
                     .key((isSync ? "Sync/" : "") + objectName + ":" + url)
                     .priority(Priority.LOW)
-                    .handler(PhotoTransactionHandler.class)
-                    .handlerParams(PhotoTransactionHandler.pGet(url, getCircle))
+                    .listener(PhotoTransactionListener.class)
+                    .listenerParams(PhotoTransactionListener.pGet(url, getCircle))
                     .isSyncCall(isSync)
                     .request(
                             new HttpJsonBuilder()

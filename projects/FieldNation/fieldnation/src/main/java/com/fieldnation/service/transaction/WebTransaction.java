@@ -9,7 +9,6 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
-import com.fieldnation.fnjson.annotations.Json;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.tracker.UploadTrackerClient;
@@ -26,8 +25,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     private static final String TAG = "WebTransaction";
 
     private final long _id;
-    private String _handlerName;
-    private byte[] _handlerParams;
+    private String _listenerClassName;
+    private byte[] _listenerParams;
     private final boolean _useAuth;
     private final boolean _isSync;
     private State _state;
@@ -59,8 +58,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-*****************************-*/
     WebTransaction(Cursor cursor) {
         _id = cursor.getLong(Column.ID.getIndex());
-        _handlerName = cursor.getString(Column.HANDLER.getIndex());
-        _handlerParams = cursor.getBlob(Column.HANDLER_PARAMS.getIndex());
+        _listenerClassName = cursor.getString(Column.LSITENER.getIndex());
+        _listenerParams = cursor.getBlob(Column.LISTENER_PARAMS.getIndex());
         _useAuth = cursor.getInt(Column.USE_AUTH.getIndex()) == 1;
         _state = State.values()[cursor.getInt(Column.STATE.getIndex())];
         _isSync = cursor.getInt(Column.IS_SYNC.getIndex()) == 1;
@@ -85,8 +84,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public WebTransaction(Bundle bundle) {
         _id = bundle.getLong(PARAM_ID, -1);
-        _handlerName = bundle.getString(PARAM_HANDLER_NAME);
-        _handlerParams = bundle.getByteArray(PARAM_HANDLER_PARAMS);
+        _listenerClassName = bundle.getString(PARAM_LISTENER_NAME);
+        _listenerParams = bundle.getByteArray(PARAM_LISTENER_PARAMS);
         _useAuth = bundle.getBoolean(PARAM_USE_AUTH);
         _state = (State) bundle.getSerializable(PARAM_STATE);
         _isSync = bundle.getBoolean(PARAM_IS_SYNC);
@@ -111,8 +110,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
-        bundle.putString(PARAM_HANDLER_NAME, _handlerName);
-        bundle.putByteArray(PARAM_HANDLER_PARAMS, _handlerParams);
+        bundle.putString(PARAM_LISTENER_NAME, _listenerClassName);
+        bundle.putByteArray(PARAM_LISTENER_PARAMS, _listenerParams);
         bundle.putSerializable(PARAM_STATE, _state);
         if (_requestString != null) {
             bundle.putByteArray(PARAM_REQUEST, _requestString.getBytes());
@@ -142,12 +141,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         return _id;
     }
 
-    public String getHandlerName() {
-        return _handlerName;
+    public String getListenerName() {
+        return _listenerClassName;
     }
 
-    public void setHandlerName(String handlerName) {
-        _handlerName = handlerName;
+    public void setListenerName(String listenerName) {
+        _listenerClassName = listenerName;
     }
 
     public boolean useAuth() {
@@ -190,12 +189,12 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         _key = key;
     }
 
-    public byte[] getHandlerParams() {
-        return _handlerParams;
+    public byte[] getListenerParams() {
+        return _listenerParams;
     }
 
-    public void setHandlerParams(byte[] params) {
-        _handlerParams = params;
+    public void setListenerParams(byte[] params) {
+        _listenerParams = params;
     }
 
     public long getQueueTime() {
@@ -371,6 +370,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
                     WebTransactionSqlHelper.getColumnNames(),
                     Column.STATE + "=?"
                             + " AND priority >= " + minPriority.ordinal()
+                            + " AND queue_time < " + System.currentTimeMillis()
                             + (allowSync ? "" : " AND is_sync = 0")
                             + (allowAuth ? "" : " AND use_auth = 0")
                             + ((!App.get().haveWifi()) ? " AND wifi_req = 0" : ""),
@@ -408,8 +408,8 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static WebTransaction put(WebTransaction obj) {
 //        Log.v(TAG, "put(" + obj._key + ")");
         ContentValues v = new ContentValues();
-        v.put(Column.HANDLER.getName(), obj._handlerName);
-        v.put(Column.HANDLER_PARAMS.getName(), obj._handlerParams);
+        v.put(Column.LSITENER.getName(), obj._listenerClassName);
+        v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
         v.put(Column.STATE.getName(), obj._state.ordinal());
         if (obj._requestString != null) {
@@ -600,13 +600,13 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             return this;
         }
 
-        public Builder handler(Class<? extends WebTransactionHandler> clazz) {
-            params.putString(PARAM_HANDLER_NAME, clazz.getName());
+        public Builder listener(Class<? extends WebTransactionListener> clazz) {
+            params.putString(PARAM_LISTENER_NAME, clazz.getName());
             return this;
         }
 
-        public Builder handlerParams(byte[] params) {
-            this.params.putByteArray(PARAM_HANDLER_PARAMS, params);
+        public Builder listenerParams(byte[] params) {
+            this.params.putByteArray(PARAM_LISTENER_PARAMS, params);
             return this;
         }
 

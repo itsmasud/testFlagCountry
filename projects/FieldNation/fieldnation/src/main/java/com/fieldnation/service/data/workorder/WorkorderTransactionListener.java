@@ -21,7 +21,7 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
@@ -30,8 +30,8 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 3/6/2015.
  */
-public class WorkorderTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
-    private static final String TAG = "WorkorderTransactionHandler";
+public class WorkorderTransactionListener extends WebTransactionListener implements WorkorderConstants {
+    private static final String TAG = "WorkorderTransactionListener";
 
     // parameter generators
     public static byte[] pDetails(long workorderId) {
@@ -289,9 +289,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-             Start               -*/
     /*-*********************************-*/
     @Override
-    public Result handleStart(Context context, WebTransaction transaction) {
+    public Result onStart(Context context, WebTransaction transaction) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pUploadDeliverable":
@@ -320,9 +320,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-************************************-*/
 
     @Override
-    public void handleProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
+    public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pUploadDeliverable":
@@ -375,9 +375,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-             Result               -*/
     /*-**********************************-*/
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDetails":
@@ -619,7 +619,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             Log.v(TAG, ex);
         }
         Log.v(TAG, "handleList time: " + watch.finish());
-        return Result.REQUEUE;
+        return Result.RETRY;
     }
 
     private Result handleMessageList(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
@@ -737,14 +737,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     /*-             Fail               -*/
     /*-********************************-*/
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
             try {
                 Log.v(TAG, "Error message: " + resultData.getString());
             } catch (Exception ex) {
 
             }
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDetails":

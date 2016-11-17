@@ -19,9 +19,9 @@ public class PaymentTransactionBuilder implements PaymentConstants {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET/api/rest/v1/accounting/payment-queue/all")
                     .priority(Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(
-                            PaymentTransactionHandler.pList(page)
+                    .listener(PaymentTransactionListener.class)
+                    .listenerParams(
+                            PaymentTransactionListener.pList(page)
                     )
                     .key((isSync ? "Sync/" : "") + "PaymentPage" + page)
                     .useAuth(true)
@@ -44,8 +44,8 @@ public class PaymentTransactionBuilder implements PaymentConstants {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET/api/rest/v1/accounting/payment-queue/[paymentId]")
                     .priority(Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(PaymentTransactionHandler.pGet(paymentId))
+                    .listener(PaymentTransactionListener.class)
+                    .listenerParams(PaymentTransactionListener.pGet(paymentId))
                     .key((isSync ? "Sync/" : "") + "Payment/" + paymentId)
                     .useAuth(true)
                     .isSyncCall(isSync)

@@ -12,13 +12,13 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 /**
  * Created by Michael Carver on 7/20/2015.
  */
-public class HelpTransactionHandler extends WebTransactionHandler {
-    private static final String TAG = "HelpTransactionHandler";
+public class HelpTransactionListener extends WebTransactionListener {
+    private static final String TAG = "HelpTransactionListener";
 
     public static byte[] pContactUs(String message, String internalTeam, String uri, String extraData, String extraType) {
         try {
@@ -39,16 +39,16 @@ public class HelpTransactionHandler extends WebTransactionHandler {
     /*-             Good            -*/
     /*-*****************************-*/
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
                     handleContactUs(context, transaction, resultData, params);
                     break;
             }
-            return super.handleResult(context, transaction, resultData);
+            return super.onComplete(context, transaction, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -67,16 +67,16 @@ public class HelpTransactionHandler extends WebTransactionHandler {
     /*-             Bad            -*/
     /*-****************************-*/
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
                     handleContactUsFail(context, transaction, resultData, params);
                     break;
             }
-            return super.handleResult(context, transaction, resultData);
+            return super.onComplete(context, transaction, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

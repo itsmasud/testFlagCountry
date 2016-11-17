@@ -1,4 +1,4 @@
-package com.fieldnation.service.data.mapbox;
+package com.fieldnation.service.data.gmaps;
 
 import android.content.Context;
 
@@ -6,15 +6,15 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.text.ParseException;
 
 /**
- * Created by Michael on 6/22/2016.
+ * Created by Shoaib on 10/14/2016.
  */
-public class MapboxTransactionHandler extends WebTransactionHandler implements MapboxConstants {
-    private static final String TAG = "MapboxTransactionHandler";
+public class GmapsTransactionListener extends WebTransactionListener implements GmapsConstants {
+    private static final String TAG = "GmapsTransactionListener";
 
     public static byte[] pDirections(long workorderId) {
         try {
@@ -39,14 +39,14 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
     }
 
     @Override
-    public Result handleStart(Context context, WebTransaction transaction) {
-        return super.handleStart(context, transaction);
+    public Result onStart(Context context, WebTransaction transaction) {
+        return super.onStart(context, transaction);
     }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDirections":
@@ -63,19 +63,19 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
 
     private Result handleDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleDirections");
-        MapboxDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
+        GmapsDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
         return Result.CONTINUE;
     }
 
     private Result handleStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
+        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
         return Result.CONTINUE;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pStaticMapClassic":
@@ -89,7 +89,7 @@ public class MapboxTransactionHandler extends WebTransactionHandler implements M
     }
 
     private Result handleStaticMapClassicFail(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
+        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
         return Result.CONTINUE;
     }
 

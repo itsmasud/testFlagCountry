@@ -5,8 +5,8 @@ package com.fieldnation.service.transaction;
  */
 public interface WebTransactionConstants {
     String PARAM_ID = "PARAM_ID";
-    String PARAM_HANDLER_NAME = "PARAM_HANDLER_NAME";
-    String PARAM_HANDLER_PARAMS = "PARAM_HANDLER_PARAMS";
+    String PARAM_LISTENER_NAME = "PARAM_LISTENER_NAME";
+    String PARAM_LISTENER_PARAMS = "PARAM_LISTENER_PARAMS";
     String PARAM_USE_AUTH = "PARAM_USE_AUTH";
     String PARAM_STATE = "PARAM_STATE";
     String PARAM_PRIORITY = "PARAM_PRIORITY";

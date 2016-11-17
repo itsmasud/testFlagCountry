@@ -7,15 +7,15 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.text.ParseException;
 
 /**
  * Created by Michael on 7/21/2016.
  */
-public class WorkOrderTransactionHandler extends WebTransactionHandler implements WorkOrderConstants {
-    private static final String TAG = "WorkOrderTransactionHandler";
+public class WorkOrderTransactionListener extends WebTransactionListener implements WorkOrderConstants {
+    private static final String TAG = "WorkOrderTransactionListener";
 
     /*-************************************************-*/
     /*-             Parameter Generators               -*/
@@ -48,9 +48,9 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     /*-************************************-*/
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pAction":
@@ -86,9 +86,9 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     /*-             Failed               -*/
     /*-**********************************-*/
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pAction":

@@ -17,15 +17,15 @@ import java.util.WeakHashMap;
 class WebTransactionSqlHelper extends SQLiteOpenHelper {
     private static final String TAG = "WebTransactionSqlHelper";
     // Note: increment this value every time the structure of the database is changed.
-    private static final int TABLE_VER = 5; // last update: 11-16-2016
+    private static final int TABLE_VER = 5; // last update: 11-16-2016 PA-423
     public static final String TABLE_NAME = "transactions";
 
     private static final WeakHashMap<Context, WebTransactionSqlHelper> _instances = new WeakHashMap<>();
 
     public enum Column {
         ID(0, "_id", "integer primary key autoincrement"),
-        HANDLER(1, "handler", "text"),
-        HANDLER_PARAMS(2, "handler_params", "blob"),
+        LSITENER(1, "listener", "text"),
+        LISTENER_PARAMS(2, "listener_params", "blob"),
         USE_AUTH(3, "use_auth", "integer not null"),
         IS_SYNC(4, "is_sync", "integer not null"),
         STATE(5, "state", "integer not null", true),

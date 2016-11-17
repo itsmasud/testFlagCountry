@@ -8,15 +8,15 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.text.ParseException;
 
 /**
  * Created by Michael on 4/9/2015.
  */
-public class DeliverableTransactionHandler extends WebTransactionHandler implements WorkorderConstants {
-    private static final String TAG = "DeliverableTransactionHandler";
+public class DeliverableTransactionListener extends WebTransactionListener implements WorkorderConstants {
+    private static final String TAG = "DeliverableTransactionListener";
 
     public static byte[] pChange(long workorderId) {
         try {
@@ -55,9 +55,9 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
 //    }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pChange":
@@ -69,13 +69,13 @@ public class DeliverableTransactionHandler extends WebTransactionHandler impleme
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.REQUEUE;
+            return Result.RETRY;
         }
         return Result.CONTINUE;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         // TODO implement fail
         return Result.CONTINUE;
     }

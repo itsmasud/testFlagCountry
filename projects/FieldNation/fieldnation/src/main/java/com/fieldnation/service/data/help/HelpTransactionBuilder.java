@@ -40,8 +40,8 @@ public class HelpTransactionBuilder {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("POST/api/rest/v1/help/feedback")
                     .priority(Priority.LOW)
-                    .handler(HelpTransactionHandler.class)
-                    .handlerParams(HelpTransactionHandler.pContactUs(message, internalTeam, uri, extraData, extraType))
+                    .listener(HelpTransactionListener.class)
+                    .listenerParams(HelpTransactionListener.pContactUs(message, internalTeam, uri, extraData, extraType))
                     .useAuth(true)
                     .request(http)
                     .build();

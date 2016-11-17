@@ -9,15 +9,15 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.text.ParseException;
 
 /**
  * Created by Michael Carver on 3/27/2015.
  */
-public class PaymentTransactionHandler extends WebTransactionHandler implements PaymentConstants {
-    private static final String TAG = "PaymentTransactionHandler";
+public class PaymentTransactionListener extends WebTransactionListener implements PaymentConstants {
+    private static final String TAG = "PaymentTransactionListener";
 
     public static byte[] pList(int page) {
         try {
@@ -42,9 +42,9 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
     }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject obj = new JsonObject(transaction.getHandlerParams());
+            JsonObject obj = new JsonObject(transaction.getListenerParams());
             String action = obj.getString("action");
 
             switch (action) {
@@ -57,13 +57,13 @@ public class PaymentTransactionHandler extends WebTransactionHandler implements 
             Log.v(TAG, ex);
             return Result.DELETE;
         }
-        return Result.REQUEUE;
+        return Result.RETRY;
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject obj = new JsonObject(transaction.getHandlerParams());
+            JsonObject obj = new JsonObject(transaction.getListenerParams());
             String action = obj.getString("action");
 
             switch (action) {

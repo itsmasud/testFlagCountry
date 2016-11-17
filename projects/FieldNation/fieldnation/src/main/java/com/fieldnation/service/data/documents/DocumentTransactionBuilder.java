@@ -24,8 +24,8 @@ public class DocumentTransactionBuilder {
 
             WebTransaction.Builder webBuilder = new WebTransaction.Builder()
                     .priority(Priority.HIGH)
-                    .handler(DocumentTransactionHandler.class)
-                    .handlerParams(DocumentTransactionHandler.pDownload(documentId, filename))
+                    .listener(DocumentTransactionListener.class)
+                    .listenerParams(DocumentTransactionListener.pDownload(documentId, filename))
                     .key((isSync ? "Sync/" : "") + "Document/" + documentId)
                     .useAuth(false)
                     .isSyncCall(isSync)

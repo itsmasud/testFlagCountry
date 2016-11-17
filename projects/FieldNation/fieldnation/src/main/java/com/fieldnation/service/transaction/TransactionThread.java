@@ -10,10 +10,14 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Timing;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
@@ -78,7 +82,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         @Override
         public void progress(long pos, long size, long time) {
-            WebTransactionHandler.transactionProgress(App.get(), trans.getHandlerName(), trans, pos, size, time);
+            WebTransactionDispatcher.progress(App.get(), trans.getListenerName(), trans, pos, size, time);
         }
     }
 
@@ -144,6 +148,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         NotificationDefinition notifFailed = null;
         NotificationDefinition notifRetry = null;
 
+        Stopwatch stopwatch = null;
         try {
             // apply authentication if needed
             if (trans.useAuth()) {
@@ -187,15 +192,17 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             Log.v(TAG, request.display());
 
-            handlerName = trans.getHandlerName();
+            handlerName = trans.getListenerName();
 
             if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(_service, handlerName, trans);
+                WebTransactionListener.Result wresult = WebTransactionDispatcher.start(_service, handlerName, trans);
             }
 
             // **** perform request ****
             _http_progress.trans = trans;
+            stopwatch = new Stopwatch(true);
             result = HttpJson.run(_service, request, _http_progress);
+            stopwatch.pause();
 
             // debug output
             try {
@@ -224,11 +231,11 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 // need to report this
                 // need to re-auth?
                 if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                    WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     return true;
                 } else if (result.getResponseMessage().contains("Bad Request")) {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                    WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     return true;
                 } else {
@@ -248,7 +255,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                     AuthTopicClient.requestCommand(_service);
                     return true;
                 } else {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                    WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                     WebTransaction.delete(trans.getId());
                     generateNotification(notifId, notifFailed);
                     return true;
@@ -256,14 +263,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             } else if (result.getResponseCode() == 404) {
                 // not found?... error
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
 
             } else if (result.getResponseCode() == 413) {
                 ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
@@ -277,7 +284,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
             } else if (result.getResponseCode() / 100 != 2) {
                 Log.v(TAG, "3");
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
                 return true;
@@ -288,20 +295,20 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             GlobalTopicClient.networkConnected(_service);
 
             if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
+                WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(
                         _service, handlerName, trans, result);
 
                 switch (wresult) {
                     case DELETE:
                         generateNotification(notifId, notifFailed);
-                        WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
+                        WebTransactionDispatcher.fail(_service, handlerName, trans, result, null);
                         WebTransaction.delete(trans.getId());
                         break;
                     case CONTINUE:
                         generateNotification(notifId, notifSuccess);
                         WebTransaction.delete(trans.getId());
                         break;
-                    case REQUEUE:
+                    case RETRY:
                         Log.v(TAG, "3");
                         transRequeueNetworkDown(trans, notifId, notifRetry);
                         break;
@@ -310,14 +317,14 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         } catch (MalformedURLException | FileNotFoundException ex) {
             Log.v(TAG, "4");
             Log.v(TAG, ex);
-            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
+            WebTransactionDispatcher.fail(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
         } catch (SecurityException | UnknownHostException ex) {
             Log.v(TAG, "4b");
             Log.v(TAG, ex);
-            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
+            WebTransactionDispatcher.fail(_service, handlerName, trans, result, ex);
             WebTransaction.delete(trans.getId());
             generateNotification(notifId, notifFailed);
 
@@ -350,13 +357,29 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 // no freaking clue
                 Log.logException(ex);
                 Log.v(TAG, ex);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
+                WebTransactionDispatcher.fail(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());
                 generateNotification(notifId, notifFailed);
             }
+        } finally {
+            if (trans != null && !misc.isEmptyOrNull(trans.getTimingKey()))
+                recordTiming(stopwatch, trans.getTimingKey());
         }
         Log.v(TAG, "10");
         return true;
+    }
+
+    private void recordTiming(Stopwatch stopwatch, String timingKey) {
+        stopwatch.unpause();
+        Tracker.timing(App.get(),
+                new Timing.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category("Web Timing")
+                        .label(timingKey)
+                        .timing((int) stopwatch.finish())
+                        .build());
+
+        Log.v(TAG, timingKey + " run time: " + stopwatch.getTime());
     }
 
     private void transRequeueNetworkDown(WebTransaction trans, int notifId, NotificationDefinition notif) {

@@ -11,15 +11,15 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.io.ByteArrayOutputStream;
 
 /**
  * Created by Michael Carver on 3/12/2015.
  */
-public class PhotoTransactionHandler extends WebTransactionHandler implements PhotoConstants {
-    private static final String TAG = "PhotoTransactionHandler";
+public class PhotoTransactionListener extends WebTransactionListener implements PhotoConstants {
+    private static final String TAG = "PhotoTransactionListener";
 
     public static byte[] pGet(String url, boolean getCircle) {
         try {
@@ -35,16 +35,16 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
     }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
-        Log.v(TAG, "handleResult");
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+        Log.v(TAG, "onComplete");
         try {
-            JsonObject json = new JsonObject(transaction.getHandlerParams());
+            JsonObject json = new JsonObject(transaction.getListenerParams());
             boolean getCircle = json.getBoolean("circle");
             String url = json.getString("url");
             String imageObjectName = "PhotoCache";
             String circleObjectName = "PhotoCacheCircle";
 
-            Log.v(TAG, "handleResult " + url + "," + getCircle);
+            Log.v(TAG, "onComplete " + url + "," + getCircle);
 
             // generate the bitmaps
             byte[] imageData = resultData.getByteArray();
@@ -75,20 +75,20 @@ public class PhotoTransactionHandler extends WebTransactionHandler implements Ph
             } else {
                 PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
             }
-            Log.v(TAG, "handleResult");
+            Log.v(TAG, "onComplete");
             return Result.CONTINUE;
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            Log.v(TAG, "handleResult");
+            Log.v(TAG, "onComplete");
             return Result.DELETE;
         }
 
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject json = new JsonObject(transaction.getHandlerParams());
+            JsonObject json = new JsonObject(transaction.getListenerParams());
             boolean getCircle = json.getBoolean("circle");
             String url = json.getString("url");
 

@@ -12,7 +12,7 @@ import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
@@ -26,8 +26,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             WebTransaction transaction = new WebTransaction.Builder()
                     .timingKey("GET/v2/workorders")
                     .priority(Priority.HIGH)
-                    .handler(WorkOrderTransactionHandler.class)
-                    .handlerParams(WorkOrderTransactionHandler.pSearch(searchParams))
+                    .listener(WorkOrderTransactionListener.class)
+                    .listenerParams(WorkOrderTransactionListener.pSearch(searchParams))
                     .key(searchParams.toKey())
                     .useAuth(true)
                     .isSyncCall(false)
@@ -79,8 +79,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             WebTransaction.Builder builder = new WebTransaction.Builder()
                     .timingKey("POST/api/rest/v2/workorders/[workorderId]/on-my-way")
                     .priority(Priority.HIGH)
-                    .handler(WorkOrderTransactionHandler.class)
-                    .handlerParams(WorkOrderTransactionHandler.pAction(workOrderId, "on-my-way"))
+                    .listener(WorkOrderTransactionListener.class)
+                    .listenerParams(WorkOrderTransactionListener.pAction(workOrderId, "on-my-way"))
                     .useAuth(true)
                     .key("Workorders/" + workOrderId + "/on-my-way")
                     .request(http)
@@ -110,20 +110,20 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         context.startService(
                 action(context, workorderId, "POST", action, params, contentType, body,
                         "POST/v2/workorder/[workorderId]/" + action,
-                        WorkOrderTransactionHandler.class,
-                        WorkOrderTransactionHandler.pAction(workorderId, action), useKey));
+                        WorkOrderTransactionListener.class,
+                        WorkOrderTransactionListener.pAction(workorderId, action), useKey));
     }
 
 
     private static Intent action(Context context, long workorderId, String method, String action, String params,
-                                 String contentType, String body, Class<? extends WebTransactionHandler> clazz,
+                                 String contentType, String body, Class<? extends WebTransactionListener> clazz,
                                  byte[] handlerParams) {
         return action(context, workorderId, method, action, params, contentType, body,
                 method + "/v2/workorder/[workorderId]/" + action, clazz, handlerParams, true);
     }
 
     private static Intent action(Context context, long workorderId, String method, String action, String params,
-                                 String contentType, String body, String timingKey, Class<? extends WebTransactionHandler> clazz,
+                                 String contentType, String body, String timingKey, Class<? extends WebTransactionListener> clazz,
                                  byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
         try {
@@ -150,8 +150,8 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             WebTransaction.Builder builder = new WebTransaction.Builder()
                     .timingKey(timingKey)
                     .priority(Priority.HIGH)
-                    .handler(clazz)
-                    .handlerParams(handlerParams)
+                    .listener(clazz)
+                    .listenerParams(handlerParams)
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)

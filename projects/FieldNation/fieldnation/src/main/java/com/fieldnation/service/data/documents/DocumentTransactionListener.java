@@ -9,7 +9,7 @@ import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransactionListener;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,8 +18,8 @@ import java.text.ParseException;
 /**
  * Created by Michael Carver on 5/28/2015.
  */
-public class DocumentTransactionHandler extends WebTransactionHandler implements DocumentConstants {
-    private static final String TAG = "DocumentTransactionHandler";
+public class DocumentTransactionListener extends WebTransactionListener implements DocumentConstants {
+    private static final String TAG = "DocumentTransactionListener";
 
     public static byte[] pDownload(long documentId, String filename) {
         try {
@@ -36,9 +36,9 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     // entry points
 
     @Override
-    public Result handleStart(Context context, WebTransaction transaction) {
+    public Result onStart(Context context, WebTransaction transaction) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
@@ -53,9 +53,9 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     }
 
     @Override
-    public Result handleResult(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
@@ -70,9 +70,9 @@ public class DocumentTransactionHandler extends WebTransactionHandler implements
     }
 
     @Override
-    public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
-            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
