@@ -119,7 +119,6 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
 
-
         WorkorderClient.getBundle(this, _bundleId);
     }
 
@@ -130,7 +129,6 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
-
 
         if (_acceptBundleDialog != null)
             _acceptBundleDialog.disconnect(App.get());
