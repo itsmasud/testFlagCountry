@@ -856,7 +856,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
 
         Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
         try {
             ToastClient.snackbar(context, resultData.getString(),
@@ -875,7 +875,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     params.getLong("workorderId"), params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
                     params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"));
 
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
 
             ToastClient.snackbar(context, "Could not send your rating. Please check your connection.",
@@ -899,7 +899,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "request", true);
 
         Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
         ToastClient.snackbar(context, "Could not complete your shipment. Please check your connection.",
                 "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
@@ -925,7 +925,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber);
         else
             intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
         ToastClient.toast(App.get(), "Could not add your shipment. Please check your connection.", Toast.LENGTH_LONG);
 
@@ -948,7 +948,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "request", true);
 
         Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
         try {
             ToastClient.snackbar(context, resultData.getString(),
@@ -973,7 +973,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.action(context, workorderId, "assignment", true);
 
         Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
-        PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+        PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
         try {
             ToastClient.snackbar(context, resultData.getString(),

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -89,7 +90,7 @@ public class HelpTransactionHandler extends WebTransactionHandler {
                     params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
                     params.getString("extraType"));
 
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
 
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),

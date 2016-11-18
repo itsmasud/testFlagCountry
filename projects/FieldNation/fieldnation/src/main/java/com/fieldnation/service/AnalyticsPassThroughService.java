@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.fieldnation.App;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
@@ -53,7 +54,7 @@ public class AnalyticsPassThroughService extends Service {
     }
 
     public static PendingIntent createPendingIntent(Context context, Event event, PendingIntent pendingIntent) {
-        return PendingIntent.getService(context, 0, createIntent(context, event, pendingIntent), 0);
+        return PendingIntent.getService(context, App.secureRandom.nextInt(), createIntent(context, event, pendingIntent), 0);
 
     }
 }

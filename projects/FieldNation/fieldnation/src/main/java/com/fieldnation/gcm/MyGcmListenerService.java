@@ -112,7 +112,7 @@ public class MyGcmListenerService extends GcmListenerService {
             case READY: {
                 switch (action.getObject()) {
                     case "wo": {
-                        PendingIntent pi = PendingIntent.getService(this, 0,
+                        PendingIntent pi = PendingIntent.getService(this, App.secureRandom.nextInt(),
                                 WorkorderTransactionBuilder.actionReadyIntent(this, Long.parseLong(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }
