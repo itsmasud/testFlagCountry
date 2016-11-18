@@ -97,6 +97,7 @@ public class MyGcmListenerService extends GcmListenerService {
                 switch (action.getObject()) {
                     case "wo": {
                         Intent workorderIntent = new Intent(this, WorkorderActivity.class);
+                        workorderIntent.setAction("DUMMY");
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, 0, workorderIntent, 0);
@@ -175,19 +176,16 @@ public class MyGcmListenerService extends GcmListenerService {
 
             // primary only
         } else if (primaryIntent != null && secondaryIntent == null) {
-            builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
-                    this, VISITED_EVENT, primaryIntent));
+            builder.setContentIntent(primaryIntent);
 
             // secondary only
         } else if (primaryIntent == null && secondaryIntent != null) {
-            builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
-                    this, VISITED_EVENT, secondaryIntent));
+            builder.setContentIntent(secondaryIntent);
 
         } else if (primaryIntent != null && secondaryIntent != null) {
             // have both
             // body
-            builder.setContentIntent(AnalyticsPassThroughService.createPendingIntent(
-                    this, VISITED_EVENT, secondaryIntent));
+            builder.setContentIntent(secondaryIntent);
 
             // secondary button
             builder.addAction(R.drawable.ic_notif_glass, "View", secondaryIntent);
@@ -203,8 +201,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     break;
             }
 
-            builder.addAction(R.drawable.ic_notif_check, primaryButtonText,
-                    AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, primaryIntent));
+            builder.addAction(R.drawable.ic_notif_check, primaryButtonText, primaryIntent);
         }
 
         NotificationCompat.BigTextStyle bigTextStyle = new NotificationCompat.BigTextStyle();

@@ -46,6 +46,7 @@ public class AnalyticsPassThroughService extends Service {
 
     public static Intent createIntent(Context context, Event event, PendingIntent pendingIntent) {
         Intent retval = new Intent(context, AnalyticsPassThroughService.class);
+        retval.setAction("DUMMY");
         retval.putExtra("event", event);
         retval.putExtra("pendingIntent", pendingIntent);
         return retval;
