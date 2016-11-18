@@ -45,7 +45,7 @@
         style="@style/Material.Button"
         android:layout_width="match_parent"
         android:layout_height="1px"
-        android:layout_below="@id/amount_textview"
+        android:layout_below="@id/worktype_textview"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
         android:background="@color/fn_brandcolor_50" />
