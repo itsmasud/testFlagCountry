@@ -14,8 +14,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fndialog.SimpleDialog;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -241,6 +243,7 @@ public class DeclineDialog extends SimpleDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
+                    GlobalTopicClient.appShutdown(App.get());
                 } else {
                     WorkOrderClient.actionDecline(
                             App.get(),
@@ -255,14 +258,17 @@ public class DeclineDialog extends SimpleDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
+                    GlobalTopicClient.appShutdown(App.get());
                 }
             } else {
                 if (_declinePosition == -1) {
                     WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
                     onDeclined();
+                    GlobalTopicClient.appShutdown(App.get());
                 } else {
                     WorkOrderClient.actionDecline(App.get(), _workOrderId, _declineReasonIds[_declinePosition], _declineEditText.getText().toString());
                     onDeclined();
+                    GlobalTopicClient.appShutdown(App.get());
                 }
             }
             dismiss(true);

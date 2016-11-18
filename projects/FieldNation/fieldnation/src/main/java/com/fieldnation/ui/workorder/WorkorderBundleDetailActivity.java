@@ -10,11 +10,13 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -22,6 +24,7 @@ import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
+import com.fieldnation.ui.dialog.v2.UpdateDialog;
 
 public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderBundleDetailActivity";
@@ -48,6 +51,10 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private com.fieldnation.data.workorder.Bundle _woBundle;
     private AcceptBundleDialog.Controller _acceptBundleDialog;
     private DeclineDialog.Controller _declineDialog;
+
+    // Services
+    private GlobalTopicClient _globalClient;
+
 
     @Override
     public int getLayoutResource() {
@@ -109,6 +116,10 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
         _declineDialog.setListener(_declineDialog_listener);
 
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(App.get());
+
+
         WorkorderClient.getBundle(this, _bundleId);
     }
 
@@ -116,6 +127,10 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
+
 
         if (_acceptBundleDialog != null)
             _acceptBundleDialog.disconnect(App.get());
@@ -263,6 +278,30 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
         }
     };
+
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalClient.subAppShutdown();
+        }
+
+        @Override
+        public void onShutdown() {
+            finish();
+        }
+
+
+
+        @Override
+        public void onNetworkDisconnected() {
+            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
+            //if (intent != null) {
+            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
+            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
+            //}
+        }
+    };
+
 
     public static void startNew(Context context, long workorderId, long bundleId) {
         Intent intent = new Intent(context, WorkorderBundleDetailActivity.class);
