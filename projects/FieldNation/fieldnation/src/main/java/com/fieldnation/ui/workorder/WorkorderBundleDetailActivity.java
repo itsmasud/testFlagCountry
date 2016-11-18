@@ -289,17 +289,6 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         public void onShutdown() {
             finish();
         }
-
-
-
-        @Override
-        public void onNetworkDisconnected() {
-            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
-            //if (intent != null) {
-            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            //}
-        }
     };
 
 
