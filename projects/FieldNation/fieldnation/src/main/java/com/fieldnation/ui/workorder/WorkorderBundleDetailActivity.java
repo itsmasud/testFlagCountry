@@ -16,7 +16,6 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -24,7 +23,6 @@ import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.DeclineDialog;
-import com.fieldnation.ui.dialog.v2.UpdateDialog;
 
 public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderBundleDetailActivity";
