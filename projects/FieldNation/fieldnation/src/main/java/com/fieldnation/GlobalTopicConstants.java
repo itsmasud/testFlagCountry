@@ -8,6 +8,7 @@ public interface GlobalTopicConstants {
     String TOPIC_ID_GOT_PROFILE = "GlobalTopicConstants:TOPIC_ID_GOT_PROFILE";
     String TOPIC_ID_PROFILE_INVALID = "GlobalTopicConstants:TOPIC_ID_PROFILE_INVALID";
     String TOPIC_ID_SHUTDOWN = "GlobalTopicConstants:TOPIC_ID_SHUTDOWN";
+    String TOPIC_ID_FINISH_ACTIVITY = "GlobalTopicConstants:TOPIC_ID_FINISH_ACTIVITY";
     String TOPIC_ID_NETWORK_STATE = "GlobalTopicConstants:TOPIC_ID_NETWORK_STATE";
     String TOPIC_ID_NETWORK_COMMAND_CONNECT = "GlobalTopicConstants:TOPIC_ID_NETWORK_COMMAND_CONNECT";
     String TOPIC_ID_GCM_MESSAGE = "GlobalTopicConstants:TOPIC_ID_GCM_MESSAGE";
