@@ -280,11 +280,11 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.subAppShutdown();
+            _globalClient.subFinishActivity();
         }
 
         @Override
-        public void onShutdown() {
+        public void onFinish() {
             finish();
         }
     };

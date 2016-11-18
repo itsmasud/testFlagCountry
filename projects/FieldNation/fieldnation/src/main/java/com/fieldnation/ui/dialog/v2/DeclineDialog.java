@@ -243,7 +243,7 @@ public class DeclineDialog extends SimpleDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.appShutdown(App.get());
+                    GlobalTopicClient.finishActivity(App.get());
                 } else {
                     WorkOrderClient.actionDecline(
                             App.get(),
@@ -258,17 +258,17 @@ public class DeclineDialog extends SimpleDialog {
                             _blockReasonIds[_blockPosition],
                             _blockEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.appShutdown(App.get());
+                    GlobalTopicClient.finishActivity(App.get());
                 }
             } else {
                 if (_declinePosition == -1) {
                     WorkOrderClient.actionDecline(App.get(), _workOrderId, -1, null);
                     onDeclined();
-                    GlobalTopicClient.appShutdown(App.get());
+                    GlobalTopicClient.finishActivity(App.get());
                 } else {
                     WorkOrderClient.actionDecline(App.get(), _workOrderId, _declineReasonIds[_declinePosition], _declineEditText.getText().toString());
                     onDeclined();
-                    GlobalTopicClient.appShutdown(App.get());
+                    GlobalTopicClient.finishActivity(App.get());
                 }
             }
             dismiss(true);
