@@ -41,46 +41,26 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
         }
     }
 
-//    public static byte[] pDownload(long workorderId, long deliverableId, String url) {
-//        try {
-//            JsonObject obj = new JsonObject("action", "pDownload");
-//            obj.put("workorderId", workorderId);
-//            obj.put("deliverableId", deliverableId);
-//            obj.put("url", url);
-//            return obj.toByteArray();
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//            return null;
-//        }
-//    }
-
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pChange":
-                    return handleChange(context, transaction, resultData, params);
+                    return onSuccessChange(context, result, transaction, params, httpResult, throwable);
                 case "pGet":
-                    return handleGet(context, transaction, resultData, params);
-//                case "pDownload":
-//                    return handleDownload(context, transaction, resultData, params);
+                    return onSuccessGet(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return Result.RETRY;
         }
-        return Result.CONTINUE;
+        return result;
     }
 
-    @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
-        // TODO implement fail
-        return Result.CONTINUE;
-    }
-
-    public Result handleChange(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+    public Result onSuccessChange(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
 
         WorkorderTransactionBuilder.get(context, workorderId, false);
@@ -90,10 +70,10 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
         return Result.CONTINUE;
     }
 
-    public Result handleGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
+    public Result onSuccessGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long deliverableId = params.getLong("deliverableId");
-        byte[] data = resultData.getByteArray();
+        byte[] data = httpResult.getByteArray();
 
         StoredObject.put(context, App.getProfileId(), PSO_DELIVERABLE, deliverableId, data);
 
@@ -101,28 +81,4 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
 
         return Result.CONTINUE;
     }
-
-//    public Result handleDownload(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException, IOException {
-//        long workorderId = params.getLong("workorderId");
-//        long deliverableId = params.getLong("deliverableId");
-//
-//        if (resultData.isFile()) {
-//            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, resultData.getFile());
-//            resultData.getFile().delete();
-//            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
-//        } else {
-//            File tempFolder = new File(App.get().getTempFolder());
-//            tempFolder.mkdirs();
-//            File tempFile = File.createTempFile("tmp", "dat", tempFolder);
-//            FileOutputStream fout = new FileOutputStream(tempFile, false);
-//            fout.write(resultData.getByteArray());
-//            fout.close();
-//
-//            StoredObject obj = StoredObject.put(context, PSO_DELIVERABLE_FILE, deliverableId, tempFile);
-//            tempFile.delete();
-//            WorkorderDispatch.downloadDeliverable(context, workorderId, deliverableId, obj.getFile(), transaction.isSync());
-//        }
-//
-//        return Result.FINISH;
-//    }
 }

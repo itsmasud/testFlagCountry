@@ -33,7 +33,35 @@ public abstract class WebTransactionListener {
         return Result.CONTINUE;
     }
 
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult result, Throwable throwable) {
+    protected final Result onComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        Result result = preCheck(context, transaction, httpResult, throwable);
+        if (result == Result.CONTINUE) {
+            return onSuccess(context, result, transaction, httpResult, throwable);
+        } else {
+            if ((result = onError(context, result, transaction, httpResult, throwable)) != Result.CONTINUE) {
+                return onFail(context, result, transaction, httpResult, throwable);
+            } else {
+                return onSuccess(context, result, transaction, httpResult, throwable);
+            }
+        }
+    }
+
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        return result;
+    }
+
+    public Result onError(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        return result;
+    }
+
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        if (!httpResult.isFile() && httpResult.getByteArray().length < 1000) {
+            ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+        }
+        return result;
+    }
+
+    private Result preCheck(Context context, WebTransaction transaction, HttpResult result, Throwable throwable) {
         JsonObject request = null;
         try {
             request = new JsonObject(transaction.getRequestString());

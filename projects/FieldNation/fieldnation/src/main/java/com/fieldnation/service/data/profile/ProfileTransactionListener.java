@@ -78,33 +78,105 @@ public class ProfileTransactionListener extends WebTransactionListener implement
     }
 
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
-        Log.v(TAG, "onComplete");
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        Log.v(TAG, "onSuccess");
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
 
             switch (action) {
                 case "pGet":
-                    return onCompleteGet(context, transaction, resultData, params);
+                    return onSuccessGet(context, result, transaction, params, httpResult, throwable);
                 case "pListNotifications":
-                    return onCompleteListNotifications(context, transaction, resultData, params);
+                    return onSuccessListNotifications(context, result, transaction, params, httpResult, throwable);
                 case "pListMessages":
-                    return onCompleteListMessages(context, transaction, resultData, params);
+                    return onSuccessListMessages(context, result, transaction, params, httpResult, throwable);
                 case "pSwitchUser":
-                    return onCompleteSwitchUser(context, transaction, resultData, params);
+                    return onSuccessSwitchUser(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
-                    return onCompleteAction(context, transaction, resultData, params);
+                    return onSuccessAction(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return Result.RETRY;
         }
+        return result;
+    }
+
+    private Result onSuccessGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessGet");
+        // store object
+        byte[] data = httpResult.getByteArray();
+        long profileId = params.getLong("profileId");
+
+        // todo parse json and put Profile/id ?
+        ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
+
+        StoredObject.put(context, (int) profileId, PSO_PROFILE, profileId, data);
+
+        return Result.CONTINUE;
+    }
+
+    private Result onSuccessListNotifications(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessListNotifications");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = httpResult.getByteArray();
+
+        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
+
+        StoredObject.put(context, App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
+
+        return Result.CONTINUE;
+    }
+
+    private Result onSuccessListMessages(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessListMessages");
+        int page = params.getInt("page");
+        // store object
+        byte[] pagedata = httpResult.getByteArray();
+
+        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
+
+        StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
+
+        return Result.CONTINUE;
+    }
+
+    private Result onSuccessAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessAction");
+
+        long profileId = params.getLong("profileId");
+        String action = params.getString("param");
+
+        ProfileDispatch.action(context, profileId, action, false);
+
+        return Result.CONTINUE;
+    }
+
+    private Result onSuccessSwitchUser(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessSwitchUser");
+
+        long userId = params.getLong("userId");
+
+        ProfileClient.get(context, false);
+        ProfileClient.listMessages(context, 0, false, false);
+        ProfileClient.listNotifications(context, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
+        WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
+
+        ProfileDispatch.switchUser(context, userId, false);
+
         return Result.CONTINUE;
     }
 
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
@@ -125,78 +197,8 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.CONTINUE;
+            return Result.RETRY;
         }
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteGet(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "onCompleteGet");
-        // store object
-        byte[] data = resultData.getByteArray();
-        long profileId = params.getLong("profileId");
-
-        // todo parse json and put Profile/id ?
-        ProfileDispatch.get(context, profileId, new JsonObject(data), false, transaction.isSync());
-
-        StoredObject.put(context, (int) profileId, PSO_PROFILE, profileId, data);
-
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteListNotifications(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "onCompleteListNotifications");
-        int page = params.getInt("page");
-        // store object
-        byte[] pagedata = resultData.getByteArray();
-
-        ProfileDispatch.listNotifications(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
-
-        StoredObject.put(context, App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
-
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteListMessages(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "onCompleteListMessages");
-        int page = params.getInt("page");
-        // store object
-        byte[] pagedata = resultData.getByteArray();
-
-        ProfileDispatch.listMessages(context, new JsonArray(pagedata), page, false, transaction.isSync(), false);
-
-        StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
-
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteAction(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "onCompleteAction");
-
-        long profileId = params.getLong("profileId");
-        String action = params.getString("param");
-
-        ProfileDispatch.action(context, profileId, action, false);
-
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteSwitchUser(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) throws ParseException {
-        Log.v(TAG, "onCompleteSwitchUser");
-
-        long userId = params.getLong("userId");
-
-        ProfileClient.get(context, false);
-        ProfileClient.listMessages(context, 0, false, false);
-        ProfileClient.listNotifications(context, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
-
-        ProfileDispatch.switchUser(context, userId, false);
-
-        return Result.CONTINUE;
+        return result;
     }
 }

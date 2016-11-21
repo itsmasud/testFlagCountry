@@ -44,53 +44,55 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
     }
 
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDirections":
-                    return onCompleteDirections(context, transaction, params, resultData);
+                    return onSuccessDirections(context, result, transaction, params, httpResult, throwable);
                 case "pStaticMapClassic":
-                    return onCompleteStaticMapClassic(context, transaction, params, resultData);
+                    return onSuccessStaticMapClassic(context, result, transaction, params, httpResult, throwable);
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
+        return result;
+    }
+
+    private Result onSuccessDirections(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessDirections");
+        GmapsDispatch.directions(context, params.getLong("workorderId"), httpResult.getByteArray());
         return Result.CONTINUE;
     }
 
-    private Result onCompleteDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "onCompleteDirections");
-        GmapsDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
+    private Result onSuccessStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), httpResult.getByteArray(), false);
         return Result.CONTINUE;
     }
 
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        // Removed because we don't trust google's error messages
+        // result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pStaticMapClassic":
-                    return onFailStaticMapClassic(context, transaction, params, resultData);
+                    return onFailStaticMapClassic(context, result, transaction, params, httpResult, throwable);
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
+        return result;
     }
 
-    private Result onFailStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private Result onFailStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
-        return Result.CONTINUE;
+        return result;
     }
 
 }

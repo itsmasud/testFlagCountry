@@ -35,7 +35,8 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
     }
 
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         Log.v(TAG, "onComplete");
         try {
             JsonObject json = new JsonObject(transaction.getListenerParams());
@@ -47,7 +48,7 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
             Log.v(TAG, "onComplete " + url + "," + getCircle);
 
             // generate the bitmaps
-            byte[] imageData = resultData.getByteArray();
+            byte[] imageData = httpResult.getByteArray();
             Bitmap sourceBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
             Bitmap imageBitmap = ImageUtils.resizeBitmap(sourceBitmap, 95, 95);
             sourceBitmap.recycle();
@@ -76,17 +77,17 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
                 PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
             }
             Log.v(TAG, "onComplete");
-            return Result.CONTINUE;
+            return result;
         } catch (Exception ex) {
             Log.v(TAG, ex);
             Log.v(TAG, "onComplete");
             return Result.DELETE;
         }
-
     }
 
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject json = new JsonObject(transaction.getListenerParams());
             boolean getCircle = json.getBoolean("circle");
@@ -96,6 +97,6 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
+        return result;
     }
 }

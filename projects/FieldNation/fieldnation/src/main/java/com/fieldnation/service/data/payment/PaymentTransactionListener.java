@@ -42,26 +42,49 @@ public class PaymentTransactionListener extends WebTransactionListener implement
     }
 
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
-            JsonObject obj = new JsonObject(transaction.getListenerParams());
-            String action = obj.getString("action");
+            JsonObject params = new JsonObject(transaction.getListenerParams());
+            String action = params.getString("action");
 
             switch (action) {
                 case "pList":
-                    return onCompleteList(context, transaction, resultData, obj);
+                    return onSuccessList(context, result, transaction, params, httpResult, throwable);
                 case "pGet":
-                    return onCompleteGet(context, transaction, resultData, obj);
+                    return onSuccessGet(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
             return Result.DELETE;
         }
-        return Result.RETRY;
+        return result;
+    }
+
+    private Result onSuccessList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        int page = params.getInt("page");
+        byte[] data = httpResult.getByteArray();
+
+        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
+        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
+
+        return Result.CONTINUE;
+    }
+
+    private Result onSuccessGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        long paymentId = params.getLong("paymentId");
+
+        byte[] data = httpResult.getByteArray();
+
+        PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
+        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
+
+        return Result.CONTINUE;
     }
 
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject obj = new JsonObject(transaction.getListenerParams());
             String action = obj.getString("action");
@@ -77,30 +100,6 @@ public class PaymentTransactionListener extends WebTransactionListener implement
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
-    }
-
-
-    private Result onCompleteList(Context context, WebTransaction transaction, HttpResult resultData,
-                                  JsonObject params) throws ParseException {
-        int page = params.getInt("page");
-        byte[] data = resultData.getByteArray();
-
-        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
-
-        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteGet(Context context, WebTransaction transaction, HttpResult resultData,
-                                 JsonObject params) throws ParseException {
-        long paymentId = params.getLong("paymentId");
-
-        byte[] data = resultData.getByteArray();
-
-        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
-
-        PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
-        return Result.CONTINUE;
+        return result;
     }
 }

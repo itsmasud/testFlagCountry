@@ -48,15 +48,16 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
     /*-************************************-*/
 
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pAction":
-                    return onCompleteAction(context, transaction, params, resultData);
+                    return onSuccessAction(context, result, transaction, params, httpResult, throwable);
                 case "pSearch":
-                    return onCompleteSearch(context, transaction, params, resultData);
+                    return onSuccessSearch(context, result, transaction, params, httpResult, throwable);
                 default:
                     break;
             }
@@ -66,19 +67,19 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         return Result.CONTINUE;
     }
 
-    private Result onCompleteAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "onCompleteAction");
+    private Result onSuccessAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessAction");
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
         WorkOrderDispatch.action(context, workorderId, action, false);
         return Result.CONTINUE;
     }
 
-    private Result onCompleteSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "onCompleteSearch");
+    private Result onSuccessSearch(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessSearch");
         WorkOrderDispatch.search(context,
                 SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
-                resultData.getByteArray(), false);
+                httpResult.getByteArray(), false);
         return Result.CONTINUE;
     }
 
@@ -86,25 +87,26 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
     /*-             Failed               -*/
     /*-**********************************-*/
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pAction":
-                    return onFailAction(context, transaction, params, resultData);
+                    return onFailAction(context, result, transaction, params, httpResult, throwable);
                 case "pSearch":
-                    return onFailSearch(context, transaction, params, resultData);
+                    return onFailSearch(context, result, transaction, params, httpResult, throwable);
                 default:
                     break;
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
+        return result;
     }
 
-    private Result onFailAction(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private Result onFailAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onFailAction");
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
@@ -114,11 +116,10 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         return Result.CONTINUE;
     }
 
-    private Result onFailSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private Result onFailSearch(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onFailSearch");
 
-        WorkOrderDispatch.search(context,
-                SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
+        WorkOrderDispatch.search(context, SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
 
         return Result.CONTINUE;
     }

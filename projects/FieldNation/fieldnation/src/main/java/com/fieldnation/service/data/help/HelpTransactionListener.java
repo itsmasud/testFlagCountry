@@ -39,27 +39,24 @@ public class HelpTransactionListener extends WebTransactionListener {
     /*-             Good            -*/
     /*-*****************************-*/
     @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
-                    onCompleteContactUs(context, transaction, resultData, params);
-                    break;
+                    return onCompleteContactUs(context, result, transaction, params, httpResult, throwable);
             }
-            return super.onComplete(context, transaction, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.DELETE;
+        return result;
     }
 
-    private Result onCompleteContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
-
+    private Result onCompleteContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
         ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
-
-        return Result.CONTINUE;
+        return result;
     }
 
 
@@ -67,30 +64,30 @@ public class HelpTransactionListener extends WebTransactionListener {
     /*-             Bad            -*/
     /*-****************************-*/
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        // skipping because we handle the toast locally
+        //result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
-                    onFailContactUs(context, transaction, resultData, params);
+                    onFailContactUs(context, result, transaction, params, httpResult, throwable);
                     break;
             }
-            return super.onComplete(context, transaction, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
+        return result;
     }
 
-    private Result onFailContactUs(Context context, WebTransaction transaction, HttpResult resultData, JsonObject params) {
+    private Result onFailContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
         try {
             Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
                     params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
                     params.getString("extraType"));
 
             PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
-
 
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
@@ -99,7 +96,6 @@ public class HelpTransactionListener extends WebTransactionListener {
             Log.v(TAG, ex);
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
         }
-        return Result.CONTINUE;
+        return result;
     }
-
 }

@@ -39,58 +39,57 @@ public class MapboxTransactionListener extends WebTransactionListener implements
     }
 
     @Override
-    public Result onStart(Context context, WebTransaction transaction) {
-        return super.onStart(context, transaction);
-    }
-
-    @Override
-    public Result onComplete(Context context, WebTransaction transaction, HttpResult resultData) {
+    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        result = super.onSuccess(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDirections":
-                    return onCompleteDirections(context, transaction, params, resultData);
+                    return onSuccessDirections(context, result, transaction, params, httpResult, throwable);
                 case "pStaticMapClassic":
-                    return onCompleteStaticMapClassic(context, transaction, params, resultData);
+                    return onSuccessStaticMapClassic(context, result, transaction, params, httpResult, throwable);
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
+            return Result.RETRY;
         }
+        return result;
+    }
+
+    private Result onSuccessDirections(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onSuccessDirections");
+        MapboxDispatch.directions(context, params.getLong("workorderId"), httpResult.getByteArray());
         return Result.CONTINUE;
     }
 
-    private Result onCompleteDirections(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        Log.v(TAG, "onCompleteDirections");
-        MapboxDispatch.directions(context, params.getLong("workorderId"), resultData.getByteArray());
-        return Result.CONTINUE;
-    }
-
-    private Result onCompleteStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
-        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), resultData.getByteArray(), false);
+    private Result onSuccessStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), httpResult.getByteArray(), false);
         return Result.CONTINUE;
     }
 
     @Override
-    public Result onFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
+    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        // we don't want to call super because we don't trust the error messages from mapbox
+        // result = super.onFail(context, result, transaction, httpResult, throwable);
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pStaticMapClassic":
-                    return onFailStaticMapClassic(context, transaction, params, resultData);
+                    return onFailStaticMapClassic(context, result, transaction, params, httpResult, throwable);
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
+        return result;
     }
 
-    private Result onFailStaticMapClassic(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
+    private Result onFailStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         MapboxDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
-        return Result.CONTINUE;
+        return result;
     }
 
 }
