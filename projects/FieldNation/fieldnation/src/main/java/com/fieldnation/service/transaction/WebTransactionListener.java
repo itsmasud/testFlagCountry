@@ -33,31 +33,25 @@ public abstract class WebTransactionListener {
         return Result.CONTINUE;
     }
 
-    protected final Result onComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+    protected final Result preComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Result result = preCheck(context, transaction, httpResult, throwable);
-        if (result == Result.CONTINUE) {
-            return onSuccess(context, result, transaction, httpResult, throwable);
-        } else {
-            if ((result = onError(context, result, transaction, httpResult, throwable)) != Result.CONTINUE) {
-                return onFail(context, result, transaction, httpResult, throwable);
-            } else {
-                return onSuccess(context, result, transaction, httpResult, throwable);
+        if (result != Result.CONTINUE) {
+            try {
+                if (!httpResult.isFile() && httpResult.getByteArray().length < 1024) {
+                    String errorString = httpResult.getString();
+                    if (errorString != null) {
+                        Log.v(TAG, errorString);
+                        Log.v(TAG, new TransactionException(errorString));
+                    }
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
         }
+        return onComplete(context, result, transaction, httpResult, throwable);
     }
 
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        return result;
-    }
-
-    public Result onError(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        return result;
-    }
-
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        if (!httpResult.isFile() && httpResult.getByteArray().length < 1000) {
-            ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
-        }
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         return result;
     }
 
