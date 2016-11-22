@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.fieldnation.App;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
@@ -20,15 +21,22 @@ public class AnalyticsPassThroughService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
-        Tracker.event(this, (Event) intent.getParcelableExtra("event"));
 
-        try {
-            ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, 0, new Intent());
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+        if (intent != null) {
+            try {
+                Tracker.event(this, (Event) intent.getParcelableExtra("event"));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            try {
+                ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, App.secureRandom.nextInt(), new Intent());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
         }
 
-        return super.onStartCommand(intent, flags, startId);
+        return Service.START_NOT_STICKY;
     }
 
     @Nullable
@@ -39,13 +47,14 @@ public class AnalyticsPassThroughService extends Service {
 
     public static Intent createIntent(Context context, Event event, PendingIntent pendingIntent) {
         Intent retval = new Intent(context, AnalyticsPassThroughService.class);
+        retval.setAction("DUMMY");
         retval.putExtra("event", event);
         retval.putExtra("pendingIntent", pendingIntent);
         return retval;
     }
 
     public static PendingIntent createPendingIntent(Context context, Event event, PendingIntent pendingIntent) {
-        return PendingIntent.getService(context, 0, createIntent(context, event, pendingIntent), 0);
+        return PendingIntent.getService(context, App.secureRandom.nextInt(), createIntent(context, event, pendingIntent), 0);
 
     }
 }

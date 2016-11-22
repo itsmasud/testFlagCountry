@@ -90,6 +90,18 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         return register(TOPIC_ID_SHUTDOWN);
     }
 
+    public boolean subFinishActivity() {
+        return register(TOPIC_ID_FINISH_ACTIVITY);
+    }
+
+    // finish activity
+    public static void finishActivity(Context context) {
+        if (context == null)
+            return;
+
+        TopicService.dispatchEvent(context, TOPIC_ID_FINISH_ACTIVITY, null, Sticky.NONE);
+    }
+
     // ContactUs dialog
     public static void showContactUsDialog(Context context, String source) {
         if (context == null)
@@ -209,6 +221,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
                 case TOPIC_ID_SHUTDOWN:
                     onShutdown();
                     break;
+                case TOPIC_ID_FINISH_ACTIVITY:
+                    onFinish();
+                    break;
                 case TOPIC_ID_SHOW_CONTACT_US:
                     onShowContactUsDialog(((Bundle) payload).getString(PARAM_CONTACT_US_SOURCE));
                     break;
@@ -251,6 +266,9 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
         }
 
         public void onShutdown() {
+        }
+
+        public void onFinish() {
         }
 
         public void onShowContactUsDialog(String source) {

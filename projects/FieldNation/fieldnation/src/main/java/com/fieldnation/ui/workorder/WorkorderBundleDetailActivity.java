@@ -10,6 +10,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
@@ -48,6 +49,10 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private com.fieldnation.data.workorder.Bundle _woBundle;
     private AcceptBundleDialog.Controller _acceptBundleDialog;
     private DeclineDialog.Controller _declineDialog;
+
+    // Services
+    private GlobalTopicClient _globalClient;
+
 
     @Override
     public int getLayoutResource() {
@@ -109,6 +114,9 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
         _declineDialog.setListener(_declineDialog_listener);
 
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(App.get());
+
         WorkorderClient.getBundle(this, _bundleId);
     }
 
@@ -116,6 +124,9 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
 
         if (_acceptBundleDialog != null)
             _acceptBundleDialog.disconnect(App.get());
@@ -263,6 +274,19 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
         }
     };
+
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalClient.subFinishActivity();
+        }
+
+        @Override
+        public void onFinish() {
+            finish();
+        }
+    };
+
 
     public static void startNew(Context context, long workorderId, long bundleId) {
         Intent intent = new Intent(context, WorkorderBundleDetailActivity.class);

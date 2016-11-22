@@ -478,7 +478,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         Log.v(TAG, "makeIntentConfirm");
         Intent intent = new Intent(context, WorkorderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);
