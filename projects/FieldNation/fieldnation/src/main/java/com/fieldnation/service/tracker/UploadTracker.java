@@ -134,7 +134,7 @@ public class UploadTracker extends MultiThreadedService implements UploadTracker
 
     private void createFailedNotification(long workorderId) {
         Intent workorderIntent = WorkorderActivity.makeIntentShow(App.get(), workorderId);
-        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, workorderIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), workorderIntent, 0);
 
         NotificationCompat.Builder
                 builder = new NotificationCompat.Builder(App.get())

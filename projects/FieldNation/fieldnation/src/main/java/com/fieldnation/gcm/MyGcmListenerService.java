@@ -100,7 +100,7 @@ public class MyGcmListenerService extends GcmListenerService {
                         workorderIntent.setAction("DUMMY");
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                        PendingIntent pi = PendingIntent.getActivity(this, 0, workorderIntent, 0);
+                        PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }
                     default:
@@ -125,13 +125,13 @@ public class MyGcmListenerService extends GcmListenerService {
             case CONFIRM: {
                 switch (action.getObject()) {
                     case "wo": {
-                        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                        PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
                                 WorkorderActivity.makeIntentConfirm(this, Long.parseLong(action.getId())), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }
                     case "tomorrow": {
                         App.get().setNeedsConfirmation(true);
-                        PendingIntent pi = PendingIntent.getActivity(this, 0,
+                        PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
                                 ConfirmActivity.startNewIntent(this), 0);
                         return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
                     }

@@ -499,7 +499,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                 ToastClient.snackbar(context, "Checkin failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 WorkorderDispatch.action(context, workorderId, "checkin", true);
@@ -524,7 +524,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                 ToastClient.snackbar(context, "Checkout failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 Log.v(TAG, "Sent snackbar");
@@ -817,7 +817,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         if (intent != null) {
-            PendingIntent pi = PendingIntent.getActivity(App.get(), 0, intent, 0);
+            PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
             ToastClient.snackbar(App.get(), resultData.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
         }
 
