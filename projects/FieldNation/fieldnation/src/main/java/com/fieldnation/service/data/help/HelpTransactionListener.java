@@ -3,7 +3,6 @@ package com.fieldnation.service.data.help;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 

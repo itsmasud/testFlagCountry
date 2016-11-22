@@ -27,17 +27,7 @@ import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.text.ParseException;
-
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLProtocolException;
 
 /**
  * Created by itssh on 3/23/2016.
