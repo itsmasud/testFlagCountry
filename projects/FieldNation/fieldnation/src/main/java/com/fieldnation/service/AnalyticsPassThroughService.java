@@ -1,5 +1,6 @@
 package com.fieldnation.service;
 
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -18,19 +19,32 @@ import com.fieldnation.fnlog.Log;
 public class AnalyticsPassThroughService extends Service {
     private static final String TAG = "AnalyticsPassThroughService";
 
+    private static final String PARAM_NOTIFICATION_ID = "notificationId";
+    private static final String PARAM_PENDING_INTENT = "pendingIntent";
+    private static final String PARAM_EVENT = "event";
+
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.v(TAG, "onStartCommand");
 
         if (intent != null) {
             try {
-                Tracker.event(this, (Event) intent.getParcelableExtra("event"));
+                if (intent.hasExtra(PARAM_NOTIFICATION_ID)) {
+                    NotificationManager manager = (NotificationManager) getSystemService(Service.NOTIFICATION_SERVICE);
+                    manager.cancel(intent.getIntExtra(PARAM_NOTIFICATION_ID, 0));
+                }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
 
             try {
-                ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, App.secureRandom.nextInt(), new Intent());
+                Tracker.event(this, (Event) intent.getParcelableExtra(PARAM_EVENT));
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+
+            try {
+                ((PendingIntent) intent.getParcelableExtra(PARAM_PENDING_INTENT)).send(this, App.secureRandom.nextInt(), new Intent());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
@@ -45,16 +59,17 @@ public class AnalyticsPassThroughService extends Service {
         return null;
     }
 
-    public static Intent createIntent(Context context, Event event, PendingIntent pendingIntent) {
+    public static Intent createIntent(Context context, Event event, PendingIntent pendingIntent, int notificationId) {
         Intent retval = new Intent(context, AnalyticsPassThroughService.class);
         retval.setAction("DUMMY");
-        retval.putExtra("event", event);
-        retval.putExtra("pendingIntent", pendingIntent);
+        retval.putExtra(PARAM_EVENT, event);
+        retval.putExtra(PARAM_PENDING_INTENT, pendingIntent);
+        retval.putExtra(PARAM_NOTIFICATION_ID, notificationId);
         return retval;
     }
 
-    public static PendingIntent createPendingIntent(Context context, Event event, PendingIntent pendingIntent) {
-        return PendingIntent.getService(context, App.secureRandom.nextInt(), createIntent(context, event, pendingIntent), 0);
+    public static PendingIntent createPendingIntent(Context context, Event event, PendingIntent pendingIntent, int notificationId) {
+        return PendingIntent.getService(context, App.secureRandom.nextInt(), createIntent(context, event, pendingIntent, notificationId), 0);
 
     }
 }
