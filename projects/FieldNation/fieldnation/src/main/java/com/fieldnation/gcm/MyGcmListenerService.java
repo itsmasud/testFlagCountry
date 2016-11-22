@@ -91,7 +91,7 @@ public class MyGcmListenerService extends GcmListenerService {
         }
     }
 
-    private PendingIntent getIntentFromAction(Action action) {
+    private PendingIntent getIntentFromAction(Action action, int notificationId) {
         switch (action.getType()) {
             case VIEW: {
                 switch (action.getObject()) {
@@ -102,7 +102,7 @@ public class MyGcmListenerService extends GcmListenerService {
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     default:
                         break;
@@ -115,7 +115,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getService(this, App.secureRandom.nextInt(),
                                 WorkorderTransactionBuilder.actionReadyIntent(this, Long.parseLong(action.getId())), 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     default:
                         break;
@@ -128,13 +128,13 @@ public class MyGcmListenerService extends GcmListenerService {
                     case "wo": {
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
                                 WorkorderActivity.makeIntentConfirm(this, Long.parseLong(action.getId())), 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     case "tomorrow": {
                         App.get().setNeedsConfirmation(true);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(),
                                 ConfirmActivity.startNewIntent(this), 0);
-                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi);
+                        return AnalyticsPassThroughService.createPendingIntent(this, VISITED_EVENT, pi, notificationId);
                     }
                     default:
                         break;
@@ -147,6 +147,15 @@ public class MyGcmListenerService extends GcmListenerService {
 
     private void buildPushNotification(GcmMessage gcmMessage) {
         // TODO, need to finish implementing this once we figure out how to send the other data
+        int id = 0;
+        switch (gcmMessage.category) {
+            case "CONFIRM_SCHEDULE":
+                id = CONFIRM_PUSH_NOTIFICATION;
+                break;
+            default:
+                id = App.secureRandom.nextInt();
+                break;
+        }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setSmallIcon(R.drawable.ic_notif_logo);
@@ -163,12 +172,12 @@ public class MyGcmListenerService extends GcmListenerService {
         if (gcmMessage.actions != null) {
             if (gcmMessage.actions.getPrimary() != null && gcmMessage.actions.getPrimary().length > 0) {
                 primaryAction = gcmMessage.actions.getPrimary()[0];
-                primaryIntent = getIntentFromAction(primaryAction);
+                primaryIntent = getIntentFromAction(primaryAction, id);
             }
 
             if (gcmMessage.actions.getSecondary() != null && gcmMessage.actions.getSecondary().length > 0) {
                 secondaryAction = gcmMessage.actions.getSecondary()[0];
-                secondaryIntent = getIntentFromAction(secondaryAction);
+                secondaryIntent = getIntentFromAction(secondaryAction, id);
             }
         }
 
@@ -211,16 +220,6 @@ public class MyGcmListenerService extends GcmListenerService {
         builder.setStyle(bigTextStyle);
         builder.setPriority(NotificationCompat.PRIORITY_MAX);
         builder.setVibrate(default_ringtone);
-
-        int id = 0;
-        switch (gcmMessage.category) {
-            case "CONFIRM_SCHEDULE":
-                id = CONFIRM_PUSH_NOTIFICATION;
-                break;
-            default:
-                id = App.secureRandom.nextInt();
-                break;
-        }
 
         Notification notification = builder.build();
         notification.flags = Notification.FLAG_AUTO_CANCEL;
