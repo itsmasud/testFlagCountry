@@ -42,25 +42,26 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
     }
 
     @Override
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onSuccess(context, result, transaction, httpResult, throwable);
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
+        if (result != Result.CONTINUE)
+            return result;
+
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pChange":
-                    return onSuccessChange(context, result, transaction, params, httpResult, throwable);
+                    return onChange(context, result, transaction, params, httpResult, throwable);
                 case "pGet":
-                    return onSuccessGet(context, result, transaction, params, httpResult, throwable);
+                    return onGet(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.RETRY;
         }
         return result;
     }
 
-    public Result onSuccessChange(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    public Result onChange(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
 
         WorkorderTransactionBuilder.get(context, workorderId, false);
@@ -70,7 +71,7 @@ public class DeliverableTransactionListener extends WebTransactionListener imple
         return Result.CONTINUE;
     }
 
-    public Result onSuccessGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    public Result onGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long deliverableId = params.getLong("deliverableId");
         byte[] data = httpResult.getByteArray();
