@@ -30,7 +30,7 @@ public class AnalyticsPassThroughService extends Service {
             }
 
             try {
-                ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, 0, new Intent());
+                ((PendingIntent) intent.getParcelableExtra("pendingIntent")).send(this, App.secureRandom.nextInt(), new Intent());
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
