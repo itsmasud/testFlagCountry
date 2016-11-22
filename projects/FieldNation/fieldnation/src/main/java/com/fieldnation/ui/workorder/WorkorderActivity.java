@@ -432,8 +432,6 @@ public class WorkorderActivity extends AuthSimpleActivity {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
                     try {
-                        Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-
                         NavActivity.startNew(App.get());
 
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
