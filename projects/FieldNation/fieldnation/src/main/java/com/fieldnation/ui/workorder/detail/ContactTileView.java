@@ -10,9 +10,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.fieldnation.Debug;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 
 /**
  * Created by Michael Carver on 5/26/2015.
@@ -105,7 +105,7 @@ public class ContactTileView extends RelativeLayout {
                         ToastClient.toast(getContext(), "Couldn't call number: " + _phone, Toast.LENGTH_LONG);
                     }
                 } catch (Exception ex) {
-                    Debug.logException(ex);
+                    Log.logException(ex);
                 }
 
             }

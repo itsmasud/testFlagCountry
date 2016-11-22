@@ -8,25 +8,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.SimpleGps;
 import com.fieldnation.data.v2.ListEnvelope;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.service.data.v2.workorder.SearchParams;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollRecyclerView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.worecycler.BaseHolder;
-import com.fieldnation.ui.worecycler.TimeHeaderAdapter;
+import com.fieldnation.ui.worecycler.PagingAdapter;
 import com.fieldnation.ui.worecycler.WorkOrderHolder;
 import com.fieldnation.ui.workorder.v2.WorkOrderCard;
-import com.fieldnation.utils.ISO8601;
 
-import java.util.Calendar;
-import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -42,10 +42,14 @@ public class SearchResultScreen extends RelativeLayout {
 
     // Service
     private WorkOrderClient _workOrderClient;
+    private SimpleGps _simpleGps;
+    private WorkorderClient _workorderClientV1;
 
     // Data
-    private SearchParams _searchParams;
+    private SavedSearchParams _searchParams;
     private Location _location;
+    private OnClickListener _onClickListener;
+    private OnWorkOrderListReceivedListener _onListReceivedListener;
 
     public SearchResultScreen(Context context) {
         super(context);
@@ -80,6 +84,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         _workOrderClient = new WorkOrderClient(_workOrderClient_listener);
         _workOrderClient.connect(App.get());
+        _workorderClientV1 = new WorkorderClient(_workorderClientV1_listener);
+        _workorderClientV1.connect(App.get());
 
         _adapter.clear();
 
@@ -90,19 +96,31 @@ public class SearchResultScreen extends RelativeLayout {
             }
         });
 
-        SimpleGps.with(App.get()).start(new SimpleGps.Listener() {
-            @Override
-            public void onLocation(Location location) {
-                SimpleGps.with(App.get()).stop();
-                _location = location;
-            }
-        });
+        _simpleGps = new SimpleGps(App.get())
+                .updateListener(_gps_listener)
+                .start(App.get());
     }
+
+    private final SimpleGps.Listener _gps_listener = new SimpleGps.Listener() {
+        @Override
+        public void onLocation(Location location) {
+            _location = location;
+            _simpleGps.stop();
+        }
+
+        @Override
+        public void onFail() {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+        }
+    };
 
     @Override
     protected void onDetachedFromWindow() {
         if (_workOrderClient != null && _workOrderClient.isConnected())
             _workOrderClient.disconnect(App.get());
+
+        if (_workorderClientV1 != null && _workorderClientV1.isConnected())
+            _workorderClientV1.disconnect(App.get());
 
         super.onDetachedFromWindow();
     }
@@ -117,10 +135,18 @@ public class SearchResultScreen extends RelativeLayout {
             _refreshView.startRefreshing();
     }
 
-    public void startSearch(SearchParams searchParams) {
+    public void startSearch(SavedSearchParams searchParams) {
         _searchParams = searchParams;
         _adapter.clear();
         getPage(0);
+    }
+
+    public void setOnChildClickListener(OnClickListener listener) {
+        _onClickListener = listener;
+    }
+
+    public void setOnWorkOrderListReceivedListener(OnWorkOrderListReceivedListener listener) {
+        _onListReceivedListener = listener;
     }
 
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
@@ -133,11 +159,18 @@ public class SearchResultScreen extends RelativeLayout {
     private final WorkOrderClient.Listener _workOrderClient_listener = new WorkOrderClient.Listener() {
         @Override
         public void onConnected() {
-            _workOrderClient.subSearch(_searchParams);
+            _workOrderClient.subSearch();
+            _workOrderClient.subActions();
         }
 
         @Override
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
+        public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
+            if (!_searchParams.toKey().equals(searchParams.toKey()))
+                return;
+
+            if (_onListReceivedListener != null)
+                _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
+
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
                 if (_adapter.getItemCount() == 0)
@@ -159,32 +192,44 @@ public class SearchResultScreen extends RelativeLayout {
             else
                 _unavailableView.setVisibility(GONE);
         }
+
+        @Override
+        public void onAction(long workOrderId, String action, boolean failed) {
+            getPage(0);
+            _adapter.clear();
+            _refreshView.startRefreshing();
+        }
     };
 
-    private final TimeHeaderAdapter<WorkOrder> _adapter = new TimeHeaderAdapter<WorkOrder>(WorkOrder.class) {
+    private final WorkorderClient.Listener _workorderClientV1_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            _workorderClientV1.subActions();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            Log.v(TAG, "_workorderClientV1_listener.onAction " + workorderId + ", " + action + ", " + failed);
+            _adapter.clear();
+            getPage(0);
+            _refreshView.startRefreshing();
+        }
+    };
+
+    private final PagingAdapter<WorkOrder> _adapter = new PagingAdapter<WorkOrder>(WorkOrder.class) {
         @Override
         public void requestPage(int page, boolean allowCache) {
             getPage(page);
         }
 
         @Override
-        public Comparator<WorkOrder> getTimeComparator() {
-            return WorkOrder.getTimeComparator();
-        }
-
-        @Override
-        public Calendar getObjectTime(WorkOrder object) {
-            try {
-                return ISO8601.toCalendar(object.getSchedule().getBegin());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return null;
-        }
-
-        @Override
         public BaseHolder onCreateObjectViewHolder(ViewGroup parent, int viewType) {
-            return new WorkOrderHolder(new WorkOrderCard(parent.getContext()));
+            WorkOrderCard card = new WorkOrderCard(parent.getContext());
+
+            if (_onClickListener != null)
+                card.setOnClickListener(_card_onClick);
+
+            return new WorkOrderHolder(card);
         }
 
         @Override
@@ -194,4 +239,20 @@ public class SearchResultScreen extends RelativeLayout {
             v.setData(object, _location);
         }
     };
+
+    private final View.OnClickListener _card_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_onClickListener != null)
+                _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    public interface OnClickListener {
+        void onWorkOrderClicked(WorkOrder workOrder);
+    }
+
+    public interface OnWorkOrderListReceivedListener {
+        void OnWorkOrderListReceived(ListEnvelope envelope, List<WorkOrder> workOrders);
+    }
 }

@@ -12,8 +12,8 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.utils.misc;
 
 import java.lang.ref.WeakReference;
 

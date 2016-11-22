@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/fn_shadow"
+    android:padding="32dp">
+
+    <RelativeLayout
+        style="@style/CardContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:padding="8dp">
+
+        <TextView
+            android:id="@+id/title_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This is a test!" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="?attr/buttonFlatStyle"
+            android:layout_below="@+id/title_textview"
+            android:layout_toLeftOf="@+id/ok_button"
+            android:text="Cancel" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="?attr/buttonFlatStyle"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/title_textview"
+            android:text="Ok" />
+
+    </RelativeLayout>
+</RelativeLayout>

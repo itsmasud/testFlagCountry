@@ -3,16 +3,16 @@ package com.fieldnation.service.data.profile;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.MSService;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.MultiThreadedService;
 
 /**
  * Created by Michael Carver on 3/13/2015.
  */
-public class ProfileService extends MSService implements ProfileConstants {
+public class ProfileService extends MultiThreadedService implements ProfileConstants {
     private static final String TAG = "ProfileService";
 
     @Override
@@ -53,7 +53,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         StoredObject obj = null;
 
         if (!isSync && allowCache) {
-            obj = StoredObject.get((int) profileId, PSO_PROFILE, profileId);
+            obj = StoredObject.get(this, (int) profileId, PSO_PROFILE, profileId);
             // get stored object
             // if exists, then pass it back
             if (obj != null) {
@@ -82,7 +82,7 @@ public class ProfileService extends MSService implements ProfileConstants {
 
         StoredObject obj = null;
         if (!isSync && allowCache) {
-            obj = StoredObject.get(App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
+            obj = StoredObject.get(this, App.getProfileId(), PSO_NOTIFICATION_PAGE, page + "");
             if (obj != null) {
                 try {
                     ProfileDispatch.listNotifications(this, new JsonArray(obj.getData()), page, false, isSync, true);
@@ -109,7 +109,7 @@ public class ProfileService extends MSService implements ProfileConstants {
         StoredObject obj = null;
 
         if (!isSync && allowCache) {
-            obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_PAGE, page);
+            obj = StoredObject.get(this, App.getProfileId(), PSO_MESSAGE_PAGE, page);
             if (obj != null) {
                 try {
                     ProfileDispatch.listMessages(this, new JsonArray(obj.getData()), page, false, isSync, true);

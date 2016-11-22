@@ -10,10 +10,10 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by michael.carver on 12/2/2014.

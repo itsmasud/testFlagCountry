@@ -22,12 +22,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 
@@ -214,10 +214,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     public void setPhoto(Bitmap bitmap) {
         Log.v(TAG, "setPhoto");
         _bitmap = bitmap;
-        if (_bitmap == null)
-            _hideImageView = true;
-        else
-            _hideImageView = false;
+        _hideImageView = _bitmap == null;
 
         populateUi();
     }

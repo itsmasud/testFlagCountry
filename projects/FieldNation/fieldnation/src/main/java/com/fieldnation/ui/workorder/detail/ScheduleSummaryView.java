@@ -4,14 +4,19 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 
 import java.text.DateFormatSymbols;
 import java.text.SimpleDateFormat;
@@ -26,6 +31,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private TextView _date1TextView;
     private TextView _type2TextView;
     private TextView _date2TextView;
+    private Button _addButton;
 
     // Data
     private Workorder _workorder;
@@ -54,7 +60,8 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         _date1TextView = (TextView) findViewById(R.id.date1_textview);
         _type2TextView = (TextView) findViewById(R.id.type2_textview);
         _date2TextView = (TextView) findViewById(R.id.date2_textview);
-
+        _addButton = (Button) findViewById(R.id.add_button);
+        _addButton.setOnClickListener(_add_onClick);
 
         setVisibility(View.GONE);
     }
@@ -72,6 +79,14 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
         if (_workorder == null)
             return;
         setVisibility(View.VISIBLE);
+
+        if (_workorder.getWorkorderSubstatus() == WorkorderSubstatus.CONFIRMED
+                && _workorder.getWorkorderStatus() == WorkorderStatus.ASSIGNED) {
+            _addButton.setVisibility(VISIBLE);
+
+        } else {
+            _addButton.setVisibility(GONE);
+        }
 
         Schedule schedule = _workorder.getSchedule();
 
@@ -101,7 +116,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             }
 
             DateFormatSymbols symbols = new DateFormatSymbols(Locale.getDefault());
-            symbols.setAmPmStrings(new String[]{"am", "pm"});
+            symbols.setAmPmStrings(getResources().getStringArray(R.array.schedule_small_case_am_pm_array));
             if (!misc.isEmptyOrNull(schedule.getEndTime()) && schedule.getType() == Schedule.Type.BUSINESS_HOURS) {
                 SimpleDateFormat sdf1 = new SimpleDateFormat("E, MMM dd", Locale.getDefault());
                 sdf1.setDateFormatSymbols(symbols);
@@ -147,4 +162,12 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
             ex.printStackTrace();
         }
     }
+
+    private final View.OnClickListener _add_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                    _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
+        }
+    };
 }

@@ -1,20 +1,27 @@
-<?xml version="1.0" encoding="utf-8"?><!--<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-<com.fieldnation.ui.ActionBarDrawerView xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/actionbardrawerview"
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <!-- The main content view -->
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            style="?attr/fnToolbarStyle"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:layout_alignParentTop="true"
+            app:layout_scrollFlags="scroll|enterAlways"
+            app:theme="@style/FieldNation.Material.ToolBar" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/fn_gradient"
+            android:background="@color/fn_primary"
             android:orientation="vertical"
             android:paddingBottom="16dp">
 
@@ -25,7 +32,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="4dp"
                 android:gravity="center"
-                android:textColor="@color/fn_white_text" />
+                android:textColor="@color/fn_white_text"
+                android:visibility="gone" />
 
             <TextView
                 android:id="@+id/payment_textview"
@@ -59,4 +67,8 @@
             android:smoothScrollbar="true" />
     </LinearLayout>
 
-</com.fieldnation.ui.ActionBarDrawerView>
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+</FrameLayout>

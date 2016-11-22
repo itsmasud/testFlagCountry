@@ -14,8 +14,8 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 
 public class DurationDialog extends DialogFragmentBase {
     private static final String TAG = "DurationDialog";
@@ -48,8 +48,8 @@ public class DurationDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-			// FIXME this line comes from 2.3.81, not sure if it's right
-			// dismiss(); 
+            // FIXME this line comes from 2.3.81, not sure if it's right
+            // dismiss();
             if (savedInstanceState.containsKey(STATE_NUMBER))
                 _number = savedInstanceState.getString(STATE_NUMBER);
         }
@@ -121,6 +121,7 @@ public class DurationDialog extends DialogFragmentBase {
     }
 
     public void show(long timeInMilliseconds) {
+/*
         long seconds = timeInMilliseconds / 1000;
         long days = seconds / 86400;
         seconds = seconds % 86400;
@@ -128,21 +129,31 @@ public class DurationDialog extends DialogFragmentBase {
         seconds = seconds % 3600;
         long min = seconds / 60;
 
-        _number = min + "";
-        if (_number.length() < 2)
-            _number = misc.repeat("0", 2 - _number.length()) + _number;
+        if (min > 0 || hours > 0 || days > 0) {
+            _number = min + "";
+            if (_number.length() < 2)
+                _number = misc.repeat("0", 2 - _number.length()) + _number;
+        }
 
-        _number = hours + _number;
-        if (_number.length() < 4)
-            _number = misc.repeat("0", 4 - _number.length()) + _number;
+        if (hours > 0 || days > 0) {
+            _number = hours + _number;
+            if (_number.length() < 4)
+                _number = misc.repeat("0", 4 - _number.length()) + _number;
+        }
 
-        _number = days + _number;
+        if (days > 0) {
+            _number = days + _number;
+        }
+*/
         super.show();
     }
 
     private void populateUi() {
         if (_dayTextView == null)
             return;
+
+        while (_number.length() > 0 && _number.charAt(0) == '0')
+            _number = _number.substring(1);
 
         String padded = _number;
 

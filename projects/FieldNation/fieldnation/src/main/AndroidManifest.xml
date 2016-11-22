@@ -19,7 +19,6 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
 
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
@@ -40,6 +39,14 @@
             tools:replace="android:value" />
 
         <activity
+            android:name=".ui.nav.AdditionalOptionsActivity"
+            android:exported="false"
+            android:process=":frontside" />
+        <activity
+            android:name=".ui.ncns.ConfirmActivity"
+            android:exported="false"
+            android:process=":frontside" />
+        <activity
             android:name=".ui.search.SearchResultsActivity"
             android:exported="false"
             android:process=":frontside" />
@@ -48,7 +55,7 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
-            android:name=".ui.workorder.MyWorkActivity"
+            android:name=".ui.nav.NavActivity"
             android:exported="false"
             android:process=":frontside" />
         <activity
@@ -61,10 +68,6 @@
             </intent-filter>
 
         </activity>
-        <activity
-            android:name=".ui.market.MarketActivity"
-            android:exported="false"
-            android:process=":frontside" />
         <activity
             android:name=".ui.SignatureActivity"
             android:exported="false"
@@ -178,7 +181,7 @@
             android:label="@string/activity_bundle_detail_title"
             android:process=":frontside" />
         <activity
-            android:name=".ui.SettingsActivity"
+            android:name=".ui.settings.SettingsActivity"
             android:exported="false"
             android:label="@string/activity_settings_title"
             android:process=":frontside" />
@@ -193,12 +196,12 @@
             android:label="@string/activity_signature_info_title"
             android:process=":frontside" />
 
-
         <activity
-            android:name=".ui.ShareRequestActivity"
+            android:name=".ui.share.ReceiverActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
-            android:process=":frontside">
+            android:process=":frontside"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.SEND" />
                 <action android:name="android.intent.action.SEND_MULTIPLE" />
@@ -213,7 +216,7 @@
             android:name="com.journeyapps.barcodescanner.CaptureActivity"
             android:exported="true"
             android:label="@string/activity_share_activity_title"
-            android:process=":frontside"></activity>
+            android:process=":frontside" />
 
         <activity
             android:name=".ui.NewFeatureActivity"
@@ -225,6 +228,10 @@
             android:exported="false"
             android:process=":frontside" />
 
+        <service
+            android:name=".service.GpsTrackingService"
+            android:exported="false"
+            android:process=":frontside" />
 
         <service
             android:name=".service.auth.AuthService"
@@ -252,11 +259,15 @@
         </service>
         <!--topics-->
         <service
-            android:name=".service.topics.TopicService"
+            android:name=".fnpigeon.TopicService"
             android:exported="false"
             android:process=":frontside" />
 
         <!--web/data-->
+        <service
+            android:name=".service.AnalyticsPassThroughService"
+            android:exported="false"
+            android:process=":frontside" />
         <service
             android:name=".service.auth.AuthTopicService"
             android:exported="false"

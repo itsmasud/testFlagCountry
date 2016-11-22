@@ -3,12 +3,12 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -26,6 +26,10 @@ public class Location implements Parcelable {
     private String _country;
     @Json(name = "geo")
     private Geo _geo;
+    @Json(name = "address_1")
+    private String _address1;
+    @Json(name = "address_2")
+    private String _address2;
 
     public Location() {
     }
@@ -48,6 +52,14 @@ public class Location implements Parcelable {
 
     public Geo getGeo() {
         return _geo;
+    }
+
+    public String getAddress1() {
+        return _address1;
+    }
+
+    public String getAddress2() {
+        return _address2;
     }
 
     /*-*************************************-*/
@@ -80,35 +92,48 @@ public class Location implements Parcelable {
     /*-				Human Generated Code				-*/
     /*-*************************************************-*/
 
+    public String getCityState() {
+        if (misc.isEmptyOrNull(_city) && misc.isEmptyOrNull(_state))
+            // both empty
+            return "";
+        else if (misc.isEmptyOrNull(_city) && !misc.isEmptyOrNull(_state))
+            // have state
+            return _state;
+        else if (!misc.isEmptyOrNull(_city) && misc.isEmptyOrNull(_state))
+            return _state;
+        else
+            return _city + ", " + _state;
+    }
+
     public String getTopAddressLine() {
-//        if (getAddress1() != null || getAddress2() != null) {
-        String address1 = null;
-        String address2 = null;
+        if (getAddress1() != null || getAddress2() != null) {
+            String address1 = null;
+            String address2 = null;
 
-//            if (getAddress1() != null)
-//                address1 = getAddress1();
-//            if (getAddress2() != null)
-//                address2 = getAddress2();
+            if (getAddress1() != null)
+                address1 = getAddress1();
+            if (getAddress2() != null)
+                address2 = getAddress2();
 
-        if (misc.isEmptyOrNull(address1))
-            address1 = null;
-        if (misc.isEmptyOrNull(address2))
-            address2 = null;
+            if (misc.isEmptyOrNull(address1))
+                address1 = null;
+            if (misc.isEmptyOrNull(address2))
+                address2 = null;
 
-        if (address1 == null)
-            address1 = address2;
-        else if (address2 != null) {
-            address1 = (address1 + "\n" + address2).trim();
-        }
+            if (address1 == null)
+                address1 = address2;
+            else if (address2 != null) {
+                address1 = (address1 + "\n" + address2).trim();
+            }
 
-        if (address1 != null) {
-            return address1;
+            if (address1 != null) {
+                return address1;
+            } else {
+                return "";
+            }
         } else {
             return "";
         }
-//        } else {
-//            return "";
-//        }
     }
 
     public String getFullAddressAndContactName() {

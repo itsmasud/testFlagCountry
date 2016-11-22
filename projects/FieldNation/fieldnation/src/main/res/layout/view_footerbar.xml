@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="48dp"
+    android:background="@color/fn_menu_bg">
+
+    <View
+        style="@style/DividerFull"
+        android:layout_width="match_parent"
+        android:layout_alignParentTop="true" />
+
+    <Button
+        android:id="@+id/reset_button"
+        style="?attr/buttonGreenStyle"
+        android:layout_width="wrap_content"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toLeftOf="@+id/inbox_textview"
+        android:text="TEST"
+        android:visibility="gone" />
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/inbox_textview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/menu_textview"
+        android:gravity="center"
+        android:text="@string/icon_inbox"
+        android:textSize="20sp" />
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/unread_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/inbox_textview"
+        android:layout_alignRight="@+id/inbox_textview"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="8dp"
+        android:gravity="center"
+        android:padding="0dp"
+        android:text="@string/icon_circle"
+        android:textColor="@color/fn_brandcolor"
+        android:textSize="10sp"
+        android:visibility="gone" />
+
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/menu_textview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text="@string/icon_overflow"
+        android:textSize="20sp" />
+
+</RelativeLayout>

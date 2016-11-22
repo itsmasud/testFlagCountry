@@ -15,9 +15,9 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.ui.AppPickerAdapter;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.AppPickerRowView;

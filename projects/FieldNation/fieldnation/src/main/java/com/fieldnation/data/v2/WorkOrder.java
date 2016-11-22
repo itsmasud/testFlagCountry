@@ -3,14 +3,13 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.ISO8601;
-
-import java.util.Comparator;
+import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.data.v2.actions.ActionContainer;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -23,6 +22,8 @@ public class WorkOrder implements Parcelable {
     @Json
     private String title;
     @Json
+    private String type;
+    @Json
     private Org org;
     @Json
     private Bundle bundle;
@@ -32,6 +33,11 @@ public class WorkOrder implements Parcelable {
     private Schedule schedule;
     @Json
     private Pay pay;
+    @Json(name = "actions")
+    private ActionContainer actions;
+    @Json(name = "contacts")
+    private Contact[] contacts;
+
 
     public WorkOrder() {
     }
@@ -42,6 +48,10 @@ public class WorkOrder implements Parcelable {
 
     public String getTitle() {
         return title;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public Org getOrg() {
@@ -68,41 +78,28 @@ public class WorkOrder implements Parcelable {
         return pay;
     }
 
+    public Action[] getPrimaryActions() {
+        if (actions == null)
+            return null;
+
+        return actions.getPrimary();
+    }
+
+    public Action[] getSecondaryActions() {
+        if (actions == null)
+            return null;
+
+        return actions.getSecondary();
+    }
+
+    public Contact[] getContacts() {
+        return contacts;
+    }
+
     @Override
     public int hashCode() {
         return (int) (long) id;
     }
-
-    public static Comparator<WorkOrder> getTimeComparator() {
-        return _timeComparator;
-    }
-
-    private static final Comparator<WorkOrder> _timeComparator = new Comparator<WorkOrder>() {
-        @Override
-        public int compare(WorkOrder lhs, WorkOrder rhs) {
-            try {
-                long l = 0;
-                if (lhs.getSchedule().getBegin() != null)
-                    l = ISO8601.toUtc(lhs.getSchedule().getBegin());
-
-                long r = 0;
-                if (rhs.getSchedule().getBegin() != null)
-                    r = ISO8601.toUtc(rhs.getSchedule().getBegin());
-
-                if (l < r)
-                    return -1;
-                else if (l > r)
-                    return 1;
-                else
-                    return 0;
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            }
-            return 0;
-        }
-    };
-
 
     /*-*************************************-*/
     /*-			JSON Implementation			-*/
@@ -112,21 +109,23 @@ public class WorkOrder implements Parcelable {
     }
 
     public static JsonObject toJson(WorkOrder workOrder) {
+        JsonObject obj = null;
         try {
-            return Serializer.serializeObject(workOrder);
+            obj = Serializer.serializeObject(workOrder);
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return null;
         }
+        return obj;
     }
 
     public static WorkOrder fromJson(JsonObject json) {
+        WorkOrder wo = null;
         try {
-            return Unserializer.unserializeObject(WorkOrder.class, json);
+            wo = Unserializer.unserializeObject(WorkOrder.class, json);
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return null;
         }
+        return wo;
     }
 
     /*-*********************************************-*/
@@ -158,74 +157,5 @@ public class WorkOrder implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
-    }
-
-
-    /*-*****************************************-*/
-    /*-			Status Implementation			-*/
-    /*-*****************************************-*/
-    public static class Status implements Parcelable {
-        private static final String TAG = "Status";
-
-        @Json
-        private String primary;
-        @Json
-        private String secondary;
-
-        public Status() {
-        }
-
-        public JsonObject toJson() {
-            return toJson(this);
-        }
-
-        public static JsonObject toJson(Status status) {
-            try {
-                return Serializer.serializeObject(status);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
-        }
-
-        public static Status fromJson(JsonObject json) {
-            try {
-                return Unserializer.unserializeObject(Status.class, json);
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-                return null;
-            }
-        }
-
-        /*-*********************************************-*/
-        /*-			Parcelable Implementation			-*/
-        /*-*********************************************-*/
-        public static final Parcelable.Creator<Status> CREATOR = new Parcelable.Creator<Status>() {
-
-            @Override
-            public Status createFromParcel(Parcel source) {
-                try {
-                    return Status.fromJson((JsonObject) source.readParcelable(JsonObject.class.getClassLoader()));
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                    return null;
-                }
-            }
-
-            @Override
-            public Status[] newArray(int size) {
-                return new Status[size];
-            }
-        };
-
-        @Override
-        public int describeContents() {
-            return 0;
-        }
-
-        @Override
-        public void writeToParcel(Parcel dest, int flags) {
-            dest.writeParcelable(toJson(), flags);
-        }
     }
 }

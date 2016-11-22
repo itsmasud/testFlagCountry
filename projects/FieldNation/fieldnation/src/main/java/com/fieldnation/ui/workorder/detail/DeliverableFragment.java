@@ -25,23 +25,28 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
-import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.MemUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
 import com.fieldnation.ui.RefreshView;
@@ -50,10 +55,6 @@ import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.UploadSlotDialog;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.FileUtils;
-import com.fieldnation.utils.MemUtils;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -237,6 +238,7 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void update() {
 //        getData();
+        Tracker.screen(App.get(), ScreenName.workOrderDetailsAttachments());
         checkMedia();
 //        executeDelayedAction();
     }
@@ -348,12 +350,17 @@ public class DeliverableFragment extends WorkorderFragment {
         setLoading(false);
     }
 
-    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.Listener() {
+    private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
         public void onConnected() {
             Log.v(TAG, "_activityResultClient_listener.onConnected");
             _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             _activityResultClient.subOnActivityResult(ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+        }
+
+        @Override
+        public ActivityResultClient getClient() {
+            return _activityResultClient;
         }
 
         @Override
@@ -418,7 +425,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     }
                 }
             } catch (Exception ex) {
-                Debug.logException(ex);
+                Log.logException(ex);
                 Log.e(TAG, ex.getMessage());
             }
         }
@@ -597,7 +604,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);
@@ -700,8 +707,8 @@ public class DeliverableFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onDeliveraleCacheEnd(Uri uri, String filename) {
-            Log.v(TAG, "onDeliveraleCacheEnd");
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
+            Log.v(TAG, "onDeliverableCacheEnd");
 
             _tempUri = uri;
             _tempFile = null;

@@ -4,12 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.MSService;
-import com.fieldnation.service.objectstore.StoredObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
 
@@ -17,7 +17,7 @@ import com.fieldnation.ui.workorder.WorkorderDataSelector;
 /**
  * Created by Michael Carver on 3/24/2015.
  */
-public class WorkorderService extends MSService implements WorkorderConstants {
+public class WorkorderService extends MultiThreadedService implements WorkorderConstants {
     private static final String TAG = "WorkorderService";
 
     @Override
@@ -81,7 +81,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
         if (allowCache && !isSync) {
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_WORKORDER, workorderId);
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_WORKORDER, workorderId);
             if (obj != null) {
                 try {
                     JsonObject workorder = new JsonObject(obj.getData());
@@ -118,7 +118,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
         if (allowCache && !isSync) {
             Log.v(TAG, "list: checking cache");
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_WORKORDER_LIST + selector, page);
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_WORKORDER_LIST + selector, page);
             if (obj != null) {
                 try {
                     JsonArray ja = new JsonArray(obj.getData());
@@ -146,7 +146,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long signatureId = intent.getLongExtra(PARAM_SIGNATURE_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_SIGNATURE, signatureId);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_SIGNATURE, signatureId);
         if (obj != null) {
             try {
                 WorkorderDispatch.signature(this, new JsonObject(obj.getData()), workorderId, signatureId, false, isSync);
@@ -166,7 +166,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
         if (!isSync && allowCache) {
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_MESSAGE_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_MESSAGE_LIST, workorderId);
             if (obj != null) {
                 try {
                     WorkorderDispatch.listMessages(this, workorderId, new JsonArray(obj.getData()), false, isSync);
@@ -183,7 +183,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_ALERT_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_ALERT_LIST, workorderId);
             if (obj != null) {
                 try {
                     WorkorderDispatch.listAlerts(this, workorderId, new JsonArray(obj.getData()), false, isSync);
@@ -201,7 +201,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
         if (!isSync) {
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_TASK_LIST, workorderId);
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_TASK_LIST, workorderId);
             if (obj != null) {
                 try {
                     WorkorderDispatch.listTasks(this, workorderId, new JsonArray(obj.getData()), false, isSync);
@@ -218,9 +218,10 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         Log.v(TAG, "getBundle");
         long bundleId = intent.getLongExtra(PARAM_WORKORDER_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
+        boolean allowCache = intent.getBooleanExtra(PARAM_ALLOW_CACHE, true);
 
-        if (!isSync) {
-            StoredObject obj = StoredObject.get(App.getProfileId(), PSO_BUNDLE, bundleId);
+        if (allowCache && !isSync) {
+            StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_BUNDLE, bundleId);
             if (obj != null) {
                 try {
                     WorkorderDispatch.bundle(this, new JsonObject(obj.getData()), bundleId, false, isSync);
@@ -235,18 +236,18 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
     private void cacheDeliverable(Intent intent) {
         Uri uri = intent.getParcelableExtra(PARAM_URI);
-        WorkorderDispatch.cacheDeliverableStart(App.get(), uri);
+        WorkorderDispatch.cacheDeliverableStart(this, uri);
         StoredObject upFile = null;
         try {
-            upFile = StoredObject.put(App.getProfileId(), "CacheFile", uri.toString(),
+            upFile = StoredObject.put(this, App.getProfileId(), "CacheFile", uri.toString(),
                     this.getContentResolver().openInputStream(uri), "uploadTemp.dat");
         } catch (Exception ex) {
             Log.v(TAG, ex);
         } finally {
             if (upFile != null)
-                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, upFile.getFile().toString());
+                WorkorderDispatch.cacheDeliverableEnd(this, uri, upFile.getFile().toString());
             else
-                WorkorderDispatch.cacheDeliverableEnd(App.get(), uri, null);
+                WorkorderDispatch.cacheDeliverableEnd(this, uri, null);
         }
     }
 
@@ -260,7 +261,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
 
         if (uri != null) {
             try {
-                StoredObject cache = StoredObject.get(App.getProfileId(), "CacheFile", uri.toString());
+                StoredObject cache = StoredObject.get(this, App.getProfileId(), "CacheFile", uri.toString());
                 if (cache != null) {
                     WorkorderTransactionBuilder.uploadDeliverable(this, cache, filename, photoDescription, workorderId, uploadSlotId);
                 } else {
@@ -278,7 +279,7 @@ public class WorkorderService extends MSService implements WorkorderConstants {
         long deliverableId = intent.getLongExtra(PARAM_DELIVERABLE_ID, 0);
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
 
-        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_DELIVERABLE, deliverableId);
+        StoredObject obj = StoredObject.get(this, App.getProfileId(), PSO_DELIVERABLE, deliverableId);
 
         if (obj != null) {
             try {

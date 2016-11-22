@@ -15,23 +15,24 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.SimpleGps;
-import com.fieldnation.data.mapbox.MapboxDirections;
-import com.fieldnation.data.mapbox.MapboxRoute;
+import com.fieldnation.data.gmaps.GmapsDirections;
+import com.fieldnation.data.gmaps.GmapsRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.mapbox.MapboxClient;
-import com.fieldnation.service.data.mapbox.Marker;
-import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.gmaps.GmapsClient;
+import com.fieldnation.service.data.gmaps.Marker;
+import com.fieldnation.service.data.gmaps.Position;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.misc;
 
 public class LocationView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "LocationView";
@@ -69,13 +70,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private android.location.Location _userLocation = null;
     private Bitmap _map = null;
     private boolean _mapUnavailable = false;
-    private MapboxDirections _directions = null;
+    private GmapsDirections _directions = null;
     private boolean _invalidAddress = false;
     private int _action = ACTION_NAVIGATE;
 
 
     // Services
-    private MapboxClient _mapboxClient = null;
+    private GmapsClient _gmapsClient = null;
+    private SimpleGps _simpleGps;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -119,10 +121,12 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _actionButton = (Button) findViewById(R.id.navigate_button);
         _actionButton.setOnClickListener(_action_onClick);
 
-        _mapboxClient = new MapboxClient(_mapboxClient_listener);
-        _mapboxClient.connect(App.get());
+        _gmapsClient = new GmapsClient(_gmapsClient_listener);
+        _gmapsClient.connect(App.get());
 
-        SimpleGps.with(App.get()).start(_gpsListener);
+        _simpleGps = new SimpleGps(getContext())
+                .updateListener(_gpsListener)
+                .start(getContext());
 
         setVisibility(View.GONE);
 
@@ -140,10 +144,10 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_mapboxClient != null && _mapboxClient.isConnected()) {
-            _mapboxClient.disconnect(App.get());
+        if (_gmapsClient != null && _gmapsClient.isConnected()) {
+            _gmapsClient.disconnect(App.get());
         }
-        SimpleGps.with(App.get()).stop();
+        _simpleGps.stop();
         super.onDetachedFromWindow();
     }
 
@@ -151,9 +155,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     public void setWorkorder(Workorder workorder) {
         _workorder = workorder;
 
-        if (_mapboxClient != null && _mapboxClient.isConnected()) {
-            _mapboxClient.subStaticMapClassic(_workorder.getWorkorderId());
-            _mapboxClient.subDirections(_workorder.getWorkorderId());
+        if (_gmapsClient != null && _gmapsClient.isConnected()) {
+            _gmapsClient.subStaticMapClassic(_workorder.getWorkorderId());
+            _gmapsClient.subDirections(_workorder.getWorkorderId());
             lookupMap();
         }
         populateUi();
@@ -184,6 +188,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
+            _actionButton.setVisibility(GONE);
             _mapLayout.setVisibility(GONE);
             _noLocationTextView.setVisibility(VISIBLE);
             _distanceTextView.setVisibility(GONE);
@@ -251,19 +256,19 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         // distance
         _distanceTextView.setVisibility(VISIBLE);
-        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+        if (!_simpleGps.isLocationEnabled()) {
             _distanceTextView.setText(R.string.cant_calc_miles);
         } else if (_directions != null) {
             double miles = 0.0;
-            MapboxRoute[] routes = _directions.getRoutes();
-            for (MapboxRoute route : routes) {
+            GmapsRoute[] routes = _directions.getRoutes();
+            for (GmapsRoute route : routes) {
                 miles += route.getDistanceMi();
             }
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
         } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude() != null && loc.getGeo().getLatitude() != null) {
             try {
-                Position siteLoc = new Position(loc.getGeo().getLongitude(), loc.getGeo().getLatitude());
-                Position myLoc = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
+                Position siteLoc = new Position(loc.getGeo().getLatitude(), loc.getGeo().getLongitude());
+                Position myLoc = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
 
                 _distanceTextView.setText(getResources().getString(R.string.num_mi_straight_line, misc.to2Decimal(myLoc.distanceTo(siteLoc))));
             } catch (Exception ex) {
@@ -295,7 +300,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _action = ACTION_MESSAGES;
             return;
         }
-        if (!SimpleGps.with(App.get()).isLocationEnabled()) {
+
+        if (_workorder.getIsRemoteWork()) {
+//        remote work
+            _noMapLayout.setVisibility(GONE);
+            _actionButton.setVisibility(GONE);
+
+        } else if (!_simpleGps.isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -305,10 +316,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
-
-        } else if (_workorder.getIsRemoteWork()) {
-//        remote work
-            _noMapLayout.setVisibility(GONE);
 
         } else if (_workorder.getLocation() == null || _workorder.getLocation().getGeo() == null) {
 //        no geo data - ie bad address - _workorder.getLocation() == null || _workord
@@ -344,7 +351,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
     private void lookupMap() {
         Log.v(TAG, "lookupMap");
 //        if (_invalidAddress) return;
-        if (_mapboxClient == null || !_mapboxClient.isConnected())
+        if (_gmapsClient == null || !_gmapsClient.isConnected())
             return;
 
         Log.v(TAG, "lookupMap - 1");
@@ -371,9 +378,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         Log.v(TAG, "lookupMap - 5");
-        Marker start = new Marker(_userLocation.getLongitude(), _userLocation.getLatitude(),
-                getContext().getString(R.string.mapbox_startMarkerUrl));
-        Position startPos = new Position(_userLocation.getLongitude(), _userLocation.getLatitude());
+        Marker start = new Marker(_userLocation.getLatitude(), _userLocation.getLongitude(),
+                getContext().getString(R.string.gmap_startMarkerUrl));
+        Position startPos = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
 
         Marker end = null;
         Position endPos = null;
@@ -382,14 +389,14 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             Geo geo = loc.getGeo();
             if (geo != null && geo.getLongitude() != null && geo.getLatitude() != null) {
                 _invalidAddress = false;
-                endPos = new Position(geo.getLongitude(), geo.getLatitude());
+                endPos = new Position(geo.getLatitude(), geo.getLongitude());
                 if (geo.getObfuscated() || !geo.getPrecise()) {
-                    end = new Marker(geo.getLongitude(), geo.getLatitude(),
-                            getContext().getString(R.string.mapbox_inpreciseMarkerUrl));
+                    end = new Marker(geo.getLatitude(), geo.getLongitude(),
+                            getContext().getString(R.string.gmap_inpreciseMarkerUrl));
                 } else {
-                    MapboxClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
-                    end = new Marker(geo.getLongitude(), geo.getLatitude(),
-                            getContext().getString(R.string.mapbox_endMarkerUrl));
+//                    GmapsClient.getDirections(App.get(), _workorder.getWorkorderId(), startPos, endPos);
+                    end = new Marker(geo.getLatitude(), geo.getLongitude(),
+                            getContext().getString(R.string.gmap_endMarkerUrl));
                 }
             } else {
                 // invalid location
@@ -415,7 +422,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             int width = (_mapImageView.getWidth() * 180) / _mapImageView.getHeight();
             int height = 180;
 
-            MapboxClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
+            GmapsClient.getStaticMapClassic(App.get(), _workorder.getWorkorderId(), start, end,
                     width, height);
         } else {
             _mapUnavailable = true;
@@ -447,11 +454,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                     break;
                 }
                 case ACTION_MESSAGES: {
-                    Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-                    intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    App.get().startActivity(intent);
+                    WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
                     break;
                 }
                 case ACTION_NAVIGATE: {
@@ -459,10 +462,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                         Location location = _workorder.getLocation();
                         if (location != null) {
                             try {
-                                GoogleAnalyticsTopicClient
-                                        .dispatchEvent(getContext(), "WorkorderActivity",
-                                                GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                                "WorkFragment", 1);
                                 String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                                 String _uriString = "google.navigation:q=" + _fullAddress;
                                 Uri _uri = Uri.parse(_uriString);
@@ -486,10 +485,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
                 Location location = _workorder.getLocation();
                 if (location != null) {
                     try {
-                        GoogleAnalyticsTopicClient
-                                .dispatchEvent(getContext(), "WorkorderActivity",
-                                        GoogleAnalyticsTopicClient.EventAction.START_MAP,
-                                        "WorkFragment", 1);
                         String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                         String _uriString = "geo:0,0?q=" + _fullAddress;
                         Uri _uri = Uri.parse(_uriString);
@@ -506,19 +501,21 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _actionButton.setText(R.string.icon_car);
-            _actionButton.setVisibility(VISIBLE);
-            _action = ACTION_NAVIGATE;
             lookupMap();
+        }
+
+        @Override
+        public void onFail() {
+            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
         }
     };
 
-    private final MapboxClient.Listener _mapboxClient_listener = new MapboxClient.Listener() {
+    private final GmapsClient.Listener _gmapsClient_listener = new GmapsClient.Listener() {
         @Override
         public void onConnected() {
             if (_workorder != null) {
-                _mapboxClient.subStaticMapClassic(_workorder.getWorkorderId());
-                _mapboxClient.subDirections(_workorder.getWorkorderId());
+                _gmapsClient.subStaticMapClassic(_workorder.getWorkorderId());
+                _gmapsClient.subDirections(_workorder.getWorkorderId());
                 lookupMap();
             }
         }
@@ -537,7 +534,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         @Override
-        public void onDirections(long workorderId, MapboxDirections directions) {
+        public void onDirections(long workorderId, GmapsDirections directions) {
             Log.v(TAG, "onDirections");
 
             if (directions != null && directions.getCode().equals("Ok")) {

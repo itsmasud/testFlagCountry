@@ -9,10 +9,10 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.widget.Toast;
 
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.io.File;
 
@@ -27,8 +27,9 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     public static void downloadDocument(Context context, long documentId, String url, String filename, boolean isSync) {
@@ -68,7 +69,7 @@ public class DocumentClient extends TopicClient implements DocumentConstants {
             topicId += "/" + documentId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static abstract class Listener extends TopicClient.Listener {

@@ -8,18 +8,31 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.view.Window;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementIdentity;
+import com.fieldnation.analytics.ElementType;
+import com.fieldnation.analytics.EventAction;
+import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.analytics.EventProperty;
+import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.SpUIContext;
+import com.fieldnation.analytics.SpWorkOrderContext;
+import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.utils.Stopwatch;
 
 /**
  * Created by michael.carver on 12/2/2014.
  */
-public class SignOffActivity extends AuthFragmentActivity {
+public class SignOffActivity extends AuthSimpleActivity {
     private static final String TAG = "SignOffActivity";
 
     // State
@@ -58,11 +71,18 @@ public class SignOffActivity extends AuthFragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Stopwatch stopwatch = new Stopwatch();
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_signoff);
+    }
 
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_signoff;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
+        Stopwatch stopwatch = new Stopwatch();
         _signOffFrag = SignOffFragment.getInstance(getSupportFragmentManager(), TAG);
         _signOffFrag.setListener(_signOff_listener);
 
@@ -109,7 +129,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                GoogleAnalyticsTopicClient.dispatchScreenView(this, "SignOffFragment");
+                Tracker.screen(App.get(), ScreenName.collectSignature());
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -160,6 +180,16 @@ public class SignOffActivity extends AuthFragmentActivity {
     }
 
     @Override
+    public int getToolbarId() {
+        return 0;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         Stopwatch stopwatch = new Stopwatch();
         outState.putInt(STATE_DISPLAY_MODE, _displayMode);
@@ -179,6 +209,10 @@ public class SignOffActivity extends AuthFragmentActivity {
         Log.v(TAG, "onSave time " + stopwatch.finish());
     }
 
+    @Override
+    public void onProfile(Profile profile) {
+    }
+
     private void sendSignature() {
         // not a task
         if (_taskId == -1) {
@@ -189,12 +223,23 @@ public class SignOffActivity extends AuthFragmentActivity {
         }
 
         if (_completeWorkorder) {
+
             WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
-            GoogleAnalyticsTopicClient.dispatchEvent(
-                    SignOffActivity.this,
-                    "WorkorderActivity",
-                    GoogleAnalyticsTopicClient.EventAction.COMPLETE_WORK,
-                    "SignOffActivity", 1);
+            Tracker.event(App.get(), new Event.Builder()
+                    .category(EventCategory.WORK_ORDER)
+                    .action(EventAction.MARK_COMPLETE)
+                    .label(_workorder.getWorkorderId() + "")
+                    .property(EventProperty.WORK_ORDER_ID)
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.collectSignature().name)
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.BUTTON)
+                            .elementIdentity(ElementIdentity.SEND)
+                            .build())
+                    .addContext(new SpWorkOrderContext.Builder()
+                            .workOrderId(_workorder.getWorkorderId())
+                            .build())
+                    .build());
             WorkorderClient.get(this, _workorder.getWorkorderId(), false);
         }
 
@@ -208,7 +253,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
-            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SignatureFragment");
+            Tracker.screen(App.get(), ScreenName.collectSignature());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -219,7 +264,7 @@ public class SignOffActivity extends AuthFragmentActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
-            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "SorryFragment");
+            Tracker.screen(App.get(), ScreenName.signatureReject());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
@@ -239,7 +284,7 @@ public class SignOffActivity extends AuthFragmentActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureSvg = signatureSvg;
-            GoogleAnalyticsTopicClient.dispatchScreenView(SignOffActivity.this, "ThankYouFragment");
+            Tracker.screen(App.get(), ScreenName.signatureAccept());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);
@@ -333,5 +378,4 @@ public class SignOffActivity extends AuthFragmentActivity {
             }
         }.executeEx(context, workorder, taskId);
     }
-
 }

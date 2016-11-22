@@ -20,12 +20,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
@@ -225,7 +225,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 break;
             case CARRIER_FEDEX:
             case CARRIER_UPS:
-            case CARRIER_USPS:
+            case CARRIER_USPS: getCarrierSpinner().setSelection(_carrierPosition);
             default:
                 _carrierLayout.setVisibility(View.GONE);
                 break;

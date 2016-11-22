@@ -3,11 +3,11 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -23,6 +23,10 @@ public class Estimate implements Parcelable {
 
     public String getArrival() {
         return arrival;
+    }
+
+    public void setArrival(String arrival) {
+        this.arrival = arrival;
     }
 
     /*-*************************************-*/

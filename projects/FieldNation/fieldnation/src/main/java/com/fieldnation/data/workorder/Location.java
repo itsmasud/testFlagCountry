@@ -1,11 +1,11 @@
 package com.fieldnation.data.workorder;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 public class Location {
     private static final String TAG = "Location";
@@ -231,7 +231,6 @@ public class Location {
 
         if (!misc.isEmptyOrNull(_city)
                 && !misc.isEmptyOrNull(_state)
-                && !misc.isEmptyOrNull(_zip)
                 && !misc.isEmptyOrNull(_country)) {
             address += _city + ", " + _state;
         }

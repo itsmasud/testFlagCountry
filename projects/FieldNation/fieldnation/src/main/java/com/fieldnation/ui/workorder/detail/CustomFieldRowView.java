@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by michael.carver on 10/29/2014.

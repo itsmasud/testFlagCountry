@@ -1,211 +1,174 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     style="@style/CardContainer"
-    android:layout_marginBottom="0dp"
-    android:paddingBottom="10dp">
+    android:layout_marginBottom="0dp">
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/bundle_iconFont"
+    <TextView
+        android:id="@+id/amount_textview"
+        style="@style/Text_Subhead"
         android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="6dp"
-        android:gravity="center_vertical"
-        android:text="@string/icon_bundle"
-        android:textSize="20sp" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="2dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="$125k" />
+
+    <TextView
+        android:id="@+id/paytype_textview"
+        style="@style/Text_Caption_Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/amount_textview"
+        android:layout_marginLeft="4dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/amount_textview"
+        android:text="BLENDED" />
+
+    <TextView
+        android:id="@+id/worktype_textview"
+        style="@style/Text_Caption_Small"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/amount_textview"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_toRightOf="@+id/paytype_textview"
+        android:ellipsize="end"
+        android:gravity="right"
+        android:maxLines="1"
+        android:text="AUTOMATIC TELLER MACHINE (ATM)" />
+
+    <View
+        android:id="@+id/titleseperator_view"
+        style="@style/Material.Button"
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_below="@id/worktype_textview"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:background="@color/fn_brandcolor_50" />
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/Text_Subhead"
-        android:layout_width="wrap_content"
-        android:layout_height="24dp"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="6dp"
-        android:layout_toRightOf="@+id/bundle_iconFont"
+        style="@style/Text_Body_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/titleseperator_view"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="16dp"
         android:ellipsize="end"
-        android:gravity="center_vertical"
-        android:maxLines="1"
-        android:singleLine="true"
+        android:maxLines="2"
         android:text="@string/placeholder_paragraph" />
 
-    <!-- left side -->
     <TextView
-        android:id="@+id/companyName_textview"
+        android:id="@+id/date_textview"
         style="@style/Text_Body_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
         android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="6dp"
-        android:layout_toLeftOf="@+id/workorderId_textview"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:singleLine="true"
-        android:text="@string/placeholder_paragraph" />
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Sept 12" />
 
     <TextView
         android:id="@+id/time_textview"
-        style="@style/Text_Body_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/companyName_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginTop="8dp"
-        android:layout_toLeftOf="@+id/payLeft_layout"
-        android:text="@string/placeholder_time_long" />
-
-    <TextView
-        android:id="@+id/location_textview"
         style="@style/Text_Body_1_Caption"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/time_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="4dp"
-        android:layout_toLeftOf="@+id/payLeft_layout"
-        android:text="@string/placeholder_one_line_address" />
+        android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/date_textview"
+        android:text="10:45 am" />
 
-    <!-- right side -->
     <TextView
-        android:id="@+id/workorderId_textview"
+        android:id="@+id/hyphen_textview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_toRightOf="@+id/time_textview"
+        android:text="-" />
+
+    <TextView
+        android:id="@+id/date2_textview"
         style="@style/Text_Body_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
         android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="12dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginTop="6dp"
-        android:text="WO 123456789" />
-
-    <LinearLayout
-        android:id="@+id/payLeft_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/workorderId_textview"
-        android:layout_toLeftOf="@+id/payRight_layout"
-        android:orientation="vertical"
-        android:visibility="gone">
-
-        <TextView
-            android:id="@+id/priceLeft_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="8dp"
-            android:text="$104.00" />
-
-        <TextView
-            android:id="@+id/statusLeft_textview"
-            style="@style/Text_Body_1_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:text="First 10hrs" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/payRight_layout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/workorderId_textview"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/priceRight_textview"
-            style="@style/Text_Body_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right"
-            android:layout_marginRight="12dp"
-            android:layout_marginTop="8dp"
-            android:text="$999.00" />
-
-        <TextView
-            android:id="@+id/statusRight_textview"
-            style="@style/Text_Body_1_Caption"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="12dp"
-            android:text="Hourly after" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/location_textview"
         android:layout_marginTop="8dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:visibility="gone">
+        android:layout_toRightOf="@+id/hyphen_textview"
+        android:text="Sept 12" />
 
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal"
-            android:paddingLeft="8dp">
+    <TextView
+        android:id="@+id/time2_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/date2_textview"
+        android:text="10:45 am" />
 
-            <com.fieldnation.ui.IconFontButton
-                android:id="@+id/left1_button"
-                style="?attr/buttonFlatStyle"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:gravity="center"
-                android:text="A" />
 
-            <com.fieldnation.ui.IconFontButton
-                android:id="@+id/left2_button"
-                style="?attr/buttonFlatStyle"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:gravity="center"
-                android:text="A" />
+    <TextView
+        android:id="@+id/location_textview"
+        style="@style/Text_Body_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/date_textview"
+        android:layout_marginBottom="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:text="Rancho Santa Margarita, CA" />
 
-            <com.fieldnation.ui.IconFontButton
-                android:id="@+id/left3_button"
-                style="?attr/buttonFlatStyle"
-                android:layout_width="38dp"
-                android:layout_height="38dp"
-                android:gravity="center"
-                android:text="A" />
-        </LinearLayout>
+    <TextView
+        android:id="@+id/distance_textview"
+        style="@style/Text_Body_1_Caption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/location_textview"
+        android:layout_marginLeft="8dp"
+        android:layout_toRightOf="@+id/location_textview"
+        android:text="19 mi" />
 
-        <Button
-            android:id="@+id/rightWhite_button"
-            style="?attr/buttonWhiteStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:text="THING 2" />
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/secondary1_button"
+        style="@style/WorkOrderCard.Button.Secondary"
+        android:layout_below="@+id/location_textview"
+        android:text="@string/icon_missing" />
 
-        <Button
-            android:id="@+id/rightOrange_button"
-            style="?attr/buttonOrangeStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:text="THING 2"
-            android:visibility="gone" />
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/secondary2_button"
+        style="@style/WorkOrderCard.Button.Secondary"
+        android:layout_below="@+id/location_textview"
+        android:layout_toRightOf="@+id/secondary1_button"
+        android:text="@string/icon_missing" />
 
-        <Button
-            android:id="@+id/rightGreen_button"
-            style="?attr/buttonGreenStyle"
-            android:layout_width="0dp"
-            android:layout_marginLeft="8dp"
-            android:layout_marginRight="8dp"
-            android:layout_weight="1"
-            android:text="THING 2"
-            android:visibility="gone" />
-    </LinearLayout>
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/secondary3_button"
+        style="@style/WorkOrderCard.Button.Secondary"
+        android:layout_below="@+id/location_textview"
+        android:layout_toRightOf="@+id/secondary2_button"
+        android:text="@string/icon_missing" />
+
+    <com.fieldnation.ui.IconFontButton
+        android:id="@+id/secondary4_button"
+        style="@style/WorkOrderCard.Button.Secondary"
+        android:layout_below="@+id/location_textview"
+        android:layout_toRightOf="@+id/secondary3_button"
+        android:text="@string/icon_map_location_solid" />
+
+    <Button
+        android:id="@+id/primary_button"
+        style="@style/Material.Button.Raised.Green"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/location_textview"
+        android:layout_marginBottom="8dp"
+        android:layout_marginRight="8dp"
+        android:minWidth="130dp"
+        android:text="@string/placeholder_phrase" />
+
 </RelativeLayout>

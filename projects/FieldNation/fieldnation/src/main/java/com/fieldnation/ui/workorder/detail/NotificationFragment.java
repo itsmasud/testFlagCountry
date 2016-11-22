@@ -8,16 +8,18 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.utils.misc;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -36,7 +38,7 @@ public class NotificationFragment extends WorkorderFragment {
     private List<Notification> _notes = new LinkedList<>();
     private NotificationListAdapter _adapter;
     private boolean _isSubbed = false;
-    private boolean _isMarkedRead =false;
+    private boolean _isMarkedRead = false;
 
 	/*-*************************************-*/
     /*-				LifeCycle				-*/
@@ -82,6 +84,7 @@ public class NotificationFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
+        Tracker.screen(App.get(), ScreenName.workOrderDetailsAlerts());
         if (getActivity() != null && _workorder != null)
             WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
     }
@@ -150,7 +153,7 @@ public class NotificationFragment extends WorkorderFragment {
             _emptyTextView.setVisibility(View.GONE);
         }
 
-        if(!_isMarkedRead){
+        if (!_isMarkedRead) {
             _isMarkedRead = true;
             WorkorderClient.actionMarkNotificationRead(App.get(), _workorder.getWorkorderId());
             ProfileClient.get(App.get());

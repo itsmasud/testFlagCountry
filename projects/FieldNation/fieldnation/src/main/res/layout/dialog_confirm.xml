@@ -37,7 +37,7 @@
                     android:text="@string/arrival_time" />
 
                 <Button
-                    android:id="@+id/startDate_button"
+                    android:id="@+id/etaStartDate_button"
                     style="@style/SpinnerButton"
                     android:text="@string/placeholder_date_long" />
 

@@ -4,14 +4,6 @@
     tools:context="com.fieldnation.MainActivity">
 
     <item
-        android:id="@+id/inbox_menuitem"
-        android:enabled="true"
-        android:orderInCategory="200"
-        android:title="Inbox"
-        app:actionViewClass="com.fieldnation.ui.InboxActionBarButton"
-        app:showAsAction="always" />
-
-    <item
         android:id="@+id/search_menuitem"
         android:enabled="true"
         android:orderInCategory="300"

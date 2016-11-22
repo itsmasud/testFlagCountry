@@ -1,7 +1,6 @@
 package com.fieldnation.ui.inbox;
 
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -10,14 +9,14 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Message;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 public class MessageTileView extends RelativeLayout {
     private static final String TAG = "MessageTileView";
@@ -174,11 +173,7 @@ public class MessageTileView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_MESSAGE);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _message.getWorkorderId());
-            getContext().startActivity(intent);
-
+            WorkorderActivity.startNew(getContext(), _message.getWorkorderId(), WorkorderActivity.TAB_MESSAGE);
         }
     };
 

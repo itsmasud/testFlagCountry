@@ -1,6 +1,7 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
+import android.os.Handler;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.LinearLayout;
@@ -10,7 +11,13 @@ import com.fieldnation.R;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.data.workorder.WorkorderContacts;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.misc;
+
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by Michael Carver on 5/26/2015.
@@ -20,6 +27,8 @@ public class ContactListView extends RelativeLayout {
     private LinearLayout _listLayout;
 
     private Workorder _workorder;
+    private ForLoopRunnable _contactsRunnable = null;
+
 
     public ContactListView(Context context) {
         super(context);
@@ -62,6 +71,8 @@ public class ContactListView extends RelativeLayout {
         _listLayout.removeAllViews();
 
         boolean addedContact = false;
+        final List<WorkorderContacts> contactList = new LinkedList<>();
+
 
         if (_workorder.getWorkorderManagerInfo() != null) {
             User user = _workorder.getWorkorderManagerInfo();
@@ -90,11 +101,46 @@ public class ContactListView extends RelativeLayout {
             }
         }
 
-        if (addedContact) {
-            setVisibility(VISIBLE);
-        } else {
-            setVisibility(GONE);
-        }
 
+        if (_workorder.getWorkorderContacts() != null)
+            Collections.addAll(contactList, _workorder.getWorkorderContacts());
+
+        if (contactList.size() > 0) {
+            if (_contactsRunnable != null)
+                _contactsRunnable.cancel();
+
+            if (_listLayout != null) {
+                _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
+                    private final List<ContactTileView> _views = new LinkedList<>();
+                    WorkorderContacts contact = null;
+
+                    @Override
+                    public void next(int i) throws Exception {
+                        ContactTileView v = new ContactTileView(getContext());
+                        if (contactList.get(i) instanceof WorkorderContacts) {
+                            contact = contactList.get(i);
+                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getRole());
+                        }
+                        _views.add(v);
+                    }
+
+                    @Override
+                    public void finish(int count) throws Exception {
+                        for (ContactTileView v : _views) {
+                            _listLayout.addView(v);
+                        }
+                    }
+                };
+                post(_contactsRunnable);
+            }
+
+
+            if (addedContact) {
+                setVisibility(VISIBLE);
+            } else {
+                setVisibility(GONE);
+            }
+
+        }
     }
 }

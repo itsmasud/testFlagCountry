@@ -5,8 +5,6 @@ import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 
-import com.fieldnation.Log;
-
 /**
  * Created by Michael on 3/17/2016.
  */
@@ -40,7 +38,7 @@ public class OverScrollRecyclerView extends RecyclerView {
     }
 
     private void init() {
-        setOverScrollMode(OVER_SCROLL_ALWAYS);
+        //setOverScrollMode(OVER_SCROLL_ALWAYS);
     }
 
     public void setOnOverScrollListener(OnOverScrollListener listener) {

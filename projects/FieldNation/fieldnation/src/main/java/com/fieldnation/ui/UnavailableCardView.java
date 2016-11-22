@@ -1,7 +1,6 @@
 package com.fieldnation.ui;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -14,10 +13,9 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.ui.market.MarketActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 6/24/2015.
@@ -214,8 +212,8 @@ public class UnavailableCardView extends FrameLayout {
         @Override
         public void onClick(View v) {
             // go to marketplace
-            Intent intent = new Intent(getContext(), MarketActivity.class);
-            getContext().startActivity(intent);
+//            Intent intent = new Intent(getContext(), MarketActivity.class);
+//            getContext().startActivity(intent);
         }
     };
 

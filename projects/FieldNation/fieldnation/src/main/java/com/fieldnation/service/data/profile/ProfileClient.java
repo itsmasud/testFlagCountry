@@ -5,15 +5,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Message;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.profile.Profile;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -29,8 +29,9 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-*********************************-*/
@@ -64,7 +65,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void listNotifications(Context context, int page) {
@@ -90,7 +91,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         if (isSync) {
             topicId += "_SYNC";
         }
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void listMessages(Context context, int page) {
@@ -117,7 +118,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "_SYNC";
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     public static void switchUser(Context context, long userId) {
@@ -126,7 +127,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
 
     public boolean subSwitchUser() {
         String topicId = TOPIC_ID_SWITCH_USER;
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-*********************************-*/
@@ -155,7 +156,7 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
             topicId += "/" + profileId;
         }
 
-        return register(topicId, TAG);
+        return register(topicId);
     }
 
     /*-******************************-*/

@@ -23,26 +23,29 @@ import android.support.design.widget.Snackbar;
 import android.support.multidex.MultiDex;
 import android.text.TextUtils;
 
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicService;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.crawler.WebCrawlerService;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.profile.ProfileClient;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.service.topics.TopicService;
 import com.fieldnation.service.transaction.WebTransactionService;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.misc;
-import com.google.android.gms.analytics.GoogleAnalytics;
-import com.google.android.gms.analytics.HitBuilders;
-import com.google.android.gms.analytics.Tracker;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -71,12 +74,11 @@ public class App extends Application {
     public static final String PREF_RATE_SHOWN = "PREF_RATE_SHOWN";
     public static final String PREF_RELEASE_NOTE_SHOWN = "PREF_RELEASE_NOTE_SHOWN";
     public static final String PREF_TOC_ACCEPTED = "PREF_TOC_ACCEPTED";
+    public static final String PREF_NEEDS_CONFIRMATION = "PREF_NEEDS_CONFIRMATION";
 
     private static App _context;
 
-    private Tracker _tracker;
     private Profile _profile;
-    private GoogleAnalyticsTopicClient _gaTopicClient;
     private GlobalTopicClient _globalTopicClient;
     private ProfileClient _profileClient;
     private AuthTopicClient _authTopicClient;
@@ -94,6 +96,10 @@ public class App extends Application {
 
     public static final SecureRandom secureRandom = new SecureRandom();
 
+    static {
+        Log.setRoller(new DebugLogRoller());
+    }
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
@@ -104,6 +110,14 @@ public class App extends Application {
     public App() {
         super();
         Log.v(TAG, "GlobalState");
+        ContextProvider.setProvider(new ContextProvider.Provider() {
+            @Override
+            public Context get() {
+                return App.this;
+            }
+        });
+        Tracker.addTrackerWrapper(new SnowplowWrapper());
+        Tracker.addTrackerWrapper(new AnswersWrapper());
     }
 
     @Override
@@ -169,30 +183,6 @@ public class App extends Application {
         // read in exepense categories
         new ExpenseCategories(this);
 
-        // GoogleAnalytics.getInstance(context) has been causing ANRs, so I'm running this in a separate thread for now
-        new AsyncTaskEx<App, Object, Tracker>() {
-            @Override
-            protected Tracker doInBackground(App... params) {
-                Stopwatch stopwatch = new Stopwatch(true);
-                App app = params[0];
-                GoogleAnalytics analytics = GoogleAnalytics.getInstance(app);
-                analytics.enableAutoActivityReports(app);
-                analytics.setLocalDispatchPeriod(app.getResources().getInteger(R.integer.ga_local_dispatch_period));
-                analytics.setDryRun(app.getResources().getBoolean(R.bool.ga_dry_run) || BuildConfig.DEBUG);
-                Tracker tracker = analytics.newTracker(R.xml.ga_config);
-                tracker.enableAdvertisingIdCollection(true);
-                tracker.enableAutoActivityTracking(true);
-                tracker.enableExceptionReporting(false);
-                Log.v(TAG, "Get Tracker time: " + stopwatch.finish());
-                return tracker;
-            }
-
-            @Override
-            protected void onPostExecute(Tracker tracker) {
-                _tracker = tracker;
-            }
-        }.executeEx(this);
-
         watch.finishAndRestart();
         // in pre FROYO keepalive = true is buggy. disable for those versions
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.FROYO) {
@@ -201,9 +191,6 @@ public class App extends Application {
         Log.v(TAG, "set keep alives time: " + watch.finishAndRestart());
 
         // set up event listeners
-        _gaTopicClient = new GoogleAnalyticsTopicClient(_gaTopicClient_listener);
-        _gaTopicClient.connect(this);
-
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
         _globalTopicClient.connect(this);
 
@@ -221,6 +208,7 @@ public class App extends Application {
         setInstallTime();
         Log.v(TAG, "set install time: " + watch.finishAndRestart());
         // new Thread(_anrReport).start();
+
         Log.v(TAG, "onCreate time: " + mwatch.finish());
     }
 
@@ -268,7 +256,6 @@ public class App extends Application {
 
     @Override
     public void onTerminate() {
-        _gaTopicClient.disconnect(this);
         _profileClient.disconnect(this);
         _globalTopicClient.disconnect(this);
         _authTopicClient.disconnect(this);
@@ -387,6 +374,8 @@ public class App extends Application {
             if (profile != null) {
                 _profile = profile;
 
+                Tracker.setUserId(App.this, _profile.getUserId());
+
                 Debug.setLong("user_id", _profile.getUserId());
                 Debug.setUserIdentifier(_profile.getUserId() + "");
 
@@ -442,105 +431,6 @@ public class App extends Application {
         return -1;
     }
 
-    /*-*********************-*/
-    /*-         GA          -*/
-    /*-*********************-*/
-
-    /**
-     * Get's the google analytics tracker.
-     *
-     * @return The tracker object, can be null!
-     */
-    private synchronized Tracker getTracker() {
-        return _tracker;
-    }
-
-    private final GoogleAnalyticsTopicClient.Listener _gaTopicClient_listener = new GoogleAnalyticsTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _gaTopicClient.registerEvents();
-            _gaTopicClient.registerScreenView();
-            _gaTopicClient.registerTiming();
-        }
-
-        @Override
-        public void onGaEvent(final String category, final String action, final String label, final Long value) {
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaEvent(category, action, label, value);
-                    }
-                }, 100);
-                return;
-            }
-
-            HitBuilders.EventBuilder event = new HitBuilders.EventBuilder();
-
-            event.setCategory(category).setAction(action).setLabel(label);
-
-            if (value != null) {
-                event.setValue(value);
-            }
-
-            t.send(event.build());
-        }
-
-        @Override
-        public void onGaScreen(final String screenName) {
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaScreen(screenName);
-                    }
-                }, 100);
-                return;
-            }
-
-            t.setScreenName(screenName);
-            t.send(new HitBuilders.AppViewBuilder().build());
-        }
-
-        @Override
-        public void onGaTiming(final String category, final String variable, final String label, final Long value) {
-            HitBuilders.TimingBuilder timing = new HitBuilders.TimingBuilder();
-            Tracker t = getTracker();
-
-            // if tracker is null, then queue this event to be handled later
-            if (t == null) {
-                _handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        onGaTiming(category, variable, label, value);
-                    }
-                }, 100);
-                return;
-            }
-
-            if (category != null)
-                timing.setCategory(category);
-
-            if (variable != null)
-                timing.setVariable(variable);
-
-            if (label != null)
-                timing.setLabel(label);
-
-            if (value != null)
-                timing.setValue(value);
-
-            t.send(timing.build());
-        }
-    };
-
-
     public boolean canRemindCoi() {
         SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
         if (settings.contains(PREF_COI_NEVER))
@@ -556,6 +446,18 @@ public class App extends Application {
         SharedPreferences.Editor edit = settings.edit();
         edit.putLong(PREF_COI_TIMEOUT, System.currentTimeMillis() + 604800000); // two weeks
         edit.apply();
+    }
+
+    public void setNeedsConfirmation(boolean needsConfirmation) {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        SharedPreferences.Editor edit = settings.edit();
+        edit.putBoolean(PREF_NEEDS_CONFIRMATION, needsConfirmation);
+        edit.apply();
+    }
+
+    public boolean needsConfirmation() {
+        SharedPreferences settings = getSharedPreferences(PREF_NAME, 0);
+        return settings.getBoolean(PREF_NEEDS_CONFIRMATION, false);
     }
 
     public void setReleaseNoteShownReminded() {
@@ -804,14 +706,6 @@ public class App extends Application {
             locationProviders = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
             return !TextUtils.isEmpty(locationProviders);
         }
-    }
-
-    public static String guessContentTypeFromName(String url) {
-        try {
-            return URLConnection.guessContentTypeFromName(url);
-        } catch (Exception ex) {
-        }
-        return "application/octet-stream";
     }
 
     @Override

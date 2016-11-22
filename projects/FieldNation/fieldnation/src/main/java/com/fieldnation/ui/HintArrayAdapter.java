@@ -17,6 +17,7 @@ import java.util.List;
  * Created by Michael on 5/25/2016.
  */
 public class HintArrayAdapter extends ArrayAdapter<Object> {
+    private static final String TAG = "HintArrayAdapter";
     private Object _hint = "";
 
     public HintArrayAdapter(Context context, int resource) {
@@ -55,6 +56,16 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
             super.remove(getItem(getCount() - 1));
         super.add(_hint);
     }
+
+    // Uncomment when you have crashes to help debug them.
+/*
+    @Nullable
+    @Override
+    public Object getItem(int position) {
+        Log.v(TAG, "getItem " + position + " " + super.getItem(position));
+        return super.getItem(position);
+    }
+*/
 
     @Override
     public void add(Object object) {

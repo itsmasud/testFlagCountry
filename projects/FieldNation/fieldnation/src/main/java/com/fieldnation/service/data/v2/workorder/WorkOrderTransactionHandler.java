@@ -2,8 +2,9 @@ package com.fieldnation.service.data.v2.workorder;
 
 import android.content.Context;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
@@ -19,10 +20,10 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
     /*-************************************************-*/
     /*-             Parameter Generators               -*/
     /*-************************************************-*/
-    public static byte[] pSearch(SearchParams searchParams) {
+    public static byte[] pSearch(SavedSearchParams searchParams) {
         try {
             JsonObject obj = new JsonObject("action", "pSearch");
-            obj.put("SearchParams", searchParams.toJson());
+            obj.put("SavedSearchParams", searchParams.toJson());
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -70,42 +71,14 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
         WorkOrderDispatch.action(context, workorderId, action, false);
-//        WorkOrderClient.listTasks(context, workorderId, false);
-
-//        if (action.equals("acknowledge-hold")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("closing-notes")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("complete")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("decline")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("delete_request")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("DELETE_LOG")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("incomplete")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("messages/new")) {
-//            WorkorderClient.listMessages(context, workorderId, false, false);
-//        } else if (action.equals("pay-change")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else if (action.equals("ready")) {
-//            return handleDetails(context, transaction, params, resultData);
-//        } else {
-//            WorkorderClient.get(context, workorderId, false);
-//        }
-
         return Result.CONTINUE;
     }
 
     private Result resultSearch(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "resultSearch");
-
         WorkOrderDispatch.search(context,
-                SearchParams.fromJson(params.getJsonObject("SearchParams")),
+                SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
                 resultData.getByteArray(), false);
-
         return Result.CONTINUE;
     }
 
@@ -145,7 +118,7 @@ public class WorkOrderTransactionHandler extends WebTransactionHandler implement
         Log.v(TAG, "failSearch");
 
         WorkOrderDispatch.search(context,
-                SearchParams.fromJson(params.getJsonObject("SearchParams")), null, true);
+                SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
 
         return Result.CONTINUE;
     }

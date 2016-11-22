@@ -7,11 +7,12 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.DialogManager;
 
 /**
  * Created by Michael Carver on 1/30/2015.
  */
-public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity {
+public abstract class TabActionBarFragmentActivity extends AuthSimpleActivity {
 
     // UI
     private ViewPager _viewPager;
@@ -35,6 +36,16 @@ public abstract class TabActionBarFragmentActivity extends AuthActionBarActivity
         _viewPager.setAdapter(new ScreenSlidePagerAdapter(getSupportFragmentManager()));
         _viewPager.setOnPageChangeListener(_pageChangeListener);
         _tabListView.setViewPager(_viewPager);
+    }
+
+    @Override
+    public int getToolbarId() {
+        return R.id.toolbar;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     public abstract void loadFragments();

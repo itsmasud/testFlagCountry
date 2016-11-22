@@ -16,17 +16,17 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
-import com.fieldnation.Debug;
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.help.HelpClient;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Shoaib on 4/27/2016.
@@ -249,7 +249,7 @@ public class ContactUsDialog extends DialogFragmentBase {
                 _listener.onOk(_explanationEditText.getText().toString());
             }
 
-            Debug.logCustom(new CustomEvent("ContactUsDialog").putCustomAttribute("Source", _source));
+            Tracker.screen(App.get(), ScreenName.contactUs());
 
             try {
                 HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +

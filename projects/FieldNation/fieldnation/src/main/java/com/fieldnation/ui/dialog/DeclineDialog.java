@@ -18,13 +18,13 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.service.toast.ToastClient;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 1/15/2015.
@@ -34,6 +34,7 @@ public class DeclineDialog extends DialogFragmentBase {
 
     private static final String STATE_BLOCK_SPINNER = "STATE_BLOCK_SPINNER";
     private static final String STATE_DECLINE_SPINNER = "STATE_DECLINE_SPINNER";
+    private static final String STATE_BLOCK_CHECKBOX= "STATE_BLOCK_CHECKBOX";
 
     // Ui
     private HintSpinner _declineSpinner;
@@ -54,7 +55,6 @@ public class DeclineDialog extends DialogFragmentBase {
     private static int DECLINE_REASON_OTHER = 7;
     private boolean _clear = false;
 
-
     /*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
@@ -73,7 +73,6 @@ public class DeclineDialog extends DialogFragmentBase {
         getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
 
         View v = inflater.inflate(R.layout.dialog_decline, container, false);
-
 
         _declineSpinner = (HintSpinner) v.findViewById(R.id.decline_spinner);
         _declineSpinner.setOnItemSelectedListener(_spinnerDecline_selected);
@@ -111,6 +110,7 @@ public class DeclineDialog extends DialogFragmentBase {
         if (_selectedPosition_declineSpinner != -1) {
             outState.putInt(STATE_DECLINE_SPINNER, _selectedPosition_declineSpinner);
         }
+            outState.putBoolean(STATE_BLOCK_CHECKBOX, _blockCheckBox.isChecked());
         super.onSaveInstanceState(outState);
     }
 
@@ -127,6 +127,9 @@ public class DeclineDialog extends DialogFragmentBase {
                 _selectedPosition_blockSpinner = savedInstanceState.getInt(STATE_BLOCK_SPINNER);
                 getBlockSpinner().setSelection(_selectedPosition_blockSpinner);
             }
+            if (savedInstanceState.containsKey(STATE_BLOCK_CHECKBOX)) {
+                _blockCheckBox_onChecked.onCheckedChanged(_blockCheckBox, savedInstanceState.getBoolean(STATE_BLOCK_CHECKBOX));
+            }
         }
     }
 
@@ -137,7 +140,6 @@ public class DeclineDialog extends DialogFragmentBase {
         getBlockSpinner();
 
         if (_clear) {
-            Log.e(TAG, "inside _clear");
             _clear = false;
             _declineEditText.setText("");
             _blockEditText.setText("");
@@ -162,6 +164,11 @@ public class DeclineDialog extends DialogFragmentBase {
     public void dismiss() {
         _clear = true;
         super.dismiss();
+    }
+
+    public void show() {
+        _clear = true;
+        super.show();
     }
 
 

@@ -8,7 +8,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.SpinnerAdapter;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael Carver on 1/25/2016.
@@ -39,6 +39,9 @@ public class HintSpinner extends AppCompatSpinner {
     }
 
     private void handleAttribues(AttributeSet attributeSet) {
+        if (isInEditMode())
+            return;
+
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, new int[]{android.R.attr.hint});
         try {
             setHint(ta.getString(0));

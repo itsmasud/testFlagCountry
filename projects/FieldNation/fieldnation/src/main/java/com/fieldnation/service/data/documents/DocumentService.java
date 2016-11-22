@@ -4,17 +4,17 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
-import com.fieldnation.service.MSService;
-import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.utils.FileUtils;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.MultiThreadedService;
 
 import java.io.File;
 
 /**
  * Created by Michael Carver on 5/28/2015.
  */
-public class DocumentService extends MSService implements DocumentConstants {
+public class DocumentService extends MultiThreadedService implements DocumentConstants {
     private static final String TAG = "DocumentService";
 
     @Override
@@ -49,7 +49,7 @@ public class DocumentService extends MSService implements DocumentConstants {
         boolean isSync = intent.getBooleanExtra(PARAM_IS_SYNC, false);
         String filename = intent.getStringExtra(PARAM_FILE_NAME);
 
-        StoredObject obj = StoredObject.get(App.getProfileId(), PSO_DOCUMENT, documentId);
+        StoredObject obj = StoredObject.get(context, App.getProfileId(), PSO_DOCUMENT, documentId);
         if (obj != null) {
             try {
 

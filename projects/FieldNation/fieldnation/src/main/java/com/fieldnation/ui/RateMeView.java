@@ -12,10 +12,12 @@ import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.Debug;
+import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 
 /**
  * Created by Michael Carver on 5/21/2015.
@@ -111,25 +113,35 @@ public class RateMeView extends RelativeLayout {
         public void onClick(View v) {
             switch (_state) {
                 case 0: // Love it
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Love"));
-
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .label("Love")
+                                    .build());
                     _state = 1;
                     populateUi();
                     break;
                 case 1: // Rate me? You got it
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Love")
-                            .putCustomAttribute("Action", "Rate"));
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .action("Rate")
+                                    .build());
+
                     Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
                     getContext().startActivity(new Intent(Intent.ACTION_VIEW).setData(marketUri));
                     if (_listener != null)
                         _listener.onHide();
                     break;
                 case 2: // Feedback? You got it
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Hate")
-                            .putCustomAttribute("Action", "Feedback"));
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .action("Feedback")
+                                    .build());
                     if (_listener != null) {
                         GlobalTopicClient.showContactUsDialog(getContext(), "RateMeCard");
                         _listener.onHide();
@@ -144,22 +156,32 @@ public class RateMeView extends RelativeLayout {
         public void onClick(View v) {
             switch (_state) {
                 case 0: // Like it? Not really
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Hate"));
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .label("Hate")
+                                    .build());
                     _state = 2;
                     populateUi();
                     break;
                 case 1: // Rate me? no thanks
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Love")
-                            .putCustomAttribute("Action", "No Rate"));
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .action("No Rate")
+                                    .build());
                     if (_listener != null)
                         _listener.onHide();
                     break;
                 case 2: // Feedback? no thanks
-                    Debug.logCustom(new CustomEvent("RateMeCard")
-                            .putCustomAttribute("Attitude", "Hate")
-                            .putCustomAttribute("Action", "No Feedback"));
+                    Tracker.event(App.get(),
+                            new Event.Builder()
+                                    .tag(AnswersWrapper.TAG)
+                                    .category("RateMeCard")
+                                    .action("No Feedback")
+                                    .build());
                     if (_listener != null)
                         _listener.onHide();
                     break;

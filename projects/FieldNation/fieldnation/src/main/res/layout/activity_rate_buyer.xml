@@ -1,226 +1,236 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<com.fieldnation.ui.OverScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/dialogBg_Material">
+    android:layout_height="match_parent">
 
-    <RelativeLayout
-        style="?attr/dialogContainerStyle"
+    <com.fieldnation.ui.OverScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/dialogBg_Material">
 
-
-        <TextView
-            android:id="@+id/title_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerHorizontal="true"
-            android:paddingBottom="8dp"
-            android:paddingTop="50dp"
-            android:text="@string/dialog_rate_buyer_title"
-            android:textSize="20dp"
-            android:textStyle="bold"
-            android:visibility="visible" />
-
-        <com.fieldnation.ui.IconFontButton
-            android:id="@+id/cancel_button"
-            style="@style/Text_Body_1"
-            android:layout_width="15dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="3dp"
-            android:background="@android:color/transparent"
-            android:text="@string/icon_x"
-            android:textColor="@color/fn_dark_text_50"
-            android:textSize="15sp"
-            android:textStyle="normal"
-            android:visibility="visible" />
-
         <RelativeLayout
-            android:id="@+id/company_layout"
+            style="?attr/dialogContainerStyle"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/title_textview"
-            android:layout_gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingTop="8dp">
+            android:layout_height="match_parent"
+            android:background="@color/dialogBg_Material">
 
-            <com.fieldnation.ui.ProfilePicView
-                android:id="@+id/pic_view"
-                style="@style/DrawerProfileImage"
-                android:layout_centerVertical="true" />
 
-            <LinearLayout
-                android:id="@+id/profile_layout"
+            <TextView
+                android:id="@+id/title_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_gravity="center_vertical"
-                android:layout_marginLeft="16dp"
-                android:layout_toLeftOf="@+id/profileexpand_button"
-                android:layout_toRightOf="@+id/pic_view"
-                android:orientation="vertical">
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="8dp"
+                android:paddingTop="50dp"
+                android:text="@string/dialog_rate_buyer_title"
+                android:textSize="20dp"
+                android:textStyle="bold"
+                android:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/company_name_textview"
-                    style="@style/DrawerProfileName"
-                    android:ellipsize="end"
-                    android:maxLines="1"
-                    android:text="Firstname Lastname" />
-
-                <TextView
-                    android:id="@+id/location_textview"
-                    style="@style/DrawerProfileDetails"
-                    android:maxLines="1"
-                    android:text="City name, State name" />
-
-            </LinearLayout>
-        </RelativeLayout>
-
-        <TextView
-            android:id="@+id/satisfaction_header_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/company_layout"
-            android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            android:text="@string/overall_satisfaction_header"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-        <com.fieldnation.ui.StarView
-            android:id="@+id/star_rating"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/satisfaction_header_textview"
-            android:layout_centerHorizontal="true"
-            android:paddingBottom="15dp"
-            android:textSize="20dp" />
-
-        <TextView
-            android:id="@+id/expectation_header_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/star_rating"
-            android:layout_centerHorizontal="true"
-            android:maxLines="1"
-            android:text="@string/clear_expectation_header"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-
-        <RelativeLayout
-            android:id="@+id/clear_expectation_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/expectation_header_textview"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="10dp">
-
-            <TextView
-                android:id="@+id/expectation_no_textview"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginRight="14dp"
-                android:background="@drawable/circle_dark_gray"
-                android:gravity="center"
-                android:text="@string/btn_no"
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:id="@+id/expectation_yes_textview"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginLeft="14dp"
-                android:layout_toRightOf="@+id/expectation_no_textview"
-                android:background="@drawable/circle_dark_gray"
-                android:gravity="center"
-                android:text="@string/btn_yes"
-                android:textColor="@android:color/white" />
-        </RelativeLayout>
-
-
-        <TextView
-            android:id="@+id/chk_professional_header_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/clear_expectation_layout"
-            android:layout_centerHorizontal="true"
-            android:text="@string/chk_professional_header"
-            android:textSize="16dp"
-            android:textStyle="bold" />
-
-
-        <RelativeLayout
-            android:id="@+id/is_professional_layout"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/chk_professional_header_textview"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center_vertical"
-            android:paddingBottom="8dp"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="10dp">
-
-
-            <TextView
-                android:id="@+id/chk_professional_no_textview"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginRight="14dp"
-                android:background="@drawable/circle_dark_gray"
-                android:gravity="center"
-                android:text="@string/btn_no"
-                android:textColor="@android:color/white" />
-
-            <TextView
-                android:id="@+id/chk_professinal_yes_textview"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginLeft="14dp"
-                android:layout_toRightOf="@+id/chk_professional_no_textview"
-                android:background="@drawable/circle_dark_gray"
-                android:gravity="center"
-                android:text="@string/btn_yes"
-                android:textColor="@android:color/white" />
-
-        </RelativeLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/other_thoughts_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/is_professional_layout"
-            android:layout_marginBottom="10dp">
-
-            <EditText
-                android:id="@+id/other_thoughts_edittext"
-                style="@style/EditText"
+            <com.fieldnation.ui.IconFontButton
+                android:id="@+id/cancel_button"
+                style="@style/Text_Body_1"
+                android:layout_width="15dp"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/other_thoughts_textview"
-                android:gravity="top"
-                android:hint="@string/other_thoughts"
-                android:imeOptions="actionDone" />
-        </android.support.design.widget.TextInputLayout>
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="3dp"
+                android:background="@android:color/transparent"
+                android:text="@string/icon_x"
+                android:textColor="@color/fn_dark_text_50"
+                android:textSize="15sp"
+                android:textStyle="normal"
+                android:visibility="visible" />
 
-        <Button
-            android:id="@+id/submit_button"
-            style="?attr/buttonDefaultStyle"
-            android:layout_width="150dp"
-            android:layout_alignParentBottom="true"
-            android:layout_below="@id/other_thoughts_layout"
-            android:layout_centerHorizontal="true"
-            android:enabled="false"
-            android:text="@string/btn_submit" />
+            <RelativeLayout
+                android:id="@+id/company_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/title_textview"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp">
 
-    </RelativeLayout>
-</com.fieldnation.ui.OverScrollView>
+                <com.fieldnation.ui.ProfilePicView
+                    android:id="@+id/pic_view"
+                    style="@style/DrawerProfileImage"
+                    android:layout_centerVertical="true" />
+
+                <LinearLayout
+                    android:id="@+id/profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="16dp"
+                    android:layout_toLeftOf="@+id/profileexpand_button"
+                    android:layout_toRightOf="@+id/pic_view"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/company_name_textview"
+                        style="@style/DrawerProfileName"
+                        android:ellipsize="end"
+                        android:maxLines="1"
+                        android:text="Firstname Lastname" />
+
+                    <TextView
+                        android:id="@+id/location_textview"
+                        style="@style/DrawerProfileDetails"
+                        android:maxLines="1"
+                        android:text="City name, State name" />
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/satisfaction_header_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/company_layout"
+                android:layout_centerHorizontal="true"
+                android:maxLines="1"
+                android:text="@string/overall_satisfaction_header"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+            <com.fieldnation.ui.StarView
+                android:id="@+id/star_rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/satisfaction_header_textview"
+                android:layout_centerHorizontal="true"
+                android:paddingBottom="15dp"
+                android:textSize="20dp" />
+
+            <TextView
+                android:id="@+id/expectation_header_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/star_rating"
+                android:layout_centerHorizontal="true"
+                android:maxLines="1"
+                android:text="@string/clear_expectation_header"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+
+            <RelativeLayout
+                android:id="@+id/clear_expectation_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/expectation_header_textview"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="10dp">
+
+                <TextView
+                    android:id="@+id/expectation_no_textview"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginRight="14dp"
+                    android:background="@drawable/circle_dark_gray"
+                    android:gravity="center"
+                    android:text="@string/btn_no"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/expectation_yes_textview"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="14dp"
+                    android:layout_toRightOf="@+id/expectation_no_textview"
+                    android:background="@drawable/circle_dark_gray"
+                    android:gravity="center"
+                    android:text="@string/btn_yes"
+                    android:textColor="@android:color/white" />
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/chk_professional_header_textview"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/clear_expectation_layout"
+                android:layout_centerHorizontal="true"
+                android:text="@string/chk_professional_header"
+                android:textSize="16dp"
+                android:textStyle="bold" />
+
+
+            <RelativeLayout
+                android:id="@+id/is_professional_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/chk_professional_header_textview"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center_vertical"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingRight="8dp"
+                android:paddingTop="10dp">
+
+
+                <TextView
+                    android:id="@+id/chk_professional_no_textview"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginRight="14dp"
+                    android:background="@drawable/circle_dark_gray"
+                    android:gravity="center"
+                    android:text="@string/btn_no"
+                    android:textColor="@android:color/white" />
+
+                <TextView
+                    android:id="@+id/chk_professinal_yes_textview"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:layout_marginLeft="14dp"
+                    android:layout_toRightOf="@+id/chk_professional_no_textview"
+                    android:background="@drawable/circle_dark_gray"
+                    android:gravity="center"
+                    android:text="@string/btn_yes"
+                    android:textColor="@android:color/white" />
+
+            </RelativeLayout>
+
+            <android.support.design.widget.TextInputLayout
+                android:id="@+id/other_thoughts_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/is_professional_layout"
+                android:layout_marginBottom="10dp">
+
+                <EditText
+                    android:id="@+id/other_thoughts_edittext"
+                    style="@style/EditText"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/other_thoughts_textview"
+                    android:gravity="top"
+                    android:hint="@string/other_thoughts"
+                    android:imeOptions="actionDone" />
+            </android.support.design.widget.TextInputLayout>
+
+            <Button
+                android:id="@+id/submit_button"
+                style="?attr/buttonDefaultStyle"
+                android:layout_width="150dp"
+                android:layout_alignParentBottom="true"
+                android:layout_below="@id/other_thoughts_layout"
+                android:layout_centerHorizontal="true"
+                android:enabled="false"
+                android:text="@string/btn_submit" />
+
+        </RelativeLayout>
+    </com.fieldnation.ui.OverScrollView>
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</FrameLayout>

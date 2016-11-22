@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scrollbarStyle="outsideOverlay">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                style="@style/OptionsTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/account" />
+
+            <RelativeLayout
+                android:id="@+id/profile_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="@color/fn_clickable_bg"
+                android:paddingBottom="8dp"
+                android:paddingLeft="8dp"
+                android:paddingTop="8dp">
+
+                <com.fieldnation.ui.ProfilePicView
+                    android:id="@+id/pic_view"
+                    style="@style/OptionsProfileImage"
+                    android:layout_centerVertical="true" />
+
+                <LinearLayout
+                    android:id="@+id/profile_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="8dp"
+                    android:layout_toLeftOf="@+id/profileexpand_button"
+                    android:layout_toRightOf="@+id/pic_view"
+                    android:orientation="vertical">
+
+                    <TextView
+                        style="@style/Text_Subhead"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/profile_information" />
+
+                    <TextView
+                        android:id="@+id/name_textview"
+                        style="@style/Text_Body_1_Caption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Firstname Lastname: 12354654" />
+
+                </LinearLayout>
+
+                <com.fieldnation.ui.IconFontButton
+                    android:id="@+id/profileexpand_button"
+                    style="@style/OptionsProfileButton"
+                    android:visibility="gone" />
+            </RelativeLayout>
+
+            <ViewStub
+                android:id="@+id/stub_profile_detail_list"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout="@layout/stub_nav_profile_detail_list"
+                android:visibility="gone" />
+
+            <LinearLayout
+                android:id="@+id/link_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <RelativeLayout
+                    android:id="@+id/payments_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/payment_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_glyphish_dollar" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/payment_iconfont"
+                        android:text="@string/payments" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/settings_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/settings_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_gear" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/settings_iconfont"
+                        android:text="@string/settings" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/logout_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/logout_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_logout" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/logout_iconfont"
+                        android:text="@string/log_out" />
+                </RelativeLayout>
+
+                <TextView
+                    style="@style/OptionsTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/support" />
+
+                <RelativeLayout
+                    android:id="@+id/contact_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/contact_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_contact" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/contact_iconfont"
+                        android:text="@string/contact_us" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/debug_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/debug_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_bug" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/debug_iconfont"
+                        android:text="@string/send_debug_log" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/legal_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/legal_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_gavel" />
+
+                    <TextView
+                        style="@style/OptionsMenuTitle"
+                        android:layout_toRightOf="@+id/legal_iconfont"
+                        android:text="@string/legal" />
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/version_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/version_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_info_circle_line" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/version_iconfont"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/OptionsMenuTitle"
+                            android:text="@string/app_version" />
+
+                        <TextView
+                            android:id="@+id/version_textview"
+                            style="@style/Text_Body_1_Caption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="8dp"
+                            android:text="0.0.0" />
+                    </LinearLayout>
+                </RelativeLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </android.support.v4.widget.NestedScrollView>
+</merge>

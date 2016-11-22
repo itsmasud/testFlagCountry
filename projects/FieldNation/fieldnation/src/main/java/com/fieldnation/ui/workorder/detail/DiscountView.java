@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Discount;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.misc;
 
 public class DiscountView extends RelativeLayout {
     private static final String TAG = "ui.workorder.detail.DiscountView";

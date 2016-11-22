@@ -18,14 +18,14 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.util.Calendar;
 
@@ -108,7 +108,7 @@ public class ConfirmDialog extends DialogFragmentBase {
 
         _startDateLayout = (LinearLayout) v.findViewById(R.id.startDate_layout);
 
-        _startDateButton = (Button) v.findViewById(R.id.startDate_button);
+        _startDateButton = (Button) v.findViewById(R.id.etaStartDate_button);
         _startDateButton.setOnClickListener(_startDate_onClick);
 
         _durationButton = (Button) v.findViewById(R.id.duration_button);
@@ -156,27 +156,6 @@ public class ConfirmDialog extends DialogFragmentBase {
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
     }
 
-//    public void setTime(Calendar time) {
-//        try {
-//            _startCalendar.set(time.get(Calendar.YEAR), time.get(Calendar.MONTH),
-//                    time.get(Calendar.DAY_OF_MONTH), time.get(Calendar.HOUR_OF_DAY),
-//                    time.get(Calendar.MINUTE));
-//
-//            long start = ISO8601.toUtc(_schedule.getStartTime());
-//            long end = ISO8601.toUtc(_schedule.getEndTime());
-//
-//            long input = _startCalendar.getTimeInMillis();
-//
-//            if (input < start || input > end) {
-//                Toast.makeText(getActivity(), "Arrival time is out of range. Please try again", Toast.LENGTH_LONG).show();
-//                _startCalendar = ISO8601.toCalendar(_schedule.getStartTime());
-//            }
-//
-//            _startDateButton.setText(misc.formatDateTimeLong(_startCalendar));
-//        } catch (Exception ex) {
-//            Log.v(TAG, ex);
-//        }
-//    }
 
     public void show(Workorder workorder, Schedule schedule) {
         _schedule = schedule;

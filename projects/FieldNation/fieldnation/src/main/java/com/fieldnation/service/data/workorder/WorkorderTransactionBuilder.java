@@ -6,23 +6,22 @@ import android.location.Location;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
-import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.ExpenseCategory;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 import java.io.File;
 import java.io.InputStream;
@@ -299,56 +298,59 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns an error/success message
-    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type) {
+    public static void actionReportProblem(Context context, long workorderId, String explanation, ReportProblemType type, Integer delayInSeconds) {
         if (misc.isEmptyOrNull(explanation)) {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "type=" + type.value);
+                    "type=" + type.value
+                            + (delayInSeconds == null ? "" : "&delay=" + delayInSeconds));
         } else {
             action(context, workorderId, "report-problem", null,
                     HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                    "explanation=" + misc.escapeForURL(explanation) + "&type=" + type.value);
+                    "explanation=" + misc.escapeForURL(explanation)
+                            + "&type=" + type.value
+                            + (delayInSeconds == null ? "" : "&delay=" + delayInSeconds));
         }
     }
 
     // returns the entire work order details
-    public static void actionCheckin(Context context, long workorderId) {
+    public static void actionCheckin(Context context, long workorderId, String dateTime) {
         context.startService(action(
                 context, workorderId, "POST", "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkin_time=" + ISO8601.now(),
+                "checkin_time=" + dateTime,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckIn(workorderId)));
     }
 
-    // returns the entire work order details
-    public static void actionCheckin(Context context, long workorderId, Location location) {
+
+    public static void actionCheckin(Context context, long workorderId, Location location, String dateTime) {
         context.startService(action(
                 context, workorderId, "POST", "checkin", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkin_time=" + ISO8601.now()
+                "checkin_time=" + dateTime
                         + "&gps_lat=" + location.getLatitude()
                         + "&gps_lon=" + location.getLongitude(),
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckIn(workorderId)));
     }
 
-    // returns the entire work order details
-    public static void actionCheckout(Context context, long workorderId) {
+
+    public static void actionCheckout(Context context, long workorderId, String dateTime) {
         context.startService(action(
                 context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkout_time=" + ISO8601.now(),
+                "checkout_time=" + dateTime,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the entire work order details
-    public static void actionCheckout(Context context, long workorderId, Location location) {
+    public static void actionCheckout(Context context, long workorderId, String dateTime, Location location) {
         context.startService(action(
                 context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "checkout_time=" + ISO8601.now()
+                "checkout_time=" + dateTime
                         + "&gps_lat=" + location.getLatitude()
                         + "&gps_lon=" + location.getLongitude(),
                 WorkorderTransactionHandler.class,
@@ -356,28 +358,29 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns the entire work order details
-    public static void actionCheckout(Context context, long workorderId, int deviceCount) {
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount) {
         context.startService(action(
                 context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "device_count=" + deviceCount
-                        + "&checkout_time=" + ISO8601.now(),
+                        + "&checkout_time=" + dateTime,
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
 
     // returns the entire work order details
-    public static void actionCheckout(Context context, long workorderId, int deviceCount, Location location) {
+    public static void actionCheckout(Context context, long workorderId, String dateTime, int deviceCount, Location location) {
         context.startService(action(
                 context, workorderId, "POST", "checkout", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
                 "device_count=" + deviceCount
-                        + "&checkout_time=" + ISO8601.now()
+                        + "&checkout_time=" + dateTime
                         + "&gps_lat=" + location.getLatitude()
                         + "&gps_lon=" + location.getLongitude(),
                 WorkorderTransactionHandler.class,
                 WorkorderTransactionHandler.pCheckOut(workorderId)));
     }
+
 
     // returns the full work order details
     public static void actionClosingNotes(Context context, long workorderId, String closingNotes) {
@@ -477,37 +480,81 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     }
 
     // returns entire work order
-    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         context.startService(
-                actionRequestIntent(context, workorderId, expireInSeconds));
+                actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note));
     }
 
-    public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds) {
+    public static void actionRequest(Context context, long workorderId, long expireInSeconds) {
+        context.startService(
+                actionRequestIntent(context, workorderId, expireInSeconds, null, null, null));
+    }
+
+    public static Intent actionRequestIntent(Context context, long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         String body = null;
 
+        if (!misc.isEmptyOrNull(startTime)) {
+            body = "start_time=" + startTime;
+        }
+
+        if (!misc.isEmptyOrNull(endTime)) {
+            if (body == null)
+                body = "end_time=" + endTime;
+            else
+                body += "&end_time=" + endTime;
+        }
+
+        if (!misc.isEmptyOrNull(note)) {
+            if (body == null)
+                body = "note=" + misc.escapeForURL(note);
+            else
+                body += "&note=" + misc.escapeForURL(note);
+        }
+
         if (expireInSeconds != -1) {
-            body = "expiration=" + expireInSeconds;
+            if (body == null)
+                body = "expiration=" + expireInSeconds;
+            else
+                body += "&expiration=" + expireInSeconds;
         }
 
         return action(context, workorderId, "POST", "request", null,
                 HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body,
                 WorkorderTransactionHandler.class,
-                WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds));
+                WorkorderTransactionHandler.pActionRequest(workorderId, expireInSeconds, startTime, endTime, note));
     }
 
 
     // returns work order details
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
-        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        Intent intent = actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         context.startService(intent);
     }
 
-    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601) {
+    public static Intent actionConfirmAssignmentIntent(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        String body = null;
+
+        if (!misc.isEmptyOrNull(startTimeIso8601))
+            body = "start_time=" + startTimeIso8601;
+
+        if (!misc.isEmptyOrNull(endTimeIso8601)) {
+            if (body == null)
+                body = "end_time=" + endTimeIso8601;
+            else
+                body += "&end_time=" + endTimeIso8601;
+        }
+
+        if (!misc.isEmptyOrNull(note)) {
+            if (body == null)
+                body = "note=" + misc.escapeForURL(note);
+            else
+                body += "&note=" + misc.escapeForURL(note);
+        }
+
         return action(context, workorderId, "POST", "assignment", null,
-                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
-                "start_time=" + startTimeIso8601 + "&end_time=" + endTimeIso8601,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED, body,
                 WorkorderTransactionHandler.class,
-                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601));
+                WorkorderTransactionHandler.pAssignment(workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta));
     }
 
     public static void actionReady(Context context, long workorderId) {
@@ -696,13 +743,13 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
     // returns the deliverable details
     public static void uploadDeliverable(Context context, String filePath, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable file");
-        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filePath, new File(filePath), "uploadTemp.dat");
         uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
     public static void uploadDeliverable(Context context, InputStream inputStream, String filename, String photoDescription, long workorderId, long uploadSlotId) {
         Log.v(TAG, "uploadDeliverable uri");
-        StoredObject upFile = StoredObject.put(App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
+        StoredObject upFile = StoredObject.put(context, App.getProfileId(), "TempFile", filename, inputStream, "uploadTemp.dat");
         uploadDeliverable(context, upFile, filename, photoDescription, workorderId, uploadSlotId);
     }
 
@@ -711,7 +758,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
         if (upFile == null) {
             ToastClient.toast(context, "Unknown error uploading file, please try again", Toast.LENGTH_SHORT);
-            Debug.logException(new Exception("PA-332 - UpFile is null"));
+            Log.logException(new Exception("PA-332 - UpFile is null"));
             WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
             return;
         }
@@ -719,7 +766,7 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
         if (upFile.isFile() && upFile.getFile() != null) {
             if (upFile.getFile().length() > 100000000) { // 100 MB?
-                StoredObject.delete(upFile);
+                StoredObject.delete(context, upFile);
                 ToastClient.toast(context, "File is too long: " + filename, Toast.LENGTH_LONG);
                 WorkorderDispatch.uploadDeliverable(context, workorderId, uploadSlotId, filename, false, true);
                 return;

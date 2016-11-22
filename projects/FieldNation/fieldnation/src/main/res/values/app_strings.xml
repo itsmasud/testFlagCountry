@@ -1,29 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>
-    <string name="mapbox_mapid">jacobbeasley.ggg811om</string>
-    <string name="mapbox_startMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/mylocation.png</string>
-    <string name="mapbox_endMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/redpin.png</string>
-    <string name="mapbox_inpreciseMarkerUrl">http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>
-    <string name="mapbox_reddot">http://fieldnation.s3.amazonaws.com/mapbox/reddot.png</string>
-
-    <string name="tos_date">08/16/2016</string>
 
     <!-- general strings -->
-    <string name="placeholder_word">Word</string>
-    <string name="placeholder_phrase">Should not see this.</string>
-    <string name="placeholder_paragraph">This is a longer paragraph. This is used to test things like word wrap and text trimming for misc displays. If you see this then the developer forgot to remove it.</string>
-    <string name="placeholder_date_long">Wednesday, December 25, 2014</string>
-    <string name="placeholder_time_long">12:00 AM - 12:00 PM</string>
-    <string name="placeholder_date_short">10/20/1963</string>
-    <string name="placeholder_money_short">$5.50</string>
-    <string name="placeholder_money_long">$6000.00</string>
-    <string name="placeholder_company_name">Company name not available</string>
-    <string name="placeholder_one_line_address">740 Valencia St, San Francisco, CA (10mi)</string>
-    <string name="placeholder_distance">65.46 miles</string>
-    <string name="placeholder_city_state_distance">Minneapolis, MN (10mi)</string>
-    <string name="gcm_senderid">179310690338</string>
-
     <string name="activity_login_title">Field Nation Login</string>
     <string name="activity_login_username">Username</string>
     <string name="activity_login_password">Password</string>
@@ -59,6 +37,7 @@
     <string name="btn_acknowledge_hold">ACKNOWLEDGE HOLD</string>
     <string name="btn_acknowledge">ACKNOWLEDGE</string>
     <string name="btn_add_shipment">ADD SHIPMENT</string>
+    <string name="btn_edit_eta">EDIT ETA</string>
     <string name="btn_add_signature">ADD SIGNATURE</string>
     <string name="btn_add_expense">ADD EXPENSE</string>
     <string name="btn_add_discount">ADD DISCOUNT</string>
@@ -102,6 +81,7 @@
     <string name="btn_not_now">NOT NOW</string>
     <string name="btn_ok">OK</string>
     <string name="btn_on_hold">ON HOLD</string>
+    <string name="btn_on_my_way">ON MY WAY</string>
     <string name="btn_payments">PAYMENTS</string>
     <string name="btn_read_less">READ LESS</string>
     <string name="btn_read_more">READ MORE</string>
@@ -122,6 +102,7 @@
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_all">VIEW ALL</string>
+    <string name="btn_view_bundle">VIEW BUNDLE</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_view_payment">VIEW PAYMENT</string>
@@ -132,6 +113,8 @@
     <string name="btn_remind_me_later">REMIND ME LATER</string>
     <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
 
+    <string name="switch_text_set_eta">Set an ETA</string>
+
     <string name="toast_cant_delete_shipment_permission">Cannot delete shipment. Shipment was not created by you.</string>
     <string name="toast_could_not_connect">An unexpected error occurred. Could not connect to servers.</string>
     <string name="toast_downloading">Downloading</string>
@@ -140,6 +123,8 @@
     <string name="toast_minimum_accumulated_payable_amount">Total amount must be at least $20.</string>
     <string name="toast_no_disk_space">No disk space available. Free some disk space.</string>
     <string name="toast_previous_date_not_allowed">Please pick a date in the future.</string>
+    <string name="toast_pick_date_time_between_schedule">Please pick date and time in between schedule.</string>
+    <string name="toast_job_duration_empty">Please fill up job duration.</string>
     <string name="toast_previous_time_not_allowed">Please pick a time in the future.</string>
     <string name="toast_carrier_not_selected">Choose a carrier</string>
     <string name="toast_direction_not_selected">Choose a direction</string>
@@ -148,6 +133,7 @@
     <string name="toast_invalid_tracking_number">Tracking number is not a valid for %1$s.</string>
     <string name="toast_missing_carrier_name">Please provide a carrier name</string>
     <string name="toast_minimum_job_duration">Please insert at least 15 min</string>
+    <string name="toast_minimum_expiring_duration">Please insert at least 15 min</string>
     <string name="toast_empty_feedback">Please enter a feedback.</string>
     <string name="toast_not_an_image">Only image can be uploaded in image slot</string>
     <string name="toast_must_select_category">Please select a category</string>
@@ -156,6 +142,7 @@
     <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
     <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
     <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
+    <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -205,7 +192,7 @@
     <string name="dialog_decline_message">This work order will be hidden from your available work order list</string>
     <string name="dialog_block_message">Block all work from this buyer</string>
     <string name="hint_text_decline_spinner">Please specify</string>
-    <string name="hint_text_block_spinner">Feel free to share more details</string>
+    <string name="hint_text_optional_details">Feel free to share more details</string>
     <string-array name="dialog_decline_reasons">
         <item>Low pay</item>
         <item>Schedule conflict</item>
@@ -324,6 +311,7 @@
     <string name="other_thoughts">Other thoughts</string>
     <string name="character_counting">%1$d /120</string>
 
+    <string name="dialog_eta_title">Edit ETA</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
@@ -339,18 +327,23 @@
 
     <string name="aborted">Aborted</string>
     <string name="accept_bundle">Accept Bundle</string>
+    <string name="account">Account</string>
     <string name="add_a_signature">Add a signature</string>
     <string name="add_discount">Add Discount</string>
     <string name="add_profile">Add Profile</string>
     <string name="add_time">Add Time</string>
     <string name="amount">Amount</string>
     <string name="and">and</string>
+    <string name="app_version">App Version</string>
     <string name="arrival_date_and_time_colon">Arrival Date and Time:</string>
     <string name="arrival_period_colon">Arrival Period:</string>
     <string name="arrival_time">Arrival Time</string>
+    <string name="tv_date">Date</string>
+    <string name="tv_start_time">Start Time</string>
     <string name="assign_add_new">Assign/Add New</string>
     <string name="between">Between</string>
     <string name="block_reason">Block Reason</string>
+    <string name="cannot_upload_to_work_order_num">Cannot upload to work order %1$s please select another</string>
     <string name="decline_reason">Decline Reason</string>
     <string name="bundle">Bundle</string>
     <string name="buyer_has_been_notified">Buyer has been notified. You may be contacted for follow up.</string>
@@ -376,7 +369,9 @@
     <string name="company_name_hidden">Company Name Hidden</string>
     <string name="completed_work">Completed work</string>
     <string name="confirm_schedule">Confirm schedule</string>
+    <string name="contact_us">Contact Us</string>
     <string name="could_not_download_file">Could not download file</string>
+    <string name="could_not_get_gps_location">Could not get GPS location</string>
     <string name="counter_offer">Counter Offer</string>
     <string name="counter_offer_caps">COUNTER OFFER</string>
     <string name="contacts">CONTACTS</string>
@@ -411,7 +406,6 @@
     <string name="expenses_caps">EXPENSES</string>
     <string name="explanation">Explanation</string>
     <string name="feedback">Feedback</string>
-    <string name="contact_us">Contact Us</string>
     <string name="dialog_release_note_title">What\'s new in Field Nation</string>
     <string name="feature_header_added_new">What we added</string>
     <string name="bugs_fixed_header">Bugs we fixed</string>
@@ -440,8 +434,11 @@
     <string name="inbox">Inbox</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
+    <string name="number_of_device_completed">Devices Completed</string>
+    <string name="spinner_hint_please_select">Please select</string>
+    <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
-    <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
+    <string name="log_out">Log Out</string>
     <string name="looks_like_you_need_to_finish_setup">Looks like you need to finish setting up your account</string>
     <string name="manage_profiles">Manage Profiles</string>
     <string name="map_not_available">MAP NOT AVAILABLE</string>
@@ -449,6 +446,7 @@
     <string name="invalid_address">INVALID ADDRESS</string>
     <string name="contact_wo_manager">Contact work order manager</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
+    <string name="mark_as_incomplete_full_warning">You are about to mark this work order as incomplete.\n\nWould you like to continue?</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
@@ -467,6 +465,7 @@
     <string name="no_email_app_is_available">No email app is available</string>
     <string name="no_expenses_have_been_added_at_this_time">No expenses have been added at this time</string>
     <string name="no_location_provided_by_buyer">No location provided by buyer</string>
+    <string name="no_location_work_is_done_remotely">No Location, work is done remotely.</string>
     <string name="no_messages">No Messages</string>
     <string name="no_notifications">No Notifications</string>
     <string name="no_routed_work">No routed work</string>
@@ -526,6 +525,7 @@
     <string name="optional_caps">OPTIONAL</string>
     <string name="overall_rating">Overall rating: </string>
     <string name="payment">Payment</string>
+    <string name="payments">Payments</string>
     <string name="payment_id_na">Payment ID NA</string>
     <string name="payment_id_x">Payment %1$s</string>
     <string name="payment_pending">Payment Pending</string>
@@ -538,11 +538,14 @@
     <string name="please_let_me_know_what_needs_to_be_corrected">Please let me know what needs\nto be corrected.</string>
     <string name="please_remove_obstruction">Please Remove Obstruction</string>
     <string name="please_select_a_problem_to_continue">Please select a problem to continue.</string>
+    <string name="please_select_fewer_than_num_files">Please select fewer than %1$d files</string>
     <string name="post_visit">Post Visit</string>
     <string name="pre_visit">Pre Visit</string>
     <string name="preparing_files">Preparing files...</string>
+    <string name="preparing_files_num">Preparing files (%1$d of %2$d)</string>
     <string name="price">Price</string>
     <string name="professionalism">Professionalism</string>
+    <string name="profile_information">Profile Information</string>
     <string name="providers_under_your_company">Providers under your company:</string>
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
@@ -560,8 +563,18 @@
     <string name="schedule_caps">SCHEDULE</string>
     <string name="schedule_business_hours_format1">%1$s - %2$s</string>
     <string name="schedule_business_hours_format2">%1$s - %2$s each day</string>
+    <string name="schedule_business_hours_format3"> (%1$s - %2$s)</string>
     <string name="schedule_open_range_format">%1$s\n%2$s</string>
+    <string name="schedule_open_range_format2">%1$s\ - %2$s</string>
+    <string name="schedule_current">Current Schedule</string>
+    <string name="schedule_original">Original Schedule</string>
+    <string name="select_a_task">Select a task</string>
+    <string name="select_a_work_order">Select a work order</string>
+    <string name="select_files">Select files</string>
     <string name="select_who_you_would_like_to_act_as">Select who you would like to act as</string>
+    <string name="send_num">Send (%1$d)</string>
+    <string name="send_debug_log">Send Debug Log</string>
+    <string name="sending_num_files">Sending %1$d files</string>
     <string name="setup_your_account">Setup your account</string>
     <string name="settings">Settings</string>
     <string name="shipment_description">Shipment Description</string>
@@ -569,6 +582,7 @@
     <string name="sorry_to_hear_that">Sorry to hear that</string>
     <string name="sorry_to_hear_that_you_have_been_removed">Sorry to hear that. You have been removed from this work order.</string>
     <string name="start_time">Start Time</string>
+    <string name="support">Support</string>
     <string name="support_has_been_notified">Support has been notified. You may be contacted for follow up.</string>
     <string name="tap_to_set_a_time">Tap to set a time</string>
     <string name="tasks">Tasks</string>
@@ -602,7 +616,7 @@
     <string name="what_about_approval">What about approval?</string>
     <string name="what_about_payment">What about payment?</string>
     <string name="what_about_site">What about the site?</string>
-    <string name="when_does_this_request_expire">When does this request expire?</string>
+    <string name="when_does_this_request_expire">Expire request</string>
     <string name="what_category">What is the category?</string>
     <string name="what_type">What is the type?</string>
     <string name="what_type_of_schedule">What type of schedule?</string>
@@ -614,7 +628,7 @@
     <string name="wo_id_x">WO ID: %1$s</string>
     <string name="wo_x">WO %1$s</string>
     <string name="work_complete">Work Complete</string>
-    <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
+    <string name="workorder_no_permission">The work order you are trying to view is unavailable.</string>
     <string name="workorder_not_found">The work order you are looking for has been assigned to another provider, canceled, or does not exist.</string>
     <string name="work_order_search">Work Order Search</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
@@ -633,7 +647,7 @@
 
     <!-- main activity strings -->
     <!--<string name="launcher_open">I am Open</string>-->
-    <string name="work_order_detail_title">Work Order</string>
+    <string name="work_order_detail_title">WO:</string>
 
     <!-- Drawer strings -->
     <string name="mywork_title">My Work Orders</string>
@@ -671,6 +685,15 @@
         <item>distance</item>
         <item>city_state</item>
     </string-array>
+    <string-array name="schedule_small_case_am_pm_array">
+        <item>am</item>
+        <item>pm</item>
+    </string-array>
+    <string-array name="schedule_capital_case_am_pm_array">
+        <item>AM</item>
+        <item>PM</item>
+    </string-array>
+
 
     <!-- sync settings -->
     <string name="pref_string_sync_category_title">Sync Settings</string>
@@ -737,7 +760,10 @@
 
     <!-- legal section -->
     <string name="pref_string_data_settings_legal">Legal</string>
+    <string name="pref_string_user_agreement">User Agreement</string>
     <string name="pref_string_tc_title">Terms and Conditions</string>
+    <string name="pref_string_work_order_tc">Work Order Terms and Conditions</string>
+    <string name="pref_string_referral_terms">Referral Terms and Conditions</string>
     <string name="pref_string_qa_title">Quality Assurance Policy</string>
 
     <!-- release declaration -->
@@ -846,6 +872,8 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="title_check_in">Check In</string>
+    <string name="title_check_out">Check Out</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>

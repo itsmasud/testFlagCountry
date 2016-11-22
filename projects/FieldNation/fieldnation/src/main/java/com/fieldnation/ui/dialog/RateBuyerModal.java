@@ -1,7 +1,6 @@
 package com.fieldnation.ui.dialog;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -13,12 +12,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.ui.NewFeatureActivity;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.RateBuyerActivity;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by shoaib.ahmed on 07/28/2016.
@@ -140,10 +138,7 @@ public class RateBuyerModal extends DialogFragmentBase {
     private final View.OnClickListener _continue_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(App.get(), RateBuyerActivity.class);
-            intent.putExtra(INTENT_WORKORDER, _workorder);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-            App.get().startActivity(intent);
+            RateBuyerActivity.startNew(App.get(), _workorder);
             dismiss();
         }
     };

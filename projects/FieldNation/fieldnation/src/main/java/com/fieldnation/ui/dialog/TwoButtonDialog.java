@@ -13,16 +13,16 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 2/6/2015.
  */
 public class TwoButtonDialog extends DialogFragmentBase {
-    private static final String TAG = UniqueTag.makeTag("OneButtonDialog");
+    private static final String TAG = UniqueTag.makeTag("TwoButtonDialog");
 
     //Ui
     private TextView _titleTextView;

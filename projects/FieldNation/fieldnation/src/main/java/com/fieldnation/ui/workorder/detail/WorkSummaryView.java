@@ -1,7 +1,6 @@
 package com.fieldnation.ui.workorder.detail;
 
 import android.content.Context;
-import android.content.Intent;
 import android.text.method.LinkMovementMethod;
 import android.text.util.Linkify;
 import android.util.AttributeSet;
@@ -14,11 +13,12 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.CustomDisplayFields;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
-import com.fieldnation.utils.misc;
 
 public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "WorkSummaryView";
@@ -191,10 +191,7 @@ public class WorkSummaryView extends LinearLayout implements WorkorderRenderer {
     private final View.OnClickListener _bundle_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), WorkorderBundleDetailActivity.class);
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            intent.putExtra(WorkorderBundleDetailActivity.INTENT_FIELD_BUNDLE_ID, _workorder.getBundleId());
-            getContext().startActivity(intent);
+            WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
     };
 

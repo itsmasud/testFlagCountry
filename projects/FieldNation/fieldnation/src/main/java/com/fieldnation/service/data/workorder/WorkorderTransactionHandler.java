@@ -8,22 +8,22 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.rpc.server.HttpResult;
-import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionHandler;
 import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.ui.workorder.WorkorderDataSelector;
-import com.fieldnation.utils.Stopwatch;
 
 import java.text.ParseException;
 
@@ -133,11 +133,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pActionRequest(long workorderId, long expireInSeconds) {
+    public static byte[] pActionRequest(long workorderId, long expireInSeconds, String startTime, String endTime, String note) {
         try {
             JsonObject obj = new JsonObject("action", "pActionRequest");
             obj.put("workorderId", workorderId);
             obj.put("expireInSeconds", expireInSeconds);
+            obj.put("startTime", startTime);
+            obj.put("endTime", endTime);
+            obj.put("note", note);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -145,12 +148,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         }
     }
 
-    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601) {
+    public static byte[] pAssignment(long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
         try {
             JsonObject obj = new JsonObject("action", "pAssignment");
             obj.put("workorderId", workorderId);
             obj.put("startTimeIso8601", startTimeIso8601);
             obj.put("endTimeIso8601", endTimeIso8601);
+            obj.put("note", note);
+            obj.put("isEditEta", isEditEta);
             return obj.toByteArray();
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -310,6 +315,34 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         return Result.CONTINUE;
     }
+    /*-************************************-*/
+    /*-             Progress               -*/
+    /*-************************************-*/
+
+    @Override
+    public void handleProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
+        try {
+            JsonObject params = new JsonObject(transaction.getHandlerParams());
+            String action = params.getString("action");
+            switch (action) {
+                case "pUploadDeliverable":
+                    handleProgressUploadDeliverable(context, transaction, params, pos, size, time);
+                    break;
+            }
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
+    private Result handleProgressUploadDeliverable(Context context, WebTransaction transaction, JsonObject params, long pos, long size, long time) throws ParseException {
+        long workorderId = params.getLong("workorderId");
+        long slotId = params.getLong("slotId");
+        String filename = params.getString("filename");
+
+        WorkorderDispatch.uploadDeliverableProgress(context, workorderId, slotId, filename, pos, size, time);
+
+        return Result.CONTINUE;
+    }
 
     /*-**********************************-*/
     /*-             Requeue              -*/
@@ -430,7 +463,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.action(context, workorderId, "assignment", false);
 
-        ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+        boolean isEditEta = params.getBoolean("isEditEta");
+
+        if (!isEditEta)
+            ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+        else
+            ToastClient.snackbar(context, "Success! Edited ETA is saved.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
 
         return handleDetails(context, transaction, params, resultData);
     }
@@ -451,9 +490,8 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckIn(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckIn");
         long workorderId = params.getLong("workorderId");
-
-        WorkorderDispatch.action(context, workorderId, "checkin", false);
         try {
+            WorkorderDispatch.action(context, workorderId, "checkin", false);
             WorkorderClient.listTasks(context, workorderId, false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
@@ -464,10 +502,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                 PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
 
                 ToastClient.snackbar(context, "Checkin failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                WorkorderDispatch.action(context, workorderId, "checkin", true);
                 return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
+            WorkorderDispatch.action(context, workorderId, "checkin", true);
             return Result.DELETE;
         }
     }
@@ -475,10 +515,9 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     private Result handleCheckOut(Context context, WebTransaction transaction, JsonObject params, HttpResult resultData) throws ParseException {
         Log.v(TAG, "handleCheckOut");
         long workorderId = params.getLong("workorderId");
-
-        WorkorderDispatch.action(context, workorderId, "checkout", false);
         try {
             WorkorderClient.listTasks(context, workorderId, false);
+            WorkorderDispatch.action(context, workorderId, "checkout", false);
             return handleDetails(context, transaction, params, resultData);
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -489,10 +528,12 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
                 ToastClient.snackbar(context, "Checkout failed: " + resultData.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 Log.v(TAG, "Sent snackbar");
+                WorkorderDispatch.action(context, workorderId, "checkout", true);
                 return Result.DELETE;
             } catch (Exception ex1) {
                 Log.v(TAG, ex1);
             }
+            WorkorderDispatch.action(context, workorderId, "checkout", true);
             return Result.DELETE;
         }
     }
@@ -557,7 +598,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             byte[] bdata = resultData.getByteArray();
             Log.v(TAG, "handleList:{selector:" + selector + ", page: " + page + "}");
 
-            StoredObject.put(App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
+            StoredObject.put(context, App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
             Log.v(TAG, "handleList 1");
             JsonArray ja = new JsonArray(bdata);
@@ -594,7 +635,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             WorkorderClient.get(context, workorderId, false);
         }
 
-        StoredObject.put(App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
+        StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
 
         return Result.CONTINUE;
     }
@@ -612,7 +653,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             WorkorderClient.get(context, workorderId, false);
         }
 
-        StoredObject.put(App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
+        StoredObject.put(context, App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
 
         return Result.CONTINUE;
     }
@@ -624,7 +665,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());
 
-        StoredObject.put(App.getProfileId(), PSO_TASK_LIST, workorderId, data);
+        StoredObject.put(context, App.getProfileId(), PSO_TASK_LIST, workorderId, data);
 
         return Result.CONTINUE;
     }
@@ -649,7 +690,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
             Log.v(TAG, "handleDetails _action=" + workorder.get("_action"));
 
         // store it in the store
-        StoredObject.put(App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
+        StoredObject.put(context, App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
 
         return Result.CONTINUE;
     }
@@ -662,7 +703,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
 
         //store the signature data
-        StoredObject.put(App.getProfileId(), PSO_SIGNATURE, signatureId, data);
+        StoredObject.put(context, App.getProfileId(), PSO_SIGNATURE, signatureId, data);
 
         return Result.CONTINUE;
     }
@@ -671,7 +712,7 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long bundleId = params.getLong("bundleId");
         byte[] data = resultData.getByteArray();
 
-        StoredObject.put(App.getProfileId(), PSO_BUNDLE, bundleId, data);
+        StoredObject.put(context, App.getProfileId(), PSO_BUNDLE, bundleId, data);
 
         WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
 
@@ -698,6 +739,11 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
     @Override
     public Result handleFail(Context context, WebTransaction transaction, HttpResult resultData, Throwable throwable) {
         try {
+            try {
+                Log.v(TAG, "Error message: " + resultData.getString());
+            } catch (Exception ex) {
+
+            }
             JsonObject params = new JsonObject(transaction.getHandlerParams());
             String action = params.getString("action");
             switch (action) {
@@ -709,6 +755,14 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
                     break;
                 case "pGetSignature":
                     WorkorderDispatch.signature(context, null, params.getLong("workorderId"), params.getLong("signatureId"), true, transaction.isSync());
+                    break;
+                case "pCheckIn":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), "checkin", true);
+                    ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
+                    break;
+                case "pCheckOut":
+                    WorkorderDispatch.action(context, params.getLong("workorderId"), "checkout", true);
+                    ToastClient.toast(context, resultData.getString(), Toast.LENGTH_LONG);
                     break;
                 case "pAction":
                     WorkorderDispatch.action(context, params.getLong("workorderId"), params.getString("param"), true);
@@ -804,8 +858,13 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }
@@ -882,14 +941,22 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
 
         long workorderId = params.getLong("workorderId");
         long expireInSeconds = params.getLong("expireInSeconds");
+        String startTime = params.getString("startTime");
+        String endTime = params.getString("endTime");
+        String note = params.getString("note");
 
         WorkorderDispatch.action(context, workorderId, "request", true);
 
-        Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds);
+        Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }
@@ -900,14 +967,21 @@ public class WorkorderTransactionHandler extends WebTransactionHandler implement
         long workorderId = params.getLong("workorderId");
         String startTimeIso8601 = params.getString("startTimeIso8601");
         String endTimeIso8601 = params.getString("endTimeIso8601");
+        String note = params.getString("note");
+        boolean isEditEta = params.getBoolean("isEditEta");
 
         WorkorderDispatch.action(context, workorderId, "assignment", true);
 
-        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601);
+        Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
         PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
 
-        ToastClient.snackbar(context, "Unable to accept work order. Please check your connection.",
-                "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        try {
+            ToastClient.snackbar(context, resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        } catch (Exception ex) {
+            ToastClient.snackbar(context, "Unable to accept work order. " + resultData.getString(),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+        }
 
         return Result.CONTINUE;
     }

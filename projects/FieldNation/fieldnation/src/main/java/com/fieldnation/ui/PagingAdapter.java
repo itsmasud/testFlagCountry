@@ -5,10 +5,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
-import com.crashlytics.android.answers.CustomEvent;
 import com.fieldnation.App;
-import com.fieldnation.Debug;
-import com.fieldnation.Log;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
 
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -174,7 +175,11 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView = new RateMeView(parent.getContext());
                 _rateMeView.setListener(_rateMe_listener);
             }
-            Debug.logCustom(new CustomEvent("RateMeCardShown"));
+            Tracker.event(App.get(),
+                    new Event.Builder()
+                            .tag(AnswersWrapper.TAG)
+                            .category("RateMeCardShown")
+                            .build());
             App.get().setRateMeShown();
             return _rateMeView;
         }

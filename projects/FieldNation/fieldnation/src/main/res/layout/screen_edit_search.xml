@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -74,7 +74,7 @@
                 android:layout_below="@+id/location_spinner"
                 android:layout_marginBottom="16dp" />
         </LinearLayout>
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
     <com.fieldnation.ui.RefreshView
         android:id="@+id/loading_view"
@@ -93,4 +93,4 @@
         android:gravity="center"
         android:text="@string/icon_search"
         android:textSize="22sp" />
-</RelativeLayout>
+</merge>

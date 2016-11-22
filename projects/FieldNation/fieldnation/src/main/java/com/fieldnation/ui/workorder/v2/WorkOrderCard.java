@@ -1,26 +1,43 @@
 package com.fieldnation.ui.workorder.v2;
 
 import android.content.Context;
+import android.content.Intent;
 import android.location.Location;
+import android.net.Uri;
 import android.util.AttributeSet;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import com.fieldnation.Log;
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
+import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.service.data.mapbox.Position;
+import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.GpsTrackingService;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.data.gmaps.Position;
+import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
+import com.fieldnation.ui.dialog.v2.DeclineDialog;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.MarkIncompleteWarningDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.dialog.v2.RunningLateDialog;
+import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -33,28 +50,19 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String TAG = "WorkOrderCard";
 
     // Ui
-    private IconFontTextView _bundleIconFont;
+    private TextView _amountTextView;
+    private TextView _payTypeTextView;
+    private TextView _workTypeTextView;
     private TextView _titleTextView;
-    private TextView _companyNameTextView;
+    private TextView _dateTextView;
     private TextView _timeTextView;
+    private TextView _hyphenTextView;
+    private TextView _date2TextView;
+    private TextView _time2TextView;
     private TextView _locationTextView;
-    private TextView _workOrderIdTextView;
-
-    private LinearLayout _payLeftLayout;
-    private TextView _priceLeftTextView;
-    private TextView _statusLeftTextView;
-
-    private LinearLayout _payRightLayout;
-    private TextView _priceRightTextView;
-    private TextView _statusRightTextView;
-
-    private IconFontButton _left1Button;
-    private IconFontButton _left2Button;
-    private IconFontButton _left3Button;
-
-    private Button _rightWhiteButton;
-    private Button _rightOrangeButton;
-    private Button _rightGreenButton;
+    private TextView _distanceTextView;
+    private IconFontButton[] _secondaryButtons = new IconFontButton[4];
+    private Button _primaryButton;
 
     // Data
     private WorkOrder _workOrder;
@@ -81,38 +89,25 @@ public class WorkOrderCard extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _bundleIconFont = (IconFontTextView) findViewById(R.id.bundle_iconFont);
+        _amountTextView = (TextView) findViewById(R.id.amount_textview);
+        _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
-        _companyNameTextView = (TextView) findViewById(R.id.companyName_textview);
+        _dateTextView = (TextView) findViewById(R.id.date_textview);
         _timeTextView = (TextView) findViewById(R.id.time_textview);
+        _hyphenTextView = (TextView) findViewById(R.id.hyphen_textview);
+        _time2TextView = (TextView) findViewById(R.id.time2_textview);
+        _date2TextView = (TextView) findViewById(R.id.date2_textview);
         _locationTextView = (TextView) findViewById(R.id.location_textview);
-        _workOrderIdTextView = (TextView) findViewById(R.id.workorderId_textview);
+        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-        _payLeftLayout = (LinearLayout) findViewById(R.id.payLeft_layout);
-        _priceLeftTextView = (TextView) findViewById(R.id.priceLeft_textview);
-        _statusLeftTextView = (TextView) findViewById(R.id.statusLeft_textview);
 
-        _payRightLayout = (LinearLayout) findViewById(R.id.payRight_layout);
-        _priceRightTextView = (TextView) findViewById(R.id.priceRight_textview);
-        _statusRightTextView = (TextView) findViewById(R.id.statusRight_textview);
+        _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
+        _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
+        _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
+        _secondaryButtons[3] = (IconFontButton) findViewById(R.id.secondary4_button);
 
-        _left1Button = (IconFontButton) findViewById(R.id.left1_button);
-        _left1Button.setOnClickListener(_left1_onClick);
-
-        _left2Button = (IconFontButton) findViewById(R.id.left2_button);
-        _left2Button.setOnClickListener(_left2_onClick);
-
-        _left3Button = (IconFontButton) findViewById(R.id.left3_button);
-        _left3Button.setOnClickListener(_left3_onClick);
-
-        _rightWhiteButton = (Button) findViewById(R.id.rightWhite_button);
-        _rightWhiteButton.setOnClickListener(_right_onClick);
-
-        _rightOrangeButton = (Button) findViewById(R.id.rightOrange_button);
-        _rightOrangeButton.setOnClickListener(_right_onClick);
-
-        _rightGreenButton = (Button) findViewById(R.id.rightGreen_button);
-        _rightGreenButton.setOnClickListener(_right_onClick);
+        _primaryButton = (Button) findViewById(R.id.primary_button);
 
         setOnClickListener(_this_onClick);
     }
@@ -124,57 +119,97 @@ public class WorkOrderCard extends RelativeLayout {
         populateUi();
     }
 
+    public WorkOrder getWorkOrder() {
+        return _workOrder;
+    }
+
     private void populateUi() {
         if (_workOrder == null)
             return;
 
-        if (_rightGreenButton == null)
+        if (_primaryButton == null)
             return;
 
-        if (_workOrder.isBundle())
-            _bundleIconFont.setVisibility(VISIBLE);
-        else
-            _bundleIconFont.setVisibility(GONE);
-
         _titleTextView.setText(_workOrder.getTitle());
-        _companyNameTextView.setText(_workOrder.getOrg().getName());
-        _workOrderIdTextView.setText("WO " + _workOrder.getId());
+        _workTypeTextView.setText(_workOrder.getType().toUpperCase());
 
         populateLocation();
         populatePay();
-        populateButtons();
         populateTime();
+        populateButtons();
     }
 
     private void populateTime() {
+        _timeTextView.setVisibility(VISIBLE);
+        _dateTextView.setVisibility(VISIBLE);
+        _hyphenTextView.setVisibility(GONE);
+        _time2TextView.setVisibility(GONE);
+        _date2TextView.setVisibility(GONE);
         if (_workOrder.getSchedule() != null) {
             if (_workOrder.getSchedule().getEstimate() != null && _workOrder.getSchedule().getEstimate().getArrival() != null) {
+                // estimated
                 try {
                     Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getEstimate().getArrival());
                     _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
                 }
 
+                // exact
             } else if (_workOrder.getSchedule().getExact() != null) {
                 try {
                     Calendar cal = ISO8601.toCalendar(_workOrder.getSchedule().getExact());
                     _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()).toUpperCase());
+                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(cal.getTime()));
+                    _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(cal.getTime()));
                 } catch (Exception ex) {
                     Log.v(TAG, ex);
+                    _timeTextView.setVisibility(GONE);
+                    _dateTextView.setVisibility(GONE);
                 }
 
+                // range
             } else if (_workOrder.getSchedule().getRange() != null) {
-                try {
-                    Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
-                    Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
-                    _timeTextView.setText(
-                            new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()).toUpperCase()
-                                    + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()).toUpperCase());
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
+                if (_workOrder.getSchedule().getRange().getType() == Range.Type.BUSINESS) {
+                    // business
+                    try {
+                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                        _timeTextView.setText(
+                                new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime())
+                                        + " - " + new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+
+                        _dateTextView.setText(
+                                new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime())
+                                        + " - " + new SimpleDateFormat("d", Locale.getDefault()).format(ecal.getTime()));
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        _timeTextView.setVisibility(GONE);
+                        _dateTextView.setVisibility(GONE);
+                    }
+
+                } else {
+                    // normal range
+                    try {
+                        Calendar scal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getBegin());
+                        Calendar ecal = ISO8601.toCalendar(_workOrder.getSchedule().getRange().getEnd());
+                        _timeTextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(scal.getTime()));
+                        _dateTextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(scal.getTime()));
+                        _time2TextView.setText(new SimpleDateFormat("h:mm a", Locale.getDefault()).format(ecal.getTime()));
+                        _date2TextView.setText(new SimpleDateFormat("MMM d", Locale.getDefault()).format(ecal.getTime()));
+                        _hyphenTextView.setVisibility(VISIBLE);
+                        _time2TextView.setVisibility(VISIBLE);
+                        _date2TextView.setVisibility(VISIBLE);
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        _timeTextView.setVisibility(GONE);
+                        _dateTextView.setVisibility(GONE);
+                    }
                 }
             } else {
                 _timeTextView.setText("");
@@ -184,126 +219,407 @@ public class WorkOrderCard extends RelativeLayout {
 
     private void populateLocation() {
         com.fieldnation.data.v2.Location location = _workOrder.getLocation();
-        if (location == null)
+        if (location == null) {
             _locationTextView.setText(R.string.remote_work);
-        else {
+            _distanceTextView.setVisibility(GONE);
+        } else {
             if (location.getGeo() == null || _location == null) {
-                _locationTextView.setText(location.getFullAddressOneLine());
+                _locationTextView.setText(location.getCityState());
+                _distanceTextView.setVisibility(GONE);
             } else {
                 try {
                     Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
                     Position myLoc = new Position(_location.getLongitude(), _location.getLatitude());
-                    _locationTextView.setText(location.getFullAddressOneLine() + " (" + myLoc.distanceTo(siteLoc) + "mi)");
+                    _locationTextView.setText(location.getCityState());
+                    _distanceTextView.setVisibility(VISIBLE);
+                    _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi");
                 } catch (Exception ex) {
-                    //Log.v(TAG, ex);
-                    _locationTextView.setText(location.getFullAddressOneLine());
+                    _locationTextView.setText(location.getCityState());
+                    _distanceTextView.setVisibility(GONE);
                 }
             }
         }
     }
 
     private void populatePay() {
-        _payLeftLayout.setVisibility(GONE);
-        if (_workOrder.getPay() == null) {
-            _payRightLayout.setVisibility(INVISIBLE);
+        if (_workOrder.getPay() == null || _workOrder.getPay().getType() == null) {
+            _payTypeTextView.setVisibility(GONE);
+            _amountTextView.setVisibility(GONE);
             return;
         }
 
         Pay pay = _workOrder.getPay();
-        if (misc.isEmptyOrNull(pay.getType())) {
-            Log.v(TAG, "PAY TYPE IS BAD!!! " + _workOrder.getId());
-            _payRightLayout.setVisibility(INVISIBLE);
-            return;
-        }
 
-        LinearLayout.LayoutParams params;
-        params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
-        params.gravity = Gravity.RIGHT;
-        _statusRightTextView.setLayoutParams(params);
-        params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
-        params.gravity = Gravity.RIGHT;
-        _priceRightTextView.setLayoutParams(params);
+        _payTypeTextView.setVisibility(VISIBLE);
+        _amountTextView.setVisibility(VISIBLE);
 
         switch (pay.getType()) {
-            case "blended":
-                _payLeftLayout.setVisibility(VISIBLE);
-                _payRightLayout.setVisibility(VISIBLE);
-
-                params = ((LinearLayout.LayoutParams) _statusRightTextView.getLayoutParams());
-                params.gravity = Gravity.LEFT;
-                _statusRightTextView.setLayoutParams(params);
-                params = ((LinearLayout.LayoutParams) _priceRightTextView.getLayoutParams());
-                params.gravity = Gravity.LEFT;
-                _priceRightTextView.setLayoutParams(params);
-
-                _priceLeftTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusLeftTextView.setText(getResources().getString(R.string.first_time_hours, pay.getUnits()));
-                _priceRightTextView.setText(misc.toCurrency(pay.getAdditionalAmount()));
-                _statusRightTextView.setText(R.string.hourly_after);
-                break;
             case "fixed":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.fixed);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("FIXED");
                 break;
             case "hourly":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.hourly);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("/ HOURLY");
+                break;
+            case "blended":
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount() * pay.getUnits() + pay.getAdditionalAmount()));
+                _payTypeTextView.setText("BLENDED");
                 break;
             case "device":
-                _payRightLayout.setVisibility(VISIBLE);
-                _priceRightTextView.setText(misc.toCurrency(pay.getAmount()));
-                _statusRightTextView.setText(R.string.per_device);
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount()));
+                _payTypeTextView.setText("/ DEVICE");
                 break;
             default:
-                Log.v(TAG, "PAY TYPE:" + pay.getType());
+                _payTypeTextView.setVisibility(GONE);
+                _amountTextView.setVisibility(GONE);
                 break;
         }
     }
 
     private void populateButtons() {
-        //* Assigned
-        // location
-        // chat
-        // alert?
+        // Primary actions
+        _primaryButton.setVisibility(GONE);
+        if (_workOrder.getPrimaryActions() != null
+                && _workOrder.getPrimaryActions().length > 0) {
 
+            Action[] actions = _workOrder.getPrimaryActions();
+            if (actions != null) {
+                for (Action action : actions) {
+                    if (populatePrimaryButton(_primaryButton, action))
+                        break;
+                }
+            }
+        }
 
+        for (Button button : _secondaryButtons) {
+            button.setVisibility(GONE);
+        }
+
+        if (_workOrder.getSecondaryActions() != null && _workOrder.getSecondaryActions().length > 0) {
+            int i = 0; // action index
+            int j = 0; // button index
+            // assign supported actions to buttons until no more actions or no more buttons
+            Action[] actions = _workOrder.getSecondaryActions();
+            while (i < actions.length && j < _secondaryButtons.length) {
+                Action action = actions[i];
+
+                // only if the action has been assigned do we move to the next button
+                if (populateSecondaryButton(_secondaryButtons[j], action)) {
+                    j++;
+                }
+                i++;
+            }
+        }
     }
 
-    private final View.OnClickListener _right_onClick = new OnClickListener() {
+    private boolean populatePrimaryButton(Button button, Action action) {
+        switch (action.getType()) {
+            case ACCEPT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_accept_onClick);
+                button.setText("ACCEPT");
+                break;
+            case CONFIRM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_confirm_onClick);
+                button.setText("CONFIRM");
+                break;
+            case ON_MY_WAY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_onMyWay_onClick);
+                button.setText(R.string.btn_on_my_way);
+                break;
+            case READY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("CONFIRM");
+                break;
+            case READY_TO_GO:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("READY");
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_reportProblem_onClick);
+                button.setText(R.string.btn_report_problem);
+                break;
+            case REQUEST:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_request_onClick);
+                button.setText("REQUEST");
+                break;
+            case VIEW_BUNDLE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_viewBundle_onClick);
+                button.setText("VIEW BUNDLE (" + _workOrder.getBundle().getCount() + ")");
+                break;
+            case ACK_HOLD:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_ackHold_onClick);
+                button.setText("ACKNOWLEDGE HOLD");
+                break;
+            case WITHDRAW:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_withdraw_onClick);
+                button.setText("WITHDRAW");
+                break;
+            case CHECK_IN:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkIn_onClick);
+                button.setText("CHECK IN");
+                break;
+            case CHECK_OUT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkOut_onClick);
+                button.setText("CHECK OUT");
+                break;
+            case MARK_INCOMPLETE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_incomplete_onClick);
+                button.setText("INCOMPLETE");
+                break;
+/*
+                case MARK_COMPLETE:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_complete_onClick);
+                    button.setText("COMPLETE");
+                    break;
+*/
+/*              // don't have a payment id in the current data structure
+                case VIEW_PAYMENT:
+                    button.setVisibility(VISIBLE);
+                    button.setOnClickListener(_viewPayment_onClick);
+                    button.setText("VIEW PAYMENT");
+                    break;
+*/
+            default:
+                return false;
+        }
+        return true;
+    }
+
+    // other icons
+    // phone-solid
+    // map-location-solid
+    // chat-solid
+    // circle-x-solid
+    // problem-solid
+    // time-issue-solid
+    private boolean populateSecondaryButton(IconFontButton button, Action action) {
+        switch (action.getType()) {
+            case DECLINE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_circle_x_solid);
+                button.setOnClickListener(_decline_onClick);
+                break;
+            case RUNNING_LATE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_time_issue_solid);
+                button.setOnClickListener(_runningLate_onClick);
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_problem_solid);
+                button.setOnClickListener(_reportProblem_onClick);
+                break;
+            case PHONE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_phone_solid);
+                button.setOnClickListener(_phone_onClick);
+                break;
+            case MESSAGE:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_chat_solid);
+                button.setOnClickListener(_message_onClick);
+                break;
+            case MAP:
+                button.setVisibility(VISIBLE);
+                button.setText(R.string.icon_map_location_solid);
+                button.setOnClickListener(_map_onClick);
+                break;
+            default:
+                button.setVisibility(GONE);
+                return false;
+        }
+        return true;
+    }
+
+    private final View.OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            MarkIncompleteWarningDialog.Controller.show(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _ackHold_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _checkIn_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            }
+        }
+    };
+
+    private final View.OnClickListener _checkOut_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            } else {
+                CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
+                        CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+            }
+        }
+    };
+
+    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+        }
+    };
+
+    private final View.OnClickListener _accept_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
+        }
+    };
+
+    private final View.OnClickListener _confirm_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
 
         }
     };
 
-    private final View.OnClickListener _left1_onClick = new OnClickListener() {
+    private final View.OnClickListener _decline_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-
+            DeclineDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getOrg().getId());
         }
     };
 
-    private final View.OnClickListener _left2_onClick = new OnClickListener() {
+    private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            if (_location != null)
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
+            else
+                WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
 
+            try {
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 10800000); // 3 hours
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
     };
 
-    private final View.OnClickListener _left3_onClick = new OnClickListener() {
+    private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getId(), _workOrder.getBundle().getId());
+        }
+    };
 
+    private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _phone_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            try {
+                Contact contact = _workOrder.getContacts()[0];
+                Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                callIntent.setData(Uri.parse("tel:" + contact.getPhoneNumber()));
+                callIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                getContext().startActivity(callIntent);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
+    private final View.OnClickListener _withdraw_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WithdrawRequestDialog.Controller.show(App.get(), _workOrder.getId());
+        }
+    };
+
+    private final View.OnClickListener _message_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
+        }
+    };
+
+    private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RunningLateDialog.Controller.show(App.get(), _workOrder);
+        }
+    };
+
+    private final View.OnClickListener _map_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_workOrder != null) {
+                com.fieldnation.data.v2.Location location = _workOrder.getLocation();
+                if (location != null) {
+                    try {
+                        String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
+                        String _uriString = "geo:0,0?q=" + _fullAddress;
+                        Uri _uri = Uri.parse(_uriString);
+                        Intent intent = new Intent(Intent.ACTION_VIEW);
+                        intent.setData(_uri);
+                        ActivityResultClient.startActivity(App.get(), intent);
+                    } catch (Exception e) {
+                        Log.v(TAG, e);
+                        ToastClient.toast(App.get(), "Could not start map", Toast.LENGTH_SHORT);
+                    }
+                }
+            }
         }
     };
 
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            getContext().startActivity(WorkorderActivity.makeIntentShow(getContext(), _workOrder.getId()));
+//            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+            ActivityResultClient.startActivity(
+                    App.get(),
+                    WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),
+                    R.anim.activity_slide_in_right,
+                    R.anim.activity_slide_out_left);
         }
     };
-
 }

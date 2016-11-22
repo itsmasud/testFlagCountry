@@ -7,9 +7,9 @@ import android.os.Parcelable;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
-import com.fieldnation.ThreadManager;
-import com.fieldnation.service.MSService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.MultiThreadedService;
+import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 import com.fieldnation.service.tracker.UploadTrackerClient;
@@ -21,7 +21,7 @@ import java.util.List;
  * <p/>
  * This class accepts web requests and stores them into the queue for processing
  */
-public class WebTransactionService extends MSService implements WebTransactionConstants {
+public class WebTransactionService extends MultiThreadedService implements WebTransactionConstants {
     private static final String TAG = "WebTransactionService";
 
     private static final Object AUTH_LOCK = new Object();
@@ -173,7 +173,12 @@ public class WebTransactionService extends MSService implements WebTransactionCo
                         extras.getBoolean(PARAM_WIFI_REQUIRED),
                         extras.getBoolean(PARAM_TRACK),
                         extras.getString(PARAM_HANDLER_NAME),
-                        extras.getByteArray(PARAM_HANDLER_PARAMS));
+                        extras.getByteArray(PARAM_HANDLER_PARAMS),
+                        extras.getInt(PARAM_NOTIFICATION_ID),
+                        extras.getByteArray(PARAM_NOTIFICATION_START),
+                        extras.getByteArray(PARAM_NOTIFICATION_SUCCESS),
+                        extras.getByteArray(PARAM_NOTIFICATION_RETRY),
+                        extras.getByteArray(PARAM_NOTIFICATION_FAILED));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
                     UploadTrackerClient.uploadQueued(App.get());

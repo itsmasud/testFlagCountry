@@ -3,13 +3,15 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.misc;
+import com.fieldnation.data.v2.Estimate;
+import com.fieldnation.data.v2.Range;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 import java.util.HashSet;
 import java.util.Iterator;
@@ -121,8 +123,44 @@ public class Workorder implements Parcelable {
     private Long _workorderId;
     @Json(name = "workorderManagerInfo")
     private User _workorderManagerInfo;
+    @Json(name = "workorderContacts")
+    private WorkorderContacts[] _workorderContacts;
+    @Json(name = "loggedWorkExists")
+    private int _loggedWorkExists;
+
 
     public Workorder() {
+    }
+
+
+    // 1=>exact schedule
+    // 2=>Buseness hours
+    // 3=>Open range
+    public com.fieldnation.data.v2.Schedule getScheduleV2() {
+        com.fieldnation.data.v2.Schedule schedule = new com.fieldnation.data.v2.Schedule();
+
+        if (getScheduleType() == 1) {
+            schedule.setExact(getSchedule().getStartTime());
+        } else if (getScheduleType() == 2) {
+            Range range = new Range();
+            range.setBegin(getSchedule().getStartTime());
+            range.setEnd(getSchedule().getEndTime());
+            range.setType(Range.Type.BUSINESS);
+            schedule.setRange(range);
+        } else if (getScheduleType() == 3) {
+            Range range = new Range();
+            range.setBegin(getSchedule().getStartTime());
+            range.setEnd(getSchedule().getEndTime());
+            range.setType(Range.Type.RANGE);
+            schedule.setRange(range);
+        }
+
+        if (getEstimatedSchedule() != null) {
+            Estimate estimate = new Estimate();
+            estimate.setArrival(getEstimatedSchedule().getStartTime());
+            schedule.setEstimate(estimate);
+        }
+        return schedule;
     }
 
     public JsonArray getActions() {
@@ -348,7 +386,7 @@ public class Workorder implements Parcelable {
 
     public boolean isW2Workorder() {
         if (_w2 == null) return false;
-        return _w2 == 1 ? true : false;
+        return _w2 == 1;
     }
 
     public Long getWorkorderId() {
@@ -357,6 +395,10 @@ public class Workorder implements Parcelable {
 
     public User getWorkorderManagerInfo() {
         return _workorderManagerInfo;
+    }
+
+    public WorkorderContacts[] getWorkorderContacts() {
+        return _workorderContacts;
     }
 
     public JsonObject toJson() {
@@ -614,6 +656,9 @@ public class Workorder implements Parcelable {
         return getWorkorderSubstatus() == WorkorderSubstatus.UNCONFIRMED;
     }
 
+    public boolean isWorkLogged() {
+        return _loggedWorkExists != 0;
+    }
 
     public void dispatchOnChange() {
         Iterator<Listener> iter = _listeners.iterator();

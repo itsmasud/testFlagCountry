@@ -9,11 +9,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.ForLoopRunnable;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fntools.ForLoopRunnable;
+import com.fieldnation.fntools.misc;
 
 import java.util.List;
 import java.util.Random;

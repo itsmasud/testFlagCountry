@@ -1,7 +1,6 @@
 package com.fieldnation.ui.payment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.misc;
 
 public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";
@@ -78,9 +77,7 @@ public class PaymentWorkorderView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(getContext(), WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _workorder.getWorkorderId());
-            getContext().startActivity(intent);
+            WorkorderActivity.startNew(getContext(), _workorder.getWorkorderId());
         }
     };
 

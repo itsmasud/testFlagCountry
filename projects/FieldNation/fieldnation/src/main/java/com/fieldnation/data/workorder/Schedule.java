@@ -3,14 +3,14 @@ package com.fieldnation.data.workorder;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -27,10 +27,16 @@ public class Schedule implements Parcelable {
     private String _endTime;
     @Json(name = "startTime")
     private String _startTime;
+//    @Json(name = "startTimeHours") // Don't use this because it will give you wrong time
+//    private String _startTimeHours;
     @Json(name = "workorderScheduleId")
     private Integer _workorderScheduleId;
     @Json(name = "type")
     private Integer _type;
+    @Json(name = "note")
+    private String _note;
+
+
 
     public Schedule() {
     }
@@ -49,6 +55,10 @@ public class Schedule implements Parcelable {
 
     public Integer getWorkorderScheduleId() {
         return _workorderScheduleId;
+    }
+
+    public String getNote() {
+        return _note;
     }
 
     public JsonObject toJson() {

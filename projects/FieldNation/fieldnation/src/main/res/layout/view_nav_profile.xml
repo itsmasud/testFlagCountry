@@ -15,7 +15,7 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@id/profile_name_textview"
+            android:id="@+id/profile_name_textview"
             style="@style/DrawerProfileName"
             android:text="@string/placeholder_phrase" />
 

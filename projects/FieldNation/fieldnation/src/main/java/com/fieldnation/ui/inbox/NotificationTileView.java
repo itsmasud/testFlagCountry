@@ -13,13 +13,13 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.DateUtils;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
 public class NotificationTileView extends RelativeLayout {
     private static final String TAG = "NotificationTileView";
@@ -150,15 +150,9 @@ public class NotificationTileView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_notification.getWorkorder() != null && _notification.getWorkorder().getWorkorderId() != null) {
-                Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorder().getWorkorderId());
-                getContext().startActivity(intent);
+                WorkorderActivity.startNew(getContext(), _notification.getWorkorder().getWorkorderId(), WorkorderActivity.TAB_DETAILS);
             } else if (_notification.getWorkorderId() != null) {
-                Intent intent = new Intent(getContext(), WorkorderActivity.class);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-                intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, _notification.getWorkorderId());
-                getContext().startActivity(intent);
+                WorkorderActivity.startNew(getContext(), _notification.getWorkorderId(), WorkorderActivity.TAB_DETAILS);
             } else if (_span != null) {
                 Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(_span.getURL()));
                 getContext().startActivity(intent);

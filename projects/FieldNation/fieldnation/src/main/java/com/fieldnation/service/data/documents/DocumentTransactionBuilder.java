@@ -3,8 +3,8 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 import android.content.res.Resources;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.service.transaction.Priority;
@@ -21,8 +21,17 @@ public class DocumentTransactionBuilder {
             Resources res = context.getResources();
             HttpJsonBuilder builder = new HttpJsonBuilder().path(link);
 
+            WebTransactionBuilder webBuilder = WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(DocumentTransactionHandler.class)
+                    .handlerParams(DocumentTransactionHandler.pDownload(documentId, filename))
+                    .key((isSync ? "Sync/" : "") + "Document/" + documentId)
+                    .useAuth(false)
+                    .isSyncCall(isSync)
+                    .request(builder);
+
             if (!isSync) {
-                builder.notify(new NotificationDefinition(
+                webBuilder.notify(new NotificationDefinition(
                                 R.drawable.ic_anim_download_start,
                                 res.getString(R.string.app_name),
                                 res.getString(R.string.notification_start_body_downloading, filename),
@@ -47,16 +56,8 @@ public class DocumentTransactionBuilder {
                                 res.getString(R.string.notification_retry_body_downloading, filename)
                         ));
             }
+            webBuilder.send();
 
-            WebTransactionBuilder.builder(context)
-                    .priority(Priority.HIGH)
-                    .handler(DocumentTransactionHandler.class)
-                    .handlerParams(DocumentTransactionHandler.pDownload(documentId, filename))
-                    .key((isSync ? "Sync/" : "") + "Document/" + documentId)
-                    .useAuth(false)
-                    .isSyncCall(isSync)
-                    .request(builder)
-                    .send();
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

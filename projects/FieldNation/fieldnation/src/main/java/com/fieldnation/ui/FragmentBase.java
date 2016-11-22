@@ -4,7 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 
-import com.fieldnation.Log;
+import com.fieldnation.fnlog.Log;
 
 import java.util.List;
 

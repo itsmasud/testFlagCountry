@@ -8,25 +8,28 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.SimpleGps;
+import com.fieldnation.data.profile.Profile;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.SimpleGps;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.v2.workorder.SearchParams;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderActivity;
-import com.fieldnation.utils.misc;
 
 import java.util.List;
 
@@ -56,10 +59,11 @@ public class SearchEditScreen extends RelativeLayout {
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
-    private Button _actionButton;
+    private IconFontButton _actionButton;
 
     // Services
     private WorkorderClient _workorderClient;
+    private SimpleGps _simpleGps;
 
     // Data
     private Listener _listener;
@@ -95,10 +99,11 @@ public class SearchEditScreen extends RelativeLayout {
 
         _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
         _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
+
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _statusSpinner.setAdapter(adapter);
-        _statusSpinner.setSelection(1);
+        _statusSpinner.setSelection(0);
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
@@ -116,7 +121,7 @@ public class SearchEditScreen extends RelativeLayout {
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
-        _actionButton = (Button) findViewById(R.id.action_button);
+        _actionButton = (IconFontButton) findViewById(R.id.action_button);
         _actionButton.setOnClickListener(_action_onClick);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
@@ -125,6 +130,8 @@ public class SearchEditScreen extends RelativeLayout {
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
         }
+
+        _simpleGps = new SimpleGps(App.get());
     }
 
     @Override
@@ -146,7 +153,7 @@ public class SearchEditScreen extends RelativeLayout {
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
-            final SearchParams searchParams = new SearchParams()
+            final SavedSearchParams searchParams = new SavedSearchParams()
                     .type(TYPES[_statusSpinner.getSelectedItemPosition()].getType())
                     .status(TYPES[_statusSpinner.getSelectedItemPosition()].getStatuses())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
@@ -158,14 +165,19 @@ public class SearchEditScreen extends RelativeLayout {
                     SearchResultsActivity.runSearch(getContext(), searchParams);
                     break;
                 case 1: // here
-                    SimpleGps.with(getContext()).start(new SimpleGps.Listener() {
+                    _simpleGps.updateListener(new SimpleGps.Listener() {
                         @Override
                         public void onLocation(Location location) {
                             searchParams.location(location.getLatitude(), location.getLongitude());
                             SearchResultsActivity.runSearch(getContext(), searchParams);
-                            SimpleGps.with(getContext()).stop();
+                            _simpleGps.stop();
                         }
-                    });
+
+                        @Override
+                        public void onFail() {
+                            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+                        }
+                    }).start(getContext());
                     break;
                 case 2: // other
                     new AsyncTaskEx<String, Object, Address>() {
@@ -282,8 +294,11 @@ public class SearchEditScreen extends RelativeLayout {
                 if (_listener != null)
                     _listener.showNotAvailableDialog();
             } else {
-                ActivityResultClient.startActivity(App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorderId));
+                ActivityResultClient.startActivity(
+                        App.get(),
+                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
+                        R.anim.activity_slide_in_right,
+                        R.anim.activity_slide_out_left);
             }
         }
     };

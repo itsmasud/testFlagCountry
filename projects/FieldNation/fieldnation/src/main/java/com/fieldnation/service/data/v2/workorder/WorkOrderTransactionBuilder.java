@@ -4,14 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransactionBuilder;
 import com.fieldnation.service.transaction.WebTransactionHandler;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -19,7 +20,7 @@ import com.fieldnation.utils.misc;
 public class WorkOrderTransactionBuilder implements WorkOrderConstants {
     private static final String TAG = "WorkOrderTransactionBuilder";
 
-    public static void search(Context context, SearchParams searchParams, int page) {
+    public static void search(Context context, SavedSearchParams searchParams, int page) {
         try {
             WebTransactionBuilder.builder(context)
                     .priority(Priority.HIGH)
@@ -48,11 +49,56 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
                         + (misc.isEmptyOrNull(declineExplanation) ? "" : "&reason_other=" + misc.escapeForURL(declineExplanation)));
     }
 
+    public static void actionEta(Context context, long workorderId, String startTime, String endTime, String note) {
+        action(context, workorderId, "confirm-eta", null,
+                HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED,
+                "start_time=" + startTime
+                        + "&end_time=" + endTime
+                        + (misc.isEmptyOrNull(note) ? "" : "&note=" + misc.escapeForURL(note)));
+    }
+
+    public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
+        App.get().setInteractedWorkorder();
+        try {
+            JsonObject _action = new JsonObject();
+            _action.put("_action[0].action", "on-my-way");
+
+            HttpJsonBuilder http = new HttpJsonBuilder()
+                    .protocol("https")
+                    .method("POST")
+                    .timingKey("POST/api/rest/v2/workorders/[workorderId]/on-my-way")
+                    .path("/api/rest/v2/workorders/" + workOrderId + "/on-my-way")
+                    .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
+
+            if (lat != null && lon != null) {
+                http.body("{\"lat\"=" + lat + ", \"lon\"=" + lon + "}");
+            }
+
+            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
+                    .priority(Priority.HIGH)
+                    .handler(WorkOrderTransactionHandler.class)
+                    .handlerParams(WorkOrderTransactionHandler.pAction(workOrderId, "on-my-way"))
+                    .useAuth(true)
+                    .key("Workorders/" + workOrderId + "/on-my-way")
+                    .request(http)
+                    .transform(Transform.makeTransformQuery(
+                            PSO_WORKORDER,
+                            workOrderId,
+                            "merges",
+                            _action.toByteArray()));
+
+            context.startService(builder.makeIntent());
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
+
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
     private static void action(Context context, long workorderId, String action, String params,
                                String contentType, String body) {
+        Log.e(TAG, "body: " + body);
         action(context, workorderId, action, params, contentType, body, true);
     }
 

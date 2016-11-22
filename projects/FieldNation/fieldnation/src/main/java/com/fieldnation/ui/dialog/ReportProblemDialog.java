@@ -18,15 +18,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.ReportProblemListFactory;
 import com.fieldnation.service.data.workorder.ReportProblemType;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.utils.misc;
 
 /**
  * Created by Michael Carver on 11/25/2015.
@@ -118,7 +118,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             _secondaryPosition = savedInstanceState.getInt(STATE_SECONDARY_POS);
 
         if (savedInstanceState.containsKey(STATE_WORKORDER))
-            _workorder = (Workorder) savedInstanceState.getParcelable(STATE_WORKORDER);
+            _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
 
         if (savedInstanceState.containsKey(STATE_SELECTED_PROBLEM))
             _selectedProblem = ReportProblemType.values()[savedInstanceState.getInt(STATE_SELECTED_PROBLEM)];
@@ -130,14 +130,14 @@ public class ReportProblemDialog extends DialogFragmentBase {
             _primaryList = ReportProblemListFactory.getPrimaryList(_workorder);
             if (_primaryList != null) {
                 getPrimaryAdapter().clear();
-                getPrimaryAdapter().addAll(_primaryList);
+                getPrimaryAdapter().addAll((Object[]) _primaryList);
 
                 if (_primaryPosition != -1) {
                     getPrimarySpinner().setSelection(_primaryPosition);
                     _secondaryList = ReportProblemListFactory.getSecondaryList(_workorder, _primaryList[_primaryPosition]);
                     if (_secondaryList != null) {
                         getSecondaryAdapter().clear();
-                        getSecondaryAdapter().addAll(_secondaryList);
+                        getSecondaryAdapter().addAll((Object[]) _secondaryList);
                     }
                     if (_secondaryPosition != -1 && _secondaryList != null) {
                         getSecondarySpinner().setSelection(_secondaryPosition);
@@ -262,7 +262,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             } else if (pList != _primaryList) {
                 _primaryList = pList;
                 getPrimaryAdapter().clear();
-                getPrimaryAdapter().addAll(_primaryList);
+                getPrimaryAdapter().addAll((Object[]) _primaryList);
                 getPrimarySpinner().clearSelection();
             }
         }
@@ -283,7 +283,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             } else if (sList != _secondaryList) {
                 _secondaryList = sList;
                 getSecondaryAdapter().clear();
-                getSecondaryAdapter().addAll(_secondaryList);
+                getSecondaryAdapter().addAll((Object[])_secondaryList);
                 getSecondarySpinner().clearSelection();
             }
         }

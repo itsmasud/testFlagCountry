@@ -1,15 +1,18 @@
 package com.fieldnation.rpc.server;
 
+import android.content.Context;
 import android.net.Uri;
 
-import com.crashlytics.android.answers.CustomEvent;
-import com.fieldnation.Debug;
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.objectstore.StoredObject;
-import com.fieldnation.utils.Stopwatch;
-import com.fieldnation.utils.StreamUtils;
-import com.fieldnation.utils.misc;
+import com.fieldnation.BuildConfig;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Timing;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnstore.StoredObject;
+import com.fieldnation.fntools.Stopwatch;
+import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.misc;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,7 +29,15 @@ import java.util.Iterator;
 public class HttpJson {
     private static final String TAG = "HttpJson";
 
-    public static HttpResult run(JsonObject request) throws Exception {
+    public interface ProgressListener {
+        void progress(long pos, long size, long time);
+    }
+
+    public static HttpResult run(Context context, JsonObject request) throws Exception {
+        return run(context, request, null);
+    }
+
+    public static HttpResult run(Context context, JsonObject request, final ProgressListener progress) throws Exception {
         String path = "";
         String timingKey = null;
         Stopwatch watch = new Stopwatch(true);
@@ -90,6 +101,8 @@ public class HttpJson {
             conn.setUseCaches(false);
             conn.setRequestProperty("Pragma", "no-cache");
             conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
+            conn.setRequestProperty("X-App-Platform", "Android");
 
             if (headers != null) {
                 Iterator<String> e = headers.keys();
@@ -129,14 +142,14 @@ public class HttpJson {
                             String filename = fo.getString("filename");
                             long soId = fo.getLong("soid");
                             String contentType = fo.getString("contentType");
-                            StoredObject so = StoredObject.get(soId);
+                            StoredObject so = StoredObject.get(context, soId);
 
                             File sourceFile = so.getFile();
                             Log.v(TAG, sourceFile.toString() + ":" + sourceFile.length());
                             if (so.isFile()) {
                                 InputStream fin = new FileInputStream(sourceFile);
                                 try {
-                                    util.addFilePart(key, filename, fin, (int) sourceFile.length());
+                                    util.addFilePart(key, filename, fin, (int) sourceFile.length(), progress);
                                 } finally {
                                     fin.close();
                                 }
@@ -148,7 +161,7 @@ public class HttpJson {
                             String filename = fo.getString("filename");
                             String contentType = fo.getString("contentType");
 
-                            util.addFilePart(key, filename, Uri.parse(uri), contentType);
+                            util.addFilePart(key, filename, Uri.parse(uri), contentType, progress);
                         }
                     }
                     util.finish();
@@ -156,11 +169,21 @@ public class HttpJson {
 
             } else if (request.has(HttpJsonBuilder.PARAM_WEB_BODY_SOID)) {
                 long soid = request.getLong(HttpJsonBuilder.PARAM_WEB_BODY_SOID);
-                StoredObject so = StoredObject.get(soid);
+                final StoredObject so = StoredObject.get(context, soid);
                 conn.setDoOutput(true);
                 OutputStream out = conn.getOutputStream();
                 if (so.isFile()) {
-                    StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100);
+                    if (progress != null) {
+                        final long startTime = System.currentTimeMillis();
+                        StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, new StreamUtils.ProgressListener() {
+                            @Override
+                            public void progress(int position) {
+                                progress.progress(position, so.getFile().length(), System.currentTimeMillis() - startTime);
+                            }
+                        });
+                    } else {
+                        StreamUtils.copyStream(new FileInputStream(so.getFile()), out, (int) so.getFile().length(), 100, null);
+                    }
                 } else {
                     out.write(so.getData());
                 }
@@ -181,13 +204,18 @@ public class HttpJson {
             }
         } finally {
             if (timingKey != null) {
-                Debug.logCustom(new CustomEvent("WebTime").putCustomAttribute(timingKey, watch.finish()));
+                Tracker.timing(context,
+                        new Timing.Builder()
+                                .tag(AnswersWrapper.TAG)
+                                .category("Web Timing")
+                                .label(timingKey)
+                                .timing((int) watch.finish())
+                                .build());
                 Log.v(TAG, timingKey + " run time: " + watch.getTime());
             } else {
                 //Debug.logCustom(new CustomEvent("WebTime").putCustomAttribute("Unknown", watch.finish()));
                 Log.v(TAG, "run time: " + watch.getTime());
             }
-
         }
     }
 

@@ -1,10 +1,11 @@
 buildscript {
     repositories {
         maven { url 'https://maven.fabric.io/public' }
+        maven { url 'http://maven.snplow.com/releases' }
     }
 
     dependencies {
-        classpath 'io.fabric.tools:gradle:1.21.4'
+        classpath 'io.fabric.tools:gradle:1.+'
     }
 }
 apply plugin: 'com.android.application'
@@ -27,8 +28,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 89
-        versionName "2.6.0"
+        versionCode 90
+        versionName "3.0.0"
         multiDexEnabled true
     }
 
@@ -63,6 +64,12 @@ android {
             applicationId "com.fieldnation.android.mobile"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Mobile"'
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.mobile"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
+        ncns {
+            applicationId "com.fieldnation.android.ncns"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncns"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
         blue {
@@ -100,11 +107,18 @@ android {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile project(':libJson')
-    compile project(':libUtils')
+    compile project(':fnlog')
+    compile project(':fntools')
+    compile project(':fnjson')
+    compile project(':fnpigeon')
+    compile project(':fnstore')
+    compile project(':fntoast')
+    compile project(':fngps')
+    compile project(':fndialog')
+    compile project(':fnanalytics')
+
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'
-    compile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
     compile 'com.android.support:design:22.2.1'
     compile 'com.android.support:recyclerview-v7:22.2.1'
@@ -121,4 +135,9 @@ dependencies {
     // ZXing - barcode scanning
     compile 'com.journeyapps:zxing-android-embedded:3.0.3@aar'
     compile 'com.google.zxing:core:3.2.1'
+
+    // Snowplow
+    compile 'com.snowplowanalytics:snowplow-android-tracker:0.6.0@aar'
+    // Required Dependency for snowplow
+    compile 'com.squareup.okhttp3:okhttp:3.4.1'
 }

@@ -8,24 +8,24 @@ import android.widget.ImageView;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fndialog.DialogManager;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.ui.workorder.MyWorkActivity;
-import com.fieldnation.utils.MemUtils;
+import com.fieldnation.ui.nav.NavActivity;
 
 /**
  * Created by michael.carver on 12/18/2014.
  */
-public class SplashActivity extends AuthFragmentActivity {
+public class SplashActivity extends AuthSimpleActivity {
     private static final String TAG = "SplashActivity";
 
     private static final String STATE_PROFILE = "STATE_PROFILE";
     private static final String STATE_IS_AUTH = "STATE_IS_AUTH";
-    private static final String STATE_SHOWING_DIALOG = "STATE_SHOWING_DIALOG";
 
     private Profile _profile = null;
     private boolean _isAuth = false;
@@ -42,7 +42,15 @@ public class SplashActivity extends AuthFragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         getWindow().requestFeature(Window.FEATURE_NO_TITLE);
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_splash);
+    }
+
+    @Override
+    public int getLayoutResource() {
+        return R.layout.activity_splash;
+    }
+
+    @Override
+    public void onFinishCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_IS_AUTH)) {
                 _isAuth = savedInstanceState.getBoolean(STATE_IS_AUTH);
@@ -53,9 +61,19 @@ public class SplashActivity extends AuthFragmentActivity {
         }
 
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
-            final int reqHeight = fnLogo.getLayoutParams().height;
-            fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
-        Log.v(TAG, "onCreate");
+        final int reqHeight = fnLogo.getLayoutParams().height;
+        fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
+        Log.v(TAG, "onFinishCreate");
+    }
+
+    @Override
+    public int getToolbarId() {
+        return 0;
+    }
+
+    @Override
+    public DialogManager getDialogManager() {
+        return null;
     }
 
     @Override
@@ -65,6 +83,10 @@ public class SplashActivity extends AuthFragmentActivity {
             outState.putParcelable(STATE_PROFILE, _profile);
         }
         super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onProfile(Profile profile) {
     }
 
     @Override
@@ -94,6 +116,12 @@ public class SplashActivity extends AuthFragmentActivity {
             Log.v(TAG, ex);
         }
         super.onStop();
+    }
+
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
 
     private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
@@ -149,7 +177,7 @@ public class SplashActivity extends AuthFragmentActivity {
             if (!_calledMyWork) {
                 Log.v(TAG, "doNextStep 5");
                 _calledMyWork = true;
-                MyWorkActivity.startNew(this);
+                NavActivity.startNew(this);
                 finish();
             }
         }

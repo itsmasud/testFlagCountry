@@ -1,6 +1,5 @@
 package com.fieldnation.ui.worecycler;
 
-import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 /**

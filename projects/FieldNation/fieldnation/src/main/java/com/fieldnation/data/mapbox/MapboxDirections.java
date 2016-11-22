@@ -3,11 +3,11 @@ package com.fieldnation.data.mapbox;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 6/22/2016.
@@ -57,7 +57,7 @@ public class MapboxDirections implements Parcelable {
     /*-*********************************************-*/
     /*-			Parcelable Implementation			-*/
     /*-*********************************************-*/
-    public static final Parcelable.Creator<MapboxDirections> CREATOR = new Parcelable.Creator<MapboxDirections>() {
+    public static final Creator<MapboxDirections> CREATOR = new Creator<MapboxDirections>() {
 
         @Override
         public MapboxDirections createFromParcel(Parcel source) {

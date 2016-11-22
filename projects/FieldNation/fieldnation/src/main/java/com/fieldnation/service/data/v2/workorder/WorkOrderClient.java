@@ -4,14 +4,15 @@ import android.content.Context;
 import android.os.Bundle;
 import android.os.Parcelable;
 
-import com.fieldnation.AsyncTaskEx;
-import com.fieldnation.Log;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.v2.ListEnvelope;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.v2.WorkOrder;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.service.topics.TopicClient;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fnpigeon.TopicClient;
+import com.fieldnation.fntools.AsyncTaskEx;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -30,27 +31,40 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         super(listener);
     }
 
-    public void disconnect(Context context) {
-        super.disconnect(context, TAG);
+    @Override
+    public String getUserTag() {
+        return TAG;
     }
 
     /*-********************************-*/
     /*-             Search             -*/
     /*-********************************-*/
-    public static void search(Context context, SearchParams searchParams, int page) {
+    public static void search(Context context, SavedSearchParams searchParams, int page) {
         WorkOrderTransactionBuilder.search(context, searchParams, page);
     }
 
-    public boolean subSearch(SearchParams searchParams) {
-        return register(TOPIC_ID_SEARCH + "/" + searchParams.toKey(), TAG);
+    public boolean subSearch(SavedSearchParams searchParams) {
+        return register(TOPIC_ID_SEARCH + "/" + searchParams.toKey());
     }
 
     public boolean subSearch() {
-        return register(TOPIC_ID_SEARCH, TAG);
+        return register(TOPIC_ID_SEARCH);
     }
 
-    public static void actionDecline(Context context, long workorderId, int declineReasonId, String declineExplanation) {
-        WorkOrderTransactionBuilder.actionDecline(context, workorderId, declineReasonId, declineExplanation);
+    public static void actionDecline(Context context, long workOrderId, int declineReasonId, String declineExplanation) {
+        WorkOrderTransactionBuilder.actionDecline(context, workOrderId, declineReasonId, declineExplanation);
+    }
+
+    public static void actionEta(Context context, long workOrderId, String startTime, String endTime, String note) {
+        WorkOrderTransactionBuilder.actionEta(context, workOrderId, startTime, endTime, note);
+    }
+
+    public static void actionOnMyWay(Context context, long workOrderId, Double lat, Double lon) {
+        WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
+    }
+
+    public boolean subActions() {
+        return register(TOPIC_ID_ACTION_COMPLETE);
     }
 
 
@@ -79,7 +93,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
         private void preOnSearch(Bundle payload) {
             new AsyncTaskEx<Bundle, Object, List<WorkOrder>>() {
-                SearchParams searchParams;
+                SavedSearchParams searchParams;
                 ListEnvelope envelope;
                 boolean failed;
 
@@ -113,7 +127,7 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
             }.executeEx(payload);
         }
 
-        public void onSearch(SearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
+        public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
         }
     }
 }

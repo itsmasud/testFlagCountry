@@ -14,43 +14,40 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GoogleAnalyticsTopicClient;
-import com.fieldnation.GpsLocationService;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Expense;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fngps.GpsLocationService;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.service.toast.ToastClient;
 import com.fieldnation.ui.LeavingActivity;
 import com.fieldnation.ui.OverScrollListView;
 import com.fieldnation.ui.PagingAdapter;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.TabActionBarFragmentActivity;
 import com.fieldnation.ui.UnavailableCardView;
-import com.fieldnation.ui.dialog.AcceptBundleDialog;
-import com.fieldnation.ui.dialog.ConfirmDialog;
 import com.fieldnation.ui.dialog.CounterOfferDialog;
 import com.fieldnation.ui.dialog.DeviceCountDialog;
-import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
+import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
+import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
+import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
-import com.fieldnation.utils.ISO8601;
-import com.fieldnation.utils.misc;
 
-import java.text.ParseException;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,18 +61,19 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_DEVICE_COUNT = TAG_BASE + ".STATE_DEVICE_COUNT";
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
+    // Dialog tags
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
+
     // UI
     private OverScrollListView _listView;
     private RefreshView _loadingView;
     private UnavailableCardView _emptyView;
 
     // Dialogs
-    private ExpiresDialog _expiresDialog;
-    private ConfirmDialog _confirmDialog;
+    private EtaDialog _etaDialog;
     private DeviceCountDialog _deviceCountDialog;
     private CounterOfferDialog _counterOfferDialog;
     private TermsDialog _termsDialog;
-    private AcceptBundleDialog _acceptBundleDialog;
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
@@ -159,11 +157,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         _emptyView = (UnavailableCardView) view.findViewById(R.id.empty_view);
 
-        _acceptBundleDialog = AcceptBundleDialog.getInstance(getFragmentManager(), TAG);
-        _confirmDialog = ConfirmDialog.getInstance(getFragmentManager(), TAG);
         _counterOfferDialog = CounterOfferDialog.getInstance(getFragmentManager(), TAG);
         _deviceCountDialog = DeviceCountDialog.getInstance(getFragmentManager(), TAG);
-        _expiresDialog = ExpiresDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -237,18 +232,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         setLoading(true);
 
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
-
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
                 getString(R.string.dialog_location_loading_button),
                 _locationLoadingDialog_listener);
 
-        _expiresDialog.setListener(_expiresDialog_listener);
-        _confirmDialog.setListener(_confirmDialog_listener);
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
-        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _reportProblemDialog.setListener(_reportProblem_listener);
 
@@ -313,7 +303,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        GoogleAnalyticsTopicClient.dispatchScreenView(App.get(), getGaLabel());
     }
 
     private void setLoading(boolean loading) {
@@ -435,11 +424,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         getLocationService().setListener(null);
         setLoading(true);
         _adapter.notifyDataSetChanged();
-        GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CHECKIN, "WorkorderCardView", 1);
         if (getLocationService().hasLocation()) {
-            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId(), getLocationService().getLocation());
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            WorkorderClient.actionCheckin(App.get(), _currentWorkorder.getWorkorderId());
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(),CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         }
 //        _adapter.refreshPages();
     }
@@ -451,29 +439,19 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         getLocationService().setListener(null);
 
         _adapter.notifyDataSetChanged();
-        GoogleAnalyticsTopicClient.dispatchEvent(
-                App.get(),
-                getGaLabel(),
-                GoogleAnalyticsTopicClient.EventAction.CHECKOUT,
-                "WorkorderCardView", 1);
 
         if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(),
-                        _currentWorkorder.getWorkorderId(),
-                        _deviceCount,
-                        getLocationService().getLocation());
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                WorkorderClient.actionCheckout(App.get(),
-                        _currentWorkorder.getWorkorderId(),
-                        getLocationService().getLocation());
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 
         } else {
             if (_deviceCount > -1) {
-                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId(), _deviceCount);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                WorkorderClient.actionCheckout(App.get(), _currentWorkorder.getWorkorderId());
+                CheckInOutDialog.Controller.show(App.get(),DIALOG_CHECK_IN_CHECK_OUT,  _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 //            _adapter.refreshPages();
         }
@@ -503,9 +481,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         // TODO: I am not pretty sure about the following method
         @Override
         public void onContinueClick() {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.MARK_INCOMPLETE, "WorkorderCardView", 1);
-
             WorkorderClient.actionIncomplete(App.get(), _currentWorkorder.getWorkorderId());
 
             setLoading(true);
@@ -615,9 +590,11 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             if (workorder.isBundle()) {
-                _acceptBundleDialog.show(workorder);
+                AcceptBundleDialog.Controller.show(App.get(), workorder.getBundleId(),
+                        workorder.getBundleCount(), workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                _expiresDialog.show(workorder);
+                EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                        workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
         }
 
@@ -628,9 +605,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
                     getString(R.string.btn_no), new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                                    GoogleAnalyticsTopicClient.EventAction.WITHDRAW_REQUEST,
-                                    "WorkorderCardView", 1);
                             WorkorderClient.actionWithdrawRequest(App.get(), workorder.getWorkorderId());
                         }
 
@@ -665,13 +639,12 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
         public void actionAcknowledgeHold(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.ACK_HOLD, "WorkorderCardView", 1);
             WorkorderClient.actionAcknowledgeHold(App.get(), workorder.getWorkorderId());
             _adapter.refreshPages();
         }
@@ -684,41 +657,29 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void onClick(WorkorderCardView view, Workorder workorder) {
             setLoading(true);
-            Intent intent = new Intent(getActivity(), WorkorderActivity.class);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorder.getWorkorderId());
-//            intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER, workorder);
-            intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
-            getActivity().startActivity(intent);
+            WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
             view.setDisplayMode(WorkorderCardView.MODE_DOING_WORK);
         }
 
         @Override
         public void onViewPayments(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.VIEW_PAY, "WorkorderCardView", 1);
-
             if (workorder.getPaymentId() != null) {
-                Intent intent = new Intent(getActivity(), PaymentDetailActivity.class);
-                intent.putExtra(PaymentDetailActivity.INTENT_KEY_PAYMENT_ID, workorder.getPaymentId());
-                startActivity(intent);
+                PaymentDetailActivity.startNew(App.get(), workorder.getPaymentId());
             } else {
-                Intent intent = new Intent(getActivity(), PaymentListActivity.class);
-                startActivity(intent);
+                PaymentListActivity.startNew(App.get());
             }
         }
 
         @Override
         public void actionReadyToGo(WorkorderCardView view, Workorder workorder) {
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.READY_TO_GO, "WorkorderCardView", 1);
-
             WorkorderClient.actionReadyToGo(App.get(), workorder.getWorkorderId());
         }
 
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _confirmDialog.show(workorder, workorder.getSchedule());
+            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -726,8 +687,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             com.fieldnation.data.workorder.Location location = workorder.getLocation();
             if (location != null) {
                 try {
-                    GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                            GoogleAnalyticsTopicClient.EventAction.START_MAP, "WorkFragment", 1);
                     String _fullAddress = misc.escapeForURL(location.getFullAddressOneLine());
                     String _uriString = "geo:0,0?q=" + _fullAddress;
                     Uri _uri = Uri.parse(_uriString);
@@ -764,13 +723,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     /*-*****************************************-*/
     /*-				Events Dialogs				-*/
     /*-*****************************************-*/
-    private final AcceptBundleDialog.Listener _acceptBundleDialog_listener = new AcceptBundleDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder) {
-            _expiresDialog.show(workorder);
-        }
-    };
-
     private final DeviceCountDialog.Listener _deviceCountDialog_listener = new DeviceCountDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, int count) {
@@ -788,60 +740,10 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         }
     };
 
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            long time = -1;
-            if (dateTime != null) {
-                try {
-                    time = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
-            }
-            // request the workorder
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.REQUEST_WORK, "WorkorderCardView", 1);
-            WorkorderClient.actionRequest(App.get(), workorder.getWorkorderId(), time);
-
-            // notify the UI
-            _adapter.refreshPages();
-        }
-    };
-
-    private final ConfirmDialog.Listener _confirmDialog_listener = new ConfirmDialog.Listener() {
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            //set  loading mode
-            try {
-                GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(), GoogleAnalyticsTopicClient.EventAction.CONFIRM_ASSIGN, "WorkorderCardView", 1);
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end));
-                _adapter.refreshPages();
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
-        }
-
-    };
-
     private final CounterOfferDialog.Listener _counterOfferDialog_listener = new CounterOfferDialog.Listener() {
         @Override
         public void onOk(Workorder workorder, String reason, boolean expires,
                          int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-
-            GoogleAnalyticsTopicClient.dispatchEvent(App.get(), getGaLabel(),
-                    GoogleAnalyticsTopicClient.EventAction.COUNTER, "WorkorderCardView", 1);
-
             WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(),
                     expires, reason, expirationInSeconds, pay, schedule, expenses);
 

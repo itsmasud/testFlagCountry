@@ -8,9 +8,9 @@ import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
 
 public class ActionView extends RelativeLayout implements WorkorderRenderer {
     private static final String TAG = "ActionView";

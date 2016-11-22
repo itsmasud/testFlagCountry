@@ -8,21 +8,20 @@ import android.support.v4.app.NotificationCompat;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.Debug;
 import com.fieldnation.GlobalTopicClient;
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.ThreadManager;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.json.JsonObject;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ThreadManager;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.rpc.server.HttpJson;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
-import com.fieldnation.service.toast.ToastClient;
-import com.fieldnation.utils.DebugUtils;
-import com.fieldnation.utils.misc;
 
 import java.io.EOFException;
 import java.io.FileNotFoundException;
@@ -71,18 +70,27 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         start();
     }
 
+    private static class MyProgressListener implements HttpJson.ProgressListener {
+        public WebTransaction trans;
+
+        public void MyProgressListener() {
+        }
+
+        @Override
+        public void progress(long pos, long size, long time) {
+            WebTransactionHandler.transactionProgress(App.get(), trans.getHandlerName(), trans, pos, size, time);
+        }
+    }
+
+    private final MyProgressListener _http_progress = new MyProgressListener();
+
     @Override
     public boolean doWork() {
-        //if (_isFirstThread) {
-        //    Log.v(TAG, "Trans Count: " + WebTransaction.count());
-        //    Log.v(TAG, "Wifi Req Trans Count: " + WebTransaction.countWifiRequired());
-        //}
-
         // try to get a transaction
         if (!App.get().isConnected()) {
             Log.v(TAG, "Testing connection");
             try {
-                HttpJson.run(TEST_QUERY);
+                HttpJson.run(_service, TEST_QUERY);
                 GlobalTopicClient.networkConnected(_service);
                 Log.v(TAG, "Testing connection... success!");
             } catch (Exception e) {
@@ -168,12 +176,12 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
 
 
-            if (request.has(HttpJsonBuilder.PARAM_NOTIFICATION_ID)) {
-                notifId = request.getInt(HttpJsonBuilder.PARAM_NOTIFICATION_ID);
-                notifStart = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_START));
-                notifSuccess = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_SUCCESS));
-                notifFailed = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_FAILED));
-                notifRetry = NotificationDefinition.fromJson(request.getJsonObject(HttpJsonBuilder.PARAM_NOTIFICATION_RETRY));
+            if (trans.getNotificationId() != -1) {
+                notifId = trans.getNotificationId();
+                notifStart = trans.getNotificationStart();
+                notifSuccess = trans.getNotificationSuccess();
+                notifFailed = trans.getNotificationFailed();
+                notifRetry = trans.getNotificationRetry();
                 generateNotification(notifId, notifStart);
             }
 
@@ -186,7 +194,8 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             }
 
             // **** perform request ****
-            result = HttpJson.run(request);
+            _http_progress.trans = trans;
+            result = HttpJson.run(_service, request, _http_progress);
 
             // debug output
             try {
@@ -339,7 +348,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
                 transRequeueNetworkDown(trans, notifId, notifRetry);
             } else {
                 // no freaking clue
-                Debug.logException(ex);
+                Log.logException(ex);
                 Log.v(TAG, ex);
                 WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
                 WebTransaction.delete(trans.getId());

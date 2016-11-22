@@ -3,11 +3,11 @@ package com.fieldnation.data.v2;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.Log;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.json.Serializer;
-import com.fieldnation.json.Unserializer;
-import com.fieldnation.json.annotations.Json;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Serializer;
+import com.fieldnation.fnjson.Unserializer;
+import com.fieldnation.fnjson.annotations.Json;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -34,11 +34,25 @@ public class Range implements Parcelable {
     }
 
     /**
-     *
      * @return range or business
      */
-    public String getType() {
-        return type;
+    public Type getType() {
+        if (type.equals("range"))
+            return Type.RANGE;
+
+        return Type.BUSINESS;
+    }
+
+    public void setEnd(String end) {
+        this.end = end;
+    }
+
+    public void setBegin(String begin) {
+        this.begin = begin;
+    }
+
+    public void setType(Type type) {
+        this.type = type.name().toLowerCase();
     }
 
     /*-*************************************-*/
@@ -95,5 +109,9 @@ public class Range implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
+    }
+
+    public enum Type {
+        BUSINESS, RANGE
     }
 }

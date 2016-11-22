@@ -2,12 +2,12 @@ package com.fieldnation.data.workorder;
 
 import android.content.Context;
 
-import com.fieldnation.Log;
 import com.fieldnation.R;
-import com.fieldnation.UniqueTag;
-import com.fieldnation.json.JsonArray;
-import com.fieldnation.json.JsonObject;
-import com.fieldnation.utils.StreamUtils;
+import com.fieldnation.fnjson.JsonArray;
+import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.StreamUtils;
+import com.fieldnation.fntools.UniqueTag;
 
 import java.io.InputStream;
 
