@@ -72,6 +72,12 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncns"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
+        ncnstest {
+            applicationId "com.fieldnation.android.ncnstest"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncnstest"'
+            buildConfigField "boolean", "USE_HTTPS", "true"
+        }
         blue {
             applicationId "com.fieldnation.android.blue"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Blue"'
