@@ -42,17 +42,16 @@ public class PaymentTransactionListener extends WebTransactionListener implement
     }
 
     @Override
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onSuccess(context, result, transaction, httpResult, throwable);
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
 
             switch (action) {
                 case "pList":
-                    return onSuccessList(context, result, transaction, params, httpResult, throwable);
+                    return onList(context, result, transaction, params, httpResult, throwable);
                 case "pGet":
-                    return onSuccessGet(context, result, transaction, params, httpResult, throwable);
+                    return onGet(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -61,45 +60,35 @@ public class PaymentTransactionListener extends WebTransactionListener implement
         return result;
     }
 
-    private Result onSuccessList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         int page = params.getInt("page");
-        byte[] data = httpResult.getByteArray();
 
-        PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
-        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
+        if (result != Result.CONTINUE) {
+            PaymentDispatch.list(context, page, null, true, transaction.isSync(), true);
+            return result;
+        } else {
+            byte[] data = httpResult.getByteArray();
 
-        return Result.CONTINUE;
+            PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
+            StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
+
+            return Result.CONTINUE;
+        }
     }
 
-    private Result onSuccessGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long paymentId = params.getLong("paymentId");
 
-        byte[] data = httpResult.getByteArray();
+        if (result != Result.CONTINUE) {
+            PaymentDispatch.get(context, paymentId, null, true, transaction.isSync());
+            return result;
+        } else {
+            byte[] data = httpResult.getByteArray();
 
-        PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
-        StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
+            PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
+            StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
-        return Result.CONTINUE;
-    }
-
-    @Override
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onFail(context, result, transaction, httpResult, throwable);
-        try {
-            JsonObject obj = new JsonObject(transaction.getListenerParams());
-            String action = obj.getString("action");
-
-            switch (action) {
-                case "pList":
-                    PaymentDispatch.list(context, obj.getInt("page"), null, true, transaction.isSync(), true);
-                    break;
-                case "pGet":
-                    PaymentDispatch.get(context, obj.getLong("paymentId"), null, true, transaction.isSync());
-                    break;
-            }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+            return Result.CONTINUE;
         }
-        return result;
     }
 }

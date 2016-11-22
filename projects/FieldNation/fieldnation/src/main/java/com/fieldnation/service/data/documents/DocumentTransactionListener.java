@@ -61,14 +61,13 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
     }
 
     @Override
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onSuccess(context, result, transaction, httpResult, throwable);
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
-                    return onSuccessDownload(context, result, transaction, params, httpResult, throwable);
+                    return onDownload(context, result, transaction, params, httpResult, throwable);
             }
 
         } catch (Exception ex) {
@@ -78,52 +77,33 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
         return result;
     }
 
-    private Result onSuccessDownload(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException, IOException {
+    private Result onDownload(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException, IOException {
         String filename = params.getString("filename");
         long documentId = params.getLong("documentId");
 
-        StoredObject obj = null;
-        if (httpResult.isFile()) {
-            obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getFile(), filename);
+        if (result != Result.CONTINUE) {
+            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.isSync());
+            return result;
         } else {
-            obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getByteArray(), filename);
-        }
 
-        String name = obj.getFile().getName();
-        name = name.substring(name.indexOf("_") + 1);
-        File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
-        if (!dlFolder.exists())
-            FileUtils.copyFile(obj.getFile(), dlFolder);
-
-        DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH,
-                transaction.isSync());
-
-        return Result.CONTINUE;
-    }
-
-
-    @Override
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onFail(context, result, transaction, httpResult, throwable);
-        try {
-            JsonObject params = new JsonObject(transaction.getListenerParams());
-            String action = params.getString("action");
-            switch (action) {
-                case "pDownload":
-                    return onFailDownload(context, result, transaction, params, httpResult, throwable);
+            StoredObject obj = null;
+            if (httpResult.isFile()) {
+                obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getFile(), filename);
+            } else {
+                obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getByteArray(), filename);
             }
 
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            return Result.DELETE;
+            String name = obj.getFile().getName();
+            name = name.substring(name.indexOf("_") + 1);
+            File dlFolder = new File(App.get().getDownloadsFolder() + "/" + name);
+            if (!dlFolder.exists())
+                FileUtils.copyFile(obj.getFile(), dlFolder);
+
+            DocumentDispatch.download(context, documentId, dlFolder, PARAM_STATE_FINISH,
+                    transaction.isSync());
+
+            return Result.CONTINUE;
         }
-        return result;
-    }
-
-
-    private Result onFailDownload(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
-        DocumentDispatch.download(context, params.getLong("documentId"), null, PARAM_STATE_FINISH, transaction.isSync());
-        return result;
     }
 }
 

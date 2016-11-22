@@ -91,9 +91,9 @@ public class ProfileTransactionListener extends WebTransactionListener implement
                 case "pListMessages":
                     return onListMessages(context, result, transaction, params, httpResult, throwable);
                 case "pSwitchUser":
-                    return onSuccessSwitchUser(context, result, transaction, params, httpResult, throwable);
+                    return onSwitchUser(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
-                    return onSuccessAction(context, result, transaction, params, httpResult, throwable);
+                    return onAction(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -159,22 +159,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         }
     }
 
-    private Result onAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
-        Log.v(TAG, "onAction");
-
-        long profileId = params.getLong("profileId");
-        String action = params.getString("param");
-
-        ProfileDispatch.action(context, profileId, action, false);
-
-        return Result.CONTINUE;
-    }
-
-    private Result onSuccessSwitchUser(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onSwitchUser(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onSuccessSwitchUser");
 
-        long userId = params.getLong("userId");
+        if (result != Result.CONTINUE)
+            return result;
 
+        long userId = params.getLong("userId");
         ProfileClient.get(context, false);
         ProfileClient.listMessages(context, 0, false, false);
         ProfileClient.listNotifications(context, 0, false, false);
@@ -189,29 +180,17 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         return Result.CONTINUE;
     }
 
-    @Override
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onFail(context, result, transaction, httpResult, throwable);
-        try {
-            JsonObject params = new JsonObject(transaction.getListenerParams());
-            String action = params.getString("action");
+    private Result onAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onAction");
+        long profileId = params.getLong("profileId");
+        String action = params.getString("param");
 
-            switch (action) {
-                case "pGet":
-                    break;
-                case "pListNotifications":
-                    break;
-                case "pListMessages":
-                    ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync(), true);
-                    break;
-                case "pAction":
-                    ProfileDispatch.action(context, params.getLong("profileId"), params.getString("param"), true);
-                    break;
-            }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            return Result.RETRY;
+        if (result != Result.CONTINUE) {
+            ProfileDispatch.action(context, profileId, action, true);
+            return result;
+        } else {
+            ProfileDispatch.action(context, profileId, action, false);
+            return Result.CONTINUE;
         }
-        return result;
     }
 }

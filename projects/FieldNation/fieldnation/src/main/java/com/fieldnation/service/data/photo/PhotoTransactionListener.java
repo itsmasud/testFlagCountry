@@ -35,68 +35,65 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
     }
 
     @Override
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onSuccess(context, result, transaction, httpResult, throwable);
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Log.v(TAG, "onComplete");
-        try {
-            JsonObject json = new JsonObject(transaction.getListenerParams());
-            boolean getCircle = json.getBoolean("circle");
-            String url = json.getString("url");
-            String imageObjectName = "PhotoCache";
-            String circleObjectName = "PhotoCacheCircle";
+        if (result != Result.CONTINUE) {
+            try {
+                JsonObject json = new JsonObject(transaction.getListenerParams());
+                boolean getCircle = json.getBoolean("circle");
+                String url = json.getString("url");
 
-            Log.v(TAG, "onComplete " + url + "," + getCircle);
-
-            // generate the bitmaps
-            byte[] imageData = httpResult.getByteArray();
-            Bitmap sourceBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
-            Bitmap imageBitmap = ImageUtils.resizeBitmap(sourceBitmap, 95, 95);
-            sourceBitmap.recycle();
-            Bitmap circleBitmap = ImageUtils.extractCircle(imageBitmap);
-
-            // Calling temp folder. Will be created if doesn't exist
-            App.get().getTempFolder();
-
-            ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
-            imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
-            StoredObject imageObj = StoredObject.put(context, App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
-            imageBitmap.recycle();
-
-
-            ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
-            circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
-            StoredObject circleObj = StoredObject.put(context, App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
-            circleBitmap.recycle();
-
-            // build the response
-
-            // done!
-            if (getCircle) {
-                PhotoDispatch.get(context, circleObj.getFile(), url, true, false, transaction.isSync());
-            } else {
-                PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
+                PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
-            Log.v(TAG, "onComplete");
             return result;
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            Log.v(TAG, "onComplete");
-            return Result.DELETE;
-        }
-    }
+        } else {
+            try {
+                JsonObject json = new JsonObject(transaction.getListenerParams());
+                boolean getCircle = json.getBoolean("circle");
+                String url = json.getString("url");
+                String imageObjectName = "PhotoCache";
+                String circleObjectName = "PhotoCacheCircle";
 
-    @Override
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onFail(context, result, transaction, httpResult, throwable);
-        try {
-            JsonObject json = new JsonObject(transaction.getListenerParams());
-            boolean getCircle = json.getBoolean("circle");
-            String url = json.getString("url");
+                Log.v(TAG, "onComplete " + url + "," + getCircle);
 
-            PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+                // generate the bitmaps
+                byte[] imageData = httpResult.getByteArray();
+                Bitmap sourceBitmap = BitmapFactory.decodeByteArray(imageData, 0, imageData.length);
+                Bitmap imageBitmap = ImageUtils.resizeBitmap(sourceBitmap, 95, 95);
+                sourceBitmap.recycle();
+                Bitmap circleBitmap = ImageUtils.extractCircle(imageBitmap);
+
+                // Calling temp folder. Will be created if doesn't exist
+                App.get().getTempFolder();
+
+                ByteArrayOutputStream imageOut = new ByteArrayOutputStream();
+                imageBitmap.compress(Bitmap.CompressFormat.PNG, 100, imageOut);
+                StoredObject imageObj = StoredObject.put(context, App.getProfileId(), imageObjectName, url, imageOut.toByteArray(), "PhotoCache.png", false);
+                imageBitmap.recycle();
+
+
+                ByteArrayOutputStream circleOut = new ByteArrayOutputStream();
+                circleBitmap.compress(Bitmap.CompressFormat.PNG, 100, circleOut);
+                StoredObject circleObj = StoredObject.put(context, App.getProfileId(), circleObjectName, url, circleOut.toByteArray(), "PhotoCacheCircle.png", false);
+                circleBitmap.recycle();
+
+                // build the response
+
+                // done!
+                if (getCircle) {
+                    PhotoDispatch.get(context, circleObj.getFile(), url, true, false, transaction.isSync());
+                } else {
+                    PhotoDispatch.get(context, imageObj.getFile(), url, false, false, transaction.isSync());
+                }
+                Log.v(TAG, "onComplete");
+                return result;
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                Log.v(TAG, "onComplete");
+                return Result.DELETE;
+            }
         }
-        return result;
     }
 }

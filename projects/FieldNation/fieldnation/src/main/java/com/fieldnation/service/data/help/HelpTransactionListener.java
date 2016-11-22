@@ -3,9 +3,11 @@ package com.fieldnation.service.data.help;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.widget.Toast;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -38,15 +40,15 @@ public class HelpTransactionListener extends WebTransactionListener {
     /*-*****************************-*/
     /*-             Good            -*/
     /*-*****************************-*/
+
     @Override
-    public Result onSuccess(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        result = super.onSuccess(context, result, transaction, httpResult, throwable);
+    public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pContactUs":
-                    return onCompleteContactUs(context, result, transaction, params, httpResult, throwable);
+                    return onContactUs(context, result, transaction, params, httpResult, throwable);
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -54,48 +56,27 @@ public class HelpTransactionListener extends WebTransactionListener {
         return result;
     }
 
-    private Result onCompleteContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
-        ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
-        return result;
-    }
+    private Result onContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
+        if (result != Result.CONTINUE) {
+            try {
+                Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
+                        params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
+                        params.getString("extraType"));
 
+                PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-    /*-****************************-*/
-    /*-             Bad            -*/
-    /*-****************************-*/
-    @Override
-    public Result onFail(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
-        // skipping because we handle the toast locally
-        //result = super.onFail(context, result, transaction, httpResult, throwable);
-        try {
-            JsonObject params = new JsonObject(transaction.getListenerParams());
-            String action = params.getString("action");
-            switch (action) {
-                case "pContactUs":
-                    onFailContactUs(context, result, transaction, params, httpResult, throwable);
-                    break;
+                ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),
+                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
             }
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+            return result;
+
+        } else {
+            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
+            return result;
         }
-        return result;
-    }
-
-    private Result onFailContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
-        try {
-            Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
-                    params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
-                    params.getString("extraType"));
-
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
-
-            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_connection_failed),
-                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
-        }
-        return result;
     }
 }

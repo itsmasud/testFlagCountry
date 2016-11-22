@@ -34,7 +34,7 @@ public class WebTransactionDispatcher {
             WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            return handler.onComplete(context, transaction, resultData, throwable);
+            return handler.preComplete(context, transaction, resultData, throwable);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);

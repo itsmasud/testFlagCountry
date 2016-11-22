@@ -552,7 +552,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
-                PendingIntent pi = PendingIntent.getActivity(App.get(), 0, intent, 0);
+                PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
                 ToastClient.snackbar(App.get(), httpResult.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
             }
 
@@ -585,7 +585,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                 ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 WorkorderDispatch.action(context, workorderId, "checkin", true);
@@ -617,7 +617,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderClient.get(context, workorderId, false);
             try {
                 Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
                 ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
                 Log.v(TAG, "Sent snackbar");
@@ -644,7 +644,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderDispatch.action(context, workorderId, "request", true);
 
             Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             try {
                 ToastClient.snackbar(context, httpResult.getString(),
@@ -782,7 +782,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderDispatch.action(context, workorderId, "assignment", true);
 
             Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             try {
                 ToastClient.snackbar(context, httpResult.getString(),
@@ -824,7 +824,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber);
             else
                 intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             ToastClient.toast(App.get(), "Could not add your shipment. Please check your connection.", Toast.LENGTH_LONG);
 
@@ -852,7 +852,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderDispatch.action(context, workorderId, "request", true);
 
             Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             ToastClient.snackbar(context, "Could not complete your shipment. Please check your connection.",
                     "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
@@ -902,7 +902,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             }
 
             Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
-            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
             try {
                 ToastClient.snackbar(context, httpResult.getString(),
@@ -929,7 +929,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                         params.getLong("workorderId"), params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
                         params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"));
 
-                PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+                PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
                 ToastClient.snackbar(context, "Could not send your rating. Please check your connection.",
                         "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);

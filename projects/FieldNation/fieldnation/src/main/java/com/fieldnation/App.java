@@ -353,7 +353,7 @@ public class App extends Application {
             _isConnected = false;
             Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
             if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                PendingIntent pi = PendingIntent.getService(App.this, App.secureRandom.nextInt(), intent, 0);
                 ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
             }
         }
