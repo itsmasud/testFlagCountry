@@ -410,7 +410,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     && httpResult.getString().equals("You don't have permission to see this workorder")) {
                 return Result.DELETE;
             } else {
-                Log.v(TAG, new TransactionException(httpResult.getString()));
                 return Result.DELETE;
             }
 
