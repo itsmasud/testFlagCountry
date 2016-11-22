@@ -98,6 +98,7 @@ public class MyGcmListenerService extends GcmListenerService {
                     case "wo": {
                         Intent workorderIntent = new Intent(this, WorkorderActivity.class);
                         workorderIntent.setAction("DUMMY");
+                        workorderIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, Long.parseLong(action.getId()));
                         workorderIntent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
                         PendingIntent pi = PendingIntent.getActivity(this, App.secureRandom.nextInt(), workorderIntent, 0);
