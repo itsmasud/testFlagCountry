@@ -261,15 +261,9 @@ public class EtaDialog extends FullScreenDialog {
             _toolbar.setTitle("Request " + _workOrderId);
             _finishMenu.setTitle(App.get().getString(R.string.btn_submit));
 
-            if (BuildConfig.FLAVOR.equals("NCNS")) {
-                _etaSwitch.setChecked(true);
-                _etaSwitchLabel.setVisibility(View.GONE);
-                _etaSwitch.setVisibility(View.GONE);
-            } else {
-                _expirationLayout.setVisibility(View.VISIBLE);
-                _etaSwitch.setVisibility(View.VISIBLE);
-                _etaSwitchLabel.setVisibility(View.VISIBLE);
-            }
+            _expirationLayout.setVisibility(View.VISIBLE);
+            _etaSwitch.setVisibility(View.VISIBLE);
+            _etaSwitchLabel.setVisibility(View.VISIBLE);
 
             SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
@@ -301,15 +295,9 @@ public class EtaDialog extends FullScreenDialog {
             _finishMenu.setTitle(App.get().getString(R.string.btn_accept));
             _expirationLayout.setVisibility(View.GONE);
 
-            if (BuildConfig.FLAVOR.equals("NCNS")) {
-                _etaSwitch.setChecked(true);
-                _etaSwitchLabel.setVisibility(View.GONE);
-                _etaSwitch.setVisibility(View.GONE);
-            } else {
-                _expirationLayout.setVisibility(View.VISIBLE);
-                _etaSwitch.setVisibility(View.VISIBLE);
-                _etaSwitchLabel.setVisibility(View.VISIBLE);
-            }
+            _etaSwitch.setChecked(true);
+            _etaSwitchLabel.setVisibility(View.GONE);
+            _etaSwitch.setVisibility(View.GONE);
 
             SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));

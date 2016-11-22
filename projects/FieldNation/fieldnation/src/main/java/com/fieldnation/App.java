@@ -748,4 +748,8 @@ public class App extends Application {
             return true;
         }
     }
+
+    public static boolean isNcns() {
+        return BuildConfig.BUILD_FLAVOR_NAME.equals("NCNS");
+    }
 }
