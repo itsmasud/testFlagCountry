@@ -110,26 +110,43 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public Bundle toBundle() {
         Bundle bundle = new Bundle();
         bundle.putLong(PARAM_ID, _id);
-        bundle.putString(PARAM_LISTENER_NAME, _listenerClassName);
-        bundle.putByteArray(PARAM_LISTENER_PARAMS, _listenerParams);
+
+        if (_listenerClassName != null)
+            bundle.putString(PARAM_LISTENER_NAME, _listenerClassName);
+
+        if (_listenerParams != null)
+            bundle.putByteArray(PARAM_LISTENER_PARAMS, _listenerParams);
+
         bundle.putSerializable(PARAM_STATE, _state);
         if (_requestString != null) {
             bundle.putByteArray(PARAM_REQUEST, _requestString.getBytes());
         }
         bundle.putSerializable(PARAM_PRIORITY, _priority);
-        bundle.putString(PARAM_KEY, _key);
+
+        if (_key != null)
+            bundle.putString(PARAM_KEY, _key);
+
         bundle.putBoolean(PARAM_USE_AUTH, _useAuth);
         bundle.putBoolean(PARAM_IS_SYNC, _isSync);
         bundle.putLong(PARAM_QUEUE_TIME, _queueTime);
         bundle.putBoolean(PARAM_WIFI_REQUIRED, _wifiRequired);
         bundle.putBoolean(PARAM_TRACK, _track);
-        bundle.putString(PARAM_TIMING_KEY, _timingKey);
+
+        if (_timingKey != null)
+            bundle.putString(PARAM_TIMING_KEY, _timingKey);
 
         bundle.putInt(PARAM_NOTIFICATION_ID, _notifId);
-        bundle.putByteArray(PARAM_NOTIFICATION_START, _notifStartArray);
-        bundle.putByteArray(PARAM_NOTIFICATION_SUCCESS, _notifSuccessArray);
-        bundle.putByteArray(PARAM_NOTIFICATION_FAILED, _notifFailedArray);
-        bundle.putByteArray(PARAM_NOTIFICATION_RETRY, _notifRetryArray);
+        if (_notifStartArray != null)
+            bundle.putByteArray(PARAM_NOTIFICATION_START, _notifStartArray);
+
+        if (_notifSuccessArray != null)
+            bundle.putByteArray(PARAM_NOTIFICATION_SUCCESS, _notifSuccessArray);
+
+        if (_notifFailedArray != null)
+            bundle.putByteArray(PARAM_NOTIFICATION_FAILED, _notifFailedArray);
+
+        if (_notifRetryArray != null)
+            bundle.putByteArray(PARAM_NOTIFICATION_RETRY, _notifRetryArray);
 
         return bundle;
     }
@@ -287,6 +304,9 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     /*-             Database interface          -*/
     /*-*****************************************-*/
     public static boolean keyExists(String key) {
+        if (key == null)
+            return false;
+        
         Log.v(TAG, "keyExists(" + key + ")");
         synchronized (TAG) {
             WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
@@ -411,7 +431,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         v.put(Column.LSITENER.getName(), obj._listenerClassName);
         v.put(Column.LISTENER_PARAMS.getName(), obj._listenerParams);
         v.put(Column.USE_AUTH.getName(), obj._useAuth ? 1 : 0);
-        
+
         if (obj._state != null) {
             v.put(Column.STATE.getName(), obj._state.ordinal());
         } else {

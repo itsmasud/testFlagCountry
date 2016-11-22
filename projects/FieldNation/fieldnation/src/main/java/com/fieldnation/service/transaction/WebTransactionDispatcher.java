@@ -12,19 +12,18 @@ import com.fieldnation.rpc.server.HttpResult;
 public class WebTransactionDispatcher {
     private static final String TAG = "WebTransactionDispatcher";
 
-    public static WebTransactionListener.Result start(Context context, String listenerName, WebTransaction transaction) {
+    public static void start(Context context, String listenerName, WebTransaction transaction) {
         try {
             Class<?> clazz = context.getClassLoader().loadClass(listenerName);
 
             WebTransactionListener handler = (WebTransactionListener) clazz.getConstructor((Class<?>[]) null)
                     .newInstance((Object[]) null);
 
-            return handler.onStart(context, transaction);
+            handler.onStart(context, transaction);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return WebTransactionListener.Result.DELETE;
     }
 
     public static WebTransactionListener.Result complete(Context context, String listenerName, WebTransaction transaction, HttpResult resultData, Throwable throwable) {

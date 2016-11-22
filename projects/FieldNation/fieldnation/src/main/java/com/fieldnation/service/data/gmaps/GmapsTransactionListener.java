@@ -39,11 +39,6 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
     }
 
     @Override
-    public Result onStart(Context context, WebTransaction transaction) {
-        return super.onStart(context, transaction);
-    }
-
-    @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());

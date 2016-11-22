@@ -289,22 +289,22 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
     /*-             onStart               -*/
     /*-***********************************-*/
     @Override
-    public Result onStart(Context context, WebTransaction transaction) {
+    public void onStart(Context context, WebTransaction transaction) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pUploadDeliverable":
-                    return onStartUploadDeliverable(context, transaction, params);
+                    onStartUploadDeliverable(context, transaction, params);
+                    break;
 
             }
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
-        return Result.CONTINUE;
     }
 
-    private Result onStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
+    private void onStartUploadDeliverable(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long slotId = params.getLong("slotId");
         String filename = params.getString("filename");
@@ -312,8 +312,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, false);
 
         UploadTrackerClient.uploadStarted(context);
-
-        return Result.CONTINUE;
     }
     /*-**************************************-*/
     /*-             onProgress               -*/

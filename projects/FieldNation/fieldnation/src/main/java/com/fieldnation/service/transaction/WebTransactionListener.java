@@ -29,8 +29,7 @@ public abstract class WebTransactionListener {
 
     public enum Result {RETRY, CONTINUE, DELETE}
 
-    public Result onStart(Context context, WebTransaction transaction) {
-        return Result.CONTINUE;
+    public void onStart(Context context, WebTransaction transaction) {
     }
 
     protected final Result preComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {

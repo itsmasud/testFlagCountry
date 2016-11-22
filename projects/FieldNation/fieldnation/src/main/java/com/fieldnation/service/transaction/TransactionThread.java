@@ -191,7 +191,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         handlerName = trans.getListenerName();
 
         if (!misc.isEmptyOrNull(handlerName)) {
-            WebTransactionListener.Result wresult = WebTransactionDispatcher.start(_service, handlerName, trans);
+            WebTransactionDispatcher.start(_service, handlerName, trans);
         }
 
         // **** perform request ****
@@ -216,6 +216,9 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             Log.v(TAG, ex);
         }
 
+        if (!misc.isEmptyOrNull(trans.getTimingKey())) {
+            recordTiming(stopwatch, trans.getTimingKey());
+        }
         // At this point we will have trans, exception and/or result
 
         WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(_service,
@@ -253,19 +256,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         Log.v(TAG, timingKey + " run time: " + stopwatch.getTime());
     }
 
-    private void transRequeueNetworkDown(WebTransaction trans, int notifId, NotificationDefinition notif) {
-        Log.v(TAG, "transRequeueNetworkDown");
-        DebugUtils.printStackTrace("transRequeueNetworkDown");
-        generateNotification(notifId, notif);
-        GlobalTopicClient.networkDisconnected(_service);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-        }
-        trans.requeue(RETRY_LONG);
-    }
-
-    protected static void generateNotification(int notifyId, NotificationDefinition notif) {
+    private static void generateNotification(int notifyId, NotificationDefinition notif) {
         if (notif == null)
             return;
 

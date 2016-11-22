@@ -35,29 +35,24 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
 
     // entry points
     @Override
-    public Result onStart(Context context, WebTransaction transaction) {
+    public void onStart(Context context, WebTransaction transaction) {
         try {
             JsonObject params = new JsonObject(transaction.getListenerParams());
             String action = params.getString("action");
             switch (action) {
                 case "pDownload":
-                    return onStartDownload(context, transaction, params);
+                    onStartDownload(context, transaction, params);
+                    break;
             }
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
-            return Result.DELETE;
         }
-        return Result.CONTINUE;
     }
 
-    public Result onStartDownload(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
-        String filename = params.getString("filename");
+    public void onStartDownload(Context context, WebTransaction transaction, JsonObject params) throws ParseException {
         long documentId = params.getLong("documentId");
-
         DocumentDispatch.download(context, documentId, null, PARAM_STATE_START, transaction.isSync());
-
-        return Result.CONTINUE;
     }
 
     @Override
