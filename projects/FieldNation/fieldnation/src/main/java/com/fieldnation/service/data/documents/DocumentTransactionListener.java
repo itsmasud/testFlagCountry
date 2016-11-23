@@ -76,11 +76,7 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
         String filename = params.getString("filename");
         long documentId = params.getLong("documentId");
 
-        if (result != Result.CONTINUE) {
-            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.isSync());
-            return result;
-        } else {
-
+        if (result == Result.CONTINUE) {
             StoredObject obj = null;
             if (httpResult.isFile()) {
                 obj = StoredObject.put(context, App.getProfileId(), PSO_DOCUMENT, documentId, httpResult.getFile(), filename);
@@ -98,6 +94,13 @@ public class DocumentTransactionListener extends WebTransactionListener implemen
                     transaction.isSync());
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            DocumentDispatch.download(context, documentId, null, PARAM_STATE_FINISH, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }

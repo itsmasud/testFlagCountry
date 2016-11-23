@@ -107,10 +107,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         // store object
         long profileId = params.getLong("profileId");
 
-        if (result != Result.CONTINUE) {
-            ProfileDispatch.get(context, profileId, null, true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             // todo parse json and put Profile/id ?
@@ -118,6 +115,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             StoredObject.put(context, (int) profileId, PSO_PROFILE, profileId, data);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ProfileDispatch.get(context, profileId, null, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -125,11 +129,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         Log.v(TAG, "onListNotifications");
         int page = params.getInt("page");
 
-        if (result != Result.CONTINUE) {
-            ProfileDispatch.listNotifications(context, null, params.getInt("page"), true, transaction.isSync(), true);
-            return result;
-        } else {
-
+        if (result == Result.CONTINUE) {
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
@@ -137,6 +137,13 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             StoredObject.put(context, App.getProfileId(), PSO_NOTIFICATION_PAGE, page, pagedata);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ProfileDispatch.listNotifications(context, null, page, true, transaction.isSync(), true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -144,11 +151,7 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         Log.v(TAG, "onListMessages");
         int page = params.getInt("page");
 
-
-        if (result != Result.CONTINUE) {
-            ProfileDispatch.listMessages(context, null, params.getInt("page"), true, transaction.isSync(), true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             // store object
             byte[] pagedata = httpResult.getByteArray();
 
@@ -156,28 +159,41 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_PAGE, page, pagedata);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ProfileDispatch.listMessages(context, null, page, true, transaction.isSync(), true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
     private Result onSwitchUser(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
-        Log.v(TAG, "onSuccessSwitchUser");
+        Log.v(TAG, "onSwitchUser");
 
-        if (result != Result.CONTINUE)
-            return result;
+        if (result == Result.CONTINUE) {
+            long userId = params.getLong("userId");
+            ProfileClient.get(context, false);
+            ProfileClient.listMessages(context, 0, false, false);
+            ProfileClient.listNotifications(context, 0, false, false);
+            WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
+            WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
+            WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
+            WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
+            WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
 
-        long userId = params.getLong("userId");
-        ProfileClient.get(context, false);
-        ProfileClient.listMessages(context, 0, false, false);
-        ProfileClient.listNotifications(context, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.AVAILABLE, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.REQUESTED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.ASSIGNED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.COMPLETED, 0, false, false);
-        WorkorderClient.list(context, WorkorderDataSelector.CANCELED, 0, false, false);
+            ProfileDispatch.switchUser(context, userId, false);
 
-        ProfileDispatch.switchUser(context, userId, false);
+            return Result.CONTINUE;
 
-        return Result.CONTINUE;
+        } else if (result == Result.DELETE) {
+            return Result.DELETE;
+
+        } else {
+
+            return Result.RETRY;
+        }
     }
 
     private Result onAction(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
@@ -185,12 +201,16 @@ public class ProfileTransactionListener extends WebTransactionListener implement
         long profileId = params.getLong("profileId");
         String action = params.getString("param");
 
-        if (result != Result.CONTINUE) {
-            ProfileDispatch.action(context, profileId, action, true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             ProfileDispatch.action(context, profileId, action, false);
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ProfileDispatch.action(context, profileId, action, true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }

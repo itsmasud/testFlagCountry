@@ -63,32 +63,40 @@ public class PaymentTransactionListener extends WebTransactionListener implement
     private Result onList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         int page = params.getInt("page");
 
-        if (result != Result.CONTINUE) {
-            PaymentDispatch.list(context, page, null, true, transaction.isSync(), true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             PaymentDispatch.list(context, page, new JsonArray(data), false, transaction.isSync(), false);
             StoredObject.put(context, App.getProfileId(), PSO_PAYMENT_LIST, page, data);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            PaymentDispatch.list(context, page, null, true, transaction.isSync(), true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
     private Result onGet(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long paymentId = params.getLong("paymentId");
 
-        if (result != Result.CONTINUE) {
-            PaymentDispatch.get(context, paymentId, null, true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             PaymentDispatch.get(context, paymentId, new JsonObject(data), false, transaction.isSync());
             StoredObject.put(context, App.getProfileId(), PSO_PAYMENT, paymentId, data);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            PaymentDispatch.get(context, paymentId, null, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }

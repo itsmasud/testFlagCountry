@@ -37,18 +37,7 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
     @Override
     public Result onComplete(Context context, Result result, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Log.v(TAG, "onComplete");
-        if (result != Result.CONTINUE) {
-            try {
-                JsonObject json = new JsonObject(transaction.getListenerParams());
-                boolean getCircle = json.getBoolean("circle");
-                String url = json.getString("url");
-
-                PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             try {
                 JsonObject json = new JsonObject(transaction.getListenerParams());
                 boolean getCircle = json.getBoolean("circle");
@@ -94,6 +83,21 @@ public class PhotoTransactionListener extends WebTransactionListener implements 
                 Log.v(TAG, "onComplete");
                 return Result.DELETE;
             }
+
+        } else if (result == Result.DELETE) {
+            try {
+                JsonObject json = new JsonObject(transaction.getListenerParams());
+                boolean getCircle = json.getBoolean("circle");
+                String url = json.getString("url");
+
+                PhotoDispatch.get(context, null, url, getCircle, true, transaction.isSync());
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }

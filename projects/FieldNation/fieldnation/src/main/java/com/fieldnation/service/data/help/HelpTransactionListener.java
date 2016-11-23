@@ -56,10 +56,17 @@ public class HelpTransactionListener extends WebTransactionListener {
     }
 
     private Result onContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             try {
                 Intent intent = HelpTransactionBuilder.actionPostContactUsIntent(context,
-                        params.getString("message"), params.getString("internalTeam"), params.getString("uri"), params.getString("extraData"),
+                        params.getString("message"),
+                        params.getString("internalTeam"),
+                        params.getString("uri"),
+                        params.getString("extraData"),
                         params.getString("extraType"));
 
                 PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
@@ -71,11 +78,10 @@ public class HelpTransactionListener extends WebTransactionListener {
                 Log.v(TAG, ex);
                 ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_sent_failed), Toast.LENGTH_LONG);
             }
-            return result;
+            return Result.DELETE;
 
         } else {
-            ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
-            return result;
+            return Result.RETRY;
         }
     }
 }

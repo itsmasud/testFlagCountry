@@ -58,21 +58,29 @@ public class GmapsTransactionListener extends WebTransactionListener implements 
 
     private Result onDirections(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onDirections");
-        if (result != Result.CONTINUE) {
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             GmapsDispatch.directions(context, params.getLong("workorderId"), httpResult.getByteArray());
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
     private Result onStaticMapClassic(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
-        if (result != Result.CONTINUE) {
-            GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), httpResult.getByteArray(), false);
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            GmapsDispatch.staticMapClassic(context, params.getLong("workorderId"), null, true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }
