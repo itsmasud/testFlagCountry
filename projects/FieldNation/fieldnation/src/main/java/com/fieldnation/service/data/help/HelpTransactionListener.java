@@ -56,6 +56,7 @@ public class HelpTransactionListener extends WebTransactionListener {
     }
 
     private Result onContactUs(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
+
         if (result == Result.CONTINUE) {
             ToastClient.snackbar(context, context.getString(R.string.snackbar_feedback_success_message), "DISMISS", null, Snackbar.LENGTH_LONG);
             return Result.CONTINUE;
