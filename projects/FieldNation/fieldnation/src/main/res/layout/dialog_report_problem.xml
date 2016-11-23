@@ -19,7 +19,6 @@
         android:focusable="true"
         android:hint="@string/dialog_report_problem_spinner_1" />
 
-
     <com.fieldnation.ui.HintSpinner
         android:id="@+id/secondary_spinner"
         style="@style/Widget.AppCompat.Spinner.Underlined"
@@ -29,11 +28,20 @@
         android:hint="@string/dialog_report_problem_spinner_1"
         android:visibility="gone" />
 
+    <com.fieldnation.ui.HintSpinner
+        android:id="@+id/time_spinner"
+        style="@style/Widget.AppCompat.Spinner.Underlined"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/secondary_spinner"
+        android:hint="How long?"
+        android:visibility="gone" />
+
     <android.support.design.widget.TextInputLayout
         android:id="@+id/explanation_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/secondary_spinner"
+        android:layout_below="@+id/time_spinner"
         android:layout_marginBottom="16dp"
         android:layout_marginLeft="-1dp">
 

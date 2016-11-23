@@ -44,6 +44,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     // Ui
     private HintSpinner _primarySpinner;
     private HintSpinner _secondarySpinner;
+    private HintSpinner _timeSpinner;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
     private TextView _noteTextView;
@@ -54,6 +55,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
     private Listener _listener;
     private ReportProblemType[] _primaryList = null;
     private ReportProblemType[] _secondaryList = null;
+    private String[] _time = new String[]{"5", "10", "15"};
 
     // Saved Data
     private Workorder _workorder;
@@ -86,6 +88,12 @@ public class ReportProblemDialog extends DialogFragmentBase {
 
         _secondarySpinner = (HintSpinner) v.findViewById(R.id.secondary_spinner);
         _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
+
+        _timeSpinner = (HintSpinner) v.findViewById(R.id.time_spinner);
+        _timeSpinner.setOnItemSelectedListener(_time_onItemClick);
+
+        _timeSpinner.setAdapter(HintArrayAdapter.createFromArray(container.getContext(), _time, R.layout.view_spinner_item));
+        ((HintArrayAdapter) _timeSpinner.getAdapter()).setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
 
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
@@ -283,7 +291,7 @@ public class ReportProblemDialog extends DialogFragmentBase {
             } else if (sList != _secondaryList) {
                 _secondaryList = sList;
                 getSecondaryAdapter().clear();
-                getSecondaryAdapter().addAll((Object[])_secondaryList);
+                getSecondaryAdapter().addAll((Object[]) _secondaryList);
                 getSecondarySpinner().clearSelection();
             }
         }
@@ -382,6 +390,17 @@ public class ReportProblemDialog extends DialogFragmentBase {
                     0, _explanationEditText.getText().toString().length(),
                     _explanationEditText.getText().toString().length());
             populateUi();
+
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final AdapterView.OnItemSelectedListener _time_onItemClick = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
 
         }
 
