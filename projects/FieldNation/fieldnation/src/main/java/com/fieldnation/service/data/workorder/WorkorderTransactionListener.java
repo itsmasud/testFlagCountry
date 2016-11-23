@@ -398,19 +398,10 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
     private Result onDetails(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onDetails " + transaction.getId());
         long workorderId = params.getLong("workorderId");
-        byte[] workorderData = httpResult.getByteArray();
 
         Log.v(TAG, "onDetails workorderId:" + workorderId);
-        if (result != Result.CONTINUE) {
-            ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
-            if (httpResult.getResponseCode() == 400 && !httpResult.isFile() && httpResult.getString() != null
-                    && httpResult.getString().equals("You don't have permission to see this workorder")) {
-                return Result.DELETE;
-            } else {
-                return Result.DELETE;
-            }
-
-        } else { // if result == CONTINUE
+        if (result == Result.CONTINUE) {
+            byte[] workorderData = httpResult.getByteArray();
             JsonObject workorder = new JsonObject(workorderData);
             Transform.applyTransform(workorder, PSO_WORKORDER, workorderId);
             WorkorderDispatch.get(context, workorder, workorderId, false, transaction.isSync(), false);
@@ -419,22 +410,23 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             // store it in the store
             StoredObject.put(context, App.getProfileId(), PSO_WORKORDER, workorderId, workorderData);
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not load work order"), Toast.LENGTH_LONG);
+            return Result.DELETE;
+
+        } else { // RETRY
+            return Result.RETRY;
         }
     }
 
-    private Result onList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
-        Stopwatch watch = new Stopwatch(true);
-        Log.v(TAG, "onSuccessList");
+    private Result onList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onList");
         // get the basics, send out the event
         int page = 0;
         WorkorderDataSelector selector = null;
 
-        try {
-            if (result != Result.CONTINUE) {
-                WorkorderDispatch.list(context, null, params.getInt("page"), WorkorderDataSelector.values()[params.getInt("selector")], true, transaction.isSync(), false);
-                return result;
-            }
-
+        if (result == Result.CONTINUE) {
             page = params.getInt("page");
             selector = WorkorderDataSelector.values()[params.getInt("selector")];
             byte[] bdata = httpResult.getByteArray();
@@ -457,29 +449,37 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Log.v(TAG, "onSuccessList 4");
 
             return Result.CONTINUE;
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get list"), Toast.LENGTH_LONG);
+            WorkorderDispatch.list(context, null, params.getInt("page"), WorkorderDataSelector.values()[params.getInt("selector")], true, transaction.isSync(), false);
+            return Result.DELETE;
+
+        } else { // RETRY
+            return Result.RETRY;
         }
-        Log.v(TAG, "onSuccessList time: " + watch.finish());
-        return Result.RETRY;
     }
 
     private Result onGetSignature(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
         long signatureId = params.getLong("signatureId");
-        byte[] data = httpResult.getByteArray();
 
-        if (result != Result.CONTINUE) {
-            // TODO toast error message?
-            WorkorderDispatch.signature(context, null, workorderId, signatureId, true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
+            byte[] data = httpResult.getByteArray();
             WorkorderDispatch.signature(context, new JsonObject(data), workorderId, signatureId, false, transaction.isSync());
 
             //store the signature data
             StoredObject.put(context, App.getProfileId(), PSO_SIGNATURE, signatureId, data);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get signature"), Toast.LENGTH_LONG);
+            WorkorderDispatch.signature(context, null, workorderId, signatureId, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -488,77 +488,88 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, action, false);
+            WorkorderClient.listTasks(context, workorderId, false);
+
+            if (action.equals("acknowledge-hold")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("closing-notes")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("complete")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("decline")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("delete_request")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("DELETE_LOG")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("incomplete")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("messages/new")) {
+                WorkorderClient.listMessages(context, workorderId, false, false);
+
+            } else if (action.equals("pay-change")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else if (action.equals("ready")) {
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+
+            } else {
+                WorkorderClient.get(context, workorderId, false);
+            }
+
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             WorkorderDispatch.action(context, workorderId, params.getString("param"), true);
             WorkorderClient.get(context, workorderId, true, false);
 
-            if (!httpResult.isFile() && httpResult.getByteArray().length < 1024) {
+            if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
             } else {
+                // TODO change to a snackbar with view link
                 ToastClient.toast(context, "Action failed on work order " + workorderId + " with code " + httpResult.getResponseCode(), Toast.LENGTH_LONG);
             }
             return result;
-        }
-
-        WorkorderDispatch.action(context, workorderId, action, false);
-        WorkorderClient.listTasks(context, workorderId, false);
-
-        if (action.equals("acknowledge-hold")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("closing-notes")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("complete")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("decline")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("delete_request")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("DELETE_LOG")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("incomplete")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("messages/new")) {
-            WorkorderClient.listMessages(context, workorderId, false, false);
-
-        } else if (action.equals("pay-change")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-
-        } else if (action.equals("ready")) {
-            return onDetails(context, result, transaction, params, httpResult, throwable);
 
         } else {
-            WorkorderClient.get(context, workorderId, false);
+            return Result.RETRY;
         }
-
-        return Result.CONTINUE;
     }
 
     private Result onTimeLog(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "pTimeLog", false);
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
             Intent intent = new Intent(context, WorkorderActivity.class);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_WORKORDER_ID, workorderId);
             intent.putExtra(WorkorderActivity.INTENT_FIELD_CURRENT_TAB, WorkorderActivity.TAB_DETAILS);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             if (intent != null) {
                 PendingIntent pi = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), intent, 0);
-                ToastClient.snackbar(App.get(), httpResult.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+                if (haveErrorMessage(httpResult)) {
+                    ToastClient.snackbar(App.get(), httpResult.getString(), "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+                } else {
+                    ToastClient.snackbar(App.get(), "Could not change time log", "VIEW", pi, Snackbar.LENGTH_INDEFINITE);
+                }
             }
 
             WorkorderDispatch.action(context, workorderId, "pTimeLog", true);
             return result;
         } else {
-
-            WorkorderDispatch.action(context, workorderId, "pTimeLog", false);
-            return onDetails(context, result, transaction, params, httpResult, throwable);
+            return Result.RETRY;
         }
     }
 
@@ -566,32 +577,35 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onCheckIn");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.action(context, workorderId, "checkin", true);
-            ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
-            return result;
-        }
-
-        try {
-
-            WorkorderDispatch.action(context, workorderId, "checkin", false);
-            WorkorderClient.listTasks(context, workorderId, false);
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            WorkorderClient.get(context, workorderId, false);
+        if (result == Result.CONTINUE) {
             try {
-                Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
+                WorkorderDispatch.action(context, workorderId, "checkin", false);
+                WorkorderClient.listTasks(context, workorderId, false);
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                WorkorderClient.get(context, workorderId, false);
+                try {
+                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
-                ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                    ToastClient.snackbar(context, "Checkin failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                    WorkorderDispatch.action(context, workorderId, "checkin", true);
+                    return Result.DELETE;
+                } catch (Exception ex1) {
+                    Log.v(TAG, ex1);
+                }
                 WorkorderDispatch.action(context, workorderId, "checkin", true);
                 return Result.DELETE;
-            } catch (Exception ex1) {
-                Log.v(TAG, ex1);
             }
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not complete checkin"), Toast.LENGTH_LONG);
             WorkorderDispatch.action(context, workorderId, "checkin", true);
             return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -599,32 +613,36 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onCheckOut");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.action(context, workorderId, "checkout", true);
-            ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
-            return result;
-        }
-
-        try {
-            WorkorderClient.listTasks(context, workorderId, false);
-            WorkorderDispatch.action(context, workorderId, "checkout", false);
-            return onDetails(context, result, transaction, params, httpResult, throwable);
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-            WorkorderClient.get(context, workorderId, false);
+        if (result == Result.CONTINUE) {
             try {
-                Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
-                PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
+                WorkorderClient.listTasks(context, workorderId, false);
+                WorkorderDispatch.action(context, workorderId, "checkout", false);
+                return onDetails(context, result, transaction, params, httpResult, throwable);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+                WorkorderClient.get(context, workorderId, false);
+                try {
+                    Intent intent = WorkorderActivity.makeIntentShow(context, workorderId);
+                    PendingIntent pendingIntent = PendingIntent.getActivity(context, App.secureRandom.nextInt(), intent, 0);
 
-                ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
-                Log.v(TAG, "Sent snackbar");
+                    ToastClient.snackbar(context, "Checkout failed: " + httpResult.getString(), "VIEW", pendingIntent, Snackbar.LENGTH_LONG);
+                    Log.v(TAG, "Sent snackbar");
+                    WorkorderDispatch.action(context, workorderId, "checkout", true);
+                    return Result.DELETE;
+                } catch (Exception ex1) {
+                    Log.v(TAG, ex1);
+                }
                 WorkorderDispatch.action(context, workorderId, "checkout", true);
                 return Result.DELETE;
-            } catch (Exception ex1) {
-                Log.v(TAG, ex1);
             }
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not complete checkout"), Toast.LENGTH_LONG);
             WorkorderDispatch.action(context, workorderId, "checkout", true);
             return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -632,7 +650,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onActionRequest");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "request", false);
+            ToastClient.toast(context, "Success! You have requested this work order.", Toast.LENGTH_LONG);
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
             long expireInSeconds = params.getLong("expireInSeconds");
             String startTime = params.getString("startTime");
             String endTime = params.getString("endTime");
@@ -643,22 +666,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Intent intent = WorkorderTransactionBuilder.actionRequestIntent(context, workorderId, expireInSeconds, startTime, endTime, note);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-            try {
-                ToastClient.snackbar(context, httpResult.getString(),
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            } catch (Exception ex) {
-                ToastClient.snackbar(context, "Unable to request work order. Please check your connection.",
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            }
-
-            return result;
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to request work order"),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            return Result.DELETE;
 
         } else {
-
-            WorkorderDispatch.action(context, workorderId, "request", false);
-            ToastClient.snackbar(context, "Success! You have requested this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
-
-            return onDetails(context, result, transaction, params, httpResult, throwable);
+            return Result.RETRY;
         }
     }
 
@@ -666,10 +679,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onMessageList");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.listMessages(context, workorderId, null, true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             WorkorderDispatch.listMessages(context, workorderId, new JsonArray(data), false, transaction.isSync());
@@ -682,6 +692,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             StoredObject.put(context, App.getProfileId(), PSO_MESSAGE_LIST, workorderId, data);
 
             return Result.CONTINUE;
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get messages"), Toast.LENGTH_LONG);
+            WorkorderDispatch.listMessages(context, workorderId, null, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -689,23 +706,25 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onAlertList");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.listAlerts(context, workorderId, null, true, transaction.isSync());
-            return result;
-        } else {
-
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             WorkorderDispatch.listAlerts(context, workorderId, new JsonArray(data), false, transaction.isSync());
-
             if (params.has("isRead") && params.getBoolean("isRead")) {
                 GlobalTopicClient.profileInvalid(context);
                 WorkorderClient.get(context, workorderId, false);
             }
 
             StoredObject.put(context, App.getProfileId(), PSO_ALERT_LIST, workorderId, data);
-
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get alerts"), Toast.LENGTH_LONG);
+            WorkorderDispatch.listAlerts(context, workorderId, null, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -713,33 +732,42 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onTaskList");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.listTasks(context, workorderId, null, true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             WorkorderDispatch.listTasks(context, workorderId, new JsonArray(data), false, transaction.isSync());
             StoredObject.put(context, App.getProfileId(), PSO_TASK_LIST, workorderId, data);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get tasks"), Toast.LENGTH_LONG);
+            WorkorderDispatch.listTasks(context, workorderId, null, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
-    public Result onGetBundle(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+    private Result onGetBundle(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         long bundleId = params.getLong("bundleId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             byte[] data = httpResult.getByteArray();
 
             WorkorderDispatch.bundle(context, new JsonObject(data), bundleId, false, transaction.isSync());
             StoredObject.put(context, App.getProfileId(), PSO_BUNDLE, bundleId, data);
-        }
+            return Result.CONTINUE;
 
-        return Result.CONTINUE;
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not load bundle details"), Toast.LENGTH_LONG);
+            WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
     }
 
     private Result onUploadDeliverable(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
@@ -747,22 +775,27 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         String filename = params.getString("filename");
         long slotId = params.getLong("slotId");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
+            WorkorderClient.get(context, workorderId, false);
+            UploadTrackerClient.uploadSuccess(context);
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             UploadTrackerClient.uploadFailed(context, workorderId);
-            if (throwable != null && throwable instanceof SecurityException) {
+
+            if (haveErrorMessage(httpResult)) {
+                ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+            } else if (throwable != null && throwable instanceof SecurityException) {
                 ToastClient.toast(context, "Failed to upload file. " + filename + " Read permission denied. Please try again", Toast.LENGTH_LONG);
             } else {
                 ToastClient.toast(context, "Failed to upload file. " + filename + " Please try again", Toast.LENGTH_LONG);
             }
             WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, false, true);
-            return result;
+            return Result.DELETE;
+
         } else {
-
-            WorkorderDispatch.uploadDeliverable(context, workorderId, slotId, filename, true, false);
-            WorkorderClient.get(context, workorderId, false);
-            UploadTrackerClient.uploadSuccess(context);
-
-            return Result.CONTINUE;
+            return Result.RETRY;
         }
     }
 
@@ -771,7 +804,17 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         long workorderId = params.getLong("workorderId");
         boolean isEditEta = params.getBoolean("isEditEta");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "assignment", false);
+
+            if (!isEditEta)
+                ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
+            else
+                ToastClient.snackbar(context, "Success! Edited ETA is saved.", "DISMISS", null, Snackbar.LENGTH_LONG);
+
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
             String startTimeIso8601 = params.getString("startTimeIso8601");
             String endTimeIso8601 = params.getString("endTimeIso8601");
             String note = params.getString("note");
@@ -781,24 +824,11 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Intent intent = WorkorderTransactionBuilder.actionConfirmAssignmentIntent(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-            try {
-                ToastClient.snackbar(context, httpResult.getString(),
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            } catch (Exception ex) {
-                ToastClient.snackbar(context, "Unable to accept work order. " + httpResult.getString(),
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            }
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Unable to accept work order"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            return Result.DELETE;
 
-            return result;
         } else {
-            WorkorderDispatch.action(context, workorderId, "assignment", false);
-
-            if (!isEditEta)
-                ToastClient.snackbar(context, "Success! You have accepted this work order.", "DISMISS", null, Snackbar.LENGTH_LONG);
-            else
-                ToastClient.snackbar(context, "Success! Edited ETA is saved.", "DISMISS", null, Snackbar.LENGTH_LONG);
-
-            return onDetails(context, result, transaction, params, httpResult, throwable);
+            return Result.RETRY;
         }
     }
 
@@ -806,7 +836,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onCreateShipment");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "create_shipment", false);
+            ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
+            WorkorderClient.get(context, workorderId, false);
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             String description = params.getString("description");
             boolean isToSite = params.getBoolean("isToSite");
             String carrier = params.getString("carrier");
@@ -823,19 +859,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 intent = WorkorderTransactionBuilder.postShipmentIntent(context, workorderId, description, isToSite, carrier, carrierName, trackingNumber, taskId);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-            ToastClient.toast(App.get(), "Could not add your shipment. Please check your connection.", Toast.LENGTH_LONG);
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not add your shipment"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
-            // TODO the snackbar is not appearing
-            ToastClient.snackbar(context, "Could not add your shipment. Please check your connection.",
-                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            return Result.DELETE;
 
-            return result;
         } else {
-            WorkorderDispatch.action(context, workorderId, "create_shipment", false);
-            ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
-            WorkorderClient.get(context, workorderId, false);
-
-            return Result.CONTINUE;
+            return Result.RETRY;
         }
     }
 
@@ -845,18 +874,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         long shipmentId = params.getLong("shipmentId");
         long taskId = params.getLong("taskId");
 
-        if (result != Result.CONTINUE) {
-            WorkorderDispatch.action(context, workorderId, "request", true);
-
-            Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
-            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
-
-            ToastClient.snackbar(context, "Could not complete your shipment. Please check your connection.",
-                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-
-            return result;
-        } else {
-
+        if (result == Result.CONTINUE) {
             WorkorderDispatch.action(context, workorderId, "complete_shipment_task", false);
 
             ToastClient.snackbar(context, "Success! Your shipment has been added.", "DISMISS", null, Snackbar.LENGTH_LONG);
@@ -865,6 +883,20 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderClient.listTasks(context, workorderId, false);
 
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            WorkorderDispatch.action(context, workorderId, "request", true);
+
+            Intent intent = WorkorderTransactionBuilder.actionCompleteShipmentTaskIntent(context, workorderId, shipmentId, taskId);
+            PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
+
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not complete your shipment."),
+                    "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
@@ -872,7 +904,13 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         Log.v(TAG, "onSuccessCounterOffer");
         long workorderId = params.getLong("workorderId");
 
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "counter_offer", false);
+            ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+            WorkorderClient.get(context, workorderId, false);
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             boolean expires = params.getBoolean("expires");
             String reason = params.getString("reason");
             int expiresAfterInSecond = params.getInt("expiresAfterInSecond");
@@ -901,45 +939,42 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Intent intent = WorkorderTransactionBuilder.actionCounterOfferIntent(context, workorderId, expires, reason, expiresAfterInSecond, pay, schedule, expenses);
             PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-            try {
-                ToastClient.snackbar(context, httpResult.getString(),
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            } catch (Exception ex) {
-                ToastClient.snackbar(context, "Could not send counter offer. Please check your connection.",
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
-            }
+            ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send counter offer"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+            return Result.DELETE;
 
-            return result;
         } else {
-            WorkorderDispatch.action(context, workorderId, "counter_offer", false);
-            ToastClient.snackbar(context, "Success! Your counter offer has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
-            WorkorderClient.get(context, workorderId, false);
-
-            return Result.CONTINUE;
+            return Result.RETRY;
         }
     }
 
     private Result onRating(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) {
-        if (result != Result.CONTINUE) {
+        if (result == Result.CONTINUE) {
+            ToastClient.snackbar(context, "Success! Your rating has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+            return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
             try {
-                Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(context,
-                        params.getLong("workorderId"), params.getInt("satisfactionRating"), params.getInt("scopeRating"), params.getInt("respectRating"),
-                        params.getInt("respectComment"), params.getBoolean("recommendBuyer"), params.getString("otherComments"));
+                Intent intent = WorkorderTransactionBuilder.actionPostRatingIntent(
+                        context,
+                        params.getLong("workorderId"),
+                        params.getInt("satisfactionRating"),
+                        params.getInt("scopeRating"),
+                        params.getInt("respectRating"),
+                        params.getInt("respectComment"),
+                        params.getBoolean("recommendBuyer"),
+                        params.getString("otherComments"));
 
                 PendingIntent pendingIntent = PendingIntent.getService(context, App.secureRandom.nextInt(), intent, 0);
 
-                ToastClient.snackbar(context, "Could not send your rating. Please check your connection.",
-                        "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
+                ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send your rating"), "TRY AGAIN", pendingIntent, Snackbar.LENGTH_LONG);
 
             } catch (Exception ex) {
                 Log.v(TAG, ex);
-                ToastClient.snackbar(context, "Failed. Your rating could not be sent.", Toast.LENGTH_LONG);
+                ToastClient.snackbar(context, pickErrorMessage(httpResult, "Could not send your rating"), Toast.LENGTH_LONG);
             }
-            return result;
+            return Result.DELETE;
         } else {
-            ToastClient.snackbar(context, "Success! Your rating has been sent.", "DISMISS", null, Snackbar.LENGTH_LONG);
+            return Result.RETRY;
         }
-
-        return Result.CONTINUE;
     }
 }

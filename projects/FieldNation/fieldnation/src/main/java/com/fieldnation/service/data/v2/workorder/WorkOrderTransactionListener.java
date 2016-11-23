@@ -1,10 +1,12 @@
 package com.fieldnation.service.data.v2.workorder;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
@@ -71,26 +73,36 @@ public class WorkOrderTransactionListener extends WebTransactionListener impleme
         long workorderId = params.getLong("workorderId");
         String action = params.getString("param");
 
-        if (result != Result.CONTINUE) {
-            WorkOrderDispatch.action(context, workorderId, action, true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             WorkOrderDispatch.action(context, workorderId, action, false);
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not complete request"), Toast.LENGTH_LONG);
+            WorkOrderDispatch.action(context, workorderId, action, true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 
     private Result onSearch(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onSearch");
 
-        if (result != Result.CONTINUE) {
-            WorkOrderDispatch.search(context, SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
-            return result;
-        } else {
+        if (result == Result.CONTINUE) {
             WorkOrderDispatch.search(context,
                     SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")),
                     httpResult.getByteArray(), false);
             return Result.CONTINUE;
+
+        } else if (result == Result.DELETE) {
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get search results"), Toast.LENGTH_LONG);
+            WorkOrderDispatch.search(context, SavedSearchParams.fromJson(params.getJsonObject("SavedSearchParams")), null, true);
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
         }
     }
 }

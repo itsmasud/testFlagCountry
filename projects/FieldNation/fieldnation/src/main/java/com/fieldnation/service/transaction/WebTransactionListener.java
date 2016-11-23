@@ -34,12 +34,13 @@ public abstract class WebTransactionListener {
 
     protected final Result preComplete(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         Result result = preCheck(context, transaction, httpResult, throwable);
+        Log.v(TAG, "Result: " + result.name());
         if (result != Result.CONTINUE) {
             try {
-                if (!httpResult.isFile() && httpResult.getByteArray().length < 1024) {
+                if (httpResult != null && !httpResult.isFile() && httpResult.getByteArray().length < 1024) {
                     String errorString = httpResult.getString();
                     if (errorString != null) {
-                        Log.v(TAG, errorString);
+                        Log.v(TAG, "Error:  " + errorString);
                         Log.v(TAG, new TransactionException(errorString));
                     }
                 }
@@ -54,7 +55,7 @@ public abstract class WebTransactionListener {
         return result;
     }
 
-    private Result preCheck(Context context, WebTransaction transaction, HttpResult result, Throwable throwable) {
+    private Result preCheck(Context context, WebTransaction transaction, HttpResult httpResult, Throwable throwable) {
         JsonObject request = null;
         try {
             request = new JsonObject(transaction.getRequestString());
@@ -63,18 +64,18 @@ public abstract class WebTransactionListener {
             return Result.DELETE;
         }
 
-        if (result != null) {
-            if (!result.isFile() && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
+        if (httpResult != null) {
+            if (!httpResult.isFile() && (httpResult.getString() != null && httpResult.getString().contains("You must provide a valid OAuth token to make a request"))) {
                 Log.v(TAG, "Reauth");
                 AuthTopicClient.invalidateCommand(context);
                 AuthTopicClient.requestCommand(context);
                 return Result.RETRY;
 
-            } else if (result.getResponseCode() == 400) {
+            } else if (httpResult.getResponseCode() == 400) {
                 // Bad request
                 // need to report this
                 // need to re-auth?
-                if (result.getResponseMessage().contains("Bad Request")) {
+                if (httpResult.getResponseMessage().contains("Bad Request")) {
                     return Result.DELETE;
 
                 } else {
@@ -84,7 +85,7 @@ public abstract class WebTransactionListener {
                     return Result.RETRY;
                 }
 
-            } else if (result.getResponseCode() == 401) {
+            } else if (httpResult.getResponseCode() == 401) {
                 // 401 usually means bad auth token
                 if (HttpJsonBuilder.isFieldNation(request)) {
                     Log.v(TAG, "Reauth 2");
@@ -96,26 +97,29 @@ public abstract class WebTransactionListener {
                     return Result.DELETE;
                 }
 
-            } else if (result.getResponseCode() == 404) {
+            } else if (httpResult.getResponseCode() == 404) {
                 // not found?... error
                 return Result.DELETE;
 
-            } else if (result.getResponseCode() == 413) {
+            } else if (httpResult.getResponseCode() == 413) {
                 ToastClient.toast(context, "File too large to upload", Toast.LENGTH_LONG);
                 return Result.DELETE;
 
                 // usually means code is being updated on the server
-            } else if (result.getResponseCode() == 502) {
+            } else if (httpResult.getResponseCode() == 502) {
                 Log.v(TAG, "2");
                 return Result.RETRY;
 
-            } else if (result.getResponseCode() / 100 != 2) {
+            } else if (httpResult.getResponseCode() / 100 != 2) {
                 Log.v(TAG, "3");
                 return Result.DELETE;
             }
         }
 
         if (throwable != null) {
+            Log.v(TAG, "throwable: " + throwable.getClass().getName());
+            Log.v(TAG, "message: " + throwable.getMessage());
+
             if (throwable instanceof MalformedURLException || throwable instanceof FileNotFoundException) {
                 return Result.DELETE;
 
@@ -157,4 +161,16 @@ public abstract class WebTransactionListener {
 
     public void onProgress(Context context, WebTransaction transaction, long pos, long size, long time) {
     }
+
+    public static boolean haveErrorMessage(HttpResult httpResult) {
+        return httpResult != null && !httpResult.isFile() && httpResult.getByteArray().length < 1024;
+    }
+
+    public static String pickErrorMessage(HttpResult httpResult, String defaultMessage) {
+        if (haveErrorMessage(httpResult))
+            return httpResult.getString();
+
+        return defaultMessage;
+    }
+
 }
