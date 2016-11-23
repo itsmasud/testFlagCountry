@@ -412,7 +412,8 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
-            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not load work order"), Toast.LENGTH_LONG);
+            ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get work order from server"), Toast.LENGTH_LONG);
+            WorkorderDispatch.get(context, null, workorderId, true, transaction.isSync(), false);
             return Result.DELETE;
 
         } else { // RETRY
@@ -423,14 +424,12 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
     private Result onList(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
         Log.v(TAG, "onList");
         // get the basics, send out the event
-        int page = 0;
-        WorkorderDataSelector selector = null;
+        int page = params.getInt("page");
+        WorkorderDataSelector selector = WorkorderDataSelector.values()[params.getInt("selector")];
 
         if (result == Result.CONTINUE) {
-            page = params.getInt("page");
-            selector = WorkorderDataSelector.values()[params.getInt("selector")];
-            byte[] bdata = httpResult.getByteArray();
             Log.v(TAG, "onSuccessList:{selector:" + selector + ", page: " + page + "}");
+            byte[] bdata = httpResult.getByteArray();
 
             StoredObject.put(context, App.getProfileId(), PSO_WORKORDER_LIST + selector, page, bdata);
 
@@ -439,20 +438,18 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             Log.v(TAG, "onSuccessList 2");
             for (int i = 0; i < ja.size(); i++) {
                 JsonObject json = ja.getJsonObject(i);
-
                 Transform.applyTransform(json, PSO_WORKORDER, json.getLong("workorderId"));
             }
             Log.v(TAG, "onSuccessList 3");
 
             WorkorderDispatch.list(context, ja, page, selector, false, transaction.isSync(), false);
-
             Log.v(TAG, "onSuccessList 4");
 
             return Result.CONTINUE;
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get list"), Toast.LENGTH_LONG);
-            WorkorderDispatch.list(context, null, params.getInt("page"), WorkorderDataSelector.values()[params.getInt("selector")], true, transaction.isSync(), false);
+            WorkorderDispatch.list(context, null, page, selector, true, transaction.isSync(), false);
             return Result.DELETE;
 
         } else { // RETRY
@@ -535,10 +532,9 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             if (haveErrorMessage(httpResult)) {
                 ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
             } else {
-                // TODO change to a snackbar with view link
-                ToastClient.toast(context, "Action failed on work order " + workorderId + " with code " + httpResult.getResponseCode(), Toast.LENGTH_LONG);
+                ToastClient.toast(context, "Could not update work order", Toast.LENGTH_LONG);
             }
-            return result;
+            return Result.DELETE;
 
         } else {
             return Result.RETRY;
@@ -762,7 +758,7 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
 
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not load bundle details"), Toast.LENGTH_LONG);
-            WorkorderDispatch.bundle(context, null, params.getLong("bundleId"), true, transaction.isSync());
+            WorkorderDispatch.bundle(context, null, bundleId, true, transaction.isSync());
             return Result.DELETE;
 
         } else {

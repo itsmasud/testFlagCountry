@@ -191,7 +191,6 @@ public class ProfileTransactionListener extends WebTransactionListener implement
             return Result.DELETE;
 
         } else {
-
             return Result.RETRY;
         }
     }
