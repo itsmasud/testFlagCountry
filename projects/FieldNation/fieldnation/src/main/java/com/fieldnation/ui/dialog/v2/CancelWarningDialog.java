@@ -78,7 +78,7 @@ public class CancelWarningDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             Intent intent = new Intent(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=provider"));
+            intent.setData(Uri.parse("https://app.fieldnation.com/legal/?a=qualityassurance"));
             ActivityResultClient.startActivity(App.get(), intent);
         }
     };

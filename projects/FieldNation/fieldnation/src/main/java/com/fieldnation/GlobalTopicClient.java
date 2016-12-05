@@ -59,7 +59,7 @@ public class GlobalTopicClient extends TopicClient implements GlobalTopicConstan
     public static void gotProfile(Context context, Profile profile) {
         if (context == null)
             return;
-        TopicService.dispatchEvent(context, TOPIC_ID_GOT_PROFILE, profile, Sticky.FOREVER);
+        TopicService.dispatchEvent(context, TOPIC_ID_GOT_PROFILE, profile, Sticky.NONE);
     }
 
     public boolean subGotProfile() {
