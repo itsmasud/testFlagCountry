@@ -111,7 +111,7 @@
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
-    <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
+    <string name="btn_review_toc">REVIEW PQAP POLICY</string>
 
     <string name="switch_text_set_eta">Set an ETA</string>
 
