@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\layout\\bottom_buttons_light.xml",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\exploded-aar\\ChooserExample\\dropboxChooserSDK\\unspecified\\res\\layout\\bottom_buttons_light.xml"
+    },
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\layout\\activity_main.xml",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\src\\main\\res\\layout\\activity_main.xml"
+    },
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\layout\\bottom_bar_light.xml",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\exploded-aar\\ChooserExample\\dropboxChooserSDK\\unspecified\\res\\layout\\bottom_bar_light.xml"
+    },
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\layout\\app_store_interstitial.xml",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\exploded-aar\\ChooserExample\\dropboxChooserSDK\\unspecified\\res\\layout\\app_store_interstitial.xml"
+    }
+]

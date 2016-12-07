@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="false"
+        jar="C:\Users\itssh\Documents\sdk\extras\android\m2repository\com\android\support\support-v4\18.0.0\support-v4-18.0.0.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="44ec51e9d395a47aab135e5e1b556c0007442156">
+        <dex dex="D:\Source\git\android_dev\projects\FieldNation\ChooserExample\chooserExample\build\intermediates\pre-dexed\debug\support-v4-18.0.0_359fece76dad8e5b90d109d07cc0eab656fcc07d.jar" />
+    </item>
+    <item
+        is-multidex="false"
+        jar="D:\Source\git\android_dev\projects\FieldNation\ChooserExample\chooserExample\build\intermediates\exploded-aar\ChooserExample\dropboxChooserSDK\unspecified\jars\classes.jar"
+        jumboMode="false"
+        optimize="true"
+        revision="25.0.0"
+        sha1="a62848b1120626ac66f68bf9c34961e652e86495">
+        <dex dex="D:\Source\git\android_dev\projects\FieldNation\ChooserExample\chooserExample\build\intermediates\pre-dexed\debug\ChooserExample-dropboxChooserSDK-unspecified_78d51e056b253030a5b9630fa47b17f5d9edb282.jar" />
+    </item>
+
+</items>

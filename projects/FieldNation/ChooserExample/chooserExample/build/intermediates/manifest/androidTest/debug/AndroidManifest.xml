@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dropbox.api.samples.chooser_start.test">
+
+    <uses-sdk android:minSdkVersion="14" android:targetSdkVersion="17" />
+
+    <application>
+        <uses-library android:name="android.test.runner" />
+    </application>
+
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+                     android:targetPackage="com.dropbox.api.samples.chooser_start"
+                     android:handleProfiling="false"
+                     android:functionalTest="false"
+                     android:label="Tests for com.dropbox.api.samples.chooser_start"/>
+</manifest>

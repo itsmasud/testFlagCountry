@@ -1,0 +1,10 @@
+[
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\icon_new.png",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\exploded-aar\\ChooserExample\\dropboxChooserSDK\\unspecified\\res\\drawable-mdpi-v4\\icon_new.png"
+    },
+    {
+        "merged": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\res\\merged\\debug\\drawable-mdpi-v4\\tab_dropbox.png",
+        "source": "D:\\Source\\git\\android_dev\\projects\\FieldNation\\ChooserExample\\chooserExample\\build\\intermediates\\exploded-aar\\ChooserExample\\dropboxChooserSDK\\unspecified\\res\\drawable-mdpi-v4\\tab_dropbox.png"
+    }
+]
