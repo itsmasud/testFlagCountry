@@ -525,7 +525,7 @@ public class WorkOrderCard extends RelativeLayout {
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
 
             try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 10800000); // 3 hours
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

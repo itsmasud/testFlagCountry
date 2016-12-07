@@ -18,10 +18,12 @@ import com.fieldnation.analytics.EventProperty;
 import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.SpUIContext;
 import com.fieldnation.analytics.SpWorkOrderContext;
+import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
@@ -98,7 +100,15 @@ public class ActionBarTopView extends LinearLayout {
             _rightGrayButton.setVisibility(View.GONE);
         }
         setVisibility(View.GONE);
+        if (App.isNcns()) {
+            populateButtonsNCNS();
+        } else {
+            populateButtons();
+        }
+    }
 
+    private void populateButtons() {
+        Log.v(TAG, "populateButtons");
         WorkorderSubstatus substatus = _workorder.getWorkorderSubstatus();
 
         switch (substatus) {
@@ -329,6 +339,145 @@ public class ActionBarTopView extends LinearLayout {
         }
     }
 
+    private void populateButtonsNCNS() {
+        Log.v(TAG, "populateButtonsNCNS");
+        // Primary actions
+        if (_workorder.getPrimaryActions() != null && _workorder.getPrimaryActions().length > 0) {
+
+            Action[] actions = _workorder.getPrimaryActions();
+            if (actions != null) {
+                inflate();
+                for (Action action : actions) {
+                    if (populateButton(_rightWhiteButton, action)) {
+                        setVisibility(VISIBLE);
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (_workorder.getSecondaryActions() != null && _workorder.getSecondaryActions().length > 0) {
+            Action[] actions = _workorder.getSecondaryActions();
+            if (actions != null) {
+                inflate();
+                for (Action action : actions) {
+                    if (populateButton(_leftWhiteButton, action)) {
+                        setVisibility(VISIBLE);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean populateButton(Button button, Action action) {
+        switch (action.getType()) {
+            case ACCEPT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_confirmAssignment_onClick);
+                button.setText("ACCEPT");
+                break;
+            case CONFIRM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_confirm_onClick);
+                button.setText("CONFIRM");
+                break;
+            case ON_MY_WAY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_onMyWay_onClick);
+                button.setText(R.string.btn_on_my_way);
+                break;
+            case READY:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("CONFIRM");
+                break;
+            case READY_TO_GO:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_readyToGo_onClick);
+                button.setText("READY");
+                break;
+            case REPORT_PROBLEM:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_reportProblem_onClick);
+                button.setText(R.string.btn_report_problem);
+                break;
+            case REQUEST:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_request_onClick);
+                button.setText("REQUEST");
+                break;
+            case VIEW_BUNDLE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_viewBundle_onClick);
+                button.setText("VIEW BUNDLE (" + _workorder.getBundleCount() + ")");
+                break;
+            case ACK_HOLD:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_acknowledge_onClick);
+                button.setText("ACKNOWLEDGE HOLD");
+                break;
+            case WITHDRAW:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_withdraw_onClick);
+                button.setText("WITHDRAW");
+                break;
+            case CHECK_IN:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkin_onClick);
+                button.setText("CHECK IN");
+                break;
+            case CHECK_OUT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_checkout_onClick);
+                button.setText("CHECK OUT");
+                break;
+            case MARK_INCOMPLETE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_markIncomplete_onClick);
+                button.setText("MARK INCOMPLETE");
+                break;
+
+            case MARK_COMPLETE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_markComplete_onClick);
+                button.setText("MARK COMPLETE");
+                break;
+            case VIEW_PAYMENT:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_viewPayment_onClick);
+                button.setText("VIEW PAYMENT");
+                break;
+//            case ACK_UPDATE:
+//                break;
+            case DECLINE:
+                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_notInterested_onClick);
+                button.setText(R.string.btn_not_interested);
+                break;
+//            case MAP:
+//                break;
+//            case MESSAGE:
+//                break;
+//            case NOT_SUPPORTED:
+//                break;
+//            case PHONE:
+//                break;
+/*
+            case RUNNING_LATE:
+                                button.setVisibility(VISIBLE);
+                button.setOnClickListener(_runningLate_onClick);
+                button.setText("RUNNING LATE");
+                break;
+*/
+//            case VIEW:
+//                break;
+            default:
+                return false;
+        }
+        return true;
+    }
+
     public void setListener(Listener listener) {
         _listener = listener;
     }
@@ -386,6 +535,14 @@ public class ActionBarTopView extends LinearLayout {
         }
     };
 
+    private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_listener != null)
+                _listener.onMyWay();
+        }
+    };
+
     private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -415,6 +572,13 @@ public class ActionBarTopView extends LinearLayout {
             if (_listener != null) {
                 _listener.onRequest();
             }
+        }
+    };
+
+    private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+//            RunningLateDialog.Controller.show(App.get(), _workOrder);
         }
     };
 
@@ -769,5 +933,7 @@ public class ActionBarTopView extends LinearLayout {
         void onViewPayment();
 
         void onReportProblem();
+
+        void onMyWay();
     }
 }
