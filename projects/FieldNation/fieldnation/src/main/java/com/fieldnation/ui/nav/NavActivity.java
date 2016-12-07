@@ -95,7 +95,7 @@ public class NavActivity extends AuthSimpleActivity {
     protected void onResume() {
         super.onResume();
 
-        _recyclerView.startSearch(_currentSearch);
+        //_recyclerView.startSearch(_currentSearch);
         NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
 
         if (App.get().needsConfirmation()) {
