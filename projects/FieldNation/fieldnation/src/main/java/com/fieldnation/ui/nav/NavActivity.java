@@ -89,6 +89,8 @@ public class NavActivity extends AuthSimpleActivity {
         if (_currentSearch == null) {
             _currentSearch = SavedSearchList.defaults[0];
         }
+
+        _recyclerView.startSearch(_currentSearch);
     }
 
     @Override
