@@ -55,6 +55,7 @@ public class SavedSearchList extends LinearLayout {
             new SavedSearchParams()
                     .type(WorkOrderListType.COMPLETED.getType())
                     .status(WorkOrderListType.COMPLETED.getStatuses())
+                    .order("desc")
                     .title("Completed"),
             new SavedSearchParams()
                     .type(WorkOrderListType.REQUESTED.getType())
