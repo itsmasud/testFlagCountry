@@ -3,10 +3,10 @@
 <resources>
     <string name="app_name">Field Nation Mobile</string>
     <string name="auth_account_name">Field Nation Mobile</string>
-    <!--<string name="auth_default_username">provider</string>-->
-    <!--<string name="auth_default_password">provider</string>-->
-    <string name="auth_default_username">mprovider</string>
-    <string name="auth_default_password">1</string>
+    <string name="auth_default_username">provider</string>
+    <string name="auth_default_password">provider</string>
+    <!--<string name="auth_default_username">mprovider</string>-->
+    <!--<string name="auth_default_password">1</string>-->
     <!--<string name="auth_default_username">mp.provider1</string>-->
     <!--<string name="auth_default_password">mp.provider1</string>-->
     <!--<string name="auth_default_username">mp.provider2</string>-->
