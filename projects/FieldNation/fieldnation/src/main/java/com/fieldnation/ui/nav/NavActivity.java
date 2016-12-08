@@ -89,13 +89,15 @@ public class NavActivity extends AuthSimpleActivity {
         if (_currentSearch == null) {
             _currentSearch = SavedSearchList.defaults[0];
         }
+
+        _recyclerView.startSearch(_currentSearch);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        _recyclerView.startSearch(_currentSearch);
+        //_recyclerView.startSearch(_currentSearch);
         NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
 
         if (App.get().needsConfirmation()) {
