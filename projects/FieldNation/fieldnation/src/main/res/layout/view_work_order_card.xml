@@ -5,134 +5,163 @@
 
     <TextView
         android:id="@+id/amount_textview"
-        style="@style/Text_Subhead"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="2dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="$125k" />
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="5dp"
+        android:text="$125k"
+        android:textColor="#FF333333"
+        android:textSize="20sp" />
 
     <TextView
         android:id="@+id/paytype_textview"
-        style="@style/Text_Caption_Small"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/amount_textview"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="4dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/amount_textview"
-        android:text="BLENDED" />
+        android:text="BLENDED"
+        android:textColor="#FF555555"
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/worktype_textview"
-        style="@style/Text_Caption_Small"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/amount_textview"
         android:layout_alignParentRight="true"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/paytype_textview"
         android:ellipsize="end"
         android:gravity="right"
         android:maxLines="1"
-        android:text="AUTOMATIC TELLER MACHINE (ATM)" />
+        android:text="AUTOMATIC TELLER MACHINE (ATM)"
+        android:textColor="#FF555555"
+        android:textSize="10sp" />
 
     <View
         android:id="@+id/titleseperator_view"
-        style="@style/Material.Button"
         android:layout_width="match_parent"
-        android:layout_height="1px"
+        android:layout_height="1dp"
         android:layout_below="@id/worktype_textview"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="3dp"
         android:layout_marginRight="3dp"
-        android:background="@color/fn_brandcolor_50" />
+        android:alpha="0.5"
+        android:background="#FFE05F2C" />
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleseperator_view"
-        android:layout_marginLeft="8dp"
-        android:layout_marginRight="16dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp"
         android:ellipsize="end"
         android:maxLines="2"
-        android:text="@string/placeholder_paragraph" />
+        android:text="@string/placeholder_paragraph"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/date_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Sept 12" />
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp"
+        android:text="Sept 12"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/time_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date_textview"
-        android:text="10:45 am" />
+        android:text="10:45 am"
+        android:textColor="#FF555555"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/hyphen_textview"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_toRightOf="@+id/time_textview"
-        android:text="-" />
+        android:text="-"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/date2_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="5dp"
         android:layout_toRightOf="@+id/hyphen_textview"
-        android:text="Sept 12" />
+        android:text="Sept 12"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/time2_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date2_textview"
-        android:text="10:45 am" />
+        android:text="10:45 am"
+        android:textColor="#FF555555"
+        android:textSize="14sp" />
 
 
     <TextView
         android:id="@+id/location_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Rancho Santa Margarita, CA" />
+        android:layout_marginBottom="10dp"
+        android:layout_marginLeft="10dp"
+        android:text="Rancho Santa Margarita, CA"
+        android:textColor="#FF333333"
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/distance_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/location_textview"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/location_textview"
-        android:text="19 mi" />
+        android:text="19 mi"
+        android:textColor="#FF555555"
+        android:textSize="14sp" />
 
     <com.fieldnation.ui.IconFontButton
         android:id="@+id/secondary1_button"
@@ -166,8 +195,8 @@
         style="@style/Material.Button.Raised.Green"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/location_textview"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="8dp"
+        android:layout_marginBottom="10dp"
+        android:layout_marginRight="10dp"
         android:minWidth="130dp"
         android:text="@string/placeholder_phrase" />
 

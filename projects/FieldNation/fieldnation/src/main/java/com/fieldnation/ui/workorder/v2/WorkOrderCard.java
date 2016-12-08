@@ -130,7 +130,7 @@ public class WorkOrderCard extends RelativeLayout {
         if (_primaryButton == null)
             return;
 
-        _titleTextView.setText(_workOrder.getTitle());
+        _titleTextView.setText(_workOrder.getId() + " | " + _workOrder.getTitle());
         _workTypeTextView.setText(_workOrder.getType().toUpperCase());
 
         populateLocation();

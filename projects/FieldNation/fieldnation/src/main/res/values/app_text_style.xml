@@ -75,4 +75,9 @@
         <item name="android:textSize">14sp</item>
         <item name="android:maxLines">1</item>
     </style>
+
+    <style name="Text_Roboto_Medium">
+        <item name="android:alpha">1</item>
+    </style>
+
 </resources>
