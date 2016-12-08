@@ -5,21 +5,19 @@
 
     <TextView
         android:id="@+id/amount_textview"
-        style="@style/Text_Subhead"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="5dp"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="$125k"
         android:textColor="#FF333333"
         android:textSize="20sp" />
 
     <TextView
         android:id="@+id/paytype_textview"
-        style="@style/Text_Subhead"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/amount_textview"
@@ -27,15 +25,13 @@
         android:layout_marginLeft="4dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/amount_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="BLENDED"
         android:textColor="#FF555555"
         android:textSize="10sp" />
 
     <TextView
         android:id="@+id/worktype_textview"
-        style="@style/Text_Caption_Small"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/amount_textview"
@@ -45,9 +41,7 @@
         android:layout_marginRight="10dp"
         android:layout_marginTop="5dp"
         android:layout_toRightOf="@+id/paytype_textview"
-        android:alpha="1"
         android:ellipsize="end"
-        android:fontFamily="roboto-medium"
         android:gravity="right"
         android:maxLines="1"
         android:text="AUTOMATIC TELLER MACHINE (ATM)"
@@ -67,16 +61,14 @@
 
     <TextView
         android:id="@+id/title_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/titleseperator_view"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:alpha="1"
         android:ellipsize="end"
-        android:fontFamily="roboto-medium"
         android:maxLines="2"
         android:text="@string/placeholder_paragraph"
         android:textColor="#FF333333"
@@ -84,35 +76,32 @@
 
     <TextView
         android:id="@+id/date_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="10dp"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="Sept 12"
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/time_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="10:45 am"
         android:textColor="#FF555555"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/hyphen_textview"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
@@ -120,37 +109,31 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_toRightOf="@+id/time_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="-"
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/date2_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/title_textview"
         android:layout_marginBottom="5dp"
         android:layout_toRightOf="@+id/hyphen_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="Sept 12"
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/time2_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/date_textview"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/date2_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="10:45 am"
         android:textColor="#FF555555"
         android:textSize="14sp" />
@@ -158,28 +141,24 @@
 
     <TextView
         android:id="@+id/location_textview"
-        style="@style/Text_Body_1"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/date_textview"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="Rancho Santa Margarita, CA"
         android:textColor="#FF333333"
         android:textSize="14sp" />
 
     <TextView
         android:id="@+id/distance_textview"
-        style="@style/Text_Body_1_Caption"
+        style="@style/Text_Roboto_Medium"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/location_textview"
         android:layout_marginLeft="8dp"
         android:layout_toRightOf="@+id/location_textview"
-        android:alpha="1"
-        android:fontFamily="roboto-medium"
         android:text="19 mi"
         android:textColor="#FF555555"
         android:textSize="14sp" />
