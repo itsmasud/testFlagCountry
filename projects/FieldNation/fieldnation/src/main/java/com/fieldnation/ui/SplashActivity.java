@@ -159,8 +159,10 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
 
         Log.v(TAG, "doNextStep 2");
-        if (_profile == null)
+        if (_profile == null) {
+            ProfileClient.get(this);
             return;
+        }
 
         Log.v(TAG, "doNextStep 3");
 
