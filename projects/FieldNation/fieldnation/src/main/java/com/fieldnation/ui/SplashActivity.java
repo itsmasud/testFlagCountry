@@ -164,10 +164,8 @@ public class SplashActivity extends AuthSimpleActivity {
 
     private void doNextStep() {
         Log.v(TAG, "doNextStep 1");
-        if (!_isAuth) {
-            AuthTopicClient.requestCommand(this);
+        if (!_isAuth)
             return;
-        }
 
         Log.v(TAG, "doNextStep 2");
         if (_profile == null) {
