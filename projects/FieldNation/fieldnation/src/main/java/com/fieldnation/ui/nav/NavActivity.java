@@ -76,9 +76,7 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
 
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
-        _ccw.setAnimationListener(_ccw_animationListener);
         _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
-        _cw.setAnimationListener(_ccw_animationListener);
 
         _arrowTextView.startAnimation(_cw);
 
@@ -136,13 +134,6 @@ public class NavActivity extends AuthSimpleActivity {
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
-
-    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            _ccw.cancel();
-        }
-    };
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
