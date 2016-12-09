@@ -16,6 +16,7 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;
 import com.fieldnation.service.auth.OAuth;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.nav.NavActivity;
 
 /**
@@ -167,8 +168,10 @@ public class SplashActivity extends AuthSimpleActivity {
             return;
 
         Log.v(TAG, "doNextStep 2");
-        if (_profile == null)
+        if (_profile == null) {
+            ProfileClient.get(this);
             return;
+        }
 
         Log.v(TAG, "doNextStep 3");
 
