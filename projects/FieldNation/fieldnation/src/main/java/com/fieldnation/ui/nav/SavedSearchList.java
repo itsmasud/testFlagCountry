@@ -51,6 +51,7 @@ public class SavedSearchList extends LinearLayout {
             new SavedSearchParams()
                     .type(WorkOrderListType.CANCELED.getType())
                     .status(WorkOrderListType.CANCELED.getStatuses())
+                    .order("desc")
                     .title("Canceled"),
             new SavedSearchParams()
                     .type(WorkOrderListType.COMPLETED.getType())
