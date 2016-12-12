@@ -31,14 +31,14 @@ public class SavedSearchList extends LinearLayout {
     private static final String TAG = "SavedSearchList";
 
     public static final SavedSearchParams[] defaults = new SavedSearchParams[]{
-            new SavedSearchParams()
-                    .type(WorkOrderListType.TODAYS_WORK.getType())
-                    .status(WorkOrderListType.TODAYS_WORK.getStatuses())
-                    .title("Today's Work"),
-            new SavedSearchParams()
-                    .type(WorkOrderListType.TOMORROWS_WORK.getType())
-                    .status(WorkOrderListType.TOMORROWS_WORK.getStatuses())
-                    .title("Tomorrow's Work"),
+//            new SavedSearchParams()
+//                    .type(WorkOrderListType.TODAYS_WORK.getType())
+//                    .status(WorkOrderListType.TODAYS_WORK.getStatuses())
+//                    .title("Today's Work"),
+//            new SavedSearchParams()
+//                    .type(WorkOrderListType.TOMORROWS_WORK.getType())
+//                    .status(WorkOrderListType.TOMORROWS_WORK.getStatuses())
+//                    .title("Tomorrow's Work"),
             new SavedSearchParams()
                     .type(WorkOrderListType.ASSIGNED.getType())
                     .status(WorkOrderListType.ASSIGNED.getStatuses())
@@ -51,10 +51,12 @@ public class SavedSearchList extends LinearLayout {
             new SavedSearchParams()
                     .type(WorkOrderListType.CANCELED.getType())
                     .status(WorkOrderListType.CANCELED.getStatuses())
+                    .order("desc")
                     .title("Canceled"),
             new SavedSearchParams()
                     .type(WorkOrderListType.COMPLETED.getType())
                     .status(WorkOrderListType.COMPLETED.getStatuses())
+                    .order("desc")
                     .title("Completed"),
             new SavedSearchParams()
                     .type(WorkOrderListType.REQUESTED.getType())

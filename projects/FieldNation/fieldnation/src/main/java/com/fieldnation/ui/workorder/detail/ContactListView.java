@@ -101,7 +101,6 @@ public class ContactListView extends RelativeLayout {
             }
         }
 
-
         if (_workorder.getWorkorderContacts() != null)
             Collections.addAll(contactList, _workorder.getWorkorderContacts());
 
@@ -110,6 +109,7 @@ public class ContactListView extends RelativeLayout {
                 _contactsRunnable.cancel();
 
             if (_listLayout != null) {
+                addedContact = true;
                 _contactsRunnable = new ForLoopRunnable(contactList.size(), new Handler()) {
                     private final List<ContactTileView> _views = new LinkedList<>();
                     WorkorderContacts contact = null;
@@ -133,14 +133,11 @@ public class ContactListView extends RelativeLayout {
                 };
                 post(_contactsRunnable);
             }
-
-
-            if (addedContact) {
-                setVisibility(VISIBLE);
-            } else {
-                setVisibility(GONE);
-            }
-
+        }
+        if (addedContact) {
+            setVisibility(VISIBLE);
+        } else {
+            setVisibility(GONE);
         }
     }
 }
