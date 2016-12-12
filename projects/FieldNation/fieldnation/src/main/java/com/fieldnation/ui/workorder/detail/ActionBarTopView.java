@@ -25,6 +25,8 @@ import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.dialog.v2.RunningLateDialog;
+import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class ActionBarTopView extends LinearLayout {
@@ -463,13 +465,11 @@ public class ActionBarTopView extends LinearLayout {
 //                break;
 //            case PHONE:
 //                break;
-/*
             case RUNNING_LATE:
-                                button.setVisibility(VISIBLE);
+                button.setVisibility(VISIBLE);
                 button.setOnClickListener(_runningLate_onClick);
                 button.setText("RUNNING LATE");
                 break;
-*/
 //            case VIEW:
 //                break;
             default:
@@ -578,7 +578,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-//            RunningLateDialog.Controller.show(App.get(), _workOrder);
+            RunningLateDialogLegacy.Controller.show(App.get(), _workorder);
         }
     };
 
