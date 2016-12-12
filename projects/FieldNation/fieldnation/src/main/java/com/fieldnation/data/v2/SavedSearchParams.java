@@ -58,7 +58,7 @@ public class SavedSearchParams implements Parcelable {
         PAID("paid"),
         TODAY("today"),
         TOMORROW("tomorrow");
-        
+
         private final String _callString;
 
         Status(String callString) {
@@ -114,6 +114,11 @@ public class SavedSearchParams implements Parcelable {
 
     public SavedSearchParams title(String title) {
         this.title = title;
+        return this;
+    }
+
+    public SavedSearchParams order(String order) {
+        this.order = order;
         return this;
     }
 
