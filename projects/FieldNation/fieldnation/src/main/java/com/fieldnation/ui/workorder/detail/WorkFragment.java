@@ -420,7 +420,10 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        _gpsLocationService.stopLocationUpdates();
+        Log.v(TAG, "onPause");
+        if (_gpsLocationService != null && _gpsLocationService.isRunning()) {
+            _gpsLocationService.stopLocationUpdates();
+        }
         super.onPause();
     }
 
@@ -1558,7 +1561,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCheckout(Task task) {
-                startCheckOut();
+            startCheckOut();
         }
 
         @Override
