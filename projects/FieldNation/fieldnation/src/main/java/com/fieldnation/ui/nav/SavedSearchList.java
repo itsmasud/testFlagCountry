@@ -46,7 +46,6 @@ public class SavedSearchList extends LinearLayout {
             new SavedSearchParams()
                     .type(WorkOrderListType.AVAILABLE.getType())
                     .status(WorkOrderListType.AVAILABLE.getStatuses())
-                    .radius(60.0)
                     .title("Available"),
             new SavedSearchParams()
                     .type(WorkOrderListType.CANCELED.getType())

@@ -502,6 +502,7 @@ public class LocationViewMapBox extends LinearLayout implements WorkorderRendere
             _actionButton.setVisibility(VISIBLE);
             _action = ACTION_NAVIGATE;
             lookupMap();
+            _simpleGps.stop();
         }
 
         @Override
