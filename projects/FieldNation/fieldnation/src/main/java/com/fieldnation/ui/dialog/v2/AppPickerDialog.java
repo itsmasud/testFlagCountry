@@ -39,7 +39,6 @@ public class AppPickerDialog extends SimpleDialog {
     // Data
     private static final List<AppPickerPackage> _activityList = new LinkedList<>();
     private static final Set<String> _packages = new HashSet<>();
-//    private static Listener _listener;
 
     public AppPickerDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -91,10 +90,10 @@ public class AppPickerDialog extends SimpleDialog {
 
     private final AppPickerRowView.OnClickListener _app_onClick = new AppPickerRowView.OnClickListener() {
         @Override
-        public void onClick(AppPickerRowView row, AppPickerPackage pack) {
+        public void onClick(AppPickerRowView row, Intent intent) {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESULT, PARAM_RESULT_OK);
-            response.putParcelable(PARAM_VALUE, pack);
+            response.putParcelable(PARAM_VALUE, intent);
             onResult(response);
             dismiss(true);
         }
@@ -108,7 +107,6 @@ public class AppPickerDialog extends SimpleDialog {
         }
 
         public static void show(Context context, String uid) {
-//            addIntent(intent, postfix);
             show(context, uid, AppPickerDialog.class, null);
         }
 
@@ -123,13 +121,12 @@ public class AppPickerDialog extends SimpleDialog {
         public void onComplete(Bundle response) {
             switch (response.getInt(PARAM_RESULT)) {
                 case PARAM_RESULT_OK:
-                    Log.e(TAG, "inside PARAM_RESULT_OK");
-                    onOk((AppPickerPackage) response.getParcelable(PARAM_VALUE));
+                    onOk((Intent) response.getParcelable(PARAM_VALUE));
                     break;
             }
         }
 
-        public abstract void onOk(AppPickerPackage pack);
+        public abstract void onOk(Intent intent);
 
     }
 
