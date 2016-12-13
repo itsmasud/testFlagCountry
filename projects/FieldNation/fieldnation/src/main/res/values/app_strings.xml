@@ -312,6 +312,7 @@
     <string name="character_counting">%1$d /120</string>
 
     <string name="dialog_eta_title">Edit ETA</string>
+    <string name="dialog_profile_information_title">Profile Information</string>
 
     <string name="workorder_bundle_warning">This is part of a bundle of %1$d work orders. By accepting this work order you are accepting all of them.</string>
 
