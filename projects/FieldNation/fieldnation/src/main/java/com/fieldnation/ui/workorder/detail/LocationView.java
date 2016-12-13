@@ -502,6 +502,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
             lookupMap();
+            _simpleGps.stop();
         }
 
         @Override
