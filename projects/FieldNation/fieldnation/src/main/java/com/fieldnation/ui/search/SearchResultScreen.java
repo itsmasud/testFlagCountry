@@ -2,6 +2,7 @@ package com.fieldnation.ui.search;
 
 import android.content.Context;
 import android.location.Location;
+import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -87,8 +88,6 @@ public class SearchResultScreen extends RelativeLayout {
         _workorderClientV1 = new WorkorderClient(_workorderClientV1_listener);
         _workorderClientV1.connect(App.get());
 
-        _adapter.clear();
-
         post(new Runnable() {
             @Override
             public void run() {
@@ -165,7 +164,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onSearch(SavedSearchParams searchParams, ListEnvelope envelope, List<WorkOrder> workOrders, boolean failed) {
-            if (!_searchParams.toKey().equals(searchParams.toKey()))
+            if (_searchParams == null || !_searchParams.toKey().equals(searchParams.toKey()))
                 return;
 
             if (_onListReceivedListener != null)
@@ -196,7 +195,6 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onAction(long workOrderId, String action, boolean failed) {
             getPage(0);
-            _adapter.clear();
             _refreshView.startRefreshing();
         }
     };
@@ -210,10 +208,10 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             Log.v(TAG, "_workorderClientV1_listener.onAction " + workorderId + ", " + action + ", " + failed);
+
             if (failed)
                 return;
-            
-            _adapter.clear();
+
             getPage(0);
             _refreshView.startRefreshing();
         }

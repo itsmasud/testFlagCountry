@@ -26,7 +26,7 @@
             android:gravity="center"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="Canceling this job will lead to terrible, horrible, no good consequences and significant penalties\n(you may even be eaten by a Grue)!" />
+            android:text="Canceling this job may lead to a penalty. Please review our Provider Quality and Assurance Program before deciding to cancel." />
 
         <ImageView
             android:id="@+id/toc_imageview"
