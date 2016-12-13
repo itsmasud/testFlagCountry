@@ -190,6 +190,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        Log.v(TAG, "onCreateView");
         if (savedInstanceState != null) {
             if (savedInstanceState.containsKey(STATE_TEMP_FILE)) {
                 _tempFile = new File(savedInstanceState.getString(STATE_TEMP_FILE));
@@ -204,6 +205,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
@@ -336,6 +338,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        Log.v(TAG, "onActivityCreated");
         super.onActivityCreated(savedInstanceState);
 
         Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
@@ -355,6 +358,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onAttach(Activity activity) {
+        Log.v(TAG, "onAttach");
         super.onAttach(activity);
         _appDialog = AppPickerDialog.getInstance(getFragmentManager(), TAG);
         _closingDialog = ClosingNotesDialog.getInstance(getFragmentManager(), TAG);
@@ -413,6 +417,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onDetach() {
+        Log.v(TAG, "onDetach");
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
@@ -421,7 +426,10 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void onPause() {
-        _gpsLocationService.stopLocationUpdates();
+        Log.v(TAG, "onPause");
+        if (_gpsLocationService != null && _gpsLocationService.isRunning()) {
+            _gpsLocationService.stopLocationUpdates();
+        }
         super.onPause();
     }
 
@@ -432,7 +440,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void setWorkorder(Workorder workorder) {
-        Log.e(TAG, "setWorkorder");
+        Log.v(TAG, "setWorkorder");
         _workorder = workorder;
         subscribeData();
         requestTasks();
@@ -459,67 +467,67 @@ public class WorkFragment extends WorkorderFragment {
         if (_sumView != null) {
             Stopwatch watch = new Stopwatch(true);
             _sumView.setWorkorder(_workorder);
-            Log.v(TAG, "_sumView time: " + watch.finish());
+            //Log.v(TAG, "_sumView time: " + watch.finish());
         }
 
         if (_companySummaryView != null) {
             Stopwatch watch = new Stopwatch(true);
             _companySummaryView.setWorkorder(_workorder);
-            Log.v(TAG, "_companySummaryView time: " + watch.finish());
+            //Log.v(TAG, "_companySummaryView time: " + watch.finish());
         }
 
         if (_locView != null) {
             Stopwatch watch = new Stopwatch(true);
             _locView.setWorkorder(_workorder);
-            Log.v(TAG, "_locView time: " + watch.finish());
+            //Log.v(TAG, "_locView time: " + watch.finish());
         }
 
         if (_scheduleView != null) {
             Stopwatch watch = new Stopwatch(true);
             _scheduleView.setWorkorder(_workorder);
-            Log.v(TAG, "_scheduleView time: " + watch.finish());
+            //Log.v(TAG, "_scheduleView time: " + watch.finish());
         }
 
         if (_contactListView != null) {
             Stopwatch watch = new Stopwatch(true);
             _contactListView.setWorkorder(_workorder);
-            Log.v(TAG, "_contactListView time: " + watch.finish());
+            //Log.v(TAG, "_contactListView time: " + watch.finish());
         }
 
         if (_payView != null) {
             Stopwatch watch = new Stopwatch(true);
             _payView.setWorkorder(_workorder);
-            Log.v(TAG, "_payView time: " + watch.finish());
+            //Log.v(TAG, "_payView time: " + watch.finish());
         }
 
         if (_coSummaryView != null) {
             Stopwatch watch = new Stopwatch(true);
             _coSummaryView.setData(_workorder);
-            Log.v(TAG, "_coSummaryView time: " + watch.finish());
+            //Log.v(TAG, "_coSummaryView time: " + watch.finish());
         }
 
         if (_expenseListView != null) {
             Stopwatch watch = new Stopwatch(true);
             _expenseListView.setWorkorder(_workorder);
-            Log.v(TAG, "_expenseListView time: " + watch.finish());
+            //Log.v(TAG, "_expenseListView time: " + watch.finish());
         }
 
         if (_discountListView != null) {
             Stopwatch watch = new Stopwatch(true);
             _discountListView.setWorkorder(_workorder);
-            Log.v(TAG, "_discountListView time: " + watch.finish());
+            //Log.v(TAG, "_discountListView time: " + watch.finish());
         }
 
         if (_topBar != null) {
             Stopwatch watch = new Stopwatch(true);
             _topBar.setWorkorder(_workorder);
-            Log.v(TAG, "_topBar time: " + watch.finish());
+            //Log.v(TAG, "_topBar time: " + watch.finish());
         }
 
         if (_exView != null) {
             Stopwatch watch = new Stopwatch(true);
             _exView.setWorkorder(_workorder);
-            Log.v(TAG, "_exView time: " + watch.finish());
+            //Log.v(TAG, "_exView time: " + watch.finish());
         }
 
         if (_shipments != null && _timeLogged != null) {
@@ -534,43 +542,43 @@ public class WorkFragment extends WorkorderFragment {
                 _timeLogged.setVisibility(View.VISIBLE);
                 _closingNotes.setVisibility(View.VISIBLE);
             }
-            Log.v(TAG, "_shipments time: " + watch.finish());
+            //Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
         if (_shipments != null) {
             Stopwatch watch = new Stopwatch(true);
             _shipments.setWorkorder(_workorder);
-            Log.v(TAG, "_shipments time: " + watch.finish());
+            //Log.v(TAG, "_shipments time: " + watch.finish());
         }
 
         if (_timeLogged != null) {
             Stopwatch watch = new Stopwatch(true);
             _timeLogged.setWorkorder(_workorder);
-            Log.v(TAG, "_timeLogged time: " + watch.finish());
+            //Log.v(TAG, "_timeLogged time: " + watch.finish());
         }
 
         if (_closingNotes != null) {
             Stopwatch watch = new Stopwatch(true);
             _closingNotes.setWorkorder(_workorder);
-            Log.v(TAG, "_closingNotes time: " + watch.finish());
+            //Log.v(TAG, "_closingNotes time: " + watch.finish());
         }
 
         if (_topBar != null) {
             Stopwatch watch = new Stopwatch(true);
             _topBar.setWorkorder(_workorder);
-            Log.v(TAG, "_topBar time: " + watch.finish());
+            //Log.v(TAG, "_topBar time: " + watch.finish());
         }
 
         if (_customFields != null) {
             Stopwatch watch = new Stopwatch(true);
             _customFields.setData(_workorder, _workorder.getCustomFields());
-            Log.v(TAG, "_customFields time: " + watch.finish());
+            //Log.v(TAG, "_customFields time: " + watch.finish());
         }
 
         if (_signatureView != null) {
             Stopwatch watch = new Stopwatch(true);
             _signatureView.setWorkorder(_workorder);
-            Log.v(TAG, "_signatureView time: " + watch.finish());
+            //Log.v(TAG, "_signatureView time: " + watch.finish());
         }
 
         setLoading(false);
@@ -582,7 +590,7 @@ public class WorkFragment extends WorkorderFragment {
             } else {
                 _bundleWarningTextView.setVisibility(View.GONE);
             }
-            Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
+            //Log.v(TAG, "_bundleWarningTextView time: " + watch.finish());
         }
 
         if (getArguments() != null) {

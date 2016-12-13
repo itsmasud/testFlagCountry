@@ -19,7 +19,7 @@ apply plugin: 'io.fabric'
 
 android {
     compileSdkVersion 22
-    buildToolsVersion '25.0.0'
+    buildToolsVersion '22.0.1'
 
     lintOptions {
         abortOnError false
@@ -28,7 +28,7 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 94
+        versionCode 95
         versionName "3.1.0"
         multiDexEnabled true
     }
