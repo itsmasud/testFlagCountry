@@ -103,6 +103,8 @@ public class HttpJson {
             conn.setRequestProperty("Cache-Control", "no-cache");
             conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
             conn.setRequestProperty("X-App-Platform", "Android");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(60000);
 
             if (headers != null) {
                 Iterator<String> e = headers.keys();
