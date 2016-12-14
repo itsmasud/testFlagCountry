@@ -55,6 +55,7 @@ import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
@@ -1258,6 +1259,22 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onReportProblem() {
             _reportProblemDialog.show(_workorder);
+        }
+
+        @Override
+        public void onMyWay() {
+            if (_gpsLocationService != null && _gpsLocationService.hasLocation() && _gpsLocationService.getLocation() != null) {
+                Location location = _gpsLocationService.getLocation();
+                WorkOrderClient.actionOnMyWay(App.get(), _workorder.getWorkorderId(), location.getLatitude(), location.getLongitude());
+            } else {
+                WorkOrderClient.actionOnMyWay(App.get(), _workorder.getWorkorderId(), null, null);
+            }
+
+            try {
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }
 
         @Override
