@@ -8,6 +8,8 @@ import android.net.Uri;
 import android.provider.MediaStore;
 import android.webkit.MimeTypeMap;
 
+import com.fieldnation.fnlog.Log;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -200,13 +202,14 @@ public class FileUtils {
 
     public static String getFilePathFromUri(Context context, Uri uri) {
         final String filePath;
+
         if (uri.getScheme().equals("file")) {
-//            Log.v(TAG, "Uri from dropbox, onedrive. ");
+//            Log.e("FileUtils", "Uri from dropbox, onedrive. ");
             return uri.getPath();
 
         } else if (uri.getScheme().equals("content")) {
             if (uri.getAuthority().equals("media")) {
-//                Log.v(TAG, "For gallery app");
+//                Log.e("FileUtils", "For gallery app");
                 Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
                 int filePathIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
                 cursor.moveToFirst();
@@ -216,7 +219,7 @@ public class FileUtils {
 
             } else if (uri.getAuthority() != null &&
                     uri.getAuthority().equals("com.google.android.apps.photos.contentprovider")) {
-//                Log.v(TAG, "form google photos");
+//                Log.e("FileUtils", "form google photos");
                 return null;
 
             }
