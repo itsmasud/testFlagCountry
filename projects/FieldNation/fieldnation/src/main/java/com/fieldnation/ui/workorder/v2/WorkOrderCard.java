@@ -130,8 +130,12 @@ public class WorkOrderCard extends RelativeLayout {
         if (_primaryButton == null)
             return;
 
-        _titleTextView.setText(_workOrder.getTitle());
-        _workTypeTextView.setText(_workOrder.getType().toUpperCase());
+        _titleTextView.setText(_workOrder.getId() + " | " + _workOrder.getTitle());
+        if (!misc.isEmptyOrNull(_workOrder.getType())) {
+            _workTypeTextView.setText(_workOrder.getType().toUpperCase());
+        } else {
+            _workTypeTextView.setText("");
+        }
 
         populateLocation();
         populatePay();
@@ -525,7 +529,7 @@ public class WorkOrderCard extends RelativeLayout {
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), null, null);
 
             try {
-                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 10800000); // 3 hours
+                GpsTrackingService.start(App.get(), System.currentTimeMillis() + 3600000); // 1 hours
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

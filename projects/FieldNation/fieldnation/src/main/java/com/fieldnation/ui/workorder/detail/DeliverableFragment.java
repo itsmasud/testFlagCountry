@@ -171,6 +171,10 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
+
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
+
     }
 
     @Override
@@ -187,6 +191,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -219,15 +226,10 @@ public class DeliverableFragment extends WorkorderFragment {
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
     }
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
-
         super.onPause();
     }
 
