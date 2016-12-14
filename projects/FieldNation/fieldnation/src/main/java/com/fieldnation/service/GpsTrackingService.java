@@ -20,7 +20,7 @@ public class GpsTrackingService extends MultiThreadedService {
     private static final String TAG = "GpsTrackingService";
 
     private static final long INTERVAL = 60000;
-    private static final long FAST_INTERVAL = 10000;
+    private static final long FAST_INTERVAL = 30000;
     private static final SimpleGps.Priority PRIORITY = SimpleGps.Priority.CITY;
 
     private long _expirationTime = 0;
