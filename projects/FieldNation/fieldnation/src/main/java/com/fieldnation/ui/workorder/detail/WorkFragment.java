@@ -85,7 +85,6 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.RateBuyerModal;
-import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -95,6 +94,7 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -378,7 +378,6 @@ public class WorkFragment extends WorkorderFragment {
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
-        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -407,7 +406,6 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-        _reportProblemDialog.setListener(_reportProblem_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
         _payDialog.setListener(_payDialog_listener);
 
@@ -721,13 +719,6 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
-        @Override
-        public void onReportAProblem(String explanation, ReportProblemType type) {
-            WorkorderClient.actionReportProblem(App.get(), _workorder.getWorkorderId(), explanation, type);
-        }
-    };
-
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -1271,7 +1262,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
-            _reportProblemDialog.show(_workorder);
+            ReportProblemDialog.Controller.show(App.get(), _workorder);
         }
 
         @Override

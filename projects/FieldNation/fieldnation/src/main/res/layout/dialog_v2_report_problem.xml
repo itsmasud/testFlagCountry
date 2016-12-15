@@ -74,7 +74,7 @@
                 style="@style/EditText"
                 android:hint="@string/provide_a_timeframe"
                 android:imeOptions="actionNext"
-                android:inputType="text" />
+                android:inputType="number" />
         </android.support.design.widget.TextInputLayout>
 
         <android.support.design.widget.TextInputLayout

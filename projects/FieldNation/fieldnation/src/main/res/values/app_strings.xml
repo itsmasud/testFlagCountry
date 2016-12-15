@@ -549,7 +549,7 @@
     <string name="professionalism">Professionalism</string>
     <string name="profile_information">Profile Information</string>
     <string name="providers_under_your_company">Providers under your company:</string>
-    <string name="provide_a_timeframe">Provide a timeframe</string>
+    <string name="provide_a_timeframe">Provide a timeframe (min)</string>
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
     <string name="rate_this_work_order">Rate this work order</string>

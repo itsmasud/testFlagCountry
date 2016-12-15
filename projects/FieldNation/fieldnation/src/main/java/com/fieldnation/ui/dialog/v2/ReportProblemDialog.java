@@ -302,6 +302,8 @@ public class ReportProblemDialog extends SimpleDialog {
             }
         }
 
+        getTimeFrameSpinner();
+
         _noteTextView.setVisibility(View.GONE);
         _timeframeSpinner.setVisibility(View.GONE);
 
@@ -329,10 +331,10 @@ public class ReportProblemDialog extends SimpleDialog {
             getSecondarySpinner().clearFocus();
         }
 
-        if (misc.isEmptyOrNull(_explanationEditText.getText().toString()) || _selectedProblem == null) {
-            _okButton.setEnabled(false);
-        } else {
+        if (!misc.isEmptyOrNull(_explanationEditText.getText().toString()) && _selectedProblem != null) {
             _okButton.setEnabled(true);
+        } else {
+            _okButton.setEnabled(false);
         }
 
         if (_selectedProblem == null) {
@@ -350,6 +352,23 @@ public class ReportProblemDialog extends SimpleDialog {
             case WILL_BE_LATE:
                 _timeframeSpinner.setVisibility(View.VISIBLE);
                 _timeframeSpinner.requestFocus();
+
+                if (_timeframePosition == -1 || _timeframePosition == 3) {
+                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+                        _okButton.setEnabled(false);
+                    } else {
+                        _okButton.setEnabled(true);
+                    }
+                } else {
+                    _okButton.setEnabled(true);
+                }
+
+                if (_timeframePosition == 3) {
+                    _timeframeLayout.setVisibility(View.VISIBLE);
+                } else {
+                    _timeframeLayout.setVisibility(View.GONE);
+                }
+
                 break;
 
             case DO_NOT_HAVE_SHIPMENT:
@@ -433,12 +452,7 @@ public class ReportProblemDialog extends SimpleDialog {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _timeframePosition = position;
-            if (position == 3) {
-                _timeframeLayout.setVisibility(View.VISIBLE);
-            } else {
-                _timeframeLayout.setVisibility(View.GONE);
-            }
-
+            Log.v(TAG, "onItemSelected " + position);
             populateUi();
         }
 

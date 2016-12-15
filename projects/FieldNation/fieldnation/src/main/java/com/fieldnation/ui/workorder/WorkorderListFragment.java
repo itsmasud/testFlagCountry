@@ -39,12 +39,12 @@ import com.fieldnation.ui.dialog.DeviceCountDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
-import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 
@@ -77,7 +77,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private LocationDialog _locationDialog;
     private OneButtonDialog _locationLoadingDialog;
     private TwoButtonDialog _yesNoDialog;
-    private ReportProblemDialog _reportProblemDialog;
     private MarkIncompleteDialog _markIncompleteDialog;
 
     // Data
@@ -163,7 +162,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
         _yesNoDialog = TwoButtonDialog.getInstance(getFragmentManager(), TAG);
-        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
 
         Log.v(TAG, "Display Type: " + _displayView.getCall());
@@ -240,7 +238,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         _deviceCountDialog.setListener(_deviceCountDialog_listener);
         _counterOfferDialog.setListener(_counterOfferDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-        _reportProblemDialog.setListener(_reportProblem_listener);
 
         checkProfile();
     }
@@ -427,7 +424,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         if (getLocationService().hasLocation()) {
             CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(),CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         }
 //        _adapter.refreshPages();
     }
@@ -451,7 +448,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             if (_deviceCount > -1) {
                 CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(),DIALOG_CHECK_IN_CHECK_OUT,  _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 //            _adapter.refreshPages();
         }
@@ -484,13 +481,6 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
             WorkorderClient.actionIncomplete(App.get(), _currentWorkorder.getWorkorderId());
 
             setLoading(true);
-        }
-    };
-
-    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
-        @Override
-        public void onReportAProblem(String explanation, ReportProblemType type) {
-            WorkorderClient.actionReportProblem(App.get(), _currentWorkorder.getWorkorderId(), explanation, type);
         }
     };
 
@@ -705,7 +695,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            _reportProblemDialog.show(workorder);
+            ReportProblemDialog.Controller.show(App.get(), workorder);
         }
 
         @Override
