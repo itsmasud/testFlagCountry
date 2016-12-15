@@ -107,6 +107,7 @@ public class ReportProblemDialog extends SimpleDialog {
         _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
         _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
         _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
+        _timeframeEditText.addTextChangedListener(_timeframeEditText_watcher);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
     }
@@ -351,20 +352,18 @@ public class ReportProblemDialog extends SimpleDialog {
 
             case WILL_BE_LATE:
                 _timeframeSpinner.setVisibility(View.VISIBLE);
-                _timeframeSpinner.requestFocus();
 
                 if (_timeframePosition == -1 || _timeframePosition == 3) {
-                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
-                        _okButton.setEnabled(false);
-                    } else {
-                        _okButton.setEnabled(true);
-                    }
+                    _okButton.setEnabled(false);
                 } else {
                     _okButton.setEnabled(true);
                 }
 
                 if (_timeframePosition == 3) {
                     _timeframeLayout.setVisibility(View.VISIBLE);
+                    if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+                        _okButton.setEnabled(false);
+                    }
                 } else {
                     _timeframeLayout.setVisibility(View.GONE);
                 }
@@ -432,7 +431,6 @@ public class ReportProblemDialog extends SimpleDialog {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
             _secondaryPosition = position;
-            _explanationEditText.requestFocus();
             misc.showKeyboard(_explanationEditText);
             _selectedProblem = (ReportProblemType) getSecondaryAdapter().getItem(position);
             _textEditText_watcherListener.onTextChanged(
@@ -460,6 +458,7 @@ public class ReportProblemDialog extends SimpleDialog {
         public void onNothingSelected(AdapterView<?> parent) {
         }
     };
+
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -543,6 +542,44 @@ public class ReportProblemDialog extends SimpleDialog {
             }
         }
 
+        public void afterTextChanged(Editable s) {
+        }
+    };
+
+    private final TextWatcher _timeframeEditText_watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            _timeframeSpinner.setVisibility(View.VISIBLE);
+
+            if (_timeframePosition == -1 || _timeframePosition == 3) {
+                _okButton.setEnabled(false);
+            } else {
+                _okButton.setEnabled(true);
+            }
+
+            if (_timeframePosition == 3) {
+                _timeframeLayout.setVisibility(View.VISIBLE);
+                if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+                    _okButton.setEnabled(false);
+                }
+            } else {
+                _timeframeLayout.setVisibility(View.GONE);
+            }
+
+            if (_primaryPosition < 0) return;
+            if (getSecondarySpinner().isShown() && _secondaryPosition < 0) return;
+            if (_explanationEditText.getText().toString().trim().length() > 0) {
+                _okButton.setEnabled(true);
+            } else {
+                _okButton.setEnabled(false);
+            }
+        }
+
+        @Override
         public void afterTextChanged(Editable s) {
         }
     };
