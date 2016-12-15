@@ -38,6 +38,7 @@ public class ReportProblemDialog extends SimpleDialog {
 
     // State keys
     private static final String PARAM_WORKORDER_ID = "workOrderId";
+    private static final String PARAM_WORKORDER = "workOrder";
 
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
     private static final String STATE_PRIMARY_POS = "STATE_PRIMARY_POS";
@@ -45,11 +46,16 @@ public class ReportProblemDialog extends SimpleDialog {
     private static final String STATE_SELECTED_PROBLEM = "STATE_SELECTED_PROBLEM";
     private static final String STATE_OK_ENABLED = "STATE_OK_ENABLED";
 
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+
     // Ui
     private TextView _titleTextView;
     private ProgressBar _loadingBar;
     private HintSpinner _primarySpinner;
     private HintSpinner _secondarySpinner;
+    private HintSpinner _timeframeSpinner;
+    private TextInputLayout _timeframeLayout;
+    private EditText _timeframeEditText;
     private TextInputLayout _explanationLayout;
     private EditText _explanationEditText;
     private TextView _noteTextView;
@@ -66,6 +72,7 @@ public class ReportProblemDialog extends SimpleDialog {
     private Workorder _workorder;
     private int _primaryPosition = -1;
     private int _secondaryPosition = -1;
+    private int _timeframePosition = -1;
     private ReportProblemType _selectedProblem = null;
     private boolean _clear = false;
 
@@ -81,6 +88,9 @@ public class ReportProblemDialog extends SimpleDialog {
         _loadingBar = (ProgressBar) v.findViewById(R.id.loadingBar);
         _primarySpinner = (HintSpinner) v.findViewById(R.id.primary_spinner);
         _secondarySpinner = (HintSpinner) v.findViewById(R.id.secondary_spinner);
+        _timeframeSpinner = (HintSpinner) v.findViewById(R.id.timeframe_spinner);
+        _timeframeLayout = (TextInputLayout) v.findViewById(R.id.timeframe_layout);
+        _timeframeEditText = (EditText) v.findViewById(R.id.timeframe_edittext);
         _explanationLayout = (TextInputLayout) v.findViewById(R.id.explanation_layout);
         _explanationEditText = (EditText) v.findViewById(R.id.explanation_edittext);
         _noteTextView = (TextView) v.findViewById(R.id.note_textview);
@@ -95,6 +105,7 @@ public class ReportProblemDialog extends SimpleDialog {
         super.onAdded();
         _primarySpinner.setOnItemSelectedListener(_problem1_onItemClick);
         _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
+        _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
         _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
@@ -105,9 +116,15 @@ public class ReportProblemDialog extends SimpleDialog {
         setLoading(true);
         _workorder = null;
         _workOrderId = payload.getLong(PARAM_WORKORDER_ID);
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
-        WorkorderClient.get(App.get(), _workOrderId, false);
+
+        if (payload.containsKey(PARAM_WORKORDER)) {
+            _workorder = (Workorder) payload.getParcelable(PARAM_WORKORDER);
+        } else {
+            _workorderClient = new WorkorderClient(_workorderClient_listener);
+            _workorderClient.connect(App.get());
+            WorkorderClient.get(App.get(), _workOrderId, false);
+        }
+
         populateUi();
         super.show(payload, animate);
     }
@@ -118,6 +135,8 @@ public class ReportProblemDialog extends SimpleDialog {
             _loadingBar.setVisibility(View.VISIBLE);
             _primarySpinner.setVisibility(View.GONE);
             _secondarySpinner.setVisibility(View.GONE);
+            _timeframeSpinner.setVisibility(View.GONE);
+            _timeframeLayout.setVisibility(View.GONE);
             _explanationLayout.setVisibility(View.GONE);
             _noteTextView.setVisibility(View.GONE);
             _cancelButton.setVisibility(View.GONE);
@@ -127,6 +146,8 @@ public class ReportProblemDialog extends SimpleDialog {
             _loadingBar.setVisibility(View.GONE);
             _primarySpinner.setVisibility(View.VISIBLE);
             _secondarySpinner.setVisibility(View.GONE);
+            _timeframeSpinner.setVisibility(View.GONE);
+            _timeframeLayout.setVisibility(View.GONE);
             _explanationLayout.setVisibility(View.VISIBLE);
             _noteTextView.setVisibility(View.VISIBLE);
             _cancelButton.setVisibility(View.VISIBLE);
@@ -240,6 +261,23 @@ public class ReportProblemDialog extends SimpleDialog {
         return (HintArrayAdapter) getSecondarySpinner().getAdapter();
     }
 
+    private HintSpinner getTimeFrameSpinner() {
+        if (_timeframeSpinner != null && _timeframeSpinner.getAdapter() == null) {
+            HintArrayAdapter adapter = HintArrayAdapter.createFromArray(getView().getContext(),
+                    TIMEFRAMES, R.layout.view_spinner_item);
+
+            adapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _timeframeSpinner.setAdapter(adapter);
+        }
+        return _timeframeSpinner;
+    }
+
+    private HintArrayAdapter getTimeFrameAdapter() {
+        return (HintArrayAdapter) _timeframeSpinner.getAdapter();
+    }
+
     private void populateUi() {
         if (_noteTextView == null)
             return;
@@ -265,6 +303,7 @@ public class ReportProblemDialog extends SimpleDialog {
         }
 
         _noteTextView.setVisibility(View.GONE);
+        _timeframeSpinner.setVisibility(View.GONE);
 
         if (_primaryList == null) {
             return;
@@ -300,7 +339,6 @@ public class ReportProblemDialog extends SimpleDialog {
             return;
         }
 
-
         switch (_selectedProblem) {
             case CANNOT_MAKE_ASSIGNMENT:
                 _noteTextView.setText(R.string.once_submitted_you_will_be_removed);
@@ -310,6 +348,10 @@ public class ReportProblemDialog extends SimpleDialog {
                 break;
 
             case WILL_BE_LATE:
+                _timeframeSpinner.setVisibility(View.VISIBLE);
+                _timeframeSpinner.requestFocus();
+                break;
+
             case DO_NOT_HAVE_SHIPMENT:
             case DO_NOT_HAVE_INFO:
             case DO_NOT_HAVE_RESPONSE:
@@ -387,6 +429,23 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
+    private final AdapterView.OnItemSelectedListener _timeframe_onItemClick = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _timeframePosition = position;
+            if (position == 3) {
+                _timeframeLayout.setVisibility(View.VISIBLE);
+            } else {
+                _timeframeLayout.setVisibility(View.GONE);
+            }
+
+            populateUi();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -496,6 +555,13 @@ public class ReportProblemDialog extends SimpleDialog {
         public static void show(Context context, long workOrderId) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORKORDER_ID, workOrderId);
+            show(context, null, ReportProblemDialog.class, params);
+        }
+
+        public static void show(Context context, Workorder workorder) {
+            Bundle params = new Bundle();
+            params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
+            params.putParcelable(PARAM_WORKORDER, workorder);
             show(context, null, ReportProblemDialog.class, params);
         }
     }

@@ -48,11 +48,40 @@
             android:hint="@string/dialog_report_problem_spinner_1"
             android:visibility="gone" />
 
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/timeframe_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/secondary_spinner"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:hint="@string/hint_how_late"
+            android:visibility="gone" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/timeframe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeframe_spinner"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:visibility="gone">
+
+            <EditText
+                android:id="@+id/timeframe_edittext"
+                style="@style/EditText"
+                android:hint="@string/provide_a_timeframe"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
         <android.support.design.widget.TextInputLayout
             android:id="@+id/explanation_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/secondary_spinner"
+            android:layout_below="@+id/timeframe_layout"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="24dp"
             android:layout_marginRight="24dp">

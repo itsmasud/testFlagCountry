@@ -24,6 +24,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -94,6 +95,7 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -125,6 +127,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_TEMP_URI = "WorkFragment:STATE_TEMP_URI";
 
     // UI
+    private Button _testButton;
     private OverScrollView _scrollView;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
@@ -207,6 +210,9 @@ public class WorkFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+
+        _testButton = (Button) view.findViewById(R.id.test_button);
+        _testButton.setOnClickListener(_test_onClick);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -1191,6 +1197,13 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************************-*/
     /*-				View Listeners				-*/
     /*-*****************************************-*/
+    private final View.OnClickListener _test_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RunningLateDialogLegacy.Controller.show(App.get(), _workorder);
+        }
+    };
+
     private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
