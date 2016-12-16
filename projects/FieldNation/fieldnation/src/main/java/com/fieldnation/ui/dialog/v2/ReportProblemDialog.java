@@ -474,11 +474,26 @@ public class ReportProblemDialog extends SimpleDialog {
             switch (_selectedProblem) {
                 case CANNOT_MAKE_ASSIGNMENT:
                     CancelWarningDialog.Controller.show(App.get(), _workorder.getWorkorderId(), explanation);
-                    dismiss(false);
-                    return;
+                    break;
 
                 case WILL_BE_LATE:
-                    ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
+                    if (_timeframePosition == 3) {
+                        try {
+                            WorkorderClient.actionRunningLate(App.get(), _workOrderId, explanation, Integer.parseInt(_timeframeEditText.getText().toString()) * 60);
+                            ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                            ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
+                        }
+                    } else {
+                        try {
+                            String delay = TIMEFRAMES[_timeframePosition];
+                            WorkorderClient.actionRunningLate(App.get(), _workOrderId, explanation, Integer.parseInt(delay) * 60);
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                            ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
+                        }
+                    }
                     break;
 
                 case SCOPE_OF_WORK:
@@ -495,14 +510,17 @@ public class ReportProblemDialog extends SimpleDialog {
                 case DO_NOT_HAVE_RESPONSE:
                 case DO_NOT_HAVE_OTHER:
                     ToastClient.toast(App.get(), R.string.buyer_has_been_notified, Toast.LENGTH_LONG);
+                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
                     break;
 
                 case BUYER_UNRESPONSIVE:
                     ToastClient.toast(App.get(), R.string.buyer_and_support_have_been_notified, Toast.LENGTH_LONG);
+                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
                     break;
 
                 case PAYMENT_NOT_RECEIVED:
                     ToastClient.toast(App.get(), R.string.support_has_been_notified, Toast.LENGTH_LONG);
+                    WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
                     break;
 
                 case SITE_NOT_READY:
@@ -515,7 +533,6 @@ public class ReportProblemDialog extends SimpleDialog {
                     break;
             }
 
-            WorkorderClient.actionReportProblem(App.get(), _workOrderId, explanation, _selectedProblem);
             dismiss(true);
         }
     };

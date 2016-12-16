@@ -119,6 +119,6 @@
             android:layout_marginRight="8dp"
             android:enabled="false"
             android:imeOptions="actionDone"
-            android:text="@string/btn_continue" />
+            android:text="@string/btn_send" />
     </RelativeLayout>
 </ScrollView>

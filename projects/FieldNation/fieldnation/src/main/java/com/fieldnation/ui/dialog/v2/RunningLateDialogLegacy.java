@@ -126,7 +126,7 @@ public class RunningLateDialogLegacy extends SimpleDialog {
         @Override
         public void onClick(View v) {
             ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-            WorkorderClient.actionWilLBeLate(App.get(), _workOrder.getWorkorderId(), "Running late. Will be there in " + v.getTag() + "min", ((Integer) v.getTag()) * 60);
+            WorkorderClient.actionRunningLate(App.get(), _workOrder.getWorkorderId(), "Running late. Will be there in " + v.getTag() + "min", ((Integer) v.getTag()) * 60);
             dismiss(true);
         }
     };
