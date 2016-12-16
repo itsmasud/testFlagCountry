@@ -66,7 +66,7 @@ public class FooterBarView extends RelativeLayout {
 
         _unreadTextView = (IconFontTextView) findViewById(R.id.unread_textview);
 
-        _testButton = (Button) findViewById(R.id.reset_button);
+        _testButton = (Button) findViewById(R.id.test_button);
         _testButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
