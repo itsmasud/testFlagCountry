@@ -106,8 +106,8 @@ public class ReportProblemDialog extends SimpleDialog {
         _primarySpinner.setOnItemSelectedListener(_problem1_onItemClick);
         _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
         _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
-        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
         _timeframeEditText.addTextChangedListener(_timeframeEditText_watcher);
+        _explanationEditText.addTextChangedListener(_textEditText_watcherListener);
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
     }
@@ -489,6 +489,7 @@ public class ReportProblemDialog extends SimpleDialog {
                         try {
                             String delay = TIMEFRAMES[_timeframePosition];
                             WorkorderClient.actionRunningLate(App.get(), _workOrderId, explanation, Integer.parseInt(delay) * 60);
+                            ToastClient.toast(App.get(), R.string.thanks_for_the_heads_up, Toast.LENGTH_LONG);
                         } catch (Exception ex) {
                             Log.v(TAG, ex);
                             ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);

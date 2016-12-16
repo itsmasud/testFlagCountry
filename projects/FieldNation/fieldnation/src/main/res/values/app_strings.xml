@@ -272,7 +272,7 @@
     <string name="dialog_terms_title">Terms and Conditions</string>
     <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
     <string name="dialog_report_problem_spinner_1">What\'s the problem?</string>
-    <string name="hint_how_late">How Late</string>
+    <string name="hint_how_late">How Late?</string>
     <string name="dialog_introduction_text">We\'re actively trying to improve the Field Nation App to better cater to your needs.</string>
     <string name="dialog_reason_spinner_default">Reason for contacting</string>
     <string name="dialog_explanation_default">How can we help</string>

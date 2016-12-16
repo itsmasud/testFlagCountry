@@ -13,6 +13,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
@@ -63,6 +64,7 @@ public class WorkOrderCard extends RelativeLayout {
     private TextView _distanceTextView;
     private IconFontButton[] _secondaryButtons = new IconFontButton[4];
     private Button _primaryButton;
+    private Button _testButton;
 
     // Data
     private WorkOrder _workOrder;
@@ -101,13 +103,19 @@ public class WorkOrderCard extends RelativeLayout {
         _locationTextView = (TextView) findViewById(R.id.location_textview);
         _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
-
         _secondaryButtons[0] = (IconFontButton) findViewById(R.id.secondary1_button);
         _secondaryButtons[1] = (IconFontButton) findViewById(R.id.secondary2_button);
         _secondaryButtons[2] = (IconFontButton) findViewById(R.id.secondary3_button);
         _secondaryButtons[3] = (IconFontButton) findViewById(R.id.secondary4_button);
 
         _primaryButton = (Button) findViewById(R.id.primary_button);
+
+        _testButton = (Button) findViewById(R.id.test_button);
+        _testButton.setOnClickListener(_test_onClick);
+
+        // Just in case we forget to hide this button when building a release version
+        if (!BuildConfig.DEBUG)
+            _testButton.setVisibility(GONE);
 
         setOnClickListener(_this_onClick);
     }
@@ -612,6 +620,13 @@ public class WorkOrderCard extends RelativeLayout {
                     }
                 }
             }
+        }
+    };
+
+    private final View.OnClickListener _test_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RunningLateDialog.Controller.show(App.get(), _workOrder);
         }
     };
 
