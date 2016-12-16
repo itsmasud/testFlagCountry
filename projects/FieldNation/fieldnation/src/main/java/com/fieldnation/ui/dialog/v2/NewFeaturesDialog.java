@@ -106,6 +106,14 @@ public class NewFeaturesDialog extends FullScreenDialog {
         }
     }
 
+    @Override
+    public void dismiss(boolean animate) {
+        _fixedWebView.destroy();
+        _newWebView.destroy();
+        _nextWebView.destroy();
+        super.dismiss(animate);
+    }
+
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
