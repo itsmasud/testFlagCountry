@@ -139,6 +139,18 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStart() {
+        Log.v(TAG, "onStart");
+        super.onStart();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.v(TAG, "onStop");
+        super.onStop();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);

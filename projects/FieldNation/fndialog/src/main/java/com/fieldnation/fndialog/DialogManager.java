@@ -100,6 +100,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
     // adds a new dialog to the stack
     private void push(DialogHolder dialogHolder) {
+        Log.v(TAG, "push");
         // add the new dialog to the stack
         _dialogStack.add(0, dialogHolder);
         if (dialogHolder.uid != null)
@@ -116,6 +117,7 @@ public class DialogManager extends FrameLayout implements Constants {
 
     // starts the pop process
     private void pop() {
+        Log.v(TAG, "pop");
         if (_dialogStack.size() > 0) {
             // remove current view from the stack
             DialogHolder dh = _dialogStack.get(0);
@@ -125,6 +127,7 @@ public class DialogManager extends FrameLayout implements Constants {
     }
 
     private void remove(Dialog dialog) {
+        Log.v(TAG, "remove");
         // find the holder
         DialogHolder holder = null;
         for (int i = 0; i < _dialogStack.size(); i++) {
@@ -132,6 +135,7 @@ public class DialogManager extends FrameLayout implements Constants {
                 holder = _dialogStack.get(i);
                 if (holder.uid != null)
                     _holderLookup.remove(holder.uid);
+                holder.dialog.onRemoved();
                 _dialogStack.remove(i);
                 break;
             }
@@ -156,6 +160,7 @@ public class DialogManager extends FrameLayout implements Constants {
      * @return true if the button event was handled, false if not
      */
     public boolean onBackPressed() {
+        Log.v(TAG, "onBackPressed");
         if (_dialogStack.size() > 0) {
             DialogHolder dh = _dialogStack.get(0);
             if (dh.dialog.isCancelable() && dh.dialog.getView().getVisibility() == VISIBLE) {
@@ -184,6 +189,7 @@ public class DialogManager extends FrameLayout implements Constants {
     }
 
     private DialogHolder makeDialogHolder(String className, ClassLoader classLoader) {
+        Log.v(TAG, "makeDialogHolder");
         try {
             Class<?> clazz = classLoader.loadClass(className);
 
@@ -207,9 +213,12 @@ public class DialogManager extends FrameLayout implements Constants {
 
     @Override
     protected void onDetachedFromWindow() {
+        Log.v(TAG, "onDetachedFromWindow");
         if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
             _dialogReceiver.disconnect(ContextProvider.get());
         }
+
+        removeAllViews();
         super.onDetachedFromWindow();
     }
 
@@ -274,6 +283,7 @@ public class DialogManager extends FrameLayout implements Constants {
         }
 
         Bundle saveState() {
+            Log.v(TAG, "saveState");
             Bundle savedState = new Bundle();
             Bundle dialogState = new Bundle();
             dialog.onSaveDialogState(dialogState);
