@@ -82,8 +82,8 @@ public class AppPickerDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         _items.setAdapter(new AppPickerAdapter(_activityList, _app_onClick));
     }
 

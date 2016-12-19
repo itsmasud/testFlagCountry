@@ -53,8 +53,8 @@ public class CancelWarningDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
 
         _reviewTosButton.setOnClickListener(_reviewTos_onClick);
         _cancelWorkButton.setOnClickListener(_cancel_onClick);

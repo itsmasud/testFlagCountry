@@ -96,8 +96,8 @@ public class DeclineDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         _declineSpinner.setOnItemSelectedListener(_declineSpinner_selected);
         _blockCheckBox.setOnCheckedChangeListener(_blockCheckBox_onChecked);
         _blockSpinner.setOnItemSelectedListener(_blockSpinner_selected);

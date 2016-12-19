@@ -53,8 +53,8 @@ public class NewFeaturesDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         final Context context = _root.getContext();
 
         _toolbar.setTitle("What's New");

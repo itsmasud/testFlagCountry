@@ -61,8 +61,8 @@ public class TwoButtonDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         _primaryButton.setOnClickListener(_primary_onClick);
         _secondaryButton.setOnClickListener(_secondary_onClick);
     }

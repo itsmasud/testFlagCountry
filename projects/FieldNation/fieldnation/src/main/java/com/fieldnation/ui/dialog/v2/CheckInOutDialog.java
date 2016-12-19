@@ -132,8 +132,8 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onResume() {
+        super.onResume();
         // Dialog setup, start them off with today
         _startTimePicker = new TimePickerDialog(_startTimeButton.getContext(), _startTime_onSet,
                 _startCalendar.get(Calendar.HOUR_OF_DAY),
@@ -157,11 +157,11 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onRemoved() {
+    public void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
-        super.onRemoved();
+        super.onPause();
     }
 
     @Override

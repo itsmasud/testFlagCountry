@@ -69,13 +69,21 @@ public abstract class SimpleDialog implements Dialog {
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
 
     @Override
-    public void onAdded() {
+    public void onStart() {
         _clickBarrier.setOnClickListener(_this_onClick);
         _container.setClickable(true);
     }
 
     @Override
-    public void onRemoved() {
+    public void onResume() {
+    }
+
+    @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onStop() {
     }
 
     @Override

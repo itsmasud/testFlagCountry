@@ -143,8 +143,8 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onResume() {
+        super.onResume();
         // Dialog setup, start them off with today
         _etaStartTimePicker = new TimePickerDialog(_expirationLayout.getContext(), _etaStartTime_onSet,
                 _etaStart.get(Calendar.HOUR_OF_DAY),
@@ -181,8 +181,8 @@ public class EtaDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onRemoved() {
-        super.onRemoved();
+    public void onPause() {
+        super.onPause();
         if (_durationDialog != null) _durationDialog.disconnect(App.get());
         if (_expiryDialog != null) _expiryDialog.disconnect(App.get());
     }

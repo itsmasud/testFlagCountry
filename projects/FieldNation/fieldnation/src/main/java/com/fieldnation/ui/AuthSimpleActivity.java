@@ -98,6 +98,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public abstract DialogManager getDialogManager();
 
     @Override
+    protected void onStart() {
+        Log.v(TAG, "onStart");
+        super.onStart();
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onStart();
+    }
+
+    @Override
     protected void onResume() {
         Log.v(TAG, "onResume");
         super.onResume();
@@ -136,6 +144,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
         super.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        Log.v(TAG, "onStop");
+        super.onStop();
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onStop();
     }
 
     @Override

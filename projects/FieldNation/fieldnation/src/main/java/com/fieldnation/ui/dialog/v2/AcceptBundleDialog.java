@@ -81,11 +81,11 @@ public class AcceptBundleDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
+    public void onResume() {
         _durationDialog = new DurationDialog.Controller(App.get(), DIALOG_DURATION);
         _durationDialog.setListener(_durationDialog_listener);
 
-        super.onAdded();
+        super.onResume();
 
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
@@ -157,8 +157,8 @@ public class AcceptBundleDialog extends SimpleDialog {
     }
 
     @Override
-    public void onRemoved() {
-        super.onRemoved();
+    public void onPause() {
+        super.onPause();
         if (_durationDialog != null) _durationDialog.disconnect(App.get());
     }
 
