@@ -6,7 +6,8 @@ import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Shoaib on 6/22/2016.
@@ -34,8 +35,8 @@ public class GmapsTransactionBuilder implements GmapsConstants {
 //
 //            WebTransactionBuilder.builder(context)
 //                    .priority(Priority.HIGH)
-//                    .handler(GmapsTransactionHandler.class)
-//                    .handlerParams(GmapsTransactionHandler.pDirections(workorderId))
+//                    .listener(GmapsTransactionListener.class)
+//                    .listenerParams(GmapsTransactionListener.pDirections(workorderId))
 //                    .useAuth(false)
 //                    .isSyncCall(false)
 //                    .request(builder)
@@ -62,19 +63,21 @@ public class GmapsTransactionBuilder implements GmapsConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .timingKey("GET/gmap/staticMapClassic")
                     .host("maps.googleapis.com")
                     .path(path)
                     .urlParams("?key=" + context.getString(R.string.gmap_apiKey));
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/gmap/staticMapClassic")
                     .priority(Priority.HIGH)
-                    .handler(GmapsTransactionHandler.class)
-                    .handlerParams(GmapsTransactionHandler.pStaticMapClassic(workorderId))
+                    .listener(GmapsTransactionListener.class)
+                    .listenerParams(GmapsTransactionListener.pStaticMapClassic(workorderId))
                     .useAuth(false)
                     .isSyncCall(false)
                     .request(builder)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

@@ -22,7 +22,6 @@ import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.Schedule;

@@ -16,7 +16,6 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;

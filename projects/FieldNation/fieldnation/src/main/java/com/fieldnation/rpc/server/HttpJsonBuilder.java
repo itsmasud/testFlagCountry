@@ -32,8 +32,6 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_BODY = "body";
     public static final String PARAM_DO_NOT_READ = "doNotRead";
 
-    public static final String PARAM_TIMING_KEY = "timingKey";
-
     private JsonObject request;
     private JsonObject headers;
     private JsonObject multiPartFields;
@@ -80,13 +78,6 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(urlParams))
             request.put(PARAM_WEB_URL_PARAMS, urlParams);
-        return this;
-    }
-
-    public HttpJsonBuilder timingKey(String timingKey) throws ParseException {
-        getRequest();
-        if (!misc.isEmptyOrNull(timingKey))
-            request.put(PARAM_TIMING_KEY, timingKey);
         return this;
     }
 

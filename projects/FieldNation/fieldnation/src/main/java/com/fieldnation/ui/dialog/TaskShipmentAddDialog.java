@@ -1,6 +1,5 @@
 package com.fieldnation.ui.dialog;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -12,12 +11,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
-import com.google.zxing.integration.android.IntentIntegrator;
 
 public class TaskShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ui.dialog.TaskShipmentAddDialog";

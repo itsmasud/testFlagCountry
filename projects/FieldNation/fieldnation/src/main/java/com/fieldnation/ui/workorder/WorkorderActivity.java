@@ -431,26 +431,12 @@ public class WorkorderActivity extends AuthSimpleActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
-                    try {
-                        Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-
-                        NavActivity.startNew(App.get());
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            finishAndRemoveTask();
-                        } else {
-                            finish();
-                        }
-                        setLoading(false);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
+                    setLoading(false);
                 }
                 return;
             }
 
             Debug.setLong("last_workorder", workorder.getWorkorderId());
-
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
             populateUi();
