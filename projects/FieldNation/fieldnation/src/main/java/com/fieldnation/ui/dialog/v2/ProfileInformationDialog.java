@@ -1,11 +1,13 @@
 package com.fieldnation.ui.dialog.v2;
 
+import android.content.ClipData;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
@@ -26,7 +28,9 @@ import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;
@@ -64,7 +68,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private WeakReference<Drawable> _profilePic = null;
     private boolean _clear = false;
     private ActivityResultClient _activityResultClient;
+    private FileCacheClient _fileCacheClient;
     private File _tempFile = null;
+    private Uri _tempUri;
     private AppPickerDialog.Controller _appPickerDialog;
 
 
@@ -137,6 +143,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
+
         _profile = App.get().getProfile();
         populateUi();
     }
@@ -150,6 +159,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
+
+        if (_fileCacheClient != null && _fileCacheClient.isConnected())
+            _fileCacheClient.disconnect(App.get());
 
         if (_appPickerDialog != null) _appPickerDialog.disconnect(App.get());
     }
@@ -233,10 +245,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
 
-    /*-*****************************-*/
-    /*-				Events			-*/
-    /*-*****************************-*/
-
+    /*-*************************-*/
+    /*-         Events			-*/
+    /*-*************************-*/
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -265,7 +276,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final View.OnClickListener _pic_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setType("*/*");
             intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -277,7 +287,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 AppPickerDialog.addIntent(intent, "Take Picture");
             }
             AppPickerDialog.Controller.show(App.get(), UID_APP_PICKER_DIALOG);
-
         }
     };
 
@@ -307,29 +316,45 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 _activityResultClient.clearOnActivityResult(RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
 //                setLoading(true);
 
-                if (requestCode == RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES && resultCode == RESULT_OK) {
-                    _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), _picView.getWidth()));
-                    return;
+                if (data == null) {
+                    Log.v(TAG, "Image uploading taken by camera");
+                    _tempUri = null;
+                    FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(_tempFile));
+                } else {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
+                        ClipData clipData = data.getClipData();
+
+                        if (clipData != null) {
+                            int count = clipData.getItemCount();
+                            Intent intent = new Intent();
+                            Uri uri = null;
+
+                            _tempUri = clipData.getItemAt(0).getUri();
+                            _tempFile = null;
+                            FileCacheClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
+                        } else {
+                            Log.v(TAG, "Single local/ non-local file upload");
+                            _tempUri = data.getData();
+                            _tempFile = null;
+                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                        }
+                    } else {
+                        Log.v(TAG, "Android version is pre-4.3");
+                        _tempUri = data.getData();
+                        _tempFile = null;
+                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
+                    }
                 }
-
-                if (requestCode == RESULT_CODE_GET_ATTACHMENT_DELIVERABLES && resultCode == RESULT_OK) {
-                    _tempFile = new File(FileUtils.getFilePathFromUri(App.get(), data.getData()));
-                    _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), _picView.getWidth()));
-                }
-
-
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
         }
     };
 
-
     private final AppPickerDialog.ControllerListener _appPickerDialog_listener = new AppPickerDialog.ControllerListener() {
 
         @Override
         public void onOk(Intent pack) {
-
             if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
                 Log.v(TAG, "onClick: " + pack.toString());
                 ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
@@ -346,6 +371,17 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
+        @Override
+        public void onConnected() {
+            _fileCacheClient.subDeliverableCache();
+        }
+
+        @Override
+        public void onDeliverableCacheEnd(Uri uri, String filename) {
+            _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(filename, 400));
+        }
+    };
 
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
