@@ -25,10 +25,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.ScreenName;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
@@ -43,11 +41,9 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -90,9 +86,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private File _tempFile;
     private Uri _tempUri;
     private Workorder _workorder;
-    private Profile _profile = null;
     private DocumentClient _docClient;
-    private ProfileClient _profileClient;
     private WorkorderClient _workorderClient;
     private PhotoClient _photoClient;
     private ActivityResultClient _activityResultClient;
@@ -162,9 +156,6 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
 
-        _profileClient = new ProfileClient(_profileClient_listener);
-        _profileClient.connect(App.get());
-
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
@@ -182,9 +173,6 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
-        if (_profileClient != null && _profileClient.isConnected())
-            _profileClient.disconnect(App.get());
-
         if (_docClient != null && _docClient.isConnected())
             _docClient.disconnect(App.get());
 
@@ -270,7 +258,7 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_workorder == null)
             return;
 
-        if (_profile == null)
+        if (App.get().getProfile() == null)
             return;
 
         if (getActivity() == null)
@@ -342,7 +330,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         _filesLayout.addView(v);
                     }
                     UploadSlot slot = _slots[i];
-                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
+                    v.setData(_workorder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
                 }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);
@@ -579,20 +567,6 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
-        @Override
-        public void onConnected() {
-            _profileClient.subGet();
-            ProfileClient.get(App.get());
-        }
-
-        @Override
-        public void onGet(Profile profile, boolean failed) {
-            _profile = profile;
-            populateUi();
-        }
-    };
-
     private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
         @Override
         public void onConnected() {
