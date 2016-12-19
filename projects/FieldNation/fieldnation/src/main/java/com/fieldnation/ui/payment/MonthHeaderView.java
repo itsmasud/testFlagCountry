@@ -6,8 +6,8 @@ import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 

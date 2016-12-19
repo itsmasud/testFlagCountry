@@ -420,6 +420,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         public void onConnected() {
             Log.v(TAG, "_workorderClient_listener.onConnected " + _workorderId);
             _workorderClient.subGet(_workorderId);
+            _workorderClient.subActions();
             getData(true);
         }
 
@@ -430,29 +431,20 @@ public class WorkorderActivity extends AuthSimpleActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
-                    try {
-                        Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-
-                        NavActivity.startNew(App.get());
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            finishAndRemoveTask();
-                        } else {
-                            finish();
-                        }
-                        setLoading(false);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
+                    setLoading(false);
                 }
                 return;
             }
 
             Debug.setLong("last_workorder", workorder.getWorkorderId());
-
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
             populateUi();
+        }
+
+        @Override
+        public void onAction(long workorderId, String action, boolean failed) {
+            WorkorderClient.get(App.get(), workorderId, false, false);
         }
     };
 
@@ -472,7 +464,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         Log.v(TAG, "makeIntentConfirm");
         Intent intent = new Intent(context, WorkorderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);

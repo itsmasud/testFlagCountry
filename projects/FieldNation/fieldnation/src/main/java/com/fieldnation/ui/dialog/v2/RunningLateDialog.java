@@ -4,10 +4,15 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.TextInputLayout;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,7 +25,10 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.HintArrayAdapter;
+import com.fieldnation.ui.HintSpinner;
 
 import java.util.Calendar;
 
@@ -33,17 +41,20 @@ public class RunningLateDialog extends SimpleDialog {
 
     private static final String PARAM_WORKORDER = "workOrder";
 
+    private static final String[] TIMEFRAMES = new String[]{"5", "10", "15", "Other"};
+
     // Ui
     private TextView _bodyTextView;
-    private Button _time1Button;
-    private Button _time2Button;
-    private Button _time3Button;
-    private Button _otherButton;
+    private HintSpinner _timeframeSpinner;
+    private TextInputLayout _timeframeLayout;
+    private EditText _timeframeEditText;
     private Button _callButton;
     private Button _cancelButton;
+    private Button _sendButton;
 
     // Data
     private WorkOrder _workOrder;
+    private int _timeframePosition = -1;
 
     public RunningLateDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -54,12 +65,12 @@ public class RunningLateDialog extends SimpleDialog {
         View v = inflater.inflate(R.layout.dialog_v2_running_late, container, false);
 
         _bodyTextView = (TextView) v.findViewById(R.id.body_textview);
-        _time1Button = (Button) v.findViewById(R.id.time1_button);
-        _time2Button = (Button) v.findViewById(R.id.time2_button);
-        _time3Button = (Button) v.findViewById(R.id.time3_button);
-        _otherButton = (Button) v.findViewById(R.id.other_button);
+        _timeframeSpinner = (HintSpinner) v.findViewById(R.id.timeframe_spinner);
+        _timeframeLayout = (TextInputLayout) v.findViewById(R.id.timeframe_layout);
+        _timeframeEditText = (EditText) v.findViewById(R.id.timeframe_edittext);
         _callButton = (Button) v.findViewById(R.id.call_button);
         _cancelButton = (Button) v.findViewById(R.id.cancel_button);
+        _sendButton = (Button) v.findViewById(R.id.send_button);
 
         return v;
     }
@@ -68,22 +79,28 @@ public class RunningLateDialog extends SimpleDialog {
     public void onAdded() {
         super.onAdded();
 
-        _time1Button.setTag(5);
-        _time1Button.setOnClickListener(_time_onClick);
-        _time2Button.setTag(10);
-        _time2Button.setOnClickListener(_time_onClick);
-        _time3Button.setTag(15);
-        _time3Button.setOnClickListener(_time_onClick);
+        _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
+        _timeframeEditText.addTextChangedListener(_timeframeEditText_watcher);
 
-        _otherButton.setOnClickListener(_other_onClick);
         _callButton.setOnClickListener(_call_onClick);
         _cancelButton.setOnClickListener(_cancel_onClick);
-
+        _sendButton.setOnClickListener(_send_onClick);
     }
 
     @Override
     public void show(Bundle payload, boolean animate) {
         _workOrder = payload.getParcelable(PARAM_WORKORDER);
+
+        populateUi();
+
+        super.show(payload, animate);
+    }
+
+    private void populateUi() {
+        if (_workOrder == null)
+            return;
+        if (_sendButton == null)
+            return;
 
         Calendar cal = null;
         try {
@@ -101,37 +118,48 @@ public class RunningLateDialog extends SimpleDialog {
                 _bodyTextView.setText(
                         _workOrder.getTitle()
                                 + " is scheduled to begin at "
-                                + DateUtils.formatTime2(cal)
-                                + ". Please estimate the amount of time you'll be late:");
+                                + DateUtils.formatTime2(cal) + ".");
             }
         } catch (Exception ex) {
             ex.printStackTrace();
         }
 
+/*
         if (_workOrder.getContacts() == null || _workOrder.getContacts().length == 0) {
             _callButton.setVisibility(View.GONE);
         } else {
             _callButton.setVisibility(View.VISIBLE);
         }
+*/
 
-        super.show(payload, animate);
+        if (_timeframeSpinner != null && _timeframeSpinner.getAdapter() == null) {
+            HintArrayAdapter adapter = HintArrayAdapter.createFromArray(getView().getContext(),
+                    TIMEFRAMES, R.layout.view_spinner_item);
+
+            adapter.setDropDownViewResource(
+                    android.support.design.R.layout.support_simple_spinner_dropdown_item);
+
+            _timeframeSpinner.setAdapter(adapter);
+        }
+
+        if (_timeframePosition == -1 || _timeframePosition == 3) {
+            _sendButton.setEnabled(false);
+        } else {
+            _sendButton.setEnabled(true);
+        }
+
+        if (_timeframePosition == 3) {
+            _timeframeLayout.setVisibility(View.VISIBLE);
+            if (misc.isEmptyOrNull(_timeframeEditText.getText().toString())) {
+                _sendButton.setEnabled(false);
+            } else {
+                _sendButton.setEnabled(true);
+            }
+        } else {
+            _timeframeLayout.setVisibility(View.GONE);
+        }
+
     }
-
-    private final View.OnClickListener _time_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
-            WorkorderClient.actionWilLBeLate(App.get(), _workOrder.getId(), "Running late. Will be there in " + v.getTag() + "min", ((Integer) v.getTag()) * 60);
-            dismiss(true);
-        }
-    };
-
-    private final View.OnClickListener _other_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            // TODO other time picker
-        }
-    };
 
     private final View.OnClickListener _call_onClick = new View.OnClickListener() {
         @Override
@@ -155,6 +183,58 @@ public class RunningLateDialog extends SimpleDialog {
         }
     };
 
+    private final View.OnClickListener _send_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            if (_timeframePosition == 3) {
+                try {
+                    int delayMin = Integer.parseInt(_timeframeEditText.getText().toString());
+                    WorkorderClient.actionRunningLate(App.get(), _workOrder.getId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
+                    ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
+                }
+            } else {
+                try {
+                    int delayMin = Integer.parseInt(TIMEFRAMES[_timeframePosition]);
+                    WorkorderClient.actionRunningLate(App.get(), _workOrder.getId(), "Running late. Will be there in " + delayMin + "min", delayMin * 60);
+                    ToastClient.toast(App.get(), "Late arrival notification sent", Toast.LENGTH_SHORT);
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                    ToastClient.toast(App.get(), "Please enter a number for the delay", Toast.LENGTH_LONG);
+                }
+            }
+            dismiss(true);
+        }
+    };
+
+    private final AdapterView.OnItemSelectedListener _timeframe_onItemClick = new AdapterView.OnItemSelectedListener() {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+            _timeframePosition = position;
+            populateUi();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final TextWatcher _timeframeEditText_watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            populateUi();
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+        }
+    };
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
 

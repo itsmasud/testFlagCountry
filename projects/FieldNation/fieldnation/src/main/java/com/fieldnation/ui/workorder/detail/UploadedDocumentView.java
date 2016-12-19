@@ -12,16 +12,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.service.data.documents.DocumentClient;
-import com.fieldnation.service.data.documents.DocumentConstants;
-import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.service.data.documents.DocumentClient;
+import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.ui.IconFontTextView;
 
 import java.io.File;
 import java.util.Hashtable;
@@ -131,6 +131,18 @@ public class UploadedDocumentView extends RelativeLayout implements PhotoReceive
         _profileId = profileId;
         _workorder = workorder;
         populateUi();
+    }
+
+    public void setProgress(Integer progress) {
+        if (_progressBar == null)
+            return;
+
+        if (progress == null)
+            _progressBar.setIndeterminate(true);
+
+        _progressBar.setIndeterminate(false);
+        _progressBar.setMax(100);
+        _progressBar.setProgress(progress);
     }
 
     public void setListener(Listener listener) {

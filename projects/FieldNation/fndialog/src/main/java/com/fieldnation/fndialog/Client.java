@@ -42,6 +42,7 @@ class Client extends TopicClient implements Constants {
         show(context, uid, klass.getName(), klass.getClassLoader(), params);
     }
 
+    // uid cannot be null when calling this method
     public static void dismiss(Context context, String uid) {
         Bundle payload = new Bundle();
         payload.putString(PARAM_DIALOG_UID, uid);

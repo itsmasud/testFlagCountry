@@ -142,6 +142,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         }
     }
 
+
+
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -166,6 +168,11 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
         @Override
         public void onScan() {
+            if (_listener != null) {
+                _listener.onScan();
+            }
+
+
         }
     };
 
@@ -216,6 +223,9 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite);
 
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
+
+        void onScan();
+
 
     }
 

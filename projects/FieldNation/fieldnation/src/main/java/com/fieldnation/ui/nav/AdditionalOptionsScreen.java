@@ -22,9 +22,11 @@ import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
-import com.fieldnation.ui.NewFeatureActivity;
+import com.fieldnation.ui.ProfilePicView;
+import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -64,7 +66,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     // Services
     private PhotoClient _photoClient;
-    private GlobalTopicClient _globalTopicClient;
+    private ProfileClient _profileClient;
+
 
     public AdditionalOptionsScreen(Context context) {
         super(context);
@@ -132,11 +135,12 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _versionTextView.setVisibility(View.GONE);
         }
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
-
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(App.get());
+
+        _profileClient = new ProfileClient(_profileClient_listener);
+        _profileClient.connect(App.get());
+
     }
 
     public void setListener(Listener listener) {
@@ -145,10 +149,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
+
 
         super.onDetachedFromWindow();
     }
@@ -242,14 +247,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.subGotProfile();
+            _profileClient.subGet(false);
         }
 
         @Override
-        public void onGotProfile(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
                 _profilePic = null;
                 _profile = profile;
@@ -262,6 +267,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             }
         }
     };
+
 
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
@@ -354,7 +360,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _version_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            NewFeatureActivity.startNew(App.get());
+            NewFeaturesDialog.Controller.show(App.get());
         }
     };
 

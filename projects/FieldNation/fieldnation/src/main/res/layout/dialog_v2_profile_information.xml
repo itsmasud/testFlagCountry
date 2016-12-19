@@ -258,7 +258,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_below="@+id/address_2_edittext"
-                            android:layout_marginBottom="8dp"
+                            android:layout_marginBottom="3dp"
                             android:layout_marginLeft="8dp"
                             android:layout_marginTop="10dp"
                             android:text="Zipcode" />

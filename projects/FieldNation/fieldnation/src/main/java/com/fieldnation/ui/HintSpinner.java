@@ -39,6 +39,9 @@ public class HintSpinner extends AppCompatSpinner {
     }
 
     private void handleAttribues(AttributeSet attributeSet) {
+        if (isInEditMode())
+            return;
+
         TypedArray ta = getContext().obtainStyledAttributes(attributeSet, new int[]{android.R.attr.hint});
         try {
             setHint(ta.getString(0));

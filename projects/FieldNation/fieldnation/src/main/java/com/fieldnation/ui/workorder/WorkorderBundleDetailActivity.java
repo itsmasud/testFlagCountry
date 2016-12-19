@@ -5,24 +5,24 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fndialog.DialogManager;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.DateUtils;
-import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-
-import java.text.NumberFormat;
+import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
+import com.fieldnation.ui.dialog.v2.DeclineDialog;
 
 public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private static final String TAG = "WorkorderBundleDetailActivity";
@@ -30,13 +30,16 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     public static final String INTENT_FIELD_WORKORDER_ID = "WorkorderBundleDetailActivity:workorder_id";
     public static final String INTENT_FIELD_BUNDLE_ID = "WorkorderBundleDetailActivity:bundle_id";
 
-    private static final int WEB_GET_BUNDLE = 1;
+    // Dialog tags
+    private static final String UID_DIALOG_DECLINE = TAG + ".DeclineDialog";
+    private static final String UID_DIALOG_ACCEPT_BUNDLE = TAG + ".AcceptBundleDialog";
 
     // UI
+    private LinearLayout _buttonToolbar;
+    private Button _notInterestedButton;
+    private Button _okButton;
     private ListView _listview;
-    private TextView _distanceTextView;
-    private TextView _dateTextView;
-    private Button _requestButton;
+    private RefreshView _refreshView;
 
     // Data
     private long _workorderId = 0;
@@ -44,6 +47,12 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private WorkorderClient _workorderClient;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
+    private AcceptBundleDialog.Controller _acceptBundleDialog;
+    private DeclineDialog.Controller _declineDialog;
+
+    // Services
+    private GlobalTopicClient _globalClient;
+
 
     @Override
     public int getLayoutResource() {
@@ -72,15 +81,13 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             return;
         }
 
+        _buttonToolbar = (LinearLayout) findViewById(R.id.button_toolbar);
+        _notInterestedButton = (Button) findViewById(R.id.notInterested_button);
+        _notInterestedButton.setOnClickListener(_notInterested_onClick);
+        _okButton = (Button) findViewById(R.id.ok_button);
+        _okButton.setOnClickListener(_ok_onClick);
         _listview = (ListView) findViewById(R.id.items_listview);
-        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
-        _dateTextView = (TextView) findViewById(R.id.date_textview);
-        _requestButton = (Button) findViewById(R.id.request_button);
-        _requestButton.setOnClickListener(_request_onClick);
-//        _loadingLayout = (RelativeLayout) findViewById(R.id.loading_layout);
-
-//        _loadingLayout.setVisibility(View.VISIBLE);
-        // TODO put into wait mode
+        _refreshView = (RefreshView) findViewById(R.id.refresh_view);
     }
 
     @Override
@@ -90,14 +97,25 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
 
     @Override
     public DialogManager getDialogManager() {
-        return null;
+        return (DialogManager) findViewById(R.id.dialogManager);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        setLoading(true);
+
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+
+        _acceptBundleDialog = new AcceptBundleDialog.Controller(App.get(), UID_DIALOG_ACCEPT_BUNDLE);
+        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+
+        _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
+        _declineDialog.setListener(_declineDialog_listener);
+
+        _globalClient = new GlobalTopicClient(_globalClient_listener);
+        _globalClient.connect(App.get());
 
         WorkorderClient.getBundle(this, _bundleId);
     }
@@ -106,18 +124,113 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     protected void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_globalClient != null && _globalClient.isConnected())
+            _globalClient.disconnect(App.get());
+
+        if (_acceptBundleDialog != null)
+            _acceptBundleDialog.disconnect(App.get());
+
+        if (_declineDialog != null)
+            _declineDialog.disconnect(App.get());
+
         super.onPause();
+    }
+
+    private void setLoading(boolean isloading) {
+        if (isloading) {
+            _refreshView.post(new Runnable() {
+                @Override
+                public void run() {
+                    _refreshView.startRefreshing();
+                }
+            });
+            _notInterestedButton.setEnabled(false);
+            _okButton.setEnabled(false);
+        } else {
+            _refreshView.refreshComplete();
+            _notInterestedButton.setEnabled(true);
+            _okButton.setEnabled(true);
+        }
     }
 
     @Override
     public void onProfile(Profile profile) {
-
     }
+
+    private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            DeclineDialog.Controller.show(App.get(), UID_DIALOG_DECLINE,
+                    _woBundle.getWorkorder().length,
+                    _woBundle.getWorkorder()[0].getWorkorderId(),
+                    _woBundle.getWorkorder()[0].getCompanyId());
+        }
+    };
+
+    private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            Workorder wo = _woBundle.getWorkorder()[0];
+
+            if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
+                AcceptBundleDialog.Controller.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_REQUEST);
+
+            } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+                AcceptBundleDialog.Controller.show(
+                        App.get(),
+                        UID_DIALOG_ACCEPT_BUNDLE,
+                        _woBundle.getBundleId(),
+                        _woBundle.getWorkorder().length,
+                        wo.getWorkorderId(),
+                        AcceptBundleDialog.TYPE_ACCEPT);
+            } else {
+                // do nothing
+            }
+        }
+    };
+
+    private final AcceptBundleDialog.ControllerListener _acceptBundleDialog_listener = new AcceptBundleDialog.ControllerListener() {
+
+        @Override
+        public void onRequested() {
+            setLoading(true);
+        }
+
+        @Override
+        public void onAccepted() {
+            setLoading(true);
+        }
+
+        @Override
+        public void onCanceled() {
+            // don't care
+        }
+    };
+
+    private final DeclineDialog.ControllerListener _declineDialog_listener = new DeclineDialog.ControllerListener() {
+        @Override
+        public void onDeclined(long workOrderId) {
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+
+        }
+    };
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override
         public void onConnected() {
             _workorderClient.subBundle();
+            _workorderClient.subActions();
         }
 
         @Override
@@ -128,36 +241,30 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
                 return;
             }
             _woBundle = bundle;
-            NumberFormat form = NumberFormat.getNumberInstance();
-            form.setMinimumFractionDigits(1);
-            form.setMaximumFractionDigits(1);
+            Workorder wo = bundle.getWorkorder()[0];
 
             try {
-                _distanceTextView.setText("Average Distance: " + form.format(_woBundle.getAverageDistance()) + " mi");
-            } catch (Exception ex) {
-            }
-            try {
-                _requestButton.setText("Request (" + _woBundle.getWorkorder().length + ")");
-            } catch (Exception ex) {
-            }
-            try {
-                _dateTextView.setText("Range " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getStartDate())) + " - " + DateUtils.formatDate(ISO8601.toCalendar(_woBundle.getScheduleRange().getEndDate())));
+                if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
+                    _okButton.setText("REQUEST (" + _woBundle.getWorkorder().length + ")");
+                    _buttonToolbar.setVisibility(View.VISIBLE);
+                } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
+                    _okButton.setText("ACCEPT (" + _woBundle.getWorkorder().length + ")");
+                    _buttonToolbar.setVisibility(View.VISIBLE);
+                } else {
+                    _buttonToolbar.setVisibility(View.GONE);
+                }
+                setLoading(false);
             } catch (Exception ex) {
             }
 
             _adapter = new BundleAdapter(_woBundle, _wocard_listener);
-
             _listview.setAdapter(_adapter);
-
-//            _loadingLayout.setVisibility(View.GONE);
         }
-    };
 
-    private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
-        public void onClick(View v) {
-            // TODO Method Stub: onClick()
-            Log.v(TAG, "Method Stub: onClick()");
+        public void onAction(long workorderId, String action, boolean failed) {
+            setLoading(true);
+            WorkorderClient.getBundle(App.get(), _bundleId, false, false);
         }
     };
 
@@ -167,6 +274,19 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             WorkorderActivity.startNew(App.get(), workorder.getWorkorderId());
         }
     };
+
+    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+        @Override
+        public void onConnected() {
+            _globalClient.subFinishActivity();
+        }
+
+        @Override
+        public void onFinish() {
+            finish();
+        }
+    };
+
 
     public static void startNew(Context context, long workorderId, long bundleId) {
         Intent intent = new Intent(context, WorkorderBundleDetailActivity.class);

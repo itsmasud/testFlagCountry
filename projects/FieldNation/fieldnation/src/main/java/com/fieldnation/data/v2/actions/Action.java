@@ -24,7 +24,7 @@ public class Action {
     }
 
     public Action(ActionType type) {
-        this.type = type.typestring;
+        this.type = type.typeString;
     }
 
     public Action(JsonObject json) {
@@ -92,31 +92,45 @@ public class Action {
 
     public enum ActionType {
         ACCEPT("accept"),
+        ACK_HOLD("ack_hold"),
+        ACK_UPDATE("ack_update"),
+        CHECK_IN("check_in"),
+        CHECK_OUT("check_out"),
         CONFIRM("confirm"),
+        DECLINE("decline"),
+        MAP("map"),
+        MARK_COMPLETE("mark_complete"),
+        MARK_INCOMPLETE("mark_incomplete"),
+        MESSAGE("message"),
         ON_MY_WAY("on_my_way"),
         PHONE("phone"),
-        RUNNING_LATE("running_late"),
-        READY("ready"),
+        READY("ready"), // NCNS ready confirm
+        READY_TO_GO("ready_to_go"), // normal ready to go system
         REPORT_PROBLEM("report_problem"),
+        REQUEST("request"),
+
+        RUNNING_LATE("running_late"),
         VIEW("view"),
-        UNKNOWN("unknown");
+        VIEW_BUNDLE("view_bundle"),
+        VIEW_PAYMENT("view_payment"),
+        WITHDRAW("withdraw"),
 
-        //CANCEL("cancel"),
-        //RESCHEDULE("reschedule"),
+        // Push notifications
+        NOT_SUPPORTED(null);
 
 
-        private String typestring;
+        private String typeString;
 
         ActionType(String type) {
-            this.typestring = type;
+            this.typeString = type;
         }
 
         public static ActionType fromTypeString(String typeString) {
             for (int i = 0; i < values().length; i++) {
-                if (values()[i].typestring.equals(typeString))
+                if (values()[i].typeString.equals(typeString))
                     return values()[i];
             }
-            return UNKNOWN;
+            return NOT_SUPPORTED;
         }
     }
 }

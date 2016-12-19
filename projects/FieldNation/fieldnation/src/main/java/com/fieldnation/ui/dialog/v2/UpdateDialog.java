@@ -21,14 +21,16 @@ public class UpdateDialog extends OneButtonDialog {
     }
 
     @Override
-    public void onPrimaryClick() {
+    public boolean onPrimaryClick() {
         Uri marketUri = Uri.parse("market://details?id=com.fieldnation.android");
         ActivityResultClient.startActivity(App.get(), new Intent(Intent.ACTION_VIEW).setData(marketUri));
+        return false;
     }
 
     @Override
-    public void onCancel() {
+    public boolean onCancel() {
         GlobalTopicClient.appShutdown(App.get());
+        return false;
     }
 
     public static abstract class Controller extends OneButtonDialog.Controller {
@@ -37,7 +39,7 @@ public class UpdateDialog extends OneButtonDialog {
         }
 
         public static void show(Context context) {
-            show(context, null, R.string.dialog_update_title, R.string.dialog_update_message,
+            show(context, null, UpdateDialog.class, R.string.dialog_update_title, R.string.dialog_update_message,
                     R.string.btn_update_now, true);
         }
     }

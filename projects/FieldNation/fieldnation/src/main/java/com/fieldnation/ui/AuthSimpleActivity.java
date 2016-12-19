@@ -135,7 +135,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         DialogManager dialogManager = getDialogManager();
         if (dialogManager != null) dialogManager.onPause();
-
         super.onPause();
     }
 
@@ -158,6 +157,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (_profileBounceProtect)
             return;
 
+        if (!_profile.isProvider()) {
+            _notProviderDialog.show();
+            return;
+        }
+
         _profileBounceProtect = true;
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
@@ -169,10 +173,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             NewFeatureActivity.startNew(App.get());
         }
 
-        if (!_profile.isProvider()) {
-//            _notProviderDialog.show();
-//            return;
-        }
         App gs = App.get();
         if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
@@ -321,6 +321,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
+            _globalClient.subProfileInvalid(App.get());
             //_globalClient.subNetworkState();
         }
 
@@ -328,6 +329,11 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         public void onGotProfile(Profile profile) {
             _profile = profile;
             gotProfile(profile);
+        }
+
+        @Override
+        public void onProfileInvalid() {
+            ProfileClient.get(App.get());
         }
 
         @Override

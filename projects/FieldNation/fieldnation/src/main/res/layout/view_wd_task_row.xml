@@ -1,28 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/layoutCardView"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/card_layout"
     style="?attr/cardContainerStyle"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:orientation="vertical">
 
-    <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/icon_view"
-        style="@style/Text_Body_1"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:text="@string/icon_task"
-        android:textSize="32sp" />
+        android:padding="16dp">
 
-    <TextView
-        android:id="@+id/description_textview"
-        style="@style/Text_Body_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        android:layout_marginLeft="8dp"
-        android:layout_toRightOf="@+id/icon_view"
-        android:text="Upload or take a picture of the upgraded ARMs serial number" />
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/icon_view"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="@string/icon_task"
+            android:textSize="32sp" />
 
-</RelativeLayout>
+        <TextView
+            android:id="@+id/description_textview"
+            style="@style/Text_Body_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="8dp"
+            android:layout_toRightOf="@+id/icon_view"
+            android:text="Upload or take a picture of the upgraded ARMs serial number" />
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progress_view"
+        style="@style/Base.Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="9dp"
+        android:layout_marginBottom="-1dp"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:indeterminate="true"
+        android:max="100"
+        android:visibility="gone" />
+</LinearLayout>

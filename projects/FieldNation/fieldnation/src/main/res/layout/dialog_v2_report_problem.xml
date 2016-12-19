@@ -1,88 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Dialog.v3"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/dialogBg_Material">
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title_textview"
-        style="@style/DialogTitle.v3"
+    <RelativeLayout
+        style="@style/Dialog.v3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/there_is_a_problem" />
+        android:background="@color/dialogBg_Material">
 
-    <ProgressBar
-        android:id="@+id/loadingBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="24dp"
-        android:layout_marginTop="24dp"
-        android:indeterminate="true" />
+        <TextView
+            android:id="@+id/title_textview"
+            style="@style/DialogTitle.v3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/there_is_a_problem" />
 
-    <com.fieldnation.ui.HintSpinner
-        android:id="@+id/primary_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title_textview"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:focusable="true"
-        android:hint="@string/dialog_report_problem_spinner_1" />
+        <ProgressBar
+            android:id="@+id/loadingBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="24dp"
+            android:layout_marginTop="24dp"
+            android:indeterminate="true" />
+
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/primary_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_textview"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:focusable="true"
+            android:hint="@string/dialog_report_problem_spinner_1" />
 
 
-    <com.fieldnation.ui.HintSpinner
-        android:id="@+id/secondary_spinner"
-        style="@style/Widget.AppCompat.Spinner.Underlined"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/primary_spinner"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:hint="@string/dialog_report_problem_spinner_1"
-        android:visibility="gone" />
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/secondary_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/primary_spinner"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:hint="@string/dialog_report_problem_spinner_1"
+            android:visibility="gone" />
 
-    <android.support.design.widget.TextInputLayout
-        android:id="@+id/explanation_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/secondary_spinner"
-        android:layout_marginBottom="16dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp">
+        <com.fieldnation.ui.HintSpinner
+            android:id="@+id/timeframe_spinner"
+            style="@style/Widget.AppCompat.Spinner.Underlined"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/secondary_spinner"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:hint="@string/hint_how_late"
+            android:visibility="gone" />
 
-        <EditText
-            android:id="@+id/explanation_edittext"
-            style="@style/EditText"
-            android:hint="@string/provide_an_explanation"
-            android:imeOptions="actionNext"
-            android:inputType="text" />
-    </android.support.design.widget.TextInputLayout>
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/timeframe_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeframe_spinner"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:visibility="gone">
 
-    <TextView
-        android:id="@+id/note_textview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/explanation_layout"
-        android:layout_marginLeft="24dp"
-        android:layout_marginRight="24dp"
-        android:text="@string/once_submitted_you_will_be_removed" />
+            <EditText
+                android:id="@+id/timeframe_edittext"
+                style="@style/EditText"
+                android:hint="@string/provide_a_timeframe"
+                android:imeOptions="actionNext"
+                android:inputType="number" />
+        </android.support.design.widget.TextInputLayout>
 
-    <Button
-        android:id="@+id/cancel_button"
-        style="@style/DialogButton.v3"
-        android:layout_below="@+id/note_textview"
-        android:layout_toLeftOf="@+id/ok_button"
-        android:text="@string/btn_cancel" />
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/explanation_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/timeframe_layout"
+            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp">
 
-    <Button
-        android:id="@+id/ok_button"
-        style="@style/DialogButton.v3"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/note_textview"
-        android:layout_marginRight="8dp"
-        android:enabled="false"
-        android:text="@string/btn_continue" />
-</RelativeLayout>
+            <EditText
+                android:id="@+id/explanation_edittext"
+                style="@style/EditText"
+                android:hint="@string/provide_an_explanation"
+                android:imeOptions="actionNext"
+                android:inputType="text" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/note_textview"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/explanation_layout"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:text="@string/once_submitted_you_will_be_removed" />
+
+        <Button
+            android:id="@+id/cancel_button"
+            style="@style/DialogButton.v3"
+            android:layout_below="@+id/note_textview"
+            android:layout_toLeftOf="@+id/ok_button"
+            android:imeOptions="actionNone"
+            android:text="@string/btn_cancel" />
+
+        <Button
+            android:id="@+id/ok_button"
+            style="@style/DialogButton.v3"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/note_textview"
+            android:layout_marginRight="8dp"
+            android:enabled="false"
+            android:imeOptions="actionDone"
+            android:text="@string/btn_send" />
+    </RelativeLayout>
+</ScrollView>

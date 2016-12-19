@@ -2,9 +2,9 @@
 <resources>
     <!-- GMaps -->
     <string name="gmap_apiKey">AIzaSyCeb9sNAn7lDagc6VKR6bb12g4CSZQRDj0</string>
-    <string name="gmap_inpreciseMarkerUrl">color:red|</string>
-    <string name="gmap_startMarkerUrl">color:red|</string>
-    <string name="gmap_endMarkerUrl">color:blue|</string>
+    <string name="gmap_inpreciseMarkerUrl">icon:http://fieldnation.s3.amazonaws.com/mapbox/orangecircle.png</string>
+    <string name="gmap_startMarkerUrl">icon:http://fieldnation.s3.amazonaws.com/mapbox/mylocation.png</string>
+    <string name="gmap_endMarkerUrl">color:red</string>
 
     <!-- Mapbox -->
     <string name="mapbox_accessToken">pk.eyJ1IjoiamFjb2JiZWFzbGV5IiwiYSI6IlBGelg4WDAifQ.KtpfrNfln0jplKdKO-xSZA</string>

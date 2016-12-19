@@ -63,6 +63,10 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
         WorkOrderTransactionBuilder.actionOnMyWay(context, workOrderId, lat, lon);
     }
 
+    public boolean subActions() {
+        return register(TOPIC_ID_ACTION_COMPLETE);
+    }
+
 
     /*-**********************************-*/
     /*-             Listener             -*/
@@ -100,8 +104,12 @@ public class WorkOrderClient extends TopicClient implements WorkOrderConstants {
 
                         searchParams = payload.getParcelable(PARAM_SEARCH_PARAMS);
                         List<WorkOrder> list = new LinkedList<WorkOrder>();
-                        Log.v(STAG, new String(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         failed = payload.getBoolean(PARAM_FAILED);
+
+                        if (failed)
+                            return null;
+
+                        Log.v(STAG, new String(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         envelope = ListEnvelope.fromJson(new JsonObject(payload.getByteArray(PARAM_LIST_ENVELOPE)));
                         JsonArray array = envelope.getResults();
 

@@ -1,9 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+
+    <ListView
+        android:id="@+id/items_listview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/button_toolbar"
+        android:divider="@null"
+        android:dividerHeight="0dp" />
+
+    <com.fieldnation.ui.RefreshView
+        android:id="@+id/refresh_view"
+        android:layout_width="wrap_content"
+        android:layout_height="250dp"
+        android:layout_below="@+id/button_toolbar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-50dp" />
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
@@ -14,78 +29,41 @@
         app:theme="@style/FieldNation.Material.ToolBar" />
 
     <LinearLayout
+        android:id="@+id/button_toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/toolbar"
         android:background="@color/fn_primary"
-        android:baselineAligned="false"
         android:orientation="horizontal"
-        android:paddingBottom="16dp"
-        android:paddingLeft="16dp"
-        android:paddingRight="16dp"
-        android:paddingTop="16dp">
+        android:paddingBottom="8dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="8dp"
+        android:visibility="visible">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.75"
-            android:orientation="vertical">
+        <Button
+            android:id="@+id/notInterested_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_below="@+id/date_textview"
+            android:layout_toLeftOf="@+id/ok_button"
+            android:layout_weight="1"
+            android:text="@string/btn_not_interested"
+            android:visibility="visible" />
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <com.fieldnation.ui.IconFontTextView
-                    android:id="@+id/bundle_imageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="4dp"
-                    android:text="@string/icon_bundle"
-                    android:textColor="@color/fn_white_text"
-                    android:textSize="24sp" />
-
-                <TextView
-                    style="@style/Text_Title"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:maxLines="1"
-                    android:text="@string/bundle"
-                    android:textColor="@color/fn_white_text" />
-            </LinearLayout>
-
-            <TextView
-                android:id="@+id/distance_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/fn_white_text" />
-
-            <TextView
-                android:id="@+id/date_textview"
-                style="@style/Text_Body_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/fn_white_text" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_weight="0.25"
-            android:orientation="vertical">
-
-            <Button
-                android:id="@+id/request_button"
-                style="?attr/buttonWhiteStyle"
-                android:visibility="gone" />
-        </LinearLayout>
+        <Button
+            android:id="@+id/ok_button"
+            style="?attr/buttonWhiteStyle"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/date_textview"
+            android:layout_weight="1"
+            android:text="@string/btn_accept"
+            android:visibility="visible" />
     </LinearLayout>
 
-    <ListView
-        android:id="@+id/items_listview"
+
+    <com.fieldnation.fndialog.DialogManager
+        android:id="@+id/dialogManager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null"
-        android:dividerHeight="0dp" />
-</LinearLayout>
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

@@ -16,6 +16,8 @@ import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.UniqueTag;
 
+import java.security.SecureRandom;
+
 /**
  * Created by Michael Carver on 7/17/2015.
  */
@@ -37,6 +39,8 @@ public class ToastClient extends TopicClient {
     private static final String PARAM_BUTTON_INTENT = "PARAM_BUTTON_INTENT";
     private static final String PARAM_DURATION = "PARAM_DURATION";
     private static final String PARAM_MESSAGE_ID = "PARAM_MESSAGE_ID";
+
+    private static final SecureRandom _random = new SecureRandom();
 
 
     public ToastClient(Listener listener) {
@@ -196,7 +200,7 @@ public class ToastClient extends TopicClient {
 
                     if (buttonIntent != null) {
                         try {
-                            buttonIntent.send(getActivity(), 0, new Intent());
+                            buttonIntent.send(getActivity(), _random.nextInt(), new Intent());
                         } catch (PendingIntent.CanceledException e) {
                             Log.v(TAG, e);
                         }
@@ -228,7 +232,7 @@ public class ToastClient extends TopicClient {
                 return;
 
             try {
-                //_snackbar.dismiss();
+                _snackbar.dismiss();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

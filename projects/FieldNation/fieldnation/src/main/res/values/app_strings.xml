@@ -102,6 +102,7 @@
     <string name="btn_submit">SUBMIT</string>
     <string name="btn_update_now">UPDATE NOW</string>
     <string name="btn_view_all">VIEW ALL</string>
+    <string name="btn_view_bundle">VIEW BUNDLE</string>
     <string name="btn_view_counter">VIEW COUNTER</string>
     <string name="btn_view_marketplace">VIEW MARKETPLACE</string>
     <string name="btn_view_payment">VIEW PAYMENT</string>
@@ -110,7 +111,7 @@
     <string name="btn_update_payment_info">UPDATE PAYMENT INFO</string>
     <string name="btn_upload">UPLOAD</string>
     <string name="btn_remind_me_later">REMIND ME LATER</string>
-    <string name="btn_review_toc">REVIEW TERMS AND CONDITIONS</string>
+    <string name="btn_review_toc">REVIEW PQAP POLICY</string>
 
     <string name="switch_text_set_eta">Set an ETA</string>
 
@@ -141,6 +142,7 @@
     <string name="toast_exceeded_max_limit_thoughts">You exceeded maximum limit.</string>
     <string name="toast_missing_decline_explanation">Decline explanation missing.</string>
     <string name="toast_missing_blocking_reason">Blocking reason missing.</string>
+    <string name="toast_future_datetime_not_allowed">You cannot select future date and time.</string>
 
     <string name="view_title_location">LOCATION</string>
 
@@ -270,6 +272,7 @@
     <string name="dialog_terms_title">Terms and Conditions</string>
     <string name="dialog_terms_body">&lt;b&gt;Service Fees&lt;/b&gt;&lt;br/&gt;A 10% service fee will be deducted from your final total payment amount from this work order.&lt;br/&gt;&lt;br/&gt;&lt;b&gt;Terms&lt;/b&gt;&lt;br/&gt;All the work orders that have been approved this week will be processed next week. You can view your payment status from the My Payments option from your account.</string>
     <string name="dialog_report_problem_spinner_1">What\'s the problem?</string>
+    <string name="hint_how_late">How Late?</string>
     <string name="dialog_introduction_text">We\'re actively trying to improve the Field Nation App to better cater to your needs.</string>
     <string name="dialog_reason_spinner_default">Reason for contacting</string>
     <string name="dialog_explanation_default">How can we help</string>
@@ -433,6 +436,8 @@
     <string name="inbox">Inbox</string>
     <string name="installed_devices">Installed Devices</string>
     <string name="job_duration">Job Duration</string>
+    <string name="number_of_device_completed">Devices Completed</string>
+    <string name="spinner_hint_please_select">Please select</string>
     <string name="legal">Legal</string>
     <string name="loading_">Loading…</string>
     <string name="log_out">Log Out</string>
@@ -443,6 +448,7 @@
     <string name="invalid_address">INVALID ADDRESS</string>
     <string name="contact_wo_manager">Contact work order manager</string>
     <string name="mark_as_incomplete">Mark as incomplete</string>
+    <string name="mark_as_incomplete_full_warning">You are about to mark this work order as incomplete.\n\nWould you like to continue?</string>
     <string name="mark_as_incomplete_warning">You are about to mark this work order as incomplete.</string>
     <string name="mark_complete_warning">You are about to mark this work order as complete. You will no longer be able to edit this work order.</string>
     <string name="mark_work_as_complete">Mark Work as Complete</string>
@@ -543,6 +549,7 @@
     <string name="professionalism">Professionalism</string>
     <string name="profile_information">Profile Information</string>
     <string name="providers_under_your_company">Providers under your company:</string>
+    <string name="provide_a_timeframe">Provide a timeframe (min)</string>
     <string name="provide_an_explanation">Provide an explanation</string>
     <string name="processing_">Processing </string>
     <string name="rate_this_work_order">Rate this work order</string>
@@ -624,7 +631,7 @@
     <string name="wo_id_x">WO ID: %1$s</string>
     <string name="wo_x">WO %1$s</string>
     <string name="work_complete">Work Complete</string>
-    <string name="workorder_no_permission">The work order you are trying to view is unavailable. It may have been removed from our platform or assigned to another provider.</string>
+    <string name="workorder_no_permission">The work order you are trying to view is unavailable.</string>
     <string name="workorder_not_found">The work order you are looking for has been assigned to another provider, canceled, or does not exist.</string>
     <string name="work_order_search">Work Order Search</string>
     <string name="you_currently_have_no_discounts">You have not given any discounts.</string>
@@ -868,6 +875,8 @@
     <string name="i_dont_have_access">I don\'t have access</string>
     <string name="i_dont_have_what_i_need">I don\'t have what I need</string>
     <string name="approval">Approval</string>
+    <string name="title_check_in">Check In</string>
+    <string name="title_check_out">Check Out</string>
 
     <string-array name="reason_list">
         <item>App Feedback</item>

@@ -2,14 +2,12 @@ package com.fieldnation.rpc.server;
 
 import android.net.Uri;
 
-import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
-import com.fieldnation.service.transaction.NotificationDefinition;
+import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.misc;
 
-import java.security.SecureRandom;
 import java.text.ParseException;
 
 /**
@@ -34,20 +32,10 @@ public class HttpJsonBuilder {
     public static final String PARAM_WEB_BODY = "body";
     public static final String PARAM_DO_NOT_READ = "doNotRead";
 
-    public static final String PARAM_NOTIFICATION_ID = "notification.id";
-    public static final String PARAM_NOTIFICATION_START = "notification.start";
-    public static final String PARAM_NOTIFICATION_SUCCESS = "notification.success";
-    public static final String PARAM_NOTIFICATION_FAILED = "notification.failed";
-    public static final String PARAM_NOTIFICATION_RETRY = "notification.retry";
-
-    public static final String PARAM_TIMING_KEY = "timingKey";
-
     private JsonObject request;
     private JsonObject headers;
     private JsonObject multiPartFields;
     private JsonObject multiPartFiles;
-
-    private static final SecureRandom _random = new SecureRandom();
 
     public HttpJsonBuilder() {
     }
@@ -93,13 +81,6 @@ public class HttpJsonBuilder {
         return this;
     }
 
-    public HttpJsonBuilder timingKey(String timingKey) throws ParseException {
-        getRequest();
-        if (!misc.isEmptyOrNull(timingKey))
-            request.put(PARAM_TIMING_KEY, timingKey);
-        return this;
-    }
-
     public HttpJsonBuilder doNotRead() throws ParseException {
         getRequest();
         request.put(PARAM_DO_NOT_READ, true);
@@ -117,19 +98,6 @@ public class HttpJsonBuilder {
         getRequest();
         if (!misc.isEmptyOrNull(body))
             request.put(PARAM_WEB_BODY, body);
-        return this;
-    }
-
-    public HttpJsonBuilder notify(NotificationDefinition start, NotificationDefinition success,
-                                  NotificationDefinition failed, NotificationDefinition retry) throws ParseException {
-        getRequest();
-        request.put(PARAM_NOTIFICATION_ID, _random.nextInt(Integer.MAX_VALUE));
-
-        request.put(PARAM_NOTIFICATION_START, start.toJson());
-        request.put(PARAM_NOTIFICATION_SUCCESS, success.toJson());
-        request.put(PARAM_NOTIFICATION_FAILED, failed.toJson());
-        request.put(PARAM_NOTIFICATION_RETRY, retry.toJson());
-
         return this;
     }
 
@@ -188,7 +156,7 @@ public class HttpJsonBuilder {
         JsonObject f = new JsonObject();
         f.put("filename", filename);
         f.put("soid", obj.getId());
-        f.put("contentType", App.guessContentTypeFromName(filename));
+        f.put("contentType", FileUtils.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;
     }
@@ -198,7 +166,7 @@ public class HttpJsonBuilder {
         JsonObject f = new JsonObject();
         f.put("uri", uri.toString());
         f.put("filename", filename);
-        f.put("contentType", App.guessContentTypeFromName(filename));
+        f.put("contentType", FileUtils.guessContentTypeFromName(filename));
         multiPartFiles.put(fieldName, f);
         return this;
     }

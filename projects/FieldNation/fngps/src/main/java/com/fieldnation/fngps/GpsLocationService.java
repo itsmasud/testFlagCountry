@@ -35,6 +35,7 @@ public class GpsLocationService {
     private Listener _listener;
 
     public GpsLocationService(Context context) {
+        Log.v(TAG, "Constructor");
         // build a location request
         _locationRequest = LocationRequest.create();
         _locationRequest.setPriority(LocationRequest.PRIORITY_LOW_POWER);
@@ -58,6 +59,7 @@ public class GpsLocationService {
     }
 
     public void startLocation() {
+        Log.v(TAG, "startLocation");
         try {
             if (!_googleApiClient.isConnected() && !_googleApiClient.isConnecting()) {
                 _isRunning = true;
@@ -93,8 +95,10 @@ public class GpsLocationService {
 
     public void stopLocationUpdates() {
         Log.v(TAG, "stopLocationUpdates");
-        if (_googleApiClient.isConnected())
+        if (_googleApiClient != null && _googleApiClient.isConnected()) {
             _fusedLocationProviderApi.removeLocationUpdates(_googleApiClient, _locationListener);
+            _googleApiClient.disconnect();
+        }
         _isRunning = false;
     }
 

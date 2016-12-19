@@ -4,19 +4,24 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.fntools.misc;
+
+import java.util.HashSet;
+import java.util.Hashtable;
 
 public class TaskRowView extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("TaskRowView");
@@ -24,12 +29,16 @@ public class TaskRowView extends RelativeLayout {
     // Ui
     private IconFontTextView _iconView;
     private TextView _descriptionTextView;
+    private ProgressBar _progressBar;
 
     // Data
     private Workorder _workorder;
     private WorkorderClient _workorderClient;
     private Task _task;
     private Listener _listener = null;
+
+    private final HashSet<String> _uploadingFiles = new HashSet<>();
+    private final Hashtable<String, Integer> _uploadingProgress = new Hashtable<>();
 
     public TaskRowView(Context context) {
         super(context);
@@ -54,6 +63,7 @@ public class TaskRowView extends RelativeLayout {
 
         _iconView = (IconFontTextView) findViewById(R.id.icon_view);
         _descriptionTextView = (TextView) findViewById(R.id.description_textview);
+        _progressBar = (ProgressBar) findViewById(R.id.progress_view);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -86,6 +96,21 @@ public class TaskRowView extends RelativeLayout {
         populateUi();
     }
 
+    public void setProgress(Integer progress) {
+        if (_progressBar == null)
+            return;
+
+        _progressBar.setVisibility(VISIBLE);
+        if (progress == null) {
+            _progressBar.setIndeterminate(true);
+            return;
+        }
+
+        _progressBar.setIndeterminate(false);
+        _progressBar.setMax(100);
+        _progressBar.setProgress(progress);
+    }
+
     private void populateUi() {
         if (_iconView == null)
             return;
@@ -104,7 +129,38 @@ public class TaskRowView extends RelativeLayout {
 
         TaskType type = _task.getTaskType();
 
-        if (misc.isEmptyOrNull(_task.getDescription())) {
+        if (_uploadingFiles.size() > 0) {
+
+            if (_uploadingFiles.size() == 1) {
+                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading: " + _uploadingFiles.iterator().next());
+            } else if (_uploadingFiles.size() > 1) {
+                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading " + _uploadingFiles.size() + " files");
+            }
+
+            int progress = 0;
+            for (Integer val : _uploadingProgress.values()) {
+                progress += val;
+            }
+
+            if (_uploadingProgress.size() > 0) {
+                int pos = progress / _uploadingProgress.size();
+
+                if (pos == 100) {
+                    _progressBar.setIndeterminate(true);
+                    _progressBar.setVisibility(VISIBLE);
+                } else {
+                    _progressBar.setIndeterminate(false);
+                    _progressBar.setProgress(progress / _uploadingProgress.size());
+                    _progressBar.setVisibility(VISIBLE);
+                }
+            } else {
+                _progressBar.setIndeterminate(true);
+                _progressBar.setVisibility(VISIBLE);
+            }
+
+        } else if (misc.isEmptyOrNull(_task.getDescription())) {
+            _progressBar.setVisibility(GONE);
+
             boolean isDescriptionSet = false;
 
             if (_workorder.getCustomFields() != null) {
@@ -121,6 +177,7 @@ public class TaskRowView extends RelativeLayout {
                 _descriptionTextView.setText(type.getDisplay(getContext()));
             }
         } else {
+            _progressBar.setVisibility(GONE);
             _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + _task.getDescription());
         }
         updateCheckBox();
@@ -164,6 +221,7 @@ public class TaskRowView extends RelativeLayout {
             return;
 
         _workorderClient.subDeliverableUpload(_workorder.getWorkorderId(), _task.getSlotId());
+        _workorderClient.subDeliverableProgress(_workorder.getWorkorderId(), _task.getSlotId());
     }
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
@@ -174,13 +232,31 @@ public class TaskRowView extends RelativeLayout {
 
         @Override
         public void onUploadDeliverable(long workorderId, long slotId, String filename, boolean isComplete, boolean failed) {
-            TaskType type = _task.getTaskType();
+            if (failed || isComplete) {
+                _uploadingFiles.remove(filename);
+                _uploadingProgress.put(filename, 100);
 
-            if (!isComplete) {
-                _descriptionTextView.setText(type.getDisplay(getContext()) + "\nUploading: " + filename);
+                if (_uploadingFiles.size() == 0)
+                    _uploadingProgress.clear();
             } else {
-                _descriptionTextView.setText(type.getDisplay(getContext()) + "\n" + filename);
+                _uploadingFiles.add(filename);
+                if (!_uploadingProgress.containsKey(filename))
+                    _uploadingProgress.put(filename, 0);
             }
+            populateUi();
+        }
+
+        @Override
+        public void onUploadDeliverableProgress(long workorderId, long slotId, String filename, long pos, long size, long time) {
+            Double percent = pos * 1.0 / size;
+
+            Log.v(TAG, "onUploadDeliverableProgress(" + workorderId + "," + slotId + "," + filename + "," + (pos * 100 / size) + "," + (int) (time / percent));
+
+            int prog = (int) (pos * 100 / size);
+
+            _uploadingProgress.put(filename, prog);
+
+            populateUi();
         }
     };
 

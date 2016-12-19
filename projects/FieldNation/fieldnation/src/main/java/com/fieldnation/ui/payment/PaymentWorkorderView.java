@@ -1,7 +1,6 @@
 package com.fieldnation.ui.payment;
 
 import android.content.Context;
-import android.content.Intent;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.R;
 import com.fieldnation.data.accounting.Payment;
 import com.fieldnation.data.accounting.Workorder;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 public class PaymentWorkorderView extends RelativeLayout {
     private static final String TAG = "PaymentWorkorderView";

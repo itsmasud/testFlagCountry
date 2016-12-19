@@ -46,7 +46,6 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.transaction.WebTransactionService;
 
 import java.io.File;
-import java.net.URLConnection;
 import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -354,7 +353,7 @@ public class App extends Application {
             _isConnected = false;
             Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
             if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                PendingIntent pi = PendingIntent.getService(App.this, App.secureRandom.nextInt(), intent, 0);
                 ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
             }
         }
@@ -709,14 +708,6 @@ public class App extends Application {
         }
     }
 
-    public static String guessContentTypeFromName(String url) {
-        try {
-            return URLConnection.guessContentTypeFromName(url);
-        } catch (Exception ex) {
-        }
-        return "application/octet-stream";
-    }
-
     @Override
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
@@ -756,5 +747,9 @@ public class App extends Application {
             Log.v(TAG, ex);
             return true;
         }
+    }
+
+    public static boolean isNcns() {
+        return BuildConfig.BUILD_FLAVOR_NAME.equals("NCNS");
     }
 }

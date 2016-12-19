@@ -1,6 +1,9 @@
 package com.fieldnation.ui.v2;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.ResolveInfo;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -57,12 +60,19 @@ public class AppPickerRowView extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_listener != null)
-                _listener.onClick(AppPickerRowView.this, _pack);
+            if (_listener != null) {
+                Intent src = _pack.intent;
+                ResolveInfo info = _pack.resolveInfo;
+
+                src.setComponent(new ComponentName(
+                        info.activityInfo.applicationInfo.packageName,
+                        info.activityInfo.name));
+                _listener.onClick(AppPickerRowView.this, src);
+            }
         }
     };
 
     public interface OnClickListener {
-        void onClick(AppPickerRowView row, AppPickerPackage pack);
+        void onClick(AppPickerRowView row, Intent src);
     }
 }

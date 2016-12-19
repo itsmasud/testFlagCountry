@@ -122,7 +122,6 @@ public class DialogManager extends FrameLayout implements Constants {
             // remove from the container
             dh.dialog.dismiss(true);
         }
-
     }
 
     private void remove(Dialog dialog) {
@@ -146,8 +145,8 @@ public class DialogManager extends FrameLayout implements Constants {
 
         // find the top view
         if (_dialogStack.size() > 0) {
-            DialogHolder dh = _dialogStack.get(0);
-            dh.dialog.show(dh.params, false);
+            //DialogHolder dh = _dialogStack.get(0);
+            //dh.dialog.show(dh.params, false);
         }
     }
 
@@ -184,15 +183,6 @@ public class DialogManager extends FrameLayout implements Constants {
         }
     }
 
-    @Override
-    protected void onDetachedFromWindow() {
-        for (int i = 0; i < _dialogStack.size(); i++) {
-            _dialogStack.get(i).dialog.onRemoved();
-        }
-        super.onDetachedFromWindow();
-    }
-
-
     private DialogHolder makeDialogHolder(String className, ClassLoader classLoader) {
         try {
             Class<?> clazz = classLoader.loadClass(className);
@@ -213,6 +203,14 @@ public class DialogManager extends FrameLayout implements Constants {
             Log.v(TAG, ex);
         }
         return null;
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        if (_dialogReceiver != null && _dialogReceiver.isConnected()) {
+            _dialogReceiver.disconnect(ContextProvider.get());
+        }
+        super.onDetachedFromWindow();
     }
 
     private Server.Listener _dialogReceiver_listener = new Server.Listener() {

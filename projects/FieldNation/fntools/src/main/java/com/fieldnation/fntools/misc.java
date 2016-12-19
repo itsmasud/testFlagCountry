@@ -613,12 +613,15 @@ public class misc {
                 || Pattern.compile("\\b((98\\d\\d\\d\\d\\d?\\d\\d\\d\\d|98\\d\\d)\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d\\d(\\s*?\\d\\d\\d)?)\\b").matcher(trackingId).matches()
                 || Pattern.compile("^[0-9]{15}$").matcher(trackingId).matches()) {
             return 0; // test with any 12 digit
-        } else if (Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
+        }
+
+        else if (Pattern.compile("/\\b(1Z ?[0-9A-Z]{3} ?[0-9A-Z]{3} ?[0-9A-Z]{2} ?[0-9A-Z]{4} ?[0-9A-Z]{3} ?[0-9A-Z]|[\\dT]\\d\\d\\d ?\\d\\d\\d\\d ?\\d\\d\\d|\\d{22})\\b/i").matcher(trackingId).matches()
+                || Pattern.compile("1Z\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]{2}\\s*?[0-9A-Z]{4}\\s*?[0-9A-Z]{3}\\s*?[0-9A-Z]").matcher(trackingId).matches()
                 || Pattern.compile("[\\dT]\\d\\d\\d\\s*?\\d\\d\\d\\d\\s*?\\d\\d\\d").matcher(trackingId).matches()
                 || Pattern.compile("\\d{22}").matcher(trackingId).matches()) {
             return 1; // test with any 11 digit
         }
-        return 3;
 
+        return 3;
     }
 }

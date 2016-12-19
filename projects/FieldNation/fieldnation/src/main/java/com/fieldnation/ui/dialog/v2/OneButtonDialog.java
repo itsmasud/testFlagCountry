@@ -2,6 +2,8 @@ package com.fieldnation.ui.dialog.v2;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +15,7 @@ import com.fieldnation.fndialog.Controller.Listener;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/19/2016.
@@ -60,7 +63,14 @@ public class OneButtonDialog extends SimpleDialog {
     @Override
     public void show(Bundle payload, boolean animate) {
         _titleTextView.setText(payload.getString(PARAM_TITLE));
-        _bodyTextView.setText(payload.getString(PARAM_BODY));
+
+        String body = payload.getString(PARAM_BODY);
+        try {
+            _bodyTextView.setText(misc.linkifyHtml(body, Linkify.ALL));
+            _bodyTextView.setMovementMethod(LinkMovementMethod.getInstance());
+        } catch (Exception ex) {
+            _bodyTextView.setText(body);
+        }
         _primaryButton.setText(payload.getString(PARAM_BUTTON));
         _isCancelable = payload.getBoolean(PARAM_CANCELABLE);
 
@@ -79,7 +89,8 @@ public class OneButtonDialog extends SimpleDialog {
         onResult(response);
         super.cancel();
 
-        onCancel();
+        if (onCancel())
+            dismiss(true);
     }
 
     private final View.OnClickListener _primaryButton_onClick = new View.OnClickListener() {
@@ -89,14 +100,17 @@ public class OneButtonDialog extends SimpleDialog {
             Bundle response = new Bundle();
             response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
             onResult(response);
-            onPrimaryClick();
+            if (onPrimaryClick())
+                dismiss(true);
         }
     };
 
-    public void onPrimaryClick() {
+    public boolean onPrimaryClick() {
+        return true;
     }
 
-    public void onCancel() {
+    public boolean onCancel() {
+        return true;
     }
 
     public static class Controller extends com.fieldnation.fndialog.Controller {
@@ -110,18 +124,27 @@ public class OneButtonDialog extends SimpleDialog {
         }
 
         public static void show(Context context, String uid, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
-            show(context, uid, context.getString(titleResId), context.getString(bodyResId),
+            show(context, uid, OneButtonDialog.class, context.getString(titleResId), context.getString(bodyResId),
+                    context.getString(buttonResId), isCancelable);
+        }
+
+        public static void show(Context context, String uid, Class<? extends Dialog> klass, int titleResId, int bodyResId, int buttonResId, boolean isCancelable) {
+            show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
                     context.getString(buttonResId), isCancelable);
         }
 
         public static void show(Context context, String uid, String title, String body, String button, boolean isCancelable) {
+            show(context, uid, OneButtonDialog.class, title, body, button, isCancelable);
+        }
+
+        public static void show(Context context, String uid, Class<? extends Dialog> klass, String title, String body, String button, boolean isCancelable) {
             Bundle params = new Bundle();
             params.putString(PARAM_TITLE, title);
             params.putString(PARAM_BODY, body);
             params.putString(PARAM_BUTTON, button);
             params.putBoolean(PARAM_CANCELABLE, isCancelable);
 
-            show(context, uid, OneButtonDialog.class, params);
+            show(context, uid, klass, params);
         }
 
         public static void dismiss(Context context, String uid) {

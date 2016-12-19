@@ -1,22 +1,22 @@
 package com.fieldnation.ui.nav;
 
 import android.content.Context;
-import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.fieldnation.App;
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.DurationDialog;
+import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.ncns.ConfirmActivity;
 
 /**
  * Created by Michael on 8/31/2016.
@@ -28,6 +28,7 @@ public class FooterBarView extends RelativeLayout {
     private IconFontTextView _inboxTextView;
     private IconFontTextView _menuTextView;
     private IconFontTextView _unreadTextView;
+    private Button _testButton;
 
     // Service
     private ProfileClient _profileClient;
@@ -65,12 +66,15 @@ public class FooterBarView extends RelativeLayout {
 
         _unreadTextView = (IconFontTextView) findViewById(R.id.unread_textview);
 
-        findViewById(R.id.reset_button).setOnClickListener(new OnClickListener() {
+        _testButton = (Button) findViewById(R.id.test_button);
+        _testButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                App.get().setNeedsConfirmation(true);
+                NewFeaturesDialog.Controller.show(App.get());
             }
         });
+        if (!BuildConfig.DEBUG)
+            _testButton.setVisibility(GONE);
 
         _profileClient = new ProfileClient(_profile_listener);
         _profileClient.connect(App.get());
@@ -84,19 +88,6 @@ public class FooterBarView extends RelativeLayout {
             _profileClient.disconnect(App.get());
 
         super.onDetachedFromWindow();
-    }
-
-    @Override
-    protected void onRestoreInstanceState(Parcelable state) {
-        Log.v(TAG, "onRestoreInstanceState");
-        // todo... need to load some sort of unique key so that the controller can resync with the dialog
-        super.onRestoreInstanceState(state);
-    }
-
-    @Override
-    protected Parcelable onSaveInstanceState() {
-        Log.v(TAG, "onSaveInstanceState");
-        return super.onSaveInstanceState();
     }
 
     private void populateUi() {

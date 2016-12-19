@@ -10,8 +10,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 

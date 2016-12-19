@@ -2,11 +2,12 @@ package com.fieldnation.service.data.mapbox;
 
 import android.content.Context;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Michael on 6/22/2016.
@@ -27,19 +28,21 @@ public class MapboxTransactionBuilder implements MapboxConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .timingKey("GET/mapbox/directions")
                     .host("api.mapbox.com")
                     .path(path)
                     .urlParams("?access_token=" + context.getString(R.string.mapbox_accessToken));
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/mapbox/directions")
                     .priority(Priority.HIGH)
-                    .handler(MapboxTransactionHandler.class)
-                    .handlerParams(MapboxTransactionHandler.pDirections(workorderId))
+                    .listener(MapboxTransactionListener.class)
+                    .listenerParams(MapboxTransactionListener.pDirections(workorderId))
                     .useAuth(false)
                     .isSyncCall(false)
                     .request(builder)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
 
         } catch (Exception ex) {
             Log.v(TAG, ex);
@@ -64,19 +67,21 @@ public class MapboxTransactionBuilder implements MapboxConstants {
             HttpJsonBuilder builder = new HttpJsonBuilder()
                     .protocol("https")
                     .method("GET")
-                    .timingKey("GET/mapbox/staticMapClassic")
                     .host("api.mapbox.com")
                     .path(path)
                     .urlParams("?access_token=" + context.getString(R.string.mapbox_accessToken));
 
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/mapbox/staticMapClassic")
                     .priority(Priority.HIGH)
-                    .handler(MapboxTransactionHandler.class)
-                    .handlerParams(MapboxTransactionHandler.pStaticMapClassic(workorderId))
+                    .listener(MapboxTransactionListener.class)
+                    .listenerParams(MapboxTransactionListener.pStaticMapClassic(workorderId))
                     .useAuth(false)
                     .isSyncCall(false)
                     .request(builder)
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

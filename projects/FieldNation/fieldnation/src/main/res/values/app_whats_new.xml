@@ -3,11 +3,13 @@
 
     <string name="added_new_feature">
 &lt;ul&gt;
-&lt;li&gt;Work order search by status, location and distance!&lt;/li&gt;
-&lt;li&gt;Now you can rate a buyer after work is completed&lt;/li&gt;
-&lt;li&gt;We\'ve added reasons for declining work orders&lt;/li&gt;
-&lt;li&gt;Updated Terms and Conditions&lt;/li&gt;
-&lt;li&gt;Added Provider Quality Policy to settings&lt;/li&gt;
+&lt;li&gt;Improved navigational layout of work order statuses&lt;/li&gt;
+&lt;li&gt;Optionally add an ETA when requesting a work order&lt;/li&gt;
+&lt;li&gt;Can now modify the ETA on a work order&lt;/li&gt;
+&lt;li&gt;Added progress bar for photo upload tasks&lt;/li&gt;
+&lt;li&gt;Improved bundled work order requesting and accepting&lt;/li&gt;
+&lt;li&gt;Additional contacts are now being displayed in a work order&lt;/li&gt;
+&lt;li&gt;Can now modify time upon check in/out&lt;/li&gt;
 &lt;/ul&gt;
     </string>
 

@@ -10,18 +10,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.analytics.ScreenName;
-import com.fieldnation.fnanalytics.Tracker;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.workorder.WorkorderFragment;
-import com.fieldnation.fntools.misc;
 
 import java.util.LinkedList;
 import java.util.List;

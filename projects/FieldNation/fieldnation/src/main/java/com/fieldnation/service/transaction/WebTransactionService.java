@@ -1,5 +1,6 @@
 package com.fieldnation.service.transaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -164,16 +165,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 }
 
                 Log.v(TAG, "processIntent building transaction");
-                WebTransaction transaction = WebTransaction.put(
-                        (Priority) extras.getSerializable(PARAM_PRIORITY),
-                        extras.getString(PARAM_KEY),
-                        extras.getBoolean(PARAM_USE_AUTH),
-                        extras.getBoolean(PARAM_IS_SYNC),
-                        extras.getByteArray(PARAM_REQUEST),
-                        extras.getBoolean(PARAM_WIFI_REQUIRED),
-                        extras.getBoolean(PARAM_TRACK),
-                        extras.getString(PARAM_HANDLER_NAME),
-                        extras.getByteArray(PARAM_HANDLER_PARAMS));
+                WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
                     UploadTrackerClient.uploadQueued(App.get());
@@ -203,4 +195,18 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     public boolean isAuthenticated() {
         return _auth != null;
     }
+
+    public static void queueTransaction(Context context, WebTransaction transaction) {
+        Intent intent = new Intent(context, WebTransactionService.class);
+        intent.putExtras(transaction.toBundle());
+        context.startService(intent);
+    }
+
+    public static Intent makeQueueTransactionIntent(Context context, WebTransaction transaction) {
+        Intent intent = new Intent(context, WebTransactionService.class);
+        intent.putExtras(transaction.toBundle());
+        return intent;
+    }
+
+
 }

@@ -76,9 +76,7 @@ public class NavActivity extends AuthSimpleActivity {
         _recyclerView = (SearchResultScreen) findViewById(R.id.recyclerView);
 
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
-        _ccw.setAnimationListener(_ccw_animationListener);
         _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
-        _cw.setAnimationListener(_ccw_animationListener);
 
         _arrowTextView.startAnimation(_cw);
 
@@ -91,6 +89,13 @@ public class NavActivity extends AuthSimpleActivity {
         }
 
         _recyclerView.startSearch(_currentSearch);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //_recyclerView.startSearch(_currentSearch);
         NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
 
         if (App.get().needsConfirmation()) {
@@ -129,13 +134,6 @@ public class NavActivity extends AuthSimpleActivity {
         }
         super.onRestoreInstanceState(savedInstanceState);
     }
-
-    private final Animation.AnimationListener _ccw_animationListener = new DefaultAnimationListener() {
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            _ccw.cancel();
-        }
-    };
 
     @Override
     public void onFinishCreate(Bundle savedInstanceState) {
@@ -205,7 +203,6 @@ public class NavActivity extends AuthSimpleActivity {
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");
-        // misc.printStackTrace("startNew");
         Intent intent = new Intent(context, NavActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);

@@ -171,6 +171,10 @@ public class DeliverableFragment extends WorkorderFragment {
 
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
+
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
+
     }
 
     @Override
@@ -187,6 +191,9 @@ public class DeliverableFragment extends WorkorderFragment {
 
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -219,15 +226,10 @@ public class DeliverableFragment extends WorkorderFragment {
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
     }
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
-
         super.onPause();
     }
 
@@ -604,7 +606,7 @@ public class DeliverableFragment extends WorkorderFragment {
 
             try {
                 Intent intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(file), App.guessContentTypeFromName(file.getName()));
+                intent.setDataAndType(Uri.fromFile(file), FileUtils.guessContentTypeFromName(file.getName()));
 
                 if (intent.resolveActivity(App.get().getPackageManager()) != null) {
                     startActivity(intent);
@@ -615,7 +617,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
                         ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);

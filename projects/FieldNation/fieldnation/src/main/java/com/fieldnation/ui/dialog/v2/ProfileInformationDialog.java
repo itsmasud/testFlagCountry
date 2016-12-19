@@ -1,10 +1,8 @@
 package com.fieldnation.ui.dialog.v2;
 
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.pm.ResolveInfo;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
@@ -28,7 +26,6 @@ import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.ui.v2.AppPickerPackage;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;
@@ -81,7 +78,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     @Override
     public void onAdded() {
         super.onAdded();
-        Log.e(TAG, "onAdded");
+        Log.v(TAG, "onAdded");
         _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
@@ -107,7 +104,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     @Override
     public void onRemoved() {
         super.onRemoved();
-        Log.e(TAG, "onRemoved");
+        Log.v(TAG, "onRemoved");
         if (_photos != null && _photos.isConnected())
             _photos.disconnect(App.get());
 
@@ -200,34 +197,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
 
-    private void dispatchTakePictureIntent() {
-        Intent src = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (src.resolveActivity(App.get().getPackageManager()) != null) {
-            File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                    + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-            _tempFile = temppath;
-
-            // removed because this doesn't work on my motorola
-            src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-            ActivityResultClient.startActivityForResult(App.get(), src, RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
-
-        }
-    }
-
-
-    private void getImageFromPhotoApp() {
-
-//        Intent src = new Intent(Intent.ACTION_PICK,
-//                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-
-        Intent src = new Intent(Intent.ACTION_PICK);
-        src.addCategory(Intent.CATEGORY_OPENABLE);
-        src.setType("image/*");
-        ActivityResultClient.startActivityForResult(App.get(), src, RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
-
-    }
-
-
     /*-*****************************-*/
     /*-				Events			-*/
     /*-*****************************-*/
@@ -273,7 +242,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
             }
             AppPickerDialog.Controller.show(App.get(), UID_APP_PICKER_DIALOG);
 
-
         }
     };
 
@@ -293,7 +261,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             try {
-
                 if ((requestCode != RESULT_CODE_GET_ATTACHMENT_DELIVERABLES
                         && requestCode != RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES)
                         || resultCode != RESULT_OK) {
@@ -326,31 +293,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private final AppPickerDialog.ControllerListener _appPickerDialog_listener = new AppPickerDialog.ControllerListener() {
 
         @Override
-        public void onOk(AppPickerPackage pack) {
-            Intent src = pack.intent;
-            if (pack == null) {
-                Log.e(TAG, "pack is null");
-            }
-            if (pack.intent == null) {
-                Log.e(TAG, "pack.intent is null");
-            }
-            if (pack.resolveInfo == null) {
-                Log.e(TAG, "pack.resolveInfo is null");
-            }
-            if (pack.appName == null) {
-                Log.e(TAG, "pack.appName is null");
-            }
+        public void onOk(Intent pack) {
 
-
-            ResolveInfo info = pack.resolveInfo;
-
-            src.setComponent(new ComponentName(
-                    info.activityInfo.applicationInfo.packageName,
-                    info.activityInfo.name));
-
-            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + src.toString());
-                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
+            if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + pack.toString());
+                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_DELIVERABLES);
             } else {
                 File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
                         + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
@@ -358,8 +305,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 Log.v(TAG, "onClick: " + temppath.getAbsolutePath());
 
                 // removed because this doesn't work on my motorola
-                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                ActivityResultClient.startActivityForResult(App.get(), src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
+                pack.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                ActivityResultClient.startActivityForResult(App.get(), pack, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_DELIVERABLES);
             }
         }
     };
@@ -379,13 +326,4 @@ public class ProfileInformationDialog extends FullScreenDialog {
             dismiss(context, null);
         }
     }
-
-
-//    public interface Listener {
-//        void onOk(String message);
-//
-//        void onCancel();
-//    }
-
-
 }

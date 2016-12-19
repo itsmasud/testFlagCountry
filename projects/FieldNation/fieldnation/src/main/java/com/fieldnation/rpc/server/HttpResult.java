@@ -1,9 +1,9 @@
 package com.fieldnation.rpc.server;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.StreamUtils;
 import com.fieldnation.fntools.misc;
 
@@ -22,6 +22,7 @@ import java.text.ParseException;
  */
 public class HttpResult {
     private static final String TAG = "HttpResult";
+    private static final int FILE_THREASHHOLD = 1024 * 10; // 10KB
 
     private byte[] _baResults = null;
     private String _sResults = null;
@@ -47,8 +48,8 @@ public class HttpResult {
     }
 
     private void storeData(InputStream in) throws IOException {
-        _baResults = StreamUtils.readAllFromStreamUntil(in, -1, 102400, 1000);
-        if (_baResults != null && _baResults.length >= 102400) {
+        _baResults = StreamUtils.readAllFromStreamUntil(in, -1, FILE_THREASHHOLD, 1000);
+        if (_baResults != null && _baResults.length >= FILE_THREASHHOLD) {
             // temp file
             File tempFolder = new File(App.get().getTempFolder());
             File tempFile = File.createTempFile("web", "dat", tempFolder);

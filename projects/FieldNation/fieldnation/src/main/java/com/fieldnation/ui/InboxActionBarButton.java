@@ -10,8 +10,8 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.inbox.InboxActivity;
 
 public class InboxActionBarButton extends RelativeLayout {

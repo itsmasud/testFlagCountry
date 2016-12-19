@@ -188,6 +188,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
 
         // hide stuff that shouldn't be seen
         if (_workorder.getIsRemoteWork()) {
+            _actionButton.setVisibility(GONE);
             _mapLayout.setVisibility(GONE);
             _noLocationTextView.setVisibility(VISIBLE);
             _distanceTextView.setVisibility(GONE);
@@ -266,8 +267,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _distanceTextView.setText(getResources().getString(R.string.num_mi_driving, misc.to2Decimal(miles)));
         } else if (_userLocation != null && loc.getGeo() != null && loc.getGeo().getLongitude() != null && loc.getGeo().getLatitude() != null) {
             try {
-                Position siteLoc = new Position( loc.getGeo().getLatitude(), loc.getGeo().getLongitude());
-                Position myLoc = new Position( _userLocation.getLatitude(), _userLocation.getLongitude());
+                Position siteLoc = new Position(loc.getGeo().getLatitude(), loc.getGeo().getLongitude());
+                Position myLoc = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
 
                 _distanceTextView.setText(getResources().getString(R.string.num_mi_straight_line, misc.to2Decimal(myLoc.distanceTo(siteLoc))));
             } catch (Exception ex) {
@@ -299,7 +300,13 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _action = ACTION_MESSAGES;
             return;
         }
-        if (!_simpleGps.isLocationEnabled()) {
+
+        if (_workorder.getIsRemoteWork()) {
+//        remote work
+            _noMapLayout.setVisibility(GONE);
+            _actionButton.setVisibility(GONE);
+
+        } else if (!_simpleGps.isLocationEnabled()) {
             //        no gps - !isLocationEnabled()
             _loadingProgress.setVisibility(GONE);
             _mapImageView.setImageResource(R.drawable.no_map);
@@ -309,10 +316,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _action = ACTION_GPS_SETTINGS;
             _gpsError1TextView.setText(R.string.map_not_available);
             _gpsError2TextView.setText(R.string.check_gps_settings);
-
-        } else if (_workorder.getIsRemoteWork()) {
-//        remote work
-            _noMapLayout.setVisibility(GONE);
 
         } else if (_workorder.getLocation() == null || _workorder.getLocation().getGeo() == null) {
 //        no geo data - ie bad address - _workorder.getLocation() == null || _workord
@@ -375,9 +378,9 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         }
 
         Log.v(TAG, "lookupMap - 5");
-        Marker start = new Marker( _userLocation.getLatitude(), _userLocation.getLongitude(),
+        Marker start = new Marker(_userLocation.getLatitude(), _userLocation.getLongitude(),
                 getContext().getString(R.string.gmap_startMarkerUrl));
-        Position startPos = new Position( _userLocation.getLatitude(), _userLocation.getLongitude());
+        Position startPos = new Position(_userLocation.getLatitude(), _userLocation.getLongitude());
 
         Marker end = null;
         Position endPos = null;
@@ -498,10 +501,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         public void onLocation(android.location.Location location) {
             Log.v(TAG, "_gpsListener");
             _userLocation = location;
-            _actionButton.setText(R.string.icon_car);
-            _actionButton.setVisibility(VISIBLE);
-            _action = ACTION_NAVIGATE;
             lookupMap();
+            _simpleGps.stop();
         }
 
         @Override

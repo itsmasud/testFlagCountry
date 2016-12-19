@@ -166,7 +166,7 @@ public class MemUtils {
         Log.i(TAG, memMessage);
         Log.v(TAG, "getAppsUsedHeapMemory:" + memoryInfo.getTotalPss() / 1024);
 
-        return (int) memoryInfo.getTotalPss() / 1024;
+        return memoryInfo.getTotalPss() / 1024;
     }
 
     // Memory info doesnt match with Device Monitor
@@ -195,12 +195,8 @@ public class MemUtils {
 //        Log.e(TAG,"getAppNativeHeapFreeSize: " + getAppNativeHeapFreeSize());
 //        Log.e(TAG,"isLowMemorySituation((context): " + isLowMemorySituation((context)));
 
-            if (!isLowMemorySituation(context)
-                    && ((getAppPrivateMemory() + getAppNativeHeapFreeSize()) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppNativeHeapFreeSize())) {
-                shouldSuspendLoadingMore_cache = true;
-            } else {
-                shouldSuspendLoadingMore_cache = false;
-            }
+            shouldSuspendLoadingMore_cache = !isLowMemorySituation(context)
+                    && ((getAppPrivateMemory() + getAppNativeHeapFreeSize()) * MINIMUM_FREE_MEMORY_THRESHOLD_PERCENTAGE < getAppNativeHeapFreeSize());
 
             shouldSuspendLoadingMore_timer = System.currentTimeMillis() + 10000;
 

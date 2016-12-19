@@ -8,7 +8,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Bonus;
@@ -16,6 +15,7 @@ import com.fieldnation.data.workorder.ExpectedPayment;
 import com.fieldnation.data.workorder.Penalty;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
 
 public class ExpectedPaymentView extends LinearLayout implements WorkorderRenderer {

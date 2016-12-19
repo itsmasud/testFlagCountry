@@ -203,6 +203,8 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             setState(AuthState.REMOVING);
             AccountManagerFuture<Boolean> future = _accountManager.removeAccount(_account, null, null);
             new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
+//            GlobalTopicClient.profileInvalid(App.get());
+//            AuthTopicClient.invalidateCommand(App.get());
             _account = null;
             _authToken = null;
         } else if (_state == AuthState.NOT_AUTHENTICATED) {
@@ -215,6 +217,9 @@ public class AuthTopicService extends Service implements AuthTopicConstants {
             new FutureWaitAsyncTask(_futureWaitAsync_remove).execute(future);
             _account = null;
             _authToken = null;
+//            GlobalTopicClient.profileInvalid(App.get());
+//            AuthTopicClient.invalidateCommand(App.get());
+
         }
     }
 
