@@ -24,6 +24,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -379,7 +380,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         @Override
         public void onDeliverableCacheEnd(Uri uri, String filename) {
-            _picView.setProfilePic(MemUtils.getMemoryEfficientBitmap(filename, 400));
+            _picView.setProfilePic(ImageUtils.extractCircle(MemUtils.getMemoryEfficientBitmap(filename, 400)));
         }
     };
 

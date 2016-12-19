@@ -2,6 +2,7 @@ package com.fieldnation.ui;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Parcelable;
@@ -12,6 +13,7 @@ import android.view.ViewStub;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 
@@ -102,6 +104,6 @@ public class ProfilePicView extends RelativeLayout {
 
     public void setProfilePic(Bitmap bitmap) {
         Log.e(TAG, "inside setProfilePic");
-        _profileImageView.setImageBitmap(bitmap);
+        setProfilePic(new BitmapDrawable(App.get().getResources(), bitmap));
     }
 }
