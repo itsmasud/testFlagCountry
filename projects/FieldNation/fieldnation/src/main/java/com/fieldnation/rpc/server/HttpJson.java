@@ -87,12 +87,14 @@ public class HttpJson {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
 
-        conn.setRequestMethod(method);
-        conn.setUseCaches(false);
-        conn.setRequestProperty("Pragma", "no-cache");
-        conn.setRequestProperty("Cache-Control", "no-cache");
-        conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
-        conn.setRequestProperty("X-App-Platform", "Android");
+            conn.setRequestMethod(method);
+            conn.setUseCaches(false);
+            conn.setRequestProperty("Pragma", "no-cache");
+            conn.setRequestProperty("Cache-Control", "no-cache");
+            conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
+            conn.setRequestProperty("X-App-Platform", "Android");
+            conn.setConnectTimeout(10000);
+            conn.setReadTimeout(60000);
 
         if (headers != null) {
             Iterator<String> e = headers.keys();
