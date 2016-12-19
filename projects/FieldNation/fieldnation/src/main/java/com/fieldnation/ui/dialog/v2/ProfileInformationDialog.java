@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -63,7 +64,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private WeakReference<Drawable> _profilePic = null;
     private boolean _clear = false;
     private ActivityResultClient _activityResultClient;
-    File _tempFile = null;
+    private File _tempFile = null;
     private AppPickerDialog.Controller _appPickerDialog;
 
 
@@ -74,6 +75,42 @@ public class ProfileInformationDialog extends FullScreenDialog {
     /*-*****************************-*/
     /*-         Life Cycle          -*/
     /*-*****************************-*/
+    @Override
+    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
+        Log.v(TAG, "onCreateView");
+        _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
+
+        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
+
+        _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
+        _picView.setProfilePic(R.drawable.missing_circle);
+
+        _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
+        _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
+        _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
+        _phoneNoExtEditText = (EditText) _root.findViewById(R.id.phone_ext_edittext);
+        _address1EditText = (EditText) _root.findViewById(R.id.address_1_edittext);
+        _address2EditText = (EditText) _root.findViewById(R.id.address_2_edittext);
+        _cityEditText = (EditText) _root.findViewById(R.id.city_edittext);
+        _stateButton = (Button) _root.findViewById(R.id.state_button);
+        _zipCodeEditText = (EditText) _root.findViewById(R.id.zip_code_edittext);
+
+        return _root;
+    }
+
+    @Override
+    public void onSaveDialogState(Bundle outState) {
+        Log.v(TAG, "onSaveDialogState");
+        if (_tempFile != null)
+            outState.putString("TEMP_FILE", _tempFile.toString());
+    }
+
+    @Override
+    public void onRestoreDialogState(Bundle savedState) {
+        Log.v(TAG, "onRestoreDialogState");
+        if (savedState.containsKey("TEMP_FILE"))
+            _tempFile = new File(savedState.getString("TEMP_FILE"));
+    }
 
     @Override
     public void onAdded() {
@@ -111,29 +148,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
 
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        Log.v(TAG, "onCreateView");
-        _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
-
-        _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
-
-        _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
-        _picView.setProfilePic(R.drawable.missing_circle);
-
-        _profileIdTextView = (TextView) _root.findViewById(R.id.profile_id_textview);
-        _profileNameTextView = (TextView) _root.findViewById(R.id.profile_name_textview);
-        _phoneNoEditText = (EditText) _root.findViewById(R.id.phone_edittext);
-        _phoneNoExtEditText = (EditText) _root.findViewById(R.id.phone_ext_edittext);
-        _address1EditText = (EditText) _root.findViewById(R.id.address_1_edittext);
-        _address2EditText = (EditText) _root.findViewById(R.id.address_2_edittext);
-        _cityEditText = (EditText) _root.findViewById(R.id.city_edittext);
-        _stateButton = (Button) _root.findViewById(R.id.state_button);
-        _zipCodeEditText = (EditText) _root.findViewById(R.id.zip_code_edittext);
-
-        return _root;
     }
 
     private void populateUi() {
@@ -283,8 +297,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
 
             } catch (Exception ex) {
-                Log.logException(ex);
-                Log.e(TAG, ex.getMessage());
+                Log.v(TAG, ex);
             }
         }
     };

@@ -30,6 +30,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public static void startActivity(Context context, Intent intent) {
+        Log.v(STAG, new Exception());
         Bundle payload = new Bundle();
         payload.putParcelable(PARAM_INTENT, intent);
 
@@ -37,6 +38,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public static void startActivity(Context context, Intent intent, int startAnimId, int endAnimId) {
+        Log.v(STAG, new Exception());
         Bundle payload = new Bundle();
         payload.putParcelable(PARAM_INTENT, intent);
         payload.putInt(PARAM_TRANSITION_START_ANIMATION, startAnimId);
@@ -52,6 +54,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     // For Result stuff
 
     public static void startActivityForResult(Context context, Intent intent, int requestCode) {
+        Log.v(STAG, new Exception());
         Bundle payload = new Bundle();
         payload.putParcelable(PARAM_INTENT, intent);
         payload.putInt(PARAM_REQUEST_CODE, requestCode);
@@ -60,6 +63,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public static void startActivityForResult(Context context, Intent intent, int requestCode, int startAnimId, int endAnimId) {
+        Log.v(STAG, new Exception());
         Bundle payload = new Bundle();
         payload.putParcelable(PARAM_INTENT, intent);
         payload.putInt(PARAM_REQUEST_CODE, requestCode);
@@ -78,6 +82,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
     }
 
     public static void onActivityResult(Context context, int requestCode, int resultCode, Intent data) {
+        Log.v(STAG, new Exception());
         Bundle payload = new Bundle();
         payload.putInt(PARAM_REQUEST_CODE, requestCode);
         payload.putInt(PARAM_RESULT_CODE, resultCode);
@@ -131,6 +136,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
          * @param payload
          */
         private void startActivity(Bundle payload) {
+            getClient().clearTopic(TOPIC_ID_START_ACTIVITY);
             Log.v(TAG, "startActivity " + getActivity().getClass().getSimpleName());
             Intent intent = payload.getParcelable(PARAM_INTENT);
             getActivity().startActivity(intent);
@@ -150,6 +156,7 @@ public class ActivityResultClient extends TopicClient implements ActivityResultC
         }
 
         private void startActivityForResult(Bundle bundle) {
+            getClient().clearStartActivityForResult();
             Intent intent = bundle.getParcelable(PARAM_INTENT);
             int requestCode = bundle.getInt(PARAM_REQUEST_CODE);
 
