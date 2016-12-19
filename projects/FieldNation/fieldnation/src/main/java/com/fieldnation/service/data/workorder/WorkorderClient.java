@@ -551,20 +551,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
-    public boolean subDeliverableCache() {
-        return register(TOPIC_ID_CACHE_DELIVERABLE_START)
-                && register(TOPIC_ID_CACHE_DELIVERABLE_END);
-    }
-
-    public static void cacheDeliverableUpload(Context context, Uri uri) {
-        Log.v(STAG, "cacheDeliverableUpload");
-
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_CACHE_DELIVERABLE);
-        intent.putExtra(PARAM_URI, uri);
-        context.startService(intent);
-    }
-
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -757,23 +743,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preUploadDeliverableProgress((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
                 preUploadDeliverable((Bundle) payload);
-            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
-                onDeliverableCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
-            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
-                try {
-                    onDeliverableCacheEnd(
-                            (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
-                            ((Bundle) payload).getString(PARAM_FILE));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
             }
-        }
-
-        public void onDeliverableCacheStart(Uri uri) {
-        }
-
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
         }
 
         private void preUploadDeliverableProgress(Bundle payload) {

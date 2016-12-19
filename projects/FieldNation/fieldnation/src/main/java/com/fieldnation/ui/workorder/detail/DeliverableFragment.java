@@ -43,6 +43,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
@@ -87,9 +88,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private Uri _tempUri;
     private Workorder _workorder;
     private DocumentClient _docClient;
-    private WorkorderClient _workorderClient;
     private PhotoClient _photoClient;
     private ActivityResultClient _activityResultClient;
+    private FileCacheClient _fileCacheClient;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -159,15 +160,14 @@ public class DeliverableFragment extends WorkorderFragment {
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
-        _workorderClient = new WorkorderClient(_workorderData_listener);
-        _workorderClient.connect(App.get());
-
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
 
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
 
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
     }
 
     @Override
@@ -176,14 +176,14 @@ public class DeliverableFragment extends WorkorderFragment {
         if (_docClient != null && _docClient.isConnected())
             _docClient.disconnect(App.get());
 
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
 
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
+
+        if (_fileCacheClient != null && _fileCacheClient.isConnected())
+            _fileCacheClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -390,7 +390,7 @@ public class DeliverableFragment extends WorkorderFragment {
                                 _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                                WorkorderClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
+                                FileCacheClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
@@ -406,14 +406,14 @@ public class DeliverableFragment extends WorkorderFragment {
                             _tempUri = data.getData();
                             _tempFile = null;
                             _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                            WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
                         _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                        WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -677,12 +677,10 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-
-    private final WorkorderClient.Listener _workorderData_listener = new WorkorderClient.Listener() {
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            Log.e(TAG, "_workorderData_listener.onConnected");
-            _workorderClient.subDeliverableCache();
+            _fileCacheClient.subDeliverableCache();
         }
 
         @Override

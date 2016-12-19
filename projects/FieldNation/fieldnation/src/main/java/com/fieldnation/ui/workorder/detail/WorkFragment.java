@@ -58,6 +58,7 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.GpsTrackingService;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.service.data.workorder.ReportProblemType;
@@ -175,6 +176,7 @@ public class WorkFragment extends WorkorderFragment {
 
     // Data
     private WorkorderClient _workorderClient;
+    private FileCacheClient _fileCacheClient;
     private File _tempFile;
     private Uri _tempUri;
     private GpsLocationService _gpsLocationService;
@@ -412,6 +414,9 @@ public class WorkFragment extends WorkorderFragment {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
+
         _gpsLocationService = new GpsLocationService(getActivity());
 
         while (_untilAdded.size() > 0) {
@@ -424,6 +429,9 @@ public class WorkFragment extends WorkorderFragment {
         Log.v(TAG, "onDetach");
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
+
+        if (_fileCacheClient != null && _fileCacheClient.isConnected())
+            _fileCacheClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -789,7 +797,7 @@ public class WorkFragment extends WorkorderFragment {
                     || requestCode == ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK)
                     && resultCode == Activity.RESULT_OK) {
 
-                _workorderClient.subDeliverableCache();
+                _fileCacheClient.subDeliverableCache();
 
                 setLoading(true);
 
@@ -811,7 +819,7 @@ public class WorkFragment extends WorkorderFragment {
                                 _tempUri = data.getData();
                                 _tempFile = null;
                                 _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                                WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                                FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
@@ -826,14 +834,14 @@ public class WorkFragment extends WorkorderFragment {
                             _tempUri = data.getData();
                             _tempFile = null;
                             _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                            WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
                         _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                        WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
 
@@ -1794,16 +1802,9 @@ public class WorkFragment extends WorkorderFragment {
         _workorderClient.subListTasks(_workorder.getWorkorderId(), false);
     }
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            subscribeData();
-            _workorderClient.subDeliverableUpload();
-        }
-
-        @Override
-        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
-            setTasks(tasks);
         }
 
         @Override
@@ -1811,6 +1812,18 @@ public class WorkFragment extends WorkorderFragment {
             _tempUri = uri;
             _tempFile = null;
             _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+        }
+    };
+
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+            subscribeData();
+        }
+
+        @Override
+        public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
+            setTasks(tasks);
         }
     };
 

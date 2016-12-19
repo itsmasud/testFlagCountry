@@ -20,6 +20,7 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.FileUtils;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -43,7 +44,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
     private TextView _loadingTextView;
 
     // Services
-    private WorkorderClient _workorderClient;
+    private FileCacheClient _fileCacheClient;
 
     // Data
     private WorkOrder _selectedWorkOrder;
@@ -108,8 +109,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
     protected void onStart() {
         super.onStart();
 
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
     }
 
     @Override
@@ -133,8 +134,8 @@ public class ReceiverActivity extends AuthSimpleActivity {
 
     @Override
     protected void onStop() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        if (_fileCacheClient != null && _fileCacheClient.isConnected())
+            _fileCacheClient.disconnect(App.get());
 
         super.onStop();
     }
@@ -150,7 +151,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
         if (fileUri != null) {
             final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUri);
             _sharedFiles[0] = new SharedFile(fileName, fileUri);
-            WorkorderClient.cacheDeliverableUpload(App.get(), fileUri);
+            FileCacheClient.cacheDeliverableUpload(App.get(), fileUri);
         } else {
             Toast.makeText(this, "Cannot upload file", Toast.LENGTH_LONG).show();
             finish();
@@ -176,7 +177,7 @@ public class ReceiverActivity extends AuthSimpleActivity {
             for (int i = 0; i < fileUris.size(); i++) {
                 final String fileName = FileUtils.getFileNameFromUri(App.get(), fileUris.get(i));
                 _sharedFiles[i] = new SharedFile(fileName, fileUris.get(i));
-                WorkorderClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
+                FileCacheClient.cacheDeliverableUpload(App.get(), fileUris.get(i));
             }
         } else {
             Toast.makeText(this, "Cannot upload files", Toast.LENGTH_LONG).show();
@@ -277,10 +278,10 @@ public class ReceiverActivity extends AuthSimpleActivity {
         finish();
     }
 
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            _workorderClient.subDeliverableCache();
+            _fileCacheClient.subDeliverableCache();
         }
 
         @Override
