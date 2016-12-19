@@ -43,9 +43,11 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -90,7 +92,7 @@ public class DeliverableFragment extends WorkorderFragment {
     private Workorder _workorder;
     private Profile _profile = null;
     private DocumentClient _docClient;
-    private GlobalTopicClient _globalClient;
+    private ProfileClient _profileClient;
     private WorkorderClient _workorderClient;
     private PhotoClient _photoClient;
     private ActivityResultClient _activityResultClient;
@@ -160,8 +162,8 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
 
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
+        _profileClient = new ProfileClient(_profileClient_listener);
+        _profileClient.connect(App.get());
 
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
@@ -180,8 +182,8 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
 
         if (_docClient != null && _docClient.isConnected())
             _docClient.disconnect(App.get());
@@ -577,14 +579,15 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _globalClient.subGotProfile();
+            _profileClient.subGet();
+            ProfileClient.get(App.get());
         }
 
         @Override
-        public void onGotProfile(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             _profile = profile;
             populateUi();
         }
