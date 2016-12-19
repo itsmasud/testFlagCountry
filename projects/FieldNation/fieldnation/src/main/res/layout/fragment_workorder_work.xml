@@ -13,6 +13,14 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
+            <Button
+                android:id="@+id/test_button"
+                style="?attr/buttonGreenStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="TEST BUTTON"
+                android:visibility="gone" />
+
             <!-- top action bar -->
             <com.fieldnation.ui.workorder.detail.ActionBarTopView
                 android:id="@+id/actiontop_view"

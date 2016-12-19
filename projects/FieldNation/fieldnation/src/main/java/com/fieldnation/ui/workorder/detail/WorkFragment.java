@@ -24,6 +24,7 @@ import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -84,7 +85,6 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
 import com.fieldnation.ui.dialog.RateBuyerModal;
-import com.fieldnation.ui.dialog.ReportProblemDialog;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -94,6 +94,8 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
+import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -125,6 +127,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String STATE_TEMP_URI = "WorkFragment:STATE_TEMP_URI";
 
     // UI
+    private Button _testButton;
     private OverScrollView _scrollView;
     private ActionBarTopView _topBar;
     private WorkSummaryView _sumView;
@@ -207,6 +210,9 @@ public class WorkFragment extends WorkorderFragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         Log.v(TAG, "onViewCreated");
         super.onViewCreated(view, savedInstanceState);
+
+        _testButton = (Button) view.findViewById(R.id.test_button);
+        _testButton.setOnClickListener(_test_onClick);
 
         _topBar = (ActionBarTopView) view.findViewById(R.id.actiontop_view);
         _topBar.setListener(_actionbartop_listener);
@@ -372,7 +378,6 @@ public class WorkFragment extends WorkorderFragment {
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
         _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
-        _reportProblemDialog = ReportProblemDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _termsDialog = TermsDialog.getInstance(getFragmentManager(), TAG);
@@ -401,7 +406,6 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog.setListener(_worklogDialog_listener);
         _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
-        _reportProblemDialog.setListener(_reportProblem_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
         _payDialog.setListener(_payDialog_listener);
 
@@ -715,13 +719,6 @@ public class WorkFragment extends WorkorderFragment {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
-    private final ReportProblemDialog.Listener _reportProblem_listener = new ReportProblemDialog.Listener() {
-        @Override
-        public void onReportAProblem(String explanation, ReportProblemType type) {
-            WorkorderClient.actionReportProblem(App.get(), _workorder.getWorkorderId(), explanation, type);
-        }
-    };
-
     private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
         @Override
         public void onButtonClick() {
@@ -1191,6 +1188,13 @@ public class WorkFragment extends WorkorderFragment {
     /*-*****************************************-*/
     /*-				View Listeners				-*/
     /*-*****************************************-*/
+    private final View.OnClickListener _test_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            RunningLateDialogLegacy.Controller.show(App.get(), _workorder);
+        }
+    };
+
     private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
         @Override
         public void onOk() {
@@ -1258,7 +1262,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
-            _reportProblemDialog.show(_workorder);
+            ReportProblemDialog.Controller.show(App.get(), _workorder);
         }
 
         @Override
