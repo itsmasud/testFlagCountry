@@ -113,19 +113,23 @@ public class ProfileInformationDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
-        Log.v(TAG, "onAdded");
+    public void onStart() {
+        super.onStart();
+        Log.v(TAG, "onStart");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Log.v(TAG, "onResume");
         _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
         _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
 
-
         _appPickerDialog = new AppPickerDialog.Controller(App.get(), UID_APP_PICKER_DIALOG);
         _appPickerDialog.setListener(_appPickerDialog_listener);
-
 
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
@@ -135,19 +139,37 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         _profile = App.get().getProfile();
         populateUi();
-
     }
 
     @Override
-    public void onRemoved() {
-        super.onRemoved();
-        Log.v(TAG, "onRemoved");
+    public void onPause() {
+        super.onPause();
+        Log.v(TAG, "onPause");
         if (_photos != null && _photos.isConnected())
             _photos.disconnect(App.get());
 
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
 
+        if (_appPickerDialog != null) _appPickerDialog.disconnect(App.get());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        Log.v(TAG, "onStop");
+    }
+
+    @Override
+    public void dismiss(boolean animate) {
+        Log.v(TAG, "dismiss");
+        super.dismiss(animate);
+    }
+
+    @Override
+    public void cancel() {
+        Log.v(TAG, "cancel");
+        super.cancel();
     }
 
     private void populateUi() {

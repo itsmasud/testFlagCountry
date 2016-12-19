@@ -79,8 +79,8 @@ public class DurationDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onResume() {
+        super.onResume();
 
         _numberPad[0].setOnClickListener(_number_onClick);
         _numberPad[1].setOnClickListener(_number_onClick);

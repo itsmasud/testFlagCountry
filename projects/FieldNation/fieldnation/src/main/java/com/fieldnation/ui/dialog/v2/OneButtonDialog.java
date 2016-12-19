@@ -55,8 +55,8 @@ public class OneButtonDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         _primaryButton.setOnClickListener(_primaryButton_onClick);
     }
 

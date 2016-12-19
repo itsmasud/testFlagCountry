@@ -76,8 +76,8 @@ public class RunningLateDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
 
         _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
         _timeframeEditText.addTextChangedListener(_timeframeEditText_watcher);

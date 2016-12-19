@@ -67,11 +67,19 @@ public abstract class FullScreenDialog implements Dialog {
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
 
     @Override
-    public void onAdded() {
+    public void onStart() {
     }
 
     @Override
-    public void onRemoved() {
+    public void onResume() {
+    }
+
+    @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onStop() {
     }
 
     @Override

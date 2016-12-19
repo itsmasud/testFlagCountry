@@ -47,8 +47,8 @@ public class ReportIssueDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
 
         _rescheduleButton.setOnClickListener(_reschedule_onClick);
         _cancelWorkButton.setOnClickListener(cancelWork_onClick);

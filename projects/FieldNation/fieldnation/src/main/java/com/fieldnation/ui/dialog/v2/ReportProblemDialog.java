@@ -101,8 +101,8 @@ public class ReportProblemDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onStart() {
+        super.onStart();
         _primarySpinner.setOnItemSelectedListener(_problem1_onItemClick);
         _secondarySpinner.setOnItemSelectedListener(_problem2_onItemClick);
         _timeframeSpinner.setOnItemSelectedListener(_timeframe_onItemClick);
