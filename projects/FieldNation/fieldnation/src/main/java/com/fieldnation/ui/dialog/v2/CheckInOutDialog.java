@@ -107,6 +107,8 @@ public class CheckInOutDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
+        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+
         _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
         _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
@@ -146,8 +148,6 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar.get(Calendar.YEAR),
                 _startCalendar.get(Calendar.MONTH),
                 _startCalendar.get(Calendar.DAY_OF_MONTH));
-
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
 
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
@@ -224,6 +224,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (misc.isEmptyOrNull(_dialogType))
             return;
 
+        if (_spinner == null)
+            return;
+
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
             _toolbar.setTitle(getView().getResources().getString(R.string.title_check_in));
             _startTimeTextView.setText(getView().getResources().getString(R.string.start_time));
@@ -235,7 +238,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _startDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
         _startTimeButton.setText(DateUtils.formatTimeLong(_startCalendar));
-
     }
 
     public HintSpinner getSpinner() {

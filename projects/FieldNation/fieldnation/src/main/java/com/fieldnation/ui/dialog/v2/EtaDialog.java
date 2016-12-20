@@ -123,6 +123,8 @@ public class EtaDialog extends FullScreenDialog {
         _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.inflateMenu(R.menu.dialog);
 
+        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
 
         // Expiration stuff
@@ -159,8 +161,6 @@ public class EtaDialog extends FullScreenDialog {
 
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
 
         _expirationButton.setOnClickListener(_expiringButton_onClick);
 
