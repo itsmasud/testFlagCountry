@@ -196,11 +196,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-//            dismiss();
-//            if (_listener != null) {
-//                _addDialog.show(getText(R.string.dialog_shipment_title), _taskId);
-//            }
-
             dismiss();
             if (_listener != null) {
                 _listener.onAddShipment(_taskId);
