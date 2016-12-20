@@ -143,7 +143,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     }
 
 
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -197,10 +196,16 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+//            dismiss();
+//            if (_listener != null) {
+//                _addDialog.show(getText(R.string.dialog_shipment_title), _taskId);
+//            }
+
             dismiss();
             if (_listener != null) {
-                _addDialog.show(getText(R.string.dialog_shipment_title), _taskId);
+                _listener.onAddShipment(_taskId);
             }
+
         }
     };
 
@@ -225,6 +230,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
         void onScan();
+
+        void onAddShipment(long taskId);
 
 
     }

@@ -1158,6 +1158,12 @@ public class WorkFragment extends WorkorderFragment {
             integrator.setBarcodeImageEnabled(true);
             integrator.initiateScan();
         }
+
+        @Override
+        public void onAddShipment(long taskId) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), taskId);
+        }
+
     };
 
     private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
