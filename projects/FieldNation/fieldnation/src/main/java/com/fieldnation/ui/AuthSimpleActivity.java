@@ -265,32 +265,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
     };
 
-
-    private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
-        @Override
-        public void onPositive() {
-            _profileBounceProtect = false;
-            ProfileClient.actionAcceptTos(AuthSimpleActivity.this, _profile.getUserId());
-        }
-
-        @Override
-        public void onNegative() {
-            // hide, continue
-            _profileBounceProtect = false;
-            App.get().setTosReminded();
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
     private final TwoButtonDialog.Listener _coi_listener = new TwoButtonDialog.Listener() {
         @Override
         public void onPositive() {
@@ -353,7 +327,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
             _globalClient.subProfileInvalid(App.get());
-            //_globalClient.subNetworkState();
         }
 
         @Override
@@ -388,11 +361,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNetworkDisconnected() {
-            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
-            //if (intent != null) {
-            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            //}
         }
     };
 
