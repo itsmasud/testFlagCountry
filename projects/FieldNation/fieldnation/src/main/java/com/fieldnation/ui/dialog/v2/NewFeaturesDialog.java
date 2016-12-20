@@ -42,6 +42,9 @@ public class NewFeaturesDialog extends FullScreenDialog {
         _root = inflater.inflate(R.layout.dialog_v2_new_feature, container, false);
 
         _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
+        _toolbar.setTitle("What's New");
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+
         _newTextView = (TextView) _root.findViewById(R.id.new_textview);
         _newWebView = (WebView) _root.findViewById(R.id.new_webview);
         _fixedTextView = (TextView) _root.findViewById(R.id.fixed_textview);
@@ -57,8 +60,6 @@ public class NewFeaturesDialog extends FullScreenDialog {
         super.onStart();
         final Context context = _root.getContext();
 
-        _toolbar.setTitle("What's New");
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         final int fontSize = context.getResources().getInteger(R.integer.textSizeReleaseNote);

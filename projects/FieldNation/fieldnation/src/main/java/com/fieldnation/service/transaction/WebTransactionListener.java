@@ -163,7 +163,7 @@ public abstract class WebTransactionListener {
     }
 
     public static boolean haveErrorMessage(HttpResult httpResult) {
-        return httpResult != null && !httpResult.isFile() && httpResult.getByteArray().length < 1024;
+        return httpResult != null && !httpResult.isFile() && httpResult.getByteArray().length < 200;
     }
 
     public static String pickErrorMessage(HttpResult httpResult, String defaultMessage) {

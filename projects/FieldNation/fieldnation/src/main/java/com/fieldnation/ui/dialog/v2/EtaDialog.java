@@ -120,6 +120,8 @@ public class EtaDialog extends FullScreenDialog {
         View v = inflater.inflate(R.layout.dialog_v2_eta, container, false);
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
 
         _termsWarningTextView = (TextView) v.findViewById(R.id.termswarning_textview);
 
@@ -155,10 +157,9 @@ public class EtaDialog extends FullScreenDialog {
                 _etaStart.get(Calendar.MONTH),
                 _etaStart.get(Calendar.DAY_OF_MONTH));
 
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _toolbar.inflateMenu(R.menu.dialog);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
+
         _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
 
         _expirationButton.setOnClickListener(_expiringButton_onClick);

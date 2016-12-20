@@ -29,6 +29,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 
@@ -62,7 +63,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
 
-    private ProgressBar _loadingProgress;
+    private RefreshView _refreshView;
     private Button _startDateButton;
     private Button _startTimeButton;
     private TextView _startTimeTextView;
@@ -103,8 +104,10 @@ public class CheckInOutDialog extends FullScreenDialog {
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
 
-        _loadingProgress = (ProgressBar) v.findViewById(R.id.loading_progress);
+        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
         _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
         _startTimeTextView = (TextView) v.findViewById(R.id.startTime_textview);
@@ -118,13 +121,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     private void setLoading(boolean loading) {
         if (loading) {
             _toolbar.setEnabled(false);
-            _loadingProgress.setVisibility(View.VISIBLE);
+            _refreshView.startRefreshing();
             _startDateButton.setEnabled(false);
             _startTimeButton.setEnabled(false);
             _spinner.setEnabled(false);
         } else {
             _toolbar.setEnabled(true);
-            _loadingProgress.setVisibility(View.GONE);
+            _refreshView.refreshComplete();
             _startDateButton.setEnabled(true);
             _startTimeButton.setEnabled(true);
             _spinner.setEnabled(true);
@@ -144,11 +147,10 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar.get(Calendar.MONTH),
                 _startCalendar.get(Calendar.DAY_OF_MONTH));
 
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _toolbar.inflateMenu(R.menu.dialog);
-        _toolbar.setOnMenuItemClickListener(_menu_onClick);
         _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+
+        _toolbar.setOnMenuItemClickListener(_menu_onClick);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
@@ -322,6 +324,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
+            setLoading(true);
             if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
                 _itemSelectedPosition = 0;
             }
@@ -347,7 +350,7 @@ public class CheckInOutDialog extends FullScreenDialog {
                 } else
                     WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
             }
-            setLoading(true);
+
             return true;
         }
     };

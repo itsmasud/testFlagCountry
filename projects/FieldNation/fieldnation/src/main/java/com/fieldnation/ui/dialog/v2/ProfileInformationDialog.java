@@ -88,6 +88,8 @@ public class ProfileInformationDialog extends FullScreenDialog {
         _root = inflater.inflate(R.layout.dialog_v2_profile_information, container, false);
 
         _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
+        _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
+        _toolbar.setNavigationIcon(R.drawable.back_arrow);
 
         _picView = (ProfilePicView) _root.findViewById(R.id.pic_view);
         _picView.setProfilePic(R.drawable.missing_circle);
@@ -129,8 +131,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     public void onResume() {
         super.onResume();
         Log.v(TAG, "onResume");
-        _toolbar.setTitle(_root.getResources().getString(R.string.dialog_profile_information_title));
-        _toolbar.setNavigationIcon(R.drawable.back_arrow);
         _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _picView.setOnClickListener(_pic_onClick);
