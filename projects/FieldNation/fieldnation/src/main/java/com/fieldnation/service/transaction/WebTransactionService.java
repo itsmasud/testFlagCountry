@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -47,10 +48,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(App.get());
+        _authTopicClient.connect(ContextProvider.get());
 
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.connect(ContextProvider.get());
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -79,10 +80,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(App.get());
+            _authTopicClient.disconnect(ContextProvider.get());
 
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
+            _globalTopicClient.disconnect(ContextProvider.get());
 
         _manager.shutdown();
         super.onDestroy();
@@ -168,7 +169,7 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
-                    UploadTrackerClient.uploadQueued(App.get());
+                    UploadTrackerClient.uploadQueued(ContextProvider.get());
                 }
 
                 Log.v(TAG, "processIntent building transforms");

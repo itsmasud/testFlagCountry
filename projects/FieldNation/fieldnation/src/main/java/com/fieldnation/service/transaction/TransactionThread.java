@@ -16,6 +16,7 @@ import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
@@ -74,7 +75,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
         @Override
         public void progress(long pos, long size, long time) {
-            WebTransactionDispatcher.progress(App.get(), trans.getListenerName(), trans, pos, size, time);
+            WebTransactionDispatcher.progress(ContextProvider.get(), trans.getListenerName(), trans, pos, size, time);
         }
     }
 
@@ -105,7 +106,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
             trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
                     _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {
-            ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
+            ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
         }
 
@@ -147,14 +148,14 @@ class TransactionThread extends ThreadManager.ManagedThread {
             OAuth auth = _service.getAuth();
 
             if (auth == null) {
-                AuthTopicClient.requestCommand(App.get());
+                AuthTopicClient.requestCommand(ContextProvider.get());
                 trans.requeue(RETRY_SHORT);
                 return false;
             }
 
             if (auth.getAccessToken() == null) {
                 Log.v(TAG, "accessToken is null");
-                AuthTopicClient.invalidateCommand(App.get());
+                AuthTopicClient.invalidateCommand(ContextProvider.get());
                 trans.requeue(RETRY_SHORT);
                 return false;
             }
@@ -244,7 +245,7 @@ class TransactionThread extends ThreadManager.ManagedThread {
 
     private void recordTiming(Stopwatch stopwatch, String timingKey) {
         stopwatch.unpause();
-        Tracker.timing(App.get(),
+        Tracker.timing(ContextProvider.get(),
                 new Timing.Builder()
                         .tag(AnswersWrapper.TAG)
                         .category("Web Timing")
@@ -259,14 +260,14 @@ class TransactionThread extends ThreadManager.ManagedThread {
         if (notif == null)
             return;
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.get())
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ContextProvider.get())
                 .setLargeIcon(null)
                 .setSmallIcon(notif.icon)
                 .setContentTitle(notif.title)
                 .setTicker(notif.ticker)
                 .setContentText(notif.body);
 
-        NotificationManager mNotifyMgr = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) ContextProvider.get().getSystemService(Service.NOTIFICATION_SERVICE);
 
 //        Log.v(TAG, "notification created");
 

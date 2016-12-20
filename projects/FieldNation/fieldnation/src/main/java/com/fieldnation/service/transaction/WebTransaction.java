@@ -8,9 +8,10 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 
@@ -292,7 +293,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         save();
 
         if (isTracked())
-            UploadTrackerClient.uploadRequeued(App.get());
+            UploadTrackerClient.uploadRequeued(ContextProvider.get());
 
     }
 
@@ -306,10 +307,10 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
     public static boolean keyExists(String key) {
         if (key == null)
             return false;
-        
+
         Log.v(TAG, "keyExists(" + key + ")");
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.query(
                     WebTransactionSqlHelper.TABLE_NAME,
@@ -355,7 +356,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 //        Log.v(TAG, "get(" + id + ")");
         WebTransaction obj = null;
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.query(
                     WebTransactionSqlHelper.TABLE_NAME,
@@ -383,7 +384,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 //        Log.v(TAG, "getNext()");
         WebTransaction obj = null;
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.query(
                     WebTransactionSqlHelper.TABLE_NAME,
@@ -415,7 +416,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         ContentValues v = new ContentValues();
         v.put(Column.STATE.getName(), State.IDLE.ordinal());
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             int rowcount = db.update(
                     WebTransactionSqlHelper.TABLE_NAME, v,
@@ -458,7 +459,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         boolean success = false;
         long id = obj._id;
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             if (id == -1) {
                 id = db.insert(WebTransactionSqlHelper.TABLE_NAME, null, v);
@@ -479,7 +480,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
         Transform.deleteTransaction(id);
         boolean success = false;
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             success = db.delete(
                     WebTransactionSqlHelper.TABLE_NAME,
@@ -491,7 +492,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static int count() {
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME, null);
 
@@ -508,7 +509,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static int countWifiRequired() {
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE wifi_req = 1", null);
 
@@ -525,7 +526,7 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
 
     public static int countTracked() {
         synchronized (TAG) {
-            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(App.get());
+            WebTransactionSqlHelper helper = WebTransactionSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + WebTransactionSqlHelper.TABLE_NAME + " WHERE track = 1", null);
 
@@ -688,6 +689,5 @@ public class WebTransaction implements Parcelable, WebTransactionConstants {
             params.putByteArray(PARAM_REQUEST, builder.build().toByteArray());
             return this;
         }
-
     }
 }
