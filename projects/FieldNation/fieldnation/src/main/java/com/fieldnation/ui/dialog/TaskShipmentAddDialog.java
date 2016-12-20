@@ -143,7 +143,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     }
 
 
-
     /*-*************************-*/
     /*-			Events			-*/
     /*-*************************-*/
@@ -199,7 +198,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         public void onClick(View v) {
             dismiss();
             if (_listener != null) {
-                _addDialog.show(getText(R.string.dialog_shipment_title), _taskId);
+                _listener.onAddShipment(_taskId);
             }
         }
     };
@@ -226,7 +225,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
         void onScan();
 
-
+        void onAddShipment(long taskId);
     }
 
 }
