@@ -3,7 +3,7 @@ package com.fieldnation.service.transaction;
 /**
  * Created by Michael Carver on 3/4/2015.
  */
-public interface TransformConstants {
+interface TransformConstants {
     String PARAM_ID = "PARAM_ID";
     String PARAM_TRANSACTION_ID = "PARAM_TRANSACTION_ID";
     String PARAM_OBJECT_NAME_KEY = "PARAM_OBJECT_NAME_KEY";

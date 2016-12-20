@@ -9,7 +9,7 @@ import com.fieldnation.fnhttpjson.HttpResult;
  * Created by mc on 11/17/16.
  */
 
-public class WebTransactionDispatcher {
+class WebTransactionDispatcher {
     private static final String TAG = "WebTransactionDispatcher";
 
     public static void start(Context context, String listenerName, WebTransaction transaction) {

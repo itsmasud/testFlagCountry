@@ -33,7 +33,7 @@ import java.text.ParseException;
  * <p/>
  * This class executes requests that are stored in the transaction queue
  */
-public class TransactionThread extends ThreadManager.ManagedThread {
+class TransactionThread extends ThreadManager.ManagedThread {
     private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
 

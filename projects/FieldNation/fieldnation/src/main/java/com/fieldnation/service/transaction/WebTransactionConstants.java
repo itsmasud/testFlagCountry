@@ -3,7 +3,7 @@ package com.fieldnation.service.transaction;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public interface WebTransactionConstants {
+interface WebTransactionConstants {
     String PARAM_ID = "PARAM_ID";
     String PARAM_LISTENER_NAME = "PARAM_LISTENER_NAME";
     String PARAM_LISTENER_PARAMS = "PARAM_LISTENER_PARAMS";
