@@ -200,7 +200,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onAddShipment(_taskId);
             }
-
         }
     };
 
@@ -227,8 +226,6 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         void onScan();
 
         void onAddShipment(long taskId);
-
-
     }
 
 }
