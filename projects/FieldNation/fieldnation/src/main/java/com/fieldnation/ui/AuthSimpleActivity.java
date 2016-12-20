@@ -180,13 +180,16 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _profileBounceProtect = true;
 
-        if (App.get().shouldShowTermsAndConditionsDialog()) {
-            _termsAndConditionsDialog.show();
-        }
-
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion()) {
             App.get().setReleaseNoteShownReminded();
             NewFeatureActivity.startNew(App.get());
+        }
+
+        if (App.get().shouldShowTermsAndConditionsDialog()) {
+            Log.v(TAG, "_termsAndConditionsDialog");
+            _profileBounceProtect = false;
+            _termsAndConditionsDialog.show(_terms_listener);
+            return;
         }
 
         App gs = App.get();
@@ -231,6 +234,18 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final TermsAndConditionsDialog.Listener _terms_listener = new TermsAndConditionsDialog.Listener() {
+        @Override
+        public void onAccept() {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
+        }
+    };
+
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {

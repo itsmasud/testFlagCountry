@@ -8,12 +8,10 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.AuthTopicService;

@@ -21,6 +21,7 @@ public class TermsAndConditionsDialog extends DialogFragmentBase {
     // Ui
     private Button _reviewTermsOfServiceButton;
     private Button _acceptButton;
+    private Listener _listener;
 
     /*-*********************************-*/
     /*-             Life Cycle          -*/
@@ -59,19 +60,10 @@ public class TermsAndConditionsDialog extends DialogFragmentBase {
         return v;
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-//        populateUi();
-    }
-
-
-    public void show() {
+    public void show(Listener listener) {
+        _listener = listener;
         super.show();
     }
-
-//    private void populateUi() {
-//    }
 
     /*-*****************************-*/
     /*-				Events			-*/
@@ -89,8 +81,15 @@ public class TermsAndConditionsDialog extends DialogFragmentBase {
         @Override
         public void onClick(View v) {
             App.get().setToCAccepted();
+
+            if (_listener != null)
+                _listener.onAccept();
+
             dismiss();
         }
     };
 
+    public interface Listener {
+        void onAccept();
+    }
 }
