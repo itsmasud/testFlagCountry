@@ -199,7 +199,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
 
         if (_profile.getUserId() != null)
-            _profileIdTextView.setText(_profile.getUserId().toString());
+            _profileIdTextView.setText("ID: " + _profile.getUserId().toString());
 
         String fullName = "";
         if (_profile.getFirstname() != null)
