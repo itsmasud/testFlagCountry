@@ -7,7 +7,7 @@ import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 

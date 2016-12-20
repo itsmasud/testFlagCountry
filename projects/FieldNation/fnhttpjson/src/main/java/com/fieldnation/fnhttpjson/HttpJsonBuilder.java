@@ -1,4 +1,4 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.fnhttpjson;
 
 import android.net.Uri;
 

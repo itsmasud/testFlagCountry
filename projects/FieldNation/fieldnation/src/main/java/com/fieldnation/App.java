@@ -28,6 +28,7 @@ import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
@@ -135,6 +136,8 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+        HttpJson.setTempFolder(getTempFolder());
+
         Stopwatch mwatch = new Stopwatch(true);
         Stopwatch watch = new Stopwatch(true);
         Log.v(TAG, "onCreate");

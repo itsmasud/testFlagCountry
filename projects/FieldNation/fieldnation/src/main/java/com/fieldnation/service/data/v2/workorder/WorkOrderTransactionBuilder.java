@@ -8,7 +8,7 @@ import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
 import com.fieldnation.service.transaction.WebTransaction;

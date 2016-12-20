@@ -6,8 +6,8 @@ import android.widget.Toast;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 
 import java.io.EOFException;

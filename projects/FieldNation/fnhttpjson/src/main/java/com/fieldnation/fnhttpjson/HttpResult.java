@@ -1,6 +1,5 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.fnhttpjson;
 
-import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
@@ -51,7 +50,7 @@ public class HttpResult {
         _baResults = StreamUtils.readAllFromStreamUntil(in, -1, FILE_THREASHHOLD, 1000);
         if (_baResults != null && _baResults.length >= FILE_THREASHHOLD) {
             // temp file
-            File tempFolder = new File(App.get().getTempFolder());
+            File tempFolder = new File(HttpJson.TEMP_FOLDER);
             File tempFile = File.createTempFile("web", "dat", tempFolder);
             FileOutputStream fout = new FileOutputStream(tempFile, false);
             fout.write(_baResults);

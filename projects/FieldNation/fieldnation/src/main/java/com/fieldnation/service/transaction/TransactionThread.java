@@ -20,9 +20,9 @@ import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.rpc.server.HttpJson;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.rpc.server.HttpResult;
+import com.fieldnation.fnhttpjson.HttpJson;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 

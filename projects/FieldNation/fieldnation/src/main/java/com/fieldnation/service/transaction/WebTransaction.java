@@ -10,7 +10,7 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.service.tracker.UploadTrackerClient;
 import com.fieldnation.service.transaction.WebTransactionSqlHelper.Column;
 

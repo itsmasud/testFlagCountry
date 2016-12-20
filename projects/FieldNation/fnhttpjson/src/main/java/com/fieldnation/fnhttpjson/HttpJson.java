@@ -1,9 +1,9 @@
-package com.fieldnation.rpc.server;
+package com.fieldnation.fnhttpjson;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Environment;
 
-import com.fieldnation.BuildConfig;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
@@ -87,14 +87,14 @@ public class HttpJson {
         HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
         Log.v(TAG, url);
 
-            conn.setRequestMethod(method);
-            conn.setUseCaches(false);
-            conn.setRequestProperty("Pragma", "no-cache");
-            conn.setRequestProperty("Cache-Control", "no-cache");
-            conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
-            conn.setRequestProperty("X-App-Platform", "Android");
-            conn.setConnectTimeout(10000);
-            conn.setReadTimeout(60000);
+        conn.setRequestMethod(method);
+        conn.setUseCaches(false);
+        conn.setRequestProperty("Pragma", "no-cache");
+        conn.setRequestProperty("Cache-Control", "no-cache");
+        conn.setRequestProperty("X-App-Version", BuildConfig.VERSION_NAME);
+        conn.setRequestProperty("X-App-Platform", "Android");
+        conn.setConnectTimeout(10000);
+        conn.setReadTimeout(60000);
 
         if (headers != null) {
             Iterator<String> e = headers.keys();
@@ -204,5 +204,13 @@ public class HttpJson {
         }
         throw new ParseException("Options must be nothing, or start with '?'. Got: " + options, 0);
     }
+
+
+    static String TEMP_FOLDER = null;
+
+    public static void setTempFolder(String tempFolder) {
+        TEMP_FOLDER = tempFolder;
+    }
+
 }
 
