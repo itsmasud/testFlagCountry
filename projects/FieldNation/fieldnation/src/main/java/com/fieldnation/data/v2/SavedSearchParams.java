@@ -72,9 +72,6 @@ public class SavedSearchParams implements Parcelable {
 
     @Json
     public int id;
-    public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
-    public ListType type = ListType.AVAILABLE;
-    public Status status[] = new Status[]{Status.PUBLISHED};
     @Json
     public Double latitude = null;
     @Json
@@ -91,6 +88,10 @@ public class SavedSearchParams implements Parcelable {
     public String title;
     @Json
     public Boolean canEdit = false;
+
+    public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
+    public ListType type = ListType.AVAILABLE;
+    public Status status[] = new Status[]{Status.PUBLISHED};
 
     public SavedSearchParams() {
     }
