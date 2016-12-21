@@ -12,6 +12,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
@@ -26,7 +27,7 @@ import java.util.List;
  * Created by Michael on 8/25/2016.
  */
 @DefaultBehavior(SavedSearchList.Behavior.class)
-public class SavedSearchList extends LinearLayout {
+public class SavedSearchList extends RelativeLayout {
     private static final String TAG = "SavedSearchList";
 
     static {
@@ -47,6 +48,7 @@ public class SavedSearchList extends LinearLayout {
                     new SavedSearchParams()
                             .type(WorkOrderListType.AVAILABLE.getType())
                             .status(WorkOrderListType.AVAILABLE.getStatuses())
+                            .canEdit(true)
                             .title("Available"),
                     new SavedSearchParams()
                             .type(WorkOrderListType.CANCELED.getType())
@@ -61,8 +63,10 @@ public class SavedSearchList extends LinearLayout {
                     new SavedSearchParams()
                             .type(WorkOrderListType.REQUESTED.getType())
                             .status(WorkOrderListType.REQUESTED.getStatuses())
+                            .canEdit(true)
                             .title("Requested"),
                     new SavedSearchParams()
+                            .canEdit(true)
                             .type(WorkOrderListType.ROUTED.getType())
                             .status(WorkOrderListType.ROUTED.getStatuses())
                             .title("Routed")
@@ -84,6 +88,7 @@ public class SavedSearchList extends LinearLayout {
                     new SavedSearchParams()
                             .type(WorkOrderListType.AVAILABLE.getType())
                             .status(WorkOrderListType.AVAILABLE.getStatuses())
+                            .canEdit(true)
                             .title("Available"),
                     new SavedSearchParams()
                             .type(WorkOrderListType.CANCELED.getType())
@@ -98,10 +103,12 @@ public class SavedSearchList extends LinearLayout {
                     new SavedSearchParams()
                             .type(WorkOrderListType.REQUESTED.getType())
                             .status(WorkOrderListType.REQUESTED.getStatuses())
+                            .canEdit(true)
                             .title("Requested"),
                     new SavedSearchParams()
                             .type(WorkOrderListType.ROUTED.getType())
                             .status(WorkOrderListType.ROUTED.getStatuses())
+                            .canEdit(true)
                             .title("Routed")
             };
         }
@@ -112,6 +119,9 @@ public class SavedSearchList extends LinearLayout {
     private OnHideListener _onHideListener;
     private OnShowListener _onShowListener;
     private OnSavedSearchParamsChangeListener _onSavedSearchParamsChangeListener;
+
+    // Ui
+    private LinearLayout _paramList;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -129,17 +139,18 @@ public class SavedSearchList extends LinearLayout {
     }
 
     private void init() {
+        LayoutInflater.from(getContext()).inflate(R.layout.view_saved_search_list, this);
+
         if (isInEditMode())
             return;
 
-        setOrientation(VERTICAL);
+        _paramList = (LinearLayout) findViewById(R.id.param_list);
 
         for (int i = 0; i < defaults.length; i++) {
-            TextView tv = (TextView) LayoutInflater.from(getContext()).inflate(R.layout.view_saved_search_row, null);
-            tv.setText(defaults[i].title);
-            tv.setTag(defaults[i]);
-            tv.setOnClickListener(_textView_onClick);
-            addView(tv);
+            SavedSearchRow row = new SavedSearchRow(getContext());
+            row.setSearchParams(defaults[i]);
+            row.setOnSearchSelectedListener(_savedSearchRow_onChange);
+            _paramList.addView(row);
         }
 
         setVisibility(GONE);
@@ -211,12 +222,12 @@ public class SavedSearchList extends LinearLayout {
         return getTop();
     }
 
-    private final View.OnClickListener _textView_onClick = new OnClickListener() {
+    private final SavedSearchRow.OnSearchSelectedListener _savedSearchRow_onChange = new SavedSearchRow.OnSearchSelectedListener() {
         @Override
-        public void onClick(View v) {
+        public void onSearch(SavedSearchParams savedSearchParams) {
             hide();
             if (_onSavedSearchParamsChangeListener != null)
-                _onSavedSearchParamsChangeListener.onChange((SavedSearchParams) v.getTag());
+                _onSavedSearchParamsChangeListener.onChange(savedSearchParams);
         }
     };
 

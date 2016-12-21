@@ -87,12 +87,19 @@ public class SavedSearchParams implements Parcelable {
     public Boolean remoteWork = null;
     @Json
     public String title;
+    @Json
+    public Boolean canEdit = false;
 
     public SavedSearchParams() {
     }
 
     public SavedSearchParams type(ListType listType) {
         type = listType;
+        return this;
+    }
+
+    public SavedSearchParams canEdit(boolean canEdit) {
+        this.canEdit = canEdit;
         return this;
     }
 
