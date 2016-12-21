@@ -6,8 +6,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.ui.dialog.v2.SearchDialog;
 import com.fieldnation.ui.search.EditSearchActivity;
 
 public class SearchActionBarButton extends RelativeLayout {
@@ -44,7 +46,8 @@ public class SearchActionBarButton extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            EditSearchActivity.startNew(getContext());
+            //EditSearchActivity.startNew(getContext());
+            SearchDialog.Controller.show(App.get());
         }
     };
 }

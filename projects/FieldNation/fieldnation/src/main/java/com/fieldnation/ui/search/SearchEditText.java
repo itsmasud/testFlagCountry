@@ -97,7 +97,8 @@ public class SearchEditText extends RelativeLayout {
     private final View.OnClickListener _search_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            _listener.startSearch(_searchTermEditText.getText().toString());
+            if (_listener != null)
+                _listener.startSearch(_searchTermEditText.getText().toString());
         }
     };
 
