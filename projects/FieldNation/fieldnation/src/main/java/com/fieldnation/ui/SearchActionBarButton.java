@@ -11,7 +11,7 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.search.EditSearchActivity;
 
 public class SearchActionBarButton extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("SearchActionBarView");
+    private final String TAG = UniqueTag.makeTag("SearchActionBarButton");
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/

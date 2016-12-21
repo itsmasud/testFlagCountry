@@ -13,16 +13,19 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.nav.AdditionalOptionsActivity;
+
+import org.w3c.dom.Text;
 
 public class InboxActionBarButton extends RelativeLayout {
-    private final String TAG = UniqueTag.makeTag("InboxActionBarView");
+    private final String TAG = UniqueTag.makeTag("InboxActionBarButton");
 
     // UI
-    private TextView _countTextView;
+    private TextView _inboxCountTextView;
 
     // data
     private Profile _profile = null;
-    private GlobalTopicClient _client;
+    private GlobalTopicClient _globalTopicClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -46,36 +49,36 @@ public class InboxActionBarButton extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_inbox_action_bar, this);
 
-        _countTextView = (TextView) findViewById(R.id.count_textview);
-
         if (isInEditMode())
             return;
 
-        setOnClickListener(_this_onClick);
+        _inboxCountTextView = (TextView) findViewById(R.id.inboxCount_textview);
 
-        _client = new GlobalTopicClient(_topicClient_listener);
-        _client.connect(App.get());
+        setOnClickListener(_inbox_onClick);
+
+        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
+        _globalTopicClient.connect(App.get());
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_client != null && _client.isConnected())
-            _client.disconnect(App.get());
+        if (_globalTopicClient != null && _globalTopicClient.isConnected())
+            _globalTopicClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
 
-    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            InboxActivity.startNew(getContext());
+            InboxActivity.startNew(v.getContext());
         }
     };
 
-    private final GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
+    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
         @Override
         public void onConnected() {
-            _client.subGotProfile();
+            _globalTopicClient.subGotProfile();
         }
 
         @Override
@@ -92,13 +95,13 @@ public class InboxActionBarButton extends RelativeLayout {
         int count = _profile.getNewNotificationCount() + _profile.getUnreadMessageCount();
 
         if (count == 0) {
-            _countTextView.setVisibility(GONE);
+            _inboxCountTextView.setVisibility(GONE);
         } else {
-            _countTextView.setVisibility(VISIBLE);
+            _inboxCountTextView.setVisibility(VISIBLE);
             if (count >= 99) {
-                _countTextView.setText("!!");
+                _inboxCountTextView.setText("!!");
             } else {
-                _countTextView.setText(count + "");
+                _inboxCountTextView.setText(count + "");
             }
         }
         //TODO if is cached consider requesting a new version
