@@ -51,8 +51,13 @@ public abstract class FullScreenDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
-                if (_dismissListener != null)
-                    _dismissListener.onDismissed(FullScreenDialog.this);
+                _root.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (_dismissListener != null)
+                            _dismissListener.onDismissed(FullScreenDialog.this);
+                    }
+                });
             }
         });
 

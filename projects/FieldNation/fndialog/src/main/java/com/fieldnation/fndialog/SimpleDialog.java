@@ -53,8 +53,13 @@ public abstract class SimpleDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
-                if (_dismissListener != null)
-                    _dismissListener.onDismissed(SimpleDialog.this);
+                _root.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (_dismissListener != null)
+                            _dismissListener.onDismissed(SimpleDialog.this);
+                    }
+                });
             }
         });
 
