@@ -152,7 +152,7 @@ public class SearchEditScreen extends RelativeLayout {
     private void doSearch() {
         if (misc.isEmptyOrNull(_searchEditText.getText())) {
             // Run search and results page
-            final SavedSearchParams searchParams = new SavedSearchParams()
+            final SavedSearchParams searchParams = new SavedSearchParams(0)
                     .type(TYPES[_statusSpinner.getSelectedItemPosition()].getType())
                     .status(TYPES[_statusSpinner.getSelectedItemPosition()].getStatuses())
                     .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);

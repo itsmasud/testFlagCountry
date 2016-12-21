@@ -19,6 +19,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 
 import java.util.List;
@@ -30,98 +31,16 @@ import java.util.List;
 public class SavedSearchList extends RelativeLayout {
     private static final String TAG = "SavedSearchList";
 
-    static {
-        if (App.isNcns()) {
-            defaults = new SavedSearchParams[]{
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.TODAYS_WORK.getType())
-                            .status(WorkOrderListType.TODAYS_WORK.getStatuses())
-                            .title("Today's Work"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.TOMORROWS_WORK.getType())
-                            .status(WorkOrderListType.TOMORROWS_WORK.getStatuses())
-                            .title("Tomorrow's Work"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.ASSIGNED.getType())
-                            .status(WorkOrderListType.ASSIGNED.getStatuses())
-                            .title("Assigned"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.AVAILABLE.getType())
-                            .status(WorkOrderListType.AVAILABLE.getStatuses())
-                            .canEdit(true)
-                            .title("Available"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.CANCELED.getType())
-                            .status(WorkOrderListType.CANCELED.getStatuses())
-                            .order("desc")
-                            .title("Canceled"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.COMPLETED.getType())
-                            .status(WorkOrderListType.COMPLETED.getStatuses())
-                            .order("desc")
-                            .title("Completed"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.REQUESTED.getType())
-                            .status(WorkOrderListType.REQUESTED.getStatuses())
-                            .canEdit(true)
-                            .title("Requested"),
-                    new SavedSearchParams()
-                            .canEdit(true)
-                            .type(WorkOrderListType.ROUTED.getType())
-                            .status(WorkOrderListType.ROUTED.getStatuses())
-                            .title("Routed")
-            };
-        } else {
-            defaults = new SavedSearchParams[]{
-//                    new SavedSearchParams()
-//                            .type(WorkOrderListType.TODAYS_WORK.getType())
-//                            .status(WorkOrderListType.TODAYS_WORK.getStatuses())
-//                            .title("Today's Work"),
-//                    new SavedSearchParams()
-//                            .type(WorkOrderListType.TOMORROWS_WORK.getType())
-//                            .status(WorkOrderListType.TOMORROWS_WORK.getStatuses())
-//                            .title("Tomorrow's Work"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.ASSIGNED.getType())
-                            .status(WorkOrderListType.ASSIGNED.getStatuses())
-                            .title("Assigned"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.AVAILABLE.getType())
-                            .status(WorkOrderListType.AVAILABLE.getStatuses())
-                            .canEdit(true)
-                            .title("Available"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.CANCELED.getType())
-                            .status(WorkOrderListType.CANCELED.getStatuses())
-                            .order("desc")
-                            .title("Canceled"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.COMPLETED.getType())
-                            .status(WorkOrderListType.COMPLETED.getStatuses())
-                            .order("desc")
-                            .title("Completed"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.REQUESTED.getType())
-                            .status(WorkOrderListType.REQUESTED.getStatuses())
-                            .canEdit(true)
-                            .title("Requested"),
-                    new SavedSearchParams()
-                            .type(WorkOrderListType.ROUTED.getType())
-                            .status(WorkOrderListType.ROUTED.getStatuses())
-                            .canEdit(true)
-                            .title("Routed")
-            };
-        }
-    }
+    // Ui
+    private LinearLayout _paramList;
 
-    public static final SavedSearchParams[] defaults;
     // Data
     private OnHideListener _onHideListener;
     private OnShowListener _onShowListener;
     private OnSavedSearchParamsChangeListener _onSavedSearchParamsChangeListener;
+    private List<SavedSearchParams> _list;
 
-    // Ui
-    private LinearLayout _paramList;
+    private SavedSearchClient _savedSearchClient;
 
     public SavedSearchList(Context context) {
         super(context);
@@ -146,14 +65,28 @@ public class SavedSearchList extends RelativeLayout {
 
         _paramList = (LinearLayout) findViewById(R.id.param_list);
 
-        for (int i = 0; i < defaults.length; i++) {
-            SavedSearchRow row = new SavedSearchRow(getContext());
-            row.setSearchParams(defaults[i]);
-            row.setOnSearchSelectedListener(_savedSearchRow_onChange);
-            _paramList.addView(row);
-        }
-
         setVisibility(GONE);
+
+        _savedSearchClient = new SavedSearchClient(_savedSearchClient_listener);
+        _savedSearchClient.connect(App.get());
+
+        populateUi();
+    }
+
+    private void populateUi() {
+        if (_paramList == null)
+            return;
+
+        if (_list == null)
+            return;
+
+        _paramList.removeAllViews();
+        for (int i = 0; i < _list.size(); i++) {
+            SavedSearchRow row = new SavedSearchRow(getContext());
+            _paramList.addView(row);
+            row.setSearchParams(_list.get(i));
+            row.setOnSearchSelectedListener(_savedSearchRow_onChange);
+        }
     }
 
     @Override
@@ -228,6 +161,20 @@ public class SavedSearchList extends RelativeLayout {
             hide();
             if (_onSavedSearchParamsChangeListener != null)
                 _onSavedSearchParamsChangeListener.onChange(savedSearchParams);
+        }
+    };
+
+    private final SavedSearchClient.Listener _savedSearchClient_listener = new SavedSearchClient.Listener() {
+        @Override
+        public void onConnected() {
+            _savedSearchClient.subList();
+            SavedSearchClient.list();
+        }
+
+        @Override
+        public void list(List<SavedSearchParams> savedSearchParams) {
+            _list = savedSearchParams;
+            populateUi();
         }
     };
 

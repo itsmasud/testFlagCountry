@@ -20,10 +20,13 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
+
+import java.util.List;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -47,6 +50,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Data
     private SavedSearchParams _currentSearch = null;
+    private SavedSearchClient _savedSearchClient;
 
     @Override
     public int getLayoutResource() {
@@ -84,23 +88,32 @@ public class NavActivity extends AuthSimpleActivity {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
         }
 
-        if (_currentSearch == null) {
-            _currentSearch = SavedSearchList.defaults[0];
-        }
 
-        _recyclerView.startSearch(_currentSearch);
+        if (_currentSearch != null) {
+            _recyclerView.startSearch(_currentSearch);
+            NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+        } else {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //_recyclerView.startSearch(_currentSearch);
-        NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
-
         if (App.get().needsConfirmation()) {
             launchConfirmActivity();
         }
+
+        _savedSearchClient = new SavedSearchClient(_savedSearchClient_listener);
+        _savedSearchClient.connect(App.get());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+
     }
 
     private void launchConfirmActivity() {
@@ -198,6 +211,23 @@ public class NavActivity extends AuthSimpleActivity {
             _currentSearch = params;
             _recyclerView.startSearch(_currentSearch);
             NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+        }
+    };
+
+    private final SavedSearchClient.Listener _savedSearchClient_listener = new SavedSearchClient.Listener() {
+        @Override
+        public void onConnected() {
+            _savedSearchClient.subList();
+            SavedSearchClient.list();
+        }
+
+        @Override
+        public void list(List<SavedSearchParams> savedSearchParams) {
+            if (_currentSearch == null) {
+                _currentSearch = savedSearchParams.get(0);
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            }
         }
     };
 

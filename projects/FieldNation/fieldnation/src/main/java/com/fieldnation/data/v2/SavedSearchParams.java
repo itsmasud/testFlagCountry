@@ -70,6 +70,8 @@ public class SavedSearchParams implements Parcelable {
         }
     }
 
+    @Json
+    public int id;
     public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
     public ListType type = ListType.AVAILABLE;
     public Status status[] = new Status[]{Status.PUBLISHED};
@@ -91,6 +93,10 @@ public class SavedSearchParams implements Parcelable {
     public Boolean canEdit = false;
 
     public SavedSearchParams() {
+    }
+
+    public SavedSearchParams(int id) {
+        this.id = id;
     }
 
     public SavedSearchParams type(ListType listType) {
