@@ -1,28 +1,47 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="40dp"
+    android:layout_width="80dp"
     android:layout_height="32dp">
 
+
+    <RelativeLayout
+        android:id="@+id/inboxLayout"
+        android:layout_width="40dp"
+        android:layout_height="32dp">
+
+        <com.fieldnation.ui.IconFontTextView
+            android:id="@+id/notif_imageview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/icon_inbox"
+            android:textColor="@color/fn_clickable_bg"
+            android:textSize="16sp"
+            android:textStyle="normal" />
+
+        <TextView
+            android:id="@+id/count_textview"
+            style="@style/NotificationText"
+            android:layout_width="16dp"
+            android:layout_height="16dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="4dp"
+            android:gravity="center"
+            android:text="0"
+            android:visibility="gone" />
+    </RelativeLayout>
+
     <com.fieldnation.ui.IconFontTextView
-        android:id="@+id/notif_imageview"
+        android:id="@+id/menu_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerInParent="true"
-        android:text="@string/icon_inbox"
-        android:textColor="@color/fn_clickable_bg"
-        android:textSize="16sp"
-        android:textStyle="normal" />
-
-    <TextView
-        android:id="@+id/count_textview"
-        style="@style/NotificationText"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="4dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="20dp"
+        android:layout_centerVertical="true"
+        android:layout_toRightOf="@+id/inboxLayout"
         android:gravity="center"
-        android:text="0"
-        android:visibility="gone" />
+        android:text="@string/icon_overflow"
+        android:textSize="20sp" />
 
 </RelativeLayout>

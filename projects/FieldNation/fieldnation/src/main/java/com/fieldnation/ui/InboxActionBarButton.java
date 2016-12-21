@@ -13,12 +13,15 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.inbox.InboxActivity;
+import com.fieldnation.ui.nav.AdditionalOptionsActivity;
 
 public class InboxActionBarButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("InboxActionBarView");
 
     // UI
     private TextView _countTextView;
+    private IconFontTextView _inboxTextView;
+    private IconFontTextView _menuTextView;
 
     // data
     private Profile _profile = null;
@@ -46,12 +49,14 @@ public class InboxActionBarButton extends RelativeLayout {
     private void init() {
         LayoutInflater.from(getContext()).inflate(R.layout.view_inbox_action_bar, this);
 
-        _countTextView = (TextView) findViewById(R.id.count_textview);
-
         if (isInEditMode())
             return;
+        _countTextView = (TextView) findViewById(R.id.count_textview);
+        _countTextView.setOnClickListener(_inbox_onClick);
 
-        setOnClickListener(_this_onClick);
+        _menuTextView = (IconFontTextView) findViewById(R.id.menu_textview);
+        _menuTextView.setOnClickListener(_menu_onClick);
+
 
         _client = new GlobalTopicClient(_topicClient_listener);
         _client.connect(App.get());
@@ -65,12 +70,20 @@ public class InboxActionBarButton extends RelativeLayout {
     }
 
 
-    private final View.OnClickListener _this_onClick = new View.OnClickListener() {
+    private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            InboxActivity.startNew(getContext());
+            InboxActivity.startNew(v.getContext());
         }
     };
+
+    private final View.OnClickListener _menu_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AdditionalOptionsActivity.startNew(getContext());
+        }
+    };
+
 
     private final GlobalTopicClient.Listener _topicClient_listener = new GlobalTopicClient.Listener() {
         @Override

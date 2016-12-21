@@ -51,14 +51,7 @@
             </android.support.v7.widget.Toolbar>
         </android.support.design.widget.AppBarLayout>
 
-
     </android.support.design.widget.CoordinatorLayout>
-
-    <com.fieldnation.ui.nav.FooterBarView
-        android:id="@+id/footer_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true" />
 
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
