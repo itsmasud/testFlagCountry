@@ -275,7 +275,7 @@ public class WorkOrderCard extends RelativeLayout {
                 _payTypeTextView.setText("/ HOURLY");
                 break;
             case "blended":
-                _amountTextView.setText(misc.toShortCurrency(pay.getAmount() * pay.getUnits() + pay.getAdditionalAmount()));
+                _amountTextView.setText(misc.toShortCurrency(pay.getAmount() + pay.getAdditionalAmount() * pay.getAdditionalUnits()));
                 _payTypeTextView.setText("BLENDED");
                 break;
             case "device":
