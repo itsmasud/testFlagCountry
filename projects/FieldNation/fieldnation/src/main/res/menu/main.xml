@@ -19,5 +19,12 @@
         app:actionViewClass="com.fieldnation.ui.InboxActionBarButton"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/menu_menuitem"
+        android:enabled="true"
+        android:orderInCategory="500"
+        android:title="Menu"
+        app:actionViewClass="com.fieldnation.ui.AdditionalOptionsActionBarButton"
+        app:showAsAction="always" />
 
 </menu>
