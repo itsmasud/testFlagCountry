@@ -296,6 +296,7 @@ public class DialogManager extends FrameLayout implements Constants {
     private final Dialog.DismissListener _dismissListener = new Dialog.DismissListener() {
         @Override
         public void onDismissed(Dialog dialog) {
+            Log.v(TAG, "_dismissListener");
             remove(dialog);
         }
     };
