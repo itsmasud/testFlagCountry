@@ -51,7 +51,6 @@ public class SearchEditScreen extends RelativeLayout {
     private SimpleGps _simpleGps;
 
     // Data
-    private Listener _listener;
     private SavedSearchParams _savedSearchParams;
 
     /*-**********************************************-*/
@@ -105,12 +104,13 @@ public class SearchEditScreen extends RelativeLayout {
         populateUi();
     }
 
-    public void setListener(Listener listener) {
-        _listener = listener;
+    public SavedSearchParams getSavedSearchParams() {
+        writeSearch();
+        return _savedSearchParams;
     }
 
     private void populateUi() {
-
+// TODO update the UI to match the saved search
     }
 
     private void writeSearch() {
@@ -173,8 +173,4 @@ public class SearchEditScreen extends RelativeLayout {
         public void onNothingSelected(AdapterView<?> parent) {
         }
     };
-
-    public interface Listener {
-        void showNotAvailableDialog();
-    }
 }

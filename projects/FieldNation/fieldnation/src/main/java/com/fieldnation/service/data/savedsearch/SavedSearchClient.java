@@ -200,6 +200,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
 
                         Parcelable[] parcels = params[0].getParcelableArray("LIST");
                         for (Parcelable parcel : parcels) {
+                            Log.v(STAG, parcel.getClass().getName());
                             list.add((SavedSearchParams) parcel);
                         }
 
