@@ -7,9 +7,11 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -17,13 +19,16 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.SearchActionBarButton;
 import com.fieldnation.ui.ncns.ConfirmActivity;
+import com.fieldnation.ui.search.SearchEditText;
 import com.fieldnation.ui.search.SearchResultScreen;
 
 import java.util.List;
@@ -43,6 +48,7 @@ public class NavActivity extends AuthSimpleActivity {
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
     private AppBarLayout _appBarLayout;
+    private SearchEditText _searchBar;
 
     // Animations
     private Animation _ccw;
@@ -69,6 +75,8 @@ public class NavActivity extends AuthSimpleActivity {
         _toolbar = (Toolbar) findViewById(R.id.toolbar);
         _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
+
+        _searchBar = (SearchEditText) findViewById(R.id.search_view);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
@@ -112,8 +120,6 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     protected void onPause() {
         super.onPause();
-
-
     }
 
     private void launchConfirmActivity() {
@@ -164,6 +170,16 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (_searchBar.getVisibility() == View.GONE)
+                    _searchBar.setVisibility(View.VISIBLE);
+                else
+                    _searchBar.setVisibility(View.GONE);
+            }
+        });
+
         return true;
     }
 

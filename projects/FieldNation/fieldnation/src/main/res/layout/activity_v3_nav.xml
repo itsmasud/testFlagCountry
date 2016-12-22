@@ -46,8 +46,16 @@
                     android:paddingLeft="4dp"
                     android:paddingRight="4dp"
                     android:text="@string/icon_arrow_down" />
-
             </android.support.v7.widget.Toolbar>
+
+            <com.fieldnation.ui.search.SearchEditText
+                android:id="@+id/search_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/fn_primary"
+                android:padding="4dp"
+                android:visibility="gone" />
+
         </android.support.design.widget.AppBarLayout>
 
     </android.support.design.widget.CoordinatorLayout>

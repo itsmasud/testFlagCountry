@@ -40,7 +40,7 @@ public class SearchActionBarButton extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        setOnClickListener(_this_onClick);
+        //setOnClickListener(_this_onClick);
     }
 
     private final View.OnClickListener _this_onClick = new OnClickListener() {

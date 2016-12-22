@@ -2,7 +2,6 @@ package com.fieldnation.ui.search;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -239,6 +238,23 @@ public class SearchResultScreen extends RelativeLayout {
             WorkOrderCard v = h.getView();
             v.setData(object, _location);
         }
+
+        @Override
+        public boolean useHeader() {
+            return true;
+        }
+
+        @Override
+        public BaseHolder onCreateHeaderViewHolder(ViewGroup parent) {
+            HeaderView v = new HeaderView(parent.getContext());
+            v.setOnClickListener(_header_onClick);
+            return new BaseHolder(v, BaseHolder.TYPE_HEADER);
+        }
+
+        @Override
+        public void onBindHeaderViewHolder(BaseHolder holder) {
+            // TODO bind the saved search params
+        }
     };
 
     private final View.OnClickListener _card_onClick = new View.OnClickListener() {
@@ -246,6 +262,13 @@ public class SearchResultScreen extends RelativeLayout {
         public void onClick(View v) {
             if (_onClickListener != null)
                 _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
+        }
+    };
+
+    private final View.OnClickListener _header_onClick = new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            ToastClient.toast(App.get(), "This is a test", Toast.LENGTH_LONG);
         }
     };
 
