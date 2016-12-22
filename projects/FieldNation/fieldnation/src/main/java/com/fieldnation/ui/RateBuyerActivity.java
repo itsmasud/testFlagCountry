@@ -61,7 +61,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     private boolean _clear = false;
     private Workorder _workorder;
     private Listener _listener;
-    private final int MAX_THOUGHTS_LENGTH = 120;
+//    private final int MAX_THOUGHTS_LENGTH = 120;
     private boolean _hasToastShown = false;
     private int _goldStar = 0;
     private Boolean _hasSelectedScopeRating = null;
@@ -342,15 +342,15 @@ public class RateBuyerActivity extends AuthSimpleActivity {
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             _commentText = _otherThoughtsEditText.getText().toString().trim();
-            int numberOfCharacter = _commentText.length();
-            if (numberOfCharacter > 0) {
-                if (numberOfCharacter >= MAX_THOUGHTS_LENGTH && !_hasToastShown) {
-                    ToastClient.toast(App.get(), getString(R.string.toast_exceeded_max_limit_thoughts), Toast.LENGTH_LONG);
-                    _hasToastShown = true;
-                } else {
-                    _hasToastShown = false;
-                }
-            }
+//            int numberOfCharacter = _commentText.length();
+//            if (numberOfCharacter > 0) {
+//                if (numberOfCharacter >= MAX_THOUGHTS_LENGTH && !_hasToastShown) {
+//                    ToastClient.toast(App.get(), getString(R.string.toast_exceeded_max_limit_thoughts), Toast.LENGTH_LONG);
+//                    _hasToastShown = true;
+//                } else {
+//                    _hasToastShown = false;
+//                }
+//            }
         }
 
         public void afterTextChanged(Editable s) {
