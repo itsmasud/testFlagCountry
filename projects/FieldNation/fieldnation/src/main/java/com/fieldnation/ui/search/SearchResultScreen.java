@@ -38,7 +38,6 @@ public class SearchResultScreen extends RelativeLayout {
     //UI
     private OverScrollRecyclerView _workOrderList;
     private RefreshView _refreshView;
-    private View _unavailableView;
 
     // Service
     private WorkOrderClient _workOrderClient;
@@ -74,8 +73,6 @@ public class SearchResultScreen extends RelativeLayout {
 
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
-
-        _unavailableView = findViewById(R.id.marketplaceUnavailable_layout);
 
         _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
@@ -171,11 +168,6 @@ public class SearchResultScreen extends RelativeLayout {
 
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
-                if (_adapter.getItemCount() == 0)
-                    _unavailableView.setVisibility(VISIBLE);
-                else
-                    _unavailableView.setVisibility(GONE);
-                return;
             }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
@@ -185,10 +177,6 @@ public class SearchResultScreen extends RelativeLayout {
                 _adapter.addObjects(envelope.getPage(), null);
 
             _refreshView.refreshComplete();
-            if (_adapter.getItemCount() == 0)
-                _unavailableView.setVisibility(VISIBLE);
-            else
-                _unavailableView.setVisibility(GONE);
         }
 
         @Override
@@ -253,7 +241,8 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
-            // TODO bind the saved search params
+            ((HeaderView) holder.itemView)
+                    .setSavedSearchParams(_searchParams);
         }
     };
 

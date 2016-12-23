@@ -156,9 +156,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
 
                 // sending the data
                 Bundle bundle = new Bundle();
-                Parcelable[] parcels = new Parcelable[searchParams.length];
-                System.arraycopy(searchParams, 0, parcels, 0, searchParams.length);
-                bundle.putParcelableArray("LIST", parcels);
+                bundle.putParcelableArray("LIST", searchParams);
                 dispatchEvent(App.get(), TOPIC_ID_LIST, bundle, Sticky.NONE);
                 return null;
             }

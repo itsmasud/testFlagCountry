@@ -43,6 +43,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         _onLastPage = false;
         notifyDataSetChanged();
         _lastPage = 0;
+        rebuildList();
         requestPage(0, false);
     }
 

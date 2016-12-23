@@ -12,6 +12,7 @@ public class BaseHolder extends RecyclerView.ViewHolder {
     public static final int TYPE_OBJECT = 1;
     public static final int TYPE_RATE_ME = 2;
     public static final int TYPE_HEADER = 3;
+    public static final int TYPE_EMPTY = 4;
 
     public int type;
 

@@ -243,6 +243,10 @@ public class NavActivity extends AuthSimpleActivity {
                 _currentSearch = savedSearchParams.get(0);
                 _recyclerView.startSearch(_currentSearch);
                 NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            } else {
+                _currentSearch = savedSearchParams.get(_currentSearch.id);
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
             }
         }
     };
