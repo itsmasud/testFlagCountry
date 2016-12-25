@@ -171,7 +171,9 @@ public class SearchResultScreen extends RelativeLayout {
             }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-            if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
+            if (workOrders.size() > 0
+                    && envelope.getPerPage() > 0
+                    && envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
                 _adapter.addObjects(envelope.getPage(), workOrders);
             else
                 _adapter.addObjects(envelope.getPage(), null);
@@ -229,7 +231,10 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public boolean useHeader() {
-            return true;
+            if (_searchParams != null)
+                return _searchParams.canEdit;
+
+            return false;
         }
 
         @Override
@@ -241,8 +246,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
-            ((HeaderView) holder.itemView)
-                    .setSavedSearchParams(_searchParams);
+            ((HeaderView) holder.itemView).setSavedSearchParams(_searchParams);
         }
     };
 
