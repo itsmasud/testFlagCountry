@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -15,20 +16,12 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
-import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.List;
 
@@ -46,6 +39,7 @@ public class SearchEditScreen extends RelativeLayout {
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
+    private Button _applyButton;
 
     // Services
     private SimpleGps _simpleGps;
@@ -92,6 +86,9 @@ public class SearchEditScreen extends RelativeLayout {
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
+        _applyButton = (Button) findViewById(R.id.apply_button);
+        _applyButton.setOnClickListener(_apply_onClick);
+
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
         }
@@ -110,7 +107,7 @@ public class SearchEditScreen extends RelativeLayout {
     }
 
     private void populateUi() {
-// TODO update the UI to match the saved search
+        // TODO update the UI to match the saved search
     }
 
     private void writeSearch() {
@@ -120,6 +117,7 @@ public class SearchEditScreen extends RelativeLayout {
         switch (_locationSpinner.getSelectedItemPosition()) {
             case 0: // profile
                 _savedSearchParams.location(null, null);
+                SavedSearchClient.save(_savedSearchParams);
                 break;
             case 1: // here
                 _simpleGps.updateListener(new SimpleGps.Listener() {
@@ -127,6 +125,7 @@ public class SearchEditScreen extends RelativeLayout {
                     public void onLocation(Location location) {
                         _savedSearchParams.location(location.getLatitude(), location.getLongitude());
                         _simpleGps.stop();
+                        SavedSearchClient.save(_savedSearchParams);
                     }
 
                     @Override
@@ -154,6 +153,7 @@ public class SearchEditScreen extends RelativeLayout {
                         if (o != null) {
                             _savedSearchParams.location(o.getLatitude(), o.getLongitude());
                         }
+                        SavedSearchClient.save(_savedSearchParams);
                     }
                 }.executeEx(_otherLocationEditText.getText().toString());
                 break;
@@ -171,6 +171,13 @@ public class SearchEditScreen extends RelativeLayout {
 
         @Override
         public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final View.OnClickListener _apply_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            writeSearch();
         }
     };
 }

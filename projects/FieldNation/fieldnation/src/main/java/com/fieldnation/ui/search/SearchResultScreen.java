@@ -240,13 +240,23 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public BaseHolder onCreateHeaderViewHolder(ViewGroup parent) {
             HeaderView v = new HeaderView(parent.getContext());
-            v.setOnClickListener(_header_onClick);
             return new BaseHolder(v, BaseHolder.TYPE_HEADER);
         }
 
         @Override
         public void onBindHeaderViewHolder(BaseHolder holder) {
             ((HeaderView) holder.itemView).setSavedSearchParams(_searchParams);
+        }
+
+        @Override
+        public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
+            return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
+        }
+
+        @Override
+        public void onBindEmptyViewHolder(BaseHolder holder) {
+            // Nothing to do.
         }
     };
 
@@ -255,13 +265,6 @@ public class SearchResultScreen extends RelativeLayout {
         public void onClick(View v) {
             if (_onClickListener != null)
                 _onClickListener.onWorkOrderClicked(((WorkOrderCard) v).getWorkOrder());
-        }
-    };
-
-    private final View.OnClickListener _header_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            ToastClient.toast(App.get(), "This is a test", Toast.LENGTH_LONG);
         }
     };
 

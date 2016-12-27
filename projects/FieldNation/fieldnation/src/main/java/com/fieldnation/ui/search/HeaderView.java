@@ -3,13 +3,10 @@ package com.fieldnation.ui.search;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.Button;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 /**
  * Created by mc on 12/22/16.
@@ -18,7 +15,6 @@ import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 public class HeaderView extends RelativeLayout {
 
     private SearchEditScreen _searchEditScreen;
-    private Button _applyButton;
 
     private SavedSearchParams _savedSearchParams;
 
@@ -44,8 +40,6 @@ public class HeaderView extends RelativeLayout {
             return;
 
         _searchEditScreen = (SearchEditScreen) findViewById(R.id.searchEditScreen);
-        _applyButton = (Button) findViewById(R.id.apply_button);
-        _applyButton.setOnClickListener(_apply_onClick);
 
         populateUi();
     }
@@ -64,12 +58,4 @@ public class HeaderView extends RelativeLayout {
 
         _searchEditScreen.setSavedSearchParams(_savedSearchParams);
     }
-
-
-    private final View.OnClickListener _apply_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            SavedSearchClient.save(_searchEditScreen.getSavedSearchParams());
-        }
-    };
 }
