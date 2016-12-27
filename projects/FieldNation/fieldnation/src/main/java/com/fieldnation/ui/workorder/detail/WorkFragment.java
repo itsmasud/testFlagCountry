@@ -1589,7 +1589,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void showStandardInstructions(String body) {
-            _termsDialog.show(getString(R.string.dialog_standard_instruction_title), body);
+            _termsScrollingDialog.show(getString(R.string.dialog_standard_instruction_title), body);
         }
     };
 
