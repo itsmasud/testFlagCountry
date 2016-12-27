@@ -67,8 +67,8 @@ public class PayDialog extends DialogFragmentBase {
     private EditText _maxDevicesEditText;
 
     private LinearLayout _blendedLayout;
-    private EditText _blendedHourlyEditText;
-    private EditText _blendedMaxHoursEditText;
+    private EditText _blendedFixedRateEditText;
+    private EditText _blendedFixedMaxHoursEditText;
     private EditText _extraHourlyEditText;
     private EditText _extraMaxHoursEditText;
 
@@ -127,10 +127,10 @@ public class PayDialog extends DialogFragmentBase {
                 _maxDevicesEditText.setText(savedInstanceState.getString(STATE_DEVICES_MAX));
 
             if (savedInstanceState.containsKey(STATE_BLENDED_HOURLY))
-                _blendedHourlyEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY));
+                _blendedFixedRateEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY));
 
             if (savedInstanceState.containsKey(STATE_BLENDED_HOURLY_MAX))
-                _blendedMaxHoursEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY_MAX));
+                _blendedFixedMaxHoursEditText.setText(savedInstanceState.getString(STATE_BLENDED_HOURLY_MAX));
 
             if (savedInstanceState.containsKey(STATE_BLENDED_XHOURLY))
                 _extraHourlyEditText.setText(savedInstanceState.getString(STATE_BLENDED_XHOURLY));
@@ -165,11 +165,11 @@ public class PayDialog extends DialogFragmentBase {
         if (_maxDevicesEditText != null && !misc.isEmptyOrNull(_maxDevicesEditText.getText().toString()))
             outState.putString(STATE_DEVICES_MAX, _maxDevicesEditText.getText().toString());
 
-        if (_blendedHourlyEditText != null && !misc.isEmptyOrNull(_blendedHourlyEditText.getText().toString()))
-            outState.putString(STATE_BLENDED_HOURLY, _blendedHourlyEditText.getText().toString());
+        if (_blendedFixedRateEditText != null && !misc.isEmptyOrNull(_blendedFixedRateEditText.getText().toString()))
+            outState.putString(STATE_BLENDED_HOURLY, _blendedFixedRateEditText.getText().toString());
 
-        if (_blendedMaxHoursEditText != null && !misc.isEmptyOrNull(_blendedMaxHoursEditText.getText().toString()))
-            outState.putString(STATE_BLENDED_HOURLY_MAX, _blendedMaxHoursEditText.getText().toString());
+        if (_blendedFixedMaxHoursEditText != null && !misc.isEmptyOrNull(_blendedFixedMaxHoursEditText.getText().toString()))
+            outState.putString(STATE_BLENDED_HOURLY_MAX, _blendedFixedMaxHoursEditText.getText().toString());
 
         if (_extraHourlyEditText != null && !misc.isEmptyOrNull(_extraHourlyEditText.getText().toString()))
             outState.putString(STATE_BLENDED_XHOURLY, _extraHourlyEditText.getText().toString());
@@ -203,8 +203,8 @@ public class PayDialog extends DialogFragmentBase {
 
         // blended
         _blendedLayout = (LinearLayout) v.findViewById(R.id.blended_layout);
-        _blendedHourlyEditText = (EditText) v.findViewById(R.id.blendedhourlyrate_edittext);
-        _blendedMaxHoursEditText = (EditText) v.findViewById(R.id.blendedmaxhours_edittext);
+        _blendedFixedRateEditText = (EditText) v.findViewById(R.id.blendedFixedRate_edittext);
+        _blendedFixedMaxHoursEditText = (EditText) v.findViewById(R.id.blendedFixedMaxHours_edittext);
         _extraHourlyEditText = (EditText) v.findViewById(R.id.extrahours_edittext);
         _extraMaxHoursEditText = (EditText) v.findViewById(R.id.extramaxhours_edittext);
 
@@ -295,11 +295,11 @@ public class PayDialog extends DialogFragmentBase {
                     int maxDevices = getInteger((_maxDevicesEditText.getText().toString()));
                     return deviceRate * maxDevices >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
                 case MODE_BLENDED:
-                    double blendedHourlyAmount = getDouble((_blendedHourlyEditText.getText().toString()));
-                    double blendedMaxHours = getDouble((_blendedMaxHoursEditText.getText().toString()));
+                    double blendedFixedRate = getDouble((_blendedFixedRateEditText.getText().toString()));
+//                    double blendedMaxHours = getDouble((_blendedFixedMaxHoursEditText.getText().toString()));
                     double extraHourly = getDouble((_extraHourlyEditText.getText().toString()));
                     double extraMaxHours = getDouble((_extraMaxHoursEditText.getText().toString()));
-                    return (blendedHourlyAmount * blendedMaxHours) + (extraHourly * extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
+                    return blendedFixedRate  + (extraHourly * extraMaxHours) >= MINIMUM_ACCUMULATED_PAYABLE_AMOUNT;
             }
         } catch (Exception ex) {
             return false;
@@ -323,8 +323,8 @@ public class PayDialog extends DialogFragmentBase {
                         Integer.parseInt(_maxDevicesEditText.getText().toString()));
                 break;
             case MODE_BLENDED:
-                pay = new Pay(Double.parseDouble(_blendedHourlyEditText.getText().toString()),
-                        Double.parseDouble(_blendedMaxHoursEditText.getText().toString()),
+                pay = new Pay(Double.parseDouble(_blendedFixedRateEditText.getText().toString()),
+                        Double.parseDouble(_blendedFixedMaxHoursEditText.getText().toString()),
                         Double.parseDouble(_extraHourlyEditText.getText().toString()),
                         Double.parseDouble(_extraMaxHoursEditText.getText().toString()));
                 break;
@@ -382,11 +382,11 @@ public class PayDialog extends DialogFragmentBase {
 
         if (_pay.isBlendedRate()) {
             setMode(MODE_BLENDED);
-            _blendedHourlyEditText.setText(_pay.getBlendedStartRate() + "");
-            _blendedMaxHoursEditText.setText(_pay.getBlendedFirstHours() + "");
+            _blendedFixedRateEditText.setText(_pay.getBlendedStartRate() + "");
+            _blendedFixedMaxHoursEditText.setText(_pay.getBlendedFirstHours() + "");
             _extraHourlyEditText.setText(_pay.getBlendedAdditionalRate() + "");
             _extraMaxHoursEditText.setText(_pay.getBlendedAdditionalHours() + "");
-            _blendedHourlyEditText.requestFocus();
+            _blendedFixedRateEditText.requestFocus();
 
         } else if (_pay.isFixedRate()) {
             setMode(MODE_FIXED);
