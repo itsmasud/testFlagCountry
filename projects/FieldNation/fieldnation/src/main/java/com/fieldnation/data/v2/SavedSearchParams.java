@@ -186,10 +186,22 @@ public class SavedSearchParams implements Parcelable {
             key += ":" + ((int) (radius * 1000));
         }
 
+        if (sort != null && order != null)
+            key += ":" + sort + " " + order;
+
         if (remoteWork != null)
             key += ":remote_work=" + (remoteWork ? 1 : 0);
 
         return key;
+    }
+
+    // TODO make this better
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SavedSearchParams))
+            return false;
+
+        return toKey().equals(((SavedSearchParams) o).toKey());
     }
 
     /*-*************************************-*/

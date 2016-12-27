@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/inbox_layout"
     android:layout_width="40dp"
-    android:layout_height="32dp">
+    android:layout_height="match_parent">
 
     <com.fieldnation.ui.IconFontTextView
         android:id="@+id/inbox_textview"
@@ -19,9 +19,10 @@
         style="@style/NotificationText"
         android:layout_width="16dp"
         android:layout_height="16dp"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="4dp"
+        android:layout_alignRight="@+id/inbox_textview"
+        android:layout_alignTop="@+id/inbox_textview"
+        android:layout_marginRight="-8dp"
+        android:layout_marginTop="-8dp"
         android:gravity="center"
         android:text="0"
         android:visibility="gone" />

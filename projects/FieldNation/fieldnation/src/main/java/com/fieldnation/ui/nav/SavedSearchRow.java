@@ -11,8 +11,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.ui.IconFontTextView;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by mc on 12/21/16.
  */
@@ -77,11 +75,13 @@ public class SavedSearchRow extends RelativeLayout {
 
         _titleTextView.setText(_searchParams.title);
 
+/*
         if (_searchParams.canEdit) {
             _editTextView.setVisibility(VISIBLE);
         } else {
             _editTextView.setVisibility(GONE);
         }
+*/
     }
 
     private final View.OnClickListener _title_onClick = new OnClickListener() {

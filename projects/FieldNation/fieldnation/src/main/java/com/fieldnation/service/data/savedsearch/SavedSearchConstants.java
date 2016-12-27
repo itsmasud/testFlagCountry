@@ -7,4 +7,5 @@ package com.fieldnation.service.data.savedsearch;
 public interface SavedSearchConstants {
 
     String TOPIC_ID_LIST = "SavedSearchConstants:TOPIC_ID_LIST";
+    String TOPIC_ID_SAVED = "SavedSearchConstants:TOPIC_ID_SAVED";
 }
