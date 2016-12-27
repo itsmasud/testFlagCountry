@@ -272,7 +272,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _workorder.getWorkorderManagerInfo().getPhotoThumbUrl();
+            String url = _workorder.getBuyerRatingInfo().getCompanyLogo();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
                 _photos.subGet(url, true, false);
