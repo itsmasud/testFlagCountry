@@ -23,6 +23,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <com.fieldnation.ui.nav.SearchToolbarView
+            android:id="@+id/searchToolbarView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
         <android.support.design.widget.AppBarLayout
             android:id="@+id/appbar"
             android:layout_width="match_parent"
@@ -47,15 +52,6 @@
                     android:paddingRight="4dp"
                     android:text="@string/icon_arrow_down" />
             </android.support.v7.widget.Toolbar>
-
-            <com.fieldnation.ui.search.SearchEditText
-                android:id="@+id/search_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@color/fn_primary"
-                android:padding="4dp"
-                android:theme="@style/Theme.AppCompat.Light.NoActionBar"
-                android:visibility="gone" />
 
         </android.support.design.widget.AppBarLayout>
 

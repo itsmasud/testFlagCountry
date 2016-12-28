@@ -43,7 +43,7 @@ public class NavActivity extends AuthSimpleActivity {
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
     private AppBarLayout _appBarLayout;
-    private SearchEditText _searchBar;
+    private SearchToolbarView _searchToolbarView;
 
     // Animations
     private Animation _ccw;
@@ -71,7 +71,7 @@ public class NavActivity extends AuthSimpleActivity {
         _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
 
-        _searchBar = (SearchEditText) findViewById(R.id.search_view);
+        _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
 
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
@@ -168,10 +168,10 @@ public class NavActivity extends AuthSimpleActivity {
         menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (_searchBar.getVisibility() == View.GONE)
-                    _searchBar.setVisibility(View.VISIBLE);
+                if (_searchToolbarView.getVisibility() == View.GONE)
+                    _searchToolbarView.show();
                 else
-                    _searchBar.setVisibility(View.GONE);
+                    _searchToolbarView.hide();
             }
         });
 
