@@ -89,7 +89,7 @@ public class SavedSearchList extends RelativeLayout {
         }
     }
 
-    @Override
+/*    @Override
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
         bundle.putInt("VISIBILITY", getVisibility());
@@ -105,7 +105,7 @@ public class SavedSearchList extends RelativeLayout {
             if (((Bundle) state).containsKey("SUPER"))
                 super.onRestoreInstanceState(((Bundle) state).getParcelable("SUPER"));
         }
-    }
+    }*/
 
     public void setOnShowListener(OnShowListener onShowListener) {
         _onShowListener = onShowListener;
@@ -208,6 +208,7 @@ public class SavedSearchList extends RelativeLayout {
                 @Override
                 public void onAnimationUpdate(ValueAnimator animation) {
                     child.setYPos((Integer) animation.getAnimatedValue());
+                    child.setVisibility(VISIBLE);
                 }
             });
             _showingAnimation.addListener(new Animator.AnimatorListener() {
@@ -231,7 +232,6 @@ public class SavedSearchList extends RelativeLayout {
                 }
             });
             child.setYPos(_appBarBottom - child.getHeight());
-            child.setVisibility(VISIBLE);
             _showingAnimation.start();
         }
 
