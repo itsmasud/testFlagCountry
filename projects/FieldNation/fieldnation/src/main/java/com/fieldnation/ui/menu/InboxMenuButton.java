@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.menu;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -14,7 +14,7 @@ import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.inbox.InboxActivity;
 
-public class InboxActionBarButton extends RelativeLayout {
+public class InboxMenuButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("InboxActionBarButton");
 
     // UI
@@ -28,17 +28,17 @@ public class InboxActionBarButton extends RelativeLayout {
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
-    public InboxActionBarButton(Context context) {
+    public InboxMenuButton(Context context) {
         super(context);
         init();
     }
 
-    public InboxActionBarButton(Context context, AttributeSet attrs) {
+    public InboxMenuButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public InboxActionBarButton(Context context, AttributeSet attrs, int defStyle) {
+    public InboxMenuButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
