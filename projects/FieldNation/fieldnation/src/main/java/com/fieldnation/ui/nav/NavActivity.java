@@ -168,10 +168,10 @@ public class NavActivity extends AuthSimpleActivity {
         menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (_searchToolbarView.getVisibility() == View.GONE)
-                    _searchToolbarView.show();
-                else
+                if (_searchToolbarView.isShowing())
                     _searchToolbarView.hide();
+                else
+                    _searchToolbarView.show();
             }
         });
 
@@ -179,13 +179,13 @@ public class NavActivity extends AuthSimpleActivity {
     }
 
     private void showDrawer() {
-        if (_searchesView.getVisibility() != View.VISIBLE) {
+        if (!_searchesView.isShowing()) {
             _searchesView.show();
         }
     }
 
     private void hideDrawer() {
-        if (_searchesView.getVisibility() != View.GONE) {
+        if (_searchesView.isShowing()) {
             _searchesView.hide();
             Log.v(TAG, "hideDrawer");
         }
@@ -194,10 +194,10 @@ public class NavActivity extends AuthSimpleActivity {
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_searchesView.getVisibility() == View.GONE) {
-                showDrawer();
-            } else {
+            if (_searchesView.isShowing()) {
                 hideDrawer();
+            } else {
+                showDrawer();
             }
         }
     };
