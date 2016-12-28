@@ -110,11 +110,21 @@ public class SearchEditScreen extends RelativeLayout {
     }
 
     private void populateUi() {
-// TODO update the UI to match the saved search
+        if (_distanceSpinner == null)
+            return;
+
+        if (_savedSearchParams == null)
+            return;
+
+        _distanceSpinner.setSelection(_savedSearchParams.uiDistanceSpinner);
+        _locationSpinner.setSelection(_savedSearchParams.uiLocationSpinner);
+        _otherLocationEditText.setText(_savedSearchParams.uiLocationText);
     }
 
     private void writeSearch() {
         // Run search and results page
+        _savedSearchParams.uiLocationSpinner = _locationSpinner.getSelectedItemPosition();
+        _savedSearchParams.uiDistanceSpinner = _distanceSpinner.getSelectedItemPosition();
         _savedSearchParams.radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
 
         switch (_locationSpinner.getSelectedItemPosition()) {
@@ -136,6 +146,7 @@ public class SearchEditScreen extends RelativeLayout {
                 }).start(getContext());
                 break;
             case 2: // other
+                _savedSearchParams.uiLocationText = _otherLocationEditText.getText().toString();
                 new AsyncTaskEx<String, Object, Address>() {
                     @Override
                     protected Address doInBackground(String... params) {

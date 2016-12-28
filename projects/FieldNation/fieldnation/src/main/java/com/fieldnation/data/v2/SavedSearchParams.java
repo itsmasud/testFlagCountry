@@ -89,6 +89,15 @@ public class SavedSearchParams implements Parcelable {
     @Json
     public Boolean canEdit = false;
 
+
+    // Ui stuff for SearchEditScreen
+    @Json
+    public Integer uiLocationSpinner = 1;
+    @Json
+    public String uiLocationText = "";
+    @Json
+    public Integer uiDistanceSpinner = 3;
+
     public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
     public ListType type = ListType.AVAILABLE;
     public Status status[] = new Status[]{Status.PUBLISHED};
