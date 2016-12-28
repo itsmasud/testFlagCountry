@@ -1,7 +1,6 @@
 package com.fieldnation.service.data.savedsearch;
 
 import android.os.Bundle;
-import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.fieldnation.App;
@@ -11,15 +10,11 @@ import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.Sticky;
 import com.fieldnation.fnpigeon.TopicClient;
-import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -179,9 +174,17 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                 StoredObject.put(App.get(), App.getProfileId(), "SavedSearch", 0, ja.toByteArray());
 
                 SavedSearchClient.list();
+
+                Bundle bundle = new Bundle();
+                bundle.putParcelable("SavedSearchParams", params[0]);
+                dispatchEvent(App.get(), TOPIC_ID_SAVED, bundle, Sticky.NONE);
                 return null;
             }
         }.executeEx(savedSearchParams);
+    }
+
+    public boolean subSaved() {
+        return register(TOPIC_ID_SAVED);
     }
 
     /*-**********************************-*/
@@ -198,8 +201,11 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
 
                         Parcelable[] parcels = params[0].getParcelableArray("LIST");
                         for (Parcelable parcel : parcels) {
-                            Log.v(STAG, parcel.getClass().getName());
-                            list.add((SavedSearchParams) parcel);
+                            try {
+                                Log.v(STAG, parcel.getClass().getName());
+                                list.add((SavedSearchParams) parcel);
+                            } catch (Exception ex) {
+                            }
                         }
 
                         return list;
@@ -210,10 +216,27 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                         list(savedSearchParams);
                     }
                 }.executeEx((Bundle) payload);
+            } else if (topicId.startsWith(TOPIC_ID_SAVED)) {
+                new AsyncTaskEx<Bundle, Object, SavedSearchParams>() {
+
+                    @Override
+                    protected SavedSearchParams doInBackground(Bundle... params) {
+                        SavedSearchParams ssp = (SavedSearchParams) params[0].getParcelable("SavedSearchParams");
+                        return ssp;
+                    }
+
+                    @Override
+                    protected void onPostExecute(SavedSearchParams savedSearchParams) {
+                        saved(savedSearchParams);
+                    }
+                }.executeEx((Bundle) payload);
             }
         }
 
         public void list(List<SavedSearchParams> savedSearchParams) {
+        }
+
+        public void saved(SavedSearchParams savedSearchParams) {
         }
     }
 }

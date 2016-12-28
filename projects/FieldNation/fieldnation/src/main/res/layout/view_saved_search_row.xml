@@ -20,5 +20,6 @@
         android:layout_alignParentRight="true"
         android:gravity="center"
         android:text="@string/icon_pencil"
-        android:textColor="@color/fn_white_text" />
+        android:textColor="@color/fn_white_text"
+        android:visibility="gone" />
 </RelativeLayout>

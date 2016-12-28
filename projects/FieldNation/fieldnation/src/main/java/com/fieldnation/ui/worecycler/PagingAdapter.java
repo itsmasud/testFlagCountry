@@ -19,6 +19,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
 
     private static final Object RATEME = new Object();
     private static final Object HEADER = new Object();
+    private static final Object EMPTY = new Object();
 
     private RateMeView _rateMeView = null;
     private List<List<T>> _pages = new LinkedList<>();
@@ -78,13 +79,17 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
             _displayList.add(HEADER);
         int location = 0;
         try {
-            for (List<T> page : _pages) {
-                if (page != null) {
-                    for (T t : page) {
-                        location++;
-                        _displayList.add(t);
-                        if (location == _rateMePosition && _showRateMe)
-                            _displayList.add(RATEME);
+            if (_pages.size() == 0 || _pages.get(0).size() == 0) {
+                _displayList.add(EMPTY);
+            } else {
+                for (List<T> page : _pages) {
+                    if (page != null) {
+                        for (T t : page) {
+                            location++;
+                            _displayList.add(t);
+                            if (location == _rateMePosition && _showRateMe)
+                                _displayList.add(RATEME);
+                        }
                     }
                 }
             }
@@ -109,6 +114,9 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
             case BaseHolder.TYPE_HEADER: {
                 return onCreateHeaderViewHolder(parent);
             }
+            case BaseHolder.TYPE_EMPTY: {
+                return onCreateEmptyViewHolder(parent);
+            }
         }
         return null;
     }
@@ -129,6 +137,9 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
             case BaseHolder.TYPE_HEADER: {
                 onBindHeaderViewHolder(holder);
                 break;
+            }
+            case BaseHolder.TYPE_EMPTY: {
+                onBindEmptyViewHolder(holder);
             }
         }
 
@@ -152,6 +163,8 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         Object obj = _displayList.get(position);
         if (obj == HEADER) {
             return BaseHolder.TYPE_HEADER;
+        } else if (obj == EMPTY) {
+            return BaseHolder.TYPE_EMPTY;
         } else if (_objectType.isInstance(obj)) {
             return BaseHolder.TYPE_OBJECT;
         } else {
@@ -176,6 +189,10 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     public abstract BaseHolder onCreateHeaderViewHolder(ViewGroup parent);
 
     public abstract void onBindHeaderViewHolder(BaseHolder holder);
+
+    public abstract BaseHolder onCreateEmptyViewHolder(ViewGroup parent);
+
+    public abstract void onBindEmptyViewHolder(BaseHolder holder);
 
     public abstract boolean useHeader();
 }

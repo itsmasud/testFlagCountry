@@ -7,11 +7,9 @@ import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -19,14 +17,11 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.SearchActionBarButton;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.search.SearchEditText;
 import com.fieldnation.ui.search.SearchResultScreen;
@@ -234,6 +229,7 @@ public class NavActivity extends AuthSimpleActivity {
         @Override
         public void onConnected() {
             _savedSearchClient.subList();
+            _savedSearchClient.subSaved();
             SavedSearchClient.list();
         }
 
@@ -243,8 +239,13 @@ public class NavActivity extends AuthSimpleActivity {
                 _currentSearch = savedSearchParams.get(0);
                 _recyclerView.startSearch(_currentSearch);
                 NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
-            } else {
-                _currentSearch = savedSearchParams.get(_currentSearch.id);
+            }
+        }
+
+        @Override
+        public void saved(SavedSearchParams savedSearchParams) {
+            if (_currentSearch != null && savedSearchParams.id == _currentSearch.id) {
+                _currentSearch = savedSearchParams;
                 _recyclerView.startSearch(_currentSearch);
                 NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
             }

@@ -44,4 +44,10 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/location_spinner"
         android:layout_marginBottom="16dp" />
+
+    <Button
+        android:id="@+id/apply_button"
+        style="@style/Material.Button.Raised.White"
+        android:layout_gravity="right"
+        android:text="APPLY" />
 </LinearLayout>
