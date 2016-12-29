@@ -612,6 +612,7 @@ public class EtaDialog extends FullScreenDialog {
     private final View.OnClickListener _duration_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+            misc.hideKeyboard(_noteEditText);
             DurationDialog.Controller.show(App.get(), UID_DURATION_DIALOG);
         }
     };

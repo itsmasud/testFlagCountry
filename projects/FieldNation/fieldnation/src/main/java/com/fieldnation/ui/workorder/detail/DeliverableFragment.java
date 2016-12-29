@@ -255,6 +255,9 @@ public class DeliverableFragment extends WorkorderFragment {
     private void populateUi() {
         misc.hideKeyboard(getView());
 
+        if (_actionButton == null)
+            return;
+
         if (_workorder == null)
             return;
 
