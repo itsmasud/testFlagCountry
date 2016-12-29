@@ -168,10 +168,12 @@ public class NavActivity extends AuthSimpleActivity {
         menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (_searchToolbarView.isShowing())
+                if (_searchToolbarView.isShowing()) {
                     _searchToolbarView.hide();
-                else
+                } else {
                     _searchToolbarView.show();
+                    _searchesView.hide();
+                }
             }
         });
 
@@ -181,6 +183,7 @@ public class NavActivity extends AuthSimpleActivity {
     private void showDrawer() {
         if (!_searchesView.isShowing()) {
             _searchesView.show();
+            _searchToolbarView.hide();
         }
     }
 
