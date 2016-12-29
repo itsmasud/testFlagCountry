@@ -1,12 +1,19 @@
 package com.fieldnation.ui.nav;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fntools.misc;
+import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.ui.search.SearchEditText;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 /**
  * Created by mc on 12/27/16.
@@ -15,6 +22,9 @@ import com.fieldnation.R;
 @CoordinatorLayout.DefaultBehavior(ToolbarMenuBehavior.class)
 public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInterface {
     private static final String TAG = "SearchToolbarView";
+
+    // Ui
+    private SearchEditText _searchEditText;
 
     public SearchToolbarView(Context context) {
         super(context);
@@ -37,6 +47,28 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
         if (isInEditMode())
             return;
 
+        _searchEditText = (SearchEditText) findViewById(R.id.searchEditText);
+        _searchEditText.setListener(_searchEditText_listener);
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean("SHOWING", isShowing());
+        bundle.putParcelable("SUPER", super.onSaveInstanceState());
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            if (((Bundle) state).containsKey("SHOWING")) {
+                if (((Bundle) state).getBoolean("SHOWING"))
+                    show();
+            }
+            if (((Bundle) state).containsKey("SUPER"))
+                super.onRestoreInstanceState(((Bundle) state).getParcelable("SUPER"));
+        }
     }
 
     public void show() {
@@ -71,4 +103,21 @@ public class SearchToolbarView extends RelativeLayout implements ToolbarMenuInte
         CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) getLayoutParams();
         return (ToolbarMenuBehavior) params.getBehavior();
     }
+
+    private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
+        @Override
+        public void onLookupWorkOrder(final long workOrderId) {
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    ActivityResultClient.startActivity(
+                            App.get(),
+                            WorkorderActivity.makeIntentShow(App.get(), workOrderId),
+                            R.anim.activity_slide_in_right,
+                            R.anim.activity_slide_out_left);
+                }
+            }, 100);
+            hide();
+        }
+    };
 }

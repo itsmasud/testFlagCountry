@@ -4,23 +4,29 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
+import com.fieldnation.ui.RefreshView;
+import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.ArrayList;
 
@@ -34,9 +40,11 @@ public class SearchEditText extends RelativeLayout {
     private IconFontTextView _searchIconFont;
     private EditText _searchTermEditText;
     private IconFontTextView _micIconFont;
+    private ProgressBar _progressBar;
 
     // Data
     private ActivityResultClient _activityResultClient;
+    private WorkorderClient _workorderClient;
     private Listener _listener;
 
     public SearchEditText(Context context) {
@@ -64,14 +72,18 @@ public class SearchEditText extends RelativeLayout {
         _searchIconFont.setOnClickListener(_search_onClick);
 
         _searchTermEditText = (EditText) findViewById(R.id.search_edittext);
-        _searchTermEditText.setOnEditorActionListener(_onEditor);
-        _searchTermEditText.addTextChangedListener(_searchTermEditText_textChangedListener);
+        _searchTermEditText.setOnEditorActionListener(_searchTermEditText_onEdit);
 
         _micIconFont = (IconFontTextView) findViewById(R.id.right_textview);
         _micIconFont.setOnClickListener(_micIconFont_onClick);
 
+        _progressBar = (ProgressBar) findViewById(R.id.progress_view);
+
         _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
         _activityResultClient.connect(App.get());
+
+        _workorderClient = new WorkorderClient(_workorderClient_listener);
+        _workorderClient.connect(App.get());
     }
 
     public void setListener(Listener listener) {
@@ -92,17 +104,12 @@ public class SearchEditText extends RelativeLayout {
 
         if (_activityResultClient != null && _activityResultClient.isConnected())
             _activityResultClient.disconnect(App.get());
+
+        if (_workorderClient != null && _workorderClient.isConnected())
+            _workorderClient.disconnect(App.get());
     }
 
-    private final View.OnClickListener _search_onClick = new OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            if (_listener != null)
-                _listener.startSearch(_searchTermEditText.getText().toString());
-        }
-    };
-
-    private final TextView.OnEditorActionListener _onEditor = new TextView.OnEditorActionListener() {
+    private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
@@ -113,21 +120,23 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    private final TextWatcher _searchTermEditText_textChangedListener = new TextWatcher() {
+    private final View.OnClickListener _search_onClick = new OnClickListener() {
         @Override
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (_listener != null)
-                _listener.onTextChanged(s);
-        }
-
-        @Override
-        public void afterTextChanged(Editable s) {
+        public void onClick(View v) {
+            doWorkorderLookup();
         }
     };
+
+    private void doWorkorderLookup() {
+        try {
+            _progressBar.setVisibility(VISIBLE);
+            long workOrderId = Long.parseLong(_searchTermEditText.getText().toString());
+            _workorderClient.subGet(workOrderId);
+            WorkorderClient.get(App.get(), workOrderId, false);
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+        }
+    }
 
     private final View.OnClickListener _micIconFont_onClick = new OnClickListener() {
         @Override
@@ -160,9 +169,29 @@ public class SearchEditText extends RelativeLayout {
         }
     };
 
-    public interface Listener {
-        void startSearch(String searchString);
+    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
+        @Override
+        public void onConnected() {
+        }
 
-        void onTextChanged(CharSequence s);
+        @Override
+        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
+            _progressBar.setVisibility(GONE);
+            _workorderClient.unsubGet(workorderId);
+            if (workorder == null || failed) {
+            } else {
+                if (_listener != null)
+                    _listener.onLookupWorkOrder(workorderId);
+//                ActivityResultClient.startActivity(
+//                        App.get(),
+//                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
+//                        R.anim.activity_slide_in_right,
+//                        R.anim.activity_slide_out_left);
+            }
+        }
+    };
+
+    public interface Listener {
+        void onLookupWorkOrder(long workOrderId);
     }
 }

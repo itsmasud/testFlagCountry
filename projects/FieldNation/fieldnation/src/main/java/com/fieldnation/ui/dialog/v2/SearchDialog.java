@@ -42,7 +42,7 @@ public class SearchDialog extends SimpleDialog {
 
     @Override
     public void onStart() {
-        _searchEdit.setListener(_search_editText);
+//        _searchEdit.setListener(_search_editText);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -56,7 +56,7 @@ public class SearchDialog extends SimpleDialog {
         super.onStop();
     }
 
-    private final SearchEditText.Listener _search_editText = new SearchEditText.Listener() {
+/*    private final SearchEditText.Listener _search_editText = new SearchEditText.Listener() {
         @Override
         public void startSearch(String searchString) {
             _workorderClient.subGet(Long.parseLong(_searchEdit.getText()));
@@ -66,7 +66,7 @@ public class SearchDialog extends SimpleDialog {
         @Override
         public void onTextChanged(CharSequence s) {
         }
-    };
+    };*/
 
     private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
         @Override

@@ -1,6 +1,8 @@
 package com.fieldnation.ui.nav;
 
 import android.content.Context;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.CoordinatorLayout.DefaultBehavior;
 import android.util.AttributeSet;
@@ -78,10 +80,30 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
         }
     }
 
-/*    @Override
+    @Override
+    protected void onLayout(boolean changed, int l, int t, int r, int b) {
+        super.onLayout(changed, l, t, r, b);
+
+        if (getBehavior() != null)
+            getBehavior().setListener(_toolbarMenuBehavior_listener);
+    }
+
+    private final ToolbarMenuBehavior.Listener _toolbarMenuBehavior_listener = new ToolbarMenuBehavior.Listener() {
+        @Override
+        public void onHide() {
+            _onHideListener.onHide();
+        }
+
+        @Override
+        public void onShow() {
+            _onShowListener.onShow();
+        }
+    };
+
+    @Override
     protected Parcelable onSaveInstanceState() {
         Bundle bundle = new Bundle();
-        bundle.putInt("VISIBILITY", getVisibility());
+        bundle.putBoolean("SHOWING", isShowing());
         bundle.putParcelable("SUPER", super.onSaveInstanceState());
         return bundle;
     }
@@ -89,12 +111,14 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
-            if (((Bundle) state).containsKey("VISIBILITY"))
-                setVisibility(((Bundle) state).getInt("VISIBILITY") == GONE ? GONE : VISIBLE);
+            if (((Bundle) state).containsKey("SHOWING")) {
+                if (((Bundle) state).getBoolean("SHOWING"))
+                    show();
+            }
             if (((Bundle) state).containsKey("SUPER"))
                 super.onRestoreInstanceState(((Bundle) state).getParcelable("SUPER"));
         }
-    }*/
+    }
 
     public void setOnShowListener(OnShowListener onShowListener) {
         _onShowListener = onShowListener;

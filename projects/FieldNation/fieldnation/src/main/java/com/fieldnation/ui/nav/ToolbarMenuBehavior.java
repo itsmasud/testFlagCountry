@@ -8,6 +8,9 @@ import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.search.SearchEditText;
+
 import java.util.List;
 
 /**
@@ -29,12 +32,18 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
     private ValueAnimator _showingAnimation;
     private ValueAnimator _hidingAnimation;
 
+    private Listener _listener;
+
     public ToolbarMenuBehavior() {
         super();
     }
 
     public ToolbarMenuBehavior(Context context, AttributeSet attrs) {
         super(context, attrs);
+    }
+
+    public void setListener(Listener listener) {
+        _listener = listener;
     }
 
     private void setYPos(View child, int y) {
@@ -47,6 +56,9 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
         if (_mode == MODE_SHOWN || _mode == MODE_ANIMATING)
             return;
         _mode = MODE_ANIMATING;
+
+        if (_listener != null)
+            _listener.onShow();
 
         _showingAnimation = ValueAnimator.ofInt(-child.getHeight(), _appBarBottom);
         _showingAnimation.setDuration(ANIMATION_DURATION);
@@ -84,6 +96,10 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
         if (_mode == MODE_HIDDEN || _mode == MODE_ANIMATING)
             return;
         _mode = MODE_ANIMATING;
+
+        if (_listener != null)
+            _listener.onHide();
+
         _hidingAnimation = ValueAnimator.ofInt(child.getTop(), -child.getHeight());
         _hidingAnimation.setDuration(ANIMATION_DURATION);
         _hidingAnimation.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
@@ -100,6 +116,7 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
             @Override
             public void onAnimationEnd(Animator animation) {
                 _mode = MODE_HIDDEN;
+                misc.hideKeyboard(child);
             }
 
             @Override
@@ -146,5 +163,11 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
         }
         startHidingAnimation(child);
         return super.onDependentViewChanged(parent, child, dependency);
+    }
+
+    public interface Listener {
+        void onHide();
+
+        void onShow();
     }
 }

@@ -105,6 +105,15 @@ public class SearchEditScreen extends RelativeLayout {
         _simpleGps = new SimpleGps(App.get());
 
         populateUi();
+
+        misc.hideKeyboard(this);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        misc.hideKeyboard(this);
+
+        super.onDetachedFromWindow();
     }
 
     public void setSavedSearchParams(SavedSearchParams savedSearchParams) {

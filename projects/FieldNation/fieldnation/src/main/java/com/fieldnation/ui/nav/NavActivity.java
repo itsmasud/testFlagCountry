@@ -85,7 +85,7 @@ public class NavActivity extends AuthSimpleActivity {
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
         _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
 
-        _arrowTextView.startAnimation(_cw);
+        //_arrowTextView.startAnimation(_cw);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
