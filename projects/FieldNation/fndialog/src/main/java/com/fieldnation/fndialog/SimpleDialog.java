@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.fntools.DefaultAnimationListener;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/20/2016.
@@ -123,6 +124,7 @@ public abstract class SimpleDialog implements Dialog {
 
     @Override
     public void dismiss(boolean animate) {
+        misc.hideKeyboard(getView());
         if (animate) {
             _container.clearAnimation();
             _container.startAnimation(_bgFadeOut);
