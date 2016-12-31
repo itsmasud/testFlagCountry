@@ -47,10 +47,6 @@
             android:exported="false"
             android:process=":frontside" />
         <activity
-            android:name=".ui.search.SearchResultsActivity"
-            android:exported="false"
-            android:process=":frontside" />
-        <activity
             android:name=".ui.search.EditSearchActivity"
             android:exported="false"
             android:process=":frontside" />
