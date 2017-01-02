@@ -188,7 +188,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
             // TODO need to present an edit dialog
             dismiss();
             if (_listener != null) {
-                _listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
+//                _listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
+                _listener.onAddShipment(shipment, _taskId);
             }
         }
     };
@@ -224,6 +225,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId);
 
         void onScan();
+
+        void onAddShipment(ShipmentTracking shipment, long taskId);
 
         void onAddShipment(long taskId);
     }
