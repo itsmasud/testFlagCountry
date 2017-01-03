@@ -554,6 +554,7 @@
     <string name="processing_">Processing </string>
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
+    <string name="disclaimer_to_counter_offer">Explanation: Only the counter offer terms previously selected can be enforced. Terms added within this field will be ignored.</string>
     <string name="reason_for_request">Reason For Request (optional)</string>
     <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
