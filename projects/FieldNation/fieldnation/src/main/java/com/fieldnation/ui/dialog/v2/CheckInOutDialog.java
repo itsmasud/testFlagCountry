@@ -56,6 +56,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     public static final String PARAM_WORK_ORDER_ID = "workOrderId";
     public static final String PARAM_LOCATION = "location";
     public static final String PARAM_MAX_DEVICE_NUMBER = "maxnumber";
+    public static final String PARAM_CALENDAR = "PARAM_CALENDAR";
 
     private final static int INVALID_NUMBER = -1;
 
@@ -200,6 +201,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (_durationMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_DURATION, _durationMilliseconds);
 
+        if (_startCalendar!=null)
+            outState.putSerializable(PARAM_CALENDAR, _startCalendar);
+
         super.onSaveDialogState(outState);
     }
 
@@ -210,6 +214,9 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         if (savedState.containsKey(STATE_DURATION))
             _durationMilliseconds = savedState.getLong(STATE_DURATION);
+
+        if (savedState.containsKey(PARAM_CALENDAR))
+            _startCalendar = (Calendar) savedState.getSerializable(PARAM_CALENDAR);
 
         super.onRestoreDialogState(savedState);
 
