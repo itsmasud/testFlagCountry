@@ -15,6 +15,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.DefaultAnimatorListener;
 import com.fieldnation.fntools.UniqueTag;
 
 /**
@@ -142,7 +143,7 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
     }
 
 
-    private final Animator.AnimatorListener _moveToRefresh_listener = new Animator.AnimatorListener() {
+    private final Animator.AnimatorListener _moveToRefresh_listener = new DefaultAnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
             _state = STATE_MOVE_TO_REFRESH;
@@ -156,17 +157,9 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
                 _completeWhenAble = false;
             }
         }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
-        }
     };
 
-    private final Animator.AnimatorListener _hiding_listener = new Animator.AnimatorListener() {
+    private final Animator.AnimatorListener _hiding_listener = new DefaultAnimatorListener() {
         @Override
         public void onAnimationStart(Animator animation) {
             _state = STATE_HIDING;
@@ -176,14 +169,6 @@ public class RefreshView extends RelativeLayout implements OnOverScrollListener 
         public void onAnimationEnd(Animator animation) {
             _state = STATE_IDLE;
             stopSpinning();
-        }
-
-        @Override
-        public void onAnimationCancel(Animator animation) {
-        }
-
-        @Override
-        public void onAnimationRepeat(Animator animation) {
         }
     };
 
