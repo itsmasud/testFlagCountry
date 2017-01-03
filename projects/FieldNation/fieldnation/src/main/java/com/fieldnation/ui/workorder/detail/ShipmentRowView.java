@@ -83,7 +83,10 @@ public class ShipmentRowView extends RelativeLayout {
             return;
 
         if (_shipment.getTrackingId() != null) {
+            _trackingIdTextView.setVisibility(VISIBLE);
             _trackingIdTextView.setText(_shipment.getTrackingId());
+        }else {
+            _trackingIdTextView.setVisibility(GONE);
         }
 
         String carrier = _shipment.getCarrier();

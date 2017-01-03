@@ -691,8 +691,13 @@ public class DeliverableFragment extends WorkorderFragment {
             Log.v(TAG, "onDeliverableCacheEnd");
 
             _tempUri = uri;
-            _tempFile = null;
-            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+//            _tempFile = null;
+
+            if (_tempFile != null) {
+                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
+            } else {
+                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+            }
         }
     };
 }
