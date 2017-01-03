@@ -12,10 +12,8 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.inbox.InboxActivity;
-import com.fieldnation.ui.nav.AdditionalOptionsActivity;
-
-import org.w3c.dom.Text;
 
 public class InboxActionBarButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("InboxActionBarButton");
@@ -26,6 +24,8 @@ public class InboxActionBarButton extends RelativeLayout {
     // data
     private Profile _profile = null;
     private GlobalTopicClient _globalTopicClient;
+    private ProfileClient _profileClient;
+
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -58,12 +58,19 @@ public class InboxActionBarButton extends RelativeLayout {
 
         _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
         _globalTopicClient.connect(App.get());
+
+        _profileClient = new ProfileClient(_profile_listener);
+        _profileClient.connect(App.get());
+
     }
 
     @Override
     protected void onDetachedFromWindow() {
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
             _globalTopicClient.disconnect(App.get());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
+
         super.onDetachedFromWindow();
     }
 
@@ -106,4 +113,21 @@ public class InboxActionBarButton extends RelativeLayout {
         }
         //TODO if is cached consider requesting a new version
     }
+
+    private final ProfileClient.Listener _profile_listener = new ProfileClient.Listener() {
+        @Override
+        public void onConnected() {
+            _profileClient.subGet(false);
+        }
+
+        @Override
+        public void onGet(Profile profile, boolean failed) {
+            if (profile == null || failed)
+                return;
+
+            _profile = profile;
+            refresh();
+        }
+    };
+
 }
