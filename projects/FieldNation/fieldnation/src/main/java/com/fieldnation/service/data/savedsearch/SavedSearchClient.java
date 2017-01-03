@@ -47,6 +47,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                             .type(WorkOrderListType.AVAILABLE.getType())
                             .status(WorkOrderListType.AVAILABLE.getStatuses())
                             .canEdit(true)
+                            .radius(60.0)
                             .title("Available"),
                     new SavedSearchParams(4)
                             .type(WorkOrderListType.CANCELED.getType())
@@ -61,12 +62,12 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                     new SavedSearchParams(6)
                             .type(WorkOrderListType.REQUESTED.getType())
                             .status(WorkOrderListType.REQUESTED.getStatuses())
-                            .canEdit(true)
                             .title("Requested"),
                     new SavedSearchParams(7)
                             .canEdit(true)
                             .type(WorkOrderListType.ROUTED.getType())
                             .status(WorkOrderListType.ROUTED.getStatuses())
+                            .radius(60.0)
                             .title("Routed")
             };
         } else {
@@ -79,6 +80,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                             .type(WorkOrderListType.AVAILABLE.getType())
                             .status(WorkOrderListType.AVAILABLE.getStatuses())
                             .canEdit(true)
+                            .radius(60.0)
                             .title("Available"),
                     new SavedSearchParams(2)
                             .type(WorkOrderListType.CANCELED.getType())
@@ -93,11 +95,11 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
                     new SavedSearchParams(4)
                             .type(WorkOrderListType.REQUESTED.getType())
                             .status(WorkOrderListType.REQUESTED.getStatuses())
-                            .canEdit(true)
                             .title("Requested"),
                     new SavedSearchParams(5)
                             .type(WorkOrderListType.ROUTED.getType())
                             .status(WorkOrderListType.ROUTED.getStatuses())
+                            .radius(60.0)
                             .canEdit(true)
                             .title("Routed")
             };
