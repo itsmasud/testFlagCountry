@@ -8,8 +8,8 @@ import android.support.design.widget.CoordinatorLayout;
 import android.util.AttributeSet;
 import android.view.View;
 
+import com.fieldnation.fntools.DefaultAnimatorListener;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.ui.search.SearchEditText;
 
 import java.util.List;
 
@@ -68,24 +68,12 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
                 setYPos(child, (Integer) animation.getAnimatedValue());
             }
         });
-        _showingAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
+        _showingAnimation.addListener(new DefaultAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
 //                    setMode(MODE_ATTACHED_TO_APPBAR);
                 _mode = MODE_SHOWN;
                 setYPos(child, _appBarBottom);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
             }
         });
         setYPos(child, -child.getHeight());
@@ -108,23 +96,11 @@ public class ToolbarMenuBehavior extends CoordinatorLayout.Behavior {
                 setYPos(child, (Integer) animation.getAnimatedValue());
             }
         });
-        _hidingAnimation.addListener(new Animator.AnimatorListener() {
-            @Override
-            public void onAnimationStart(Animator animation) {
-            }
-
+        _hidingAnimation.addListener(new DefaultAnimatorListener() {
             @Override
             public void onAnimationEnd(Animator animation) {
                 _mode = MODE_HIDDEN;
                 misc.hideKeyboard(child);
-            }
-
-            @Override
-            public void onAnimationCancel(Animator animation) {
-            }
-
-            @Override
-            public void onAnimationRepeat(Animator animation) {
             }
         });
         _hidingAnimation.start();
