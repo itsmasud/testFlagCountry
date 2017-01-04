@@ -3,6 +3,7 @@ package com.fieldnation.ui.workorder.detail;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.telephony.PhoneNumberUtils;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
+
+import java.net.URLEncoder;
 
 /**
  * Created by Michael Carver on 5/26/2015.
@@ -98,14 +101,16 @@ public class ContactTileView extends RelativeLayout {
         @Override
         public void onClick(View v) {
             if (_phone != null) {
-                Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + _phone + _phoneExt));
                 try {
+                    Intent callIntent = new Intent(Intent.ACTION_CALL);
+                    callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone + "," + _phoneExt, "UTF-8")));
+
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
                     } else {
-                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone, Toast.LENGTH_LONG);
+                        ToastClient.toast(getContext(), "Couldn't call number: " + _phone + (_phoneExt == null ? "" : " x" + _phoneExt), Toast.LENGTH_LONG);
                     }
+
                 } catch (Exception ex) {
                     Log.logException(ex);
                 }
