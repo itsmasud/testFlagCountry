@@ -26,6 +26,7 @@ public class ContactTileView extends RelativeLayout {
 
     private String _name;
     private String _phone;
+    private String _phoneExt;
     private String _title;
 
     public ContactTileView(Context context) {
@@ -56,9 +57,10 @@ public class ContactTileView extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    public void setData(String name, String phone, String title) {
+    public void setData(String name, String phone, String phoneExt, String title) {
         _name = name;
         _phone = phone;
+        _phoneExt = phoneExt;
         _title = title;
 
         populateUi();
@@ -78,7 +80,7 @@ public class ContactTileView extends RelativeLayout {
         _nameTextView.setText(_name);
 
         if (_phone != null) {
-            _phoneTextView.setText(_phone);
+            _phoneTextView.setText(_phone + (_phoneExt == null ? "" : " x" + _phoneExt));
             _phoneTextView.setVisibility(VISIBLE);
         } else {
             _phoneTextView.setVisibility(GONE);
@@ -97,7 +99,7 @@ public class ContactTileView extends RelativeLayout {
         public void onClick(View v) {
             if (_phone != null) {
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
-                callIntent.setData(Uri.parse("tel:" + _phone));
+                callIntent.setData(Uri.parse("tel:" + _phone + _phoneExt));
                 try {
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
