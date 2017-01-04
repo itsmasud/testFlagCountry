@@ -13,6 +13,7 @@ import android.view.animation.AnimationUtils;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SavedSearchTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.DialogManager;
@@ -91,10 +92,12 @@ public class NavActivity extends AuthSimpleActivity {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
         }
 
+        SavedSearchTracker.onShow(App.get());
 
         if (_currentSearch != null) {
             _recyclerView.startSearch(_currentSearch);
             NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            SavedSearchTracker.onListChanged(App.get(), _currentSearch);
         } else {
             NavActivity.this.setTitle(misc.capitalize("LOADING..."));
         }
@@ -225,6 +228,7 @@ public class NavActivity extends AuthSimpleActivity {
             _currentSearch = params;
             _recyclerView.startSearch(_currentSearch);
             NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            SavedSearchTracker.onListChanged(App.get(), _currentSearch);
         }
     };
 

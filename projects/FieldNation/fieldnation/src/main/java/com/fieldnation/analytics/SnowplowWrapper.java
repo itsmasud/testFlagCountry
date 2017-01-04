@@ -78,7 +78,23 @@ public class SnowplowWrapper implements TrackerWrapper {
 
                 try {
                     if (obj.has("tag") && obj.getString("tag").equals(SpWorkOrderContext.TAG)) {
-                        list.add(SpWorkOrderContext.fromJason(obj).toSelfDescribingJson(context));
+                        list.add(SpWorkOrderContext.fromJson(obj).toSelfDescribingJson(context));
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                try {
+                    if (obj.has("tag") && obj.getString("tag").equals(SpScreenDisplayUiContext.TAG)) {
+                        list.add(SpScreenDisplayUiContext.fromJson(obj).toSelfDescribingJson(context));
+                    }
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
+
+                try {
+                    if (obj.has("tag") && obj.getString("tag").equals(SpSearchContext.TAG)) {
+                        list.add(SpSearchContext.fromJson(obj).toSelfDescribingJson(context));
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);

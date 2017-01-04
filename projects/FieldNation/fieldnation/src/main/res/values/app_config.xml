@@ -26,6 +26,7 @@
     <string name="sp_namespace">android</string>
     <string name="sp_ui_context_schema_uri">iglu:com.fieldnation/user_interface_context/jsonschema/1-0-0</string>
     <string name="sp_work_order_context_schema_uri">iglu:com.fieldnation/work_order_context/jsonschema/1-0-0</string>
+    <string name="sp_search_context_schema_uri">iglu:com.fieldnation/search_context/jsonschema/1-0-0</string>
 
     <!-- Placeholders -->
     <string name="placeholder_word">Word</string>

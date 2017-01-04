@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SavedSearchTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;
@@ -70,6 +71,7 @@ public class InboxMenuButton extends RelativeLayout {
     private final View.OnClickListener _inbox_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.INBOX);
             InboxActivity.startNew(v.getContext());
         }
     };

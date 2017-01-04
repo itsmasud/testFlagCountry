@@ -8,6 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SavedSearchTracker;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.dialog.v2.SearchDialog;
 import com.fieldnation.ui.search.EditSearchActivity;
@@ -47,6 +48,7 @@ public class SearchMenuButton extends RelativeLayout {
         @Override
         public void onClick(View v) {
             //EditSearchActivity.startNew(getContext());
+            SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.SEARCH);
             SearchDialog.Controller.show(App.get());
         }
     };

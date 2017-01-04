@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.SavedSearchTracker;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.nav.AdditionalOptionsActivity;
 
@@ -48,6 +50,7 @@ public class AdditionalOptionsMenuButton extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.ADDITIONAL_OPTIONS);
             AdditionalOptionsActivity.startNew(getContext());
         }
     };
