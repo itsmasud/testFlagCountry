@@ -249,8 +249,6 @@ public class ContactUsDialog extends DialogFragmentBase {
                 _listener.onOk(_explanationEditText.getText().toString());
             }
 
-            Tracker.screen(App.get(), ScreenName.contactUs());
-
             try {
                 HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
                         (BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim(), null);

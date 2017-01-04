@@ -17,7 +17,14 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementIdentity;
+import com.fieldnation.analytics.ElementType;
+import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.SpUIContext;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -268,7 +275,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
@@ -307,6 +313,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _profile_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Profile")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             ProfileInformationDialog.Controller.show(App.get());
         }
     };
@@ -314,6 +329,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _payment_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Payments")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             PaymentListActivity.startNew(getContext());
         }
     };
@@ -321,6 +345,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _settings_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Settings")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             SettingsActivity.startNew(getContext());
         }
     };
@@ -328,6 +361,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _logout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Log Out")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             AuthTopicClient.removeCommand(getContext());
         }
     };
@@ -335,6 +377,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _contact_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Contact Us")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
         }
     };
@@ -360,6 +411,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _version_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("App Version")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             NewFeaturesDialog.Controller.show(App.get());
         }
     };
@@ -367,6 +427,15 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _legal_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            Tracker.event(App.get(), new Event.Builder()
+                    .addContext(new SpUIContext.Builder()
+                            .page(ScreenName.additionalOptions().name)
+                            .elementIdentity("Legal")
+                            .elementAction(ElementAction.CLICK)
+                            .elementType(ElementType.LIST_ITEM)
+                            .build())
+                    .action(ElementAction.CLICK)
+                    .build());
             SettingsActivity.startNewLegal(getContext());
         }
     };
