@@ -65,7 +65,7 @@ public class ConfirmActivity extends AuthSimpleActivity {
         }
 
         if (_currentSearch == null) {
-            _currentSearch = new SavedSearchParams()
+            _currentSearch = new SavedSearchParams(0)
                     .type(WorkOrderListType.CONFIRM_TOMORROW.getType())
                     .status(WorkOrderListType.CONFIRM_TOMORROW.getStatuses())
                     .title("Confirm Tomorrow's Work");

@@ -102,10 +102,10 @@ public class HintArrayAdapter extends ArrayAdapter<Object> {
         View v = super.getView(position, convertView, parent);
 
         if (v instanceof TextView) {
+            TextView tv = (TextView) v;
             if (position == (getCount() - 1)) {
-                ((TextView) v).setTextColor(getContext().getResources().getColor(R.color.fn_light_text));
-            } else {
-                ((TextView) v).setTextColor(getContext().getResources().getColor(R.color.fn_dark_text));
+                tv.setHint(tv.getText());
+                tv.setText("");
             }
         }
         return v;

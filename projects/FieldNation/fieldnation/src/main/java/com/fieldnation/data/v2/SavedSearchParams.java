@@ -70,9 +70,8 @@ public class SavedSearchParams implements Parcelable {
         }
     }
 
-    public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
-    public ListType type = ListType.AVAILABLE;
-    public Status status[] = new Status[]{Status.PUBLISHED};
+    @Json
+    public int id;
     @Json
     public Double latitude = null;
     @Json
@@ -87,12 +86,37 @@ public class SavedSearchParams implements Parcelable {
     public Boolean remoteWork = null;
     @Json
     public String title;
+    @Json
+    public Boolean canEdit = false;
+
+
+    // Ui stuff for SearchEditScreen
+    @Json
+    public Integer uiLocationSpinner = 1;
+    @Json
+    public String uiLocationText = "";
+    @Json
+    public Integer uiDistanceSpinner = 3;
+
+    // These three are encoded manually in toJson and fromJson
+    public WorkOrderListType woList = WorkOrderListType.AVAILABLE;
+    public ListType type = ListType.AVAILABLE;
+    public Status status[] = new Status[]{Status.PUBLISHED};
 
     public SavedSearchParams() {
     }
 
+    public SavedSearchParams(int id) {
+        this.id = id;
+    }
+
     public SavedSearchParams type(ListType listType) {
         type = listType;
+        return this;
+    }
+
+    public SavedSearchParams canEdit(boolean canEdit) {
+        this.canEdit = canEdit;
         return this;
     }
 
@@ -134,17 +158,21 @@ public class SavedSearchParams implements Parcelable {
             }
         }
 
-        if (latitude != null && longitude != null)
-            params += "&lat=" + latitude + "&lng=" + longitude;
+        if (remoteWork != null)
+            params += "&remote_work=" + (remoteWork ? 1 : 0);
 
-        if (radius != null)
-            params += "&radius=" + radius;
+        if (remoteWork == null || !remoteWork) {
+
+            if (latitude != null && longitude != null)
+                params += "&lat=" + latitude + "&lng=" + longitude;
+
+            if (radius != null)
+                params += "&radius=" + radius;
+        }
 
         if (sort != null && order != null)
             params += "&sort=" + sort + "&order=" + order;
 
-        if (remoteWork != null)
-            params += "&remote_work=" + (remoteWork ? 1 : 0);
 
         return params;
     }
@@ -158,24 +186,33 @@ public class SavedSearchParams implements Parcelable {
             for (int i = 0; i < status.length; i++) {
                 Status s = status[i];
                 key += s.getCallString();
-                if (i < status.length - 1) {
+                if (i < status.length - 1)
                     key += ",";
-                }
             }
         }
 
-        if (latitude != null && longitude != null) {
+        if (latitude != null && longitude != null)
             key += ":" + ((int) (latitude * 1000)) + ":" + ((int) (longitude * 1000));
-        }
 
-        if (radius != null) {
+        if (radius != null)
             key += ":" + ((int) (radius * 1000));
-        }
+
+        if (sort != null && order != null)
+            key += ":" + sort + " " + order;
 
         if (remoteWork != null)
             key += ":remote_work=" + (remoteWork ? 1 : 0);
 
         return key;
+    }
+
+    // TODO make this better
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof SavedSearchParams))
+            return false;
+
+        return toKey().equals(((SavedSearchParams) o).toKey());
     }
 
     /*-*************************************-*/

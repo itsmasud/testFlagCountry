@@ -1,4 +1,4 @@
-package com.fieldnation.ui;
+package com.fieldnation.ui.menu;
 
 import android.content.Context;
 import android.util.AttributeSet;
@@ -8,16 +8,13 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.inbox.InboxActivity;
-import com.fieldnation.ui.nav.AdditionalOptionsActivity;
 
-import org.w3c.dom.Text;
-
-public class InboxActionBarButton extends RelativeLayout {
+public class InboxMenuButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("InboxActionBarButton");
 
     // UI
@@ -25,23 +22,23 @@ public class InboxActionBarButton extends RelativeLayout {
 
     // data
     private Profile _profile = null;
-    private GlobalTopicClient _globalTopicClient;
+    private ProfileClient _profileClient;
 
 	/*-*************************************-*/
     /*-				Life Cycle				-*/
     /*-*************************************-*/
 
-    public InboxActionBarButton(Context context) {
+    public InboxMenuButton(Context context) {
         super(context);
         init();
     }
 
-    public InboxActionBarButton(Context context, AttributeSet attrs) {
+    public InboxMenuButton(Context context, AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public InboxActionBarButton(Context context, AttributeSet attrs, int defStyle) {
+    public InboxMenuButton(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
         init();
     }
@@ -56,14 +53,16 @@ public class InboxActionBarButton extends RelativeLayout {
 
         setOnClickListener(_inbox_onClick);
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
+        _profileClient = new ProfileClient(_profileCLient_listener);
+        _profileClient.connect(App.get());
+
+        refresh();
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
         super.onDetachedFromWindow();
     }
 
@@ -75,14 +74,15 @@ public class InboxActionBarButton extends RelativeLayout {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+    private final ProfileClient.Listener _profileCLient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.subGotProfile();
+            _profileClient.subGet();
+            ProfileClient.get(App.get());
         }
 
         @Override
-        public void onGotProfile(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             _profile = profile;
             refresh();
         }

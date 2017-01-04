@@ -8,7 +8,7 @@
         android:enabled="true"
         android:orderInCategory="300"
         android:title="Search"
-        app:actionViewClass="com.fieldnation.ui.SearchActionBarButton"
+        app:actionViewClass="com.fieldnation.ui.menu.SearchMenuButton"
         app:showAsAction="always" />
 
     <item
@@ -16,7 +16,7 @@
         android:enabled="true"
         android:orderInCategory="400"
         android:title="Inbox"
-        app:actionViewClass="com.fieldnation.ui.InboxActionBarButton"
+        app:actionViewClass="com.fieldnation.ui.menu.InboxMenuButton"
         app:showAsAction="always" />
 
     <item
@@ -24,7 +24,7 @@
         android:enabled="true"
         android:orderInCategory="500"
         android:title="Menu"
-        app:actionViewClass="com.fieldnation.ui.AdditionalOptionsActionBarButton"
+        app:actionViewClass="com.fieldnation.ui.menu.AdditionalOptionsMenuButton"
         app:showAsAction="always" />
 
 </menu>

@@ -8,6 +8,6 @@
         android:enabled="true"
         android:orderInCategory="300"
         android:title="Search"
-        app:actionViewClass="com.fieldnation.ui.SearchActionBarButton"
+        app:actionViewClass="com.fieldnation.ui.menu.SearchMenuButton"
         app:showAsAction="always" />
 </menu>
