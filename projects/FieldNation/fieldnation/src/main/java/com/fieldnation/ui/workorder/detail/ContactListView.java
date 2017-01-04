@@ -79,7 +79,7 @@ public class ContactListView extends RelativeLayout {
 
             if (!misc.isEmptyOrNull(user.getFullName()) || !misc.isEmptyOrNull(user.getPhone())) {
                 ContactTileView tileView = new ContactTileView(getContext());
-                tileView.setData(user.getFullName(), user.getPhone(), "Work Order Manager");
+                tileView.setData(user.getFullName(), user.getPhone(), null, "Work Order Manager");
                 addedContact = true;
                 _listLayout.addView(tileView);
             }
@@ -88,15 +88,10 @@ public class ContactListView extends RelativeLayout {
         if (_workorder.getLocation() != null) {
             Location location = _workorder.getLocation();
             String phone = location.getContactPhone();
-
             if (!misc.isEmptyOrNull(location.getContactName()) || !misc.isEmptyOrNull(phone)) {
                 ContactTileView tileView = new ContactTileView(getContext());
                 addedContact = true;
-                if (!misc.isEmptyOrNull(location.getContactPhoneExt())) {
-                    phone += " x" + location.getContactPhoneExt();
-                }
-                tileView.setData(location.getContactName(),
-                        phone, "Location Contact");
+                tileView.setData(location.getContactName(), location.getContactPhone(), location.getContactPhoneExt(), "Location Contact");
                 _listLayout.addView(tileView);
             }
         }
@@ -119,7 +114,7 @@ public class ContactListView extends RelativeLayout {
                         ContactTileView v = new ContactTileView(getContext());
                         if (contactList.get(i) instanceof WorkorderContacts) {
                             contact = contactList.get(i);
-                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getRole());
+                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getPhoneExt(), contact.getRole());
                         }
                         _views.add(v);
                     }
