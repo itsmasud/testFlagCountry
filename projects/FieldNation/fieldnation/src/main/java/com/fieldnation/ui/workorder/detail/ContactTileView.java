@@ -102,8 +102,13 @@ public class ContactTileView extends RelativeLayout {
         public void onClick(View v) {
             if (_phone != null) {
                 try {
+/*
+                    // TODO Save this for when we upgrade to Android 6+
                     Intent callIntent = new Intent(Intent.ACTION_CALL);
                     callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone + "," + _phoneExt, "UTF-8")));
+*/
+                    Intent callIntent = new Intent(Intent.ACTION_DIAL);
+                    callIntent.setData(Uri.parse("tel:" + URLEncoder.encode(_phone, "UTF-8")));
 
                     if (getContext().getPackageManager().queryIntentActivities(callIntent, 0).size() > 0) {
                         getContext().startActivity(callIntent);
