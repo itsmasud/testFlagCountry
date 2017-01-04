@@ -10,6 +10,6 @@
     android:paddingTop="6dp"
     android:singleLine="true"
     android:textAlignment="inherit"
-    android:textColor="@color/fn_accent_color"
+    android:textColor="@color/spinner_item_text_color_dark"
     android:textColorHint="@color/fn_light_text"
     android:textSize="16sp" />

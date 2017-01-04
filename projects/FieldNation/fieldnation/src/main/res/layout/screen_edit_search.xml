@@ -2,10 +2,35 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/fn_primary"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="16dp"
+    android:theme="@style/FieldNation.Material.ToolBar">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="32dp">
+
+        <TextView
+            style="@style/Text_Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:text="Filters" />
+
+        <Button
+            android:id="@+id/apply_button"
+            style="@style/Material.Button.Flat"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:gravity="right|center_vertical"
+            android:text="APPLY"
+            android:textColor="@color/fn_white_text" />
+    </RelativeLayout>
 
     <TextView
+
         style="@style/Text_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -45,15 +70,4 @@
         android:layout_below="@+id/location_spinner"
         android:layout_marginBottom="16dp" />
 
-    <Button
-        android:id="@+id/clear_button"
-        style="@style/Material.Button.Raised.White"
-        android:layout_gravity="right"
-        android:text="APPLY" />
-
-    <Button
-        android:id="@+id/apply_button"
-        style="@style/Material.Button.Raised.White"
-        android:layout_gravity="right"
-        android:text="APPLY" />
 </LinearLayout>

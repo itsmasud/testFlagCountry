@@ -56,6 +56,8 @@ public class SearchEditScreen extends RelativeLayout {
     // Data
     private SavedSearchParams _savedSearchParams;
 
+    private Listener _listener;
+
     /*-**********************************************-*/
     /*-                  Life Cycle                  -*/
     /*-**********************************************-*/
@@ -82,7 +84,7 @@ public class SearchEditScreen extends RelativeLayout {
 
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _locationSpinner.setAdapter(adapter);
         _locationSpinner.setSelection(1);
@@ -90,7 +92,7 @@ public class SearchEditScreen extends RelativeLayout {
         _otherLocationEditText = (EditText) findViewById(R.id.otherLocation_edittext);
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
-        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
@@ -121,6 +123,10 @@ public class SearchEditScreen extends RelativeLayout {
         populateUi();
     }
 
+    public void setListener(Listener listener) {
+        _listener = listener;
+    }
+
     private void populateUi() {
         if (_distanceSpinner == null)
             return;
@@ -138,6 +144,7 @@ public class SearchEditScreen extends RelativeLayout {
         _savedSearchParams.uiLocationSpinner = _locationSpinner.getSelectedItemPosition();
         _savedSearchParams.uiDistanceSpinner = _distanceSpinner.getSelectedItemPosition();
         _savedSearchParams.radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
+        _savedSearchParams.remoteWork = null;
 
         switch (_locationSpinner.getSelectedItemPosition()) {
             case 0: // profile
@@ -183,7 +190,13 @@ public class SearchEditScreen extends RelativeLayout {
                     }
                 }.executeEx(_otherLocationEditText.getText().toString());
                 break;
+            case 3: // Remote Work
+                _savedSearchParams.remoteWork = true;
+                SavedSearchClient.save(_savedSearchParams);
+                break;
         }
+        if (_listener != null)
+            _listener.onApply();
     }
 
     private final AdapterView.OnItemSelectedListener _locationSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
@@ -193,6 +206,12 @@ public class SearchEditScreen extends RelativeLayout {
                 _otherLocationEditText.setVisibility(VISIBLE);
             else
                 _otherLocationEditText.setVisibility(GONE);
+
+            if (position == 3) {
+                _distanceSpinner.setEnabled(false);
+            } else {
+                _distanceSpinner.setEnabled(true);
+            }
         }
 
         @Override
@@ -206,4 +225,8 @@ public class SearchEditScreen extends RelativeLayout {
             writeSearch();
         }
     };
+
+    public interface Listener {
+        void onApply();
+    }
 }
