@@ -114,7 +114,6 @@ public class ContactListView extends RelativeLayout {
                         ContactTileView v = new ContactTileView(getContext());
                         if (contactList.get(i) instanceof WorkorderContacts) {
                             contact = contactList.get(i);
-                            v.setData(contact.getName(), contact.getPhoneNumber(), contact.getRole());
                             v.setData(contact.getName(), contact.getPhoneNumber(), contact.getPhoneExt(), contact.getRole());
                         }
                         _views.add(v);
