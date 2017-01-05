@@ -255,8 +255,8 @@ public class WorkOrderCard extends RelativeLayout {
 
     private void populatePay() {
         if (_workOrder.getPay() == null || _workOrder.getPay().getType() == null) {
-            _payTypeTextView.setVisibility(GONE);
-            _amountTextView.setVisibility(GONE);
+            _payTypeTextView.setVisibility(INVISIBLE);
+            _amountTextView.setVisibility(INVISIBLE);
             return;
         }
 
@@ -283,8 +283,8 @@ public class WorkOrderCard extends RelativeLayout {
                 _payTypeTextView.setText("/ DEVICE");
                 break;
             default:
-                _payTypeTextView.setVisibility(GONE);
-                _amountTextView.setVisibility(GONE);
+                _payTypeTextView.setVisibility(INVISIBLE);
+                _amountTextView.setVisibility(INVISIBLE);
                 break;
         }
     }
