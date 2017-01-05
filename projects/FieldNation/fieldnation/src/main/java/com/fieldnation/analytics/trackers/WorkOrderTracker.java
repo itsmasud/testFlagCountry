@@ -380,8 +380,15 @@ public class WorkOrderTracker {
         }
     }
 
-    public static void trackOtherEvent() {
-        // TODO ~!!!!!!
+    public static void trackOtherEvent(Context context) {
+        Tracker.event(context, new CustomEvent.Builder()
+                .addContext(new SpUIContext.Builder()
+                        .page(Tab.DETAILS.tab)
+                        .elementAction(ElementAction.CLICK)
+                        .elementIdentity("Directions")
+                        .elementType(ElementType.LIST_ITEM)
+                        .build())
+                .build());
     }
 
     private static void navigationEvent(Context context, Tab tab, Identity identity) {
@@ -412,6 +419,4 @@ public class WorkOrderTracker {
                         .build())
                 .build());
     }
-
-
 }
