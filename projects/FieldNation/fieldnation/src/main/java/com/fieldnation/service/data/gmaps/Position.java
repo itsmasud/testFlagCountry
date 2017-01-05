@@ -5,12 +5,12 @@ package com.fieldnation.service.data.gmaps;
  */
 public class Position {
 
-    public final double longitude;
     public final double latitude;
+    public final double longitude;
 
     public Position(double latitude, double longitude) {
-        this.longitude = longitude;
         this.latitude = latitude;
+        this.longitude = longitude;
     }
 
     @Override
@@ -18,26 +18,26 @@ public class Position {
         return latitude + "," + longitude;
     }
 
-    public static final float DEG2RAD = (float) (Math.PI / 180.0);
-    public static final float RAD2DEG = (float) (180.0 / Math.PI);
-    public static final float PI = (float) Math.PI;
-    public static final float RADIUS_EARTH_MILES = 3963.1676F;
+    public static final double DEG2RAD = (double) (Math.PI / 180.0);
+    public static final double RAD2DEG = (double) (180.0 / Math.PI);
+    public static final double PI = (double) Math.PI;
+    public static final double RADIUS_EARTH_METERS = 6372800;
+    public static final double RADIUS_METERS_TO_MILES = 0.000621371D;
+    public static final double RADIUS_EARTH_MILES = 3959.8731088D;
 
     public int distanceTo(final Position other) {
+        return (int) haversine(latitude, longitude, other.latitude, other.longitude);
+    }
 
-        final double a1 = DEG2RAD * this.latitude;
-        final double a2 = DEG2RAD * this.longitude;
-        final double b1 = DEG2RAD * other.latitude;
-        final double b2 = DEG2RAD * other.longitude;
+    // Source: https://rosettacode.org/wiki/Haversine_formula#Java
+    public static double haversine(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = Math.toRadians(lat2 - lat1);
+        double dLon = Math.toRadians(lon2 - lon1);
+        lat1 = Math.toRadians(lat1);
+        lat2 = Math.toRadians(lat2);
 
-        final double cosa1 = Math.cos(a1);
-        final double cosb1 = Math.cos(b1);
-
-        final double t1 = cosa1 * Math.cos(a2) * cosb1 * Math.cos(b2);
-        final double t2 = cosa1 * Math.sin(a2) * cosb1 * Math.sin(b2);
-        final double t3 = Math.sin(a1) * Math.sin(b1);
-        final double tt = Math.acos(t1 + t2 + t3);
-
-        return (int) (RADIUS_EARTH_MILES * tt);
+        double a = Math.pow(Math.sin(dLat / 2), 2) + Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
+        double c = 2 * Math.asin(Math.sqrt(a));
+        return RADIUS_EARTH_MILES * c;
     }
 }
