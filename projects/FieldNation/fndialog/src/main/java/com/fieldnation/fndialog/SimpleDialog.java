@@ -78,6 +78,7 @@ public abstract class SimpleDialog implements Dialog {
     public void onStart() {
         _clickBarrier.setOnClickListener(_this_onClick);
         _clickBarrier.setClickable(true);
+        _container.setOnClickListener(_this_onClick);
         _container.setClickable(true);
     }
 
@@ -108,8 +109,8 @@ public abstract class SimpleDialog implements Dialog {
         _root.setVisibility(View.VISIBLE);
         _child.setVisibility(View.VISIBLE);
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeIn);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeIn);
             _child.clearAnimation();
             _child.startAnimation(_fgFadeIn);
         }
@@ -127,8 +128,8 @@ public abstract class SimpleDialog implements Dialog {
     public void dismiss(boolean animate) {
         misc.hideKeyboard(getView());
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeOut);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeOut);
             _child.clearAnimation();
             _child.startAnimation(_fgFadeOut);
         } else {

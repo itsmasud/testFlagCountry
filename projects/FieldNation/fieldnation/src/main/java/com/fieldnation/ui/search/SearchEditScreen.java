@@ -8,6 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
@@ -42,29 +44,18 @@ public class SearchEditScreen extends RelativeLayout {
             10.0, 20.0, 40.0, 60.0, 100.0, 150.0, 200.0, 300.0, 500.0
     };
 
-    private static final WorkOrderListType[] TYPES = new WorkOrderListType[]{
-            WorkOrderListType.ASSIGNED,
-            WorkOrderListType.AVAILABLE,
-            WorkOrderListType.CANCELED,
-            WorkOrderListType.COMPLETED,
-            WorkOrderListType.REQUESTED,
-            WorkOrderListType.ROUTED
-    };
-
     // UI
-    private RefreshView _loadingView;
-    private SearchEditText _searchEditText;
-    private HintSpinner _statusSpinner;
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
     private HintSpinner _distanceSpinner;
-    private IconFontButton _actionButton;
+    private Button _applyButton;
 
     // Services
-    private WorkorderClient _workorderClient;
     private SimpleGps _simpleGps;
 
     // Data
+    private SavedSearchParams _savedSearchParams;
+
     private Listener _listener;
 
     /*-**********************************************-*/
@@ -91,22 +82,9 @@ public class SearchEditScreen extends RelativeLayout {
         if (isInEditMode())
             return;
 
-        _loadingView = (RefreshView) findViewById(R.id.loading_view);
-
-        _searchEditText = (SearchEditText) findViewById(R.id.searchedittext);
-        _searchEditText.setListener(_searchEditText_listener);
-
-        _statusSpinner = (HintSpinner) findViewById(R.id.status_spinner);
-        _statusSpinner.setOnItemSelectedListener(_statusSpinner_onItemSelected);
-
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_status, R.layout.view_spinner_item);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
-        _statusSpinner.setAdapter(adapter);
-        _statusSpinner.setSelection(0);
-
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _locationSpinner.setAdapter(adapter);
         _locationSpinner.setSelection(1);
@@ -114,147 +92,112 @@ public class SearchEditScreen extends RelativeLayout {
         _otherLocationEditText = (EditText) findViewById(R.id.otherLocation_edittext);
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
-        _distanceSpinner.setOnItemSelectedListener(_distanceSpinner_onItemSelected);
-        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item);
+        adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item_dark);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
-        _actionButton = (IconFontButton) findViewById(R.id.action_button);
-        _actionButton.setOnClickListener(_action_onClick);
-
-        _workorderClient = new WorkorderClient(_workorderClient_listener);
-        _workorderClient.connect(App.get());
+        _applyButton = (Button) findViewById(R.id.apply_button);
+        _applyButton.setOnClickListener(_apply_onClick);
 
         if (!App.get().isLocationEnabled()) {
             _locationSpinner.setSelection(0);
         }
 
         _simpleGps = new SimpleGps(App.get());
+
+        populateUi();
+
+        misc.hideKeyboard(this);
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
+        misc.hideKeyboard(this);
 
         super.onDetachedFromWindow();
+    }
+
+    public void setSavedSearchParams(SavedSearchParams savedSearchParams) {
+        _savedSearchParams = savedSearchParams;
+        populateUi();
     }
 
     public void setListener(Listener listener) {
         _listener = listener;
     }
 
-    public void reset() {
-        _searchEditText.setText("");
+    private void populateUi() {
+        if (_distanceSpinner == null)
+            return;
+
+        if (_savedSearchParams == null)
+            return;
+
+        _distanceSpinner.setSelection(_savedSearchParams.uiDistanceSpinner);
+        _locationSpinner.setSelection(_savedSearchParams.uiLocationSpinner);
+        _otherLocationEditText.setText(_savedSearchParams.uiLocationText);
     }
 
-    private void doSearch() {
-        if (misc.isEmptyOrNull(_searchEditText.getText())) {
-            // Run search and results page
-            final SavedSearchParams searchParams = new SavedSearchParams()
-                    .type(TYPES[_statusSpinner.getSelectedItemPosition()].getType())
-                    .status(TYPES[_statusSpinner.getSelectedItemPosition()].getStatuses())
-                    .radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
+    private void writeSearch() {
+        // Run search and results page
+        _savedSearchParams.uiLocationSpinner = _locationSpinner.getSelectedItemPosition();
+        _savedSearchParams.uiDistanceSpinner = _distanceSpinner.getSelectedItemPosition();
+        _savedSearchParams.radius(DISTANCES[_distanceSpinner.getSelectedItemPosition()]);
+        _savedSearchParams.remoteWork = null;
 
-            searchParams.woList = TYPES[_statusSpinner.getSelectedItemPosition()];
+        switch (_locationSpinner.getSelectedItemPosition()) {
+            case 0: // profile
+                _savedSearchParams.location(null, null);
+                SavedSearchClient.save(_savedSearchParams);
+                break;
+            case 1: // here
+                _simpleGps.updateListener(new SimpleGps.Listener() {
+                    @Override
+                    public void onLocation(Location location) {
+                        _savedSearchParams.location(location.getLatitude(), location.getLongitude());
+                        _simpleGps.stop();
+                        SavedSearchClient.save(_savedSearchParams);
+                    }
 
-            switch (_locationSpinner.getSelectedItemPosition()) {
-                case 0: // profile
-                    SearchResultsActivity.runSearch(getContext(), searchParams);
-                    break;
-                case 1: // here
-                    _simpleGps.updateListener(new SimpleGps.Listener() {
-                        @Override
-                        public void onLocation(Location location) {
-                            searchParams.location(location.getLatitude(), location.getLongitude());
-                            SearchResultsActivity.runSearch(getContext(), searchParams);
-                            _simpleGps.stop();
+                    @Override
+                    public void onFail() {
+                        ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+                    }
+                }).start(getContext());
+                break;
+            case 2: // other
+                _savedSearchParams.uiLocationText = _otherLocationEditText.getText().toString();
+                new AsyncTaskEx<String, Object, Address>() {
+                    @Override
+                    protected Address doInBackground(String... params) {
+                        try {
+                            List<Address> list = new Geocoder(App.get()).getFromLocationName(params[0], 5);
+
+                            return list.get(0);
+
+                        } catch (Exception ex) {
                         }
+                        return null;
+                    }
 
-                        @Override
-                        public void onFail() {
-                            ToastClient.toast(App.get(), R.string.could_not_get_gps_location, Toast.LENGTH_LONG);
+                    @Override
+                    protected void onPostExecute(Address o) {
+                        if (o != null) {
+                            _savedSearchParams.location(o.getLatitude(), o.getLongitude());
                         }
-                    }).start(getContext());
-                    break;
-                case 2: // other
-                    new AsyncTaskEx<String, Object, Address>() {
-                        @Override
-                        protected Address doInBackground(String... params) {
-                            try {
-                                List<Address> list = new Geocoder(App.get()).getFromLocationName(params[0], 5);
-
-                                return list.get(0);
-
-                            } catch (Exception ex) {
-                            }
-                            return null;
-                        }
-
-                        @Override
-                        protected void onPostExecute(Address o) {
-                            if (o != null) {
-                                searchParams.location(o.getLatitude(), o.getLongitude());
-                            }
-                            SearchResultsActivity.runSearch(getContext(), searchParams);
-                        }
-                    }.executeEx(_otherLocationEditText.getText().toString());
-                    break;
-            }
-        } else {
-            doWorkorderLookup();
+                        SavedSearchClient.save(_savedSearchParams);
+                    }
+                }.executeEx(_otherLocationEditText.getText().toString());
+                break;
+            case 3: // Remote Work
+                _savedSearchParams.remoteWork = true;
+                SavedSearchClient.save(_savedSearchParams);
+                break;
         }
+        if (_listener != null)
+            _listener.onApply();
     }
-
-    private void doWorkorderLookup() {
-        try {
-            _workorderClient.subGet(Long.parseLong(_searchEditText.getText()));
-            WorkorderClient.get(App.get(), Long.parseLong(_searchEditText.getText()), false);
-            _loadingView.startRefreshing();
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        }
-    }
-
-    private final View.OnClickListener _action_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            doSearch();
-        }
-    };
-
-    private final SearchEditText.Listener _searchEditText_listener = new SearchEditText.Listener() {
-        @Override
-        public void startSearch(String searchString) {
-            doSearch();
-        }
-
-        @Override
-        public void onTextChanged(CharSequence s) {
-            if (misc.isEmptyOrNull(s.toString())) {
-                _distanceSpinner.setEnabled(true);
-                _locationSpinner.setEnabled(true);
-                _statusSpinner.setEnabled(true);
-                _otherLocationEditText.setEnabled(true);
-            } else {
-                _distanceSpinner.setEnabled(false);
-                _locationSpinner.setEnabled(false);
-                _statusSpinner.setEnabled(false);
-                _otherLocationEditText.setEnabled(false);
-            }
-        }
-    };
-
-    private final AdapterView.OnItemSelectedListener _statusSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
 
     private final AdapterView.OnItemSelectedListener _locationSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
@@ -263,46 +206,27 @@ public class SearchEditScreen extends RelativeLayout {
                 _otherLocationEditText.setVisibility(VISIBLE);
             else
                 _otherLocationEditText.setVisibility(GONE);
-        }
 
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private final AdapterView.OnItemSelectedListener _distanceSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
-        @Override
-        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        }
-
-        @Override
-        public void onNothingSelected(AdapterView<?> parent) {
-        }
-    };
-
-    private final WorkorderClient.Listener _workorderClient_listener = new WorkorderClient.Listener() {
-        @Override
-        public void onConnected() {
-        }
-
-        @Override
-        public void onGet(long workorderId, Workorder workorder, boolean failed, boolean isCached) {
-            _loadingView.refreshComplete();
-            _workorderClient.unsubGet(workorderId);
-            if (workorder == null || failed) {
-                if (_listener != null)
-                    _listener.showNotAvailableDialog();
+            if (position == 3) {
+                _distanceSpinner.setEnabled(false);
             } else {
-                ActivityResultClient.startActivity(
-                        App.get(),
-                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
-                        R.anim.activity_slide_in_right,
-                        R.anim.activity_slide_out_left);
+                _distanceSpinner.setEnabled(true);
             }
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+        }
+    };
+
+    private final View.OnClickListener _apply_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            writeSearch();
         }
     };
 
     public interface Listener {
-        void showNotAvailableDialog();
+        void onApply();
     }
 }

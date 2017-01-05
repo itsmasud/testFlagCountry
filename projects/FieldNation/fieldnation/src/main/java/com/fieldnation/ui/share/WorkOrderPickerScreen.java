@@ -21,7 +21,7 @@ public class WorkOrderPickerScreen extends FrameLayout {
     private static final String TAG = "WorkOrderPickerScreen";
 
     private static final SavedSearchParams _searchParams =
-            new SavedSearchParams()
+            new SavedSearchParams(0)
                     .type(WorkOrderListType.ATTACHABLE.getType())
                     .status(WorkOrderListType.ATTACHABLE.getStatuses())
                     .title("Select a Work Order");
