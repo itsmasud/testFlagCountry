@@ -240,8 +240,8 @@ public class WorkOrderCard extends RelativeLayout {
                 _distanceTextView.setVisibility(GONE);
             } else {
                 try {
-                    Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
-                    Position myLoc = new Position(_location.getLongitude(), _location.getLatitude());
+                    Position siteLoc = new Position(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                    Position myLoc = new Position(_location.getLatitude(), _location.getLongitude());
                     _locationTextView.setText(location.getCityState());
                     _distanceTextView.setVisibility(VISIBLE);
                     _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi");

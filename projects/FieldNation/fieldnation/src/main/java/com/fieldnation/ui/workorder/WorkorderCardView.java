@@ -563,8 +563,8 @@ public class WorkorderCardView extends RelativeLayout {
                         _leftButton.setVisibility(VISIBLE);
 
                         try {
-                            Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
-                            Position myLoc = new Position(_gpsLocation.getLongitude(), _gpsLocation.getLatitude());
+                            Position siteLoc = new Position(location.getGeo().getLatitude(), location.getGeo().getLongitude());
+                            Position myLoc = new Position(_gpsLocation.getLatitude(), _gpsLocation.getLongitude());
                             _leftButton.setText(myLoc.distanceTo(siteLoc) + " mi");
                         } catch (Exception ex) {
                             //Log.v(TAG, ex);
