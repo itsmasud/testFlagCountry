@@ -15,7 +15,6 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.v2.actions.Action;
@@ -487,6 +486,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -503,6 +503,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onReportProblem();
             }
@@ -512,6 +513,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -528,6 +530,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onNotInterested();
             }
@@ -552,6 +555,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .action(EventAction.REQUEST)
@@ -568,6 +572,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onRequest();
             }
@@ -584,6 +589,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -600,6 +606,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onConfirmAssignment();
             }
@@ -609,6 +616,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -625,6 +633,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onWithdraw();
             }
@@ -634,6 +643,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -650,6 +660,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onViewCounter();
             }
@@ -659,6 +670,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -675,6 +687,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onReadyToGo();
             }
@@ -684,6 +697,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markComplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -700,6 +714,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onMarkComplete();
             }
@@ -709,6 +724,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -725,6 +741,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null) {
                 _listener.onEnterClosingNotes();
             }
@@ -734,6 +751,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -750,6 +768,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null)
                 _listener.onConfirm();
         }
@@ -758,6 +777,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -774,7 +794,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
-
+*/
             if (_listener != null)
                 _listener.onCheckIn();
         }
@@ -783,6 +803,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkinAgain_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -799,7 +820,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
-
+*/
             if (_listener != null)
                 _listener.onCheckIn();
         }
@@ -808,6 +829,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -824,7 +846,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
-
+*/
             if (_listener != null)
                 _listener.onCheckOut();
         }
@@ -833,6 +855,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -849,6 +872,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null)
                 _listener.onAcknowledgeHold();
         }
@@ -857,6 +881,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markIncomplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -873,6 +898,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null)
                 _listener.onMarkIncomplete();
         }
@@ -881,6 +907,7 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
+/*
             Tracker.event(App.get(),
                     new Event.Builder()
                             .category(EventCategory.WORK_ORDER)
@@ -897,6 +924,7 @@ public class ActionBarTopView extends LinearLayout {
                                     .workOrderId(_workorder.getWorkorderId())
                                     .build())
                             .build());
+*/
             if (_listener != null)
                 _listener.onViewPayment();
         }

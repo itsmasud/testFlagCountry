@@ -21,6 +21,7 @@ import com.snowplowanalytics.snowplow.tracker.Emitter;
 import com.snowplowanalytics.snowplow.tracker.Subject;
 import com.snowplowanalytics.snowplow.tracker.Tracker;
 import com.snowplowanalytics.snowplow.tracker.events.ScreenView;
+import com.snowplowanalytics.snowplow.tracker.events.SelfDescribing;
 import com.snowplowanalytics.snowplow.tracker.events.Structured;
 import com.snowplowanalytics.snowplow.tracker.events.Timing;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
@@ -109,10 +110,13 @@ public class SnowplowWrapper implements TrackerWrapper {
 
     @Override
     public void event(Context context, Event event) {
-        event(context, event, buildExtraContexts(context, event.extraContext), null, null, null);
+        if (event instanceof SimpleEvent)
+            event(context, (SimpleEvent) event, buildExtraContexts(context, ((SimpleEvent) event).extraContext), null, null, null);
+        else if (event instanceof CustomEvent)
+            event(context, (CustomEvent) event, buildExtraContexts(context, ((CustomEvent) event).extraContext));
     }
 
-    private void event(Context context, Event event, List<SelfDescribingJson> customContext,
+    private void event(Context context, SimpleEvent event, List<SelfDescribingJson> customContext,
                        Long deviceCreatedTimestamp, Long trueTimestamp, String eventId) {
         Structured.Builder<?> builder = Structured.builder();
         if (event != null) {
@@ -138,6 +142,13 @@ public class SnowplowWrapper implements TrackerWrapper {
 
         Tracker t = getTracker(context);
         t.track(builder.build());
+    }
+
+    private void event(Context context, CustomEvent event, List<SelfDescribingJson> customContext) {
+        Tracker t = getTracker(context);
+        t.track(SelfDescribing.builder()
+                .customContext(customContext)
+                .build());
     }
 
     @Override

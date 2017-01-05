@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
@@ -98,8 +97,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
             _adapter.refreshPages();
 
         setLoading(true);
-
-        Tracker.screen(App.get(), ScreenName.inboxAlerts());
     }
 
     @Override
@@ -124,7 +121,6 @@ public class InboxNotificationListFragment extends Fragment implements TabAction
     @Override
     public void isShowing() {
         Log.v(TAG, "isShowing");
-        Tracker.screen(App.get(), ScreenName.inboxAlerts());
     }
 
     private void setLoading(boolean loading) {

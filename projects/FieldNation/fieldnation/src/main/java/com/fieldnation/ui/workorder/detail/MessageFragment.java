@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
@@ -102,7 +101,7 @@ public class MessageFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
+//        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
         if (_workorder != null) {
             _refreshView.startRefreshing();
             WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);

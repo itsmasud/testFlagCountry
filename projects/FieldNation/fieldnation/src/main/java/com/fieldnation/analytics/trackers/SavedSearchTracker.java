@@ -2,6 +2,7 @@ package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -35,26 +36,24 @@ public class SavedSearchTracker {
     }
 
     public static void onListChanged(Context context, SavedSearchParams savedSearchParams) {
-        Tracker.event(context, new Event.Builder()
+        Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(SCREEN.name)
                         .elementIdentity(savedSearchParams.title + " Saved Search")
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.LIST_ITEM)
                         .build())
-                .action(ElementAction.CLICK)
                 .build());
     }
 
     public static void onClick(Context context, Item item) {
-        Tracker.event(context, new Event.Builder()
+        Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(SCREEN.name)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.BAR_BUTTON)
                         .build())
-                .action(ElementAction.CLICK)
                 .build());
     }
 }

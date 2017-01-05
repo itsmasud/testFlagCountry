@@ -2,6 +2,7 @@ package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -39,14 +40,13 @@ public class InboxTracker {
     }
 
     public static void onClickTab(Context context, Item item) {
-        Tracker.event(context, new Event.Builder()
+        Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(item == Item.MESSAGES ? SCREEN_MESSAGES.name : SCREEN_NOTIFICATIONS.name)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.TAB)
                         .build())
-                .action(ElementAction.CLICK)
                 .build());
 
     }

@@ -32,7 +32,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -62,7 +61,6 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -448,7 +446,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
+//        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
     }
 
     @Override
@@ -1691,14 +1689,13 @@ public class WorkFragment extends WorkorderFragment {
 //                        setLoading(true);
 //                    }
 
-                    if (!TextUtils.isEmpty(task.getPhoneNumber()) && android.util.Patterns.PHONE.matcher(task.getPhoneNumber()).matches()){
+                    if (!TextUtils.isEmpty(task.getPhoneNumber()) && android.util.Patterns.PHONE.matcher(task.getPhoneNumber()).matches()) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         String phNum = "tel:" + task.getPhoneNumber();
                         callIntent.setData(Uri.parse(phNum));
                         startActivity(callIntent);
                         setLoading(true);
-                    }
-                    else {
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setMessage(R.string.dialog_no_number_message);
                         builder.setTitle(R.string.dialog_no_number_title);

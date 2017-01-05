@@ -11,10 +11,7 @@ import android.view.ViewGroup;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
-import com.fieldnation.analytics.trackers.InboxTracker;
 import com.fieldnation.data.profile.Message;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.photo.PhotoClient;

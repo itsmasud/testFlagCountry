@@ -17,7 +17,6 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.workorder.Pay;
@@ -158,6 +157,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
         @Override
         public void onClick(View v) {
             if (_workorder.canCounterOffer() && _workorder.getCounterOfferInfo() == null) {
+/*
                 Tracker.event(App.get(),
                         new Event.Builder()
                                 .category(EventCategory.WORK_ORDER)
@@ -174,6 +174,7 @@ public class PaymentView extends LinearLayout implements WorkorderRenderer {
                                         .workOrderId(_workorder.getWorkorderId())
                                         .build())
                                 .build());
+*/
                 if (_listener != null)
                     _listener.onCounterOffer(_workorder);
             } else if (_workorder.canRequestPayIncrease()) {

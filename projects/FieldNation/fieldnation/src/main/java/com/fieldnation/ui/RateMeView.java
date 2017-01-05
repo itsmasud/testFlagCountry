@@ -16,6 +16,7 @@ import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 
@@ -114,7 +115,7 @@ public class RateMeView extends RelativeLayout {
             switch (_state) {
                 case 0: // Love it
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .label("Love")
@@ -124,7 +125,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 1: // Rate me? You got it
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .action("Rate")
@@ -137,7 +138,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 2: // Feedback? You got it
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .action("Feedback")
@@ -157,7 +158,7 @@ public class RateMeView extends RelativeLayout {
             switch (_state) {
                 case 0: // Like it? Not really
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .label("Hate")
@@ -167,7 +168,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 1: // Rate me? no thanks
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .action("No Rate")
@@ -177,7 +178,7 @@ public class RateMeView extends RelativeLayout {
                     break;
                 case 2: // Feedback? no thanks
                     Tracker.event(App.get(),
-                            new Event.Builder()
+                            new SimpleEvent.Builder()
                                     .tag(AnswersWrapper.TAG)
                                     .category("RateMeCard")
                                     .action("No Feedback")

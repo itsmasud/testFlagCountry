@@ -2,6 +2,7 @@ package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
+import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.SnowplowWrapper;
@@ -36,7 +37,7 @@ public class SearchTracker {
     }
 
     public static void onSearch(Context context, Item item, long workOrderId) {
-        Tracker.event(context, new Event.Builder()
+        Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(SCREEN.name)
                         .elementIdentity(item.identity)
@@ -47,12 +48,11 @@ public class SearchTracker {
                         .name("ID")
                         .value(workOrderId + "")
                         .build())
-                .action(ElementAction.CLICK)
                 .build());
     }
 
     public static void onSearch(Context context, Item item, SavedSearchParams savedSearchParams) {
-        Tracker.event(context, new Event.Builder()
+        Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(SCREEN.name)
                         .elementIdentity(item.identity)
@@ -71,7 +71,6 @@ public class SearchTracker {
                         .name("Distance")
                         .value(savedSearchParams.radius + "")
                         .build())
-                .action(ElementAction.CLICK)
                 .build());
     }
 

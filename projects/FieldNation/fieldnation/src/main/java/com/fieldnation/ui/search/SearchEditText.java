@@ -115,8 +115,13 @@ public class SearchEditText extends RelativeLayout {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                SearchTracker.onSearch(App.get(), _sea);
-                _search_onClick.onClick(v);
+                try {
+                    SearchTracker.onSearch(App.get(),
+                            SearchTracker.Item.KEYBOARD,
+                            Long.parseLong(_searchTermEditText.getText().toString()));
+                } catch (Exception ex) {
+                }
+                doWorkorderLookup();
                 return true;
             }
             return false;
@@ -126,6 +131,12 @@ public class SearchEditText extends RelativeLayout {
     private final View.OnClickListener _search_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            try {
+                SearchTracker.onSearch(App.get(),
+                        SearchTracker.Item.SEARCH_BAR,
+                        Long.parseLong(_searchTermEditText.getText().toString()));
+            } catch (Exception ex) {
+            }
             doWorkorderLookup();
         }
     };

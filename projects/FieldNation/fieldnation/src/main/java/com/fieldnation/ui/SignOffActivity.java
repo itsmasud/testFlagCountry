@@ -16,7 +16,6 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
 import com.fieldnation.analytics.EventProperty;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.profile.Profile;
@@ -129,7 +128,6 @@ public class SignOffActivity extends AuthSimpleActivity {
             if (savedInstanceState == null) {
                 _signOffFrag.setArguments(getIntent().getExtras());
                 getSupportFragmentManager().beginTransaction().add(R.id.container_view, _signOffFrag).commit();
-                Tracker.screen(App.get(), ScreenName.collectSignature());
             }
         } else if (savedInstanceState != null) {
             new AsyncTaskEx<Bundle, Object, Object[]>() {
@@ -225,21 +223,6 @@ public class SignOffActivity extends AuthSimpleActivity {
         if (_completeWorkorder) {
 
             WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
-            Tracker.event(App.get(), new Event.Builder()
-                    .category(EventCategory.WORK_ORDER)
-                    .action(EventAction.MARK_COMPLETE)
-                    .label(_workorder.getWorkorderId() + "")
-                    .property(EventProperty.WORK_ORDER_ID)
-                    .addContext(new SpUIContext.Builder()
-                            .page(ScreenName.collectSignature().name)
-                            .elementAction(ElementAction.CLICK)
-                            .elementType(ElementType.BUTTON)
-                            .elementIdentity(ElementIdentity.SEND)
-                            .build())
-                    .addContext(new SpWorkOrderContext.Builder()
-                            .workOrderId(_workorder.getWorkorderId())
-                            .build())
-                    .build());
             WorkorderClient.get(this, _workorder.getWorkorderId(), false);
         }
 
@@ -253,7 +236,6 @@ public class SignOffActivity extends AuthSimpleActivity {
         @Override
         public void signOffOnClick() {
             _displayMode = DISPLAY_SIGNATURE;
-            Tracker.screen(App.get(), ScreenName.collectSignature());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sigFrag);
@@ -264,7 +246,6 @@ public class SignOffActivity extends AuthSimpleActivity {
         @Override
         public void rejectOnClick() {
             _displayMode = DISPLAY_SORRY;
-            Tracker.screen(App.get(), ScreenName.signatureReject());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _sorryFrag);
@@ -284,7 +265,6 @@ public class SignOffActivity extends AuthSimpleActivity {
             _displayMode = DISPLAY_THANK_YOU;
             _name = name;
             _signatureSvg = signatureSvg;
-            Tracker.screen(App.get(), ScreenName.signatureAccept());
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
             FragmentTransaction trans = getSupportFragmentManager().beginTransaction();
             trans.replace(R.id.container_view, _thankYouFrag);

@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.profile.Notification;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnanalytics.Tracker;
@@ -84,7 +83,7 @@ public class NotificationFragment extends WorkorderFragment {
     @Override
     public void update() {
         Log.v(TAG, "update");
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsAlerts());
+//        Tracker.screen(App.get(), ScreenName.workOrderDetailsAlerts());
         if (getActivity() != null && _workorder != null)
             WorkorderClient.listAlerts(getActivity(), _workorder.getWorkorderId(), false);
     }
