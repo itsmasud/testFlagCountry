@@ -17,7 +17,7 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.analytics.AdditionalOptionsTracker;
+import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;

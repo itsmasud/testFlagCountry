@@ -8,7 +8,7 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.SavedSearchTracker;
+import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.nav.AdditionalOptionsActivity;
 

@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
@@ -195,6 +196,7 @@ public class SearchEditScreen extends RelativeLayout {
                 SavedSearchClient.save(_savedSearchParams);
                 break;
         }
+        SearchTracker.onSearch(App.get(), SearchTracker.Item.SEARCH_BAR, _savedSearchParams);
         if (_listener != null)
             _listener.onApply();
     }

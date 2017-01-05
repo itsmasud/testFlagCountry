@@ -17,7 +17,9 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -113,6 +115,7 @@ public class SearchEditText extends RelativeLayout {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+                SearchTracker.onSearch(App.get(), _sea);
                 _search_onClick.onClick(v);
                 return true;
             }

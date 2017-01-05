@@ -1,7 +1,11 @@
-package com.fieldnation.analytics;
+package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
+import com.fieldnation.analytics.ElementAction;
+import com.fieldnation.analytics.ElementType;
+import com.fieldnation.analytics.SnowplowWrapper;
+import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Screen;

@@ -13,7 +13,7 @@ import android.view.animation.AnimationUtils;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.SavedSearchTracker;
+import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.DialogManager;
@@ -24,7 +24,6 @@ import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
-import com.fieldnation.ui.search.SearchEditText;
 import com.fieldnation.ui.search.SearchResultScreen;
 
 import java.util.List;

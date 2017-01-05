@@ -3,11 +3,17 @@ package com.fieldnation.analytics;
 import android.content.Context;
 
 import com.fieldnation.R;
+import com.fieldnation.analytics.contexts.SpContext;
+import com.fieldnation.analytics.contexts.SpScreenDisplayUiContext;
+import com.fieldnation.analytics.contexts.SpSearchContext;
+import com.fieldnation.analytics.contexts.SpUIContext;
+import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.TrackerWrapper;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
+import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.Stopwatch;
 import com.snowplowanalytics.snowplow.tracker.DevicePlatforms;
@@ -19,6 +25,7 @@ import com.snowplowanalytics.snowplow.tracker.events.Structured;
 import com.snowplowanalytics.snowplow.tracker.events.Timing;
 import com.snowplowanalytics.snowplow.tracker.payload.SelfDescribingJson;
 
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,6 +34,15 @@ import java.util.List;
  */
 public class SnowplowWrapper implements TrackerWrapper {
     public static final String TAG = "SnowplowWrapper";
+
+    private static Hashtable<String, Class<? extends SpContext>> contexts = new Hashtable<>();
+
+    static {
+        contexts.put(SpUIContext.TAG, SpUIContext.class);
+        contexts.put(SpScreenDisplayUiContext.TAG, SpScreenDisplayUiContext.class);
+        contexts.put(SpSearchContext.TAG, SpSearchContext.class);
+        contexts.put(SpWorkOrderContext.TAG, SpWorkOrderContext.class);
+    }
 
     private static Tracker _tracker = null;
 
@@ -69,32 +85,9 @@ public class SnowplowWrapper implements TrackerWrapper {
             for (int i = 0; i < extraContext.size(); i++) {
                 JsonObject obj = extraContext.getJsonObject(i);
                 try {
-                    if (obj.has("tag") && obj.getString("tag").equals(SpUIContext.TAG)) {
-                        list.add(SpUIContext.fromJson(obj).toSelfDescribingJson(context));
-                    }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-                try {
-                    if (obj.has("tag") && obj.getString("tag").equals(SpWorkOrderContext.TAG)) {
-                        list.add(SpWorkOrderContext.fromJson(obj).toSelfDescribingJson(context));
-                    }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-                try {
-                    if (obj.has("tag") && obj.getString("tag").equals(SpScreenDisplayUiContext.TAG)) {
-                        list.add(SpScreenDisplayUiContext.fromJson(obj).toSelfDescribingJson(context));
-                    }
-                } catch (Exception ex) {
-                    Log.v(TAG, ex);
-                }
-
-                try {
-                    if (obj.has("tag") && obj.getString("tag").equals(SpSearchContext.TAG)) {
-                        list.add(SpSearchContext.fromJson(obj).toSelfDescribingJson(context));
+                    if (obj.has("tag") && contexts.containsKey(obj.getString("tag"))) {
+                        Class<? extends SpContext> clazz = contexts.get(obj.getString("tag"));
+                        list.add(Unserializer.unserializeObject(clazz, obj).toSelfDescribingJson(context));
                     }
                 } catch (Exception ex) {
                     Log.v(TAG, ex);

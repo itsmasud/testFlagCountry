@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.InboxTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -91,6 +92,18 @@ public class InboxActivity extends TabActionBarFragmentActivity {
 
     @Override
     public void onProfile(Profile profile) {
+    }
+
+    @Override
+    public void switchFragment(int position) {
+        super.switchFragment(position);
+        if (position == 0) {
+            InboxTracker.onClickTab(App.get(), InboxTracker.Item.MESSAGES);
+            InboxTracker.onShowMessages(App.get());
+        } else {
+            InboxTracker.onClickTab(App.get(), InboxTracker.Item.NOTIFICATIONS);
+            InboxTracker.onShowNotifications(App.get());
+        }
     }
 
     public static void startNew(Context context) {

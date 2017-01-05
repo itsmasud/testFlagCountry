@@ -8,10 +8,9 @@ import android.widget.RelativeLayout;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.SavedSearchTracker;
+import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.ui.dialog.v2.SearchDialog;
-import com.fieldnation.ui.search.EditSearchActivity;
 
 public class SearchMenuButton extends RelativeLayout {
     private final String TAG = UniqueTag.makeTag("SearchActionBarButton");

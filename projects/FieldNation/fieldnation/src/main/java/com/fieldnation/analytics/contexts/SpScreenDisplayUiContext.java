@@ -1,8 +1,10 @@
-package com.fieldnation.analytics;
+package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
+import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
+import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
 import com.fieldnation.fnjson.Unserializer;
@@ -17,40 +19,33 @@ import java.util.Map;
  * Created by mc on 1/4/17.
  */
 
-public class SpSearchContext implements SpContext {
-    public static final String TAG = "SpSearchContext";
-
+public class SpScreenDisplayUiContext implements EventContext, SpContext {
+    public static final String TAG = "SpScreenDisplayUiContext";
 
     @Json
     public String tag = TAG;
     @Json
-    public String name;
-    @Json
-    public String value;
+    public String page;
 
-    public SpSearchContext() {
+    public SpScreenDisplayUiContext() {
     }
 
-    public SpSearchContext(Builder builder) {
-        this.name = builder.name;
-        this.value = builder.value;
+    public SpScreenDisplayUiContext(Builder builder) {
+        this.page = builder.page;
     }
+
 
     @Override
     public SelfDescribingJson toSelfDescribingJson(Context context) {
         Map<String, Object> dataMap = new HashMap<>();
+        dataMap.put("interface", "android");
+        dataMap.put("version", (BuildConfig.VERSION_NAME + "-" + BuildConfig.BUILD_FLAVOR_NAME).trim());
+        dataMap.put("page", "na");
 
-        dataMap.put("parameter_name", "na");
-        dataMap.put("parameter_value", "na");
+        if (page != null)
+            dataMap.put("page", page);
 
-        if (name != null)
-            dataMap.put("parameter_name", name);
-
-        if (value != null)
-            dataMap.put("parameter_value", value);
-
-
-        return new SelfDescribingJson(context.getString(R.string.sp_search_context_schema_uri), dataMap);
+        return new SelfDescribingJson(context.getString(R.string.sp_ui_context_schema_uri), dataMap);
     }
 
     public JsonObject toJson() {
@@ -72,25 +67,18 @@ public class SpSearchContext implements SpContext {
     }
 
     public static class Builder {
-        private String name;
-        private String value;
+        private String page;
 
         public Builder() {
         }
 
-        public SpSearchContext builder() {
-            return new SpSearchContext(this);
+        public SpScreenDisplayUiContext build() {
+            return new SpScreenDisplayUiContext(this);
         }
 
-        public Builder name(String name) {
-            this.name = name;
-            return this;
-        }
-
-        public Builder value(String value) {
-            this.value = value;
+        public Builder page(String page) {
+            this.page = page;
             return this;
         }
     }
-
 }
