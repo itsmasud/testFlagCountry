@@ -104,11 +104,12 @@ public class WorkOrderTracker {
         STANDARD_INSTRUCTIONS_BUTTON("Standard Instructions");
 
         private String identity;
-        private String elementType;
 
         Identity(String identity) {
             this.identity = identity;
+        }
 
+        public String getElementType() {
             switch (this) {
                 case CHECK_IN_ACTION_BUTTON:
                 case CHECK_IN_AGAIN_ACTION_BUTTON:
@@ -136,8 +137,7 @@ public class WorkOrderTracker {
                 case CONFIDENTIAL_INFORMATION_BUTTON:
                 case CUSTOMER_POLICIES_BUTTON:
                 case STANDARD_INSTRUCTIONS_BUTTON:
-                    elementType = ElementType.BUTTON;
-                    break;
+                    return ElementType.BUTTON;
 
                 case TIME_LOG_EDIT_ITEM:
                 case SIGNATURE_EDIT_ITEM:
@@ -158,9 +158,9 @@ public class WorkOrderTracker {
                 case COLLECT_SIGNATURE_TASK:
                 case COLLECT_SHIPMENT_TASK:
                 case DOWNLOAD_FILE_TASK:
-                    elementType = ElementType.LIST_ITEM;
-                    break;
+                    return ElementType.LIST_ITEM;
             }
+            return null;
         }
 
         public static Identity fromTaskType(TaskType taskType) {
@@ -427,7 +427,7 @@ public class WorkOrderTracker {
                         .page(tab.tab)
                         .elementAction(ElementAction.CLICK)
                         .elementIdentity(identity.identity)
-                        .elementType(identity.elementType)
+                        .elementType(identity.getElementType())
                         .build())
                 .build());
     }
@@ -443,7 +443,7 @@ public class WorkOrderTracker {
                         .build())
                 .addContext(new SpUIContext.Builder()
                         .elementIdentity(identity.identity)
-                        .elementType(identity.elementType)
+                        .elementType(identity.getElementType())
                         .elementAction(ElementAction.CLICK)
                         .page(SCREEN_WORK_ORDER_DETAILS.name)
                         .build())

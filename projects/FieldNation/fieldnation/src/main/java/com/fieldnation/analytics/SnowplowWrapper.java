@@ -145,8 +145,10 @@ public class SnowplowWrapper implements TrackerWrapper {
     }
 
     private void event(Context context, CustomEvent event, List<SelfDescribingJson> customContext) {
+        SelfDescribingJson sdj = customContext.remove(0);
         Tracker t = getTracker(context);
         t.track(SelfDescribing.builder()
+                .eventData(sdj)
                 .customContext(customContext)
                 .build());
     }

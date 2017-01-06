@@ -21,7 +21,7 @@
     <string name="tos_date">08/16/2016</string>
 
     <!-- Snowplow -->
-    <string name="sp_collector_uri">collector.fieldnation.com</string>
+    <string name="sp_collector_uri">52.207.41.131:8080</string>
     <string name="sp_app_id">fn:dev</string>
     <string name="sp_namespace">android</string>
     <string name="sp_ui_context_schema_uri">iglu:com.fieldnation/user_interface_context/jsonschema/1-0-0</string>
