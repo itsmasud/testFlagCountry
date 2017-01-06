@@ -132,9 +132,6 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Mutators				-*/
     /*-*************************************-*/
     public void setSelected(int index) {
-        WorkOrderTracker.onTabSwitchEvent(App.get(),
-                WorkOrderTracker.Tab.values()[_currentTab],
-                WorkOrderTracker.Tab.values()[index]);
         _currentTab = index;
         for (int i = 0; i < _buttons.length; i++) {
             _buttons[i].setSelected(i == index);

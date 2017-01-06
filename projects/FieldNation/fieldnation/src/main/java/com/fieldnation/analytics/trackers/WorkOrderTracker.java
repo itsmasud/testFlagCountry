@@ -373,7 +373,6 @@ public class WorkOrderTracker {
                         .elementType(ElementType.TAB)
                         .build())
                 .build());
-
     }
 
     public static void onActionButtonEvent(Context context, ActionButton actionButton, Long workOrderId) {

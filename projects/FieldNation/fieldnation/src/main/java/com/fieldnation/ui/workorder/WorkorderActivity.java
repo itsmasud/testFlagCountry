@@ -13,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
@@ -367,6 +368,8 @@ public class WorkorderActivity extends AuthSimpleActivity {
         @Override
         public void onPageSelected(int position) {
             try {
+                WorkOrderTracker.onTabSwitchEvent(App.get(), WorkOrderTracker.Tab.values()[_currentFragment], WorkOrderTracker.Tab.values()[position]);
+                WorkOrderTracker.onShow(App.get(), WorkOrderTracker.Tab.values()[position], _workorderId);
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
