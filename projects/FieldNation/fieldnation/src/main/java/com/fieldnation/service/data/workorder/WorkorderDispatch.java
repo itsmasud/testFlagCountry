@@ -1,7 +1,6 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.fieldnation.fnjson.JsonArray;

@@ -9,7 +9,9 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fntools.ForLoopRunnable;
@@ -194,6 +196,7 @@ public class TaskListView extends RelativeLayout {
         @Override
         public void onTaskClick(Task task) {
             if (_listener != null) {
+                WorkOrderTracker.onTaskEvent(App.get(), task.getTaskType(), _workorder.getWorkorderId());
                 switch (task.getTaskType()) {
                     case CONFIRM_ASSIGNMENT:
                         _listener.onConfirmAssignment(task);

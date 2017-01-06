@@ -4,8 +4,8 @@ import android.content.Context;
 import android.content.res.Resources;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.NotificationDefinition;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;

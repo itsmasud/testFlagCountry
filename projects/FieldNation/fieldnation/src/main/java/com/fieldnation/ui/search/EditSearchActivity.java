@@ -34,7 +34,7 @@ public class EditSearchActivity extends AuthSimpleActivity {
         setTitle(R.string.work_order_search);
 
         _searchEditScreen = (SearchEditScreen) findViewById(R.id.searchEdit_screen);
-        _searchEditScreen.setListener(_searchEditScreen_listener);
+        //_searchEditScreen.setListener(_searchEditScreen_listener);
 
         _notAvailableDialog = OneButtonDialog.getInstance(getSupportFragmentManager(), TAG + ":notAvailableDialog");
     }
@@ -52,7 +52,7 @@ public class EditSearchActivity extends AuthSimpleActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        _searchEditScreen.reset();
+        //_searchEditScreen.reset();
     }
 
     @Override
@@ -66,13 +66,6 @@ public class EditSearchActivity extends AuthSimpleActivity {
     @Override
     public void onProfile(Profile profile) {
     }
-
-    private final SearchEditScreen.Listener _searchEditScreen_listener = new SearchEditScreen.Listener() {
-        @Override
-        public void showNotAvailableDialog() {
-            _notAvailableDialog.show();
-        }
-    };
 
     public static void startNew(Context context) {
         Log.v(TAG, "startNew");

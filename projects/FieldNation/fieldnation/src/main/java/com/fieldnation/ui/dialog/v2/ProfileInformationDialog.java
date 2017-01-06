@@ -23,7 +23,6 @@ import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.FileUtils;
 import com.fieldnation.fntools.ImageUtils;
 import com.fieldnation.fntools.MemUtils;
 import com.fieldnation.fntools.misc;
@@ -31,7 +30,6 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;

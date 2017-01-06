@@ -17,6 +17,7 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
@@ -27,7 +28,6 @@ import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
-import com.fieldnation.ui.ProfilePicView;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
@@ -141,6 +141,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _profileClient = new ProfileClient(_profileClient_listener);
         _profileClient.connect(App.get());
 
+        AdditionalOptionsTracker.onShow(App.get());
     }
 
     public void setListener(Listener listener) {
@@ -268,7 +269,6 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-
     private final PhotoClient.Listener _photo_listener = new PhotoClient.Listener() {
         @Override
         public void onConnected() {
@@ -307,6 +307,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _profile_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.PROFILE);
             ProfileInformationDialog.Controller.show(App.get());
         }
     };
@@ -314,6 +315,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _payment_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.PAYMENTS);
             PaymentListActivity.startNew(getContext());
         }
     };
@@ -321,6 +323,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _settings_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.SETTINGS);
             SettingsActivity.startNew(getContext());
         }
     };
@@ -328,6 +331,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _logout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
             AuthTopicClient.removeCommand(getContext());
         }
     };
@@ -335,6 +339,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _contact_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.CONTACT_US);
             GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
         }
     };
@@ -360,6 +365,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _version_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
             NewFeaturesDialog.Controller.show(App.get());
         }
     };
@@ -367,6 +373,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _legal_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LEGAL);
             SettingsActivity.startNewLegal(getContext());
         }
     };

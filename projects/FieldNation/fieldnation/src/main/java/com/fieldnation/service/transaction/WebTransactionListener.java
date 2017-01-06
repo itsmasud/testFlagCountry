@@ -3,11 +3,11 @@ package com.fieldnation.service.transaction;
 import android.content.Context;
 import android.widget.Toast;
 
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fnhttpjson.HttpJsonBuilder;
-import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 
 import java.io.EOFException;

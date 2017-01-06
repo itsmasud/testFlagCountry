@@ -21,6 +21,7 @@ public abstract class FullScreenDialog implements Dialog {
 
     // Ui
     private View _root;
+    private View _clickBarrier;
     private RelativeLayout _container;
     private View _child;
 
@@ -38,6 +39,7 @@ public abstract class FullScreenDialog implements Dialog {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         _root = inflater.inflate(R.layout.dialog_fullscreen, container, false);
+        _clickBarrier = _root.findViewById(R.id.click_barrier);
         _container = (RelativeLayout) _root.findViewById(R.id.container);
 
         _child = onCreateView(inflater, context, _container);
@@ -103,8 +105,8 @@ public abstract class FullScreenDialog implements Dialog {
         _root.setVisibility(View.VISIBLE);
         _child.setVisibility(View.VISIBLE);
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeIn);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeIn);
             _child.clearAnimation();
             _child.startAnimation(_fgSlideIn);
         }
@@ -122,8 +124,8 @@ public abstract class FullScreenDialog implements Dialog {
     public void dismiss(boolean animate) {
         misc.hideKeyboard(getView());
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeOut);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeOut);
             _child.clearAnimation();
             _child.startAnimation(_fgSlideOut);
         } else {

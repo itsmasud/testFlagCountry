@@ -1,8 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
-    style="@style/Text_Subhead"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="10dp"
-    android:text="@string/placeholder_phrase"
-    android:textColor="@color/fn_white_text" />
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/title_textview"
+        style="@style/Text_Subhead"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_toLeftOf="@+id/edit_textview"
+        android:padding="10dp"
+        android:text="@string/placeholder_phrase"
+        android:textColor="@color/fn_white_text" />
+
+    <com.fieldnation.ui.IconFontTextView
+        android:id="@+id/edit_textview"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="@string/icon_pencil"
+        android:textColor="@color/fn_white_text"
+        android:visibility="gone" />
+</RelativeLayout>

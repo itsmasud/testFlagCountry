@@ -21,7 +21,6 @@
         android:layout_below="@+id/schedule_textview"
         android:text="@string/disclaimer_to_counter_offer" />
 
-
     <EditText
         android:id="@+id/request_reason_edittext"
         style="@style/EditText"

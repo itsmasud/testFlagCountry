@@ -1,4 +1,4 @@
-package com.fieldnation.analytics;
+package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 
@@ -54,7 +54,7 @@ public class SpWorkOrderContext implements EventContext, SpContext {
         return null;
     }
 
-    public static SpWorkOrderContext fromJason(JsonObject object) {
+    public static SpWorkOrderContext fromJson(JsonObject object) {
         try {
             return Unserializer.unserializeObject(SpWorkOrderContext.class, object);
         } catch (Exception e) {

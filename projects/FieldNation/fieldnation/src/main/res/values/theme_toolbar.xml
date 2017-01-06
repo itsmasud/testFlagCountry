@@ -5,6 +5,7 @@
         <item name="android:textColorPrimary">@color/fn_white_text</item>
         <item name="android:actionMenuTextColor">@color/fn_white_text</item>
         <item name="android:textColor">@color/fn_white_text</item>
+        <item name="colorAccent">@color/fn_brandcolor_80</item>
     </style>
 
     <style name="FieldNation.Material.ToolBar.Blue" parent="Theme.AppCompat.NoActionBar">

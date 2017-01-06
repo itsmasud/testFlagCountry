@@ -24,7 +24,7 @@ public class Tracker {
     public static void event(Context context, Event event) {
         for (int i = 0; i < _wrappers.size(); i++) {
             TrackerWrapper wrapper = _wrappers.get(i);
-            if (event.tag == null || wrapper.getTag().equals(event.tag))
+            if (event.getTag() == null || wrapper.getTag().equals(event.getTag()))
                 wrapper.event(context, event);
         }
     }

@@ -19,8 +19,6 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -248,8 +246,6 @@ public class ContactUsDialog extends DialogFragmentBase {
             if (_listener != null) {
                 _listener.onOk(_explanationEditText.getText().toString());
             }
-
-            Tracker.screen(App.get(), ScreenName.contactUs());
 
             try {
                 HelpClient.sendContactUsFeedback(App.get(), _explanationEditText.getText().toString(), _internalTeamParam, _source, "Version " +
