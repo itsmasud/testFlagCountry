@@ -10,6 +10,7 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;
@@ -57,12 +58,15 @@ public class WorkOrderTracker {
         REQUEST_ACTION_BUTTON("Request Action"),
         NOT_INTERESTED_ACTION_BUTTON("Not Interested Action"),
         READY_TO_GO_ACTION_BUTTON("Ready To Go Action"),
-        REPORT_PROBLEM_ACTION_BUTTON("Report Probem Action"),
+        REPORT_PROBLEM_ACTION_BUTTON("Report Problem Action"),
         WITHDRAW_ACTION_BUTTON("Withdraw Action"),
         VIEW_PAYMENT_ACTION_BUTTON("View Payment Action"),
         RUNNING_LATE_ACTION_BUTTON("Running Late Action"),
         ON_MY_WAY_ACTION_BUTTON("On My Way Action"),
         VIEW_BUNDLE_ACTION_BUTTON("View Bundle Action"),
+        CALL_BUYER_ACTION_BUTTON("Call Buyer Action"),
+        VIEW_MESSAGES_ACTION_BUTTON("View Messages Action"),
+        VIEW_DIRECTIONS_ACTION_BUTTON("View Directions Action"),
 
         // Add
         TIME_LOG_ADD_BUTTON("Time Log Add"),
@@ -286,7 +290,8 @@ public class WorkOrderTracker {
     public enum ActionButton {
         CHECK_IN, CHECK_IN_AGAIN, CHECK_OUT, VIEW_COUNTER_OFFER, COUNTER_OFFER, CLOSING_NOTES,
         CONFIRM, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
-        MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE;
+        MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE,
+        CALL_BUYER, VIEW_MESSAGES, DIRECTIONS;
 
         public Identity getIdentity() {
             switch (this) {
@@ -330,6 +335,12 @@ public class WorkOrderTracker {
                     return Identity.ON_MY_WAY_ACTION_BUTTON;
                 case VIEW_BUNDLE:
                     return Identity.VIEW_BUNDLE_ACTION_BUTTON;
+                case CALL_BUYER:
+                    return Identity.CALL_BUYER_ACTION_BUTTON;
+                case VIEW_MESSAGES:
+                    return Identity.VIEW_MESSAGES_ACTION_BUTTON;
+                case DIRECTIONS:
+                    return Identity.VIEW_DIRECTIONS_ACTION_BUTTON;
             }
             return null;
         }
@@ -385,6 +396,19 @@ public class WorkOrderTracker {
                 navigationEvent(context, Tab.DETAILS, identity);
             }
         }
+    }
+
+    public static void onActionButtonEvent(Context context, String searchTitle, ActionButton actionButton) {
+        Identity identity = actionButton.getIdentity();
+
+        Tracker.event(context, new CustomEvent.Builder()
+                .addContext(new SpUIContext.Builder()
+                        .page(searchTitle + " Saved Search")
+                        .elementAction(ElementAction.CLICK)
+                        .elementIdentity(identity.identity)
+                        .elementType(identity.getElementType())
+                        .build())
+                .build());
     }
 
     public static void onAddEvent(Context context, WorkOrderDetailsSection section) {
