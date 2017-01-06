@@ -76,6 +76,13 @@ public class WorkOrderTracker {
         CLOSING_NOTE_EDIT_ITEM("Closing Note Edit"),
         SHIPMENT_EDIT_ITEM("Shipment Edit"),
 
+        // Delete
+        TIME_LOG_DELETE_ITEM("Time Log Delete"),
+        SIGNATURE_DELETE_ITEM("Signature Delete"),
+        EXPENSE_DELETE_ITEM("Expense Delete"),
+        DISCOUNT_DELETE_ITEM("Discount Delete"),
+        SHIPMENT_DELETE_ITEM("Shipment Delete"),
+
         // Task
         CONFIRM_TASK("Confirm Assignment Task"),
         CLOSING_NOTE_TASK("Closing Note Task"),
@@ -206,20 +213,20 @@ public class WorkOrderTracker {
     }
 
     public enum WorkOrderDetailsSection {
-        TIME_LOGGED, SIGNATURES, EXPENSES, DISCOUNTS, SHIPMENTS;
+        TIME_LOGGED, SIGNATURES, EXPENSES, DISCOUNTS, SHIPMENTS, CLOSING_NOTES;
 
         public Identity getEditIdentity() {
             switch (this) {
                 case TIME_LOGGED:
                     return Identity.TIME_LOG_EDIT_ITEM;
-                case SIGNATURES:
-                    return Identity.SIGNATURE_EDIT_ITEM;
                 case EXPENSES:
                     return Identity.EXPENSE_EDIT_ITEM;
                 case DISCOUNTS:
                     return Identity.DISCOUNT_EDIT_ITEM;
                 case SHIPMENTS:
                     return Identity.SHIPMENT_EDIT_ITEM;
+                case CLOSING_NOTES:
+                    return Identity.CLOSING_NOTE_EDIT_ITEM;
             }
             return null;
         }
@@ -236,6 +243,24 @@ public class WorkOrderTracker {
                     return Identity.DISCOUNT_ADD_BUTTON;
                 case SHIPMENTS:
                     return Identity.SHIPMENT_ADD_BUTTON;
+                case CLOSING_NOTES:
+                    return Identity.CLOSING_NOTE_ADD_BUTTON;
+            }
+            return null;
+        }
+
+        public Identity getDeleteIdentity() {
+            switch (this) {
+                case TIME_LOGGED:
+                    return Identity.TIME_LOG_DELETE_ITEM;
+                case SIGNATURES:
+                    return Identity.SIGNATURE_DELETE_ITEM;
+                case EXPENSES:
+                    return Identity.EXPENSE_DELETE_ITEM;
+                case DISCOUNTS:
+                    return Identity.DISCOUNT_DELETE_ITEM;
+                case SHIPMENTS:
+                    return Identity.SHIPMENT_DELETE_ITEM;
             }
             return null;
         }
@@ -363,6 +388,11 @@ public class WorkOrderTracker {
             navigationEvent(context, Tab.DETAILS, identity);
     }
 
+    public static void onDeleteEvent(Context context, WorkOrderDetailsSection section) {
+        Identity identity = section.getDeleteIdentity();
+        if (identity != null)
+            navigationEvent(context, Tab.DETAILS, identity);
+    }
 
     public static void onDescriptionModalEvent(Context context, ModalType modalType) {
         navigationEvent(context, Tab.DETAILS, modalType.getIdentity());

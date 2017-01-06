@@ -10,18 +10,9 @@ import android.view.Window;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ElementAction;
-import com.fieldnation.analytics.ElementIdentity;
-import com.fieldnation.analytics.ElementType;
-import com.fieldnation.analytics.EventAction;
-import com.fieldnation.analytics.EventCategory;
-import com.fieldnation.analytics.EventProperty;
-import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Event;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.AsyncTaskEx;
@@ -272,6 +263,7 @@ public class SignOffActivity extends AuthSimpleActivity {
             trans.commit();
 
             sendSignature();
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
         }
     };
 
@@ -305,9 +297,6 @@ public class SignOffActivity extends AuthSimpleActivity {
         super.onBackPressed();
     }
 
-    /*-******************************-*/
-    /*-             Web              -*/
-    /*-******************************-*/
     public static void startSignOff(Context context, Workorder workorder) {
         startSignOff(context, workorder, false);
     }

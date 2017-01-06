@@ -7,7 +7,9 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 
 public class WorkorderTabView extends RelativeLayout {
     private static final String TAG = "ui.workorder.WorkorderTabView";
@@ -25,6 +27,7 @@ public class WorkorderTabView extends RelativeLayout {
     private Listener _listener;
     private View[] _buttons;
     private RelativeLayout[] _layouts;
+    private int _currentTab = 0;
 
     /*-*************************************-*/
     /*-				Lifecycle				-*/
@@ -98,17 +101,6 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
-/*
-    private View.OnClickListener _tasksLayout_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setSelected(1);
-            if (_listener != null)
-                _listener.onChange(1);
-        }
-    };
-*/
-
     private final View.OnClickListener _messagesLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -140,6 +132,10 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Mutators				-*/
     /*-*************************************-*/
     public void setSelected(int index) {
+        WorkOrderTracker.onTabSwitchEvent(App.get(),
+                WorkOrderTracker.Tab.values()[_currentTab],
+                WorkOrderTracker.Tab.values()[index]);
+        _currentTab = index;
         for (int i = 0; i < _buttons.length; i++) {
             _buttons[i].setSelected(i == index);
         }
