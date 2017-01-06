@@ -30,7 +30,8 @@ public class WorkOrderTracker {
         MARK_INCOMPLETE("Mark Incomplete"),
         READY_TO_GO("Ready To Go"),
         WITHDRAW("Withdraw"),
-        UNIQUE_TASK("Unique Task");
+        UNIQUE_TASK("Unique Task"),
+        ON_MY_WAY("On My Way");
 
         private String action;
         private String category = EventCategory.WORK_ORDER;
@@ -59,6 +60,9 @@ public class WorkOrderTracker {
         REPORT_PROBLEM_ACTION_BUTTON("Report Probem Action"),
         WITHDRAW_ACTION_BUTTON("Withdraw Action"),
         VIEW_PAYMENT_ACTION_BUTTON("View Payment Action"),
+        RUNNING_LATE_ACTION_BUTTON("Running Late Action"),
+        ON_MY_WAY_ACTION_BUTTON("On My Way Action"),
+        VIEW_BUNDLE_ACTION_BUTTON("View Bundle Action"),
 
         // Add
         TIME_LOG_ADD_BUTTON("Time Log Add"),
@@ -282,7 +286,7 @@ public class WorkOrderTracker {
     public enum ActionButton {
         CHECK_IN, CHECK_IN_AGAIN, CHECK_OUT, VIEW_COUNTER_OFFER, COUNTER_OFFER, CLOSING_NOTES,
         CONFIRM, ACCEPT_WORK, REQUEST, NOT_INTERESTED, REPORT_PROBLEM, VIEW_PAYMENT, ACKNOWLEDGE_HOLD,
-        MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW;
+        MARK_COMPlETE, MARK_INCOMPLETE, READY_TO_GO, WITHDRAW, RUNNING_LATE, ON_MY_WAY, VIEW_BUNDLE;
 
         public Identity getIdentity() {
             switch (this) {
@@ -320,6 +324,12 @@ public class WorkOrderTracker {
                     return Identity.READY_TO_GO_ACTION_BUTTON;
                 case WITHDRAW:
                     return Identity.WITHDRAW_ACTION_BUTTON;
+                case RUNNING_LATE:
+                    return Identity.RUNNING_LATE_ACTION_BUTTON;
+                case ON_MY_WAY:
+                    return Identity.ON_MY_WAY_ACTION_BUTTON;
+                case VIEW_BUNDLE:
+                    return Identity.VIEW_BUNDLE_ACTION_BUTTON;
             }
             return null;
         }
@@ -336,6 +346,8 @@ public class WorkOrderTracker {
                     return Action.READY_TO_GO;
                 case WITHDRAW:
                     return Action.WITHDRAW;
+                case ON_MY_WAY:
+                    return Action.ON_MY_WAY;
             }
             return null;
         }
