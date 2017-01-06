@@ -17,7 +17,7 @@
             android:layout_alignParentLeft="true"
             android:paddingBottom="15dp"
             android:paddingTop="10dp"
-            android:text="@string/dialog_release_note_title"
+            android:text="What's New in Version 3.1.0"
             android:textSize="20dp"
             android:visibility="visible" />
 

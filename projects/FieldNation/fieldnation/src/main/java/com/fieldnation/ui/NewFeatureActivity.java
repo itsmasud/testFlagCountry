@@ -60,7 +60,7 @@ public class NewFeatureActivity extends Activity {
         WebSettings webSettings = null;
 
         if (SHOW_WHATS_NEW) {
-            _addedNewTextView.setVisibility(View.VISIBLE);
+            _addedNewTextView.setVisibility(View.GONE);
             _addedNewWebView.setVisibility(View.VISIBLE);
             webSettings = _addedNewWebView.getSettings();
             _addedNewWebView.loadData(getString(R.string.added_new_feature), "text/html", "utf-8");
