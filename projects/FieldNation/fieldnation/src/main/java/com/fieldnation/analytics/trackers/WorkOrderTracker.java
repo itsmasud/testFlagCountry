@@ -380,7 +380,7 @@ public class WorkOrderTracker {
         }
     }
 
-    public static void trackOtherEvent(Context context) {
+    public static void directionsEvent(Context context) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
                         .page(Tab.DETAILS.tab)
