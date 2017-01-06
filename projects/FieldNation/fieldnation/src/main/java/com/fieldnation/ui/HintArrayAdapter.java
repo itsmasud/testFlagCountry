@@ -6,8 +6,6 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
-import com.fieldnation.R;
-
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;

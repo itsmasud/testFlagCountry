@@ -17,21 +17,13 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fngps.SimpleGps;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
-import com.fieldnation.service.data.v2.workorder.WorkOrderListType;
-import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
-import com.fieldnation.ui.IconFontButton;
-import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.List;
 

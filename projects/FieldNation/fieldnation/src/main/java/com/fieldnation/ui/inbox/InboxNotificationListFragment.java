@@ -10,7 +10,6 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Notification;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.service.data.profile.ProfileClient;

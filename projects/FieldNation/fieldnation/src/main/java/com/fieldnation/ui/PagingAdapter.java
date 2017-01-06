@@ -8,7 +8,6 @@ import android.widget.BaseAdapter;
 import com.fieldnation.App;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 

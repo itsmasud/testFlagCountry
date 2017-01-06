@@ -27,7 +27,6 @@ import com.fieldnation.data.gmaps.GmapsRoute;
 import com.fieldnation.data.workorder.Geo;
 import com.fieldnation.data.workorder.Location;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.SimpleGps;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;

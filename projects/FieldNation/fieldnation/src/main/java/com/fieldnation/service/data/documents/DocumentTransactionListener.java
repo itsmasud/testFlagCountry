@@ -3,11 +3,11 @@ package com.fieldnation.service.data.documents;
 import android.content.Context;
 
 import com.fieldnation.App;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnstore.StoredObject;
 import com.fieldnation.fntools.FileUtils;
-import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionListener;
 

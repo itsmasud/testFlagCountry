@@ -17,7 +17,6 @@ import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.SimpleEvent;
-import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
 
 /**

@@ -9,21 +9,10 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ElementAction;
-import com.fieldnation.analytics.ElementIdentity;
-import com.fieldnation.analytics.ElementType;
-import com.fieldnation.analytics.EventAction;
-import com.fieldnation.analytics.EventCategory;
-import com.fieldnation.analytics.EventProperty;
-import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
-import com.fieldnation.fnanalytics.Event;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fntools.misc;
 
 public class PaymentView extends LinearLayout implements WorkorderRenderer {
