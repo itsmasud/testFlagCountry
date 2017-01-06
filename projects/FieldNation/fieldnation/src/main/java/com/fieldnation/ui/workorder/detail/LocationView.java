@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.data.gmaps.GmapsRoute;
 import com.fieldnation.data.workorder.Geo;
@@ -436,6 +437,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         Intent _intent = new Intent(Intent.ACTION_VIEW);
         _intent.setData(geoLocation);
         if (_intent.resolveActivity(getContext().getPackageManager()) != null) {
+            WorkOrderTracker.directionsEvent(App.get());
             getContext().startActivity(_intent);
         }
     }

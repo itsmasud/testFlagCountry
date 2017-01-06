@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.RightDrawerDialog;
 import com.fieldnation.ui.search.SearchEditScreen;
@@ -42,6 +44,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         super.onStart();
 
         _searchEditScreen.setListener(_searchEditScreen_onApply);
+        SearchTracker.onShow(App.get());
     }
 
     @Override

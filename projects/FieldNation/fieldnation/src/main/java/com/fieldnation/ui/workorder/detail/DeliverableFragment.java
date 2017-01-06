@@ -26,12 +26,10 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -230,7 +228,6 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void update() {
 //        getData();
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsAttachments());
         checkMedia();
 //        executeDelayedAction();
     }

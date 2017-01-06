@@ -2,8 +2,8 @@ package com.fieldnation.service.transaction;
 
 import android.content.Context;
 
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnhttpjson.HttpResult;
+import com.fieldnation.fnlog.Log;
 
 /**
  * Created by mc on 11/17/16.

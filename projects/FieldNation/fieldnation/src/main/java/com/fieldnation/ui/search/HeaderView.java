@@ -14,8 +14,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.dialog.v2.FilterDrawerDialog;
 
-import org.w3c.dom.Text;
-
 /**
  * Created by mc on 12/22/16.
  */

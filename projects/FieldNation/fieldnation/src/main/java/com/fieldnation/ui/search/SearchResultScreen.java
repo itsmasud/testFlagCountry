@@ -226,7 +226,7 @@ public class SearchResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(object, _location);
+            v.setData(object, _location, _searchParams.title);
         }
 
         @Override

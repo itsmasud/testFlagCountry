@@ -26,7 +26,6 @@ import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.LeavingActivity;
 import com.fieldnation.ui.OverScrollListView;

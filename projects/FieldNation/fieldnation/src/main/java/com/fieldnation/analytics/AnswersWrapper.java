@@ -30,33 +30,38 @@ public class AnswersWrapper implements TrackerWrapper {
         if (!Debug.isCrashlyticsRunning())
             return;
 
-        if (event != null && event.category != null) {
-            CustomEvent customEvent = new CustomEvent(event.category);
-            if (event.action != null) {
-                customEvent.putCustomAttribute("Actions", event.action);
+        if (event == null || !(event instanceof SimpleEvent))
+            return;
 
-                if (event.label != null)
-                    customEvent.putCustomAttribute(event.action, event.label);
+        SimpleEvent simpleEvent = (SimpleEvent) event;
+
+        if (simpleEvent.category != null) {
+            CustomEvent customEvent = new CustomEvent(simpleEvent.category);
+            if (simpleEvent.action != null) {
+                customEvent.putCustomAttribute("Actions", simpleEvent.action);
+
+                if (simpleEvent.label != null)
+                    customEvent.putCustomAttribute(simpleEvent.action, simpleEvent.label);
                 else
-                    customEvent.putCustomAttribute(event.action, 1);
+                    customEvent.putCustomAttribute(simpleEvent.action, 1);
 
-            } else if (event.label != null)
-                customEvent.putCustomAttribute("Labels", event.value);
+            } else if (simpleEvent.label != null)
+                customEvent.putCustomAttribute("Labels", simpleEvent.value);
 
-            if (event.property != null) {
-                customEvent.putCustomAttribute("Properties", event.property);
+            if (simpleEvent.property != null) {
+                customEvent.putCustomAttribute("Properties", simpleEvent.property);
 
-                if (event.value != null)
-                    customEvent.putCustomAttribute(event.property, event.value);
+                if (simpleEvent.value != null)
+                    customEvent.putCustomAttribute(simpleEvent.property, simpleEvent.value);
 
-                if (event.label != null)
-                    customEvent.putCustomAttribute(event.property, event.label);
+                if (simpleEvent.label != null)
+                    customEvent.putCustomAttribute(simpleEvent.property, simpleEvent.label);
 
-                if (event.value == null && event.label == null)
-                    customEvent.putCustomAttribute(event.property, 1);
+                if (simpleEvent.value == null && simpleEvent.label == null)
+                    customEvent.putCustomAttribute(simpleEvent.property, 1);
 
-            } else if (event.value != null)
-                customEvent.putCustomAttribute("Value", event.value);
+            } else if (simpleEvent.value != null)
+                customEvent.putCustomAttribute("Value", simpleEvent.value);
 
             Answers.getInstance().logCustom(customEvent);
         }

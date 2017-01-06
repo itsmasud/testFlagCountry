@@ -13,20 +13,17 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.RefreshView;
-import com.fieldnation.ui.workorder.WorkorderActivity;
 
 import java.util.ArrayList;
 
@@ -113,7 +110,13 @@ public class SearchEditText extends RelativeLayout {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
             if (actionId == EditorInfo.IME_ACTION_SEARCH) {
-                _search_onClick.onClick(v);
+                try {
+                    SearchTracker.onSearch(App.get(),
+                            SearchTracker.Item.KEYBOARD,
+                            Long.parseLong(_searchTermEditText.getText().toString()));
+                } catch (Exception ex) {
+                }
+                doWorkorderLookup();
                 return true;
             }
             return false;
@@ -123,6 +126,12 @@ public class SearchEditText extends RelativeLayout {
     private final View.OnClickListener _search_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            try {
+                SearchTracker.onSearch(App.get(),
+                        SearchTracker.Item.SEARCH_BAR,
+                        Long.parseLong(_searchTermEditText.getText().toString()));
+            } catch (Exception ex) {
+            }
             doWorkorderLookup();
         }
     };

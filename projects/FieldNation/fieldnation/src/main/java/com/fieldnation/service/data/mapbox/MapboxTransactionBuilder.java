@@ -3,8 +3,8 @@ package com.fieldnation.service.data.mapbox;
 import android.content.Context;
 
 import com.fieldnation.R;
-import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.WebTransaction;
 import com.fieldnation.service.transaction.WebTransactionService;

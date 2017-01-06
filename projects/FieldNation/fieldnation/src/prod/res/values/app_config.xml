@@ -14,6 +14,7 @@
     <integer name="ga_local_dispatch_period">60</integer>
     <bool name="ga_dry_run">false</bool>
     <string name="sp_app_id">fn:live</string>
+    <string name="sp_collector_uri">collector.fieldnation.com</string>
 
     <string name="placeholder_word"></string>
     <string name="placeholder_phrase"></string>

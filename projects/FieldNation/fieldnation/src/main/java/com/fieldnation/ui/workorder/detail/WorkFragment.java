@@ -17,11 +17,7 @@ import android.os.Parcelable;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
-import android.text.SpannableString;
 import android.text.TextUtils;
-import android.text.style.URLSpan;
-import android.text.util.Linkify;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,7 +28,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -47,7 +43,6 @@ import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderStatus;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fngps.GpsLocationService;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -62,7 +57,6 @@ import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
-import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
 import com.fieldnation.ui.OverScrollView;
@@ -448,7 +442,7 @@ public class WorkFragment extends WorkorderFragment {
 
     @Override
     public void update() {
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
+//        Tracker.screen(App.get(), ScreenName.workOrderDetailsWork());
     }
 
     @Override
@@ -1364,6 +1358,7 @@ public class WorkFragment extends WorkorderFragment {
     private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
         @Override
         public void onChangeClosingNotes(String closingNotes) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
             showClosingNotesDialog();
         }
     };
@@ -1411,6 +1406,7 @@ public class WorkFragment extends WorkorderFragment {
     private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
         @Override
         public void addExpense() {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
             _expenseDialog.show(true);
         }
 
@@ -1426,6 +1422,7 @@ public class WorkFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
                             WorkorderClient.deleteExpense(App.get(),
                                     _workorder.getWorkorderId(), expense.getExpenseId());
                         }
@@ -1445,6 +1442,7 @@ public class WorkFragment extends WorkorderFragment {
     private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
         @Override
         public void addDiscount() {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
             _discountDialog.show(getString(R.string.dialog_add_discount_title));
         }
 
@@ -1460,6 +1458,7 @@ public class WorkFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
                             WorkorderClient.deleteDiscount(App.get(),
                                     _workorder.getWorkorderId(), discount.getDiscountId());
                         }
@@ -1545,6 +1544,7 @@ public class WorkFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
                             WorkorderClient.deleteSignature(App.get(),
                                     _workorder.getWorkorderId(), signature.getSignatureId());
                         }
@@ -1580,16 +1580,19 @@ public class WorkFragment extends WorkorderFragment {
     private final WorkSummaryView.Listener _summaryView_listener = new WorkSummaryView.Listener() {
         @Override
         public void showConfidentialInfo(String body) {
+            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CONFIDENTIAL_INFORMATION);
             _termsScrollingDialog.show(getString(R.string.dialog_confidential_information_title), body);
         }
 
         @Override
         public void showCustomerPolicies(String body) {
+            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.CUSTOMER_POLICIES);
             _termsScrollingDialog.show(getString(R.string.dialog_policy_title), body);
         }
 
         @Override
         public void showStandardInstructions(String body) {
+            WorkOrderTracker.onDescriptionModalEvent(App.get(), WorkOrderTracker.ModalType.STANDARD_INSTRUCTIONS);
             _termsScrollingDialog.show(getString(R.string.dialog_standard_instruction_title), body);
         }
     };
@@ -1691,14 +1694,13 @@ public class WorkFragment extends WorkorderFragment {
 //                        setLoading(true);
 //                    }
 
-                    if (!TextUtils.isEmpty(task.getPhoneNumber()) && android.util.Patterns.PHONE.matcher(task.getPhoneNumber()).matches()){
+                    if (!TextUtils.isEmpty(task.getPhoneNumber()) && android.util.Patterns.PHONE.matcher(task.getPhoneNumber()).matches()) {
                         Intent callIntent = new Intent(Intent.ACTION_DIAL);
                         String phNum = "tel:" + task.getPhoneNumber();
                         callIntent.setData(Uri.parse(phNum));
                         startActivity(callIntent);
                         setLoading(true);
-                    }
-                    else {
+                    } else {
                         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                         builder.setMessage(R.string.dialog_no_number_message);
                         builder.setTitle(R.string.dialog_no_number_title);
@@ -1760,20 +1762,18 @@ public class WorkFragment extends WorkorderFragment {
     private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
         @Override
         public void addWorklog(boolean showdevice) {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
             _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
         }
 
         @Override
         public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
             _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
         }
 
         @Override
         public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-//            WorkorderClient.deleteTimeLog(GlobalState.getContext(), workorder.getWorkorderId(),
-//                    loggedWork.getLoggedHoursId());
-//            setLoading(true);
-
             final long workorderID = workorder.getWorkorderId();
             final long loggedHoursID = loggedWork.getLoggedHoursId();
 
@@ -1782,6 +1782,7 @@ public class WorkFragment extends WorkorderFragment {
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
                             WorkorderClient.deleteTimeLog(App.get(), workorderID,
                                     loggedHoursID);
                             setLoading(true);

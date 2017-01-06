@@ -5,4 +5,8 @@ package com.fieldnation.analytics;
  */
 public interface ElementType {
     String BUTTON = "Button";
+    String LIST_ITEM = "List Item";
+    String TAB = "Tab";
+    String BAR_BUTTON = "Bar Button";
+    String KEYBOARD_BUTTON = "Keyboard Button";
 }

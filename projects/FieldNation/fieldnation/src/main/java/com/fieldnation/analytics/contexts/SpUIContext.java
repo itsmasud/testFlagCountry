@@ -1,4 +1,4 @@
-package com.fieldnation.analytics;
+package com.fieldnation.analytics.contexts;
 
 import android.content.Context;
 

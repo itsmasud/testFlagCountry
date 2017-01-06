@@ -29,6 +29,7 @@ import com.fieldnation.R;
 import com.fieldnation.analytics.AnswersWrapper;
 import com.fieldnation.analytics.EventAction;
 import com.fieldnation.analytics.EventCategory;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.data.v2.actions.Action;
 import com.fieldnation.fnanalytics.Event;
 import com.fieldnation.fnanalytics.Tracker;
@@ -52,7 +53,7 @@ public class MyGcmListenerService extends GcmListenerService {
     //private static final long[] star_wars = new long[]{0, 500, 110, 500, 110, 450, 110, 200, 110, 170, 40, 450, 110, 200, 110, 170, 40, 500};
     private static final long[] default_ringtone = new long[]{0, 500};
 
-    private static final Event VISITED_EVENT = new Event.Builder()
+    private static final Event VISITED_EVENT = new SimpleEvent.Builder()
             .category(EventCategory.GCM)
             .action(EventAction.PUSH_NOTIFICATION_INTERACTED)
             .build();
@@ -77,7 +78,7 @@ public class MyGcmListenerService extends GcmListenerService {
         Log.d(TAG, "Message: " + message);
 
         Tracker.event(this,
-                new Event.Builder()
+                new SimpleEvent.Builder()
                         .tag(AnswersWrapper.TAG)
                         .category(EventCategory.GCM)
                         .action(EventAction.PUSH_NOTIFICATION)

@@ -16,7 +16,6 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
-import com.fieldnation.ui.ncns.ConfirmActivity;
 
 /**
  * Created by Michael on 8/31/2016.
