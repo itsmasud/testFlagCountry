@@ -33,6 +33,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     // State
     private static final String STATE_TASKID = "STATE_TASKID";
     private static final String STATE_TITLE = "STATE_TITLE";
+    private static final String STATE_SHIPMENT_DESCRIPTION = "STATE_SHIPMENT_DESCRIPTION";
     private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
     private static final String STATE_DIRECTION_SELECTION = "STATE_DIRECTION_SELECTION";
 
@@ -57,6 +58,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private boolean _clear = false;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
+    private String _shipmentDescription;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
@@ -99,6 +101,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         if (_taskId != -1)
             outState.putLong(STATE_TASKID, _taskId);
+
+        if (_shipmentDescription != null)
+            outState.putString(STATE_SHIPMENT_DESCRIPTION, _shipmentDescription);
 
         if (_carrierPosition != -1)
             outState.putInt(STATE_CARRIER_SELECTION, _carrierPosition);
@@ -155,6 +160,9 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_TASKID))
                 _taskId = savedInstanceState.getLong(STATE_TASKID);
 
+            if (savedInstanceState.containsKey(STATE_SHIPMENT_DESCRIPTION))
+                _shipmentDescription = savedInstanceState.getParcelable(STATE_SHIPMENT_DESCRIPTION);
+
             if (savedInstanceState.containsKey(STATE_TITLE)) {
                 _title = savedInstanceState.getString(STATE_TITLE);
                 _titleTextView.setText(_title);
@@ -208,6 +216,14 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         show();
     }
 
+    public void show(CharSequence title, String shipmentDescription, long taskId) {
+        _title = (String) title;
+        _shipmentDescription = shipmentDescription;
+        _taskId = taskId;
+        _clear = true;
+        show();
+    }
+
     private void populateUi() {
         if (_cancelButton == null)
             return;
@@ -215,6 +231,11 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         switchCarrierTextEdit();
 
         getCarrierSpinner();
+
+        if (_shipmentDescription != null) {
+            _descriptionEditText.setText(_shipmentDescription);
+        }
+
         getDirectionSpinner();
     }
 
@@ -225,7 +246,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                 break;
             case CARRIER_FEDEX:
             case CARRIER_UPS:
-            case CARRIER_USPS: getCarrierSpinner().setSelection(_carrierPosition);
+            case CARRIER_USPS:
+                getCarrierSpinner().setSelection(_carrierPosition);
             default:
                 _carrierLayout.setVisibility(View.GONE);
                 break;

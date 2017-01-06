@@ -1160,6 +1160,11 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
+        public void onAddShipment(ShipmentTracking shipment, long taskId) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), taskId);
+        }
+
+        @Override
         public void onAddShipment(long taskId) {
             _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), taskId);
         }
