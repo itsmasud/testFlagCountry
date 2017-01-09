@@ -24,6 +24,7 @@ import com.fieldnation.data.workorder.Pay;
 import com.fieldnation.data.workorder.Schedule;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ISO8601;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -42,7 +43,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private static final String STATE_COUNTER_SCHEDULE = "STATE_COUNTER_SCHEDULE";
     private static final String STATE_COUNTER_REASON = "STATE_COUNTER_REASON";
     private static final String STATE_EXPIRES = "STATE_EXPIRES";
-    private static final String STATE_EXPIRATION_IN_SECOND = "STATE_EXPIRATION_IN_SECOND";
+    private static final String STATE_EXPIRATION_DATE = "STATE_EXPIRATION_DATE";
     private static final String STATE_TAC = "STATE_TAC";
 
     // Ui
@@ -69,9 +70,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
     private Schedule _counterSchedule;
     private String _counterReason;
     private boolean _expires = false;
-//    private String _expirationDate;
-    private int _expiresAfterInSecond = -1;
-    private int _expireDuration = -1;
+    private String _expirationDate;
 
     // Data
     private boolean _tacAccpet;
@@ -112,8 +111,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
             if (savedInstanceState.containsKey(STATE_EXPIRES))
                 _expires = savedInstanceState.getBoolean(STATE_EXPIRES);
 
-            if (savedInstanceState.containsKey(STATE_EXPIRATION_IN_SECOND))
-                _expiresAfterInSecond = savedInstanceState.getInt(STATE_EXPIRATION_IN_SECOND);
+            if (savedInstanceState.containsKey(STATE_EXPIRATION_DATE))
+                _expirationDate = savedInstanceState.getString(STATE_EXPIRATION_DATE);
 
             if (savedInstanceState.containsKey(STATE_TAC))
                 _tacAccpet = savedInstanceState.getBoolean(STATE_TAC);
@@ -147,9 +146,8 @@ public class CounterOfferDialog extends DialogFragmentBase {
             outState.putParcelable(STATE_COUNTER_SCHEDULE, _counterSchedule);
 
         if (_reasonView != null) {
-            Log.e(TAG, "_reasonView.getExpiration(): " + _reasonView.getExpiration());
             outState.putString(STATE_COUNTER_REASON, _reasonView.getReason());
-            outState.putInt(STATE_EXPIRATION_IN_SECOND, _reasonView.getExpiration());
+            outState.putString(STATE_EXPIRATION_DATE, _reasonView.getExpiration());
         }
 
         super.onSaveInstanceState(outState);
@@ -283,7 +281,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
 
         _expenseView.setData(_workorder, _expenses);
 
-        _reasonView.setCounterOffer(_counterReason, _expires, _expiresAfterInSecond);
+        _reasonView.setCounterOffer(_counterReason, _expires, _expirationDate);
     }
 
     public void setListener(Listener listener) {
@@ -301,7 +299,7 @@ public class CounterOfferDialog extends DialogFragmentBase {
         _counterSchedule = null;
         _counterReason = null;
         _expires = false;
-//        _expirationDate = null;
+        _expirationDate = null;
 
         if (info != null) {
             if (info.getPay() != null) {
@@ -321,12 +319,11 @@ public class CounterOfferDialog extends DialogFragmentBase {
             _counterReason = info.getExplanation();
             _expires = info.getExpires();
             if (_expires) {
-//                try {
-//                    _expirationDate = info.getExpiresAfter();
-                    _expiresAfterInSecond = info.getExpiresAfterInSecond();
-//                } catch (Exception ex) {
-//                    Log.v(TAG, ex);
-//                }
+                try {
+                    _expirationDate = info.getExpiresAfter();
+                } catch (Exception ex) {
+                    Log.v(TAG, ex);
+                }
             }
         }
 
@@ -374,9 +371,9 @@ public class CounterOfferDialog extends DialogFragmentBase {
         }
 
         @Override
-        public void onExpirationChange(boolean expires, int second) {
+        public void onExpirationChange(boolean expires, String date) {
             _expires = expires;
-            _expireDuration = second;
+            _expirationDate = date;
         }
     };
 
@@ -513,19 +510,17 @@ public class CounterOfferDialog extends DialogFragmentBase {
                         exp[i] = _expenses.get(i);
                     }
 
-//                    int seconds = -1;
-//                    if (_expires) {
-//                        try {
-//                            seconds = (int) (ISO8601.toUtc(_expirationDate)
-//                                    - System.currentTimeMillis()) / 1000;
-//                        } catch (Exception ex) {
-//                            Log.v(TAG, ex);
-//                        }
-//                    }
+                    int seconds = -1;
+                    if (_expires) {
+                        try {
+                            seconds = (int) (ISO8601.toUtc(_expirationDate)
+                                    - System.currentTimeMillis()) / 1000;
+                        } catch (Exception ex) {
+                            Log.v(TAG, ex);
+                        }
+                    }
 
-                    Log.e(TAG, "_expireDuration: "+ _expireDuration );
-
-                    _listener.onOk(_workorder, _counterReason, _expires, _expireDuration, _counterPay, _counterSchedule, exp);
+                    _listener.onOk(_workorder, _counterReason, _expires, seconds, _counterPay, _counterSchedule, exp);
                     _tacAccpet = false;
                     dismiss();
                 }
