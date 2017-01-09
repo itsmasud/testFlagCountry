@@ -15,12 +15,13 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.v2.Contact;
 import com.fieldnation.data.v2.Pay;
 import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.data.workorder.WorkorderStatus;
+import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.ISO8601;
@@ -54,6 +55,7 @@ public class WorkOrderCard extends RelativeLayout {
     // Ui
     private TextView _amountTextView;
     private TextView _payTypeTextView;
+    private TextView _statusTextView;
     private TextView _workTypeTextView;
     private TextView _titleTextView;
     private TextView _dateTextView;
@@ -70,7 +72,6 @@ public class WorkOrderCard extends RelativeLayout {
     // Data
     private WorkOrder _workOrder;
     private Location _location;
-    private String _savedSearchTitle;
 
     public WorkOrderCard(Context context) {
         super(context);
@@ -95,6 +96,7 @@ public class WorkOrderCard extends RelativeLayout {
 
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
+        _statusTextView = (TextView) findViewById(R.id.status_textview);
         _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
@@ -122,10 +124,9 @@ public class WorkOrderCard extends RelativeLayout {
         setOnClickListener(_this_onClick);
     }
 
-    public void setData(WorkOrder workOrder, Location location, String savedSearchTitle) {
+    public void setData(WorkOrder workOrder, Location location) {
         _workOrder = workOrder;
         _location = location;
-        _savedSearchTitle = savedSearchTitle;
 
         populateUi();
     }
@@ -243,8 +244,8 @@ public class WorkOrderCard extends RelativeLayout {
                 _distanceTextView.setVisibility(GONE);
             } else {
                 try {
-                    Position siteLoc = new Position(location.getGeo().getLatitude(), location.getGeo().getLongitude());
-                    Position myLoc = new Position(_location.getLatitude(), _location.getLongitude());
+                    Position siteLoc = new Position(location.getGeo().getLongitude(), location.getGeo().getLatitude());
+                    Position myLoc = new Position(_location.getLongitude(), _location.getLatitude());
                     _locationTextView.setText(location.getCityState());
                     _distanceTextView.setVisibility(VISIBLE);
                     _distanceTextView.setText(myLoc.distanceTo(siteLoc) + " mi");
@@ -262,6 +263,8 @@ public class WorkOrderCard extends RelativeLayout {
             _amountTextView.setVisibility(INVISIBLE);
             return;
         }
+
+
 
         Pay pay = _workOrder.getPay();
 
@@ -289,6 +292,20 @@ public class WorkOrderCard extends RelativeLayout {
                 _payTypeTextView.setVisibility(INVISIBLE);
                 _amountTextView.setVisibility(INVISIBLE);
                 break;
+        }
+
+        if (_workOrder.getStaus()!= null )
+            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
+
+        if (_workOrder.getStaus()!= null &&
+                (_workOrder.getStaus().getWorkorderStatus().equals(WorkorderStatus.COMPLETED))) {
+//            Log.e(TAG, "_workOrder");
+//            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
+            _payTypeTextView.setVisibility(GONE);
+            _statusTextView.setText("IN REVIEW");
+            _statusTextView.setVisibility(VISIBLE);
+        }else {
+            _statusTextView.setVisibility(GONE);
         }
     }
 
@@ -464,7 +481,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _incomplete_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.MARK_INCOMPLETE);
             MarkIncompleteWarningDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
@@ -472,7 +488,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _ackHold_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD);
             WorkorderClient.actionAcknowledgeHold(App.get(), _workOrder.getId());
         }
     };
@@ -480,7 +495,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _checkIn_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.CHECK_IN);
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
                 CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -494,7 +508,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _checkOut_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.CHECK_OUT);
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
                 CheckInOutDialog.Controller.show(App.get(), null, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
@@ -508,7 +521,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.REQUEST);
             EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
         }
     };
@@ -516,7 +528,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _accept_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.ACCEPT_WORK);
             EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
         }
     };
@@ -524,7 +535,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _confirm_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.CONFIRM);
+//            WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
             EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
 
         }
@@ -533,7 +544,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _decline_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.NOT_INTERESTED);
             DeclineDialog.Controller.show(App.get(), null, _workOrder.getId(), _workOrder.getOrg().getId());
         }
     };
@@ -541,7 +551,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.ON_MY_WAY);
             if (_location != null)
                 WorkOrderClient.actionOnMyWay(App.get(), _workOrder.getId(), _location.getLatitude(), _location.getLongitude());
             else
@@ -558,7 +567,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.VIEW_BUNDLE);
             WorkorderBundleDetailActivity.startNew(App.get(), _workOrder.getId(), _workOrder.getBundle().getId());
         }
     };
@@ -566,7 +574,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _readyToGo_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.READY_TO_GO);
             WorkorderClient.actionReadyToGo(App.get(), _workOrder.getId());
         }
     };
@@ -574,7 +581,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.REPORT_PROBLEM);
             ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
@@ -582,7 +588,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _phone_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.CALL_BUYER);
             try {
                 Contact contact = _workOrder.getContacts()[0];
                 Intent callIntent = new Intent(Intent.ACTION_DIAL);
@@ -598,7 +603,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _withdraw_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.WITHDRAW);
             WithdrawRequestDialog.Controller.show(App.get(), _workOrder.getId());
         }
     };
@@ -606,7 +610,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _message_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.VIEW_MESSAGES);
             WorkorderActivity.startNew(App.get(), _workOrder.getId(), WorkorderActivity.TAB_MESSAGE);
         }
     };
@@ -614,7 +617,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.RUNNING_LATE);
             RunningLateDialog.Controller.show(App.get(), _workOrder);
         }
     };
@@ -622,7 +624,6 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _map_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle, WorkOrderTracker.ActionButton.DIRECTIONS);
             if (_workOrder != null) {
                 com.fieldnation.data.v2.Location location = _workOrder.getLocation();
                 if (location != null) {
@@ -652,6 +653,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _this_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+//            EtaDialog.Controller.show(App.get(), _workOrder.getId(), _workOrder.getSchedule(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
             ActivityResultClient.startActivity(
                     App.get(),
                     WorkorderActivity.makeIntentShow(App.get(), _workOrder.getId()),
