@@ -44,6 +44,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private static final String STATE_DESCRIPTION = "STATE_DESCRIPTION";
     private static final String STATE_PHOTO = "STATE_PHOTO";
     private static final String STATE_HIDE_PHOTO = "STATE_HIDE_PHOTO";
+    private static final String STATE_WORK_ORDER_ID = "STATE_WORK_ORDER_ID";
 
     // UI
     private ImageView _imageView;
@@ -65,6 +66,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     private boolean _hideImageView = false;
     File _file;
     Intent _data;
+    private long _workOrderId = 0;
 
     /*-*************************************-*/
     /*-				Life Cycle				-*/
@@ -94,6 +96,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
             if (savedInstanceState.containsKey(STATE_HIDE_PHOTO))
                 _hideImageView = savedInstanceState.getBoolean(STATE_HIDE_PHOTO);
+
+            if (savedInstanceState.containsKey(STATE_WORK_ORDER_ID))
+                _workOrderId = savedInstanceState.getLong(STATE_WORK_ORDER_ID);
         }
         super.onCreate(savedInstanceState);
         setStyle(STYLE_NO_TITLE, 0);
@@ -119,6 +124,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
 
         if (_hideImageView)
             outState.putBoolean(STATE_HIDE_PHOTO, _hideImageView);
+
+        if (_workOrderId != 0)
+            outState.putLong(STATE_WORK_ORDER_ID, _workOrderId);
 
         super.onSaveInstanceState(outState);
     }
@@ -199,8 +207,9 @@ public class PhotoUploadDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(String fileName) {
+    public void show(long workOrderId, String fileName) {
         _originalFileName = fileName;
+        _workOrderId = workOrderId;
 
         if (fileName.contains(".")) {
             _extension = fileName.substring(fileName.lastIndexOf("."));
@@ -277,7 +286,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
             }
 
             if (_listener != null) {
-                _listener.onOk(_newFileName, _description);
+                _listener.onOk(_workOrderId, _newFileName, _description);
                 dismiss();
             }
         }
@@ -335,7 +344,7 @@ public class PhotoUploadDialog extends DialogFragmentBase {
     };
 
     public interface Listener {
-        void onOk(String filename, String photoDescription);
+        void onOk(long workOrderId, String filename, String photoDescription);
 
         void onImageClick();
     }
