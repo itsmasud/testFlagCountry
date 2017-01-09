@@ -29,7 +29,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
-                android:text="@string/feature_header_added_new"
+                android:text="What's New in Version 3.1.0"
                 android:textColor="@color/fn_dark_text_50"
                 android:textSize="16dp"
                 android:visibility="gone" />

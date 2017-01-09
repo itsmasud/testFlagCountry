@@ -14,7 +14,7 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontTextView;
-import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 import com.fieldnation.ui.inbox.InboxActivity;
 
 /**
@@ -69,7 +69,7 @@ public class FooterBarView extends RelativeLayout {
         _testButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                NewFeaturesDialog.Controller.show(App.get());
+                WhatsNewDialog.Controller.show(App.get());
             }
         });
         if (!BuildConfig.DEBUG)

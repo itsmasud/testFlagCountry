@@ -15,7 +15,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.R;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.crawler.WebCrawlerService;
-import com.fieldnation.ui.NewFeatureActivity;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 
 /**
  * Created by Michael Carver on 4/15/2015.
@@ -102,7 +102,7 @@ public class GeneralSettingsFragment extends PreferenceFragment implements Share
         public boolean onPreferenceClick(Preference preference) {
             if (preference.getKey() != null && (preference.getKey()).equals(getActivity().getResources().getString(R.string.pref_key_release_declaration))) {
                 Log.e("GeneralSettingsFragment", "release things clicked");
-                NewFeatureActivity.startNew(App.get());
+                WhatsNewDialog.Controller.show(App.get());
                 return true;
             }
             return false;
