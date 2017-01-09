@@ -29,6 +29,7 @@ import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.DateUtils;
+import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
@@ -235,7 +236,6 @@ public class EtaDialog extends FullScreenDialog {
             _expiringDurationMilliseconds = savedState.getLong(STATE_EXPIRATION_DURATION);
 
         // ETA stuff
-
         if (savedState.containsKey(STATE_DURATION))
             _durationMilliseconds = savedState.getLong(STATE_DURATION);
 
@@ -278,6 +278,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_EDIT)) {
@@ -288,6 +289,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitch.setVisibility(View.GONE);
             _etaSwitchLabel.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
             _termsWarningTextView.setVisibility(View.GONE);
 
         } else if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
@@ -298,6 +300,7 @@ public class EtaDialog extends FullScreenDialog {
             _etaSwitch.setChecked(true);
             _etaSwitchLabel.setVisibility(View.GONE);
             _etaSwitch.setVisibility(View.GONE);
+            _etaLayout.setVisibility(View.VISIBLE);
 
             SpannableString spanned = new SpannableString("By accepting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 53, 84, spanned.getSpanFlags(_terms_onClick));
@@ -310,13 +313,6 @@ public class EtaDialog extends FullScreenDialog {
             _scheduleTextView.setVisibility(View.GONE);
         } else
             _scheduleTextView.setText(scheduleDisplayText);
-
-        _noteEditText.post(new Runnable() {
-            @Override
-            public void run() {
-                misc.hideKeyboard(_noteEditText);
-            }
-        });
 
         _etaStartDateButton.setText(DateUtils.formatDateReallyLongV2(_etaStart));
         _etaStartTimeButton.setText(DateUtils.formatTimeLong(_etaStart));
@@ -620,6 +616,7 @@ public class EtaDialog extends FullScreenDialog {
     private final DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
         @Override
         public void onOk(long milliseconds) {
+            Log.v(TAG, "_durationDialog_listener.onOk");
             if (milliseconds < MIN_JOB_DURATION) {
                 ToastClient.toast(App.get(), R.string.toast_minimum_job_duration, Toast.LENGTH_LONG);
                 return;
@@ -656,6 +653,7 @@ public class EtaDialog extends FullScreenDialog {
     private final DurationDialog.ControllerListener _expiryDialog_listener = new DurationDialog.ControllerListener() {
         @Override
         public void onOk(long milliseconds) {
+            Log.v(TAG, "_expiryDialog_listener.onOk");
             if (milliseconds < MIN_EXPIRING_DURATION) {
                 ToastClient.toast(App.get(), R.string.toast_minimum_expiring_duration, Toast.LENGTH_LONG);
                 return;
