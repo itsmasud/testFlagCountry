@@ -264,6 +264,7 @@ public class EtaDialog extends FullScreenDialog {
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
             _etaSwitchLabel.setVisibility(View.VISIBLE);
+            _etaLayout.setVisibility(_etaSwitch.isChecked() ? View.VISIBLE : View.GONE);
 
             SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
@@ -325,11 +326,26 @@ public class EtaDialog extends FullScreenDialog {
             _etaStartTimeButton.setEnabled(true);
         }
 
-        if (_durationMilliseconds == INVALID_NUMBER) {
-            _durationButton.setText("");
-        } else {
-            _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+        try {
+            if (_durationMilliseconds == INVALID_NUMBER) {
+                if (_schedule.getRange() != null) {
+                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
+                            || _schedule.getRange().getType() == Range.Type.RANGE) {
+                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
+                                - ISO8601.toUtc(_schedule.getRange().getBegin());
+                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
+                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
+                    }
+                }
+            }
+        } catch (Exception e) {
         }
+
+        if (_durationMilliseconds == INVALID_NUMBER) {
+            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
+        }
+        _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
+
 
         if (_expiringDurationMilliseconds == INVALID_NUMBER) {
             _expirationButton.setText(R.string.btn_never);
