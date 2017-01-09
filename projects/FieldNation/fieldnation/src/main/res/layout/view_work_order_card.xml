@@ -27,8 +27,7 @@
         android:layout_toRightOf="@+id/amount_textview"
         android:text="BLENDED"
         android:textColor="#FF555555"
-        android:textSize="10sp"
-        android:visibility="gone"/>
+        android:textSize="10sp" />
 
     <TextView
         android:id="@+id/worktype_textview"

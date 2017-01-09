@@ -33,6 +33,8 @@ public class Pay implements Parcelable {
     private String approximate_date;
     @Json
     private Double total;
+    @Json
+    private String status;
 
     public Pay() {
     }
@@ -55,6 +57,10 @@ public class Pay implements Parcelable {
 
     public Double getAmount() {
         return amount;
+    }
+
+    public Status getStatus() {
+        return Status.fromStatus(status);
     }
 
     public Double getAdditionalUnits() {
@@ -127,5 +133,24 @@ public class Pay implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeParcelable(toJson(), flags);
+    }
+
+    public enum Status {
+        PENDING("pending"), PAID("paid"), UNPAID("unpaid");
+
+        private String _status;
+
+        Status(String status) {
+            this._status = status;
+        }
+
+        public static Status fromStatus(String status) {
+            Status[] v = values();
+            for (int i = 0; i < v.length; i++) {
+                if (v[i]._status.equals(status))
+                    return v[i];
+            }
+            return null;
+        }
     }
 }

@@ -290,26 +290,30 @@ public class WorkOrderCard extends RelativeLayout {
                 _amountTextView.setVisibility(INVISIBLE);
                 break;
         }
-
-        // TODO populate the pay-type
-
-/*
-        if (_workOrder.getStaus() != null)
-            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
-*/
-
-/*
-        if (_workOrder.getStaus()!= null &&
-                (_workOrder.getStaus().getWorkorderStatus().equals(WorkorderStatus.COMPLETED))) {
-//            Log.e(TAG, "_workOrder");
-//            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
-            _payTypeTextView.setVisibility(GONE);
-            _statusTextView.setText("IN REVIEW");
-            _statusTextView.setVisibility(VISIBLE);
-        }else {
-            _statusTextView.setVisibility(GONE);
+        if (pay.getStatus() != null) {
+            switch (pay.getStatus()) {
+                case PENDING:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                    _payTypeTextView.setText("APPROVED");
+                    break;
+                case PAID:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                    _payTypeTextView.setText("PAID");
+                    break;
+                case UNPAID:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    // we use the payment value set above, because total isn't set at this stage
+                    _payTypeTextView.setText("IN REVIEW");
+                    break;
+                default:
+                    break;
+            }
         }
-*/
     }
 
     private void populateButtons() {
