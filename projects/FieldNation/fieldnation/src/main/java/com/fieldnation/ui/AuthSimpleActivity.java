@@ -25,6 +25,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -180,9 +181,9 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         _profileBounceProtect = true;
 
-        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion()) {
+        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             App.get().setReleaseNoteShownReminded();
-            NewFeatureActivity.startNew(App.get());
+            WhatsNewDialog.Controller.show(App.get());
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {

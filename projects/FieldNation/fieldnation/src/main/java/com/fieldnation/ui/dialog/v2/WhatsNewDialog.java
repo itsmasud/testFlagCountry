@@ -16,8 +16,8 @@ import com.fieldnation.fndialog.FullScreenDialog;
  * Created by Michael on 9/23/2016.
  */
 
-public class NewFeaturesDialog extends FullScreenDialog {
-    private static final String TAG = "NewFeaturesDialog";
+public class WhatsNewDialog extends FullScreenDialog {
+    private static final String TAG = "WhatsNewDialog";
 
     private static final boolean SHOW_WHATS_NEW = true;
     private static final boolean SHOW_BUGS = false;
@@ -33,13 +33,13 @@ public class NewFeaturesDialog extends FullScreenDialog {
     private TextView _nextTextView;
     private WebView _nextWebView;
 
-    public NewFeaturesDialog(Context context, ViewGroup container) {
+    public WhatsNewDialog(Context context, ViewGroup container) {
         super(context, container);
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, Context context, ViewGroup container) {
-        _root = inflater.inflate(R.layout.dialog_v2_new_feature, container, false);
+        _root = inflater.inflate(R.layout.dialog_v2_whats_new, container, false);
 
         _toolbar = (Toolbar) _root.findViewById(R.id.toolbar);
         _toolbar.setTitle("What's New");
@@ -124,11 +124,11 @@ public class NewFeaturesDialog extends FullScreenDialog {
     public static abstract class Controller extends com.fieldnation.fndialog.Controller {
 
         public Controller(Context context) {
-            super(context, NewFeaturesDialog.class, null);
+            super(context, WhatsNewDialog.class, null);
         }
 
         public static void show(Context context) {
-            show(context, null, NewFeaturesDialog.class, null);
+            show(context, null, WhatsNewDialog.class, null);
         }
 
         public static void dismiss(Context context) {

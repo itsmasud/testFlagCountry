@@ -27,7 +27,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
@@ -366,7 +366,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
-            NewFeaturesDialog.Controller.show(App.get());
+            WhatsNewDialog.Controller.show(App.get());
         }
     };
 
