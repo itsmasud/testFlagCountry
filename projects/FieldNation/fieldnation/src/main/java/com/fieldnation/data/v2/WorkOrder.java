@@ -26,8 +26,6 @@ public class WorkOrder implements Parcelable {
     @Json
     private Org org;
     @Json
-    private Status status;
-    @Json
     private Bundle bundle;
     @Json
     private Location location;
@@ -58,10 +56,6 @@ public class WorkOrder implements Parcelable {
 
     public Org getOrg() {
         return org;
-    }
-
-    public Status getStaus() {
-        return status;
     }
 
     public Bundle getBundle() {

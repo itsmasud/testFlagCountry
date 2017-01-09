@@ -55,7 +55,6 @@ public class WorkOrderCard extends RelativeLayout {
     // Ui
     private TextView _amountTextView;
     private TextView _payTypeTextView;
-    private TextView _statusTextView;
     private TextView _workTypeTextView;
     private TextView _titleTextView;
     private TextView _dateTextView;
@@ -96,7 +95,6 @@ public class WorkOrderCard extends RelativeLayout {
 
         _amountTextView = (TextView) findViewById(R.id.amount_textview);
         _payTypeTextView = (TextView) findViewById(R.id.paytype_textview);
-        _statusTextView = (TextView) findViewById(R.id.status_textview);
         _workTypeTextView = (TextView) findViewById(R.id.worktype_textview);
         _titleTextView = (TextView) findViewById(R.id.title_textview);
         _dateTextView = (TextView) findViewById(R.id.date_textview);
@@ -265,7 +263,6 @@ public class WorkOrderCard extends RelativeLayout {
         }
 
 
-
         Pay pay = _workOrder.getPay();
 
         _payTypeTextView.setVisibility(VISIBLE);
@@ -294,9 +291,14 @@ public class WorkOrderCard extends RelativeLayout {
                 break;
         }
 
-        if (_workOrder.getStaus()!= null )
-            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
+        // TODO populate the pay-type
 
+/*
+        if (_workOrder.getStaus() != null)
+            Log.e(TAG, "_workOrder status: " + _workOrder.getStaus().getWorkorderStatus());
+*/
+
+/*
         if (_workOrder.getStaus()!= null &&
                 (_workOrder.getStaus().getWorkorderStatus().equals(WorkorderStatus.COMPLETED))) {
 //            Log.e(TAG, "_workOrder");
@@ -307,6 +309,7 @@ public class WorkOrderCard extends RelativeLayout {
         }else {
             _statusTextView.setVisibility(GONE);
         }
+*/
     }
 
     private void populateButtons() {
