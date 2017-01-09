@@ -1642,8 +1642,8 @@ public class WorkFragment extends WorkorderFragment {
             Document[] docs = _workorder.getDocuments();
             if (docs != null && docs.length > 0) {
                 for (Document doc : docs) {
-                    Log.v(TAG, "docid: " + doc.getDocumentId());
-                    if (doc.getDocumentId().equals(_identifier)) {
+                    if (doc != null && doc.getDocumentId() != null && doc.getDocumentId().equals(_identifier)) {
+                        Log.v(TAG, "docid: " + doc.getDocumentId());
                         // task completed here
                         if (!task.getCompleted()) {
                             WorkorderClient.actionCompleteTask(App.get(),
