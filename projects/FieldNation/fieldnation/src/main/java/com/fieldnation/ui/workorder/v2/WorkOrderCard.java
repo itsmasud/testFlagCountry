@@ -290,6 +290,30 @@ public class WorkOrderCard extends RelativeLayout {
                 _amountTextView.setVisibility(INVISIBLE);
                 break;
         }
+        if (pay.getStatus() != null) {
+            switch (pay.getStatus()) {
+                case PENDING:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                    _payTypeTextView.setText("APPROVED");
+                    break;
+                case PAID:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    _amountTextView.setText(misc.toShortCurrency(pay.getTotal()));
+                    _payTypeTextView.setText("PAID");
+                    break;
+                case UNPAID:
+                    _amountTextView.setVisibility(VISIBLE);
+                    _payTypeTextView.setVisibility(VISIBLE);
+                    // we use the payment value set above, because total isn't set at this stage
+                    _payTypeTextView.setText("IN REVIEW");
+                    break;
+                default:
+                    break;
+            }
+        }
     }
 
     private void populateButtons() {
