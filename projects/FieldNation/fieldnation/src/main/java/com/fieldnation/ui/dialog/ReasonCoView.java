@@ -68,7 +68,7 @@ public class ReasonCoView extends RelativeLayout {
 
         _expireDurationSpinner = (HintSpinner) findViewById(R.id.expire_duration_spinner);
         _expireDurationSpinner.setOnItemSelectedListener(_expireSpinner_selected);
-        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.expire_duration_titles, R.layout.view_spinner_item);
+        HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.expire_duration_titles, R.layout.view_counter_offer_reason_spinner_item);
         adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
         _expireDurationSpinner.setAdapter(adapter);
 
