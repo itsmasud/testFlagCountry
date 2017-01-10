@@ -7,9 +7,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.trackers.WorkOrderTracker;
 
 public class WorkorderTabView extends RelativeLayout {
     private static final String TAG = "ui.workorder.WorkorderTabView";
