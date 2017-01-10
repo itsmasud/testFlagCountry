@@ -375,7 +375,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (data == null) {
                     Log.v(TAG, "Image uploading taken by camera");
                     _tempUri = null;
-                    _photoUploadDialog.show(_tempFile.getName());
+                    _photoUploadDialog.show(_workorder.getWorkorderId(), _tempFile.getName());
                     _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -389,7 +389,7 @@ public class DeliverableFragment extends WorkorderFragment {
                             if (count == 1) {
                                 _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
-                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                                _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                                 FileCacheClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
                             } else {
                                 for (int i = 0; i < count; ++i) {
@@ -405,14 +405,14 @@ public class DeliverableFragment extends WorkorderFragment {
                             Log.v(TAG, "Single local/ non-local file upload");
                             _tempUri = data.getData();
                             _tempFile = null;
-                            _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                            _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                             FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
-                        _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                        _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
                         FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
@@ -642,14 +642,14 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
-        public void onOk(String filename, String photoDescription) {
+        public void onOk(long workOrderId, String filename, String photoDescription) {
             Log.v(TAG, "uploading an image using camera");
             if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                        _uploadingSlotId, filename, _tempFile.getAbsolutePath(), photoDescription);
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _uploadingSlotId, filename,
+                        _tempFile.getAbsolutePath(), photoDescription);
             } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                        _uploadingSlotId, filename, _tempUri, photoDescription);
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _uploadingSlotId, filename,
+                        _tempUri, photoDescription);
             }
         }
 
