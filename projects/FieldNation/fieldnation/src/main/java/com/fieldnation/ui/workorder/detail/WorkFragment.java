@@ -1160,13 +1160,13 @@ public class WorkFragment extends WorkorderFragment {
         }
 
         @Override
-        public void onAddShipment(ShipmentTracking shipment, long taskId) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), taskId);
+        public void onAddShipment(ShipmentTracking shipment, Task task) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), task);
         }
 
         @Override
-        public void onAddShipment(long taskId) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), taskId);
+        public void onAddShipment(Task task) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
         }
 
     };
@@ -1491,7 +1491,7 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), 0);
+            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
         }
 
         @Override
@@ -1729,9 +1729,9 @@ public class WorkFragment extends WorkorderFragment {
         public void onShipment(Task task) {
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             if (shipments == null) {
-                _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task.getTaskId());
+                _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
             } else {
-                _taskShipmentAddDialog.show(getString(R.string.dialog_task_shipment_title), _workorder, task.getTaskId());
+                _taskShipmentAddDialog.show(getString(R.string.dialog_task_shipment_title), _workorder, task);
             }
         }
 

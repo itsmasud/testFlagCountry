@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.ShipmentTracking;
+import com.fieldnation.data.workorder.Task;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.ui.workorder.detail.ShipmentRowView;
 
@@ -21,7 +22,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
     // State
     private static final String STATE_WORKORDER = "STATE_WORKORDER";
-    private static final String STATE_TASKID = "STATE_TASKID";
+    private static final String STATE_TASK = "STATE_TASK";
     private static final String STATE_TITLE = "STATE_TITLE";
 
     // UI
@@ -35,7 +36,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     private Listener _listener;
     private Workorder _workorder;
     private String _title;
-    private long _taskId;
+    private Task _task;
+//    private long _taskId;
 
 
     /*-*****************************-*/
@@ -48,8 +50,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TASKID))
-                _taskId = savedInstanceState.getLong(STATE_TASKID);
+            if (savedInstanceState.containsKey(STATE_TASK))
+                _task = savedInstanceState.getParcelable(STATE_TASK);
 
             if (savedInstanceState.containsKey(STATE_WORKORDER))
                 _workorder = savedInstanceState.getParcelable(STATE_WORKORDER);
@@ -67,8 +69,8 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         if (_workorder != null)
             outState.putParcelable(STATE_WORKORDER, _workorder);
 
-        if (_taskId != 0)
-            outState.putLong(STATE_TASKID, _taskId);
+        if (_task!=null)
+            outState.putParcelable(STATE_TASK, _task);
 
         if (_title != null)
             outState.putString(STATE_TITLE, _title);
@@ -112,10 +114,10 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         _listener = listener;
     }
 
-    public void show(String title, Workorder workorder, long taskId) {
+    public void show(String title, Workorder workorder, Task task) {
         _workorder = workorder;
         _title = title;
-        _taskId = taskId;
+        _task = task;
         show();
     }
 
@@ -188,8 +190,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
             // TODO need to present an edit dialog
             dismiss();
             if (_listener != null) {
-//                _listener.onAssign(_workorder, shipment.getWorkorderShipmentId(), _taskId);
-                _listener.onAddShipment(shipment, _taskId);
+                _listener.onAddShipment(shipment, _task);
             }
         }
     };
@@ -199,7 +200,7 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
         public void onClick(View v) {
             dismiss();
             if (_listener != null) {
-                _listener.onAddShipment(_taskId);
+                _listener.onAddShipment( _task);
             }
         }
     };
@@ -226,9 +227,9 @@ public class TaskShipmentAddDialog extends DialogFragmentBase {
 
         void onScan();
 
-        void onAddShipment(ShipmentTracking shipment, long taskId);
+        void onAddShipment(ShipmentTracking shipment, Task task);
 
-        void onAddShipment(long taskId);
+        void onAddShipment(Task task);
     }
 
 }
