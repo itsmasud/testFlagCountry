@@ -15,7 +15,6 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.Stopwatch;
 import com.snowplowanalytics.snowplow.tracker.DevicePlatforms;
 import com.snowplowanalytics.snowplow.tracker.Emitter;
 import com.snowplowanalytics.snowplow.tracker.Subject;

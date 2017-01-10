@@ -7,7 +7,6 @@ import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
 
-import com.fieldnation.App;
 import com.fieldnation.fnlog.Log;
 
 /**
