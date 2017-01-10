@@ -15,8 +15,8 @@ import com.fieldnation.fnanalytics.Tracker;
  */
 
 public class InboxTracker {
-    private static final Screen SCREEN_MESSAGES = new Screen.Builder().name("Messages").tag(SnowplowWrapper.TAG).build();
-    private static final Screen SCREEN_NOTIFICATIONS = new Screen.Builder().name("Notifications").tag(SnowplowWrapper.TAG).build();
+    private static final String SCREEN_MESSAGES = "Messages";
+    private static final String SCREEN_NOTIFICATIONS = "Notifications";
 
 
     public enum Item {
@@ -31,17 +31,33 @@ public class InboxTracker {
     }
 
     public static void onShowMessages(Context context) {
-        Tracker.screen(context, SCREEN_MESSAGES);
+        Tracker.screen(context,
+                new Screen.Builder()
+                        .name(SCREEN_MESSAGES)
+                        .tag(SnowplowWrapper.TAG)
+                        .addContext(new SpUIContext.Builder()
+                                .page(SCREEN_MESSAGES)
+                                .build()
+                        )
+                        .build());
     }
 
     public static void onShowNotifications(Context context) {
-        Tracker.screen(context, SCREEN_NOTIFICATIONS);
+        Tracker.screen(context,
+                new Screen.Builder()
+                        .name(SCREEN_NOTIFICATIONS)
+                        .tag(SnowplowWrapper.TAG)
+                        .addContext(new SpUIContext.Builder()
+                                .page(SCREEN_NOTIFICATIONS)
+                                .build()
+                        )
+                        .build());
     }
 
     public static void onClickTab(Context context, Item item) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(item == Item.MESSAGES ? SCREEN_MESSAGES.name : SCREEN_NOTIFICATIONS.name)
+                        .page(item == Item.MESSAGES ? SCREEN_MESSAGES : SCREEN_NOTIFICATIONS)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.TAB)
@@ -50,4 +66,11 @@ public class InboxTracker {
 
     }
 
+    public static void test(Context context) {
+        onShowMessages(context);
+        onShowNotifications(context);
+        for (Item item : Item.values()) {
+            onClickTab(context, item);
+        }
+    }
 }

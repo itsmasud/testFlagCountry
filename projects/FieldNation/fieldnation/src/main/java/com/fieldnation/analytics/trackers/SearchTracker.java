@@ -11,6 +11,7 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 /**
  * Created by mc on 1/4/17.
@@ -29,16 +30,24 @@ public class SearchTracker {
         }
     }
 
-    private static final Screen SCREEN = new Screen.Builder().name("Search").tag(SnowplowWrapper.TAG).build();
+    private static final String SCREEN = "Search";
 
     public static void onShow(Context context) {
-        Tracker.screen(context, SCREEN);
+        Tracker.screen(context,
+                new Screen.Builder()
+                        .name(SCREEN)
+                        .tag(SnowplowWrapper.TAG)
+                        .addContext(new SpUIContext.Builder()
+                                .page(SCREEN)
+                                .build()
+                        )
+                        .build());
     }
 
     public static void onSearch(Context context, Item item, long workOrderId) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
+                        .page(SCREEN)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(item == Item.KEYBOARD ? ElementType.KEYBOARD_BUTTON : ElementType.BAR_BUTTON)
@@ -53,7 +62,7 @@ public class SearchTracker {
     public static void onSearch(Context context, Item item, SavedSearchParams savedSearchParams) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
+                        .page(SCREEN)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.LIST_ITEM)
@@ -88,4 +97,15 @@ public class SearchTracker {
         }
     }
 
+    public static void test(Context context) {
+        onShow(context);
+        SavedSearchParams[] list = SavedSearchClient.defaults;
+        for (Item item : Item.values()) {
+            onSearch(context, item, 1);
+            for (SavedSearchParams p : list) {
+                onSearch(context, item, p);
+            }
+        }
+
+    }
 }

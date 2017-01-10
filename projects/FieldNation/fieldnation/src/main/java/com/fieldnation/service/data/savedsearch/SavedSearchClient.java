@@ -26,7 +26,7 @@ public class SavedSearchClient extends TopicClient implements SavedSearchConstan
     private static final String STAG = "SavedSearchClient";
     private final String TAG = UniqueTag.makeTag(STAG);
 
-    private static final SavedSearchParams[] defaults;
+    public static final SavedSearchParams[] defaults;
 
     static {
         if (App.isNcns()) {

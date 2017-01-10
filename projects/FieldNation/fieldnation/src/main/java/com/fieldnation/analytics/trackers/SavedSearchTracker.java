@@ -10,13 +10,14 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 /**
  * Created by mc on 1/4/17.
  */
 
 public class SavedSearchTracker {
-    private static final Screen SCREEN = new Screen.Builder().name("Saved Search").tag(SnowplowWrapper.TAG).build();
+    private static final String SCREEN = "Saved Search";
 
     public enum Item {
         INBOX("Inbox"),
@@ -31,13 +32,21 @@ public class SavedSearchTracker {
     }
 
     public static void onShow(Context context) {
-        Tracker.screen(context, SCREEN);
+        Tracker.screen(context,
+                new Screen.Builder()
+                        .name(SCREEN)
+                        .tag(SnowplowWrapper.TAG)
+                        .addContext(new SpUIContext.Builder()
+                                .page(SCREEN)
+                                .build()
+                        )
+                        .build());
     }
 
     public static void onListChanged(Context context, SavedSearchParams savedSearchParams) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
+                        .page(SCREEN)
                         .elementIdentity(savedSearchParams.title + " Saved Search")
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.LIST_ITEM)
@@ -48,11 +57,22 @@ public class SavedSearchTracker {
     public static void onClick(Context context, Item item) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
+                        .page(SCREEN)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.BAR_BUTTON)
                         .build())
                 .build());
+    }
+
+    public static void test(Context context) {
+        onShow(context);
+        SavedSearchParams[] list = SavedSearchClient.defaults;
+        for (SavedSearchParams p : list) {
+            onListChanged(context, p);
+        }
+        for (Item item : Item.values()) {
+            onClick(context, item);
+        }
     }
 }

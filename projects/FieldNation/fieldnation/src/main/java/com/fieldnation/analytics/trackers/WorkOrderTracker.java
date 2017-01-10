@@ -14,16 +14,17 @@ import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 /**
  * Created by mc on 1/5/17.
  */
 
 public class WorkOrderTracker {
-    private static final Screen SCREEN_WORK_ORDER_DETAILS = new Screen.Builder().name("Work Order Details").tag(SnowplowWrapper.TAG).build();
-    private static final Screen SCREEN_WORK_ORDER_MESSAGES = new Screen.Builder().name("Work Order Messages").tag(SnowplowWrapper.TAG).build();
-    private static final Screen SCREEN_WORK_ORDER_ATTACHMENTS = new Screen.Builder().name("Work Order Attachments").tag(SnowplowWrapper.TAG).build();
-    private static final Screen SCREEN_WORK_ORDER_NOTIFICATIONS = new Screen.Builder().name("Work Order Notifications").tag(SnowplowWrapper.TAG).build();
+    private static final String SCREEN_WORK_ORDER_DETAILS = "Work Order Details";
+    private static final String SCREEN_WORK_ORDER_MESSAGES = "Work Order Messages";
+    private static final String SCREEN_WORK_ORDER_ATTACHMENTS = "Work Order Attachments";
+    private static final String SCREEN_WORK_ORDER_NOTIFICATIONS = "Work Order Notifications";
 
     public enum Action {
         ACK_HOLD("Acknowledge Hold"),
@@ -372,6 +373,9 @@ public class WorkOrderTracker {
                         .addContext(new SpWorkOrderContext.Builder()
                                 .workOrderId(workOrderId)
                                 .build())
+                        .addContext(new SpUIContext.Builder()
+                                .page(tab.tab)
+                                .build())
                         .build());
     }
 
@@ -480,8 +484,51 @@ public class WorkOrderTracker {
                         .elementIdentity(identity.identity)
                         .elementType(identity.getElementType())
                         .elementAction(ElementAction.CLICK)
-                        .page(SCREEN_WORK_ORDER_DETAILS.name)
+                        .page(SCREEN_WORK_ORDER_DETAILS)
                         .build())
                 .build());
+    }
+
+    public static void test(Context context) {
+        SavedSearchParams[] list = SavedSearchClient.defaults;
+
+        for (Tab tab : Tab.values()) {
+            onShow(context, tab, 1);
+        }
+        for (Tab tab1 : Tab.values()) {
+            for (Tab tab2 : Tab.values()) {
+                if (tab1 != tab2)
+                    onTabSwitchEvent(context, tab1, tab2);
+            }
+        }
+
+        for (ActionButton ab : ActionButton.values()) {
+            onActionButtonEvent(context, ab, 1L);
+            for (SavedSearchParams p : list) {
+                onActionButtonEvent(context, p.title, ab);
+            }
+        }
+
+        for (WorkOrderDetailsSection section : WorkOrderDetailsSection.values()) {
+            onAddEvent(context, section);
+            onEditEvent(context, section);
+            onDeleteEvent(context, section);
+        }
+
+        for (ModalType mt : ModalType.values()) {
+            onDescriptionModalEvent(context, mt);
+        }
+
+        for (TaskType tt : TaskType.values()) {
+            onTaskEvent(context, tt, 1L);
+        }
+
+        directionsEvent(context);
+
+        for (Identity identity : Identity.values()) {
+            for (Action action : Action.values()) {
+                onEvent(context, identity, action, 1L);
+            }
+        }
     }
 }

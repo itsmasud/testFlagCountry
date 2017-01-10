@@ -15,8 +15,7 @@ import com.fieldnation.fnanalytics.Tracker;
  */
 
 public class AdditionalOptionsTracker {
-    private static final Screen SCREEN = new Screen.Builder().name("Additional Options").tag(SnowplowWrapper.TAG).build();
-
+    private static final String SCREEN = "Additional Options";
 
     public enum Item {
         PROFILE("Profile"),
@@ -35,18 +34,33 @@ public class AdditionalOptionsTracker {
     }
 
     public static void onShow(Context context) {
-        Tracker.screen(context, SCREEN);
+        Tracker.screen(context,
+                new Screen.Builder()
+                        .name(SCREEN)
+                        .tag(SnowplowWrapper.TAG)
+                        .addContext(new SpUIContext.Builder()
+                                .page(SCREEN)
+                                .build()
+                        )
+                        .build());
     }
 
     public static void onClick(Context context, Item item) {
         Tracker.event(context, new CustomEvent.Builder()
                 .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
+                        .page(SCREEN)
                         .elementIdentity(item.identity)
                         .elementAction(ElementAction.CLICK)
                         .elementType(ElementType.LIST_ITEM)
                         .build())
                 .build());
+    }
+
+    public static void test(Context context) {
+        onShow(context);
+        for (Item item : Item.values()) {
+            onClick(context, item);
+        }
     }
 
 }

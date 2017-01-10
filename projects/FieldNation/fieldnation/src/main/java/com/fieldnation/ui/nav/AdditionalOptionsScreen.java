@@ -18,6 +18,7 @@ import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
+import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
@@ -56,6 +57,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private View _debugMenu;
     private View _legalMenu;
     private View _versionMenu;
+    private View _touchMeMenu;
     private TextView _versionTextView;
     private View _linkContainerView;
 
@@ -126,6 +128,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _versionMenu = findViewById(R.id.version_menu);
         _versionMenu.setOnClickListener(_version_onClick);
+
+        _touchMeMenu = findViewById(R.id.touchMe_menu);
+        _touchMeMenu.setOnClickListener(_touchMe_onClick);
+
+        if (BuildConfig.DEBUG)
+            _touchMeMenu.setVisibility(VISIBLE);
+        else
+            _touchMeMenu.setVisibility(GONE);
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
@@ -375,6 +385,13 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LEGAL);
             SettingsActivity.startNewLegal(getContext());
+        }
+    };
+
+    private final View.OnClickListener _touchMe_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TestTrackers.runTests(App.get());
         }
     };
 
