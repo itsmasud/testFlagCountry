@@ -28,8 +28,8 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
 
@@ -106,7 +106,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _linkContainerView = findViewById(R.id.link_container);
 
         _profileMenu = findViewById(R.id.profile_view);
-        _profileMenu.setOnClickListener(_profile_onClick);
+        //_profileMenu.setOnClickListener(_profile_onClick);
 
         _paymentMenu = findViewById(R.id.payments_menu);
         _paymentMenu.setOnClickListener(_payment_onClick);

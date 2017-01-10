@@ -10,7 +10,6 @@ import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.analytics.contexts.SpWorkOrderContext;
-import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.data.workorder.TaskType;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;

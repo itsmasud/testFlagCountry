@@ -21,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.data.workorder.Task;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -31,7 +32,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     private static final String TAG = "ShipmentAddDialog";
 
     // State
-    private static final String STATE_TASKID = "STATE_TASKID";
+    private static final String STATE_TASK = "STATE_TASK";
     private static final String STATE_TITLE = "STATE_TITLE";
     private static final String STATE_SHIPMENT_DESCRIPTION = "STATE_SHIPMENT_DESCRIPTION";
     private static final String STATE_CARRIER_SELECTION = "STATE_CARRIER_SELECTION";
@@ -54,11 +55,12 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private String _title = null;
-    private long _taskId = -1;
+    //    private long _taskId = -1;
     private boolean _clear = false;
     private int _carrierPosition = -1;
     private int _directionPosition = -1;
     private String _shipmentDescription;
+    private Task _task;
 
     // Modes
     private static final int CARRIER_FEDEX = 0;
@@ -99,8 +101,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         if (_titleTextView != null && !misc.isEmptyOrNull(_titleTextView.getText().toString()))
             outState.putString(STATE_TITLE, _titleTextView.getText().toString());
 
-        if (_taskId != -1)
-            outState.putLong(STATE_TASKID, _taskId);
+        if (_task != null)
+            outState.putParcelable(STATE_TASK, _task);
 
         if (_shipmentDescription != null)
             outState.putString(STATE_SHIPMENT_DESCRIPTION, _shipmentDescription);
@@ -157,8 +159,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
     public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
         super.onViewStateRestored(savedInstanceState);
         if (savedInstanceState != null) {
-            if (savedInstanceState.containsKey(STATE_TASKID))
-                _taskId = savedInstanceState.getLong(STATE_TASKID);
+            if (savedInstanceState.containsKey(STATE_TASK))
+                _task = savedInstanceState.getParcelable(STATE_TASK);
 
             if (savedInstanceState.containsKey(STATE_SHIPMENT_DESCRIPTION))
                 _shipmentDescription = savedInstanceState.getParcelable(STATE_SHIPMENT_DESCRIPTION);
@@ -209,17 +211,17 @@ public class ShipmentAddDialog extends DialogFragmentBase {
         populateUi();
     }
 
-    public void show(CharSequence title, long taskId) {
+    public void show(CharSequence title, Task task) {
         _title = (String) title;
-        _taskId = taskId;
+        _task = task;
         _clear = true;
         show();
     }
 
-    public void show(CharSequence title, String shipmentDescription, long taskId) {
+    public void show(CharSequence title, String shipmentDescription, Task task) {
         _title = (String) title;
         _shipmentDescription = shipmentDescription;
-        _taskId = taskId;
+        _task = task;
         _clear = true;
         show();
     }
@@ -234,6 +236,8 @@ public class ShipmentAddDialog extends DialogFragmentBase {
 
         if (_shipmentDescription != null) {
             _descriptionEditText.setText(_shipmentDescription);
+        } else if (_task != null) {
+            _descriptionEditText.setText(_task.getDescription());
         }
 
         getDirectionSpinner();
@@ -414,7 +418,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
             }
 
             if (_listener != null) {
-                if (_taskId != 0) {
+                if (_task != null && _task.getTaskId() != 0) {
                     if (_carrierPosition == CARRIER_OTHER) {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
@@ -422,7 +426,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                                 _carrierEditText.getText().toString(),
                                 _descriptionEditText.getText().toString(),
                                 _directionPosition == 0,
-                                _taskId);
+                                _task.getTaskId());
                     } else {
                         _listener.onOk(
                                 _trackingIdEditText.getText().toString(),
@@ -430,7 +434,7 @@ public class ShipmentAddDialog extends DialogFragmentBase {
                                 null,
                                 _descriptionEditText.getText().toString(),
                                 _directionPosition == 0,
-                                _taskId);
+                                _task.getTaskId());
                     }
 
                 } else {
