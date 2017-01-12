@@ -30,6 +30,8 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
+import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.ProfilePicView;
 
 import java.io.File;
@@ -319,6 +321,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
                     Log.v(TAG, "Image uploading taken by camera");
                     _tempUri = null;
                     FileCacheClient.cacheDeliverableUpload(App.get(), Uri.fromFile(_tempFile));
+                    ProfileClient.uploadProfilePhoto(App.get(), _tempFile.getAbsolutePath());
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
                         ClipData clipData = data.getClipData();

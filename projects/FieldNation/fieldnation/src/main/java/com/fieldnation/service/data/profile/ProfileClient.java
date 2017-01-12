@@ -14,6 +14,8 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicClient;
 import com.fieldnation.fntools.AsyncTaskEx;
 import com.fieldnation.fntools.UniqueTag;
+import com.fieldnation.service.data.workorder.WorkorderDispatch;
+import com.fieldnation.service.data.workorder.WorkorderService;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -130,6 +132,18 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
         return register(topicId);
     }
 
+    public static void uploadProfilePhoto(Context context, String filePath){
+        Log.v(STAG, "uploadProfilePhoto");
+
+        ProfileDispatch.uploadProfilePhoto(context, filePath, false, false);
+
+        Intent intent = new Intent(context, ProfileService.class);
+        intent.putExtra(PARAM_ACTION, PARAM_ACTION_PHOTO_UPLOAD);
+        intent.putExtra(PARAM_IS_PHOTO_PATH, filePath);
+        context.startService(intent);
+
+    }
+
     /*-*********************************-*/
     /*-             Actions             -*/
     /*-*********************************-*/
@@ -179,7 +193,25 @@ public class ProfileClient extends TopicClient implements ProfileConstants {
                 preOnAction(bundle);
             } else if (topicId.startsWith(TOPIC_ID_SWITCH_USER)) {
                 onSwitchUser(bundle.getLong(PARAM_USER_ID), bundle.getBoolean(PARAM_ERROR));
+            }else if (topicId.startsWith(TOPIC_ID_UPLOAD_PHOTO)) {
+                preUploadPhoto((Bundle) payload);
             }
+        }
+
+
+        private void preUploadPhoto(Bundle payload) {
+            if (payload.containsKey(PARAM_ERROR) && payload.getBoolean(PARAM_ERROR)) {
+                preUploadPhoto(
+                        payload.getString(PARAM_IS_PHOTO_PATH),
+                        payload.getBoolean(PARAM_IS_COMPLETE), true);
+            } else {
+                preUploadPhoto(
+                        payload.getString(PARAM_IS_PHOTO_PATH),
+                        payload.getBoolean(PARAM_IS_COMPLETE), false);
+            }
+        }
+
+        public void preUploadPhoto( String filename, boolean isComplete, boolean failed) {
         }
 
         public void onSwitchUser(long userId, boolean failed) {
