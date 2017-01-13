@@ -1,5 +1,6 @@
 package com.fieldnation.ui.dialog;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentManager;
@@ -16,6 +17,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 
@@ -35,6 +37,8 @@ public class DiscountDialog extends DialogFragmentBase {
     // Data
     private Listener _listener;
     private String _title;
+    private boolean _clear = false;
+
 
 
     /*-*************************************-*/
@@ -87,6 +91,19 @@ public class DiscountDialog extends DialogFragmentBase {
 
         if (_title != null)
             _titleTextView.setText(_title);
+
+        if (_clear){
+            _clear = false;
+            _descriptionEditText.setText("");
+            _amountEditText.setText("");
+        }
+
+    }
+
+    @Override
+    public void onDismiss(DialogInterface dialog) {
+        super.onDismiss(dialog);
+        _clear = true;
     }
 
     public void setListener(Listener listener) {
@@ -95,6 +112,7 @@ public class DiscountDialog extends DialogFragmentBase {
 
     public void show(String title) {
         _title = title;
+        _clear = true;
         super.show();
     }
 
