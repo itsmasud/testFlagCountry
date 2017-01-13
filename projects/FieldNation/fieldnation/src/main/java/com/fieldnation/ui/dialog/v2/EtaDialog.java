@@ -56,6 +56,7 @@ public class EtaDialog extends FullScreenDialog {
     private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
     private static final String STATE_NOTE = "STATE_NOTE";
     private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
+    private static final String STATE_ETA_CALENDAR = "STATE_ETA_CALENDAR";
 
     // Params
     public static final String PARAM_DIALOG_TYPE = "type";
@@ -225,6 +226,7 @@ public class EtaDialog extends FullScreenDialog {
             outState.putString(STATE_NOTE, _noteEditText.getText().toString().trim());
 
         outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
+        outState.putSerializable(STATE_ETA_CALENDAR, _etaStart);
 
         super.onSaveDialogState(outState);
     }
@@ -242,6 +244,9 @@ public class EtaDialog extends FullScreenDialog {
             _noteEditText.setText(savedState.getString(STATE_NOTE));
 
         _etaSwitch.setChecked(savedState.getBoolean(STATE_ETA_SWITCH));
+
+        if (savedState.containsKey(STATE_ETA_CALENDAR))
+            _etaStart = (Calendar) savedState.getSerializable(STATE_ETA_CALENDAR);
 
         super.onRestoreDialogState(savedState);
 
