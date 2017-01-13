@@ -8,7 +8,6 @@ import com.fieldnation.analytics.ElementType;
 import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.analytics.contexts.SpWorkOrderContext;
 import com.fieldnation.fnanalytics.EventContext;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;

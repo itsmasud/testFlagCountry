@@ -2,13 +2,8 @@ package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
-import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
-import com.fieldnation.analytics.SnowplowWrapper;
-import com.fieldnation.analytics.contexts.SpUIContext;
-import com.fieldnation.fnanalytics.Screen;
-import com.fieldnation.fnanalytics.Tracker;
 
 import java.util.LinkedList;
 import java.util.List;
