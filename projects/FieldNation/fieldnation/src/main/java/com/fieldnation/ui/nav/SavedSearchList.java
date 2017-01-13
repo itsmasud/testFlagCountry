@@ -13,6 +13,7 @@ import android.widget.RelativeLayout;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 
 import java.util.List;
@@ -78,6 +79,7 @@ public class SavedSearchList extends RelativeLayout implements ToolbarMenuInterf
             row.setSearchParams(_list.get(i));
             row.setOnSearchSelectedListener(_savedSearchRow_onChange);
         }
+        misc.hideKeyboard(_paramList);
     }
 
     @Override
