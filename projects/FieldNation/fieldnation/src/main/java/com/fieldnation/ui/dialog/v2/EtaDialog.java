@@ -332,22 +332,25 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-                if (_schedule.getRange() != null) {
-                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
-                            || _schedule.getRange().getType() == Range.Type.RANGE) {
-                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
-                                - ISO8601.toUtc(_schedule.getRange().getBegin());
-                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
-                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
-                    }
+//                if (_schedule.getRange() != null) {
+//                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
+//                            || _schedule.getRange().getType() == Range.Type.RANGE) {
+//                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
+//                                - ISO8601.toUtc(_schedule.getRange().getBegin());
+//                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
+//                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
+//                    }
+//                }
+                if (_schedule.getEstimate() != null && _schedule.getEstimate().getDuration() != null) {
+                    _durationMilliseconds = (long) (_schedule.getEstimate().getDuration() * 60 * 60 * 1000);
                 }
             }
         } catch (Exception e) {
         }
 
-        if (_durationMilliseconds == INVALID_NUMBER) {
-            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
-        }
+//        if (_durationMilliseconds == INVALID_NUMBER) {
+//            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
+//        }
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
 
 
