@@ -477,7 +477,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _reportProblem_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onReportProblem();
             }
@@ -487,7 +486,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onNotInterested();
             }
@@ -497,7 +495,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _onMyWay_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onMyWay();
         }
@@ -506,7 +503,9 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewBundle_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_BUNDLE,
+                    null, _workorder.getWorkorderId());
+
             WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
         }
     };
@@ -514,7 +513,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _request_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onRequest();
             }
@@ -524,7 +522,9 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _runningLate_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
+                    null, _workorder.getWorkorderId());
+
             RunningLateDialogLegacy.Controller.show(App.get(), _workorder);
         }
     };
@@ -532,7 +532,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirmAssignment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onConfirmAssignment();
             }
@@ -542,7 +541,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _withdraw_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onWithdraw();
             }
@@ -552,7 +550,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewCounter_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onViewCounter();
             }
@@ -562,7 +559,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _readyToGo_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onReadyToGo();
             }
@@ -572,7 +568,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markComplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onMarkComplete();
             }
@@ -582,7 +577,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _closing_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, _workorder.getWorkorderId());
             if (_listener != null) {
                 _listener.onEnterClosingNotes();
             }
@@ -592,7 +586,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _confirm_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onConfirm();
         }
@@ -601,7 +594,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkin_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onCheckIn();
         }
@@ -610,16 +602,14 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _checkinAgain_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN, _workorder.getWorkorderId());
             if (_listener != null)
-                _listener.onCheckIn();
+                _listener.onCheckInAgain();
         }
     };
 
     private final View.OnClickListener _checkout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onCheckOut();
         }
@@ -628,7 +618,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _acknowledge_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onAcknowledgeHold();
         }
@@ -637,7 +626,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _markIncomplete_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onMarkIncomplete();
         }
@@ -646,7 +634,6 @@ public class ActionBarTopView extends LinearLayout {
     private final View.OnClickListener _viewPayment_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, _workorder.getWorkorderId());
             if (_listener != null)
                 _listener.onViewPayment();
         }
@@ -668,6 +655,8 @@ public class ActionBarTopView extends LinearLayout {
         void onConfirm();
 
         void onCheckIn();
+
+        void onCheckInAgain();
 
         void onEnterClosingNotes();
 

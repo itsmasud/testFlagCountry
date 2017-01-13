@@ -10,6 +10,9 @@ import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.fnanalytics.Screen;
 import com.fieldnation.fnanalytics.Tracker;
 
+import java.util.LinkedList;
+import java.util.List;
+
 /**
  * Created by mc on 1/4/17.
  */
@@ -17,43 +20,59 @@ import com.fieldnation.fnanalytics.Tracker;
 public class AdditionalOptionsTracker {
     private static final String SCREEN = "Additional Options";
 
-    public enum Item {
-        PROFILE("Profile"),
-        PAYMENTS("Payments"),
-        SETTINGS("Settings"),
-        LOG_OUT("Log Out"),
-        CONTACT_US("Contact Us"),
-        LEGAL("Legal"),
-        APP_VERSION("App Version");
+    public static class Item implements TrackerBase.Identity {
+        public static final Item PROFILE = new Item("Profile");
+        public static final Item PAYMENTS = new Item("Payments");
+        public static final Item SETTINGS = new Item("Settings");
+        public static final Item LOG_OUT = new Item("Log Out");
+        public static final Item CONTACT_US = new Item("Contact Us");
+        public static final Item LEGAL = new Item("Legal");
+        public static final Item APP_VERSION = new Item("App Version");
 
         private String identity;
 
-        Item(String identity) {
+        private static List<Item> valuesList = new LinkedList<>();
+        private static Item[] valuesArray;
+
+        private Item(String identity) {
             this.identity = identity;
+            valuesList.add(this);
+        }
+
+        @Override
+        public String page() {
+            return SCREEN;
+        }
+
+        @Override
+        public String identity() {
+            return identity;
+        }
+
+        @Override
+        public ElementAction elementAction() {
+            return ElementAction.CLICK;
+        }
+
+        @Override
+        public ElementType elementType() {
+            return ElementType.LIST_ITEM;
+        }
+
+        public static Item[] values() {
+            if (valuesArray != null && valuesArray.length == valuesList.size())
+                return valuesArray;
+
+            return valuesArray = valuesList.toArray(new Item[valuesList.size()]);
         }
     }
 
     public static void onShow(Context context) {
-        Tracker.screen(context,
-                new Screen.Builder()
-                        .name(SCREEN)
-                        .tag(SnowplowWrapper.TAG)
-                        .addContext(new SpUIContext.Builder()
-                                .page(SCREEN)
-                                .build()
-                        )
-                        .build());
+        TrackerBase.show(context, SCREEN, null);
     }
 
     public static void onClick(Context context, Item item) {
-        Tracker.event(context, new CustomEvent.Builder()
-                .addContext(new SpUIContext.Builder()
-                        .page(SCREEN)
-                        .elementIdentity(item.identity)
-                        .elementAction(ElementAction.CLICK)
-                        .elementType(ElementType.LIST_ITEM)
-                        .build())
-                .build());
+        TrackerBase.unstructuredEvent(context, item);
     }
 
     public static void test(Context context) {

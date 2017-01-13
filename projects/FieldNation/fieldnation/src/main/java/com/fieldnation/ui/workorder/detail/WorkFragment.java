@@ -92,6 +92,7 @@ import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
+import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.workorder.WorkorderActivity;
@@ -1250,23 +1251,32 @@ public class WorkFragment extends WorkorderFragment {
     private final ActionBarTopView.Listener _actionbartop_listener = new ActionBarTopView.Listener() {
         @Override
         public void onCheckOut() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT,
+                    null, _workorder.getWorkorderId());
+
             startCheckOut();
         }
 
         @Override
         public void onAcknowledgeHold() {
-            WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACKNOWLEDGE_HOLD,
+                    WorkOrderTracker.Action.ACKNOWLEDGE_HOLD, _workorder.getWorkorderId());
 
+            WorkorderClient.actionAcknowledgeHold(App.get(), _workorder.getWorkorderId());
             setLoading(true);
         }
 
         @Override
         public void onMarkIncomplete() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE,
+                    null, _workorder.getWorkorderId());
+
             _markIncompleteDialog.show(_workorder);
         }
 
         @Override
         public void onViewPayment() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_PAYMENT, null, _workorder.getWorkorderId());
             if (_workorder.getPaymentId() != null) {
                 PaymentDetailActivity.startNew(App.get(), _workorder.getPaymentId());
             } else {
@@ -1276,11 +1286,15 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onReportProblem() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workorder.getWorkorderId());
+
             ReportProblemDialog.Controller.show(App.get(), _workorder);
         }
 
         @Override
         public void onMyWay() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ON_MY_WAY, WorkOrderTracker.Action.ON_MY_WAY, _workorder.getWorkorderId());
+
             if (_gpsLocationService != null && _gpsLocationService.hasLocation() && _gpsLocationService.getLocation() != null) {
                 Location location = _gpsLocationService.getLocation();
                 WorkOrderClient.actionOnMyWay(App.get(), _workorder.getWorkorderId(), location.getLatitude(), location.getLongitude());
@@ -1297,17 +1311,31 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onCheckIn() {
-            Log.v(TAG, "onCheckIn");
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN,
+                    null, _workorder.getWorkorderId());
+
+            startCheckin();
+        }
+
+        @Override
+        public void onCheckInAgain() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN_AGAIN,
+                    null, _workorder.getWorkorderId());
+
             startCheckin();
         }
 
         @Override
         public void onNotInterested() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, null, _workorder.getWorkorderId());
+
             _declineDialog.show();
         }
 
         @Override
         public void onRequest() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, null, _workorder.getWorkorderId());
+
             if (_workorder.isBundle()) {
                 AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
@@ -1319,6 +1347,9 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
+                    null, _workorder.getWorkorderId());
+
             if (_workorder.isBundle()) {
                 AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
@@ -1330,32 +1361,49 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onWithdraw() {
-            WorkorderClient.actionWithdrawRequest(App.get(), _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workorder.getWorkorderId());
+
+            WithdrawRequestDialog.Controller.show(App.get(), _workorder.getWorkorderId());
         }
 
         @Override
         public void onViewCounter() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER,
+                    null, _workorder.getWorkorderId());
+
             _counterOfferDialog.show(_workorder);
         }
 
         @Override
         public void onReadyToGo() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO,
+                    null, _workorder.getWorkorderId());
+
             WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
         }
 
         @Override
         public void onConfirm() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
+                    null, _workorder.getWorkorderId());
+
             EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
         public void onEnterClosingNotes() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES,
+                    null, _workorder.getWorkorderId());
+
             showClosingNotesDialog();
         }
 
         @Override
         public void onMarkComplete() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
+                    null, _workorder.getWorkorderId());
+
             _markCompleteDialog.show(_workorder);
         }
     };
