@@ -26,6 +26,9 @@ public class WorkOrderTracker {
 
 
     public static class Action implements TrackerBase.Action, Cloneable {
+        private static List<Action> valuesList = new LinkedList<>();
+        private static Action[] valuesArray;
+
         public static final Action MARK_COMPLETE = new Action("Mark Complete", true);
         public static final Action MARK_INCOMPLETE = new Action("Mark Incomplete", true);
         public static final Action READY_TO_GO = new Action("Ready To Go", true);
@@ -53,11 +56,8 @@ public class WorkOrderTracker {
 
         private String action;
 
-        private static List<Action> valuesList = new LinkedList<>();
-        private static Action[] valuesArray;
-
         private Action(String action, boolean internal) {
-            this(action);
+            this.action = action;
             valuesList.add(this);
         }
 
@@ -92,6 +92,9 @@ public class WorkOrderTracker {
     }
 
     public static class Identity implements TrackerBase.Identity, Cloneable {
+        private static List<Identity> valuesList = new LinkedList<>();
+        private static Identity[] valuesArray;
+
         // Action
         public static final Identity CHECK_IN_ACTION_BUTTON = new Identity(" Check In Action", ElementType.BUTTON, true);
         public static final Identity CHECK_IN_AGAIN_ACTION_BUTTON = new Identity(" Check In Again Action", ElementType.BUTTON, true);
@@ -165,11 +168,12 @@ public class WorkOrderTracker {
         private ElementAction _elementAction;
         private ElementType _elementType;
 
-        private static List<Identity> valuesList = new LinkedList<>();
-        private static Identity[] valuesArray;
-
         private Identity(String identity, ElementType elementType, boolean internal) {
-            this(identity, elementType);
+            this._page = SCREEN_WORK_ORDER_DETAILS;
+            this._identity = identity;
+            this._elementAction = ElementAction.CLICK;
+            this._elementType = elementType;
+
             valuesList.add(this);
         }
 
@@ -249,10 +253,10 @@ public class WorkOrderTracker {
     }
 
     public enum Tab {
-        DETAILS("Work Order Details"),
-        MESSAGES("Work Order Messages"),
-        ATTACHMENTS("Work Order Attachments"),
-        NOTIFICATIONS("Work Order Notifications");
+        DETAILS(SCREEN_WORK_ORDER_DETAILS),
+        MESSAGES(SCREEN_WORK_ORDER_MESSAGES),
+        ATTACHMENTS(SCREEN_WORK_ORDER_ATTACHMENTS),
+        NOTIFICATIONS(SCREEN_WORK_ORDER_NOTIFICATIONS);
 
         private String tab;
 

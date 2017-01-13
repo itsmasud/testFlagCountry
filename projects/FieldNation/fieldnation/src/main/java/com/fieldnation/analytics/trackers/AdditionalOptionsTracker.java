@@ -21,6 +21,9 @@ public class AdditionalOptionsTracker {
     private static final String SCREEN = "Additional Options";
 
     public static class Item implements TrackerBase.Identity {
+        private static List<Item> valuesList = new LinkedList<>();
+        private static Item[] valuesArray;
+
         public static final Item PROFILE = new Item("Profile");
         public static final Item PAYMENTS = new Item("Payments");
         public static final Item SETTINGS = new Item("Settings");
@@ -30,9 +33,6 @@ public class AdditionalOptionsTracker {
         public static final Item APP_VERSION = new Item("App Version");
 
         private String identity;
-
-        private static List<Item> valuesList = new LinkedList<>();
-        private static Item[] valuesArray;
 
         private Item(String identity) {
             this.identity = identity;

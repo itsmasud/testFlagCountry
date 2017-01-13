@@ -25,14 +25,14 @@ public class SearchTracker {
     private static final String SCREEN = "Search";
 
     public static class Item implements TrackerBase.Identity, Cloneable {
+        private static List<Item> valuesList = new LinkedList<>();
+        private static Item[] valuesArray;
+
         public static final Item SEARCH_BAR = new Item("Search", ElementType.BAR_BUTTON);
         public static final Item KEYBOARD = new Item("Search Keyboard", ElementType.KEYBOARD_BUTTON);
 
         private String identity;
         private ElementType elementType;
-
-        private static List<Item> valuesList = new LinkedList<>();
-        private static Item[] valuesArray;
 
         private Item(String identity, ElementType elementType) {
             this.identity = identity;

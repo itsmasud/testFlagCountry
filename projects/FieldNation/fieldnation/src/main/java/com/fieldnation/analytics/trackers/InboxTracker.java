@@ -23,13 +23,13 @@ public class InboxTracker {
 
 
     public static class Item implements TrackerBase.Identity {
+        private static List<Item> valueList = new LinkedList<>();
+        private static Item[] valuesArray;
+
         public static final Item MESSAGES = new Item(SCREEN_MESSAGES);
         public static final Item NOTIFICATIONS = new Item(SCREEN_NOTIFICATIONS);
 
         private String identity;
-
-        private static List<Item> valueList = new LinkedList<>();
-        private static Item[] valuesArray;
 
         private Item(String identity) {
             this.identity = identity;

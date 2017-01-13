@@ -23,14 +23,14 @@ public class SavedSearchTracker {
     private static final String SCREEN = "Saved Search";
 
     public static class Item implements TrackerBase.Identity {
+        private static List<Item> valuesList = new LinkedList<>();
+        private static Item[] valuesArray;
+
         public static final Item INBOX = new Item("Inbox");
         public static final Item SEARCH = new Item("Search");
         public static final Item ADDITIONAL_OPTIONS = new Item("Additional Options");
 
         private String identity;
-
-        private static List<Item> valuesList = new LinkedList<>();
-        private static Item[] valuesArray;
 
         private Item(String identity) {
             this.identity = identity;
