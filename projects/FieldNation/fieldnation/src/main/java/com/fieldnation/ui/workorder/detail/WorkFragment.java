@@ -1739,8 +1739,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onShipment(Task task) {
-            Log.e(TAG, "_taskListView_listener");
-            Log.e(TAG, "onShipment");
             ShipmentTracking[] shipments = _workorder.getShipmentTracking();
             if (shipments == null) {
                 _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
