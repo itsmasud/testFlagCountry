@@ -29,6 +29,7 @@ import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
+import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -115,6 +116,7 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG + ".checkInOutDialog";
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
+    private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -609,7 +611,7 @@ public class WorkFragment extends WorkorderFragment {
                     && getArguments().getString(WorkorderActivity.INTENT_FIELD_ACTION)
                     .equals(WorkorderActivity.ACTION_CONFIRM)) {
 
-                EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+                EtaDialog.Controller.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                         _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
                 getArguments().remove(WorkorderActivity.INTENT_FIELD_ACTION);
             }
@@ -646,10 +648,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-    private void showClosingNotesDialog() {
-        if (_workorder.canChangeClosingNotes())
-            _closingDialog.show(_workorder.getClosingNotes());
-    }
+    /*-*********************************************-*/
+    /*-				Check In Process				-*/
+    /*-*********************************************-*/
 
     private void startCheckin() {
         // everything is awsome. checkin
@@ -658,24 +659,6 @@ public class WorkFragment extends WorkorderFragment {
             _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkInListener);
         } else if (_gpsLocationService.hasLocation()) {
             doCheckin();
-        } else if (_gpsLocationService.isRunning()) {
-            _locationLoadingDialog.show();
-        } else if (_gpsLocationService.isLocationServicesEnabled()) {
-            _locationLoadingDialog.show();
-            _gpsLocationService.startLocation();
-        } else {
-            // location is disabled, or failed. ask for them to be enabled
-            Log.v(TAG, "Should not be here");
-        }
-//        setLoading(true);
-    }
-
-    private void startCheckOut() {
-        _gpsLocationService.setListener(_gps_checkOutListener);
-        if (!_gpsLocationService.isLocationServicesEnabled()) {
-            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
-        } else if (_gpsLocationService.hasLocation()) {
-            doCheckOut();
         } else if (_gpsLocationService.isRunning()) {
             _locationLoadingDialog.show();
         } else if (_gpsLocationService.isLocationServicesEnabled()) {
@@ -707,6 +690,58 @@ public class WorkFragment extends WorkorderFragment {
             CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         }
     };
+
+    private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
+        @Override
+        public void onOk() {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
+        }
+
+        @Override
+        public void onNotNow() {
+            doCheckin();
+            setLoading(false);
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
+        }
+    };
+
+    private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
+        @Override
+        public void onLocation(Location location) {
+            Log.v(TAG, "_gps_checkInListener.onLocation");
+            startCheckin();
+            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
+                _locationLoadingDialog.dismiss();
+            }
+        }
+    };
+
+    /*-*********************************************-*/
+    /*-				Check Out Process				-*/
+    /*-*********************************************-*/
+
+    private void startCheckOut() {
+        _gpsLocationService.setListener(_gps_checkOutListener);
+        if (!_gpsLocationService.isLocationServicesEnabled()) {
+            _locationDialog.show(_workorder.getIsGpsRequired(), _locationDialog_checkOutListener);
+        } else if (_gpsLocationService.hasLocation()) {
+            doCheckOut();
+        } else if (_gpsLocationService.isRunning()) {
+            _locationLoadingDialog.show();
+        } else if (_gpsLocationService.isLocationServicesEnabled()) {
+            _locationLoadingDialog.show();
+            _gpsLocationService.startLocation();
+        } else {
+            // location is disabled, or failed. ask for them to be enabled
+            Log.v(TAG, "Should not be here");
+        }
+//        setLoading(true);
+    }
 
     private void doCheckOut() {
 //        setLoading(true);
@@ -742,13 +777,16 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    /*-*********************************-*/
-    /*-				Events				-*/
-    /*-*********************************-*/
-    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+    private final LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
         @Override
-        public void onButtonClick() {
-            _gpsLocationService.stopLocationUpdates();
+        public void onOk() {
+            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
+        }
+
+        @Override
+        public void onNotNow() {
+            doCheckOut();
             setLoading(false);
         }
 
@@ -757,16 +795,7 @@ public class WorkFragment extends WorkorderFragment {
             setLoading(false);
         }
     };
-    private final GpsLocationService.Listener _gps_checkInListener = new GpsLocationService.Listener() {
-        @Override
-        public void onLocation(Location location) {
-            Log.v(TAG, "_gps_checkInListener.onLocation");
-            startCheckin();
-            if (_locationLoadingDialog != null && _locationLoadingDialog.isVisible()) {
-                _locationLoadingDialog.dismiss();
-            }
-        }
-    };
+
     private final GpsLocationService.Listener _gps_checkOutListener = new GpsLocationService.Listener() {
         @Override
         public void onLocation(Location location) {
@@ -778,6 +807,9 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
+    /*-*********************************-*/
+    /*-				Events				-*/
+    /*-*********************************-*/
     @Override
     public void onActivityResult(final int requestCode, final int resultCode, final Intent data) {
         Log.v(TAG, "WorkFragment#onActivityResult");
@@ -885,389 +917,13 @@ public class WorkFragment extends WorkorderFragment {
         }
     }
 
-
     /*-*********************************************-*/
-    /*-				Dialog Listeners				-*/
+    /*-				Main View Listeners				-*/
     /*-*********************************************-*/
-    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
-
-        @Override
-        public void onClick(AppPickerPackage pack) {
-            Intent src = pack.intent;
-
-            ResolveInfo info = pack.resolveInfo;
-
-            src.setComponent(new ComponentName(
-                    info.activityInfo.applicationInfo.packageName,
-                    info.activityInfo.name));
-
-            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
-                Log.v(TAG, "onClick: " + src.toString());
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
-            } else {
-                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
-                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
-                _tempFile = temppath;
-                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
-                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
-            }
-            setLoading(true);
-        }
-    };
-
-    private final ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
-        @Override
-        public void onOk(String message) {
-            WorkorderClient.actionSetClosingNotes(App.get(), _workorder.getWorkorderId(), message);
-            _workorder.dispatchOnChange();
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
-            try {
-                long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionConfirmAssignment(App.get(),
-                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end), null, false);
-                setLoading(true);
-
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
-        }
-
-        @Override
-        public void onCancel(Workorder workorder) {
-        }
-
-        @Override
-        public void termsOnClick(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
-        }
-    };
-
-    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String reason, boolean expires,
-                         int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
-            WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
-                    reason, expirationInSeconds, pay, schedule, expenses);
-            setLoading(true);
-        }
-    };
-
-    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
-        @Override
-        public void onOk(CustomField field, String value) {
-            WorkorderClient.actionCustomField(App.get(), _workorder.getWorkorderId(),
-                    field.getCustomLabelId(), value);
-            setLoading(true);
-        }
-    };
-
-    private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
-        @Override
-        public void onOk() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
-
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
-            }
-        }
-
-        @Override
-        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
-            if (blockBuyer) {
-                ProfileClient.actionBlockCompany(App.get(),
-                        App.get().getProfile().getUserId(),
-                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
-            }
-
-            getActivity().finish();
-        }
-
-        @Override
-        public void onOk(int declineReasonId, String declineExplanation) {
-            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount) {
-            WorkorderClient.createDiscount(App.get(), _workorder.getWorkorderId(),
-                    description, amount);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
-        @Override
-        public void onOk(String description, double amount, ExpenseCategory category) {
-            WorkorderClient.createExpense(App.get(), _workorder.getWorkorderId(), description,
-                    amount, category);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
-        @Override
-        public void onOk(Workorder workorder, String dateTime) {
-            long seconds = -1;
-            if (dateTime != null) {
-                try {
-                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
-                } catch (ParseException e) {
-                    Log.v(TAG, e);
-                }
-            }
-
-            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
-            setLoading(true);
-        }
-    };
-
-    private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
-        @Override
-        public void onSignatureClick() {
-            new AsyncTaskEx<Object, Object, Object>() {
-                @Override
-                protected Object doInBackground(Object... params) {
-                    try {
-                        Context context = (Context) params[0];
-                        Workorder workorder = (Workorder) params[1];
-
-                        Intent intent = new Intent(context, SignOffActivity.class);
-                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
-                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
-                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
-                        return null;
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                        ToastClient.toast(App.get(), "Could not start signature collection. Please try again.", Toast.LENGTH_LONG);
-                    }
-                    return null;
-                }
-            }.executeEx(getActivity(), _workorder);
-        }
-
-        @Override
-        public void onContinueClick() {
-            WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
-            setLoading(true);
-        }
-    };
-
-
-    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
-        @Override
-        public void onContinueClick() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workorder.getWorkorderId());
-            WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
-            setLoading(true);
-        }
-    };
-
-
-    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            if (_scannedImagePath != null) {
-                final UploadSlot[] slots = _workorder.getUploadSlots();
-                if (slots == null) return;
-                for (UploadSlot uploadSlot : slots) {
-                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
-                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
-                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
-                        _scannedImagePath = null;
-                    }
-                }
-            }
-
-            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
-                    carrier, carrierName, trackingId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onOk(String trackingId, String carrier, String carrierName, String description,
-                         boolean shipToSite, long taskId) {
-            Log.v(TAG, "ShipmentAddDialog#onOk");
-            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
-                    carrier, carrierName, trackingId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
-        }
-    };
-
-    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
-        @Override
-        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
-            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
-            setLoading(true);
-        }
-
-        @Override
-        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
-            WorkorderClient.actionCompleteShipmentTask(App.get(), workorder.getWorkorderId(), shipmentId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
-            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
-                    shipToSite, carrier, carrierName, trackingId, taskId);
-            setLoading(true);
-        }
-
-        @Override
-        public void onScan() {
-            IntentIntegrator integrator = new IntentIntegrator(getActivity());
-            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
-            integrator.setCameraId(0);
-            integrator.setBeepEnabled(false);
-            integrator.setBarcodeImageEnabled(true);
-            integrator.initiateScan();
-        }
-
-        @Override
-        public void onAddShipment(ShipmentTracking shipment, Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), task);
-        }
-
-        @Override
-        public void onAddShipment(Task task) {
-            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
-        }
-
-    };
-
-    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
-        @Override
-        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
-            if (loggedWork == null) {
-                if (deviceCount <= 0) {
-                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
-                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
-            } else {
-                if (deviceCount <= 0) {
-                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
-                } else {
-                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
-                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
-                }
-            }
-            setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-        }
-    };
-
-    /*-*****************************************-*/
-    /*-				View Listeners				-*/
-    /*-*****************************************-*/
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             RunningLateDialogLegacy.Controller.show(App.get(), null, _workorder);
-        }
-    };
-
-    private final LocationDialog.Listener _locationDialog_checkInListener = new LocationDialog.Listener() {
-        @Override
-        public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN);
-        }
-
-        @Override
-        public void onNotNow() {
-            doCheckin();
-            setLoading(false);
-        }
-
-        @Override
-        public void onCancel() {
-            setLoading(false);
-        }
-    };
-
-    private final LocationDialog.Listener _locationDialog_checkOutListener = new LocationDialog.Listener() {
-        @Override
-        public void onOk() {
-            Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKOUT);
-        }
-
-        @Override
-        public void onNotNow() {
-            doCheckOut();
-            setLoading(false);
-        }
-
-        @Override
-        public void onCancel() {
-            setLoading(false);
         }
     };
 
@@ -1387,27 +1043,23 @@ public class WorkFragment extends WorkorderFragment {
             }
         }
 
-        /*-*******************-*/
-
         @Override
         public void onWithdraw() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workorder.getWorkorderId());
 
-            WithdrawRequestDialog.Controller.show(App.get(), _workorder.getWorkorderId());
+            WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+            WithdrawRequestDialog.Controller.show(App.get(), DIALOG_WITHDRAW, _workorder.getWorkorderId());
         }
 
         @Override
         public void onViewCounter() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER,
-                    null, _workorder.getWorkorderId());
-
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.VIEW_COUNTER_OFFER, null, _workorder.getWorkorderId());
             _counterOfferDialog.show(_workorder);
         }
 
         @Override
         public void onReadyToGo() {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO,
-                    null, _workorder.getWorkorderId());
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.READY_TO_GO, WorkOrderTracker.Action.READY_TO_GO, _workorder.getWorkorderId());
 
             WorkorderClient.actionReadyToGo(App.get(), _workorder.getWorkorderId());
         }
@@ -1417,7 +1069,8 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workorder.getWorkorderId());
 
-            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+            EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
+            EtaDialog.Controller.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
@@ -1435,253 +1088,6 @@ public class WorkFragment extends WorkorderFragment {
                     null, _workorder.getWorkorderId());
 
             _markCompleteDialog.show(_workorder);
-        }
-    };
-
-    private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
-        @Override
-        public void onSend(long workorderId, String explanation, ReportProblemType type) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
-        }
-    };
-
-    private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
-        @Override
-        public void onRequested(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
-            EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
-        }
-    };
-
-    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
-        @Override
-        public void onAccepted(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-            EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
-        }
-    };
-
-    //*****************//
-
-    private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
-        @Override
-        public void onChangeClosingNotes(String closingNotes) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
-            showClosingNotesDialog();
-        }
-    };
-
-    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
-        @Override
-        public void onClick(CustomFieldRowView view, CustomField field) {
-            _customFieldDialog.show(field);
-        }
-    };
-
-    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
-        @Override
-        public void onCounterOffer(Workorder workorder) {
-            _counterOfferDialog.show(_workorder);
-        }
-
-        @Override
-        public void onRequestNewPay(Workorder workorder) {
-            // TODO show request new pay dialog
-            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
-
-            if (workorder.getIncreaseRequestInfo() != null && workorder.getIncreaseRequestInfo().getPay() != null) {
-                _payDialog.show(workorder.getIncreaseRequestInfo().getPay(), true);
-            } else {
-                _payDialog.show(workorder.getPay(), true);
-            }
-
-        }
-
-        @Override
-        public void onShowTerms(Workorder workorder) {
-            _termsDialog.show(getString(R.string.dialog_terms_title),
-                    getString(R.string.dialog_terms_body));
-        }
-    };
-
-    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
-        @Override
-        public void onCounterOffer() {
-            _counterOfferDialog.show(_workorder);
-        }
-    };
-
-    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
-        @Override
-        public void addExpense() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-            _expenseDialog.show(true);
-        }
-
-        @Override
-        public void expenseOnClick(Expense expense) {
-            //TODO expenseOnClick
-        }
-
-        @Override
-        public void expenseLongClick(final Expense expense) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_expense_title),
-                    getString(R.string.dialog_delete_expense_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
-                            WorkorderClient.deleteExpense(App.get(),
-                                    _workorder.getWorkorderId(), expense.getExpenseId());
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
-        }
-    };
-
-    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
-        @Override
-        public void addDiscount() {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-            _discountDialog.show(getString(R.string.dialog_add_discount_title));
-        }
-
-        @Override
-        public void discountOnClick(Discount discount) {
-            // TODO discountOnClick
-        }
-
-        @Override
-        public void discountLongClick(final Discount discount) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
-                    getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
-                            WorkorderClient.deleteDiscount(App.get(),
-                                    _workorder.getWorkorderId(), discount.getDiscountId());
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
-        }
-    };
-
-    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
-        @Override
-        public void onStartRefresh() {
-            requestWorkorder();
-        }
-    };
-
-    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
-
-        @Override
-        public void addShipment() {
-            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
-        }
-
-        @Override
-        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
-            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
-                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
-                return;
-            }
-
-            _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
-                    getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkorderClient.deleteShipment(App.get(),
-                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
-        }
-
-        @Override
-        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
-            // TODO STUB .onAssign()
-            Log.v(TAG, "STUB .onAssign()");
-            // TODO present a picker of the tasks that this can be assigned too
-        }
-    };
-
-    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
-        @Override
-        public void addSignature() {
-            SignOffActivity.startSignOff(getActivity(), _workorder);
-            setLoading(true);
-        }
-
-        @Override
-        public void signatureOnClick(SignatureCardView view, Signature signature) {
-            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
-            setLoading(true);
-        }
-
-        @Override
-        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
-            _yesNoDialog.setData(getString(R.string.dialog_delete_signature_title),
-                    getString(R.string.dialog_delete_signature_body), getString(R.string.btn_yes), getString(R.string.btn_no),
-                    new TwoButtonDialog.Listener() {
-                        @Override
-                        public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
-                            WorkorderClient.deleteSignature(App.get(),
-                                    _workorder.getWorkorderId(), signature.getSignatureId());
-                        }
-
-                        @Override
-                        public void onNegative() {
-                        }
-
-                        @Override
-                        public void onCancel() {
-                        }
-                    });
-            _yesNoDialog.show();
-            return true;
-        }
-    };
-
-
-    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
-        @Override
-        public void onComplete(Pay pay, String explanation) {
-            WorkorderClient.actionChangePay(App.get(), _workorder.getWorkorderId(),
-                    pay, explanation);
-
-            populateUi();
-        }
-
-        @Override
-        public void onNothing() {
         }
     };
 
@@ -1705,6 +1111,48 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
+    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+        @Override
+        public void addWorklog(boolean showdevice) {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+        }
+
+        @Override
+        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
+        }
+
+        @Override
+        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
+            final long workorderID = workorder.getWorkorderId();
+            final long loggedHoursID = loggedWork.getLoggedHoursId();
+
+            _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
+                    getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                            WorkorderClient.deleteTimeLog(App.get(), workorderID,
+                                    loggedHoursID);
+                            setLoading(true);
+
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+        }
+    };
+
     private final TaskListView.Listener _taskListView_listener = new TaskListView.Listener() {
         @Override
         public void onCheckin(Task task) {
@@ -1723,7 +1171,8 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            EtaDialog.Controller.show(App.get(), _workorder.getWorkorderId(),
+            EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
+            EtaDialog.Controller.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
@@ -1867,34 +1316,191 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final TimeLogListView.Listener _timeLoggedView_listener = new TimeLogListView.Listener() {
+    private final CustomFieldRowView.Listener _customFields_listener = new CustomFieldRowView.Listener() {
         @Override
-        public void addWorklog(boolean showdevice) {
-            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), null, showdevice);
+        public void onClick(CustomFieldRowView view, CustomField field) {
+            _customFieldDialog.show(field);
+        }
+    };
+
+    private final ShipmentListView.Listener _shipments_listener = new ShipmentListView.Listener() {
+
+        @Override
+        public void addShipment() {
+            _shipmentAddDialog.show(getString(R.string.dialog_shipment_title), null);
         }
 
         @Override
-        public void editWorklog(Workorder workorder, LoggedWork loggedWork, boolean showDeviceCount) {
-            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-            _worklogDialog.show(getString(R.string.dialog_delete_add_worklog_title), loggedWork, showDeviceCount);
-        }
+        public void onDelete(Workorder workorder, final ShipmentTracking shipment) {
+            if ((long) shipment.getUserId() != (long) App.getProfileId()) {
+                ToastClient.toast(App.get(), R.string.toast_cant_delete_shipment_permission, Toast.LENGTH_LONG);
+                return;
+            }
 
-        @Override
-        public void deleteWorklog(Workorder workorder, LoggedWork loggedWork) {
-            final long workorderID = workorder.getWorkorderId();
-            final long loggedHoursID = loggedWork.getLoggedHoursId();
-
-            _yesNoDialog.setData(getString(R.string.dialog_delete_worklog_title),
-                    getString(R.string.dialog_delete_worklog_body), getString(R.string.btn_yes), getString(R.string.btn_no),
+            _yesNoDialog.setData(getString(R.string.dialog_delete_shipment_title),
+                    getString(R.string.dialog_delete_shipment_body), getString(R.string.btn_yes), getString(R.string.btn_no),
                     new TwoButtonDialog.Listener() {
                         @Override
                         public void onPositive() {
-                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
-                            WorkorderClient.deleteTimeLog(App.get(), workorderID,
-                                    loggedHoursID);
-                            setLoading(true);
+                            WorkorderClient.deleteShipment(App.get(),
+                                    _workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
+                        }
 
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+        }
+
+        @Override
+        public void onAssign(Workorder workorder, ShipmentTracking shipment) {
+            // TODO STUB .onAssign()
+            Log.v(TAG, "STUB .onAssign()");
+            // TODO present a picker of the tasks that this can be assigned too
+        }
+    };
+
+    private final ClosingNotesView.Listener _clockingNotesView_listener = new ClosingNotesView.Listener() {
+        @Override
+        public void onChangeClosingNotes(String closingNotes) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
+            showClosingNotesDialog();
+        }
+    };
+
+    private final SignatureListView.Listener _signaturelist_listener = new SignatureListView.Listener() {
+        @Override
+        public void addSignature() {
+            SignOffActivity.startSignOff(getActivity(), _workorder);
+            setLoading(true);
+        }
+
+        @Override
+        public void signatureOnClick(SignatureCardView view, Signature signature) {
+            SignatureDisplayActivity.startIntent(getActivity(), signature.getSignatureId(), _workorder);
+            setLoading(true);
+        }
+
+        @Override
+        public boolean signatureOnLongClick(SignatureCardView view, final Signature signature) {
+            _yesNoDialog.setData(getString(R.string.dialog_delete_signature_title),
+                    getString(R.string.dialog_delete_signature_body), getString(R.string.btn_yes), getString(R.string.btn_no),
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SIGNATURES);
+                            WorkorderClient.deleteSignature(App.get(),
+                                    _workorder.getWorkorderId(), signature.getSignatureId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+            return true;
+        }
+    };
+
+    private final PaymentView.Listener _paymentView_listener = new PaymentView.Listener() {
+        @Override
+        public void onCounterOffer(Workorder workorder) {
+            _counterOfferDialog.show(_workorder);
+        }
+
+        @Override
+        public void onRequestNewPay(Workorder workorder) {
+            // TODO add analytics
+            Log.e(TAG, "Inside _paymentView_listener.onRequestNewPay()");
+            if (workorder.getIncreaseRequestInfo() != null && workorder.getIncreaseRequestInfo().getPay() != null) {
+                _payDialog.show(workorder.getIncreaseRequestInfo().getPay(), true);
+            } else {
+                _payDialog.show(workorder.getPay(), true);
+            }
+
+        }
+
+        @Override
+        public void onShowTerms(Workorder workorder) {
+            _termsDialog.show(getString(R.string.dialog_terms_title),
+                    getString(R.string.dialog_terms_body));
+        }
+    };
+
+    private final CounterOfferSummaryView.Listener _coSummary_listener = new CounterOfferSummaryView.Listener() {
+        @Override
+        public void onCounterOffer() {
+            _counterOfferDialog.show(_workorder);
+        }
+    };
+
+    private final ExpenseListLayout.Listener _expenseListView_listener = new ExpenseListLayout.Listener() {
+        @Override
+        public void addExpense() {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+            _expenseDialog.show(true);
+        }
+
+        @Override
+        public void expenseOnClick(Expense expense) {
+            //TODO expenseOnClick
+        }
+
+        @Override
+        public void expenseLongClick(final Expense expense) {
+            _yesNoDialog.setData(getString(R.string.dialog_delete_expense_title),
+                    getString(R.string.dialog_delete_expense_body), getString(R.string.btn_yes), getString(R.string.btn_no),
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+                            WorkorderClient.deleteExpense(App.get(),
+                                    _workorder.getWorkorderId(), expense.getExpenseId());
+                        }
+
+                        @Override
+                        public void onNegative() {
+                        }
+
+                        @Override
+                        public void onCancel() {
+                        }
+                    });
+            _yesNoDialog.show();
+        }
+    };
+
+    private final DiscountListLayout.Listener _discountListView_listener = new DiscountListLayout.Listener() {
+        @Override
+        public void addDiscount() {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            _discountDialog.show(getString(R.string.dialog_add_discount_title));
+        }
+
+        @Override
+        public void discountOnClick(Discount discount) {
+            // TODO discountOnClick
+        }
+
+        @Override
+        public void discountLongClick(final Discount discount) {
+            _yesNoDialog.setData(getString(R.string.dialog_delete_discount_title),
+                    getString(R.string.dialog_delete_discount_body), getString(R.string.btn_yes), getString(R.string.btn_no),
+                    new TwoButtonDialog.Listener() {
+                        @Override
+                        public void onPositive() {
+                            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+                            WorkorderClient.deleteDiscount(App.get(),
+                                    _workorder.getWorkorderId(), discount.getDiscountId());
                         }
 
                         @Override
@@ -1914,6 +1520,471 @@ public class WorkFragment extends WorkorderFragment {
         public void onClick(View v) {
             WorkorderBundleDetailActivity.startNew(App.get(), _workorder.getWorkorderId(), _workorder.getBundleId());
             setLoading(true);
+        }
+    };
+
+    /*-*********************************-*/
+    /*-				Dialogs				-*/
+    /*-*********************************-*/
+    private void showClosingNotesDialog() {
+        if (_workorder.canChangeClosingNotes())
+            _closingDialog.show(_workorder.getClosingNotes());
+    }
+
+    private final AppPickerDialog.Listener _appdialog_listener = new AppPickerDialog.Listener() {
+
+        @Override
+        public void onClick(AppPickerPackage pack) {
+            Intent src = pack.intent;
+
+            ResolveInfo info = pack.resolveInfo;
+
+            src.setComponent(new ComponentName(
+                    info.activityInfo.applicationInfo.packageName,
+                    info.activityInfo.name));
+
+            if (src.getAction().equals(Intent.ACTION_GET_CONTENT)) {
+                Log.v(TAG, "onClick: " + src.toString());
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_ATTACHMENT_WORK);
+            } else {
+                File temppath = new File(App.get().getTempFolder() + "/IMAGE-"
+                        + misc.longToHex(System.currentTimeMillis(), 8) + ".png");
+                _tempFile = temppath;
+                src.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(temppath));
+                startActivityForResult(src, ActivityResultConstants.RESULT_CODE_GET_CAMERA_PIC_WORK);
+            }
+            setLoading(true);
+        }
+    };
+
+    private final OneButtonDialog.Listener _locationLoadingDialog_listener = new OneButtonDialog.Listener() {
+        @Override
+        public void onButtonClick() {
+            _gpsLocationService.stopLocationUpdates();
+            setLoading(false);
+        }
+
+        @Override
+        public void onCancel() {
+            setLoading(false);
+        }
+    };
+
+    private final ClosingNotesDialog.Listener _closingNotes_onOk = new ClosingNotesDialog.Listener() {
+        @Override
+        public void onOk(String message) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CLOSING_NOTES, WorkOrderTracker.Action.CLOSING_NOTES, _workorder.getWorkorderId());
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.CLOSING_NOTES);
+            WorkorderClient.actionSetClosingNotes(App.get(), _workorder.getWorkorderId(), message);
+            _workorder.dispatchOnChange();
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private final ConfirmDialog.Listener _confirmListener = new ConfirmDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
+            try {
+                long end = durationMilliseconds + ISO8601.toUtc(startDate);
+                WorkorderClient.actionConfirmAssignment(App.get(),
+                        _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end), null, false);
+                setLoading(true);
+
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+
+        @Override
+        public void onCancel(Workorder workorder) {
+        }
+
+        @Override
+        public void termsOnClick(Workorder workorder) {
+            _termsDialog.show(getString(R.string.dialog_terms_title), getString(R.string.dialog_terms_body));
+        }
+    };
+
+    private final CounterOfferDialog.Listener _counterOffer_listener = new CounterOfferDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String reason, boolean expires,
+                         int expirationInSeconds, Pay pay, Schedule schedule, Expense[] expenses) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.COUNTER_OFFER, WorkOrderTracker.Action.COUNTER_OFFER, workorder.getWorkorderId());
+            WorkorderClient.actionCounterOffer(App.get(), workorder.getWorkorderId(), expires,
+                    reason, expirationInSeconds, pay, schedule, expenses);
+            setLoading(true);
+        }
+    };
+
+    private final CustomFieldDialog.Listener _customFieldDialog_listener = new CustomFieldDialog.Listener() {
+        @Override
+        public void onOk(CustomField field, String value) {
+            WorkorderClient.actionCustomField(App.get(), _workorder.getWorkorderId(),
+                    field.getCustomLabelId(), value);
+            setLoading(true);
+        }
+    };
+
+    private final DeclineDialog.Listener _declineDialog_listener = new DeclineDialog.Listener() {
+        @Override
+        public void onOk() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), -1, null);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+
+            if (blockBuyer) {
+                ProfileClient.actionBlockCompany(App.get(),
+                        App.get().getProfile().getUserId(),
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+            }
+        }
+
+        @Override
+        public void onOk(boolean blockBuyer, int declineReasonId, String declineExplanation, int blockingReasonId, String blockingExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+            if (blockBuyer) {
+                ProfileClient.actionBlockCompany(App.get(),
+                        App.get().getProfile().getUserId(),
+                        _workorder.getCompanyId(), blockingReasonId, blockingExplanation);
+            }
+
+            getActivity().finish();
+        }
+
+        @Override
+        public void onOk(int declineReasonId, String declineExplanation) {
+            WorkOrderClient.actionDecline(App.get(), _workorder.getWorkorderId(), declineReasonId, declineExplanation);
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.NOT_INTERESTED, WorkOrderTracker.Action.NOT_INTERESTED, _workorder.getWorkorderId());
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private final DiscountDialog.Listener _discountDialog_listener = new DiscountDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount) {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.DISCOUNTS);
+            WorkorderClient.createDiscount(App.get(), _workorder.getWorkorderId(),
+                    description, amount);
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private final EtaDialog.OnRequestedListener _etaDialog_onRequested = new EtaDialog.OnRequestedListener() {
+        @Override
+        public void onRequested(long workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
+            EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
+        }
+    };
+
+    private final EtaDialog.OnAcceptedListener _etaDialog_onAccepted = new EtaDialog.OnAcceptedListener() {
+        @Override
+        public void onAccepted(long workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
+            EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        }
+    };
+
+    private final EtaDialog.OnConfirmedListener _etaDialog_onConfirmed = new EtaDialog.OnConfirmedListener() {
+        @Override
+        public void onConfirmed(long workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
+            EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
+        }
+    };
+
+    private final ExpenseDialog.Listener _expenseDialog_listener = new ExpenseDialog.Listener() {
+        @Override
+        public void onOk(String description, double amount, ExpenseCategory category) {
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.EXPENSES);
+            WorkorderClient.createExpense(App.get(), _workorder.getWorkorderId(), description,
+                    amount, category);
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+    };
+
+    private final ExpiresDialog.Listener _expiresDialog_listener = new ExpiresDialog.Listener() {
+        @Override
+        public void onOk(Workorder workorder, String dateTime) {
+            long seconds = -1;
+            if (dateTime != null) {
+                try {
+                    seconds = (ISO8601.toUtc(dateTime) - System.currentTimeMillis()) / 1000;
+                } catch (ParseException e) {
+                    Log.v(TAG, e);
+                }
+            }
+
+            WorkorderClient.actionRequest(App.get(), _workorder.getWorkorderId(), seconds);
+            setLoading(true);
+        }
+    };
+
+    private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
+        @Override
+        public void onSignatureClick() {
+            new AsyncTaskEx<Object, Object, Object>() {
+                @Override
+                protected Object doInBackground(Object... params) {
+                    try {
+                        Context context = (Context) params[0];
+                        Workorder workorder = (Workorder) params[1];
+
+                        Intent intent = new Intent(context, SignOffActivity.class);
+                        intent.putExtra(SignOffActivity.INTENT_PARAM_WORKORDER, workorder);
+                        intent.putExtra(SignOffActivity.INTENT_COMPLETE_WORKORDER, true);
+                        startActivityForResult(intent, ActivityResultConstants.RESULT_CODE_GET_SIGNATURE);
+                        return null;
+                    } catch (Exception ex) {
+                        Log.v(TAG, ex);
+                        ToastClient.toast(App.get(), "Could not start signature collection. Please try again.", Toast.LENGTH_LONG);
+                    }
+                    return null;
+                }
+            }.executeEx(getActivity(), _workorder);
+        }
+
+        @Override
+        public void onContinueClick() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workorder.getWorkorderId());
+            WorkorderClient.actionComplete(App.get(), _workorder.getWorkorderId());
+            setLoading(true);
+        }
+    };
+
+    private final MarkIncompleteDialog.Listener _markIncompleteDialog_listener = new MarkIncompleteDialog.Listener() {
+        @Override
+        public void onContinueClick() {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_INCOMPLETE, WorkOrderTracker.Action.MARK_INCOMPLETE, _workorder.getWorkorderId());
+            WorkorderClient.actionIncomplete(App.get(), _workorder.getWorkorderId());
+            setLoading(true);
+        }
+    };
+
+    private final PayDialog.Listener _payDialog_listener = new PayDialog.Listener() {
+        @Override
+        public void onComplete(Pay pay, String explanation) {
+            // TODO analytics
+            WorkorderClient.actionChangePay(App.get(), _workorder.getWorkorderId(),
+                    pay, explanation);
+
+            populateUi();
+        }
+
+        @Override
+        public void onNothing() {
+        }
+    };
+
+    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
+        @Override
+        public void onOk(long workOrderId, String filename, String photoDescription) {
+            Log.e(TAG, "uploading an image using camera");
+            if (_tempFile != null) {
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
+                        filename, _tempFile.getAbsolutePath(), photoDescription);
+            } else if (_tempUri != null) {
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
+                        filename, _tempUri, photoDescription);
+            }
+        }
+
+        @Override
+        public void onImageClick() {
+            Intent intent;
+            if (_tempUri == null) {
+                intent = new Intent(Intent.ACTION_VIEW);
+                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
+
+            } else {
+                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
+            }
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            try {
+                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
+                    App.get().startActivity(intent);
+                }
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
+            }
+        }
+    };
+
+    private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
+        @Override
+        public void onStartRefresh() {
+            requestWorkorder();
+        }
+    };
+
+    private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
+        @Override
+        public void onSend(long workorderId, String explanation, ReportProblemType type) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
+            ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        }
+    };
+
+    private final ShipmentAddDialog.Listener _shipmentAddDialog_listener = new ShipmentAddDialog.Listener() {
+        @Override
+        public void onOk(String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            if (_scannedImagePath != null) {
+                final UploadSlot[] slots = _workorder.getUploadSlots();
+                if (slots == null) return;
+                for (UploadSlot uploadSlot : slots) {
+                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
+                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
+                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                        _scannedImagePath = null;
+                    }
+                }
+            }
+
+            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
+                    carrier, carrierName, trackingId);
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            setLoading(true);
+        }
+
+        @Override
+        public void onOk(String trackingId, String carrier, String carrierName, String description,
+                         boolean shipToSite, long taskId) {
+            Log.v(TAG, "ShipmentAddDialog#onOk");
+            WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
+                    carrier, carrierName, trackingId, taskId);
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+
+        @Override
+        public void onScan() {
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
+            integrator.setCameraId(0);
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan();
+        }
+    };
+
+    private final TaskShipmentAddDialog.Listener taskShipmentAddDialog_listener = new TaskShipmentAddDialog.Listener() {
+        @Override
+        public void onDelete(Workorder workorder, ShipmentTracking shipment) {
+            WorkOrderTracker.onDeleteEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkorderClient.deleteShipment(App.get(), workorder.getWorkorderId(), shipment.getWorkorderShipmentId());
+            setLoading(true);
+        }
+
+        @Override
+        public void onAssign(Workorder workorder, int shipmentId, long taskId) {
+            WorkorderClient.actionCompleteShipmentTask(App.get(), workorder.getWorkorderId(), shipmentId, taskId);
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
+        }
+
+        @Override
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
+                    shipToSite, carrier, carrierName, trackingId);
+            setLoading(true);
+        }
+
+        @Override
+        public void onAddShipmentDetails(Workorder workorder, String trackingId, String carrier, String carrierName, String description, boolean shipToSite, long taskId) {
+            WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
+            WorkorderClient.actionSetShipmentDetails(App.get(), workorder.getWorkorderId(), description,
+                    shipToSite, carrier, carrierName, trackingId, taskId);
+            setLoading(true);
+        }
+
+        @Override
+        public void onScan() {
+            IntentIntegrator integrator = new IntentIntegrator(getActivity());
+            integrator.setPrompt(getString(R.string.dialog_scan_barcode_title));
+            integrator.setCameraId(0);
+            integrator.setBeepEnabled(false);
+            integrator.setBarcodeImageEnabled(true);
+            integrator.initiateScan();
+        }
+
+        @Override
+        public void onAddShipment(ShipmentTracking shipment, Task task) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), shipment.getName(), task);
+        }
+
+        @Override
+        public void onAddShipment(Task task) {
+            _shipmentAddDialog.show(getText(R.string.dialog_shipment_title), task);
+        }
+
+    };
+
+    private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
+        @Override
+        public void onWithdraw(long workOrderId) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
+            WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+        }
+    };
+
+    private final WorkLogDialog.Listener _worklogDialog_listener = new WorkLogDialog.Listener() {
+        @Override
+        public void onOk(LoggedWork loggedWork, Calendar start, Calendar end, int deviceCount) {
+            if (loggedWork == null) {
+                WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                if (deviceCount <= 0) {
+                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
+                            start.getTimeInMillis(), end.getTimeInMillis());
+                } else {
+                    WorkorderClient.addTimeLog(App.get(), _workorder.getWorkorderId(),
+                            start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+                }
+            } else {
+                WorkOrderTracker.onEditEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.TIME_LOGGED);
+                if (deviceCount <= 0) {
+                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis());
+                } else {
+                    WorkorderClient.updateTimeLog(App.get(), _workorder.getWorkorderId(),
+                            loggedWork.getLoggedHoursId(), start.getTimeInMillis(), end.getTimeInMillis(), deviceCount);
+                }
+            }
+            setLoading(true);
+        }
+
+        @Override
+        public void onCancel() {
         }
     };
 
@@ -1956,41 +2027,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onTaskList(long workorderId, List<Task> tasks, boolean failed) {
             setTasks(tasks);
-        }
-    };
-
-    private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
-        @Override
-        public void onOk(long workOrderId, String filename, String photoDescription) {
-            Log.e(TAG, "uploading an image using camera");
-            if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempFile.getAbsolutePath(), photoDescription);
-            } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _currentTask.getSlotId(),
-                        filename, _tempUri, photoDescription);
-            }
-        }
-
-        @Override
-        public void onImageClick() {
-            Intent intent;
-            if (_tempUri == null) {
-                intent = new Intent(Intent.ACTION_VIEW);
-                intent.setDataAndType(Uri.fromFile(_tempFile), "image/*");
-
-            } else {
-                intent = new Intent(Intent.ACTION_VIEW, _tempUri);
-            }
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-
-            try {
-                if (App.get().getPackageManager().queryIntentActivities(intent, 0).size() > 0) {
-                    App.get().startActivity(intent);
-                }
-            } catch (Exception ex) {
-                Log.v(TAG, ex);
-            }
         }
     };
 }

@@ -730,6 +730,8 @@ public class EtaDialog extends FullScreenDialog {
                 } else {
                     if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
                         _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+                    } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
+                        _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
                     }
 
                     if (_etaSwitch.isChecked()) {
@@ -820,5 +822,28 @@ public class EtaDialog extends FullScreenDialog {
 
     public static void removeAllOnAcceptedListener(String uid) {
         _onAcceptedDispatcher.removeAll(uid);
+    }
+
+    public interface OnConfirmedListener {
+        void onConfirmed(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnConfirmedListener> _onConfirmedDispatcher = new KeyedDispatcher<OnConfirmedListener>() {
+        @Override
+        public void onDispatch(OnConfirmedListener listener, Object... parameters) {
+            listener.onConfirmed((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
+        _onConfirmedDispatcher.add(uid, onConfirmedListener);
+    }
+
+    public static void removeOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
+        _onConfirmedDispatcher.remove(uid, onConfirmedListener);
+    }
+
+    public static void removeAllOnConfirmedListener(String uid) {
+        _onConfirmedDispatcher.removeAll(uid);
     }
 }
