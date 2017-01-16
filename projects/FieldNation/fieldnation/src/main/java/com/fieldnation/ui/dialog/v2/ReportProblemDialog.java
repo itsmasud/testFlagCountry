@@ -28,6 +28,7 @@ import com.fieldnation.service.data.workorder.ReportProblemType;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 10/5/2016.
@@ -621,17 +622,45 @@ public class ReportProblemDialog extends SimpleDialog {
             super(context, klass, null);
         }
 
-        public static void show(Context context, long workOrderId) {
+        public static void show(Context context, String uid, long workOrderId) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORKORDER_ID, workOrderId);
-            show(context, null, ReportProblemDialog.class, params);
+            show(context, uid, ReportProblemDialog.class, params);
         }
 
-        public static void show(Context context, Workorder workorder) {
+        public static void show(Context context, String uid, Workorder workorder) {
             Bundle params = new Bundle();
             params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
             params.putParcelable(PARAM_WORKORDER, workorder);
-            show(context, null, ReportProblemDialog.class, params);
+            show(context, uid, ReportProblemDialog.class, params);
         }
     }
+
+    /*-*******************************************/
+    /*-         Experimental Listener           -*/
+    /*-*******************************************/
+
+    public interface OnSendListener {
+        void onSend(long workorderId, String explanation, ReportProblemType type);
+    }
+
+    private static KeyedDispatcher<OnSendListener> _onSendDispatcher = new KeyedDispatcher<OnSendListener>() {
+        @Override
+        public void onDispatch(OnSendListener listener, Object... parameters) {
+            listener.onSend((Long) parameters[0], (String) parameters[1], (ReportProblemType) parameters[2]);
+        }
+    };
+
+    public static void addOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.add(uid, onSendListener);
+    }
+
+    public static void removeOnSendListener(String uid, OnSendListener onSendListener) {
+        _onSendDispatcher.remove(uid, onSendListener);
+    }
+
+    public static void removeAll(String uid) {
+        _onSendDispatcher.removeAll(uid);
+    }
+
 }

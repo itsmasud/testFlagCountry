@@ -32,6 +32,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 
@@ -707,6 +708,7 @@ public class EtaDialog extends FullScreenDialog {
 
             try {
                 if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
+                    _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionRequest(
@@ -726,6 +728,10 @@ public class EtaDialog extends FullScreenDialog {
                     }
                     dismiss(true);
                 } else {
+                    if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+                    }
+
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionConfirmAssignment(
@@ -758,12 +764,61 @@ public class EtaDialog extends FullScreenDialog {
             super(context, EtaDialog.class, uid);
         }
 
-        public static void show(Context context, long workOrderId, Schedule schedule, String dialogType) {
+        public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
             Bundle params = new Bundle();
             params.putParcelable(PARAM_SCHEDULE, schedule);
             params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
             params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, null, EtaDialog.class, params);
+            show(context, uid, EtaDialog.class, params);
         }
+    }
+
+    /*-*******************************************/
+    /*-         Experimental Listener           -*/
+    /*-*******************************************/
+    public interface OnRequestedListener {
+        void onRequested(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
+        @Override
+        public void onDispatch(OnRequestedListener listener, Object... parameters) {
+            listener.onRequested((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.add(uid, onRequestedListener);
+    }
+
+    public static void removeOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.remove(uid, onRequestedListener);
+    }
+
+    public static void removeAllOnRequestedListener(String uid) {
+        _onRequestedDispatcher.removeAll(uid);
+    }
+
+    public interface OnAcceptedListener {
+        void onAccepted(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
+        @Override
+        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
+            listener.onAccepted((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.add(uid, onAcceptedListener);
+    }
+
+    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
+    }
+
+    public static void removeAllOnAcceptedListener(String uid) {
+        _onAcceptedDispatcher.removeAll(uid);
     }
 }

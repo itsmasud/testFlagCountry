@@ -51,6 +51,9 @@ import java.util.Locale;
 public class WorkOrderCard extends RelativeLayout {
     private static final String TAG = "WorkOrderCard";
 
+    // Dialog UIDs
+    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
+
     // Ui
     private TextView _amountTextView;
     private TextView _payTypeTextView;
@@ -595,7 +598,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workOrder.getId());
-            ReportProblemDialog.Controller.show(App.get(), _workOrder.getId());
+            ReportProblemDialog.Controller.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
         }
     };
 

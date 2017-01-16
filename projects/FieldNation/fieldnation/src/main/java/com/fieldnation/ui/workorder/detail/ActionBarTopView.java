@@ -15,11 +15,15 @@ import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.data.workorder.WorkorderSubstatus;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.dialog.v2.RunningLateDialog;
 import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
 
 public class ActionBarTopView extends LinearLayout {
     private static final String TAG = "ActionBarTopView";
+
+    // Dalog UIDs
+    private static final String DIALOG_RUNNING_LATE_LEGACY = TAG + ".runningLateLegacyDialog";
 
     // Ui
     private Button _leftWhiteButton;
@@ -525,7 +529,18 @@ public class ActionBarTopView extends LinearLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                     null, _workorder.getWorkorderId());
 
-            RunningLateDialogLegacy.Controller.show(App.get(), _workorder);
+            RunningLateDialogLegacy.addOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+            RunningLateDialogLegacy.Controller.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
+        }
+    };
+
+    private final RunningLateDialogLegacy.OnSendListener _runningLateDialogLegacy_onSend = new RunningLateDialogLegacy.OnSendListener() {
+        @Override
+        public void onSend(long workOrderId, int delayMin) {
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
+                    WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
+
+            RunningLateDialogLegacy.removeOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
         }
     };
 

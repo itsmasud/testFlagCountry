@@ -28,6 +28,7 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
@@ -200,7 +201,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (_durationMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_DURATION, _durationMilliseconds);
 
-        if (_startCalendar!=null)
+        if (_startCalendar != null)
             outState.putSerializable(PARAM_CALENDAR, _startCalendar);
 
         super.onSaveDialogState(outState);
@@ -343,6 +344,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                 else
                     WorkorderClient.actionCheckin(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
 
+                _onCheckInDispatcher.dispatch(getUid(), _workorderId);
+
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                 if (_location != null) {
                     if (_itemSelectedPosition >= INVALID_NUMBER)
@@ -357,6 +360,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                         WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition);
                 } else
                     WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
+
+                _onCheckOutDispatcher.dispatch(getUid(), _workorderId);
             }
 
             return true;
@@ -438,4 +443,55 @@ public class CheckInOutDialog extends FullScreenDialog {
             dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
         }
     }
+
+    /*-*******************************************/
+    /*-         Experimental Listener           -*/
+    /*-*******************************************/
+    public interface OnCheckInListener {
+        void onCheckIn(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnCheckInListener> _onCheckInDispatcher = new KeyedDispatcher<OnCheckInListener>() {
+        @Override
+        public void onDispatch(OnCheckInListener listener, Object... parameters) {
+            listener.onCheckIn((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
+        _onCheckInDispatcher.add(uid, onCheckInListener);
+    }
+
+    public static void removeOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
+        _onCheckInDispatcher.remove(uid, onCheckInListener);
+    }
+
+    public static void removeAllOnCheckInListener(String uid) {
+        _onCheckInDispatcher.removeAll(uid);
+    }
+
+    public interface OnCheckOutListener {
+        void onCheckOut(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {
+        @Override
+        public void onDispatch(OnCheckOutListener listener, Object... parameters) {
+            listener.onCheckOut((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
+        _onCheckOutDispatcher.add(uid, onCheckOutListener);
+    }
+
+    public static void removeOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
+        _onCheckOutDispatcher.remove(uid, onCheckOutListener);
+    }
+
+    public static void removeAllOnCheckOutListener(String uid) {
+        _onCheckOutDispatcher.removeAll(uid);
+    }
+
+
 }

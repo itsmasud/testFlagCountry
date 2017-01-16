@@ -96,72 +96,72 @@ public class WorkOrderTracker {
         private static Identity[] valuesArray;
 
         // Action
-        public static final Identity CHECK_IN_ACTION_BUTTON = new Identity(" Check In Action", ElementType.BUTTON, true);
-        public static final Identity CHECK_IN_AGAIN_ACTION_BUTTON = new Identity(" Check In Again Action", ElementType.BUTTON, true);
-        public static final Identity CHECK_OUT_ACTION_BUTTON = new Identity(" Check Out Action", ElementType.BUTTON, true);
-        public static final Identity VIEW_COUNTER_OFFER_ACTION_BUTTON = new Identity(" View Counter Offer Action", ElementType.BUTTON, true);
-        public static final Identity COUNTER_OFFER_ACTION_BUTTON = new Identity(" Counter Offer Action", ElementType.BUTTON, true);
-        public static final Identity CLOSING_NOTE_ACTION_BUTTON = new Identity(" Closing Note Action", ElementType.BUTTON, true);
-        public static final Identity CONFIRM_ACTION_BUTTON = new Identity(" Confirm Action", ElementType.BUTTON, true);
-        public static final Identity ACKNOWLEDGE_HOLD_ACTION_BUTTON = new Identity(" Acknowledge Hold Action", ElementType.BUTTON, true);
-        public static final Identity MARK_COMPLETE_ACTION_BUTTON = new Identity(" Mark Complete Action", ElementType.BUTTON, true);
-        public static final Identity MARK_INCOMPLETE_ACTION_BUTTON = new Identity(" Mark Incomplete Action", ElementType.BUTTON, true);
-        public static final Identity ACCEPT_ACTION_BUTTON = new Identity(" Accept Action", ElementType.BUTTON, true);
-        public static final Identity REQUEST_ACTION_BUTTON = new Identity(" Request Action", ElementType.BUTTON, true);
-        public static final Identity NOT_INTERESTED_ACTION_BUTTON = new Identity(" Not Interested Action", ElementType.BUTTON, true);
-        public static final Identity READY_TO_GO_ACTION_BUTTON = new Identity(" Ready To Go Action", ElementType.BUTTON, true);
-        public static final Identity REPORT_PROBLEM_ACTION_BUTTON = new Identity(" Report Problem Action", ElementType.BUTTON, true);
-        public static final Identity WITHDRAW_ACTION_BUTTON = new Identity(" Withdraw Action", ElementType.BUTTON, true);
-        public static final Identity VIEW_PAYMENT_ACTION_BUTTON = new Identity(" View Payment Action", ElementType.BUTTON, true);
-        public static final Identity RUNNING_LATE_ACTION_BUTTON = new Identity(" Running Late Action", ElementType.BUTTON, true);
-        public static final Identity ON_MY_WAY_ACTION_BUTTON = new Identity(" On My Way Action", ElementType.BUTTON, true);
-        public static final Identity VIEW_BUNDLE_ACTION_BUTTON = new Identity(" View Bundle Action", ElementType.BUTTON, true);
-        public static final Identity CALL_BUYER_ACTION_BUTTON = new Identity(" Call Buyer Action", ElementType.BUTTON, true);
-        public static final Identity VIEW_MESSAGES_ACTION_BUTTON = new Identity(" View Messages Action", ElementType.BUTTON, true);
-        public static final Identity VIEW_DIRECTIONS_ACTION_BUTTON = new Identity(" View Directions Action", ElementType.BUTTON, true);
+        public static final Identity CHECK_IN_ACTION_BUTTON = new Identity("Check In Action", ElementType.BUTTON, true);
+        public static final Identity CHECK_IN_AGAIN_ACTION_BUTTON = new Identity("Check In Again Action", ElementType.BUTTON, true);
+        public static final Identity CHECK_OUT_ACTION_BUTTON = new Identity("Check Out Action", ElementType.BUTTON, true);
+        public static final Identity VIEW_COUNTER_OFFER_ACTION_BUTTON = new Identity("View Counter Offer Action", ElementType.BUTTON, true);
+        public static final Identity COUNTER_OFFER_ACTION_BUTTON = new Identity("Counter Offer Action", ElementType.BUTTON, true);
+        public static final Identity CLOSING_NOTE_ACTION_BUTTON = new Identity("Closing Note Action", ElementType.BUTTON, true);
+        public static final Identity CONFIRM_ACTION_BUTTON = new Identity("Confirm Action", ElementType.BUTTON, true);
+        public static final Identity ACKNOWLEDGE_HOLD_ACTION_BUTTON = new Identity("Acknowledge Hold Action", ElementType.BUTTON, true);
+        public static final Identity MARK_COMPLETE_ACTION_BUTTON = new Identity("Mark Complete Action", ElementType.BUTTON, true);
+        public static final Identity MARK_INCOMPLETE_ACTION_BUTTON = new Identity("Mark Incomplete Action", ElementType.BUTTON, true);
+        public static final Identity ACCEPT_ACTION_BUTTON = new Identity("Accept Action", ElementType.BUTTON, true);
+        public static final Identity REQUEST_ACTION_BUTTON = new Identity("Request Action", ElementType.BUTTON, true);
+        public static final Identity NOT_INTERESTED_ACTION_BUTTON = new Identity("Not Interested Action", ElementType.BUTTON, true);
+        public static final Identity READY_TO_GO_ACTION_BUTTON = new Identity("Ready To Go Action", ElementType.BUTTON, true);
+        public static final Identity REPORT_PROBLEM_ACTION_BUTTON = new Identity("Report Problem Action", ElementType.BUTTON, true);
+        public static final Identity WITHDRAW_ACTION_BUTTON = new Identity("Withdraw Action", ElementType.BUTTON, true);
+        public static final Identity VIEW_PAYMENT_ACTION_BUTTON = new Identity("View Payment Action", ElementType.BUTTON, true);
+        public static final Identity RUNNING_LATE_ACTION_BUTTON = new Identity("Running Late Action", ElementType.BUTTON, true);
+        public static final Identity ON_MY_WAY_ACTION_BUTTON = new Identity("On My Way Action", ElementType.BUTTON, true);
+        public static final Identity VIEW_BUNDLE_ACTION_BUTTON = new Identity("View Bundle Action", ElementType.BUTTON, true);
+        public static final Identity CALL_BUYER_ACTION_BUTTON = new Identity("Call Buyer Action", ElementType.BUTTON, true);
+        public static final Identity VIEW_MESSAGES_ACTION_BUTTON = new Identity("View Messages Action", ElementType.BUTTON, true);
+        public static final Identity VIEW_DIRECTIONS_ACTION_BUTTON = new Identity("View Directions Action", ElementType.BUTTON, true);
 
         // Add
-        public static final Identity TIME_LOG_ADD_BUTTON = new Identity(" Time Log Add", ElementType.BUTTON, true);
-        public static final Identity SIGNATURE_ADD_BUTTON = new Identity(" Signature Add", ElementType.BUTTON, true);
-        public static final Identity EXPENSE_ADD_BUTTON = new Identity(" Expense Add", ElementType.BUTTON, true);
-        public static final Identity DISCOUNT_ADD_BUTTON = new Identity(" Discount Add", ElementType.BUTTON, true);
-        public static final Identity CLOSING_NOTE_ADD_BUTTON = new Identity(" Closing Note Add", ElementType.BUTTON, true);
-        public static final Identity SHIPMENT_ADD_BUTTON = new Identity(" Shipment Add", ElementType.BUTTON, true);
+        public static final Identity TIME_LOG_ADD_BUTTON = new Identity("Time Log Add", ElementType.BUTTON, true);
+        public static final Identity SIGNATURE_ADD_BUTTON = new Identity("Signature Add", ElementType.BUTTON, true);
+        public static final Identity EXPENSE_ADD_BUTTON = new Identity("Expense Add", ElementType.BUTTON, true);
+        public static final Identity DISCOUNT_ADD_BUTTON = new Identity("Discount Add", ElementType.BUTTON, true);
+        public static final Identity CLOSING_NOTE_ADD_BUTTON = new Identity("Closing Note Add", ElementType.BUTTON, true);
+        public static final Identity SHIPMENT_ADD_BUTTON = new Identity("Shipment Add", ElementType.BUTTON, true);
 
         // Edit
-        public static final Identity TIME_LOG_EDIT_ITEM = new Identity(" Time Log Edit", ElementType.LIST_ITEM, true);
-        public static final Identity SIGNATURE_EDIT_ITEM = new Identity(" Signature Edit", ElementType.LIST_ITEM, true);
-        public static final Identity EXPENSE_EDIT_ITEM = new Identity(" Expense Edit", ElementType.LIST_ITEM, true);
-        public static final Identity DISCOUNT_EDIT_ITEM = new Identity(" Discount Edit", ElementType.LIST_ITEM, true);
-        public static final Identity CLOSING_NOTE_EDIT_ITEM = new Identity(" Closing Note Edit", ElementType.LIST_ITEM, true);
-        public static final Identity SHIPMENT_EDIT_ITEM = new Identity(" Shipment Edit", ElementType.LIST_ITEM, true);
+        public static final Identity TIME_LOG_EDIT_ITEM = new Identity("Time Log Edit", ElementType.LIST_ITEM, true);
+        public static final Identity SIGNATURE_EDIT_ITEM = new Identity("Signature Edit", ElementType.LIST_ITEM, true);
+        public static final Identity EXPENSE_EDIT_ITEM = new Identity("Expense Edit", ElementType.LIST_ITEM, true);
+        public static final Identity DISCOUNT_EDIT_ITEM = new Identity("Discount Edit", ElementType.LIST_ITEM, true);
+        public static final Identity CLOSING_NOTE_EDIT_ITEM = new Identity("Closing Note Edit", ElementType.LIST_ITEM, true);
+        public static final Identity SHIPMENT_EDIT_ITEM = new Identity("Shipment Edit", ElementType.LIST_ITEM, true);
 
         // Delete
-        public static final Identity TIME_LOG_DELETE_ITEM = new Identity(" Time Log Delete", ElementType.LIST_ITEM, true);
-        public static final Identity SIGNATURE_DELETE_ITEM = new Identity(" Signature Delete", ElementType.LIST_ITEM, true);
-        public static final Identity EXPENSE_DELETE_ITEM = new Identity(" Expense Delete", ElementType.LIST_ITEM, true);
-        public static final Identity DISCOUNT_DELETE_ITEM = new Identity(" Discount Delete", ElementType.LIST_ITEM, true);
-        public static final Identity SHIPMENT_DELETE_ITEM = new Identity(" Shipment Delete", ElementType.LIST_ITEM, true);
+        public static final Identity TIME_LOG_DELETE_ITEM = new Identity("Time Log Delete", ElementType.LIST_ITEM, true);
+        public static final Identity SIGNATURE_DELETE_ITEM = new Identity("Signature Delete", ElementType.LIST_ITEM, true);
+        public static final Identity EXPENSE_DELETE_ITEM = new Identity("Expense Delete", ElementType.LIST_ITEM, true);
+        public static final Identity DISCOUNT_DELETE_ITEM = new Identity("Discount Delete", ElementType.LIST_ITEM, true);
+        public static final Identity SHIPMENT_DELETE_ITEM = new Identity("Shipment Delete", ElementType.LIST_ITEM, true);
 
         // Task
-        public static final Identity CONFIRM_TASK = new Identity(" Confirm Assignment Task", ElementType.LIST_ITEM, true);
-        public static final Identity CLOSING_NOTE_TASK = new Identity(" Closing Note Task", ElementType.LIST_ITEM, true);
-        public static final Identity CHECK_IN_TASK = new Identity(" Check In Task", ElementType.LIST_ITEM, true);
-        public static final Identity CHECK_OUT_TASK = new Identity(" Check Out Task", ElementType.LIST_ITEM, true);
-        public static final Identity UPLOAD_DOCUMENT_TASK = new Identity(" Upload Document Task", ElementType.LIST_ITEM, true);
-        public static final Identity UPLOAD_PICTURE_TASK = new Identity(" Upload Picture Task", ElementType.LIST_ITEM, true);
-        public static final Identity CUSTOM_FIELD_TASK = new Identity(" Custom Field Task", ElementType.LIST_ITEM, true);
-        public static final Identity CALL_NUMBER_TASK = new Identity(" Call Number Task", ElementType.LIST_ITEM, true);
-        public static final Identity SEND_EMAIL_TASK = new Identity(" Send Email Task", ElementType.LIST_ITEM, true);
-        public static final Identity UNIQUE_TASK = new Identity(" Unique Task", ElementType.LIST_ITEM, true);
-        public static final Identity COLLECT_SIGNATURE_TASK = new Identity(" Collect Signature Task", ElementType.LIST_ITEM, true);
-        public static final Identity COLLECT_SHIPMENT_TASK = new Identity(" Collect Shipment Task", ElementType.LIST_ITEM, true);
-        public static final Identity DOWNLOAD_FILE_TASK = new Identity(" Download File Task", ElementType.LIST_ITEM, true);
+        public static final Identity CONFIRM_TASK = new Identity("Confirm Assignment Task", ElementType.LIST_ITEM, true);
+        public static final Identity CLOSING_NOTE_TASK = new Identity("Closing Note Task", ElementType.LIST_ITEM, true);
+        public static final Identity CHECK_IN_TASK = new Identity("Check In Task", ElementType.LIST_ITEM, true);
+        public static final Identity CHECK_OUT_TASK = new Identity("Check Out Task", ElementType.LIST_ITEM, true);
+        public static final Identity UPLOAD_DOCUMENT_TASK = new Identity("Upload Document Task", ElementType.LIST_ITEM, true);
+        public static final Identity UPLOAD_PICTURE_TASK = new Identity("Upload Picture Task", ElementType.LIST_ITEM, true);
+        public static final Identity CUSTOM_FIELD_TASK = new Identity("Custom Field Task", ElementType.LIST_ITEM, true);
+        public static final Identity CALL_NUMBER_TASK = new Identity("Call Number Task", ElementType.LIST_ITEM, true);
+        public static final Identity SEND_EMAIL_TASK = new Identity("Send Email Task", ElementType.LIST_ITEM, true);
+        public static final Identity UNIQUE_TASK = new Identity("Unique Task", ElementType.LIST_ITEM, true);
+        public static final Identity COLLECT_SIGNATURE_TASK = new Identity("Collect Signature Task", ElementType.LIST_ITEM, true);
+        public static final Identity COLLECT_SHIPMENT_TASK = new Identity("Collect Shipment Task", ElementType.LIST_ITEM, true);
+        public static final Identity DOWNLOAD_FILE_TASK = new Identity("Download File Task", ElementType.LIST_ITEM, true);
 
         // Description Modal
-        public static final Identity CONFIDENTIAL_INFORMATION_BUTTON = new Identity(" Confidential Information", ElementType.BUTTON, true);
-        public static final Identity CUSTOMER_POLICIES_BUTTON = new Identity(" Customer Policies", ElementType.BUTTON, true);
-        public static final Identity STANDARD_INSTRUCTIONS_BUTTON = new Identity(" Standard Instructions", ElementType.BUTTON, true);
+        public static final Identity CONFIDENTIAL_INFORMATION_BUTTON = new Identity("Confidential Information", ElementType.BUTTON, true);
+        public static final Identity CUSTOMER_POLICIES_BUTTON = new Identity("Customer Policies", ElementType.BUTTON, true);
+        public static final Identity STANDARD_INSTRUCTIONS_BUTTON = new Identity("Standard Instructions", ElementType.BUTTON, true);
 
         private String _page;
         private String _identity;
