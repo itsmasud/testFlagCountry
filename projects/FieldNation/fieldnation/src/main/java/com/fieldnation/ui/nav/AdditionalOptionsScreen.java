@@ -318,7 +318,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.PROFILE);
-            ProfileInformationDialog.Controller.show(App.get());
+            ProfileInformationDialog.show(App.get());
         }
     };
 
@@ -376,7 +376,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         @Override
         public void onClick(View v) {
             AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
-            WhatsNewDialog.Controller.show(App.get());
+            WhatsNewDialog.show(App.get());
         }
     };
 

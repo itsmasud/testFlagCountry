@@ -10,6 +10,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.SearchTracker;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.RightDrawerDialog;
 import com.fieldnation.ui.search.SearchEditScreen;
 
@@ -63,16 +64,9 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context, String uid) {
-            super(context, FilterDrawerDialog.class, uid);
-        }
-
-        public static void show(Context context, SavedSearchParams savedSearchParams) {
-            Bundle bundle = new Bundle();
-            bundle.putParcelable("SAVED_SEARCH_PARAMS", savedSearchParams);
-            show(context, null, FilterDrawerDialog.class, bundle);
-        }
+    public static void show(Context context, SavedSearchParams savedSearchParams) {
+        Bundle bundle = new Bundle();
+        bundle.putParcelable("SAVED_SEARCH_PARAMS", savedSearchParams);
+        Controller.show(context, null, FilterDrawerDialog.class, bundle);
     }
-
 }

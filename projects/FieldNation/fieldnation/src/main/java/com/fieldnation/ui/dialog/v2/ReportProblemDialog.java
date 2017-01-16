@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
@@ -474,7 +475,7 @@ public class ReportProblemDialog extends SimpleDialog {
 
             switch (_selectedProblem) {
                 case CANNOT_MAKE_ASSIGNMENT:
-                    CancelWarningDialog.Controller.show(App.get(), _workorder.getWorkorderId(), explanation);
+                    CancelWarningDialog.show(App.get(), _workorder.getWorkorderId(), explanation);
                     break;
 
                 case WILL_BE_LATE:
@@ -616,24 +617,17 @@ public class ReportProblemDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, String uid, long workOrderId) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORKORDER_ID, workOrderId);
+        Controller.show(context, uid, ReportProblemDialog.class, params);
+    }
 
-        public Controller(Context context, Class<? extends Dialog> klass) {
-            super(context, klass, null);
-        }
-
-        public static void show(Context context, String uid, long workOrderId) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORKORDER_ID, workOrderId);
-            show(context, uid, ReportProblemDialog.class, params);
-        }
-
-        public static void show(Context context, String uid, Workorder workorder) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
-            params.putParcelable(PARAM_WORKORDER, workorder);
-            show(context, uid, ReportProblemDialog.class, params);
-        }
+    public static void show(Context context, String uid, Workorder workorder) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORKORDER_ID, workorder.getWorkorderId());
+        params.putParcelable(PARAM_WORKORDER, workorder);
+        Controller.show(context, uid, ReportProblemDialog.class, params);
     }
 
     /*-*******************************************/

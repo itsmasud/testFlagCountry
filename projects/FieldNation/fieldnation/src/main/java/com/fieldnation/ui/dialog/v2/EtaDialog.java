@@ -25,6 +25,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.Schedule;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -536,7 +537,7 @@ public class EtaDialog extends FullScreenDialog {
     private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
+            OneButtonDialog.show(App.get(), null, R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };
@@ -760,20 +761,14 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public abstract static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context, String uid) {
-            super(context, EtaDialog.class, uid);
-        }
-
-        public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
-            Bundle params = new Bundle();
-            params.putParcelable(PARAM_SCHEDULE, schedule);
-            params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, EtaDialog.class, params);
-        }
+    public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_SCHEDULE, schedule);
+        params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, EtaDialog.class, params);
     }
+
 
     /*-*******************************************/
     /*-         Experimental Listener           -*/

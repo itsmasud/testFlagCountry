@@ -10,6 +10,7 @@ import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 
 /**
@@ -121,18 +122,11 @@ public class WhatsNewDialog extends FullScreenDialog {
         }
     };
 
-    public static abstract class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context) {
+        Controller.show(context, null, WhatsNewDialog.class, null);
+    }
 
-        public Controller(Context context) {
-            super(context, WhatsNewDialog.class, null);
-        }
-
-        public static void show(Context context) {
-            show(context, null, WhatsNewDialog.class, null);
-        }
-
-        public static void dismiss(Context context) {
-            dismiss(context, null);
-        }
+    public static void dismiss(Context context) {
+        Controller.dismiss(context, null);
     }
 }

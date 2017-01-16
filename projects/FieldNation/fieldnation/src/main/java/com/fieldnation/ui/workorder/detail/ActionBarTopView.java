@@ -530,7 +530,7 @@ public class ActionBarTopView extends LinearLayout {
                     null, _workorder.getWorkorderId());
 
             RunningLateDialogLegacy.addOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
-            RunningLateDialogLegacy.Controller.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
+            RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
         }
     };
 

@@ -16,6 +16,7 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
@@ -23,6 +24,7 @@ import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.v2.workorder.WorkOrderClient;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by mc on 10/28/16.
@@ -205,6 +207,7 @@ public class DeclineDialog extends SimpleDialog {
         response.putString("ACTION", "CANCEL");
         onResult(response);
         super.cancel();
+        _onCanceledDispatcher.dispatch(getUid());
     }
 
     private void onDeclined() {
@@ -212,6 +215,7 @@ public class DeclineDialog extends SimpleDialog {
         response.putString("ACTION", "DECLINED");
         response.putLong(PARAM_WORK_ORDER_ID, _workOrderId);
         onResult(response);
+        _onDeclinedDispatcher.dispatch(getUid(), _workOrderId);
     }
 
     /*-*********************************-*/
@@ -323,42 +327,35 @@ public class DeclineDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    /**
+     * @param context
+     * @param uid
+     * @param workOrderId
+     * @param companyId
+     */
+    public static void show(Context context, String uid, int bundleSize, long workOrderId, long companyId) {
+        Bundle params = new Bundle();
+        params.putInt(PARAM_TYPE, TYPE_BUNDLE);
+        params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putLong(PARAM_COMPANY_ID, companyId);
+        params.putInt(PARAM_BUNDLE_SIZE, bundleSize);
 
-        public Controller(Context context, String uid) {
-            super(context, DeclineDialog.class, uid);
-        }
+        Controller.show(context, uid, DeclineDialog.class, params);
+    }
 
-        /**
-         * @param context
-         * @param uid
-         * @param workOrderId
-         * @param companyId
-         */
-        public static void show(Context context, String uid, int bundleSize, long workOrderId, long companyId) {
-            Bundle params = new Bundle();
-            params.putInt(PARAM_TYPE, TYPE_BUNDLE);
-            params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            params.putLong(PARAM_COMPANY_ID, companyId);
-            params.putInt(PARAM_BUNDLE_SIZE, bundleSize);
+    /**
+     * @param context
+     * @param uid
+     * @param workOrderId
+     * @param companyId
+     */
+    public static void show(Context context, String uid, long workOrderId, long companyId) {
+        Bundle params = new Bundle();
+        params.putInt(PARAM_TYPE, TYPE_WORK_ORDER);
+        params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putLong(PARAM_COMPANY_ID, companyId);
 
-            show(context, uid, DeclineDialog.class, params);
-        }
-
-        /**
-         * @param context
-         * @param uid
-         * @param workOrderId
-         * @param companyId
-         */
-        public static void show(Context context, String uid, long workOrderId, long companyId) {
-            Bundle params = new Bundle();
-            params.putInt(PARAM_TYPE, TYPE_WORK_ORDER);
-            params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            params.putLong(PARAM_COMPANY_ID, companyId);
-
-            show(context, uid, DeclineDialog.class, params);
-        }
+        Controller.show(context, uid, DeclineDialog.class, params);
     }
 
     public static abstract class ControllerListener implements Controller.Listener {
@@ -377,6 +374,55 @@ public class DeclineDialog extends SimpleDialog {
         public abstract void onDeclined(long workOrderId);
 
         public abstract void onCancel();
+    }
+
+    /*-*******************************************/
+    /*-         Experimental Listener           -*/
+    /*-*******************************************/
+    public interface OnDeclinedListener {
+        void onDeclined(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnDeclinedListener> _onDeclinedDispatcher = new KeyedDispatcher<OnDeclinedListener>() {
+        @Override
+        public void onDispatch(OnDeclinedListener listener, Object... parameters) {
+            listener.onDeclined((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnDeclinedListener(String uid, OnDeclinedListener onDeclinedListener) {
+        _onDeclinedDispatcher.add(uid, onDeclinedListener);
+    }
+
+    public static void removeOnDeclinedListener(String uid, OnDeclinedListener onDeclinedListener) {
+        _onDeclinedDispatcher.remove(uid, onDeclinedListener);
+    }
+
+    public static void removeAllOnDeclinedListener(String uid) {
+        _onDeclinedDispatcher.removeAll(uid);
+    }
+
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
     }
 
 }

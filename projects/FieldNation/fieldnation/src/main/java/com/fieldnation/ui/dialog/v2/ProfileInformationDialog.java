@@ -21,6 +21,7 @@ import android.widget.TextView;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.ImageUtils;
@@ -70,8 +71,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private FileCacheClient _fileCacheClient;
     private File _tempFile = null;
     private Uri _tempUri;
-    private AppPickerDialog.Controller _appPickerDialog;
-
 
     public ProfileInformationDialog(Context context, ViewGroup container) {
         super(context, container);
@@ -133,8 +132,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
 
         _picView.setOnClickListener(_pic_onClick);
 
-        _appPickerDialog = new AppPickerDialog.Controller(App.get(), UID_APP_PICKER_DIALOG);
-        _appPickerDialog.setListener(_appPickerDialog_listener);
+        AppPickerDialog.addOnOkListener(UID_APP_PICKER_DIALOG, _appPickerDialog_onOk);
 
         _photos = new PhotoClient(_photo_listener);
         _photos.connect(App.get());
@@ -162,7 +160,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         if (_fileCacheClient != null && _fileCacheClient.isConnected())
             _fileCacheClient.disconnect(App.get());
 
-        if (_appPickerDialog != null) _appPickerDialog.disconnect(App.get());
+        AppPickerDialog.removeOnOkListener(UID_APP_PICKER_DIALOG, _appPickerDialog_onOk);
     }
 
     @Override
@@ -285,10 +283,9 @@ public class ProfileInformationDialog extends FullScreenDialog {
                 intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                 AppPickerDialog.addIntent(intent, "Take Picture");
             }
-            AppPickerDialog.Controller.show(App.get(), UID_APP_PICKER_DIALOG);
+            AppPickerDialog.show(App.get(), UID_APP_PICKER_DIALOG);
         }
     };
-
 
     private final ActivityResultClient.Listener _activityResultClient_listener = new ActivityResultClient.ResultListener() {
         @Override
@@ -350,8 +347,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
-    private final AppPickerDialog.ControllerListener _appPickerDialog_listener = new AppPickerDialog.ControllerListener() {
-
+    private final AppPickerDialog.OnOkListener _appPickerDialog_onOk = new AppPickerDialog.OnOkListener() {
         @Override
         public void onOk(Intent pack) {
             if (pack.getAction().equals(Intent.ACTION_GET_CONTENT)) {
@@ -370,6 +366,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
+
     private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
@@ -382,18 +379,11 @@ public class ProfileInformationDialog extends FullScreenDialog {
         }
     };
 
-    public static abstract class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context) {
+        Controller.show(context, null, ProfileInformationDialog.class, null);
+    }
 
-        public Controller(Context context) {
-            super(context, ProfileInformationDialog.class, null);
-        }
-
-        public static void show(Context context) {
-            show(context, null, ProfileInformationDialog.class, null);
-        }
-
-        public static void dismiss(Context context) {
-            dismiss(context, null);
-        }
+    public static void dismiss(Context context) {
+        Controller.dismiss(context, null);
     }
 }

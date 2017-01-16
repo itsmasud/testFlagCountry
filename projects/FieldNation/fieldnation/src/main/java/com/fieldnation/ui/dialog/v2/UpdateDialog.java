@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 
 /**
@@ -33,14 +34,8 @@ public class UpdateDialog extends OneButtonDialog {
         return false;
     }
 
-    public static abstract class Controller extends OneButtonDialog.Controller {
-        public Controller(Context context) {
-            super(context, UpdateDialog.class, null);
-        }
-
-        public static void show(Context context) {
-            show(context, null, UpdateDialog.class, R.string.dialog_update_title, R.string.dialog_update_message,
-                    R.string.btn_update_now, true);
-        }
+    public static void show(Context context) {
+        show(context, null, UpdateDialog.class, R.string.dialog_update_title, R.string.dialog_update_message,
+                R.string.btn_update_now, true);
     }
 }

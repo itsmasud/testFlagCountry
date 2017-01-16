@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
@@ -140,58 +141,48 @@ public class TwoButtonDialog extends SimpleDialog {
         return true;
     }
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context, String uid) {
-            super(context, TwoButtonDialog.class, uid);
-        }
+    public static void show(Context context, String uid, int titleResId, int bodyResId,
+                            int primaryButtonResId, int secondaryButtonResId, boolean isCancelable,
+                            Parcelable extraData) {
 
-        public Controller(Context context, Class<? extends Dialog> klass, String uid) {
-            super(context, klass, uid);
-        }
+        show(context, uid, TwoButtonDialog.class, titleResId, bodyResId, primaryButtonResId,
+                secondaryButtonResId, isCancelable, extraData);
+    }
 
-        public static void show(Context context, String uid, int titleResId, int bodyResId,
-                                int primaryButtonResId, int secondaryButtonResId, boolean isCancelable,
-                                Parcelable extraData) {
+    public static void show(Context context, String uid, Class<? extends Dialog> klass,
+                            int titleResId, int bodyResId, int primaryButtonResId,
+                            int secondaryButtonResId, boolean isCancelable, Parcelable extraData) {
 
-            show(context, uid, TwoButtonDialog.class, titleResId, bodyResId, primaryButtonResId,
-                    secondaryButtonResId, isCancelable, extraData);
-        }
+        show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
+                context.getString(primaryButtonResId), context.getString(secondaryButtonResId),
+                isCancelable, extraData);
+    }
 
-        public static void show(Context context, String uid, Class<? extends Dialog> klass,
-                                int titleResId, int bodyResId, int primaryButtonResId,
-                                int secondaryButtonResId, boolean isCancelable, Parcelable extraData) {
+    public static void show(Context context, String uid, String title, String body,
+                            String primaryButton, String secondaryButton, boolean isCancelable,
+                            Parcelable extraData) {
 
-            show(context, uid, klass, context.getString(titleResId), context.getString(bodyResId),
-                    context.getString(primaryButtonResId), context.getString(secondaryButtonResId),
-                    isCancelable, extraData);
-        }
+        show(context, uid, TwoButtonDialog.class, title, body, primaryButton, secondaryButton,
+                isCancelable, extraData);
+    }
 
-        public static void show(Context context, String uid, String title, String body,
-                                String primaryButton, String secondaryButton, boolean isCancelable,
-                                Parcelable extraData) {
+    public static void show(Context context, String uid, Class<? extends Dialog> klass,
+                            String title, String body, String primaryButton,
+                            String secondaryButton, boolean isCancelable, Parcelable extraData) {
 
-            show(context, uid, TwoButtonDialog.class, title, body, primaryButton, secondaryButton,
-                    isCancelable, extraData);
-        }
+        Bundle params = new Bundle();
+        params.putString(PARAM_TITLE, title);
+        params.putString(PARAM_BODY, body);
+        params.putString(PARAM_PRIMARY_BUTTON, primaryButton);
+        params.putString(PARAM_SECONDARY_BUTTON, secondaryButton);
+        params.putBoolean(PARAM_CANCELABLE, isCancelable);
+        params.putParcelable(PARAM_EXTRA_DATA, extraData);
 
-        public static void show(Context context, String uid, Class<? extends Dialog> klass,
-                                String title, String body, String primaryButton,
-                                String secondaryButton, boolean isCancelable, Parcelable extraData) {
+        Controller.show(context, uid, klass, params);
+    }
 
-            Bundle params = new Bundle();
-            params.putString(PARAM_TITLE, title);
-            params.putString(PARAM_BODY, body);
-            params.putString(PARAM_PRIMARY_BUTTON, primaryButton);
-            params.putString(PARAM_SECONDARY_BUTTON, secondaryButton);
-            params.putBoolean(PARAM_CANCELABLE, isCancelable);
-            params.putParcelable(PARAM_EXTRA_DATA, extraData);
-
-            show(context, uid, klass, params);
-        }
-
-        public static void dismiss(Context context, String uid) {
-            dismiss(context, uid);
-        }
+    public static void dismiss(Context context, String uid) {
+        Controller.dismiss(context, uid);
     }
 
     public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {

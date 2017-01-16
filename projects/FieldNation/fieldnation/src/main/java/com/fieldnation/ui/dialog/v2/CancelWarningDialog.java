@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.service.activityresult.ActivityResultClient;
@@ -99,17 +100,10 @@ public class CancelWarningDialog extends FullScreenDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context) {
-            super(context, CancelWarningDialog.class, null);
-        }
-
-        public static void show(Context context, long workOrderId, String explanation) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORKORDER_ID, workOrderId);
-            params.putString(PARAM_EXPLANATION, explanation);
-            show(context, null, CancelWarningDialog.class, params);
-        }
+    public static void show(Context context, long workOrderId, String explanation) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORKORDER_ID, workOrderId);
+        params.putString(PARAM_EXPLANATION, explanation);
+        Controller.show(context, null, CancelWarningDialog.class, params);
     }
 }

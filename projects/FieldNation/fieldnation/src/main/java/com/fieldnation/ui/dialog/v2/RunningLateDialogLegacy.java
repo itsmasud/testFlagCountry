@@ -21,6 +21,7 @@ import com.fieldnation.R;
 import com.fieldnation.data.v2.Schedule;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -244,18 +245,11 @@ public class RunningLateDialogLegacy extends SimpleDialog {
     };
 
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, String uid, Workorder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_WORKORDER, workOrder);
 
-        public Controller(Context context) {
-            super(context, RunningLateDialogLegacy.class, null);
-        }
-
-        public static void show(Context context, String uid, Workorder workOrder) {
-            Bundle params = new Bundle();
-            params.putParcelable(PARAM_WORKORDER, workOrder);
-
-            show(context, uid, RunningLateDialogLegacy.class, params);
-        }
+        Controller.show(context, uid, RunningLateDialogLegacy.class, params);
     }
 
     /**

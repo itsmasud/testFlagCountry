@@ -47,8 +47,6 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private WorkorderClient _workorderClient;
     private BundleAdapter _adapter;
     private com.fieldnation.data.workorder.Bundle _woBundle;
-    private AcceptBundleDialog.Controller _acceptBundleDialog;
-    private DeclineDialog.Controller _declineDialog;
 
     // Services
     private GlobalTopicClient _globalClient;
@@ -108,8 +106,8 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
-        _acceptBundleDialog = new AcceptBundleDialog.Controller(App.get(), UID_DIALOG_ACCEPT_BUNDLE);
-        _acceptBundleDialog.setListener(_acceptBundleDialog_listener);
+        AcceptBundleDialog.addOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
+        AcceptBundleDialog.addOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
 
         _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
         _declineDialog.setListener(_declineDialog_listener);
@@ -128,8 +126,8 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         if (_globalClient != null && _globalClient.isConnected())
             _globalClient.disconnect(App.get());
 
-        if (_acceptBundleDialog != null)
-            _acceptBundleDialog.disconnect(App.get());
+        AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
+        AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
 
         if (_declineDialog != null)
             _declineDialog.disconnect(App.get());
@@ -161,7 +159,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
     private final View.OnClickListener _notInterested_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DeclineDialog.Controller.show(App.get(), UID_DIALOG_DECLINE,
+            DeclineDialog.show(App.get(), UID_DIALOG_DECLINE,
                     _woBundle.getWorkorder().length,
                     _woBundle.getWorkorder()[0].getWorkorderId(),
                     _woBundle.getWorkorder()[0].getCompanyId());
@@ -174,7 +172,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
             Workorder wo = _woBundle.getWorkorder()[0];
 
             if (wo.getWorkorderSubstatus() == WorkorderSubstatus.AVAILABLE) {
-                AcceptBundleDialog.Controller.show(
+                AcceptBundleDialog.show(
                         App.get(),
                         UID_DIALOG_ACCEPT_BUNDLE,
                         _woBundle.getBundleId(),
@@ -183,7 +181,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
                         AcceptBundleDialog.TYPE_REQUEST);
 
             } else if (wo.getWorkorderSubstatus() == WorkorderSubstatus.ROUTED) {
-                AcceptBundleDialog.Controller.show(
+                AcceptBundleDialog.show(
                         App.get(),
                         UID_DIALOG_ACCEPT_BUNDLE,
                         _woBundle.getBundleId(),
@@ -196,21 +194,17 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final AcceptBundleDialog.ControllerListener _acceptBundleDialog_listener = new AcceptBundleDialog.ControllerListener() {
-
+    private final AcceptBundleDialog.OnAcceptedListener _acceptBundleDialog_onAccepted = new AcceptBundleDialog.OnAcceptedListener() {
         @Override
-        public void onRequested() {
+        public void onAccepted(long workOrderId) {
             setLoading(true);
         }
+    };
 
+    private final AcceptBundleDialog.OnRequestedListener _acceptBundleDialog_onRequested = new AcceptBundleDialog.OnRequestedListener() {
         @Override
-        public void onAccepted() {
+        public void onRequested(long workOrderId) {
             setLoading(true);
-        }
-
-        @Override
-        public void onCanceled() {
-            // don't care
         }
     };
 

@@ -33,19 +33,12 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
     }
 
 
-    public static class Controller extends TwoButtonDialog.Controller {
+    public static void show(Context context, String uid, long workOrderId) {
+        Bundle extraData = new Bundle();
+        extraData.putLong("workOrderId", workOrderId);
 
-        public Controller(Context context, String uid) {
-            super(context, WithdrawRequestDialog.class, uid);
-        }
-
-        public static void show(Context context, String uid, long workOrderId) {
-            Bundle extraData = new Bundle();
-            extraData.putLong("workOrderId", workOrderId);
-
-            show(context, uid, WithdrawRequestDialog.class, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
-                    R.string.btn_yes, R.string.btn_no, true, extraData);
-        }
+        show(context, uid, WithdrawRequestDialog.class, R.string.dialog_withdraw_title, R.string.dialog_withdraw_body,
+                R.string.btn_yes, R.string.btn_no, true, extraData);
     }
 
     /*-*******************************************/

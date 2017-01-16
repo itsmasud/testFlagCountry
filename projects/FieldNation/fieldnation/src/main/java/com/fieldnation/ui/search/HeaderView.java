@@ -93,7 +93,7 @@ public class HeaderView extends RelativeLayout {
     private final View.OnClickListener _iconFontView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            FilterDrawerDialog.Controller.show(App.get(), _savedSearchParams);
+            FilterDrawerDialog.show(App.get(), _savedSearchParams);
         }
     };
 }

@@ -10,6 +10,7 @@ import android.widget.Button;
 import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.WorkOrder;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 
 /**
@@ -80,7 +81,7 @@ public class ReportIssueDialog extends SimpleDialog {
     private final View.OnClickListener _reportOther_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ReportProblemDialog.Controller.show(App.get(), null, _workOrder.getId());
+            ReportProblemDialog.show(App.get(), null, _workOrder.getId());
         }
     };
 
@@ -91,17 +92,10 @@ public class ReportIssueDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, WorkOrder workOrder) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_WORKORDER, workOrder);
 
-        public Controller(Context context) {
-            super(context, ReportIssueDialog.class, null);
-        }
-
-        public static void show(Context context, WorkOrder workOrder) {
-            Bundle params = new Bundle();
-            params.putParcelable(PARAM_WORKORDER, workOrder);
-
-            show(context, null, ReportIssueDialog.class, params);
-        }
+        Controller.show(context, null, ReportIssueDialog.class, params);
     }
 }

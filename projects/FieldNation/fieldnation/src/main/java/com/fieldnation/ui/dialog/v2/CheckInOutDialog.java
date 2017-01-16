@@ -18,6 +18,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -399,49 +400,43 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    public abstract static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context, String uid) {
-            super(context, CheckInOutDialog.class, uid);
-        }
+    // with location
+    public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putParcelable(PARAM_LOCATION, location);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
 
-        // with location
-        public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putParcelable(PARAM_LOCATION, location);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
+    // with location + max device
+    public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putParcelable(PARAM_LOCATION, location);
+        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
 
-        // with location + max device
-        public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putParcelable(PARAM_LOCATION, location);
-            params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
+    // with max device but no location
+    public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
 
-        // with max device but no location
-        public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
+    public static void show(Context context, String uid, long workorderId, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
 
-        public static void show(Context context, String uid, long workorderId, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
-
-        public static void dismiss(Context context) {
-            dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
-        }
+    public static void dismiss(Context context) {
+        Controller.dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
     }
 
     /*-*******************************************/
