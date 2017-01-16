@@ -579,7 +579,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             if (workorder.isBundle()) {
-                AcceptBundleDialog.Controller.show(App.get(), workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), workorder.getBundleId(),
                         workorder.getBundleCount(), workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
 /*

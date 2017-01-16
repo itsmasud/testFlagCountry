@@ -109,8 +109,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         AcceptBundleDialog.addOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.addOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
 
-        _declineDialog = new DeclineDialog.Controller(App.get(), UID_DIALOG_DECLINE);
-        _declineDialog.setListener(_declineDialog_listener);
+        DeclineDialog.addOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         _globalClient = new GlobalTopicClient(_globalClient_listener);
         _globalClient.connect(App.get());
@@ -129,8 +128,7 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         AcceptBundleDialog.removeOnAcceptedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onAccepted);
         AcceptBundleDialog.removeOnRequestedListener(UID_DIALOG_ACCEPT_BUNDLE, _acceptBundleDialog_onRequested);
 
-        if (_declineDialog != null)
-            _declineDialog.disconnect(App.get());
+        DeclineDialog.removeOnDeclinedListener(UID_DIALOG_DECLINE, _declineDialog_onDeclined);
 
         super.onPause();
     }
@@ -208,15 +206,10 @@ public class WorkorderBundleDetailActivity extends AuthSimpleActivity {
         }
     };
 
-    private final DeclineDialog.ControllerListener _declineDialog_listener = new DeclineDialog.ControllerListener() {
+    private final DeclineDialog.OnDeclinedListener _declineDialog_onDeclined = new DeclineDialog.OnDeclinedListener() {
         @Override
         public void onDeclined(long workOrderId) {
             setLoading(true);
-        }
-
-        @Override
-        public void onCancel() {
-
         }
     };
 

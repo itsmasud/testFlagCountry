@@ -1018,7 +1018,7 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workorder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
@@ -1034,7 +1034,7 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workorder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.Controller.show(App.get(), _workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);

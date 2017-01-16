@@ -203,18 +203,11 @@ public class DeclineDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        Bundle response = new Bundle();
-        response.putString("ACTION", "CANCEL");
-        onResult(response);
         super.cancel();
         _onCanceledDispatcher.dispatch(getUid());
     }
 
     private void onDeclined() {
-        Bundle response = new Bundle();
-        response.putString("ACTION", "DECLINED");
-        response.putLong(PARAM_WORK_ORDER_ID, _workOrderId);
-        onResult(response);
         _onDeclinedDispatcher.dispatch(getUid(), _workOrderId);
     }
 
@@ -356,24 +349,6 @@ public class DeclineDialog extends SimpleDialog {
         params.putLong(PARAM_COMPANY_ID, companyId);
 
         Controller.show(context, uid, DeclineDialog.class, params);
-    }
-
-    public static abstract class ControllerListener implements Controller.Listener {
-        @Override
-        public void onComplete(Bundle response) {
-            switch (response.getString("ACTION")) {
-                case "DECLINED":
-                    onDeclined(response.getLong(PARAM_WORK_ORDER_ID));
-                    break;
-                case "CANCEL":
-                    onCancel();
-                    break;
-            }
-        }
-
-        public abstract void onDeclined(long workOrderId);
-
-        public abstract void onCancel();
     }
 
     /*-*******************************************/
