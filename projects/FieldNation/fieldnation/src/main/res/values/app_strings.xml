@@ -555,7 +555,7 @@
     <string name="rate_this_work_order">Rate this work order</string>
     <string name="reason_for_counter_offer">Counter offer reason</string>
     <string name="disclaimer_to_counter_offer">Only the counter offer terms previously selected can be enforced. Terms added within this field will be ignored.</string>
-    <string name="reason_for_request">Reason For Request (optional)</string>
+    <string name="reason_for_request">Reason (optional)</string>
     <string name="remote_work">Remote Work</string>
     <string name="request_workorder">Request Work Order</string>
     <string name="request_bundle">Request Bundle</string>
@@ -855,6 +855,30 @@
         <item>Enter shipment tracking</item>
         <item>Download a File</item>
     </string-array>
+
+    <string-array name="expire_duration_titles">
+        <item>15 mins</item>
+        <item>30 mins</item>
+        <item>1 hour</item>
+        <item>2 hours</item>
+        <item>3 hours</item>
+        <item>6 hours</item>
+        <item>12 hours</item>
+        <item>1 day</item>
+        <item>2 days</item>
+    </string-array>
+    <integer-array name="expire_duration_values">
+        <item>900</item>
+        <item>1800</item>
+        <item>3600</item>
+        <item>7200</item>
+        <item>10800</item>
+        <item>21600</item>
+        <item>43200</item>
+        <item>86400</item>
+        <item>172800</item>
+    </integer-array>
+
 
     <!-- If you change any of these, make sure you update
         com.fieldnation.service.data.workorder.ReportProblemType -->
