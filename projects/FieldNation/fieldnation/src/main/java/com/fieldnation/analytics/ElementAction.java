@@ -3,6 +3,12 @@ package com.fieldnation.analytics;
 /**
  * Created by Michael on 9/14/2016.
  */
-public interface ElementAction {
-    String CLICK = "Click";
+public enum ElementAction {
+    CLICK("Click");
+
+    public final String elementAction;
+
+    ElementAction(String elementAction) {
+        this.elementAction = elementAction;
+    }
 }

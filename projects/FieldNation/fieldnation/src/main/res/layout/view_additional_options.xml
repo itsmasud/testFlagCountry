@@ -3,7 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <android.support.v4.widget.NestedScrollView
+    <com.fieldnation.ui.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbarStyle="outsideOverlay">
@@ -218,7 +218,32 @@
                             android:text="0.0.0" />
                     </LinearLayout>
                 </RelativeLayout>
+
+                <RelativeLayout
+                    android:id="@+id/touchMe_menu"
+                    style="@style/OptionsMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <com.fieldnation.ui.IconFontTextView
+                        android:id="@+id/touchMe_iconfont"
+                        style="@style/OptionsMenuIcon"
+                        android:text="@string/icon_alert" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_toRightOf="@+id/touchMe_iconfont"
+                        android:orientation="vertical">
+
+                        <TextView
+                            style="@style/OptionsMenuTitle"
+                            android:text="Touch Me" />
+
+                    </LinearLayout>
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
-    </android.support.v4.widget.NestedScrollView>
+    </com.fieldnation.ui.NestedScrollView>
 </merge>

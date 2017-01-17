@@ -61,7 +61,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // Dialog tags
-    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
+    private static final String DIALOG_ACCEPT_BUNDLE = TAG_BASE + ".acceptBundleDialog";
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG_BASE + ".checkInOutDialog";
 
     // UI
     private OverScrollListView _listView;
@@ -421,9 +422,9 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         setLoading(true);
         _adapter.notifyDataSetChanged();
         if (getLocationService().hasLocation()) {
-            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         } else {
-            CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
+            CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
         }
 //        _adapter.refreshPages();
     }
@@ -438,16 +439,16 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         if (getLocationService().hasLocation()) {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), getLocationService().getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 
         } else {
             if (_deviceCount > -1) {
-                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.Controller.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _currentWorkorder.getWorkorderId(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
 //            _adapter.refreshPages();
         }
@@ -579,11 +580,13 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             if (workorder.isBundle()) {
-                AcceptBundleDialog.Controller.show(App.get(), workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), DIALOG_ACCEPT_BUNDLE, workorder.getBundleId(),
                         workorder.getBundleCount(), workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
+/*
+                EtaDialog.show(App.get(), workorder.getWorkorderId(),
                         workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
+*/
             }
         }
 
@@ -628,8 +631,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
 
         @Override
         public void actionAssignment(WorkorderCardView view, Workorder workorder) {
-            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
-                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+//            EtaDialog.show(App.get(), workorder.getWorkorderId(),
+//                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -667,8 +670,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionConfirm(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            EtaDialog.Controller.show(App.get(), workorder.getWorkorderId(),
-                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
+//            EtaDialog.show(App.get(), workorder.getWorkorderId(),
+//                    workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
 
         @Override
@@ -694,7 +697,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionReportProblem(WorkorderCardView view, Workorder workorder) {
             _currentWorkorder = workorder;
-            ReportProblemDialog.Controller.show(App.get(), workorder);
+//            ReportProblemDialog.Controller.show(App.get(), workorder);
         }
 
         @Override

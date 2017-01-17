@@ -15,7 +15,6 @@ import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Unserializer;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.Stopwatch;
 import com.snowplowanalytics.snowplow.tracker.DevicePlatforms;
 import com.snowplowanalytics.snowplow.tracker.Emitter;
 import com.snowplowanalytics.snowplow.tracker.Subject;
@@ -48,35 +47,30 @@ public class SnowplowWrapper implements TrackerWrapper {
     private static Tracker _tracker = null;
 
     private static Tracker getTracker(Context context) {
-        Stopwatch stopwatch = new Stopwatch(true);
-        try {
-            Context appContext = context.getApplicationContext();
-            if (_tracker == null) {
-                // Build the emitter
-                Emitter emitter = new Emitter.EmitterBuilder(
-                        appContext.getString(R.string.sp_collector_uri), appContext)
-                        .build();
+        Context appContext = context.getApplicationContext();
+        if (_tracker == null) {
+            // Build the emitter
+            Emitter emitter = new Emitter.EmitterBuilder(
+                    appContext.getString(R.string.sp_collector_uri), appContext)
+                    .build();
 
-                // Build the snowplow tracker
-                _tracker = Tracker.init(
-                        new Tracker.TrackerBuilder
-                                (
-                                        emitter,
-                                        appContext.getString(R.string.sp_namespace),
-                                        appContext.getString(R.string.sp_app_id),
-                                        appContext
-                                )
-                                .subject(new Subject.SubjectBuilder().build())
-                                .platform(DevicePlatforms.Mobile)
-                                .geoLocationContext(true)
-                                .mobileContext(true)
-                                .sessionContext(true)
-                                .build());
-            }
-            return _tracker;
-        } finally {
-            Log.v(TAG, "getTracker time: " + stopwatch.finish() + "ms");
+            // Build the snowplow tracker
+            _tracker = Tracker.init(
+                    new Tracker.TrackerBuilder
+                            (
+                                    emitter,
+                                    appContext.getString(R.string.sp_namespace),
+                                    appContext.getString(R.string.sp_app_id),
+                                    appContext
+                            )
+                            .subject(new Subject.SubjectBuilder().build())
+                            .platform(DevicePlatforms.Mobile)
+                            .geoLocationContext(true)
+                            .mobileContext(true)
+                            .sessionContext(true)
+                            .build());
         }
+        return _tracker;
     }
 
     private List<SelfDescribingJson> buildExtraContexts(Context context, JsonArray extraContext) {

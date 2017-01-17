@@ -86,6 +86,7 @@
     <string name="btn_read_less">READ LESS</string>
     <string name="btn_read_more">READ MORE</string>
     <string name="btn_ready_to_go">READY TO GO</string>
+    <string name="btn_ready">READY</string>
     <string name="brn_recognize_hold">RECOGNIZE HOLD</string>
     <string name="btn_reject">REJECT</string>
     <string name="btn_remote_work">REMOTE WORK</string>
