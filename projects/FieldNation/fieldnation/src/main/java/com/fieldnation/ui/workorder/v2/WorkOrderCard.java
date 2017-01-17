@@ -552,10 +552,10 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_IN, null, _workOrder.getId());
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             } else {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
             }
         }
@@ -574,10 +574,10 @@ public class WorkOrderCard extends RelativeLayout {
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.CHECK_OUT, null, _workOrder.getId());
             if (_workOrder.getPay() != null && _workOrder.getPay().getType().equals("device")) {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
                         _workOrder.getPay().getUnits().intValue(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
-                CheckInOutDialog.show(App.get(), null, _workOrder.getId(), _location,
+                CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_OUT, _workOrder.getId(), _location,
                         CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             }
         }
