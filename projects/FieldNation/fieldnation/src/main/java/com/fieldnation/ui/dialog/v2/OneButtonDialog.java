@@ -12,11 +12,11 @@ import android.widget.TextView;
 
 import com.fieldnation.R;
 import com.fieldnation.fndialog.Controller;
-import com.fieldnation.fndialog.Controller.Listener;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 9/19/2016.
@@ -85,9 +85,7 @@ public class OneButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        Bundle response = new Bundle();
-        response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
-        onResult(response);
+        _onPrimaryDispatcher.dispatch(getUid(), null);
         super.cancel();
 
         if (onCancel())
@@ -98,9 +96,7 @@ public class OneButtonDialog extends SimpleDialog {
         @Override
         public void onClick(View v) {
             Log.v(TAG, "_primaryButton_onClick");
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
-            onResult(response);
+            _onCanceledDispatcher.dispatch(getUid(), null);
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -142,24 +138,56 @@ public class OneButtonDialog extends SimpleDialog {
         Controller.dismiss(context, uid);
     }
 
-
-    public static abstract class ControllerListener implements Listener {
-        @Override
-        public void onComplete(Bundle response) {
-            switch (response.getInt(PARAM_RESPONSE)) {
-                case PARAM_RESPONSE_PRIMARY:
-                    onPrimary();
-                    break;
-                case PARAM_RESPONSE_CANCEL:
-                    onCancel();
-                    break;
-                default:
-                    break;
-            }
-        }
-
-        public abstract void onPrimary();
-
-        public abstract void onCancel();
+    /*-************************************-*/
+    /*-         Primary Listener           -*/
+    /*-************************************-*/
+    public interface OnPrimaryListener {
+        void onPrimary();
     }
+
+    private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
+        @Override
+        public void onDispatch(OnPrimaryListener listener, Object... parameters) {
+            listener.onPrimary();
+        }
+    };
+
+    public static void addOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.add(uid, onPrimaryListener);
+    }
+
+    public static void removeOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.remove(uid, onPrimaryListener);
+    }
+
+    public static void removeAllOnPrimaryListener(String uid) {
+        _onPrimaryDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
+    }
+
 }

@@ -33,7 +33,6 @@ public abstract class SimpleDialog implements Dialog {
 
     // Listeners
     private DismissListener _dismissListener;
-    private ResultListener _resultListener;
 
     // Data
     private String _uid;
@@ -171,14 +170,4 @@ public abstract class SimpleDialog implements Dialog {
             }
         }
     };
-
-    @Override
-    public void setResultListener(ResultListener listener) {
-        _resultListener = listener;
-    }
-
-    public void onResult(Bundle response) {
-        if (_resultListener != null)
-            _resultListener.onResult(this, response);
-    }
 }
