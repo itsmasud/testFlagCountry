@@ -168,6 +168,7 @@ public class SearchResultScreen extends RelativeLayout {
 
             if (envelope == null || envelope.getTotal() == 0) {
                 _refreshView.refreshComplete();
+                return;
             }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
