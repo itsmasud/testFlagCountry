@@ -242,12 +242,13 @@ public class CounterOfferDialog extends DialogFragmentBase {
         } else {
             window.setLayout((display.getWidth() * 9) / 10, (display.getHeight() * 9) / 10);
         }
+
+        populateUi();
     }
 
     @Override
     public void init() {
         Log.v(TAG, "init");
-        populateUi();
     }
 
     @Override

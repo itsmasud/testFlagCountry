@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebSettings;
+import android.webkit.WebStorage;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -108,10 +109,16 @@ public class WhatsNewDialog extends FullScreenDialog {
 
     @Override
     public void dismiss(boolean animate) {
+        super.dismiss(animate);
+    }
+
+    @Override
+    public void onStop() {
+        WebStorage.getInstance().deleteAllData();
         _fixedWebView.destroy();
         _newWebView.destroy();
         _nextWebView.destroy();
-        super.dismiss(animate);
+        super.onStop();
     }
 
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {

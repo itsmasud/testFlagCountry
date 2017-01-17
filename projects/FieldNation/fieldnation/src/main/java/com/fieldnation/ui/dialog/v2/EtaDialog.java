@@ -58,6 +58,7 @@ public class EtaDialog extends FullScreenDialog {
     private static final String STATE_EXPIRATION_DURATION = "STATE_EXPIRATION_DURATION";
     private static final String STATE_NOTE = "STATE_NOTE";
     private static final String STATE_ETA_SWITCH = "STATE_ETA_SWITCH";
+    private static final String STATE_ETA_CALENDAR = "STATE_ETA_CALENDAR";
 
     // Params
     public static final String PARAM_DIALOG_TYPE = "type";
@@ -107,6 +108,7 @@ public class EtaDialog extends FullScreenDialog {
     private Calendar _etaStart;
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationMilliseconds = INVALID_NUMBER;
+    private boolean _isSwitchOn = true;
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -178,8 +180,6 @@ public class EtaDialog extends FullScreenDialog {
         _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
         _expiryDialog.setListener(_expiryDialog_listener);
 
-        _etaSwitch.setChecked(true);
-
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -227,6 +227,7 @@ public class EtaDialog extends FullScreenDialog {
             outState.putString(STATE_NOTE, _noteEditText.getText().toString().trim());
 
         outState.putBoolean(STATE_ETA_SWITCH, _etaSwitch.isChecked());
+        outState.putSerializable(STATE_ETA_CALENDAR, _etaStart);
 
         super.onSaveDialogState(outState);
     }
@@ -243,7 +244,11 @@ public class EtaDialog extends FullScreenDialog {
         if (savedState.containsKey(STATE_NOTE))
             _noteEditText.setText(savedState.getString(STATE_NOTE));
 
-        _etaSwitch.setChecked(savedState.getBoolean(STATE_ETA_SWITCH));
+        if (savedState.containsKey(STATE_ETA_SWITCH))
+            _isSwitchOn = savedState.getBoolean(STATE_ETA_SWITCH);
+
+        if (savedState.containsKey(STATE_ETA_CALENDAR))
+            _etaStart = (Calendar) savedState.getSerializable(STATE_ETA_CALENDAR);
 
         super.onRestoreDialogState(savedState);
 
@@ -265,7 +270,8 @@ public class EtaDialog extends FullScreenDialog {
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
             _etaSwitchLabel.setVisibility(View.VISIBLE);
-            _etaLayout.setVisibility(_etaSwitch.isChecked() ? View.VISIBLE : View.GONE);
+            _etaSwitch.setChecked(_isSwitchOn);
+            _etaLayout.setVisibility(_isSwitchOn ? View.VISIBLE : View.GONE);
 
             SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
@@ -329,22 +335,25 @@ public class EtaDialog extends FullScreenDialog {
 
         try {
             if (_durationMilliseconds == INVALID_NUMBER) {
-                if (_schedule.getRange() != null) {
-                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
-                            || _schedule.getRange().getType() == Range.Type.RANGE) {
-                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
-                                - ISO8601.toUtc(_schedule.getRange().getBegin());
-                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
-                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
-                    }
+//                if (_schedule.getRange() != null) {
+//                    if (_schedule.getRange().getType() == Range.Type.BUSINESS
+//                            || _schedule.getRange().getType() == Range.Type.RANGE) {
+//                        _durationMilliseconds = ISO8601.toUtc(_schedule.getRange().getEnd())
+//                                - ISO8601.toUtc(_schedule.getRange().getBegin());
+//                        while (_durationMilliseconds > 60 * 60 * 1000 * 24)
+//                            _durationMilliseconds = _durationMilliseconds - 60 * 60 * 1000 * 24;
+//                    }
+//                }
+                if (_schedule.getEstimate() != null && _schedule.getEstimate().getDuration() != null) {
+                    _durationMilliseconds = (long) (_schedule.getEstimate().getDuration() * 60 * 60 * 1000);
                 }
             }
         } catch (Exception e) {
         }
 
-        if (_durationMilliseconds == INVALID_NUMBER) {
-            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
-        }
+//        if (_durationMilliseconds == INVALID_NUMBER) {
+//            _durationMilliseconds = 60 * 60 * 1000; // 1 hr
+//        }
         _durationButton.setText(misc.convertMsToHuman(_durationMilliseconds));
 
 

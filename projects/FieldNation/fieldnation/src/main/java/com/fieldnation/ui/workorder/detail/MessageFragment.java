@@ -94,6 +94,7 @@ public class MessageFragment extends WorkorderFragment {
             _adapter.notifyDataSetInvalidated();
             _adapter = null;
         }
+        misc.hideKeyboard(_inputView);
         super.onPause();
     }
 
