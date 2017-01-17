@@ -61,7 +61,8 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
     private static final String STATE_TAG = TAG_BASE + ".STATE_TAG";
 
     // Dialog tags
-    private static final String DIALOG_CHECK_IN_CHECK_OUT = "DIALOG_CHECK_IN_CHECK_OUT";
+    private static final String DIALOG_ACCEPT_BUNDLE = TAG_BASE + ".acceptBundleDialog";
+    private static final String DIALOG_CHECK_IN_CHECK_OUT = TAG_BASE + ".checkInOutDialog";
 
     // UI
     private OverScrollListView _listView;
@@ -579,7 +580,7 @@ public class WorkorderListFragment extends Fragment implements TabActionBarFragm
         @Override
         public void actionRequest(WorkorderCardView view, Workorder workorder) {
             if (workorder.isBundle()) {
-                AcceptBundleDialog.show(App.get(), workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), DIALOG_ACCEPT_BUNDLE, workorder.getBundleId(),
                         workorder.getBundleCount(), workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
 /*

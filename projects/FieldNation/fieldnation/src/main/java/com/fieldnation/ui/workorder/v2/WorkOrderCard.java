@@ -60,6 +60,7 @@ public class WorkOrderCard extends RelativeLayout {
     private static final String DIALOG_DECLINE = TAG + ".declineDialog";
     private static final String DIALOG_WITHDRAW_REQUEST = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialog";
+    private static final String DIALOG_MARK_INCOMLPETE = TAG + ".markIncompleteWarningDialog";
 
     // Ui
     private TextView _amountTextView;
@@ -526,7 +527,7 @@ public class WorkOrderCard extends RelativeLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search",
                     WorkOrderTracker.ActionButton.MARK_INCOMPLETE, null, _workOrder.getId());
 
-            MarkIncompleteWarningDialog.show(App.get(), _workOrder.getId());
+            MarkIncompleteWarningDialog.show(App.get(), DIALOG_MARK_INCOMLPETE, _workOrder.getId());
         }
     };
 
@@ -748,7 +749,7 @@ public class WorkOrderCard extends RelativeLayout {
         @Override
         public void onClick(View v) {
             WorkOrderTracker.onActionButtonEvent(App.get(), _savedSearchTitle + " Saved Search", WorkOrderTracker.ActionButton.RUNNING_LATE, null, _workOrder.getId());
-            RunningLateDialog.show(App.get(), _workOrder);
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
     };
 
@@ -786,7 +787,7 @@ public class WorkOrderCard extends RelativeLayout {
     private final View.OnClickListener _test_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            RunningLateDialog.show(App.get(), _workOrder);
+            RunningLateDialog.show(App.get(), DIALOG_RUNNING_LATE, _workOrder);
         }
     };
 

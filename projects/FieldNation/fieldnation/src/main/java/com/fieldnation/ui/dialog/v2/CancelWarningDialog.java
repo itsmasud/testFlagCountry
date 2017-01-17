@@ -100,10 +100,10 @@ public class CancelWarningDialog extends FullScreenDialog {
         }
     };
 
-    public static void show(Context context, long workOrderId, String explanation) {
+    public static void show(Context context, String uid, long workOrderId, String explanation) {
         Bundle params = new Bundle();
         params.putLong(PARAM_WORKORDER_ID, workOrderId);
         params.putString(PARAM_EXPLANATION, explanation);
-        Controller.show(context, null, CancelWarningDialog.class, params);
+        Controller.show(context, uid, CancelWarningDialog.class, params);
     }
 }

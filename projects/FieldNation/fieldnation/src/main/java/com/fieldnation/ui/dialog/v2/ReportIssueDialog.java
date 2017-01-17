@@ -20,6 +20,8 @@ import com.fieldnation.fndialog.SimpleDialog;
 public class ReportIssueDialog extends SimpleDialog {
     private static final String TAG = "ReportIssueDialog";
 
+    private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
+
     private static final String PARAM_WORKORDER = "workOrder";
 
     // Ui
@@ -81,7 +83,7 @@ public class ReportIssueDialog extends SimpleDialog {
     private final View.OnClickListener _reportOther_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            ReportProblemDialog.show(App.get(), null, _workOrder.getId());
+            ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workOrder.getId());
         }
     };
 

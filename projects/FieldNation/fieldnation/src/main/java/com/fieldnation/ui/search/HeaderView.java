@@ -21,6 +21,8 @@ import com.fieldnation.ui.dialog.v2.FilterDrawerDialog;
 public class HeaderView extends RelativeLayout {
     private static final String TAG = "HeaderView";
 
+    private static final String DIALOG_FILTER_DRAWER = TAG + ".filterDrawerDialog";
+
     // Ui
     private IconFontTextView _iconFontView;
     private TextView _filtersTextView;
@@ -93,7 +95,7 @@ public class HeaderView extends RelativeLayout {
     private final View.OnClickListener _iconFontView_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            FilterDrawerDialog.show(App.get(), _savedSearchParams);
+            FilterDrawerDialog.show(App.get(), DIALOG_FILTER_DRAWER, _savedSearchParams);
         }
     };
 }

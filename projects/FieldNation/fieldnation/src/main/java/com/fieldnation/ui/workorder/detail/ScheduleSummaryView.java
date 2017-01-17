@@ -26,6 +26,8 @@ import java.util.Locale;
 public class ScheduleSummaryView extends LinearLayout implements WorkorderRenderer {
     private static final String TAG = "ScheduleSummaryView";
 
+    private static final String DIALOG_ETA = TAG + ".etaDialog";
+
     // UI
     private TextView _type1TextView;
     private TextView _date1TextView;
@@ -166,7 +168,7 @@ public class ScheduleSummaryView extends LinearLayout implements WorkorderRender
     private final View.OnClickListener _add_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            EtaDialog.show(App.get(), null, _workorder.getWorkorderId(),
+            EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_EDIT);
         }
     };

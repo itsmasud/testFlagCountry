@@ -240,11 +240,11 @@ public class RunningLateDialog extends SimpleDialog {
         }
     };
 
-    public static void show(Context context, WorkOrder workOrder) {
+    public static void show(Context context, String uid, WorkOrder workOrder) {
         Bundle params = new Bundle();
         params.putParcelable(PARAM_WORKORDER, workOrder);
 
-        Controller.show(context, null, RunningLateDialog.class, params);
+        Controller.show(context, uid, RunningLateDialog.class, params);
     }
 
     /*-*******************************************/

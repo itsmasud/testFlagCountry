@@ -173,7 +173,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.show(App.get(), null, R.string.dialog_terms_title,
+            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };
@@ -248,22 +248,6 @@ public class AcceptBundleDialog extends SimpleDialog {
         bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
         bundle.putInt(PARAM_TYPE, type);
         Controller.show(context, uid, AcceptBundleDialog.class, bundle);
-    }
-
-    /**
-     * @param context     Application context
-     * @param bundleId    The id of the bundle we're worried about
-     * @param bundleSize  The number of work orders in the bundle
-     * @param workOrderId An id of one of the work orders in the bundle.
-     * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
-     */
-    public static void show(Context context, long bundleId, int bundleSize, long workOrderId, int type) {
-        Bundle bundle = new Bundle();
-        bundle.putLong(PARAM_BUNDLE_ID, bundleId);
-        bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-        bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
-        bundle.putInt(PARAM_TYPE, type);
-        Controller.show(context, null, AcceptBundleDialog.class, bundle);
     }
 
     /*-****************************************/

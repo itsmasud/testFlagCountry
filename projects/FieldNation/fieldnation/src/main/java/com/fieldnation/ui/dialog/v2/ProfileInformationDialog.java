@@ -47,7 +47,6 @@ public class ProfileInformationDialog extends FullScreenDialog {
     private static final String TAG = "ProfileInformationDialog";
     private static final String UID_APP_PICKER_DIALOG = TAG + ".AppPickerDialog";
 
-
     // Ui
     private Toolbar _toolbar;
     private View _root;
@@ -380,7 +379,7 @@ public class ProfileInformationDialog extends FullScreenDialog {
     };
 
     public static void show(Context context) {
-        Controller.show(context, null, ProfileInformationDialog.class, null);
+        Controller.show(context, "ProfileInformationDialog", ProfileInformationDialog.class, null);
     }
 
     public static void dismiss(Context context) {

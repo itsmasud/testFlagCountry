@@ -537,7 +537,7 @@ public class EtaDialog extends FullScreenDialog {
     private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.show(App.get(), null, R.string.dialog_terms_title,
+            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };

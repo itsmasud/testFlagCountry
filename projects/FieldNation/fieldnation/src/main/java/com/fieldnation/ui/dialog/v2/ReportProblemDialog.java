@@ -38,6 +38,8 @@ import com.fieldnation.ui.KeyedDispatcher;
 public class ReportProblemDialog extends SimpleDialog {
     private static final String TAG = "ReportProblemDialog";
 
+    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
+
     // State keys
     private static final String PARAM_WORKORDER_ID = "workOrderId";
     private static final String PARAM_WORKORDER = "workOrder";
@@ -475,7 +477,7 @@ public class ReportProblemDialog extends SimpleDialog {
 
             switch (_selectedProblem) {
                 case CANNOT_MAKE_ASSIGNMENT:
-                    CancelWarningDialog.show(App.get(), _workorder.getWorkorderId(), explanation);
+                    CancelWarningDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getWorkorderId(), explanation);
                     break;
 
                 case WILL_BE_LATE:

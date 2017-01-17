@@ -31,11 +31,11 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
         return true;
     }
 
-    public static void show(Context context, long workOrderId) {
+    public static void show(Context context, String uid, long workOrderId) {
         Bundle extraData = new Bundle();
         extraData.putLong("workOrderId", workOrderId);
 
-        show(context, null, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
+        show(context, uid, MarkIncompleteWarningDialog.class, R.string.mark_as_incomplete, R.string.mark_as_incomplete_full_warning,
                 R.string.btn_continue, R.string.btn_cancel, true, extraData);
     }
 

@@ -117,6 +117,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_REPORT_PROBLEM = TAG + ".reportProblemDialog";
     private static final String DIALOG_ETA = TAG + ".etaDialog";
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
+    private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
+    private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -935,7 +937,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            RunningLateDialogLegacy.show(App.get(), null, _workorder);
+            RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE, _workorder);
         }
     };
 
@@ -1029,7 +1031,7 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workorder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
@@ -1044,7 +1046,7 @@ public class WorkFragment extends WorkorderFragment {
 
             if (_workorder.isBundle()) {
                 // Todo track bundles... although we don't allow this anymore
-                AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
+                AcceptBundleDialog.show(App.get(), DIALOG_CANCEL_WARNING, _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
                 EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),

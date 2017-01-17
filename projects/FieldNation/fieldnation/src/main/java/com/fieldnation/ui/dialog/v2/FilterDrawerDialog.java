@@ -64,7 +64,7 @@ public class FilterDrawerDialog extends RightDrawerDialog {
         }
     };
 
-    public static void show(Context context, SavedSearchParams savedSearchParams) {
+    public static void show(Context context, String uid, SavedSearchParams savedSearchParams) {
         Bundle bundle = new Bundle();
         bundle.putParcelable("SAVED_SEARCH_PARAMS", savedSearchParams);
         Controller.show(context, null, FilterDrawerDialog.class, bundle);
