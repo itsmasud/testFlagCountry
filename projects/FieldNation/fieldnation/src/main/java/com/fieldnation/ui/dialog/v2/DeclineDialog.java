@@ -351,9 +351,9 @@ public class DeclineDialog extends SimpleDialog {
         Controller.show(context, uid, DeclineDialog.class, params);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-****************************-*/
+    /*-         Declined           -*/
+    /*-****************************-*/
     public interface OnDeclinedListener {
         void onDeclined(long workOrderId);
     }
@@ -377,6 +377,9 @@ public class DeclineDialog extends SimpleDialog {
         _onDeclinedDispatcher.removeAll(uid);
     }
 
+    /*-****************************-*/
+    /*-         Canceled           -*/
+    /*-****************************-*/
     public interface OnCanceledListener {
         void onCanceled();
     }

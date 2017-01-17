@@ -632,10 +632,9 @@ public class ReportProblemDialog extends SimpleDialog {
         Controller.show(context, uid, ReportProblemDialog.class, params);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
-
+    /*-************************-*/
+    /*-         Send           -*/
+    /*-************************-*/
     public interface OnSendListener {
         void onSend(long workorderId, String explanation, ReportProblemType type);
     }

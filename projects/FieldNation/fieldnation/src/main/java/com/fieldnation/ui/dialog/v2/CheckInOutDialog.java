@@ -439,9 +439,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         Controller.dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-****************************-*/
+    /*-         Check In           -*/
+    /*-****************************-*/
     public interface OnCheckInListener {
         void onCheckIn(long workOrderId);
     }
@@ -465,6 +465,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         _onCheckInDispatcher.removeAll(uid);
     }
 
+    /*-*****************************-*/
+    /*-         Check Out           -*/
+    /*-*****************************-*/
     public interface OnCheckOutListener {
         void onCheckOut(long workOrderId);
     }

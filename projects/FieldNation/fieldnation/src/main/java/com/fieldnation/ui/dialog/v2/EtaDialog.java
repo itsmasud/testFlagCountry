@@ -779,9 +779,9 @@ public class EtaDialog extends FullScreenDialog {
     }
 
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-*****************************-*/
+    /*-         Requested           -*/
+    /*-*****************************-*/
     public interface OnRequestedListener {
         void onRequested(long workOrderId);
     }
@@ -805,6 +805,9 @@ public class EtaDialog extends FullScreenDialog {
         _onRequestedDispatcher.removeAll(uid);
     }
 
+    /*-****************************-*/
+    /*-         Accepted           -*/
+    /*-****************************-*/
     public interface OnAcceptedListener {
         void onAccepted(long workOrderId);
     }
@@ -828,6 +831,9 @@ public class EtaDialog extends FullScreenDialog {
         _onAcceptedDispatcher.removeAll(uid);
     }
 
+    /*-*****************************-*/
+    /*-         Confirmed           -*/
+    /*-*****************************-*/
     public interface OnConfirmedListener {
         void onConfirmed(long workOrderId);
     }

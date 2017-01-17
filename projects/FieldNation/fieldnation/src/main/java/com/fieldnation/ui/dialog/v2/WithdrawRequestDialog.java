@@ -41,9 +41,9 @@ public class WithdrawRequestDialog extends TwoButtonDialog {
                 R.string.btn_yes, R.string.btn_no, true, extraData);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-****************************-*/
+    /*-         Withdraw           -*/
+    /*-****************************-*/
     public interface OnWithdrawListener {
         void onWithdraw(long workOrderId);
     }

@@ -39,9 +39,9 @@ public class MarkIncompleteWarningDialog extends TwoButtonDialog {
                 R.string.btn_continue, R.string.btn_cancel, true, extraData);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-***********************************-*/
+    /*-         Mark Incomplete           -*/
+    /*-***********************************-*/
     public interface OnMarkIncompleteListener {
         void onMarkIncomplete(long workOrderId);
     }

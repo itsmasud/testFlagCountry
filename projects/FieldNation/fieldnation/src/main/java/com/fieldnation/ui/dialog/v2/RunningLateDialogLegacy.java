@@ -252,9 +252,9 @@ public class RunningLateDialogLegacy extends SimpleDialog {
         Controller.show(context, uid, RunningLateDialogLegacy.class, params);
     }
 
-    /**
-     * Callback experiment
-     **/
+    /*-************************-*/
+    /*-         Send           -*/
+    /*-************************-*/
     public interface OnSendListener {
         void onSend(long workOrderId, int delayMin);
     }

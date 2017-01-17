@@ -247,9 +247,9 @@ public class RunningLateDialog extends SimpleDialog {
         Controller.show(context, uid, RunningLateDialog.class, params);
     }
 
-    /*-*******************************************/
-    /*-         Experimental Listener           -*/
-    /*-*******************************************/
+    /*-************************-*/
+    /*-         Send           -*/
+    /*-************************-*/
     public interface OnSendListener {
         void onSend(long workOrderId);
     }
