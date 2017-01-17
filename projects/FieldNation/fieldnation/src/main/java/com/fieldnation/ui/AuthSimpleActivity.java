@@ -183,7 +183,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             App.get().setReleaseNoteShownReminded();
-            WhatsNewDialog.Controller.show(App.get());
+            WhatsNewDialog.show(App.get());
         }
 
         if (App.get().shouldShowTermsAndConditionsDialog()) {
@@ -343,7 +343,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            UpdateDialog.Controller.show(App.get());
+            UpdateDialog.show(App.get());
         }
 
         @Override

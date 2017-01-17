@@ -101,6 +101,7 @@ public class DialogManager extends FrameLayout implements Constants {
                     holder.params = params;
                     holder.savedState = dialogSavedState;
                     holder.uid = uid;
+                    holder.dialog.setUid(uid);
                     push(holder);
                 }
             }
@@ -278,6 +279,7 @@ public class DialogManager extends FrameLayout implements Constants {
                 if (holder != null) {
                     holder.params = params;
                     holder.uid = uid;
+                    holder.dialog.setUid(uid);
                     push(holder);
                 }
             } catch (Exception ex) {

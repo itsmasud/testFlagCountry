@@ -25,6 +25,7 @@ import com.fieldnation.App;
 import com.fieldnation.R;
 import com.fieldnation.data.v2.Range;
 import com.fieldnation.data.v2.Schedule;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -32,6 +33,7 @@ import com.fieldnation.fntools.DateUtils;
 import com.fieldnation.fntools.ISO8601;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.KeyedDispatcher;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 
@@ -544,7 +546,7 @@ public class EtaDialog extends FullScreenDialog {
     private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
+            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };
@@ -716,6 +718,7 @@ public class EtaDialog extends FullScreenDialog {
 
             try {
                 if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
+                    _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionRequest(
@@ -735,6 +738,12 @@ public class EtaDialog extends FullScreenDialog {
                     }
                     dismiss(true);
                 } else {
+                    if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+                    } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
+                        _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
+                    }
+
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionConfirmAssignment(
@@ -761,18 +770,84 @@ public class EtaDialog extends FullScreenDialog {
         }
     };
 
-    public abstract static class Controller extends com.fieldnation.fndialog.Controller {
+    public static void show(Context context, String uid, long workOrderId, Schedule schedule, String dialogType) {
+        Bundle params = new Bundle();
+        params.putParcelable(PARAM_SCHEDULE, schedule);
+        params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, EtaDialog.class, params);
+    }
 
-        public Controller(Context context, String uid) {
-            super(context, EtaDialog.class, uid);
-        }
 
-        public static void show(Context context, long workOrderId, Schedule schedule, String dialogType) {
-            Bundle params = new Bundle();
-            params.putParcelable(PARAM_SCHEDULE, schedule);
-            params.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, null, EtaDialog.class, params);
+    /*-*******************************************/
+    /*-         Experimental Listener           -*/
+    /*-*******************************************/
+    public interface OnRequestedListener {
+        void onRequested(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
+        @Override
+        public void onDispatch(OnRequestedListener listener, Object... parameters) {
+            listener.onRequested((Long) parameters[0]);
         }
+    };
+
+    public static void addOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.add(uid, onRequestedListener);
+    }
+
+    public static void removeOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.remove(uid, onRequestedListener);
+    }
+
+    public static void removeAllOnRequestedListener(String uid) {
+        _onRequestedDispatcher.removeAll(uid);
+    }
+
+    public interface OnAcceptedListener {
+        void onAccepted(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
+        @Override
+        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
+            listener.onAccepted((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.add(uid, onAcceptedListener);
+    }
+
+    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
+    }
+
+    public static void removeAllOnAcceptedListener(String uid) {
+        _onAcceptedDispatcher.removeAll(uid);
+    }
+
+    public interface OnConfirmedListener {
+        void onConfirmed(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnConfirmedListener> _onConfirmedDispatcher = new KeyedDispatcher<OnConfirmedListener>() {
+        @Override
+        public void onDispatch(OnConfirmedListener listener, Object... parameters) {
+            listener.onConfirmed((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
+        _onConfirmedDispatcher.add(uid, onConfirmedListener);
+    }
+
+    public static void removeOnConfirmedListener(String uid, OnConfirmedListener onConfirmedListener) {
+        _onConfirmedDispatcher.remove(uid, onConfirmedListener);
+    }
+
+    public static void removeAllOnConfirmedListener(String uid) {
+        _onConfirmedDispatcher.removeAll(uid);
     }
 }

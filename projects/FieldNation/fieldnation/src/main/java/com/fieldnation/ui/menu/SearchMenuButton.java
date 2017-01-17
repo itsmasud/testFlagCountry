@@ -48,7 +48,7 @@ public class SearchMenuButton extends RelativeLayout {
         public void onClick(View v) {
             //EditSearchActivity.startNew(getContext());
             SavedSearchTracker.onClick(App.get(), SavedSearchTracker.Item.SEARCH);
-            SearchDialog.Controller.show(App.get());
+            SearchDialog.show(App.get());
         }
     };
 }

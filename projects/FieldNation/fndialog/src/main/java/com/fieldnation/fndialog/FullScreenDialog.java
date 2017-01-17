@@ -35,6 +35,9 @@ public abstract class FullScreenDialog implements Dialog {
     private DismissListener _dismissListener;
     private ResultListener _resultListener;
 
+    // Data
+    private String _uid;
+
     public FullScreenDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
 
@@ -88,6 +91,16 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void onStop() {
+    }
+
+    @Override
+    public String getUid() {
+        return _uid;
+    }
+
+    @Override
+    public void setUid(String uid) {
+        _uid = uid;
     }
 
     @Override

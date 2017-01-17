@@ -212,7 +212,7 @@ public class SignOffActivity extends AuthSimpleActivity {
         }
 
         if (_completeWorkorder) {
-
+            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workorder.getWorkorderId());
             WorkorderClient.actionComplete(this, _workorder.getWorkorderId());
             WorkorderClient.get(this, _workorder.getWorkorderId(), false);
         }

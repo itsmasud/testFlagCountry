@@ -2,75 +2,108 @@ package com.fieldnation.analytics.trackers;
 
 import android.content.Context;
 
-import com.fieldnation.analytics.CustomEvent;
 import com.fieldnation.analytics.ElementAction;
 import com.fieldnation.analytics.ElementType;
-import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.analytics.contexts.SpSearchContext;
-import com.fieldnation.analytics.contexts.SpUIContext;
 import com.fieldnation.data.v2.SavedSearchParams;
-import com.fieldnation.fnanalytics.Screen;
-import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnanalytics.EventContext;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Created by mc on 1/4/17.
  */
 
 public class SearchTracker {
+    private static final String SCREEN = "Search";
 
-    public enum Item {
-        SEARCH_BAR("Search"),
-        KEYBOARD("Search Keyboard");
+    public static class Item implements TrackerBase.Identity, Cloneable {
+        private static List<Item> valuesList = new LinkedList<>();
+        private static Item[] valuesArray;
+
+        public static final Item SEARCH_BAR = new Item("Search", ElementType.BAR_BUTTON);
+        public static final Item KEYBOARD = new Item("Search Keyboard", ElementType.KEYBOARD_BUTTON);
 
         private String identity;
+        private ElementType elementType;
 
-        Item(String identity) {
+        private Item(String identity, ElementType elementType) {
             this.identity = identity;
+            this.elementType = elementType;
+            valuesList.add(this);
+        }
+
+        public static Item[] values() {
+            if (valuesArray != null && valuesArray.length == valuesList.size())
+                return valuesArray;
+
+            return valuesArray = valuesList.toArray(new Item[valuesList.size()]);
+        }
+
+        @Override
+        public String page() {
+            return SCREEN;
+        }
+
+        @Override
+        public String identity() {
+            return identity;
+        }
+
+        @Override
+        public ElementAction elementAction() {
+            return ElementAction.CLICK;
+        }
+
+        @Override
+        public ElementType elementType() {
+            return elementType;
+        }
+
+        public Item clone() {
+            try {
+                return (Item) super.clone();
+            } catch (Exception e) {
+                return null;
+            }
         }
     }
 
-    private static final Screen SCREEN = new Screen.Builder().name("Search").tag(SnowplowWrapper.TAG).build();
 
     public static void onShow(Context context) {
-        Tracker.screen(context, SCREEN);
+        TrackerBase.show(context, SCREEN, null);
     }
 
     public static void onSearch(Context context, Item item, long workOrderId) {
-        Tracker.event(context, new CustomEvent.Builder()
-                .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
-                        .elementIdentity(item.identity)
-                        .elementAction(ElementAction.CLICK)
-                        .elementType(item == Item.KEYBOARD ? ElementType.KEYBOARD_BUTTON : ElementType.BAR_BUTTON)
-                        .build())
-                .addContext(new SpSearchContext.Builder()
-                        .name("ID")
-                        .value(workOrderId + "")
-                        .build())
-                .build());
+        TrackerBase.unstructuredEvent(context, item,
+                new EventContext[]{
+                        new SpSearchContext.Builder()
+                                .name("ID")
+                                .value(workOrderId + "")
+                                .build()
+                });
     }
 
     public static void onSearch(Context context, Item item, SavedSearchParams savedSearchParams) {
-        Tracker.event(context, new CustomEvent.Builder()
-                .addContext(new SpUIContext.Builder()
-                        .page(SCREEN.name)
-                        .elementIdentity(item.identity)
-                        .elementAction(ElementAction.CLICK)
-                        .elementType(ElementType.LIST_ITEM)
-                        .build())
-                .addContext(new SpSearchContext.Builder()
-                        .name("Location")
-                        .value(getLocationString(savedSearchParams))
-                        .build())
-                .addContext(new SpSearchContext.Builder()
-                        .name("Status")
-                        .value(savedSearchParams.title)
-                        .build())
-                .addContext(new SpSearchContext.Builder()
-                        .name("Distance")
-                        .value(savedSearchParams.radius + "")
-                        .build())
-                .build());
+        Item i = item.clone();
+        i.elementType = ElementType.LIST_ITEM;
+        TrackerBase.unstructuredEvent(context, item,
+                new EventContext[]{
+                        new SpSearchContext.Builder()
+                                .name("Location")
+                                .value(getLocationString(savedSearchParams))
+                                .build(),
+                        new SpSearchContext.Builder()
+                                .name("Status")
+                                .value(savedSearchParams.title)
+                                .build(),
+                        new SpSearchContext.Builder()
+                                .name("Distance")
+                                .value(savedSearchParams.radius + "")
+                                .build()
+                });
     }
 
     private static String getLocationString(SavedSearchParams savedSearchParams) {
@@ -88,4 +121,15 @@ public class SearchTracker {
         }
     }
 
+    public static void test(Context context) {
+        onShow(context);
+        SavedSearchParams[] list = SavedSearchClient.defaults;
+        for (Item item : Item.values()) {
+            onSearch(context, item, 1);
+            for (SavedSearchParams p : list) {
+                onSearch(context, item, p);
+            }
+        }
+
+    }
 }
