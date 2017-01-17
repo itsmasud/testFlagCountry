@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.speech.RecognizerIntent;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -70,6 +72,7 @@ public class SearchEditText extends RelativeLayout {
 
         _searchTermEditText = (EditText) findViewById(R.id.search_edittext);
         _searchTermEditText.setOnEditorActionListener(_searchTermEditText_onEdit);
+        _searchTermEditText.addTextChangedListener(_searchTermEditText_watcher);
 
         _micIconFont = (IconFontTextView) findViewById(R.id.right_textview);
         _micIconFont.setOnClickListener(_micIconFont_onClick);
@@ -81,6 +84,8 @@ public class SearchEditText extends RelativeLayout {
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
+
+        _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
 
     public void setListener(Listener listener) {
@@ -89,6 +94,8 @@ public class SearchEditText extends RelativeLayout {
 
     public void setText(CharSequence charSequence) {
         _searchTermEditText.setText(charSequence);
+
+        _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
     }
 
     public String getText() {
@@ -109,7 +116,7 @@ public class SearchEditText extends RelativeLayout {
     private final TextView.OnEditorActionListener _searchTermEditText_onEdit = new TextView.OnEditorActionListener() {
         @Override
         public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-            if (actionId == EditorInfo.IME_ACTION_SEARCH) {
+            if (actionId == EditorInfo.IME_ACTION_SEARCH && _searchTermEditText.getText().toString().length() > 0) {
                 try {
                     SearchTracker.onSearch(App.get(),
                             SearchTracker.Item.KEYBOARD,
@@ -120,6 +127,21 @@ public class SearchEditText extends RelativeLayout {
                 return true;
             }
             return false;
+        }
+    };
+
+    private final TextWatcher _searchTermEditText_watcher = new TextWatcher() {
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            _searchIconFont.setEnabled(_searchTermEditText.getText().toString().length() > 0);
         }
     };
 
@@ -191,11 +213,6 @@ public class SearchEditText extends RelativeLayout {
             } else {
                 if (_listener != null)
                     _listener.onLookupWorkOrder(workorderId);
-//                ActivityResultClient.startActivity(
-//                        App.get(),
-//                        WorkorderActivity.makeIntentShow(App.get(), workorderId),
-//                        R.anim.activity_slide_in_right,
-//                        R.anim.activity_slide_out_left);
             }
         }
     };
