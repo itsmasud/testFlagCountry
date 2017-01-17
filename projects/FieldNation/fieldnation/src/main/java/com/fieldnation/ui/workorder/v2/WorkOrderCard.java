@@ -392,12 +392,12 @@ public class WorkOrderCard extends RelativeLayout {
             case ACCEPT:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_accept_onClick);
-                button.setText("ACCEPT");
+                button.setText(R.string.btn_accept);
                 break;
             case CONFIRM:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_confirm_onClick);
-                button.setText("CONFIRM");
+                button.setText(R.string.btn_confirm);
                 break;
             case ON_MY_WAY:
                 button.setVisibility(VISIBLE);
@@ -407,12 +407,12 @@ public class WorkOrderCard extends RelativeLayout {
             case READY:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_readyToGo_onClick);
-                button.setText("CONFIRM");
+                button.setText(R.string.btn_confirm);
                 break;
             case READY_TO_GO:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_readyToGo_onClick);
-                button.setText("READY");
+                button.setText(R.string.btn_ready);
                 break;
             case REPORT_PROBLEM:
                 button.setVisibility(VISIBLE);
@@ -422,7 +422,7 @@ public class WorkOrderCard extends RelativeLayout {
             case REQUEST:
                 button.setVisibility(VISIBLE);
                 button.setOnClickListener(_request_onClick);
-                button.setText("REQUEST");
+                button.setText(R.string.btn_request);
                 break;
             case VIEW_BUNDLE:
                 button.setVisibility(VISIBLE);
