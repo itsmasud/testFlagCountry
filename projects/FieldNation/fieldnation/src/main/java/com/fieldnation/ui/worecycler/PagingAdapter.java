@@ -32,6 +32,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     private Class<T> _objectType;
     private int _rateMePosition = 5;
     private boolean _showRateMe = false;
+    private boolean _lastPage = false;
 
 
     public PagingAdapter(Class<T> clazz) {
@@ -45,12 +46,16 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         _pages.clear();
         _displayList.clear();
         _loadingPages.clear();
+        _lastPage = false;
         notifyDataSetChanged();
         rebuildList();
         preRequestPage(0, false);
     }
 
     private void preRequestPage(int page, boolean allowCache) {
+        if (_lastPage)
+            return;
+        
         if (!_loadingPages.contains(page)
                 && (page >= _pages.size() || _pages.get(page) == null)) {
             _loadingPages.add(page);
@@ -70,6 +75,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         _loadingPages.remove(page);
 
         if (list == null || list.size() == 0) {
+            _lastPage = true;
             return;
         }
 
