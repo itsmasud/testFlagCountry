@@ -132,10 +132,10 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _touchMeMenu = findViewById(R.id.touchMe_menu);
         _touchMeMenu.setOnClickListener(_touchMe_onClick);
 
-        if (BuildConfig.DEBUG)
-            _touchMeMenu.setVisibility(VISIBLE);
-        else
-            _touchMeMenu.setVisibility(GONE);
+//        if (BuildConfig.DEBUG)
+//            _touchMeMenu.setVisibility(VISIBLE);
+//        else
+        _touchMeMenu.setVisibility(GONE);
 
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
