@@ -471,7 +471,7 @@ public class WorkOrderTracker {
 
             @Override
             public ElementType elementType() {
-                return elementType().TAB;
+                return ElementType.TAB;
             }
         });
     }
