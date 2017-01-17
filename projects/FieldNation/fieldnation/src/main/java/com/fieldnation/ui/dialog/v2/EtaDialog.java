@@ -106,6 +106,7 @@ public class EtaDialog extends FullScreenDialog {
     private Calendar _etaStart;
     private long _durationMilliseconds = INVALID_NUMBER;
     private long _expiringDurationMilliseconds = INVALID_NUMBER;
+    private boolean _isSwitchOn = true;
 
     /*-*************************************-*/
     /*-             Life cycle              -*/
@@ -177,8 +178,6 @@ public class EtaDialog extends FullScreenDialog {
         _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
         _expiryDialog.setListener(_expiryDialog_listener);
 
-        _etaSwitch.setChecked(true);
-
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -243,7 +242,8 @@ public class EtaDialog extends FullScreenDialog {
         if (savedState.containsKey(STATE_NOTE))
             _noteEditText.setText(savedState.getString(STATE_NOTE));
 
-        _etaSwitch.setChecked(savedState.getBoolean(STATE_ETA_SWITCH));
+        if (savedState.containsKey(STATE_ETA_SWITCH))
+            _isSwitchOn = savedState.getBoolean(STATE_ETA_SWITCH);
 
         if (savedState.containsKey(STATE_ETA_CALENDAR))
             _etaStart = (Calendar) savedState.getSerializable(STATE_ETA_CALENDAR);
@@ -268,7 +268,8 @@ public class EtaDialog extends FullScreenDialog {
             _expirationLayout.setVisibility(View.VISIBLE);
             _etaSwitch.setVisibility(View.VISIBLE);
             _etaSwitchLabel.setVisibility(View.VISIBLE);
-            _etaLayout.setVisibility(_etaSwitch.isChecked() ? View.VISIBLE : View.GONE);
+            _etaSwitch.setChecked(_isSwitchOn);
+            _etaLayout.setVisibility(_isSwitchOn ? View.VISIBLE : View.GONE);
 
             SpannableString spanned = new SpannableString("By requesting this work order you are agreeing to our Work Order Terms and Conditions");
             spanned.setSpan(_terms_onClick, 54, 85, spanned.getSpanFlags(_terms_onClick));
