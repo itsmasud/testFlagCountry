@@ -147,7 +147,7 @@ public class SearchResultScreen extends RelativeLayout {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            getPage(0);
+            _adapter.refreshAll();
         }
     };
 
@@ -184,7 +184,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         @Override
         public void onAction(long workOrderId, String action, boolean failed) {
-            getPage(0);
+            _adapter.refreshAll();
             _refreshView.startRefreshing();
         }
     };
@@ -202,7 +202,7 @@ public class SearchResultScreen extends RelativeLayout {
             if (failed)
                 return;
 
-            getPage(0);
+            _adapter.refreshAll();
             _refreshView.startRefreshing();
         }
     };

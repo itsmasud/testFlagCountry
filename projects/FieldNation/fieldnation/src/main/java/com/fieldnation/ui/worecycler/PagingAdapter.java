@@ -55,7 +55,7 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     private void preRequestPage(int page, boolean allowCache) {
         if (_lastPage)
             return;
-        
+
         if (!_loadingPages.contains(page)
                 && (page >= _pages.size() || _pages.get(page) == null)) {
             _loadingPages.add(page);
@@ -68,6 +68,13 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
             _showRateMe = App.get().showRateMe();
         } else {
             _showRateMe = false;
+        }
+    }
+
+    public void refreshAll() {
+        for (int i = 0; i < _pages.size(); i++) {
+            _loadingPages.add(i);
+            requestPage(i, false);
         }
     }
 
