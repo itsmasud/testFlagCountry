@@ -412,6 +412,14 @@ public class WorkFragment extends WorkorderFragment {
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
         _payDialog.setListener(_payDialog_listener);
 
+        CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
+        CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
+        EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
+        ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
 
@@ -428,6 +436,15 @@ public class WorkFragment extends WorkorderFragment {
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
+
+        CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
+        CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
+        EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
+        EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
+        EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
+        ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+        WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
@@ -673,7 +690,6 @@ public class WorkFragment extends WorkorderFragment {
 
     private void doCheckin() {
 //        setLoading(true);
-        CheckInOutDialog.addOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
             CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_IN);
@@ -687,7 +703,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCheckIn(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_IN, WorkOrderTracker.Action.CHECK_IN, workOrderId);
-            CheckInOutDialog.removeOnCheckInListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckIn);
         }
     };
 
@@ -753,8 +768,6 @@ public class WorkFragment extends WorkorderFragment {
 
         _gpsLocationService.setListener(null);
         if (_gpsLocationService.hasLocation()) {
-            CheckInOutDialog.addOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
-
             if (_deviceCount > -1) {
                 CheckInOutDialog.show(App.get(), DIALOG_CHECK_IN_CHECK_OUT, _workorder.getWorkorderId(), _gpsLocationService.getLocation(), _deviceCount, CheckInOutDialog.PARAM_DIALOG_TYPE_CHECK_OUT);
             } else {
@@ -773,7 +786,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onCheckOut(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CHECK_OUT, WorkOrderTracker.Action.CHECK_OUT, workOrderId);
-            CheckInOutDialog.removeOnCheckOutListener(DIALOG_CHECK_IN_CHECK_OUT, _checkInOutDialog_onCheckOut);
         }
     };
 
@@ -983,7 +995,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onReportProblem() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, null, _workorder.getWorkorderId());
 
-            ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
             ReportProblemDialog.show(App.get(), DIALOG_REPORT_PROBLEM, _workorder);
         }
 
@@ -1021,7 +1032,6 @@ public class WorkFragment extends WorkorderFragment {
                 AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_REQUEST);
             } else {
-                EtaDialog.addOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
                 EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                         _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_REQUEST);
             }
@@ -1037,7 +1047,6 @@ public class WorkFragment extends WorkorderFragment {
                 AcceptBundleDialog.show(App.get(), _workorder.getBundleId(),
                         _workorder.getBundleCount(), _workorder.getWorkorderId(), AcceptBundleDialog.TYPE_ACCEPT);
             } else {
-                EtaDialog.addOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
                 EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                         _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_ACCEPT);
             }
@@ -1047,7 +1056,6 @@ public class WorkFragment extends WorkorderFragment {
         public void onWithdraw() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, null, _workorder.getWorkorderId());
 
-            WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
             WithdrawRequestDialog.show(App.get(), DIALOG_WITHDRAW, _workorder.getWorkorderId());
         }
 
@@ -1069,7 +1077,6 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM,
                     null, _workorder.getWorkorderId());
 
-            EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
             EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
@@ -1171,7 +1178,6 @@ public class WorkFragment extends WorkorderFragment {
 
         @Override
         public void onConfirmAssignment(Task task) {
-            EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
             EtaDialog.show(App.get(), DIALOG_ETA, _workorder.getWorkorderId(),
                     _workorder.getScheduleV2(), EtaDialog.PARAM_DIALOG_TYPE_CONFIRM);
         }
@@ -1690,7 +1696,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onRequested(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REQUEST, WorkOrderTracker.Action.REQUEST, workOrderId);
-            EtaDialog.removeOnRequestedListener(DIALOG_ETA, _etaDialog_onRequested);
         }
     };
 
@@ -1698,7 +1703,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onAccepted(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.ACCEPT_WORK, WorkOrderTracker.Action.ACCEPT_WORK, workOrderId);
-            EtaDialog.removeOnAcceptedListener(DIALOG_ETA, _etaDialog_onAccepted);
         }
     };
 
@@ -1706,7 +1710,6 @@ public class WorkFragment extends WorkorderFragment {
         @Override
         public void onConfirmed(long workOrderId) {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.CONFIRM, WorkOrderTracker.Action.CONFIRM, workOrderId);
-            EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         }
     };
 
@@ -1842,8 +1845,8 @@ public class WorkFragment extends WorkorderFragment {
     private final ReportProblemDialog.OnSendListener _reportProblemDialog_onSend = new ReportProblemDialog.OnSendListener() {
         @Override
         public void onSend(long workorderId, String explanation, ReportProblemType type) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
-            ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
+            if (_workorder.getWorkorderId() == workorderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.REPORT_PROBLEM, WorkOrderTracker.Action.REPORT_PROBLEM, workorderId);
         }
     };
 
@@ -1953,8 +1956,8 @@ public class WorkFragment extends WorkorderFragment {
     private final WithdrawRequestDialog.OnWithdrawListener _withdrawRequestDialog_onWithdraw = new WithdrawRequestDialog.OnWithdrawListener() {
         @Override
         public void onWithdraw(long workOrderId) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
-            WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+            if (_workorder.getWorkorderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.WITHDRAW, WorkOrderTracker.Action.WITHDRAW, workOrderId);
         }
     };
 

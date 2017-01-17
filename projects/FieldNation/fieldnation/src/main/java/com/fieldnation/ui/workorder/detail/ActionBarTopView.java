@@ -59,7 +59,16 @@ public class ActionBarTopView extends LinearLayout {
         if (isInEditMode())
             return;
 
+        RunningLateDialogLegacy.addOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+
         setVisibility(View.GONE);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        RunningLateDialogLegacy.removeOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+
+        super.onDetachedFromWindow();
     }
 
     private void inflate() {
@@ -529,7 +538,6 @@ public class ActionBarTopView extends LinearLayout {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
                     null, _workorder.getWorkorderId());
 
-            RunningLateDialogLegacy.addOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
             RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE_LEGACY, _workorder);
         }
     };
@@ -537,10 +545,9 @@ public class ActionBarTopView extends LinearLayout {
     private final RunningLateDialogLegacy.OnSendListener _runningLateDialogLegacy_onSend = new RunningLateDialogLegacy.OnSendListener() {
         @Override
         public void onSend(long workOrderId, int delayMin) {
-            WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
-                    WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
-
-            RunningLateDialogLegacy.removeOnSendListener(DIALOG_RUNNING_LATE_LEGACY, _runningLateDialogLegacy_onSend);
+            if (_workorder.getWorkorderId() == workOrderId)
+                WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.RUNNING_LATE,
+                        WorkOrderTracker.Action.RUNNING_LATE, workOrderId);
         }
     };
 
