@@ -166,7 +166,7 @@ public class SearchResultScreen extends RelativeLayout {
             if (_onListReceivedListener != null)
                 _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
 
-            if (envelope == null || envelope.getTotal() == 0) {
+            if (envelope == null || envelope.getTotal() == 0 || failed) {
                 _refreshView.refreshComplete();
                 return;
             }
