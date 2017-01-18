@@ -706,69 +706,73 @@ public class EtaDialog extends FullScreenDialog {
             }
 
             try {
-                if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
-                    _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
+                switch (_dialogType) {
+                    case PARAM_DIALOG_TYPE_REQUEST:
+                        _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
 
-                    if (_etaSwitch.isChecked()) {
-                        String startDate = ISO8601.fromCalendar(_etaStart);
-                        WorkorderClient.actionRequest(
-                                App.get(),
-                                _workOrderId,
-                                _expiringDurationMilliseconds / 1000,
-                                startDate,
-                                ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                _noteEditText.getText().toString().trim());
-                    } else {
-                        WorkorderClient.actionRequest(
-                                App.get(),
-                                _workOrderId,
-                                _expiringDurationMilliseconds / 1000,
-                                null, null,
-                                _noteEditText.getText().toString().trim());
-                    }
-                    dismiss(true);
-                } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-                    _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
+                        if (_etaSwitch.isChecked()) {
+                            String startDate = ISO8601.fromCalendar(_etaStart);
+                            WorkorderClient.actionRequest(
+                                    App.get(),
+                                    _workOrderId,
+                                    _expiringDurationMilliseconds / 1000,
+                                    startDate,
+                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                    _noteEditText.getText().toString().trim());
+                        } else {
+                            WorkorderClient.actionRequest(
+                                    App.get(),
+                                    _workOrderId,
+                                    _expiringDurationMilliseconds / 1000,
+                                    null, null,
+                                    _noteEditText.getText().toString().trim());
+                        }
+                        dismiss(true);
+                        break;
+                    case PARAM_DIALOG_TYPE_CONFIRM:
+                        _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
 
-                    if (_etaSwitch.isChecked()) {
-                        String startDate = ISO8601.fromCalendar(_etaStart);
-                        WorkorderClient.actionConfirm(
-                                App.get(),
-                                _workOrderId,
-                                startDate,
-                                ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                _noteEditText.getText().toString().trim());
-                    } else {
-                        WorkorderClient.actionConfirm(
-                                App.get(),
-                                _workOrderId,
-                                null, null,
-                                _noteEditText.getText().toString().trim());
-                    }
-                    dismiss(true);
+                        if (_etaSwitch.isChecked()) {
+                            String startDate = ISO8601.fromCalendar(_etaStart);
+                            WorkorderClient.actionConfirm(
+                                    App.get(),
+                                    _workOrderId,
+                                    startDate,
+                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                    _noteEditText.getText().toString().trim());
+                        } else {
+                            WorkorderClient.actionConfirm(
+                                    App.get(),
+                                    _workOrderId,
+                                    null, null,
+                                    _noteEditText.getText().toString().trim());
+                        }
+                        dismiss(true);
+                        break;
+                    case PARAM_DIALOG_TYPE_ACCEPT:
+                    case PARAM_DIALOG_TYPE_EDIT:
+                        if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT))
+                            _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
 
-                } else {
-                    if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT))
-                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
-
-                    if (_etaSwitch.isChecked()) {
-                        String startDate = ISO8601.fromCalendar(_etaStart);
-                        WorkorderClient.actionAcceptAssignment(
-                                App.get(),
-                                _workOrderId,
-                                startDate,
-                                ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                _noteEditText.getText().toString().trim(),
-                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-                    } else {
-                        WorkorderClient.actionAcceptAssignment(
-                                App.get(),
-                                _workOrderId,
-                                null, null,
-                                _noteEditText.getText().toString().trim(),
-                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
-                    }
-                    dismiss(true);
+                        if (_etaSwitch.isChecked()) {
+                            String startDate = ISO8601.fromCalendar(_etaStart);
+                            WorkorderClient.actionAcceptAssignment(
+                                    App.get(),
+                                    _workOrderId,
+                                    startDate,
+                                    ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                    _noteEditText.getText().toString().trim(),
+                                    _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                        } else {
+                            WorkorderClient.actionAcceptAssignment(
+                                    App.get(),
+                                    _workOrderId,
+                                    null, null,
+                                    _noteEditText.getText().toString().trim(),
+                                    _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                        }
+                        dismiss(true);
+                        break;
                 }
             } catch (Exception ex) {
                 Log.v(TAG, ex);
