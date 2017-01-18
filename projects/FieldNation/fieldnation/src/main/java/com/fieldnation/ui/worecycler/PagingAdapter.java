@@ -48,7 +48,6 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
         _lastPage = false;
         notifyDataSetChanged();
         rebuildList();
-        preRequestPage(0, false);
     }
 
     private void preRequestPage(int page, boolean allowCache) {
@@ -71,17 +70,26 @@ public abstract class PagingAdapter<T> extends RecyclerView.Adapter<BaseHolder> 
     }
 
     public void refreshAll() {
-        for (int i = 0; i < _pages.size(); i++) {
-            _loadingPages.add(i);
-            requestPage(i, false);
+        if (_pages.size() == 0) {
+            requestPage(0, false);
+        } else {
+            for (int i = 0; i < _pages.size(); i++) {
+                _loadingPages.add(i);
+                requestPage(i, false);
+            }
         }
     }
 
     public void addObjects(int page, List<T> list) {
         _loadingPages.remove(page);
 
-        if (list == null || list.size() == 0) {
+        if (list == null) {
             _lastPage = true;
+            return;
+        }
+        if (page == 0 && list.size() == 0) {
+            _pages.clear();
+            rebuildList();
             return;
         }
 
