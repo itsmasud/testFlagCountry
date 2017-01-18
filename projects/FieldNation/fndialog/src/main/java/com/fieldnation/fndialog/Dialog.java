@@ -88,10 +88,4 @@ public interface Dialog {
     interface DismissListener {
         void onDismissed(Dialog dialog);
     }
-
-    void setResultListener(ResultListener listener);
-
-    interface ResultListener {
-        void onResult(Dialog dialog, Bundle response);
-    }
 }

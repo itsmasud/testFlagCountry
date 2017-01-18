@@ -96,8 +96,6 @@ public class EtaDialog extends FullScreenDialog {
     // Dialogs
     private DatePickerDialog _etaStartDatePicker;
     private TimePickerDialog _etaStartTimePicker;
-    private DurationDialog.Controller _durationDialog;
-    private DurationDialog.Controller _expiryDialog;
 
     // Passed data
     private String _dialogType;
@@ -174,11 +172,8 @@ public class EtaDialog extends FullScreenDialog {
         _etaStartTimeButton.setOnClickListener(_etaStartTime_onClick);
         _durationButton.setOnClickListener(_duration_onClick);
 
-        _durationDialog = new DurationDialog.Controller(App.get(), UID_DURATION_DIALOG);
-        _durationDialog.setListener(_durationDialog_listener);
-
-        _expiryDialog = new DurationDialog.Controller(App.get(), UID_EXIPRY_DIALOG);
-        _expiryDialog.setListener(_expiryDialog_listener);
+        DurationDialog.addOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
+        DurationDialog.addOnOkListener(UID_EXIPRY_DIALOG, _expiryDialog_onOk);
 
         _termsWarningTextView.setMovementMethod(LinkMovementMethod.getInstance());
     }
@@ -186,8 +181,8 @@ public class EtaDialog extends FullScreenDialog {
     @Override
     public void onPause() {
         super.onPause();
-        if (_durationDialog != null) _durationDialog.disconnect(App.get());
-        if (_expiryDialog != null) _expiryDialog.disconnect(App.get());
+        DurationDialog.removeOnOkListener(UID_DURATION_DIALOG, _durationDialog_onOk);
+        DurationDialog.removeOnOkListener(UID_EXIPRY_DIALOG, _expiryDialog_onOk);
     }
 
     @Override
@@ -555,8 +550,10 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
+                _isSwitchOn = true;
                 _etaLayout.setVisibility(View.VISIBLE);
             } else {
+                _isSwitchOn = false;
                 _etaLayout.setVisibility(View.GONE);
             }
         }
@@ -635,11 +632,11 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onClick(View v) {
             misc.hideKeyboard(_noteEditText);
-            DurationDialog.Controller.show(App.get(), UID_DURATION_DIALOG);
+            DurationDialog.show(App.get(), UID_DURATION_DIALOG);
         }
     };
 
-    private final DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
+    private final DurationDialog.OnOkListener _durationDialog_onOk = new DurationDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
             Log.v(TAG, "_durationDialog_listener.onOk");
@@ -663,20 +660,16 @@ public class EtaDialog extends FullScreenDialog {
                 }
             }
         }
-
-        @Override
-        public void onCancel() {
-        }
     };
 
     private final View.OnClickListener _expiringButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DurationDialog.Controller.show(App.get(), UID_EXIPRY_DIALOG);
+            DurationDialog.show(App.get(), UID_EXIPRY_DIALOG);
         }
     };
 
-    private final DurationDialog.ControllerListener _expiryDialog_listener = new DurationDialog.ControllerListener() {
+    private final DurationDialog.OnOkListener _expiryDialog_onOk = new DurationDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
             Log.v(TAG, "_expiryDialog_listener.onOk");
@@ -686,10 +679,6 @@ public class EtaDialog extends FullScreenDialog {
             }
             _expiringDurationMilliseconds = milliseconds;
             populateUi();
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 

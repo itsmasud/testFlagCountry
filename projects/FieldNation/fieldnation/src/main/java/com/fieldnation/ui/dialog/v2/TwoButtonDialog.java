@@ -16,6 +16,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.Dialog;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 9/21/2016.
@@ -98,9 +99,7 @@ public class TwoButtonDialog extends SimpleDialog {
 
     @Override
     public void cancel() {
-        Bundle response = new Bundle();
-        response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_CANCEL);
-        onResult(response);
+        _onCanceledDispatcher.dispatch(getUid(), null);
         super.cancel();
 
         if (onCancel())
@@ -110,9 +109,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _primary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_PRIMARY);
-            onResult(response);
+            _onPrimaryDispatcher.dispatch(getUid(), null);
             if (onPrimaryClick())
                 dismiss(true);
         }
@@ -121,9 +118,7 @@ public class TwoButtonDialog extends SimpleDialog {
     private final View.OnClickListener _secondary_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESPONSE, PARAM_RESPONSE_SECONDARY);
-            onResult(response);
+            _onSecondaryDispatcher.dispatch(getUid(), null);
             if (onSecondaryClick())
                 dismiss(true);
         }
@@ -185,28 +180,81 @@ public class TwoButtonDialog extends SimpleDialog {
         Controller.dismiss(context, uid);
     }
 
-    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+    /*-************************************-*/
+    /*-         Primary Listener           -*/
+    /*-************************************-*/
+    public interface OnPrimaryListener {
+        void onPrimary();
+    }
+
+    private static KeyedDispatcher<OnPrimaryListener> _onPrimaryDispatcher = new KeyedDispatcher<OnPrimaryListener>() {
         @Override
-        public void onComplete(Bundle response) {
-            switch (response.getInt(PARAM_RESPONSE)) {
-                case PARAM_RESPONSE_PRIMARY:
-                    onPrimary();
-                    break;
-                case PARAM_RESPONSE_SECONDARY:
-                    onSecondary();
-                    break;
-                case PARAM_RESPONSE_CANCEL:
-                    onCancel();
-                    break;
-                default:
-                    break;
-            }
+        public void onDispatch(OnPrimaryListener listener, Object... parameters) {
+            listener.onPrimary();
         }
+    };
 
-        public abstract void onPrimary();
+    public static void addOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.add(uid, onPrimaryListener);
+    }
 
-        public abstract void onSecondary();
+    public static void removeOnPrimaryListener(String uid, OnPrimaryListener onPrimaryListener) {
+        _onPrimaryDispatcher.remove(uid, onPrimaryListener);
+    }
 
-        public abstract void onCancel();
+    public static void removeAllOnPrimaryListener(String uid) {
+        _onPrimaryDispatcher.removeAll(uid);
+    }
+
+    /*-************************************-*/
+    /*-         Secondary Listener           -*/
+    /*-************************************-*/
+    public interface OnSecondaryListener {
+        void onSecondary();
+    }
+
+    private static KeyedDispatcher<OnSecondaryListener> _onSecondaryDispatcher = new KeyedDispatcher<OnSecondaryListener>() {
+        @Override
+        public void onDispatch(OnSecondaryListener listener, Object... parameters) {
+            listener.onSecondary();
+        }
+    };
+
+    public static void addOnSecondaryListener(String uid, OnSecondaryListener onSecondaryListener) {
+        _onSecondaryDispatcher.add(uid, onSecondaryListener);
+    }
+
+    public static void removeOnSecondaryListener(String uid, OnSecondaryListener onSecondaryListener) {
+        _onSecondaryDispatcher.remove(uid, onSecondaryListener);
+    }
+
+    public static void removeAllOnSecondaryListener(String uid) {
+        _onSecondaryDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
     }
 }

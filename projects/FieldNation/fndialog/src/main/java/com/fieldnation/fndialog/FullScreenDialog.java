@@ -33,7 +33,6 @@ public abstract class FullScreenDialog implements Dialog {
 
     // Listener
     private DismissListener _dismissListener;
-    private ResultListener _resultListener;
 
     // Data
     private String _uid;
@@ -156,15 +155,5 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void cancel() {
-    }
-
-    @Override
-    public void setResultListener(ResultListener listener) {
-        _resultListener = listener;
-    }
-
-    public void onResult(Bundle response) {
-        if (_resultListener != null)
-            _resultListener.onResult(this, response);
     }
 }

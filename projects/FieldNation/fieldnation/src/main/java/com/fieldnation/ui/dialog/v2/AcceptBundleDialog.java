@@ -51,9 +51,6 @@ public class AcceptBundleDialog extends SimpleDialog {
     private Button _cancelButton;
     private Button _okButton;
 
-    // Dialogs
-    private DurationDialog.Controller _durationDialog;
-
     // Data
     private int _type = TYPE_ACCEPT;
     private long _bundleId = 0;
@@ -84,8 +81,7 @@ public class AcceptBundleDialog extends SimpleDialog {
 
     @Override
     public void onResume() {
-        _durationDialog = new DurationDialog.Controller(App.get(), DIALOG_DURATION);
-        _durationDialog.setListener(_durationDialog_listener);
+        DurationDialog.addOnOkListener(DIALOG_DURATION, _durationDialog_onOk);
 
         super.onResume();
 
@@ -161,7 +157,8 @@ public class AcceptBundleDialog extends SimpleDialog {
     @Override
     public void onPause() {
         super.onPause();
-        if (_durationDialog != null) _durationDialog.disconnect(App.get());
+
+        DurationDialog.removeOnOkListener(getUid(), _durationDialog_onOk);
     }
 
     private void setExpirationVisibility(boolean visible) {
@@ -216,20 +213,15 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final View.OnClickListener _expiration_okClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DurationDialog.Controller.show(App.get(), DIALOG_DURATION);
+            DurationDialog.show(App.get(), DIALOG_DURATION);
         }
     };
 
-    private final DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
+    private final DurationDialog.OnOkListener _durationDialog_onOk = new DurationDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
             _expiration = milliseconds;
             populateUi();
-        }
-
-        @Override
-        public void onCancel() {
-            // dont' care
         }
     };
 
@@ -250,9 +242,9 @@ public class AcceptBundleDialog extends SimpleDialog {
         Controller.show(context, uid, AcceptBundleDialog.class, bundle);
     }
 
-    /*-****************************************/
+    /*-**************************************-*/
     /*-         Requested Listener           -*/
-    /*-****************************************/
+    /*-**************************************-*/
     public interface OnRequestedListener {
         void onRequested(long workOrderId);
     }
@@ -276,9 +268,9 @@ public class AcceptBundleDialog extends SimpleDialog {
         _onRequestedDispatcher.removeAll(uid);
     }
 
-    /*-****************************************/
+    /*-*************************************-*/
     /*-         Accepted Listener           -*/
-    /*-****************************************/
+    /*-*************************************-*/
     public interface OnAcceptedListener {
         void onAccepted(long workOrderId);
     }
@@ -302,9 +294,9 @@ public class AcceptBundleDialog extends SimpleDialog {
         _onAcceptedDispatcher.removeAll(uid);
     }
 
-    /*-****************************************/
+    /*-*************************************-*/
     /*-         Canceled Listener           -*/
-    /*-****************************************/
+    /*-*************************************-*/
     public interface OnCanceledListener {
         void onCanceled(long workOrderId);
     }

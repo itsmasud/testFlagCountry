@@ -8,7 +8,6 @@ import android.view.ViewGroup;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.fndialog.Controller;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 
 /**

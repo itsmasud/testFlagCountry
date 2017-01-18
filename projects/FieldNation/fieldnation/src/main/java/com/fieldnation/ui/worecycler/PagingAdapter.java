@@ -8,7 +8,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.ui.RateMeView;
 
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;

@@ -29,7 +29,6 @@ import com.fieldnation.App;
 import com.fieldnation.FileHelper;
 import com.fieldnation.R;
 import com.fieldnation.analytics.trackers.WorkOrderTracker;
-import com.fieldnation.data.v2.WorkOrder;
 import com.fieldnation.data.workorder.CustomField;
 import com.fieldnation.data.workorder.Discount;
 import com.fieldnation.data.workorder.Document;
@@ -1878,6 +1877,20 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(String trackingId, String carrier, String carrierName, String description,
                          boolean shipToSite, long taskId) {
             Log.v(TAG, "ShipmentAddDialog#onOk");
+
+            if (_scannedImagePath != null) {
+                final UploadSlot[] slots = _workorder.getUploadSlots();
+                if (slots == null) return;
+                for (UploadSlot uploadSlot : slots) {
+                    if (uploadSlot.getSlotName().equalsIgnoreCase("misc")) {
+                        String fileName = _scannedImagePath.substring(_scannedImagePath.lastIndexOf(File.separator) + 1, _scannedImagePath.length());
+                        WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
+                                uploadSlot.getSlotId(), fileName, _scannedImagePath);
+                        _scannedImagePath = null;
+                    }
+                }
+            }
+
             WorkOrderTracker.onAddEvent(App.get(), WorkOrderTracker.WorkOrderDetailsSection.SHIPMENTS);
             WorkorderClient.createShipment(App.get(), _workorder.getWorkorderId(), description, shipToSite,
                     carrier, carrierName, trackingId, taskId);
