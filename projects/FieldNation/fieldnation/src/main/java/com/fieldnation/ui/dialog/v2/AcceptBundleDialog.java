@@ -194,7 +194,7 @@ public class AcceptBundleDialog extends SimpleDialog {
         public void onClick(View v) {
             switch (_type) {
                 case TYPE_ACCEPT:
-                    WorkorderClient.actionConfirmAssignment(App.get(), _workOrderId, null, null, null, false);
+                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
                     _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
                     break;
                 case TYPE_REQUEST:

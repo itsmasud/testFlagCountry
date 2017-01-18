@@ -708,6 +708,7 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
                     _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
+                    
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionRequest(
@@ -726,16 +727,12 @@ public class EtaDialog extends FullScreenDialog {
                                 _noteEditText.getText().toString().trim());
                     }
                     dismiss(true);
-                } else {
-                    if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT)) {
-                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
-                    } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
-                        _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
-                    }
+                } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CONFIRM)) {
+                    _onConfirmedDispatcher.dispatch(getUid(), _workOrderId);
 
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
-                        WorkorderClient.actionConfirmAssignment(
+                        WorkorderClient.actionConfirm(
                                 App.get(),
                                 _workOrderId,
                                 startDate,
@@ -743,7 +740,30 @@ public class EtaDialog extends FullScreenDialog {
                                 _noteEditText.getText().toString().trim(),
                                 _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
                     } else {
-                        WorkorderClient.actionConfirmAssignment(
+                        WorkorderClient.actionConfirm(
+                                App.get(),
+                                _workOrderId,
+                                null, null,
+                                _noteEditText.getText().toString().trim(),
+                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                    }
+                    dismiss(true);
+
+                } else {
+                    if (_dialogType.equals(PARAM_DIALOG_TYPE_ACCEPT))
+                        _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
+
+                    if (_etaSwitch.isChecked()) {
+                        String startDate = ISO8601.fromCalendar(_etaStart);
+                        WorkorderClient.actionAcceptAssignment(
+                                App.get(),
+                                _workOrderId,
+                                startDate,
+                                ISO8601.getEndDate(startDate, _durationMilliseconds),
+                                _noteEditText.getText().toString().trim(),
+                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                    } else {
+                        WorkorderClient.actionAcceptAssignment(
                                 App.get(),
                                 _workOrderId,
                                 null, null,

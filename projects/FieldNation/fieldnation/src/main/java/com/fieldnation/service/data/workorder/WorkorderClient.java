@@ -474,8 +474,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
 
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
-        WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+    public static void actionAcceptAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        WorkorderTransactionBuilder.actionAccept(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+    }
+
+    public static void actionConfirm(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        WorkorderTransactionBuilder.actionConfirm(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
