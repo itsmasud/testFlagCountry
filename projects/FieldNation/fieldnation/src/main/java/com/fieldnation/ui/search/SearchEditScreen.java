@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
@@ -40,6 +41,7 @@ public class SearchEditScreen extends RelativeLayout {
     // UI
     private HintSpinner _locationSpinner;
     private EditText _otherLocationEditText;
+    private TextView _distanceTextView;
     private HintSpinner _distanceSpinner;
     private Button _applyButton;
 
@@ -83,6 +85,8 @@ public class SearchEditScreen extends RelativeLayout {
         _locationSpinner.setSelection(1);
 
         _otherLocationEditText = (EditText) findViewById(R.id.otherLocation_edittext);
+
+        _distanceTextView = (TextView) findViewById(R.id.distance_textview);
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
         adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item_dark);
@@ -196,15 +200,17 @@ public class SearchEditScreen extends RelativeLayout {
     private final AdapterView.OnItemSelectedListener _locationSpinner_onItemSelected = new AdapterView.OnItemSelectedListener() {
         @Override
         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-            if (position == 2)
+            if (position == 2) // other place
                 _otherLocationEditText.setVisibility(VISIBLE);
             else
                 _otherLocationEditText.setVisibility(GONE);
 
-            if (position == 3) {
-                _distanceSpinner.setEnabled(false);
+            if (position == 3) { // remote work
+                _distanceSpinner.setVisibility(GONE);
+                _distanceTextView.setVisibility(GONE);
             } else {
-                _distanceSpinner.setEnabled(true);
+                _distanceSpinner.setVisibility(VISIBLE);
+                _distanceTextView.setVisibility(VISIBLE);
             }
         }
 
