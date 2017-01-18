@@ -550,8 +550,10 @@ public class EtaDialog extends FullScreenDialog {
         @Override
         public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
             if (isChecked) {
+                _isSwitchOn = true;
                 _etaLayout.setVisibility(View.VISIBLE);
             } else {
+                _isSwitchOn = false;
                 _etaLayout.setVisibility(View.GONE);
             }
         }
