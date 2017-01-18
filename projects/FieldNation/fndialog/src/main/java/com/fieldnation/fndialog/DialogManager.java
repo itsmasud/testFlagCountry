@@ -56,6 +56,8 @@ public class DialogManager extends FrameLayout implements Constants {
     }
 
     private void init() {
+        setFocusable(true);
+        setFocusableInTouchMode(true);
     }
 
     /**
