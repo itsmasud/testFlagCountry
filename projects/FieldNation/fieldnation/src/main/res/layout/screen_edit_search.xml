@@ -32,7 +32,6 @@
     </RelativeLayout>
 
     <TextView
-
         style="@style/Text_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -58,6 +57,7 @@
         android:visibility="gone" />
 
     <TextView
+        android:id="@+id/distance_textview"
         style="@style/Text_Caption"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

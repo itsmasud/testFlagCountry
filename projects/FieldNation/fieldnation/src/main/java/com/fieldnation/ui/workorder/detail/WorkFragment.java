@@ -1597,7 +1597,7 @@ public class WorkFragment extends WorkorderFragment {
         public void onOk(Workorder workorder, String startDate, long durationMilliseconds) {
             try {
                 long end = durationMilliseconds + ISO8601.toUtc(startDate);
-                WorkorderClient.actionConfirmAssignment(App.get(),
+                WorkorderClient.actionAcceptAssignment(App.get(),
                         _workorder.getWorkorderId(), startDate, ISO8601.fromUTC(end), null, false);
                 setLoading(true);
 
