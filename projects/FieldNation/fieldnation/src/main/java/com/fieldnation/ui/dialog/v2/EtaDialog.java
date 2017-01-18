@@ -713,7 +713,7 @@ public class EtaDialog extends FullScreenDialog {
                         WorkorderClient.actionRequest(
                                 App.get(),
                                 _workOrderId,
-                                _expiringDurationMilliseconds,
+                                _expiringDurationMilliseconds / 1000,
                                 startDate,
                                 ISO8601.getEndDate(startDate, _durationMilliseconds),
                                 _noteEditText.getText().toString().trim());
@@ -721,7 +721,7 @@ public class EtaDialog extends FullScreenDialog {
                         WorkorderClient.actionRequest(
                                 App.get(),
                                 _workOrderId,
-                                _expiringDurationMilliseconds,
+                                _expiringDurationMilliseconds / 1000,
                                 null, null,
                                 _noteEditText.getText().toString().trim());
                     }
