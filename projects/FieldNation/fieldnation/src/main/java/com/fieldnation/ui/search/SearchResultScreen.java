@@ -142,7 +142,7 @@ public class SearchResultScreen extends RelativeLayout {
         }
 
         _adapter.clear();
-        getPage(0);
+        _adapter.refreshAll();
     }
 
     public void setOnChildClickListener(OnClickListener listener) {
