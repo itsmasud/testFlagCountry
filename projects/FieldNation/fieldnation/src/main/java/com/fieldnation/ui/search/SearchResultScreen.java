@@ -175,13 +175,16 @@ public class SearchResultScreen extends RelativeLayout {
             if (_onListReceivedListener != null)
                 _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
 
-            if (envelope == null || envelope.getTotal() == 0 || failed) {
+            if (envelope == null || failed) {
                 _refreshView.refreshComplete();
                 return;
             }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-            if (workOrders.size() > 0
+
+            if (envelope.getTotal() == 0) {
+                _adapter.clear();
+            } else if (workOrders.size() > 0
                     && envelope.getPerPage() > 0
                     && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage())
                 _adapter.addObjects(envelope.getPage(), workOrders);
