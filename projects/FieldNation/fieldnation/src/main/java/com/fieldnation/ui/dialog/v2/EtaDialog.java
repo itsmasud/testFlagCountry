@@ -708,7 +708,7 @@ public class EtaDialog extends FullScreenDialog {
             try {
                 if (_dialogType.equals(PARAM_DIALOG_TYPE_REQUEST)) {
                     _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
-                    
+
                     if (_etaSwitch.isChecked()) {
                         String startDate = ISO8601.fromCalendar(_etaStart);
                         WorkorderClient.actionRequest(
@@ -737,15 +737,13 @@ public class EtaDialog extends FullScreenDialog {
                                 _workOrderId,
                                 startDate,
                                 ISO8601.getEndDate(startDate, _durationMilliseconds),
-                                _noteEditText.getText().toString().trim(),
-                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                                _noteEditText.getText().toString().trim());
                     } else {
                         WorkorderClient.actionConfirm(
                                 App.get(),
                                 _workOrderId,
                                 null, null,
-                                _noteEditText.getText().toString().trim(),
-                                _dialogType.equals(PARAM_DIALOG_TYPE_EDIT));
+                                _noteEditText.getText().toString().trim());
                     }
                     dismiss(true);
 
