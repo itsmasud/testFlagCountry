@@ -78,7 +78,7 @@ public class SearchEditScreen extends RelativeLayout {
         _locationSpinner = (HintSpinner) findViewById(R.id.location_spinner);
         _locationSpinner.setOnItemSelectedListener(_locationSpinner_onItemSelected);
         HintArrayAdapter adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_location, R.layout.view_spinner_item_dark);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.view_dropdown_item_dark);
         _locationSpinner.setAdapter(adapter);
         _locationSpinner.setSelection(1);
 
@@ -86,7 +86,7 @@ public class SearchEditScreen extends RelativeLayout {
 
         _distanceSpinner = (HintSpinner) findViewById(R.id.distance_spinner);
         adapter = HintArrayAdapter.createFromResources(getContext(), R.array.search_distances, R.layout.view_spinner_item_dark);
-        adapter.setDropDownViewResource(android.support.design.R.layout.support_simple_spinner_dropdown_item);
+        adapter.setDropDownViewResource(R.layout.view_dropdown_item_dark);
         _distanceSpinner.setAdapter(adapter);
         _distanceSpinner.setSelection(3);
 
