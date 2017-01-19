@@ -122,6 +122,8 @@
                 android:layout_below="@+id/eta_switch"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:focusable="true"
+                android:focusableInTouchMode="true"
                 android:visibility="gone">
 
                 <TextView

@@ -11,7 +11,6 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
@@ -19,7 +18,6 @@ import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.photo.PhotoClient;
@@ -61,7 +59,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
     private boolean _clear = false;
     private Workorder _workorder;
     private Listener _listener;
-    private final int MAX_THOUGHTS_LENGTH = 120;
+//    private final int MAX_THOUGHTS_LENGTH = 120;
     private boolean _hasToastShown = false;
     private int _goldStar = 0;
     private Boolean _hasSelectedScopeRating = null;
@@ -272,7 +270,7 @@ public class RateBuyerActivity extends AuthSimpleActivity {
 
         if (_photos.isConnected() && (_profilePic == null || _profilePic.get() == null)) {
             _picView.setProfilePic(R.drawable.missing_circle);
-            String url = _workorder.getWorkorderManagerInfo().getPhotoThumbUrl();
+            String url = _workorder.getBuyerRatingInfo().getCompanyLogo();
             if (!misc.isEmptyOrNull(url)) {
                 PhotoClient.get(App.get(), url, true, false);
                 _photos.subGet(url, true, false);
@@ -342,15 +340,15 @@ public class RateBuyerActivity extends AuthSimpleActivity {
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
             _commentText = _otherThoughtsEditText.getText().toString().trim();
-            int numberOfCharacter = _commentText.length();
-            if (numberOfCharacter > 0) {
-                if (numberOfCharacter >= MAX_THOUGHTS_LENGTH && !_hasToastShown) {
-                    ToastClient.toast(App.get(), getString(R.string.toast_exceeded_max_limit_thoughts), Toast.LENGTH_LONG);
-                    _hasToastShown = true;
-                } else {
-                    _hasToastShown = false;
-                }
-            }
+//            int numberOfCharacter = _commentText.length();
+//            if (numberOfCharacter > 0) {
+//                if (numberOfCharacter >= MAX_THOUGHTS_LENGTH && !_hasToastShown) {
+//                    ToastClient.toast(App.get(), getString(R.string.toast_exceeded_max_limit_thoughts), Toast.LENGTH_LONG);
+//                    _hasToastShown = true;
+//                } else {
+//                    _hasToastShown = false;
+//                }
+//            }
         }
 
         public void afterTextChanged(Editable s) {

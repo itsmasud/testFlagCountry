@@ -25,15 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
-import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Document;
 import com.fieldnation.data.workorder.UploadSlot;
 import com.fieldnation.data.workorder.UploadedDocument;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.FileUtils;
@@ -45,6 +41,7 @@ import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.activityresult.ActivityResultConstants;
 import com.fieldnation.service.data.documents.DocumentClient;
 import com.fieldnation.service.data.documents.DocumentConstants;
+import com.fieldnation.service.data.filecache.FileCacheClient;
 import com.fieldnation.service.data.photo.PhotoClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AppPickerPackage;
@@ -88,12 +85,10 @@ public class DeliverableFragment extends WorkorderFragment {
     private File _tempFile;
     private Uri _tempUri;
     private Workorder _workorder;
-    private Profile _profile = null;
     private DocumentClient _docClient;
-    private GlobalTopicClient _globalClient;
-    private WorkorderClient _workorderClient;
     private PhotoClient _photoClient;
     private ActivityResultClient _activityResultClient;
+    private FileCacheClient _fileCacheClient;
 
     private static final Hashtable<String, WeakReference<Drawable>> _picCache = new Hashtable<>();
     private ForLoopRunnable _filesRunnable = null;
@@ -160,33 +155,33 @@ public class DeliverableFragment extends WorkorderFragment {
         Log.v(TAG, "onAttach");
         super.onAttach(activity);
 
-        _globalClient = new GlobalTopicClient(_globalClient_listener);
-        _globalClient.connect(App.get());
-
         _docClient = new DocumentClient(_documentClient_listener);
         _docClient.connect(App.get());
 
-        _workorderClient = new WorkorderClient(_workorderData_listener);
-        _workorderClient.connect(App.get());
-
         _photoClient = new PhotoClient(_photoClient_listener);
         _photoClient.connect(App.get());
+
+        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
+        _activityResultClient.connect(App.get());
+
+        _fileCacheClient = new FileCacheClient(_fileCacheClient_listener);
+        _fileCacheClient.connect(App.get());
     }
 
     @Override
     public void onDetach() {
         Log.v(TAG, "onDetach");
-        if (_globalClient != null && _globalClient.isConnected())
-            _globalClient.disconnect(App.get());
-
         if (_docClient != null && _docClient.isConnected())
             _docClient.disconnect(App.get());
 
-        if (_workorderClient != null && _workorderClient.isConnected())
-            _workorderClient.disconnect(App.get());
-
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
+
+        if (_activityResultClient != null && _activityResultClient.isConnected())
+            _activityResultClient.disconnect(App.get());
+
+        if (_fileCacheClient != null && _fileCacheClient.isConnected())
+            _fileCacheClient.disconnect(App.get());
 
         super.onDetach();
     }
@@ -219,15 +214,10 @@ public class DeliverableFragment extends WorkorderFragment {
             _appPickerDialog.addIntent(getActivity().getPackageManager(), intent, "Take Picture");
         }
 
-        _activityResultClient = new ActivityResultClient(_activityResultClient_listener);
-        _activityResultClient.connect(App.get());
     }
 
     @Override
     public void onPause() {
-        if (_activityResultClient != null && _activityResultClient.isConnected())
-            _activityResultClient.disconnect(App.get());
-
         super.onPause();
     }
 
@@ -238,7 +228,6 @@ public class DeliverableFragment extends WorkorderFragment {
     @Override
     public void update() {
 //        getData();
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsAttachments());
         checkMedia();
 //        executeDelayedAction();
     }
@@ -263,10 +252,13 @@ public class DeliverableFragment extends WorkorderFragment {
     private void populateUi() {
         misc.hideKeyboard(getView());
 
+        if (_actionButton == null)
+            return;
+
         if (_workorder == null)
             return;
 
-        if (_profile == null)
+        if (App.get().getProfile() == null)
             return;
 
         if (getActivity() == null)
@@ -338,7 +330,7 @@ public class DeliverableFragment extends WorkorderFragment {
                         _filesLayout.addView(v);
                     }
                     UploadSlot slot = _slots[i];
-                    v.setData(_workorder, _profile.getUserId(), slot, _uploaded_document_listener);
+                    v.setData(_workorder, App.get().getProfile().getUserId(), slot, _uploaded_document_listener);
                 }
             };
             _filesLayout.postDelayed(_filesRunnable, 100);
@@ -383,7 +375,7 @@ public class DeliverableFragment extends WorkorderFragment {
                 if (data == null) {
                     Log.v(TAG, "Image uploading taken by camera");
                     _tempUri = null;
-                    _photoUploadDialog.show(_tempFile.getName());
+                    _photoUploadDialog.show(_workorder.getWorkorderId(), _tempFile.getName());
                     _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
                 } else {
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2) {
@@ -397,8 +389,8 @@ public class DeliverableFragment extends WorkorderFragment {
                             if (count == 1) {
                                 _tempUri = clipData.getItemAt(0).getUri();
                                 _tempFile = null;
-                                _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                                WorkorderClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
+                                _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                                FileCacheClient.cacheDeliverableUpload(App.get(), clipData.getItemAt(0).getUri());
                             } else {
                                 for (int i = 0; i < count; ++i) {
                                     uri = clipData.getItemAt(i).getUri();
@@ -413,15 +405,15 @@ public class DeliverableFragment extends WorkorderFragment {
                             Log.v(TAG, "Single local/ non-local file upload");
                             _tempUri = data.getData();
                             _tempFile = null;
-                            _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                            WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                            _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                            FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                         }
                     } else {
                         Log.v(TAG, "Android version is pre-4.3");
                         _tempUri = data.getData();
                         _tempFile = null;
-                        _photoUploadDialog.show(FileUtils.getFileNameFromUri(App.get(), data.getData()));
-                        WorkorderClient.cacheDeliverableUpload(App.get(), data.getData());
+                        _photoUploadDialog.show(_workorder.getWorkorderId(), FileUtils.getFileNameFromUri(App.get(), data.getData()));
+                        FileCacheClient.cacheDeliverableUpload(App.get(), data.getData());
                     }
                 }
             } catch (Exception ex) {
@@ -575,19 +567,6 @@ public class DeliverableFragment extends WorkorderFragment {
     /*-*****************************-*/
     /*-				Web				-*/
     /*-*****************************-*/
-    private final GlobalTopicClient.Listener _globalClient_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            _globalClient.subGotProfile();
-        }
-
-        @Override
-        public void onGotProfile(Profile profile) {
-            _profile = profile;
-            populateUi();
-        }
-    };
-
     private final DocumentClient.Listener _documentClient_listener = new DocumentClient.Listener() {
         @Override
         public void onConnected() {
@@ -615,7 +594,7 @@ public class DeliverableFragment extends WorkorderFragment {
                     Intent folderIntent = new Intent(Intent.ACTION_VIEW);
                     folderIntent.setDataAndType(Uri.fromFile(new File(App.get().getDownloadsFolder())), "resource/folder");
                     if (folderIntent.resolveActivity(App.get().getPackageManager()) != null) {
-                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), 0, folderIntent, 0);
+                        PendingIntent pendingIntent = PendingIntent.getActivity(App.get(), App.secureRandom.nextInt(), folderIntent, 0);
                         ToastClient.snackbar(App.get(), "Can not open " + name + ", placed in downloads folder", "View", pendingIntent, Snackbar.LENGTH_LONG);
                     } else {
                         ToastClient.toast(App.get(), "Can not open " + name + ", placed in downloads folder", Toast.LENGTH_LONG);
@@ -663,14 +642,14 @@ public class DeliverableFragment extends WorkorderFragment {
 
     private final PhotoUploadDialog.Listener _photoUploadDialog_listener = new PhotoUploadDialog.Listener() {
         @Override
-        public void onOk(String filename, String photoDescription) {
+        public void onOk(long workOrderId, String filename, String photoDescription) {
             Log.v(TAG, "uploading an image using camera");
             if (_tempFile != null) {
-                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                        _uploadingSlotId, filename, _tempFile.getAbsolutePath(), photoDescription);
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _uploadingSlotId, filename,
+                        _tempFile.getAbsolutePath(), photoDescription);
             } else if (_tempUri != null) {
-                WorkorderClient.uploadDeliverable(App.get(), _workorder.getWorkorderId(),
-                        _uploadingSlotId, filename, _tempUri, photoDescription);
+                WorkorderClient.uploadDeliverable(App.get(), workOrderId, _uploadingSlotId, filename,
+                        _tempUri, photoDescription);
             }
         }
 
@@ -698,12 +677,10 @@ public class DeliverableFragment extends WorkorderFragment {
         }
     };
 
-
-    private final WorkorderClient.Listener _workorderData_listener = new WorkorderClient.Listener() {
+    private final FileCacheClient.Listener _fileCacheClient_listener = new FileCacheClient.Listener() {
         @Override
         public void onConnected() {
-            Log.e(TAG, "_workorderData_listener.onConnected");
-            _workorderClient.subDeliverableCache();
+            _fileCacheClient.subDeliverableCache();
         }
 
         @Override
@@ -711,8 +688,13 @@ public class DeliverableFragment extends WorkorderFragment {
             Log.v(TAG, "onDeliverableCacheEnd");
 
             _tempUri = uri;
-            _tempFile = null;
-            _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+//            _tempFile = null;
+
+            if (_tempFile != null) {
+                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(_tempFile.toString(), 400));
+            } else {
+                _photoUploadDialog.setPhoto(MemUtils.getMemoryEfficientBitmap(filename, 400));
+            }
         }
     };
 }

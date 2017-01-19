@@ -13,6 +13,14 @@
         android:layout_marginBottom="@dimen/tileContentPadding"
         android:text="@string/reason_for_counter_offer" />
 
+    <TextView
+        android:id="@+id/body_textview"
+        style="?attr/tileTextStatusStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/schedule_textview"
+        android:text="@string/disclaimer_to_counter_offer" />
+
     <EditText
         android:id="@+id/request_reason_edittext"
         style="@style/EditText"

@@ -7,7 +7,7 @@ import android.widget.BaseAdapter;
 
 import com.fieldnation.App;
 import com.fieldnation.analytics.AnswersWrapper;
-import com.fieldnation.fnanalytics.Event;
+import com.fieldnation.analytics.SimpleEvent;
 import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 
@@ -176,7 +176,7 @@ public abstract class PagingAdapter<T> extends BaseAdapter {
                 _rateMeView.setListener(_rateMe_listener);
             }
             Tracker.event(App.get(),
-                    new Event.Builder()
+                    new SimpleEvent.Builder()
                             .tag(AnswersWrapper.TAG)
                             .category("RateMeCardShown")
                             .build());

@@ -2,10 +2,11 @@ package com.fieldnation.service.data.payment;
 
 import android.content.Context;
 
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Michael Carver on 4/22/2015.
@@ -15,11 +16,12 @@ public class PaymentTransactionBuilder implements PaymentConstants {
 
     public static void list(Context context, int page, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/accounting/payment-queue/all")
                     .priority(Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(
-                            PaymentTransactionHandler.pList(page)
+                    .listener(PaymentTransactionListener.class)
+                    .listenerParams(
+                            PaymentTransactionListener.pList(page)
                     )
                     .key((isSync ? "Sync/" : "") + "PaymentPage" + page)
                     .useAuth(true)
@@ -28,10 +30,10 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .timingKey("GET/api/rest/v1/accounting/payment-queue/all")
                                     .path("/api/rest/v1/accounting/payment-queue/all")
                                     .urlParams("?page=" + page)
-                    ).send();
+                    ).build();
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -39,10 +41,11 @@ public class PaymentTransactionBuilder implements PaymentConstants {
 
     public static void get(Context context, long paymentId, boolean isSync) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/api/rest/v1/accounting/payment-queue/[paymentId]")
                     .priority(Priority.HIGH)
-                    .handler(PaymentTransactionHandler.class)
-                    .handlerParams(PaymentTransactionHandler.pGet(paymentId))
+                    .listener(PaymentTransactionListener.class)
+                    .listenerParams(PaymentTransactionListener.pGet(paymentId))
                     .key((isSync ? "Sync/" : "") + "Payment/" + paymentId)
                     .useAuth(true)
                     .isSyncCall(isSync)
@@ -50,9 +53,9 @@ public class PaymentTransactionBuilder implements PaymentConstants {
                             new HttpJsonBuilder()
                                     .protocol("https")
                                     .method("GET")
-                                    .timingKey("GET/api/rest/v1/accounting/payment-queue/[paymentId]")
                                     .path("/api/rest/v1/accounting/payment-queue/" + paymentId)
-                    ).send();
+                    ).build();
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

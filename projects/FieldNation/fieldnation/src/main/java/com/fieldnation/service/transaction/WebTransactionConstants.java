@@ -3,10 +3,10 @@ package com.fieldnation.service.transaction;
 /**
  * Created by Michael Carver on 2/27/2015.
  */
-public interface WebTransactionConstants {
+interface WebTransactionConstants {
     String PARAM_ID = "PARAM_ID";
-    String PARAM_HANDLER_NAME = "PARAM_HANDLER_NAME";
-    String PARAM_HANDLER_PARAMS = "PARAM_HANDLER_PARAMS";
+    String PARAM_LISTENER_NAME = "PARAM_LISTENER_NAME";
+    String PARAM_LISTENER_PARAMS = "PARAM_LISTENER_PARAMS";
     String PARAM_USE_AUTH = "PARAM_USE_AUTH";
     String PARAM_STATE = "PARAM_STATE";
     String PARAM_PRIORITY = "PARAM_PRIORITY";
@@ -17,11 +17,11 @@ public interface WebTransactionConstants {
     String PARAM_QUEUE_TIME = "PARAM_QUEUE_TIME";
     String PARAM_WIFI_REQUIRED = "PARAM_WIFI_REQUIRED";
     String PARAM_TRACK = "PARAM_TRACK";
+    String PARAM_TIMING_KEY = "timingKey";
 
     String PARAM_NOTIFICATION_ID = "PARAM_NOTIFICATION_ID";
     String PARAM_NOTIFICATION_START = "PARAM_NOTIFICATION_START";
     String PARAM_NOTIFICATION_SUCCESS = "PARAM_NOTIFICATION_SUCCESS";
     String PARAM_NOTIFICATION_FAILED = "PARAM_NOTIFICATION_FAILED";
     String PARAM_NOTIFICATION_RETRY = "PARAM_NOTIFICATION_RETRY";
-
 }

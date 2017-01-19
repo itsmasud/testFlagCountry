@@ -1,7 +1,6 @@
 package com.fieldnation.service.data.workorder;
 
 import android.content.Context;
-import android.net.Uri;
 import android.os.Bundle;
 
 import com.fieldnation.fnjson.JsonArray;
@@ -251,22 +250,6 @@ public class WorkorderDispatch implements WorkorderConstants {
         topicId += "/" + workorderId + "/" + slotId;
 
         TopicService.dispatchEvent(context, topicId, bundle, Sticky.NONE);
-    }
-
-    public static void cacheDeliverableStart(Context context, Uri uri) {
-        Log.v(TAG, "cacheDeliverableStart");
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PARAM_URI, uri);
-
-        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_START, bundle, Sticky.TEMP);
-    }
-
-    public static void cacheDeliverableEnd(Context context, Uri uri, String file) {
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(PARAM_URI, uri);
-        bundle.putString(PARAM_FILE, file);
-
-        TopicService.dispatchEvent(context, TOPIC_ID_CACHE_DELIVERABLE_END, bundle, Sticky.TEMP);
     }
 
     public static void getDeliverable(Context context, JsonObject obj, long workorderId, long deliverableId, boolean failed, boolean isSync) {

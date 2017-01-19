@@ -13,17 +13,20 @@ import android.view.animation.AnimationUtils;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.SavedSearchTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.v2.SavedSearchParams;
 import com.fieldnation.fndialog.DialogManager;
 import com.fieldnation.fnlog.Log;
-import com.fieldnation.fntools.DefaultAnimationListener;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.gcm.MyGcmListenerService;
+import com.fieldnation.service.data.savedsearch.SavedSearchClient;
 import com.fieldnation.ui.AuthSimpleActivity;
 import com.fieldnation.ui.IconFontTextView;
 import com.fieldnation.ui.ncns.ConfirmActivity;
 import com.fieldnation.ui.search.SearchResultScreen;
+
+import java.util.List;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -40,6 +43,7 @@ public class NavActivity extends AuthSimpleActivity {
     private IconFontTextView _arrowTextView;
     private CoordinatorLayout _layout;
     private AppBarLayout _appBarLayout;
+    private SearchToolbarView _searchToolbarView;
 
     // Animations
     private Animation _ccw;
@@ -47,6 +51,7 @@ public class NavActivity extends AuthSimpleActivity {
 
     // Data
     private SavedSearchParams _currentSearch = null;
+    private SavedSearchClient _savedSearchClient;
 
     @Override
     public int getLayoutResource() {
@@ -66,6 +71,8 @@ public class NavActivity extends AuthSimpleActivity {
         _toolbar.setNavigationIcon(null);
         _toolbar.setOnClickListener(_toolbar_onClick);
 
+        _searchToolbarView = (SearchToolbarView) findViewById(R.id.searchToolbarView);
+
         _arrowTextView = (IconFontTextView) findViewById(R.id.arrow_textview);
 
         _searchesView = (SavedSearchList) findViewById(R.id.searchesView);
@@ -78,29 +85,38 @@ public class NavActivity extends AuthSimpleActivity {
         _ccw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_ccw);
         _cw = AnimationUtils.loadAnimation(this, R.anim.rotate_180_cw);
 
-        _arrowTextView.startAnimation(_cw);
+        //_arrowTextView.startAnimation(_cw);
 
         if (savedInstanceState != null && savedInstanceState.containsKey(STATE_CURRENT_SEARCH)) {
             _currentSearch = savedInstanceState.getParcelable(STATE_CURRENT_SEARCH);
         }
 
-        if (_currentSearch == null) {
-            _currentSearch = SavedSearchList.defaults[0];
-        }
+        SavedSearchTracker.onShow(App.get());
 
-        _recyclerView.startSearch(_currentSearch);
+        if (_currentSearch != null) {
+            _recyclerView.startSearch(_currentSearch);
+            NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            SavedSearchTracker.onListChanged(App.get(), _currentSearch);
+        } else {
+            NavActivity.this.setTitle(misc.capitalize("LOADING..."));
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        //_recyclerView.startSearch(_currentSearch);
-        NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
-
         if (App.get().needsConfirmation()) {
             launchConfirmActivity();
         }
+
+        _savedSearchClient = new SavedSearchClient(_savedSearchClient_listener);
+        _savedSearchClient.connect(App.get());
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
     }
 
     private void launchConfirmActivity() {
@@ -151,17 +167,30 @@ public class NavActivity extends AuthSimpleActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        menu.findItem(R.id.search_menuitem).getActionView().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (_searchToolbarView.isShowing()) {
+                    _searchToolbarView.hide();
+                } else {
+                    _searchToolbarView.show();
+                    _searchesView.hide();
+                }
+            }
+        });
+
         return true;
     }
 
     private void showDrawer() {
-        if (_searchesView.getVisibility() != View.VISIBLE) {
+        if (!_searchesView.isShowing()) {
             _searchesView.show();
+            _searchToolbarView.hide();
         }
     }
 
     private void hideDrawer() {
-        if (_searchesView.getVisibility() != View.GONE) {
+        if (_searchesView.isShowing()) {
             _searchesView.hide();
             Log.v(TAG, "hideDrawer");
         }
@@ -170,10 +199,10 @@ public class NavActivity extends AuthSimpleActivity {
     private final View.OnClickListener _toolbar_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            if (_searchesView.getVisibility() == View.GONE) {
-                showDrawer();
-            } else {
+            if (_searchesView.isShowing()) {
                 hideDrawer();
+            } else {
+                showDrawer();
             }
         }
     };
@@ -198,6 +227,34 @@ public class NavActivity extends AuthSimpleActivity {
             _currentSearch = params;
             _recyclerView.startSearch(_currentSearch);
             NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            SavedSearchTracker.onListChanged(App.get(), _currentSearch);
+        }
+    };
+
+    private final SavedSearchClient.Listener _savedSearchClient_listener = new SavedSearchClient.Listener() {
+        @Override
+        public void onConnected() {
+            _savedSearchClient.subList();
+            _savedSearchClient.subSaved();
+            SavedSearchClient.list();
+        }
+
+        @Override
+        public void list(List<SavedSearchParams> savedSearchParams) {
+            if (_currentSearch == null) {
+                _currentSearch = savedSearchParams.get(0);
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            }
+        }
+
+        @Override
+        public void saved(SavedSearchParams savedSearchParams) {
+            if (_currentSearch != null && savedSearchParams.id == _currentSearch.id) {
+                _currentSearch = savedSearchParams;
+                _recyclerView.startSearch(_currentSearch);
+                NavActivity.this.setTitle(misc.capitalize(_currentSearch.title));
+            }
         }
     };
 

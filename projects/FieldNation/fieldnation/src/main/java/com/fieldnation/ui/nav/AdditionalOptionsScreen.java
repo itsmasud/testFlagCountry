@@ -17,16 +17,19 @@ import com.fieldnation.App;
 import com.fieldnation.BuildConfig;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.AdditionalOptionsTracker;
+import com.fieldnation.analytics.trackers.TestTrackers;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fntools.DebugUtils;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.data.photo.PhotoClient;
+import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.ui.IconFontButton;
 import com.fieldnation.ui.NavProfileDetailListView;
-import com.fieldnation.ui.NewFeatureActivity;
 import com.fieldnation.ui.ProfilePicView;
-import com.fieldnation.ui.dialog.v2.NewFeaturesDialog;
+import com.fieldnation.ui.dialog.v2.ProfileInformationDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 import com.fieldnation.ui.payment.PaymentListActivity;
 import com.fieldnation.ui.settings.SettingsActivity;
 
@@ -46,6 +49,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private ViewStub _stubProfileListView;
     private NavProfileDetailListView _profileListView = null;
 
+    private View _profileMenu;
     private View _paymentMenu;
     private View _settingsMenu;
     private View _logoutMenu;
@@ -53,6 +57,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private View _debugMenu;
     private View _legalMenu;
     private View _versionMenu;
+    private View _touchMeMenu;
     private TextView _versionTextView;
     private View _linkContainerView;
 
@@ -63,7 +68,8 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     // Services
     private PhotoClient _photoClient;
-    private GlobalTopicClient _globalTopicClient;
+    private ProfileClient _profileClient;
+
 
     public AdditionalOptionsScreen(Context context) {
         super(context);
@@ -99,6 +105,9 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
         _linkContainerView = findViewById(R.id.link_container);
 
+        _profileMenu = findViewById(R.id.profile_view);
+        //_profileMenu.setOnClickListener(_profile_onClick);
+
         _paymentMenu = findViewById(R.id.payments_menu);
         _paymentMenu.setOnClickListener(_payment_onClick);
 
@@ -120,6 +129,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         _versionMenu = findViewById(R.id.version_menu);
         _versionMenu.setOnClickListener(_version_onClick);
 
+        _touchMeMenu = findViewById(R.id.touchMe_menu);
+        _touchMeMenu.setOnClickListener(_touchMe_onClick);
+
+//        if (BuildConfig.DEBUG)
+//            _touchMeMenu.setVisibility(VISIBLE);
+//        else
+        _touchMeMenu.setVisibility(GONE);
+
         _versionTextView = (TextView) findViewById(R.id.version_textview);
         try {
             _versionTextView.setText((BuildConfig.VERSION_NAME + " " + BuildConfig.BUILD_FLAVOR_NAME).trim());
@@ -128,11 +145,13 @@ public class AdditionalOptionsScreen extends RelativeLayout {
             _versionTextView.setVisibility(View.GONE);
         }
 
-        _globalTopicClient = new GlobalTopicClient(_globalTopicClient_listener);
-        _globalTopicClient.connect(App.get());
-
         _photoClient = new PhotoClient(_photo_listener);
         _photoClient.connect(App.get());
+
+        _profileClient = new ProfileClient(_profileClient_listener);
+        _profileClient.connect(App.get());
+
+        AdditionalOptionsTracker.onShow(App.get());
     }
 
     public void setListener(Listener listener) {
@@ -141,10 +160,11 @@ public class AdditionalOptionsScreen extends RelativeLayout {
 
     @Override
     protected void onDetachedFromWindow() {
-        if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
         if (_photoClient != null && _photoClient.isConnected())
             _photoClient.disconnect(App.get());
+        if (_profileClient != null && _profileClient.isConnected())
+            _profileClient.disconnect(App.get());
+
 
         super.onDetachedFromWindow();
     }
@@ -238,14 +258,14 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
-    private final GlobalTopicClient.Listener _globalTopicClient_listener = new GlobalTopicClient.Listener() {
+    private final ProfileClient.Listener _profileClient_listener = new ProfileClient.Listener() {
         @Override
         public void onConnected() {
-            _globalTopicClient.subGotProfile();
+            _profileClient.subGet(false);
         }
 
         @Override
-        public void onGotProfile(Profile profile) {
+        public void onGet(Profile profile, boolean failed) {
             if (profile != null) {
                 _profilePic = null;
                 _profile = profile;
@@ -294,9 +314,18 @@ public class AdditionalOptionsScreen extends RelativeLayout {
         }
     };
 
+    private final View.OnClickListener _profile_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.PROFILE);
+            ProfileInformationDialog.show(App.get());
+        }
+    };
+
     private final View.OnClickListener _payment_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.PAYMENTS);
             PaymentListActivity.startNew(getContext());
         }
     };
@@ -304,6 +333,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _settings_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.SETTINGS);
             SettingsActivity.startNew(getContext());
         }
     };
@@ -311,6 +341,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _logout_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LOG_OUT);
             AuthTopicClient.removeCommand(getContext());
         }
     };
@@ -318,6 +349,7 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _contact_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.CONTACT_US);
             GlobalTopicClient.showContactUsDialog(getContext(), "LeftNavDrawer");
         }
     };
@@ -343,14 +375,23 @@ public class AdditionalOptionsScreen extends RelativeLayout {
     private final View.OnClickListener _version_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
-            NewFeaturesDialog.Controller.show(App.get());
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.APP_VERSION);
+            WhatsNewDialog.show(App.get());
         }
     };
 
     private final View.OnClickListener _legal_onClick = new OnClickListener() {
         @Override
         public void onClick(View v) {
+            AdditionalOptionsTracker.onClick(App.get(), AdditionalOptionsTracker.Item.LEGAL);
             SettingsActivity.startNewLegal(getContext());
+        }
+    };
+
+    private final View.OnClickListener _touchMe_onClick = new OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            TestTrackers.runTests(App.get());
         }
     };
 

@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.provider.Settings;
+import android.text.method.LinkMovementMethod;
+import android.text.util.Linkify;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +21,7 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.gmaps.GmapsDirections;
 import com.fieldnation.data.gmaps.GmapsRoute;
 import com.fieldnation.data.workorder.Geo;
@@ -106,7 +109,6 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         _gpsError2TextView = (TextView) findViewById(R.id.gpsError2_textview);
 
         _addressLayout = (LinearLayout) findViewById(R.id.address_layout);
-        _addressLayout.setOnClickListener(_map_onClick);
 
         _siteTitleTextView = (TextView) findViewById(R.id.siteTitle_textview);
         _addressTextView = (TextView) findViewById(R.id.address_textview);
@@ -289,7 +291,8 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
             _noteTextView.setVisibility(GONE);
         } else {
             _noteTextView.setVisibility(VISIBLE);
-            _noteTextView.setText(loc.getNotes());
+            _noteTextView.setText(misc.linkifyHtml(loc.getNotes(), Linkify.ALL));
+            _noteTextView.setMovementMethod(LinkMovementMethod.getInstance());
         }
     }
 
@@ -434,6 +437,7 @@ public class LocationView extends LinearLayout implements WorkorderRenderer {
         Intent _intent = new Intent(Intent.ACTION_VIEW);
         _intent.setData(geoLocation);
         if (_intent.resolveActivity(getContext().getPackageManager()) != null) {
+            WorkOrderTracker.directionsEvent(App.get());
             getContext().startActivity(_intent);
         }
     }

@@ -12,13 +12,13 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.FullScreenDialog;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
@@ -29,6 +29,8 @@ import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.service.data.workorder.WorkorderConstants;
 import com.fieldnation.ui.HintArrayAdapter;
 import com.fieldnation.ui.HintSpinner;
+import com.fieldnation.ui.KeyedDispatcher;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.dialog.DatePickerDialog;
 import com.fieldnation.ui.dialog.TimePickerDialog;
 
@@ -55,6 +57,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     public static final String PARAM_WORK_ORDER_ID = "workOrderId";
     public static final String PARAM_LOCATION = "location";
     public static final String PARAM_MAX_DEVICE_NUMBER = "maxnumber";
+    public static final String PARAM_CALENDAR = "PARAM_CALENDAR";
 
     private final static int INVALID_NUMBER = -1;
 
@@ -62,7 +65,7 @@ public class CheckInOutDialog extends FullScreenDialog {
     private Toolbar _toolbar;
     private ActionMenuItemView _finishMenu;
 
-    private ProgressBar _loadingProgress;
+    private RefreshView _refreshView;
     private Button _startDateButton;
     private Button _startTimeButton;
     private TextView _startTimeTextView;
@@ -103,8 +106,12 @@ public class CheckInOutDialog extends FullScreenDialog {
         View v = inflater.inflate(R.layout.dialog_v2_check_in_out, container, false);
 
         _toolbar = (Toolbar) v.findViewById(R.id.toolbar);
+        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
+        _toolbar.inflateMenu(R.menu.dialog);
 
-        _loadingProgress = (ProgressBar) v.findViewById(R.id.loading_progress);
+        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+
+        _refreshView = (RefreshView) v.findViewById(R.id.refresh_view);
 
         _deviceNumberLayout = v.findViewById(R.id.deviceNumber_layout);
         _startTimeTextView = (TextView) v.findViewById(R.id.startTime_textview);
@@ -118,13 +125,13 @@ public class CheckInOutDialog extends FullScreenDialog {
     private void setLoading(boolean loading) {
         if (loading) {
             _toolbar.setEnabled(false);
-            _loadingProgress.setVisibility(View.VISIBLE);
+            _refreshView.startRefreshing();
             _startDateButton.setEnabled(false);
             _startTimeButton.setEnabled(false);
             _spinner.setEnabled(false);
         } else {
             _toolbar.setEnabled(true);
-            _loadingProgress.setVisibility(View.GONE);
+            _refreshView.refreshComplete();
             _startDateButton.setEnabled(true);
             _startTimeButton.setEnabled(true);
             _spinner.setEnabled(true);
@@ -132,8 +139,8 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onResume() {
+        super.onResume();
         // Dialog setup, start them off with today
         _startTimePicker = new TimePickerDialog(_startTimeButton.getContext(), _startTime_onSet,
                 _startCalendar.get(Calendar.HOUR_OF_DAY),
@@ -144,11 +151,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                 _startCalendar.get(Calendar.MONTH),
                 _startCalendar.get(Calendar.DAY_OF_MONTH));
 
-        _toolbar.setNavigationIcon(R.drawable.ic_signature_x);
-        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
-        _toolbar.inflateMenu(R.menu.dialog);
         _toolbar.setOnMenuItemClickListener(_menu_onClick);
-        _finishMenu = (ActionMenuItemView) _toolbar.findViewById(R.id.primary_menu);
+        _toolbar.setNavigationOnClickListener(_toolbar_onClick);
 
         _startDateButton.setOnClickListener(startDate_onClick);
         _startTimeButton.setOnClickListener(startTime_onClick);
@@ -157,11 +161,11 @@ public class CheckInOutDialog extends FullScreenDialog {
     }
 
     @Override
-    public void onRemoved() {
+    public void onPause() {
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
 
-        super.onRemoved();
+        super.onPause();
     }
 
     @Override
@@ -198,6 +202,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (_durationMilliseconds != INVALID_NUMBER)
             outState.putLong(STATE_DURATION, _durationMilliseconds);
 
+        if (_startCalendar != null)
+            outState.putSerializable(PARAM_CALENDAR, _startCalendar);
+
         super.onSaveDialogState(outState);
     }
 
@@ -208,6 +215,9 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         if (savedState.containsKey(STATE_DURATION))
             _durationMilliseconds = savedState.getLong(STATE_DURATION);
+
+        if (savedState.containsKey(PARAM_CALENDAR))
+            _startCalendar = (Calendar) savedState.getSerializable(PARAM_CALENDAR);
 
         super.onRestoreDialogState(savedState);
 
@@ -222,6 +232,9 @@ public class CheckInOutDialog extends FullScreenDialog {
         if (misc.isEmptyOrNull(_dialogType))
             return;
 
+        if (_spinner == null)
+            return;
+
         if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_IN)) {
             _toolbar.setTitle(getView().getResources().getString(R.string.title_check_in));
             _startTimeTextView.setText(getView().getResources().getString(R.string.start_time));
@@ -233,7 +246,6 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         _startDateButton.setText(DateUtils.formatDateReallyLongV2(_startCalendar));
         _startTimeButton.setText(DateUtils.formatTimeLong(_startCalendar));
-
     }
 
     public HintSpinner getSpinner() {
@@ -322,6 +334,7 @@ public class CheckInOutDialog extends FullScreenDialog {
         @Override
         public boolean onMenuItemClick(MenuItem item) {
 
+            setLoading(true);
             if (_maxDevice != INVALID_NUMBER && _itemSelectedPosition == INVALID_NUMBER) {
                 _itemSelectedPosition = 0;
             }
@@ -331,6 +344,8 @@ public class CheckInOutDialog extends FullScreenDialog {
                     WorkorderClient.actionCheckin(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _location);
                 else
                     WorkorderClient.actionCheckin(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
+
+                _onCheckInDispatcher.dispatch(getUid(), _workorderId);
 
             } else if (_dialogType.equals(PARAM_DIALOG_TYPE_CHECK_OUT)) {
                 if (_location != null) {
@@ -346,8 +361,10 @@ public class CheckInOutDialog extends FullScreenDialog {
                         WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar), _itemSelectedPosition);
                 } else
                     WorkorderClient.actionCheckout(App.get(), _workorderId, ISO8601.fromCalendar(_startCalendar));
+
+                _onCheckOutDispatcher.dispatch(getUid(), _workorderId);
             }
-            setLoading(true);
+
             return true;
         }
     };
@@ -373,6 +390,12 @@ public class CheckInOutDialog extends FullScreenDialog {
 
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
+            if (workorderId != _workorderId)
+                return;
+
+            if (action.equals("checkin") || action.equals("checkout"))
+                return;
+
             Log.v(TAG, "_workorderClient_listener.onAction()");
             _workorderClient.clearTopic(WorkorderConstants.TOPIC_ID_ACTION_COMPLETE);
             setLoading(false);
@@ -383,48 +406,96 @@ public class CheckInOutDialog extends FullScreenDialog {
         }
     };
 
-    public abstract static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context, String uid) {
-            super(context, CheckInOutDialog.class, uid);
-        }
-
-        // with location
-        public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putParcelable(PARAM_LOCATION, location);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
-
-        // with location + max device
-        public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putParcelable(PARAM_LOCATION, location);
-            params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
-
-        // with max device but no location
-        public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
-
-        public static void show(Context context, String uid, long workorderId, String dialogType) {
-            Bundle params = new Bundle();
-            params.putLong(PARAM_WORK_ORDER_ID, workorderId);
-            params.putString(PARAM_DIALOG_TYPE, dialogType);
-            show(context, uid, CheckInOutDialog.class, params);
-        }
-
-        public static void dismiss(Context context) {
-            dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
-        }
+    // with location
+    public static void show(Context context, String uid, long workorderId, Location location, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putParcelable(PARAM_LOCATION, location);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
     }
+
+    // with location + max device
+    public static void show(Context context, String uid, long workorderId, Location location, int maxDevice, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putParcelable(PARAM_LOCATION, location);
+        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
+
+    // with max device but no location
+    public static void show(Context context, String uid, long workorderId, int maxDevice, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        params.putInt(PARAM_MAX_DEVICE_NUMBER, maxDevice);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
+
+    public static void show(Context context, String uid, long workorderId, String dialogType) {
+        Bundle params = new Bundle();
+        params.putLong(PARAM_WORK_ORDER_ID, workorderId);
+        params.putString(PARAM_DIALOG_TYPE, dialogType);
+        Controller.show(context, uid, CheckInOutDialog.class, params);
+    }
+
+    public static void dismiss(Context context) {
+        Controller.dismiss(context, DIALOG_CHECK_IN_CHECK_OUT);
+    }
+
+    /*-****************************-*/
+    /*-         Check In           -*/
+    /*-****************************-*/
+    public interface OnCheckInListener {
+        void onCheckIn(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnCheckInListener> _onCheckInDispatcher = new KeyedDispatcher<OnCheckInListener>() {
+        @Override
+        public void onDispatch(OnCheckInListener listener, Object... parameters) {
+            listener.onCheckIn((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
+        _onCheckInDispatcher.add(uid, onCheckInListener);
+    }
+
+    public static void removeOnCheckInListener(String uid, OnCheckInListener onCheckInListener) {
+        _onCheckInDispatcher.remove(uid, onCheckInListener);
+    }
+
+    public static void removeAllOnCheckInListener(String uid) {
+        _onCheckInDispatcher.removeAll(uid);
+    }
+
+    /*-*****************************-*/
+    /*-         Check Out           -*/
+    /*-*****************************-*/
+    public interface OnCheckOutListener {
+        void onCheckOut(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnCheckOutListener> _onCheckOutDispatcher = new KeyedDispatcher<OnCheckOutListener>() {
+        @Override
+        public void onDispatch(OnCheckOutListener listener, Object... parameters) {
+            listener.onCheckOut((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
+        _onCheckOutDispatcher.add(uid, onCheckOutListener);
+    }
+
+    public static void removeOnCheckOutListener(String uid, OnCheckOutListener onCheckOutListener) {
+        _onCheckOutDispatcher.remove(uid, onCheckOutListener);
+    }
+
+    public static void removeAllOnCheckOutListener(String uid) {
+        _onCheckOutDispatcher.removeAll(uid);
+    }
+
+
 }

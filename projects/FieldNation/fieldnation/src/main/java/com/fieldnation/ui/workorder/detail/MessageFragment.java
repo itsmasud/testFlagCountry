@@ -11,16 +11,15 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
-import com.fieldnation.analytics.ScreenName;
 import com.fieldnation.data.workorder.Message;
 import com.fieldnation.data.workorder.User;
 import com.fieldnation.data.workorder.Workorder;
-import com.fieldnation.fnanalytics.Tracker;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.profile.ProfileClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
+import com.fieldnation.ui.RefreshView;
 import com.fieldnation.ui.workorder.WorkorderFragment;
 
 import java.util.LinkedList;
@@ -33,6 +32,7 @@ public class MessageFragment extends WorkorderFragment {
     private ListView _listview;
     private MessageInputView _inputView;
     private ViewStub _emptyMessageViewStub;
+    private RefreshView _refreshView;
 
     // Data
     private Workorder _workorder;
@@ -60,6 +60,8 @@ public class MessageFragment extends WorkorderFragment {
         _inputView.setOnSendButtonClick(_send_onClick);
         _inputView.setButtonEnabled(false);
         _emptyMessageViewStub = (ViewStub) view.findViewById(R.id.emptyMessage_viewstub);
+
+        _refreshView = (RefreshView) view.findViewById(R.id.refresh_view);
     }
 
     @Override
@@ -92,15 +94,18 @@ public class MessageFragment extends WorkorderFragment {
             _adapter.notifyDataSetInvalidated();
             _adapter = null;
         }
+        misc.hideKeyboard(_inputView);
         super.onPause();
     }
 
     @Override
     public void update() {
         Log.v(TAG, "update");
-        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
-        if (_workorder != null)
+//        Tracker.screen(App.get(), ScreenName.workOrderDetailsMessages());
+        if (_workorder != null) {
+            _refreshView.startRefreshing();
             WorkorderClient.listMessages(App.get(), _workorder.getWorkorderId(), false, false);
+        }
     }
 
     @Override
@@ -160,6 +165,8 @@ public class MessageFragment extends WorkorderFragment {
             if (_messages != null && _messages.size() > 0)
                 _listview.setSelection(_messages.size() - 1);
         }
+
+        _refreshView.refreshComplete();
     }
 
     private MessagesAdapter getAdapter() {

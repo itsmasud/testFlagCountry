@@ -8,6 +8,7 @@ import android.os.Parcelable;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.WindowManager;
 
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
@@ -25,6 +26,7 @@ import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.TermsAndConditionsDialog;
 import com.fieldnation.ui.dialog.TwoButtonDialog;
 import com.fieldnation.ui.dialog.v2.UpdateDialog;
+import com.fieldnation.ui.dialog.v2.WhatsNewDialog;
 
 /**
  * Created by Michael on 8/19/2016.
@@ -58,6 +60,8 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(getLayoutResource());
+
+        this.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 
         if (getToolbarId() != 0) {
             Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
@@ -96,6 +100,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     public abstract int getToolbarId();
 
     public abstract DialogManager getDialogManager();
+
+    @Override
+    protected void onStart() {
+        Log.v(TAG, "onStart");
+        super.onStart();
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onStart();
+    }
 
     @Override
     protected void onResume() {
@@ -139,6 +151,14 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onStop() {
+        Log.v(TAG, "onStop");
+        super.onStop();
+        DialogManager dialogManager = getDialogManager();
+        if (dialogManager != null) dialogManager.onStop();
+    }
+
+    @Override
     protected void onSaveInstanceState(Bundle outState) {
         outState.putString(STATE_TAG, TAG);
         super.onSaveInstanceState(outState);
@@ -157,21 +177,25 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         if (_profileBounceProtect)
             return;
 
+        if (!_profile.isProvider()) {
+            _notProviderDialog.show();
+            return;
+        }
+
         _profileBounceProtect = true;
 
-        if (App.get().shouldShowTermsAndConditionsDialog()) {
-            _termsAndConditionsDialog.show();
-        }
-
-        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion()) {
+        if (_profile != null && !App.get().hasReleaseNoteShownForThisVersion() && getDialogManager() != null) {
             App.get().setReleaseNoteShownReminded();
-            NewFeatureActivity.startNew(App.get());
+            WhatsNewDialog.show(App.get());
         }
 
-        if (!_profile.isProvider()) {
-//            _notProviderDialog.show();
-//            return;
+        if (App.get().shouldShowTermsAndConditionsDialog()) {
+            Log.v(TAG, "_termsAndConditionsDialog");
+            _profileBounceProtect = false;
+            _termsAndConditionsDialog.show(_terms_listener);
+            return;
         }
+
         App gs = App.get();
         if (!profile.hasValidCoi() && gs.canRemindCoi() && _profile.getCanViewPayments()) {
             Log.v(TAG, "Asking coi");
@@ -214,6 +238,18 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
     /*-*********************************-*/
     /*-				Events				-*/
     /*-*********************************-*/
+    private final TermsAndConditionsDialog.Listener _terms_listener = new TermsAndConditionsDialog.Listener() {
+        @Override
+        public void onAccept() {
+            new Handler().post(new Runnable() {
+                @Override
+                public void run() {
+                    gotProfile(_profile);
+                }
+            });
+        }
+    };
+
     private final View.OnClickListener _toolbarNavication_listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -230,32 +266,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         @Override
         public void onCancel() {
             AuthTopicClient.removeCommand(AuthSimpleActivity.this);
-        }
-    };
-
-
-    private final TwoButtonDialog.Listener _acceptTerms_listener = new TwoButtonDialog.Listener() {
-        @Override
-        public void onPositive() {
-            _profileBounceProtect = false;
-            ProfileClient.actionAcceptTos(AuthSimpleActivity.this, _profile.getUserId());
-        }
-
-        @Override
-        public void onNegative() {
-            // hide, continue
-            _profileBounceProtect = false;
-            App.get().setTosReminded();
-            new Handler().post(new Runnable() {
-                @Override
-                public void run() {
-                    gotProfile(_profile);
-                }
-            });
-        }
-
-        @Override
-        public void onCancel() {
         }
     };
 
@@ -320,7 +330,7 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
             _globalClient.subUpdateApp();
             _globalClient.subAppShutdown();
             _globalClient.subShowContactUsDialog();
-            //_globalClient.subNetworkState();
+            _globalClient.subProfileInvalid(App.get());
         }
 
         @Override
@@ -330,8 +340,13 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
         }
 
         @Override
+        public void onProfileInvalid() {
+            ProfileClient.get(App.get());
+        }
+
+        @Override
         public void onNeedAppUpdate() {
-            UpdateDialog.Controller.show(App.get());
+            UpdateDialog.show(App.get());
         }
 
         @Override
@@ -350,11 +365,6 @@ public abstract class AuthSimpleActivity extends AppCompatActivity {
 
         @Override
         public void onNetworkDisconnected() {
-            //Intent intent = GlobalTopicClient.networkConnectIntent(App.get());
-            //if (intent != null) {
-            //    PendingIntent pi = PendingIntent.getService(App.get(), 0, intent, 0);
-            //    ToastClient.snackbar(App.get(), "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
-            //}
         }
     };
 

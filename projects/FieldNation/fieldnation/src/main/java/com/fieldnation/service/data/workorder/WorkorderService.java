@@ -50,9 +50,6 @@ public class WorkorderService extends MultiThreadedService implements WorkorderC
                 case PARAM_ACTION_GET_BUNDLE:
                     getBundle(intent);
                     break;
-                case PARAM_ACTION_CACHE_DELIVERABLE:
-                    cacheDeliverable(intent);
-                    break;
                 case PARAM_ACTION_UPLOAD_DELIVERABLE:
                     uploadDeliverable(intent);
                     break;
@@ -232,23 +229,6 @@ public class WorkorderService extends MultiThreadedService implements WorkorderC
         }
 
         WorkorderTransactionBuilder.getBundle(this, bundleId, isSync);
-    }
-
-    private void cacheDeliverable(Intent intent) {
-        Uri uri = intent.getParcelableExtra(PARAM_URI);
-        WorkorderDispatch.cacheDeliverableStart(this, uri);
-        StoredObject upFile = null;
-        try {
-            upFile = StoredObject.put(this, App.getProfileId(), "CacheFile", uri.toString(),
-                    this.getContentResolver().openInputStream(uri), "uploadTemp.dat");
-        } catch (Exception ex) {
-            Log.v(TAG, ex);
-        } finally {
-            if (upFile != null)
-                WorkorderDispatch.cacheDeliverableEnd(this, uri, upFile.getFile().toString());
-            else
-                WorkorderDispatch.cacheDeliverableEnd(this, uri, null);
-        }
     }
 
     private void uploadDeliverable(Intent intent) {

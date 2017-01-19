@@ -16,7 +16,7 @@ import android.view.View;
 public interface Dialog {
 
     /**
-     * All implementations of Dialog must have a cosntructor of the following form so that
+     * All implementations of Dialog must have a constructor of the following form so that
      * DialogManager can create it.
      * @param context
      * @param container
@@ -25,17 +25,17 @@ public interface Dialog {
      * public OneButtonDialog(Context context, ViewGroup container) {
      */
 
-    /**
-     * Called after the dialog has been added to the layout. This is when you should add click
-     * listeners to your inflated views.
-     */
-    void onAdded();
+    void onStart();
 
-    /**
-     * Called after the view has been removed from the layout. The entire dialog is about to be
-     * destroyed, so use this call to clean up anything that you might need to.
-     */
-    void onRemoved();
+    void onResume();
+
+    void onPause();
+
+    void onStop();
+
+    String getUid();
+
+    void setUid(String uid);
 
     /**
      * @return the View that contains the dialog
@@ -87,11 +87,5 @@ public interface Dialog {
 
     interface DismissListener {
         void onDismissed(Dialog dialog);
-    }
-
-    void setResultListener(ResultListener listener);
-
-    interface ResultListener {
-        void onResult(Dialog dialog, Bundle response);
     }
 }

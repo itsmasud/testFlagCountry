@@ -7,9 +7,9 @@ import android.os.Bundle;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.fieldnation.App;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.service.transaction.TransformSqlHelper.Column;
 
 import java.util.LinkedList;
@@ -117,7 +117,7 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "get(" + id + ")");
         Transform obj = null;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             try {
                 Cursor cursor = db.query(
@@ -165,7 +165,7 @@ public class Transform implements Parcelable, TransformConstants {
         final String objectNameKey = objectName + "/" + objectKey;
         List<Transform> list = new LinkedList<>();
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getReadableDatabase();
             try {
                 Cursor cursor = db.query(
@@ -214,7 +214,7 @@ public class Transform implements Parcelable, TransformConstants {
 
         long id = -1;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 id = db.insert(TransformSqlHelper.TABLE_NAME, null, v);
@@ -232,7 +232,7 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "deleteTransaction(" + transactionId + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 success = db.delete(
@@ -250,7 +250,7 @@ public class Transform implements Parcelable, TransformConstants {
 //        Log.v(TAG, "delete(" + id + ")");
         boolean success = false;
         synchronized (TAG) {
-            TransformSqlHelper helper = TransformSqlHelper.getInstance(App.get());
+            TransformSqlHelper helper = TransformSqlHelper.getInstance(ContextProvider.get());
             SQLiteDatabase db = helper.getWritableDatabase();
             try {
                 success = db.delete(

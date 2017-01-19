@@ -78,6 +78,8 @@ public class HintSpinner extends AppCompatSpinner {
         clearSelection();
     }
 
+
+
     public void clearSelection() {
         super.setSelection(getCount() - 1);
     }

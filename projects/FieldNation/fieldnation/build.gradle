@@ -28,8 +28,8 @@ android {
     defaultConfig {
         minSdkVersion 14
         targetSdkVersion 22
-        versionCode 94
-        versionName "3.0.4"
+        versionCode 95
+        versionName "3.1.0"
         multiDexEnabled true
     }
 
@@ -55,12 +55,12 @@ android {
     }
 
     productFlavors {
-        red {
-            applicationId "com.fieldnation.android.red"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Red"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.red"'
-            buildConfigField "boolean", "USE_HTTPS", "true"
-        }
+//        red {
+//            applicationId "com.fieldnation.android.red"
+//            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Red"'
+//            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.red"'
+//            buildConfigField "boolean", "USE_HTTPS", "true"
+//        }
         mobile {
             applicationId "com.fieldnation.android.mobile"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '"Mobile"'
@@ -73,18 +73,24 @@ android {
             buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncns"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        blue {
-            applicationId "com.fieldnation.android.blue"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Blue"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.blue"'
+        ncnstest {
+            applicationId "com.fieldnation.android.ncnstest"
+            buildConfigField "String", "BUILD_FLAVOR_NAME", '"NCNS"'
+            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.ncnstest"'
             buildConfigField "boolean", "USE_HTTPS", "true"
         }
-        green {
-            applicationId "com.fieldnation.android.green"
-            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Green"'
-            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.green"'
-            buildConfigField "boolean", "USE_HTTPS", "true"
-        }
+//        blue {
+//            applicationId "com.fieldnation.android.blue"
+//            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Blue"'
+//            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.blue"'
+//            buildConfigField "boolean", "USE_HTTPS", "true"
+//        }
+//        green {
+//            applicationId "com.fieldnation.android.green"
+//            buildConfigField "String", "BUILD_FLAVOR_NAME", '"Green"'
+//            buildConfigField "String", "ACCOUNT_TYPE", '"com.fieldnation.android.green"'
+//            buildConfigField "boolean", "USE_HTTPS", "true"
+//        }
         prod {
             applicationId "com.fieldnation.android"
             buildConfigField "String", "BUILD_FLAVOR_NAME", '""'
@@ -117,6 +123,7 @@ dependencies {
     compile project(':fngps')
     compile project(':fndialog')
     compile project(':fnanalytics')
+    compile project(':fnhttpjson')
 
     // Google stuffs
     compile 'com.android.support:multidex:1.0.1'

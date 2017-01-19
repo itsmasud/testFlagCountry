@@ -5,14 +5,15 @@ import android.content.Intent;
 
 import com.fieldnation.App;
 import com.fieldnation.data.v2.SavedSearchParams;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
 import com.fieldnation.service.transaction.Priority;
 import com.fieldnation.service.transaction.Transform;
-import com.fieldnation.service.transaction.WebTransactionBuilder;
-import com.fieldnation.service.transaction.WebTransactionHandler;
+import com.fieldnation.service.transaction.WebTransaction;
+import com.fieldnation.service.transaction.WebTransactionListener;
+import com.fieldnation.service.transaction.WebTransactionService;
 
 /**
  * Created by Michael on 7/21/2016.
@@ -22,20 +23,22 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
 
     public static void search(Context context, SavedSearchParams searchParams, int page) {
         try {
-            WebTransactionBuilder.builder(context)
+            WebTransaction transaction = new WebTransaction.Builder()
+                    .timingKey("GET/v2/workorders")
                     .priority(Priority.HIGH)
-                    .handler(WorkOrderTransactionHandler.class)
-                    .handlerParams(WorkOrderTransactionHandler.pSearch(searchParams))
+                    .listener(WorkOrderTransactionListener.class)
+                    .listenerParams(WorkOrderTransactionListener.pSearch(searchParams))
                     .key(searchParams.toKey())
                     .useAuth(true)
                     .isSyncCall(false)
                     .request(new HttpJsonBuilder()
                             .protocol("https")
                             .method("GET")
-                            .timingKey("GET/v2/workorders")
                             .urlParams(searchParams.toUrlParams() + "&page=" + page)
                             .path("/v2/workorders"))
-                    .send();
+                    .build();
+
+            WebTransactionService.queueTransaction(context, transaction);
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -66,7 +69,6 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method("POST")
-                    .timingKey("POST/api/rest/v2/workorders/[workorderId]/on-my-way")
                     .path("/api/rest/v2/workorders/" + workOrderId + "/on-my-way")
                     .header(HttpJsonBuilder.HEADER_CONTENT_TYPE, HttpJsonBuilder.HEADER_CONTENT_TYPE_FORM_ENCODED);
 
@@ -74,20 +76,21 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
                 http.body("{\"lat\"=" + lat + ", \"lon\"=" + lon + "}");
             }
 
-            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
+            WebTransaction.Builder builder = new WebTransaction.Builder()
+                    .timingKey("POST/api/rest/v2/workorders/[workorderId]/on-my-way")
                     .priority(Priority.HIGH)
-                    .handler(WorkOrderTransactionHandler.class)
-                    .handlerParams(WorkOrderTransactionHandler.pAction(workOrderId, "on-my-way"))
+                    .listener(WorkOrderTransactionListener.class)
+                    .listenerParams(WorkOrderTransactionListener.pAction(workOrderId, "on-my-way"))
                     .useAuth(true)
                     .key("Workorders/" + workOrderId + "/on-my-way")
                     .request(http)
-                    .transform(Transform.makeTransformQuery(
+                    .addTransform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workOrderId,
                             "merges",
                             _action.toByteArray()));
 
-            context.startService(builder.makeIntent());
+            WebTransactionService.queueTransaction(context, builder.build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }
@@ -107,20 +110,20 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
         context.startService(
                 action(context, workorderId, "POST", action, params, contentType, body,
                         "POST/v2/workorder/[workorderId]/" + action,
-                        WorkOrderTransactionHandler.class,
-                        WorkOrderTransactionHandler.pAction(workorderId, action), useKey));
+                        WorkOrderTransactionListener.class,
+                        WorkOrderTransactionListener.pAction(workorderId, action), useKey));
     }
 
 
     private static Intent action(Context context, long workorderId, String method, String action, String params,
-                                 String contentType, String body, Class<? extends WebTransactionHandler> clazz,
+                                 String contentType, String body, Class<? extends WebTransactionListener> clazz,
                                  byte[] handlerParams) {
         return action(context, workorderId, method, action, params, contentType, body,
                 method + "/v2/workorder/[workorderId]/" + action, clazz, handlerParams, true);
     }
 
     private static Intent action(Context context, long workorderId, String method, String action, String params,
-                                 String contentType, String body, String timingKey, Class<? extends WebTransactionHandler> clazz,
+                                 String contentType, String body, String timingKey, Class<? extends WebTransactionListener> clazz,
                                  byte[] handlerParams, boolean useKey) {
         App.get().setInteractedWorkorder();
         try {
@@ -130,7 +133,6 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             HttpJsonBuilder http = new HttpJsonBuilder()
                     .protocol("https")
                     .method(method)
-                    .timingKey(timingKey)
                     .path("/v2/workorder/" + workorderId + "/" + action);
 
             if (params != null) {
@@ -145,14 +147,15 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
                 }
             }
 
-            WebTransactionBuilder builder = WebTransactionBuilder.builder(context)
+            WebTransaction.Builder builder = new WebTransaction.Builder()
+                    .timingKey(timingKey)
                     .priority(Priority.HIGH)
-                    .handler(clazz)
-                    .handlerParams(handlerParams)
+                    .listener(clazz)
+                    .listenerParams(handlerParams)
                     .useAuth(true)
                     .key("Workorder/" + workorderId + "/" + action)
                     .request(http)
-                    .transform(Transform.makeTransformQuery(
+                    .addTransform(Transform.makeTransformQuery(
                             PSO_WORKORDER,
                             workorderId,
                             "merges",
@@ -161,7 +164,7 @@ public class WorkOrderTransactionBuilder implements WorkOrderConstants {
             if (useKey)
                 builder.key("Workorder/" + workorderId + "/" + action);
 
-            return builder.makeIntent();
+            return WebTransactionService.makeQueueTransactionIntent(context, builder.build());
         } catch (Exception ex) {
             Log.v(TAG, ex);
         }

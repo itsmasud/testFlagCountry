@@ -1,5 +1,6 @@
 package com.fieldnation.service.transaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.IBinder;
@@ -8,6 +9,7 @@ import android.os.Parcelable;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.fnlog.Log;
+import com.fieldnation.fntools.ContextProvider;
 import com.fieldnation.fntools.MultiThreadedService;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.service.auth.AuthTopicClient;
@@ -46,10 +48,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
         }
 
         _authTopicClient = new AuthTopicClient(_authTopic_listener);
-        _authTopicClient.connect(App.get());
+        _authTopicClient.connect(ContextProvider.get());
 
         _globalTopicClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalTopicClient.connect(App.get());
+        _globalTopicClient.connect(ContextProvider.get());
 
         _manager = new ThreadManager();
         TransactionThread t = new TransactionThread(_manager, this, false);
@@ -78,10 +80,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     public void onDestroy() {
         Log.v(TAG, "onDestroy");
         if (_authTopicClient != null && _authTopicClient.isConnected())
-            _authTopicClient.disconnect(App.get());
+            _authTopicClient.disconnect(ContextProvider.get());
 
         if (_globalTopicClient != null && _globalTopicClient.isConnected())
-            _globalTopicClient.disconnect(App.get());
+            _globalTopicClient.disconnect(ContextProvider.get());
 
         _manager.shutdown();
         super.onDestroy();
@@ -164,24 +166,10 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
                 }
 
                 Log.v(TAG, "processIntent building transaction");
-                WebTransaction transaction = WebTransaction.put(
-                        (Priority) extras.getSerializable(PARAM_PRIORITY),
-                        extras.getString(PARAM_KEY),
-                        extras.getBoolean(PARAM_USE_AUTH),
-                        extras.getBoolean(PARAM_IS_SYNC),
-                        extras.getByteArray(PARAM_REQUEST),
-                        extras.getBoolean(PARAM_WIFI_REQUIRED),
-                        extras.getBoolean(PARAM_TRACK),
-                        extras.getString(PARAM_HANDLER_NAME),
-                        extras.getByteArray(PARAM_HANDLER_PARAMS),
-                        extras.getInt(PARAM_NOTIFICATION_ID),
-                        extras.getByteArray(PARAM_NOTIFICATION_START),
-                        extras.getByteArray(PARAM_NOTIFICATION_SUCCESS),
-                        extras.getByteArray(PARAM_NOTIFICATION_RETRY),
-                        extras.getByteArray(PARAM_NOTIFICATION_FAILED));
+                WebTransaction transaction = WebTransaction.put(new WebTransaction(extras));
 
                 if (extras.getBoolean(PARAM_TRACK)) {
-                    UploadTrackerClient.uploadQueued(App.get());
+                    UploadTrackerClient.uploadQueued(ContextProvider.get());
                 }
 
                 Log.v(TAG, "processIntent building transforms");
@@ -208,4 +196,18 @@ public class WebTransactionService extends MultiThreadedService implements WebTr
     public boolean isAuthenticated() {
         return _auth != null;
     }
+
+    public static void queueTransaction(Context context, WebTransaction transaction) {
+        Intent intent = new Intent(context, WebTransactionService.class);
+        intent.putExtras(transaction.toBundle());
+        context.startService(intent);
+    }
+
+    public static Intent makeQueueTransactionIntent(Context context, WebTransaction transaction) {
+        Intent intent = new Intent(context, WebTransactionService.class);
+        intent.putExtras(transaction.toBundle());
+        return intent;
+    }
+
+
 }

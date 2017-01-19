@@ -11,10 +11,12 @@ import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.R;
+import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntoast.ToastClient;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.ui.IconFontButton;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by Michael on 10/11/2016.
@@ -79,8 +81,8 @@ public class DurationDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        super.onAdded();
+    public void onResume() {
+        super.onResume();
 
         _numberPad[0].setOnClickListener(_number_onClick);
         _numberPad[1].setOnClickListener(_number_onClick);
@@ -149,11 +151,7 @@ public class DurationDialog extends SimpleDialog {
                 seconds += Long.parseLong(_hourTextView.getText() + "") * 3600;
                 seconds += Long.parseLong(_minTextView.getText() + "") * 60;
 
-                Bundle response = new Bundle();
-                response.putInt(PARAM_RESULT, PARAM_RESULT_OK);
-                response.putLong(PARAM_VALUE, seconds * 1000);
-                onResult(response);
-
+                _onOkDispatcher.dispatch(getUid(), seconds * 1000);
 
                 dismiss(true);
             } catch (Exception ex) {
@@ -165,9 +163,7 @@ public class DurationDialog extends SimpleDialog {
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Bundle response = new Bundle();
-            response.putInt(PARAM_RESULT, PARAM_RESULT_CANCEL);
-            onResult(response);
+            _onCanceledDispatcher.dispatch(getUid(), null);
             dismiss(true);
         }
     };
@@ -183,31 +179,60 @@ public class DurationDialog extends SimpleDialog {
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-        public Controller(Context context, String uid) {
-            super(context, DurationDialog.class, uid);
-        }
-
-        public static void show(Context context, String uid) {
-            show(context, uid, DurationDialog.class, null);
-        }
+    public static void show(Context context, String uid) {
+        Controller.show(context, uid, DurationDialog.class, null);
     }
 
-    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+    /*-*******************************-*/
+    /*-         Ok Listener           -*/
+    /*-*******************************-*/
+    public interface OnOkListener {
+        void onOk(long milliseconds);
+    }
+
+    private static KeyedDispatcher<OnOkListener> _onOkDispatcher = new KeyedDispatcher<OnOkListener>() {
         @Override
-        public void onComplete(Bundle response) {
-            switch (response.getInt(PARAM_RESULT)) {
-                case PARAM_RESULT_OK:
-                    onOk(response.getLong(PARAM_VALUE));
-                    break;
-                case PARAM_RESULT_CANCEL:
-                    onCancel();
-                    break;
-            }
+        public void onDispatch(OnOkListener listener, Object... parameters) {
+            listener.onOk((Long) parameters[0]);
         }
+    };
 
-        public abstract void onOk(long milliseconds);
-
-        public abstract void onCancel();
+    public static void addOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.add(uid, onOkListener);
     }
+
+    public static void removeOnOkListener(String uid, OnOkListener onOkListener) {
+        _onOkDispatcher.remove(uid, onOkListener);
+    }
+
+    public static void removeAllOnOkListener(String uid) {
+        _onOkDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled();
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled();
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
+    }
+
 }

@@ -10,6 +10,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
 
 import com.fieldnation.fntools.DefaultAnimationListener;
+import com.fieldnation.fntools.misc;
 
 /**
  * Created by Michael on 9/23/2016.
@@ -20,6 +21,7 @@ public abstract class FullScreenDialog implements Dialog {
 
     // Ui
     private View _root;
+    private View _clickBarrier;
     private RelativeLayout _container;
     private View _child;
 
@@ -31,12 +33,15 @@ public abstract class FullScreenDialog implements Dialog {
 
     // Listener
     private DismissListener _dismissListener;
-    private ResultListener _resultListener;
+
+    // Data
+    private String _uid;
 
     public FullScreenDialog(Context context, ViewGroup container) {
         LayoutInflater inflater = LayoutInflater.from(context);
 
         _root = inflater.inflate(R.layout.dialog_fullscreen, container, false);
+        _clickBarrier = _root.findViewById(R.id.click_barrier);
         _container = (RelativeLayout) _root.findViewById(R.id.container);
 
         _child = onCreateView(inflater, context, _container);
@@ -51,8 +56,13 @@ public abstract class FullScreenDialog implements Dialog {
             @Override
             public void onAnimationEnd(Animation animation) {
                 _root.setVisibility(View.GONE);
-                if (_dismissListener != null)
-                    _dismissListener.onDismissed(FullScreenDialog.this);
+                _root.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (_dismissListener != null)
+                            _dismissListener.onDismissed(FullScreenDialog.this);
+                    }
+                });
             }
         });
 
@@ -67,11 +77,29 @@ public abstract class FullScreenDialog implements Dialog {
     public abstract View onCreateView(LayoutInflater inflater, Context context, ViewGroup container);
 
     @Override
-    public void onAdded() {
+    public void onStart() {
     }
 
     @Override
-    public void onRemoved() {
+    public void onResume() {
+    }
+
+    @Override
+    public void onPause() {
+    }
+
+    @Override
+    public void onStop() {
+    }
+
+    @Override
+    public String getUid() {
+        return _uid;
+    }
+
+    @Override
+    public void setUid(String uid) {
+        _uid = uid;
     }
 
     @Override
@@ -89,8 +117,8 @@ public abstract class FullScreenDialog implements Dialog {
         _root.setVisibility(View.VISIBLE);
         _child.setVisibility(View.VISIBLE);
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeIn);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeIn);
             _child.clearAnimation();
             _child.startAnimation(_fgSlideIn);
         }
@@ -106,9 +134,10 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void dismiss(boolean animate) {
+        misc.hideKeyboard(getView());
         if (animate) {
-            _container.clearAnimation();
-            _container.startAnimation(_bgFadeOut);
+            _clickBarrier.clearAnimation();
+            _clickBarrier.startAnimation(_bgFadeOut);
             _child.clearAnimation();
             _child.startAnimation(_fgSlideOut);
         } else {
@@ -126,15 +155,5 @@ public abstract class FullScreenDialog implements Dialog {
 
     @Override
     public void cancel() {
-    }
-
-    @Override
-    public void setResultListener(ResultListener listener) {
-        _resultListener = listener;
-    }
-
-    public void onResult(Bundle response) {
-        if (_resultListener != null)
-            _resultListener.onResult(this, response);
     }
 }

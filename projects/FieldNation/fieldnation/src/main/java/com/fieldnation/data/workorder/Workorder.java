@@ -5,6 +5,8 @@ import android.os.Parcelable;
 
 import com.fieldnation.data.v2.Estimate;
 import com.fieldnation.data.v2.Range;
+import com.fieldnation.data.v2.actions.Action;
+import com.fieldnation.data.v2.actions.ActionContainer;
 import com.fieldnation.fnjson.JsonArray;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnjson.Serializer;
@@ -21,6 +23,8 @@ public class Workorder implements Parcelable {
 
     @Json(name = "_action")
     private JsonArray _action;
+    @Json(name = "actions")
+    private ActionContainer _actions;
     @Json(name = "additionalExpenses")
     private Expense[] _additionalExpenses;
     @Json(name = "alertCount ")
@@ -158,6 +162,7 @@ public class Workorder implements Parcelable {
         if (getEstimatedSchedule() != null) {
             Estimate estimate = new Estimate();
             estimate.setArrival(getEstimatedSchedule().getStartTime());
+            estimate.setDuration(getEstimatedSchedule().getDuration());
             schedule.setEstimate(estimate);
         }
         return schedule;
@@ -165,6 +170,21 @@ public class Workorder implements Parcelable {
 
     public JsonArray getActions() {
         return _action;
+    }
+
+
+    public Action[] getPrimaryActions() {
+        if (_actions == null)
+            return null;
+
+        return _actions.getPrimary();
+    }
+
+    public Action[] getSecondaryActions() {
+        if (_actions == null)
+            return null;
+
+        return _actions.getSecondary();
     }
 
     public Expense[] getAdditionalExpenses() {

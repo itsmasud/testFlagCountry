@@ -2,7 +2,6 @@ package com.fieldnation.ui.search;
 
 import android.content.Context;
 import android.location.Location;
-import android.os.Parcelable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
@@ -39,7 +38,6 @@ public class SearchResultScreen extends RelativeLayout {
     //UI
     private OverScrollRecyclerView _workOrderList;
     private RefreshView _refreshView;
-    private View _unavailableView;
 
     // Service
     private WorkOrderClient _workOrderClient;
@@ -76,8 +74,6 @@ public class SearchResultScreen extends RelativeLayout {
         _refreshView = (RefreshView) findViewById(R.id.refresh_view);
         _refreshView.setListener(_refreshView_listener);
 
-        _unavailableView = findViewById(R.id.marketplaceUnavailable_layout);
-
         _workOrderList = (OverScrollRecyclerView) findViewById(R.id.workOrderList_recyclerView);
         _workOrderList.setOnOverScrollListener(_refreshView);
         _workOrderList.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
@@ -97,6 +93,7 @@ public class SearchResultScreen extends RelativeLayout {
 
         _simpleGps = new SimpleGps(App.get())
                 .updateListener(_gps_listener)
+                .priority(SimpleGps.Priority.HIGHEST)
                 .start(App.get());
     }
 
@@ -104,6 +101,9 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onLocation(Location location) {
             _location = location;
+            if (_searchParams != null && _searchParams.uiLocationSpinner == 1 && _location != null) {
+                _searchParams.location(_location.getLatitude(), _location.getLongitude());
+            }
             _simpleGps.stop();
         }
 
@@ -136,8 +136,13 @@ public class SearchResultScreen extends RelativeLayout {
 
     public void startSearch(SavedSearchParams searchParams) {
         _searchParams = searchParams;
+
+        if (_searchParams.uiLocationSpinner == 1 && _location != null) {
+            _searchParams.location(_location.getLatitude(), _location.getLongitude());
+        }
+
         _adapter.clear();
-        getPage(0);
+        _adapter.refreshAll();
     }
 
     public void setOnChildClickListener(OnClickListener listener) {
@@ -151,7 +156,7 @@ public class SearchResultScreen extends RelativeLayout {
     private final RefreshView.Listener _refreshView_listener = new RefreshView.Listener() {
         @Override
         public void onStartRefresh() {
-            getPage(0);
+            _adapter.refreshAll();
         }
     };
 
@@ -170,31 +175,28 @@ public class SearchResultScreen extends RelativeLayout {
             if (_onListReceivedListener != null)
                 _onListReceivedListener.OnWorkOrderListReceived(envelope, workOrders);
 
-            if (envelope == null || envelope.getTotal() == 0) {
+            if (envelope == null || failed) {
                 _refreshView.refreshComplete();
-                if (_adapter.getItemCount() == 0)
-                    _unavailableView.setVisibility(VISIBLE);
-                else
-                    _unavailableView.setVisibility(GONE);
                 return;
             }
 
             Log.v(TAG, "onSearch" + envelope.getPage() + ":" + envelope.getTotal());
-            if (envelope.getPage() <= (envelope.getTotal() / envelope.getPerPage()) + 1)
+
+            if (envelope.getTotal() == 0) {
+                _adapter.clear();
+            } else if (workOrders.size() > 0
+                    && envelope.getPerPage() > 0
+                    && envelope.getPage() <= envelope.getTotal() / envelope.getPerPage())
                 _adapter.addObjects(envelope.getPage(), workOrders);
             else
                 _adapter.addObjects(envelope.getPage(), null);
 
             _refreshView.refreshComplete();
-            if (_adapter.getItemCount() == 0)
-                _unavailableView.setVisibility(VISIBLE);
-            else
-                _unavailableView.setVisibility(GONE);
         }
 
         @Override
         public void onAction(long workOrderId, String action, boolean failed) {
-            getPage(0);
+            _adapter.refreshAll();
             _refreshView.startRefreshing();
         }
     };
@@ -208,7 +210,11 @@ public class SearchResultScreen extends RelativeLayout {
         @Override
         public void onAction(long workorderId, String action, boolean failed) {
             Log.v(TAG, "_workorderClientV1_listener.onAction " + workorderId + ", " + action + ", " + failed);
-            getPage(0);
+
+            if (failed)
+                return;
+
+            _adapter.refreshAll();
             _refreshView.startRefreshing();
         }
     };
@@ -233,7 +239,37 @@ public class SearchResultScreen extends RelativeLayout {
         public void onBindObjectViewHolder(BaseHolder holder, WorkOrder object) {
             WorkOrderHolder h = (WorkOrderHolder) holder;
             WorkOrderCard v = h.getView();
-            v.setData(object, _location);
+            v.setData(object, _location, _searchParams.title);
+        }
+
+        @Override
+        public boolean useHeader() {
+            if (_searchParams != null)
+                return _searchParams.canEdit;
+
+            return false;
+        }
+
+        @Override
+        public BaseHolder onCreateHeaderViewHolder(ViewGroup parent) {
+            HeaderView v = new HeaderView(parent.getContext());
+            return new BaseHolder(v, BaseHolder.TYPE_HEADER);
+        }
+
+        @Override
+        public void onBindHeaderViewHolder(BaseHolder holder) {
+            ((HeaderView) holder.itemView).setSavedSearchParams(_searchParams);
+        }
+
+        @Override
+        public BaseHolder onCreateEmptyViewHolder(ViewGroup parent) {
+            View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.view_no_work, parent, false);
+            return new BaseHolder(v, BaseHolder.TYPE_EMPTY);
+        }
+
+        @Override
+        public void onBindEmptyViewHolder(BaseHolder holder) {
+            // Nothing to do.
         }
     };
 

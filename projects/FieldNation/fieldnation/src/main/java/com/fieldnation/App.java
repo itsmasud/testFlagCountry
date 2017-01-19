@@ -28,6 +28,7 @@ import com.fieldnation.analytics.SnowplowWrapper;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.ExpenseCategories;
 import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnhttpjson.HttpJson;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fnpigeon.TopicService;
 import com.fieldnation.fntoast.ToastClient;
@@ -135,6 +136,8 @@ public class App extends Application {
 //        }
 
         super.onCreate();
+        HttpJson.setTempFolder(getTempFolder());
+
         Stopwatch mwatch = new Stopwatch(true);
         Stopwatch watch = new Stopwatch(true);
         Log.v(TAG, "onCreate");
@@ -353,7 +356,7 @@ public class App extends Application {
             _isConnected = false;
             Intent intent = GlobalTopicClient.networkConnectIntent(App.this);
             if (intent != null) {
-                PendingIntent pi = PendingIntent.getService(App.this, 0, intent, 0);
+                PendingIntent pi = PendingIntent.getService(App.this, App.secureRandom.nextInt(), intent, 0);
                 ToastClient.snackbar(App.this, 1, "Can't connect to servers.", "RETRY", pi, Snackbar.LENGTH_INDEFINITE);
             }
         }
@@ -747,5 +750,9 @@ public class App extends Application {
             Log.v(TAG, ex);
             return true;
         }
+    }
+
+    public static boolean isNcns() {
+        return BuildConfig.BUILD_FLAVOR_NAME.equals("NCNS");
     }
 }

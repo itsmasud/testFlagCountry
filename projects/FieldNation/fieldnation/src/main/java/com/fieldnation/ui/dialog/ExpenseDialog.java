@@ -74,6 +74,8 @@ public class ExpenseDialog extends DialogFragmentBase {
         if (_itemSelectedPosition != -1)
             outState.putInt(STATE_CATEGORY_SELECTION, _itemSelectedPosition);
 
+        outState.putBoolean(STATE_SHOW_CATEGORIES, _showCategories);
+
         super.onSaveInstanceState(outState);
     }
 
@@ -147,6 +149,13 @@ public class ExpenseDialog extends DialogFragmentBase {
     }
 
     public void populateUi() {
+
+        if (_showCategories) {
+            _categoryLayout.setVisibility(View.VISIBLE);
+        } else {
+            _categoryLayout.setVisibility(View.GONE);
+        }
+
         if (!_reset)
             return;
 
@@ -159,11 +168,6 @@ public class ExpenseDialog extends DialogFragmentBase {
         if (_categorySpinner != null)
             _categorySpinner.clearSelection();
 
-        if (_showCategories) {
-            _categoryLayout.setVisibility(View.VISIBLE);
-        } else {
-            _categoryLayout.setVisibility(View.GONE);
-        }
     }
 
 

@@ -95,7 +95,6 @@ public class ClosingNotesView extends LinearLayout implements WorkorderRenderer 
         }
     };
 
-
     public interface Listener {
         void onChangeClosingNotes(String closingNotes);
     }

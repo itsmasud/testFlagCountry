@@ -4,6 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="0dp"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:padding="8dp">
 
     <com.fieldnation.ui.IconFontTextView
@@ -41,4 +43,9 @@
         android:text="@string/icon_google_microphone"
         android:textSize="24sp" />
 
+    <ProgressBar
+        android:id="@+id/progress_view"
+        android:layout_width="match_parent"
+        android:layout_height="38dp"
+        android:visibility="gone" />
 </RelativeLayout>

@@ -10,39 +10,36 @@ import android.widget.Toast;
 import com.fieldnation.App;
 import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
+import com.fieldnation.analytics.AnswersWrapper;
+import com.fieldnation.fnanalytics.Timing;
+import com.fieldnation.fnanalytics.Tracker;
+import com.fieldnation.fnhttpjson.HttpJson;
+import com.fieldnation.fnhttpjson.HttpJsonBuilder;
+import com.fieldnation.fnhttpjson.HttpResult;
 import com.fieldnation.fnjson.JsonObject;
 import com.fieldnation.fnlog.Log;
 import com.fieldnation.fntoast.ToastClient;
-import com.fieldnation.fntools.DebugUtils;
+import com.fieldnation.fntools.ContextProvider;
+import com.fieldnation.fntools.Stopwatch;
 import com.fieldnation.fntools.ThreadManager;
 import com.fieldnation.fntools.UniqueTag;
 import com.fieldnation.fntools.misc;
-import com.fieldnation.rpc.server.HttpJson;
-import com.fieldnation.rpc.server.HttpJsonBuilder;
-import com.fieldnation.rpc.server.HttpResult;
 import com.fieldnation.service.auth.AuthTopicClient;
 import com.fieldnation.service.auth.OAuth;
 
-import java.io.EOFException;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ConnectException;
-import java.net.MalformedURLException;
-import java.net.SocketTimeoutException;
-import java.net.UnknownHostException;
 import java.text.ParseException;
-
-import javax.net.ssl.SSLException;
-import javax.net.ssl.SSLProtocolException;
 
 /**
  * Created by itssh on 3/23/2016.
  * <p/>
  * This class executes requests that are stored in the transaction queue
  */
-public class TransactionThread extends ThreadManager.ManagedThread {
+class TransactionThread extends ThreadManager.ManagedThread {
     private final String TAG = UniqueTag.makeTag("TransactionThread");
     private final Object SYNC_LOCK = new Object();
+
+    private static final long RETRY_SHORT = 5000;
+    private static final long RETRY_LONG = 30000;
 
     private final WebTransactionService _service;
 
@@ -78,7 +75,7 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         @Override
         public void progress(long pos, long size, long time) {
-            WebTransactionHandler.transactionProgress(App.get(), trans.getHandlerName(), trans, pos, size, time);
+            WebTransactionDispatcher.progress(ContextProvider.get(), trans.getListenerName(), trans, pos, size, time);
         }
     }
 
@@ -106,9 +103,10 @@ public class TransactionThread extends ThreadManager.ManagedThread {
 
         WebTransaction trans = null;
         try {
-            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(), _syncThread ? Priority.LOW : Priority.NORMAL);
+            trans = WebTransaction.getNext(_syncThread && allowSync(), _service.isAuthenticated(),
+                    _syncThread ? Priority.LOW : Priority.NORMAL);
         } catch (SQLiteFullException ex) {
-            ToastClient.toast(App.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
+            ToastClient.toast(ContextProvider.get(), "Your device is full. Please free up space.", Toast.LENGTH_LONG);
             return false;
         }
 
@@ -144,60 +142,65 @@ public class TransactionThread extends ThreadManager.ManagedThread {
         NotificationDefinition notifFailed = null;
         NotificationDefinition notifRetry = null;
 
-        try {
-            // apply authentication if needed
-            if (trans.useAuth()) {
-                OAuth auth = _service.getAuth();
+        Stopwatch stopwatch = null;
+        // apply authentication if needed
+        if (trans.useAuth()) {
+            OAuth auth = _service.getAuth();
 
-                if (auth == null) {
-                    AuthTopicClient.requestCommand(App.get());
-                    trans.requeue();
-                    return false;
-                }
+            if (auth == null) {
+                AuthTopicClient.requestCommand(ContextProvider.get());
+                trans.requeue(RETRY_SHORT);
+                return false;
+            }
 
-                if (auth.getAccessToken() == null) {
-                    Log.v(TAG, "accessToken is null");
-                    AuthTopicClient.invalidateCommand(App.get());
-                    trans.requeue();
-                    return false;
-                }
+            if (auth.getAccessToken() == null) {
+                Log.v(TAG, "accessToken is null");
+                AuthTopicClient.invalidateCommand(ContextProvider.get());
+                trans.requeue(RETRY_SHORT);
+                return false;
+            }
 
-                if (!_service.isAuthenticated()) {
-                    Log.v(TAG, "skip no auth");
-                    trans.requeue();
-                    return false;
-                }
+            if (!_service.isAuthenticated()) {
+                Log.v(TAG, "skip no auth");
+                trans.requeue(RETRY_SHORT);
+                return false;
+            }
 
+            try {
                 if (!request.has(HttpJsonBuilder.PARAM_WEB_HOST)) {
                     request.put(HttpJsonBuilder.PARAM_WEB_HOST, auth.getHost());
                 }
                 request.put(HttpJsonBuilder.PARAM_WEB_PROTOCOL, "https");
                 auth.applyToRequest(request);
+            } catch (Exception ex) {
+                Log.v(TAG, ex);
             }
+        }
 
+        if (trans.getNotificationId() != -1) {
+            notifId = trans.getNotificationId();
+            notifStart = trans.getNotificationStart();
+            notifSuccess = trans.getNotificationSuccess();
+            notifFailed = trans.getNotificationFailed();
+            notifRetry = trans.getNotificationRetry();
+            generateNotification(notifId, notifStart);
+        }
 
-            if (trans.getNotificationId() != -1) {
-                notifId = trans.getNotificationId();
-                notifStart = trans.getNotificationStart();
-                notifSuccess = trans.getNotificationSuccess();
-                notifFailed = trans.getNotificationFailed();
-                notifRetry = trans.getNotificationRetry();
-                generateNotification(notifId, notifStart);
-            }
+        Log.v(TAG, request.display());
 
-            Log.v(TAG, request.display());
+        handlerName = trans.getListenerName();
 
-            handlerName = trans.getHandlerName();
+        if (!misc.isEmptyOrNull(handlerName)) {
+            WebTransactionDispatcher.start(_service, handlerName, trans);
+        }
 
-            if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionHandler.Result wresult = WebTransactionHandler.startTransaction(_service, handlerName, trans);
-            }
-
-            // **** perform request ****
+        // **** perform request ****
+        Exception exception = null;
+        try {
             _http_progress.trans = trans;
+            stopwatch = new Stopwatch(true);
             result = HttpJson.run(_service, request, _http_progress);
-
-            // debug output
+            stopwatch.pause();
             try {
                 Log.v(TAG, "ResponseCode: " + result.getResponseCode());
                 Log.v(TAG, "ResponseMessage: " + result.getResponseMessage());
@@ -208,181 +211,63 @@ public class TransactionThread extends ThreadManager.ManagedThread {
             } catch (Exception ex) {
                 Log.v(TAG, ex);
             }
-
-            // **** Error handling ****
-            // check for invalid auth
-            if (!result.isFile()
-                    && (result.getString() != null && result.getString().contains("You must provide a valid OAuth token to make a request"))) {
-                Log.v(TAG, "Reauth");
-                AuthTopicClient.invalidateCommand(_service);
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(_service);
-                return true;
-
-            } else if (result.getResponseCode() == 400) {
-                // Bad request
-                // need to report this
-                // need to re-auth?
-                if (result.getString() != null && result.getString().contains("You don't have permission to see this workorder")) {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                    WebTransaction.delete(trans.getId());
-                    return true;
-                } else if (result.getResponseMessage().contains("Bad Request")) {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                    WebTransaction.delete(trans.getId());
-                    return true;
-                } else {
-                    Log.v(TAG, "1");
-                    AuthTopicClient.invalidateCommand(_service);
-                    transRequeueNetworkDown(trans, notifId, notifRetry);
-                    AuthTopicClient.requestCommand(_service);
-                    return true;
-                }
-
-            } else if (result.getResponseCode() == 401) {
-                // 401 usually means bad auth token
-                if (HttpJsonBuilder.isFieldNation(request)) {
-                    Log.v(TAG, "Reauth 2");
-                    AuthTopicClient.invalidateCommand(_service);
-                    transRequeueNetworkDown(trans, notifId, notifRetry);
-                    AuthTopicClient.requestCommand(_service);
-                    return true;
-                } else {
-                    WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                    WebTransaction.delete(trans.getId());
-                    generateNotification(notifId, notifFailed);
-                    return true;
-                }
-
-            } else if (result.getResponseCode() == 404) {
-                // not found?... error
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
-                return true;
-
-            } else if (result.getResponseCode() == 413) {
-                ToastClient.toast(_service, "File too large to upload", Toast.LENGTH_LONG);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
-                return true;
-
-                // usually means code is being updated on the server
-            } else if (result.getResponseCode() == 502) {
-                Log.v(TAG, "2");
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-                AuthTopicClient.requestCommand(_service);
-                return true;
-
-            } else if (result.getResponseCode() / 100 != 2) {
-                Log.v(TAG, "3");
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
-                return true;
-            }
-
-            Log.v(TAG, "Passed response error checks");
-
-            GlobalTopicClient.networkConnected(_service);
-
-            if (!misc.isEmptyOrNull(handlerName)) {
-                WebTransactionHandler.Result wresult = WebTransactionHandler.completeTransaction(
-                        _service, handlerName, trans, result);
-
-                switch (wresult) {
-                    case DELETE:
-                        generateNotification(notifId, notifFailed);
-                        WebTransactionHandler.failTransaction(_service, handlerName, trans, result, null);
-                        WebTransaction.delete(trans.getId());
-                        break;
-                    case CONTINUE:
-                        generateNotification(notifId, notifSuccess);
-                        WebTransaction.delete(trans.getId());
-                        break;
-                    case REQUEUE:
-                        Log.v(TAG, "3");
-                        transRequeueNetworkDown(trans, notifId, notifRetry);
-                        break;
-                }
-            }
-        } catch (MalformedURLException | FileNotFoundException ex) {
-            Log.v(TAG, "4");
-            Log.v(TAG, ex);
-            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
-            WebTransaction.delete(trans.getId());
-            generateNotification(notifId, notifFailed);
-
-        } catch (SecurityException | UnknownHostException ex) {
-            Log.v(TAG, "4b");
-            Log.v(TAG, ex);
-            WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
-            WebTransaction.delete(trans.getId());
-            generateNotification(notifId, notifFailed);
-
-        } catch (SSLProtocolException | ConnectException | SocketTimeoutException | EOFException ex) {
-            Log.v(TAG, "5");
-            Log.v(TAG, ex);
-            transRequeueNetworkDown(trans, notifId, notifRetry);
-
-        } catch (SSLException ex) {
-            Log.v(TAG, ex);
-            if (ex.getMessage().contains("Broken pipe")) {
-                Log.v(TAG, "6");
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-            } else {
-                Log.v(TAG, "7");
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-            }
-
-        } catch (IOException ex) {
-            Log.v(TAG, "8");
-            Log.v(TAG, ex);
-            transRequeueNetworkDown(trans, notifId, notifRetry);
-
         } catch (Exception ex) {
-            Log.v(TAG, "9");
+            exception = ex;
             Log.v(TAG, ex);
-            if (ex.getMessage() != null && ex.getMessage().contains("ETIMEDOUT")) {
-                transRequeueNetworkDown(trans, notifId, notifRetry);
-            } else {
-                // no freaking clue
-                Log.logException(ex);
-                Log.v(TAG, ex);
-                WebTransactionHandler.failTransaction(_service, handlerName, trans, result, ex);
-                WebTransaction.delete(trans.getId());
-                generateNotification(notifId, notifFailed);
-            }
         }
-        Log.v(TAG, "10");
+
+        if (!misc.isEmptyOrNull(trans.getTimingKey())) {
+            recordTiming(stopwatch, trans.getTimingKey());
+        }
+        // At this point we will have trans, exception and/or result
+
+        WebTransactionListener.Result wresult = WebTransactionDispatcher.complete(_service,
+                trans.getListenerName(), trans, result, exception);
+
+        // do what the result says
+        switch (wresult) {
+            case DELETE:
+                generateNotification(notifId, notifFailed);
+                WebTransaction.delete(trans.getId());
+                break;
+            case CONTINUE:
+                generateNotification(notifId, notifSuccess);
+                WebTransaction.delete(trans.getId());
+                break;
+            case RETRY:
+                Log.v(TAG, "3");
+                generateNotification(notifId, notifRetry);
+                trans.requeue(RETRY_LONG);
+                break;
+        }
         return true;
     }
 
-    private void transRequeueNetworkDown(WebTransaction trans, int notifId, NotificationDefinition notif) {
-        Log.v(TAG, "transRequeueNetworkDown");
-        DebugUtils.printStackTrace("transRequeueNetworkDown");
-        generateNotification(notifId, notif);
-        GlobalTopicClient.networkDisconnected(_service);
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-        }
-        trans.requeue();
+    private void recordTiming(Stopwatch stopwatch, String timingKey) {
+        stopwatch.unpause();
+        Tracker.timing(ContextProvider.get(),
+                new Timing.Builder()
+                        .tag(AnswersWrapper.TAG)
+                        .category("Web Timing")
+                        .label(timingKey)
+                        .timing((int) stopwatch.finish())
+                        .build());
+
+        Log.v(TAG, timingKey + " run time: " + stopwatch.getTime());
     }
 
-    protected static void generateNotification(int notifyId, NotificationDefinition notif) {
+    private static void generateNotification(int notifyId, NotificationDefinition notif) {
         if (notif == null)
             return;
 
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(App.get())
+        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(ContextProvider.get())
                 .setLargeIcon(null)
                 .setSmallIcon(notif.icon)
                 .setContentTitle(notif.title)
                 .setTicker(notif.ticker)
                 .setContentText(notif.body);
 
-        NotificationManager mNotifyMgr = (NotificationManager) App.get().getSystemService(Service.NOTIFICATION_SERVICE);
+        NotificationManager mNotifyMgr = (NotificationManager) ContextProvider.get().getSystemService(Service.NOTIFICATION_SERVICE);
 
 //        Log.v(TAG, "notification created");
 

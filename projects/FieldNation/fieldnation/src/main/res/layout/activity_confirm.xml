@@ -47,6 +47,7 @@
     </android.support.design.widget.CoordinatorLayout>
 
     <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/footer_view"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_alignParentBottom="true"
@@ -72,5 +73,5 @@
     <com.fieldnation.fndialog.DialogManager
         android:id="@+id/dialogManager"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 </RelativeLayout>

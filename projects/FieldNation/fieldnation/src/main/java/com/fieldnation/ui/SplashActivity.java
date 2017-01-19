@@ -5,9 +5,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.fieldnation.App;
-import com.fieldnation.GlobalTopicClient;
 import com.fieldnation.R;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.fndialog.DialogManager;
@@ -31,7 +31,6 @@ public class SplashActivity extends AuthSimpleActivity {
     private Profile _profile = null;
     private boolean _isAuth = false;
     private boolean _calledMyWork = false;
-    private GlobalTopicClient _globalClient;
     private AuthTopicClient _authClient;
 
     public SplashActivity() {
@@ -64,6 +63,7 @@ public class SplashActivity extends AuthSimpleActivity {
         final ImageView fnLogo = (ImageView) findViewById(R.id.logo_imageview);
         final int reqHeight = fnLogo.getLayoutParams().height;
         fnLogo.setImageBitmap(MemUtils.getMemoryEfficientBitmap(this, R.drawable.fn_logo, reqHeight));
+
         Log.v(TAG, "onFinishCreate");
     }
 
@@ -88,6 +88,18 @@ public class SplashActivity extends AuthSimpleActivity {
 
     @Override
     public void onProfile(Profile profile) {
+        Log.e(TAG, "SplashActivity#onProfile");
+
+        if (profile != null)
+            Log.v(TAG, profile.toJson().display());
+
+        if (!profile.isProvider()) {
+            Toast.makeText(SplashActivity.this, "Invalid username or password", Toast.LENGTH_LONG).show();
+            AuthTopicClient.removeCommand(SplashActivity.this);
+            return;
+        }
+        _profile = profile;
+        doNextStep();
     }
 
     @Override
@@ -96,9 +108,6 @@ public class SplashActivity extends AuthSimpleActivity {
         super.onResume();
         _calledMyWork = false;
         startService(new Intent(this, AuthTopicService.class));
-
-        _globalClient = new GlobalTopicClient(_globalTopic_listener);
-        _globalClient.connect(App.get());
 
         _authClient = new AuthTopicClient(_authTopic_listener);
         _authClient.connect(App.get());
@@ -109,8 +118,6 @@ public class SplashActivity extends AuthSimpleActivity {
     @Override
     protected void onStop() {
         try {
-            if (_globalClient != null && _globalClient.isConnected())
-                _globalClient.disconnect(App.get());
             if (_authClient != null && _authClient.isConnected())
                 _authClient.disconnect(App.get());
         } catch (Exception ex) {
@@ -124,23 +131,6 @@ public class SplashActivity extends AuthSimpleActivity {
         super.finish();
         overridePendingTransition(R.anim.abc_fade_in, R.anim.abc_fade_out);
     }
-
-    private final GlobalTopicClient.Listener _globalTopic_listener = new GlobalTopicClient.Listener() {
-        @Override
-        public void onConnected() {
-            Log.v(TAG, "_globalTopic_listener.onConnected");
-            _globalClient.subGotProfile();
-        }
-
-        @Override
-        public void onGotProfile(Profile profile) {
-            Log.v(TAG, "_globalTopic_listener.onGotProfile");
-            if (profile != null)
-                Log.v(TAG, profile.toJson().display());
-            _profile = profile;
-            doNextStep();
-        }
-    };
 
     private final AuthTopicClient.Listener _authTopic_listener = new AuthTopicClient.Listener() {
         @Override

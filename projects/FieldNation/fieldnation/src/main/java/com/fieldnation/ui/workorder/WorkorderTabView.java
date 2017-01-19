@@ -25,6 +25,7 @@ public class WorkorderTabView extends RelativeLayout {
     private Listener _listener;
     private View[] _buttons;
     private RelativeLayout[] _layouts;
+    private int _currentTab = 0;
 
     /*-*************************************-*/
     /*-				Lifecycle				-*/
@@ -98,17 +99,6 @@ public class WorkorderTabView extends RelativeLayout {
         }
     };
 
-/*
-    private View.OnClickListener _tasksLayout_onClick = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            setSelected(1);
-            if (_listener != null)
-                _listener.onChange(1);
-        }
-    };
-*/
-
     private final View.OnClickListener _messagesLayout_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -140,6 +130,7 @@ public class WorkorderTabView extends RelativeLayout {
     /*-				Mutators				-*/
     /*-*************************************-*/
     public void setSelected(int index) {
+        _currentTab = index;
         for (int i = 0; i < _buttons.length; i++) {
             _buttons[i].setSelected(i == index);
         }

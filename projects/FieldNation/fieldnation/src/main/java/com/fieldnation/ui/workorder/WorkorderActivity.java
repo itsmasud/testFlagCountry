@@ -3,18 +3,17 @@ package com.fieldnation.ui.workorder;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.widget.Toast;
 
 import com.fieldnation.App;
 import com.fieldnation.Debug;
 import com.fieldnation.R;
+import com.fieldnation.analytics.trackers.WorkOrderTracker;
 import com.fieldnation.data.profile.Profile;
 import com.fieldnation.data.workorder.Workorder;
 import com.fieldnation.fndialog.DialogManager;
@@ -22,7 +21,6 @@ import com.fieldnation.fnlog.Log;
 import com.fieldnation.service.activityresult.ActivityResultClient;
 import com.fieldnation.service.data.workorder.WorkorderClient;
 import com.fieldnation.ui.AuthSimpleActivity;
-import com.fieldnation.ui.nav.NavActivity;
 import com.fieldnation.ui.workorder.detail.DeliverableFragment;
 import com.fieldnation.ui.workorder.detail.MessageFragment;
 import com.fieldnation.ui.workorder.detail.NotificationFragment;
@@ -370,6 +368,8 @@ public class WorkorderActivity extends AuthSimpleActivity {
         @Override
         public void onPageSelected(int position) {
             try {
+                WorkOrderTracker.onTabSwitchEvent(App.get(), WorkOrderTracker.Tab.values()[_currentFragment], WorkOrderTracker.Tab.values()[position]);
+                WorkOrderTracker.onShow(App.get(), WorkOrderTracker.Tab.values()[position], _workorderId);
                 _currentFragment = position;
                 _tabview.setSelected(position);
                 _fragments[position].update();
@@ -431,26 +431,12 @@ public class WorkorderActivity extends AuthSimpleActivity {
                 if (isCached) {
                     WorkorderClient.get(App.get(), _workorderId, false);
                 } else {
-                    try {
-                        Toast.makeText(WorkorderActivity.this, R.string.workorder_no_permission, Toast.LENGTH_LONG).show();
-
-                        NavActivity.startNew(App.get());
-
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            finishAndRemoveTask();
-                        } else {
-                            finish();
-                        }
-                        setLoading(false);
-                    } catch (Exception ex) {
-                        Log.v(TAG, ex);
-                    }
+                    setLoading(false);
                 }
                 return;
             }
 
             Debug.setLong("last_workorder", workorder.getWorkorderId());
-
             workorder.addListener(_workorder_listener);
             _workorder = workorder;
             populateUi();
@@ -478,7 +464,7 @@ public class WorkorderActivity extends AuthSimpleActivity {
         Log.v(TAG, "makeIntentConfirm");
         Intent intent = new Intent(context, WorkorderActivity.class);
         intent.setAction("DUMMY");
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.putExtra(INTENT_FIELD_ACTION, ACTION_CONFIRM);
         intent.putExtra(INTENT_FIELD_WORKORDER_ID, workorderId);
         intent.putExtra(INTENT_FIELD_CURRENT_TAB, TAB_DETAILS);

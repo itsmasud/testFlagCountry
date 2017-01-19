@@ -17,7 +17,7 @@ import com.fieldnation.fndialog.Controller;
 import com.fieldnation.fndialog.SimpleDialog;
 import com.fieldnation.fntools.misc;
 import com.fieldnation.service.data.workorder.WorkorderClient;
-import com.fieldnation.ui.workorder.WorkorderBundleDetailActivity;
+import com.fieldnation.ui.KeyedDispatcher;
 
 /**
  * Created by mc on 10/27/16.
@@ -51,9 +51,6 @@ public class AcceptBundleDialog extends SimpleDialog {
     private Button _cancelButton;
     private Button _okButton;
 
-    // Dialogs
-    private DurationDialog.Controller _durationDialog;
-
     // Data
     private int _type = TYPE_ACCEPT;
     private long _bundleId = 0;
@@ -83,11 +80,10 @@ public class AcceptBundleDialog extends SimpleDialog {
     }
 
     @Override
-    public void onAdded() {
-        _durationDialog = new DurationDialog.Controller(App.get(), DIALOG_DURATION);
-        _durationDialog.setListener(_durationDialog_listener);
+    public void onResume() {
+        DurationDialog.addOnOkListener(DIALOG_DURATION, _durationDialog_onOk);
 
-        super.onAdded();
+        super.onResume();
 
         _cancelButton.setOnClickListener(_cancel_onClick);
         _okButton.setOnClickListener(_ok_onClick);
@@ -159,9 +155,10 @@ public class AcceptBundleDialog extends SimpleDialog {
     }
 
     @Override
-    public void onRemoved() {
-        super.onRemoved();
-        if (_durationDialog != null) _durationDialog.disconnect(App.get());
+    public void onPause() {
+        super.onPause();
+
+        DurationDialog.removeOnOkListener(getUid(), _durationDialog_onOk);
     }
 
     private void setExpirationVisibility(boolean visible) {
@@ -173,7 +170,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final ClickableSpan _terms_onClick = new ClickableSpan() {
         @Override
         public void onClick(View widget) {
-            OneButtonDialog.Controller.show(App.get(), null, R.string.dialog_terms_title,
+            OneButtonDialog.show(App.get(), getUid() + ".oneButtonDialog", R.string.dialog_terms_title,
                     R.string.dialog_terms_body, R.string.btn_ok, true);
         }
     };
@@ -181,9 +178,7 @@ public class AcceptBundleDialog extends SimpleDialog {
     @Override
     public void cancel() {
         super.cancel();
-        Bundle response = new Bundle();
-        response.putString("ACTION", "CANCEL");
-        onResult(response);
+        _onCanceledDispatcher.dispatch(getUid(), _workOrderId);
     }
 
     private final View.OnClickListener _cancel_onClick = new View.OnClickListener() {
@@ -197,13 +192,10 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final View.OnClickListener _ok_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            Bundle response = new Bundle();
-
             switch (_type) {
                 case TYPE_ACCEPT:
-                    response.putString("ACTION", "ACCEPTED");
-                    WorkorderClient.actionConfirmAssignment(App.get(), _workOrderId, null, null, null, false);
-                    onResult(response);
+                    WorkorderClient.actionAcceptAssignment(App.get(), _workOrderId, null, null, null, false);
+                    _onAcceptedDispatcher.dispatch(getUid(), _workOrderId);
                     break;
                 case TYPE_REQUEST:
                     if (_expiration > -1) {
@@ -211,8 +203,7 @@ public class AcceptBundleDialog extends SimpleDialog {
                     } else {
                         WorkorderClient.actionRequest(App.get(), _workOrderId, _expiration);
                     }
-                    response.putString("ACTION", "REQUESTED");
-                    onResult(response);
+                    _onRequestedDispatcher.dispatch(getUid(), _workOrderId);
                     break;
             }
             dismiss(true);
@@ -222,83 +213,110 @@ public class AcceptBundleDialog extends SimpleDialog {
     private final View.OnClickListener _expiration_okClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            DurationDialog.Controller.show(App.get(), DIALOG_DURATION);
+            DurationDialog.show(App.get(), DIALOG_DURATION);
         }
     };
 
-    private final DurationDialog.ControllerListener _durationDialog_listener = new DurationDialog.ControllerListener() {
+    private final DurationDialog.OnOkListener _durationDialog_onOk = new DurationDialog.OnOkListener() {
         @Override
         public void onOk(long milliseconds) {
             _expiration = milliseconds;
             populateUi();
         }
+    };
 
+    /**
+     * @param context     Application context
+     * @param uid         the uid of the dialog
+     * @param bundleId    The id of the bundle we're worried about
+     * @param bundleSize  The number of work orders in the bundle
+     * @param workOrderId An id of one of the work orders in the bundle.
+     * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
+     */
+    public static void show(Context context, String uid, long bundleId, int bundleSize, long workOrderId, int type) {
+        Bundle bundle = new Bundle();
+        bundle.putLong(PARAM_BUNDLE_ID, bundleId);
+        bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
+        bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
+        bundle.putInt(PARAM_TYPE, type);
+        Controller.show(context, uid, AcceptBundleDialog.class, bundle);
+    }
+
+    /*-**************************************-*/
+    /*-         Requested Listener           -*/
+    /*-**************************************-*/
+    public interface OnRequestedListener {
+        void onRequested(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnRequestedListener> _onRequestedDispatcher = new KeyedDispatcher<OnRequestedListener>() {
         @Override
-        public void onCancel() {
-            // dont' care
+        public void onDispatch(OnRequestedListener listener, Object... parameters) {
+            listener.onRequested((Long) parameters[0]);
         }
     };
 
-    public static class Controller extends com.fieldnation.fndialog.Controller {
-
-        public Controller(Context context, String uid) {
-            super(context, AcceptBundleDialog.class, uid);
-        }
-
-        /**
-         * @param context     Application context
-         * @param uid         the uid of the dialog
-         * @param bundleId    The id of the bundle we're worried about
-         * @param bundleSize  The number of work orders in the bundle
-         * @param workOrderId An id of one of the work orders in the bundle.
-         * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
-         */
-        public static void show(Context context, String uid, long bundleId, int bundleSize, long workOrderId, int type) {
-            Bundle bundle = new Bundle();
-            bundle.putLong(PARAM_BUNDLE_ID, bundleId);
-            bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
-            bundle.putInt(PARAM_TYPE, type);
-            show(context, uid, AcceptBundleDialog.class, bundle);
-        }
-
-        /**
-         * @param context     Application context
-         * @param bundleId    The id of the bundle we're worried about
-         * @param bundleSize  The number of work orders in the bundle
-         * @param workOrderId An id of one of the work orders in the bundle.
-         * @param type        One of {@link #TYPE_ACCEPT} or {@link #TYPE_REQUEST}
-         */
-        public static void show(Context context, long bundleId, int bundleSize, long workOrderId, int type) {
-            Bundle bundle = new Bundle();
-            bundle.putLong(PARAM_BUNDLE_ID, bundleId);
-            bundle.putLong(PARAM_WORK_ORDER_ID, workOrderId);
-            bundle.putInt(PARAM_BUNDLE_SIZE, bundleSize);
-            bundle.putInt(PARAM_TYPE, type);
-            show(context, null, AcceptBundleDialog.class, bundle);
-        }
+    public static void addOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.add(uid, onRequestedListener);
     }
 
-    public static abstract class ControllerListener implements com.fieldnation.fndialog.Controller.Listener {
+    public static void removeOnRequestedListener(String uid, OnRequestedListener onRequestedListener) {
+        _onRequestedDispatcher.remove(uid, onRequestedListener);
+    }
+
+    public static void removeAllOnRequestedListener(String uid) {
+        _onRequestedDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Accepted Listener           -*/
+    /*-*************************************-*/
+    public interface OnAcceptedListener {
+        void onAccepted(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnAcceptedListener> _onAcceptedDispatcher = new KeyedDispatcher<OnAcceptedListener>() {
         @Override
-        public void onComplete(Bundle response) {
-            switch (response.getString("ACTION")) {
-                case "REQUESTED":
-                    onRequested();
-                    break;
-                case "ACCEPTED":
-                    onAccepted();
-                    break;
-                case "CANCEL":
-                    onCanceled();
-                    break;
-            }
+        public void onDispatch(OnAcceptedListener listener, Object... parameters) {
+            listener.onAccepted((Long) parameters[0]);
         }
+    };
 
-        public abstract void onRequested();
+    public static void addOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.add(uid, onAcceptedListener);
+    }
 
-        public abstract void onAccepted();
+    public static void removeOnAcceptedListener(String uid, OnAcceptedListener onAcceptedListener) {
+        _onAcceptedDispatcher.remove(uid, onAcceptedListener);
+    }
 
-        public abstract void onCanceled();
+    public static void removeAllOnAcceptedListener(String uid) {
+        _onAcceptedDispatcher.removeAll(uid);
+    }
+
+    /*-*************************************-*/
+    /*-         Canceled Listener           -*/
+    /*-*************************************-*/
+    public interface OnCanceledListener {
+        void onCanceled(long workOrderId);
+    }
+
+    private static KeyedDispatcher<OnCanceledListener> _onCanceledDispatcher = new KeyedDispatcher<OnCanceledListener>() {
+        @Override
+        public void onDispatch(OnCanceledListener listener, Object... parameters) {
+            listener.onCanceled((Long) parameters[0]);
+        }
+    };
+
+    public static void addOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.add(uid, onCanceledListener);
+    }
+
+    public static void removeOnCanceledListener(String uid, OnCanceledListener onCanceledListener) {
+        _onCanceledDispatcher.remove(uid, onCanceledListener);
+    }
+
+    public static void removeAllOnCanceledListener(String uid) {
+        _onCanceledDispatcher.removeAll(uid);
     }
 }

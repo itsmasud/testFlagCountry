@@ -17,6 +17,8 @@ public class Estimate implements Parcelable {
 
     @Json
     private String arrival;
+    @Json
+    private Double _duration;
 
     public Estimate() {
     }
@@ -27,6 +29,14 @@ public class Estimate implements Parcelable {
 
     public void setArrival(String arrival) {
         this.arrival = arrival;
+    }
+
+    public Double getDuration() {
+        return _duration;
+    }
+
+    public void setDuration(Double duration) {
+        this._duration = duration;
     }
 
     /*-*************************************-*/

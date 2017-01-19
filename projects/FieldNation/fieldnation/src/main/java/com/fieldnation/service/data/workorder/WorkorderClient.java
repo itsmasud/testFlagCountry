@@ -222,7 +222,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, type, null);
     }
 
-    public static void actionWilLBeLate(Context context, long workorderId, String explanation, Integer delayInSeconds) {
+    public static void actionRunningLate(Context context, long workorderId, String explanation, Integer delayInSeconds) {
         WorkorderTransactionBuilder.actionReportProblem(context, workorderId, explanation, ReportProblemType.WILL_BE_LATE, delayInSeconds);
     }
 
@@ -474,8 +474,12 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
         WorkorderTransactionBuilder.actionRequest(context, workorderId, expireInSeconds, startTime, endTime, note);
     }
 
-    public static void actionConfirmAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
-        WorkorderTransactionBuilder.actionConfirmAssignment(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+    public static void actionAcceptAssignment(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note, boolean isEditEta) {
+        WorkorderTransactionBuilder.actionAccept(context, workorderId, startTimeIso8601, endTimeIso8601, note, isEditEta);
+    }
+
+    public static void actionConfirm(Context context, long workorderId, String startTimeIso8601, String endTimeIso8601, String note) {
+        WorkorderTransactionBuilder.actionConfirm(context, workorderId, startTimeIso8601, endTimeIso8601, note);
     }
 
     public static void actionWithdrawRequest(Context context, long workorderId) {
@@ -551,20 +555,6 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
     /*-*************************************-*/
     /*-             deliverables            -*/
     /*-*************************************-*/
-    public boolean subDeliverableCache() {
-        return register(TOPIC_ID_CACHE_DELIVERABLE_START)
-                && register(TOPIC_ID_CACHE_DELIVERABLE_END);
-    }
-
-    public static void cacheDeliverableUpload(Context context, Uri uri) {
-        Log.v(STAG, "cacheDeliverableUpload");
-
-        Intent intent = new Intent(context, WorkorderService.class);
-        intent.putExtra(PARAM_ACTION, PARAM_ACTION_CACHE_DELIVERABLE);
-        intent.putExtra(PARAM_URI, uri);
-        context.startService(intent);
-    }
-
     public static void uploadDeliverable(Context context, long workorderId, long uploadSlotId, String filename, String filePath) {
         Log.v(STAG, "requestUploadDeliverable");
 
@@ -757,23 +747,7 @@ public class WorkorderClient extends TopicClient implements WorkorderConstants {
                 preUploadDeliverableProgress((Bundle) payload);
             } else if (topicId.startsWith(TOPIC_ID_UPLOAD_DELIVERABLE)) {
                 preUploadDeliverable((Bundle) payload);
-            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_START)) {
-                onDeliverableCacheStart((Uri) ((Bundle) payload).getParcelable(PARAM_URI));
-            } else if (topicId.startsWith(TOPIC_ID_CACHE_DELIVERABLE_END)) {
-                try {
-                    onDeliverableCacheEnd(
-                            (Uri) ((Bundle) payload).getParcelable(PARAM_URI),
-                            ((Bundle) payload).getString(PARAM_FILE));
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
             }
-        }
-
-        public void onDeliverableCacheStart(Uri uri) {
-        }
-
-        public void onDeliverableCacheEnd(Uri uri, String filename) {
         }
 
         private void preUploadDeliverableProgress(Bundle payload) {

@@ -188,7 +188,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
 
         @Override
         public void onNeedAppUpdate() {
-            UpdateDialog.Controller.show(App.get());
+            UpdateDialog.show(App.get());
         }
     };
 
@@ -223,7 +223,7 @@ public class AuthActivity extends AccountAuthenticatorSupportFragmentActivity {
     private final View.OnClickListener _loginButton_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            misc.hideKeyboard(v);
+            misc.hideKeyboard(getCurrentFocus());
             startService(new Intent(AuthActivity.this, ProfileService.class));
             startService(new Intent(AuthActivity.this, WebTransactionService.class));
 
