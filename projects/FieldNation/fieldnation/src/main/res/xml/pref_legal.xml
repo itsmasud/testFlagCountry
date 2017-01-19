@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
-    <PreferenceCategory android:title="@string/pref_string_data_settings_legal">
-        <Preference android:title="@string/pref_string_user_agreement">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=user" />
-        </Preference>
-        <Preference android:title="@string/pref_string_tc_title">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=provider" />
-        </Preference>
-        <Preference android:title="@string/pref_string_work_order_tc">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=workorder" />
-        </Preference>
-        <Preference android:title="@string/pref_string_referral_terms">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=referral" />
-        </Preference>
-        <Preference android:title="@string/pref_string_qa_title">
-            <intent
-                android:action="android.intent.action.VIEW"
-                android:data="https://app.fieldnation.com/legal/?a=qualityassurance" />
-        </Preference>
-    </PreferenceCategory>
+    <Preference android:title="@string/pref_string_user_agreement">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://app.fieldnation.com/legal/?a=user" />
+    </Preference>
+    <Preference android:title="@string/pref_string_tc_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://app.fieldnation.com/legal/?a=provider" />
+    </Preference>
+    <Preference android:title="@string/pref_string_work_order_tc">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://app.fieldnation.com/legal/?a=workorder" />
+    </Preference>
+    <Preference android:title="@string/pref_string_referral_terms">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://app.fieldnation.com/legal/?a=referral" />
+    </Preference>
+    <Preference android:title="@string/pref_string_qa_title">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:data="https://app.fieldnation.com/legal/?a=qualityassurance" />
+    </Preference>
 </PreferenceScreen>

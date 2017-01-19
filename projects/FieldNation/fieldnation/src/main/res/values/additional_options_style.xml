@@ -13,8 +13,9 @@
         <item name="android:layout_marginTop">0dp</item>
         <item name="android:layout_marginBottom">0dp</item>
         <item name="android:layout_alignParentRight">true</item>
+        <item name="android:textColor">@color/fn_dark_text</item>
         <item name="android:layout_centerVertical">true</item>
-        <item name="android:text">@string/icon_arrow_right</item>
+        <item name="android:text">@string/icon_arrow_down</item>
     </style>
 
     <style name="OptionsTitle" parent="@style/Text_Body_1">
