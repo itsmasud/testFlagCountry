@@ -68,6 +68,17 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         }
     }
 
+    public static byte[] pComplete(long workOrderId) {
+        try {
+            JsonObject obj = new JsonObject("action", "pComplete");
+            obj.put("workorderId", workOrderId);
+            return obj.toByteArray();
+        } catch (Exception ex) {
+            Log.v(TAG, ex);
+            return null;
+        }
+    }
+
     public static byte[] pTimeLog(long workorderId) {
         try {
             JsonObject obj = new JsonObject("action", "pTimeLog");
@@ -372,6 +383,8 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                     return onGetSignature(context, result, transaction, params, httpResult, throwable);
                 case "pAction":
                     return onAction(context, result, transaction, params, httpResult, throwable);
+                case "pComplete":
+                    return onMarkComplete(context, result, transaction, params, httpResult, throwable);
                 case "pTimeLog":
                     return onTimeLog(context, result, transaction, params, httpResult, throwable);
                 case "pCheckIn":
@@ -488,6 +501,34 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
         } else if (result == Result.DELETE) {
             ToastClient.toast(context, pickErrorMessage(httpResult, "Could not get signature"), Toast.LENGTH_LONG);
             WorkorderDispatch.signature(context, null, workorderId, signatureId, true, transaction.isSync());
+            return Result.DELETE;
+
+        } else {
+            return Result.RETRY;
+        }
+    }
+
+    private Result onMarkComplete(Context context, Result result, WebTransaction transaction, JsonObject params, HttpResult httpResult, Throwable throwable) throws ParseException {
+        Log.v(TAG, "onMarkComplete");
+        long workorderId = params.getLong("workorderId");
+
+        if (result == Result.CONTINUE) {
+            WorkorderDispatch.action(context, workorderId, "complete", false);
+            WorkorderClient.listTasks(context, workorderId, false);
+            return onDetails(context, result, transaction, params, httpResult, throwable);
+
+        } else if (result == Result.DELETE) {
+            WorkorderDispatch.action(context, workorderId, "complete", true);
+            WorkorderClient.get(context, workorderId, true, false);
+
+            if (haveErrorMessage(httpResult)) {
+                ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+            } else {
+                // probably a formatted error message
+
+
+                ToastClient.toast(context, "Could not mark complete.", Toast.LENGTH_LONG);
+            }
             return Result.DELETE;
 
         } else {
