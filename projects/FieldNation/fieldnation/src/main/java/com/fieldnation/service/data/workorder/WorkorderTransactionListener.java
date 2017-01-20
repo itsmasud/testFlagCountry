@@ -522,11 +522,50 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
             WorkorderClient.get(context, workorderId, true, false);
 
             if (haveErrorMessage(httpResult)) {
-                ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+                try {
+                    JsonObject error = httpResult.getJsonObject();
+
+                    JsonArray requirements = error.getJsonArray("requirements");
+
+                    if (requirements.size() > 0) {
+                        String first = requirements.getString(0);
+
+                        switch (first) {
+                            case "COMPLETION_STEP_CUSTOMFIELDS. ":
+                                ToastClient.toast(context, "Can't complete, must enter custom fields", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_DOCUMENTSUPLOAD. ":
+                                ToastClient.toast(context, "Can't complete, must upload a document", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGTIME. ":
+                                ToastClient.toast(context, "Can't complete, must log time", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_LOGDEVICE. ":
+                                ToastClient.toast(context, "Can't complete, must log a device", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CHECKOUT. ":
+                                ToastClient.toast(context, "Can't complete, must check out", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSINGNOTE. ":
+                                ToastClient.toast(context, "Can't complete, must enter closing", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_CLOSEOUTREQUIREMENT. ":
+                                ToastClient.toast(context, "Can't complete, must complete close out requirements", Toast.LENGTH_LONG);
+                                break;
+                            case "COMPLETION_STEP_TASKLISTS. ":
+                                ToastClient.toast(context, "Can't complete, must complete tasks", Toast.LENGTH_LONG);
+                                break;
+                            default:
+                                ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                                break;
+                        }
+                    } else {
+                        ToastClient.toast(context, "Can't complete, must finish work order", Toast.LENGTH_LONG);
+                    }
+                } catch (Exception ex) {
+                    ToastClient.toast(context, httpResult.getString(), Toast.LENGTH_LONG);
+                }
             } else {
-                // probably a formatted error message
-
-
                 ToastClient.toast(context, "Could not mark complete.", Toast.LENGTH_LONG);
             }
             return Result.DELETE;
@@ -549,9 +588,6 @@ public class WorkorderTransactionListener extends WebTransactionListener impleme
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("closing-notes")) {
-                return onDetails(context, result, transaction, params, httpResult, throwable);
-
-            } else if (action.equals("complete")) {
                 return onDetails(context, result, transaction, params, httpResult, throwable);
 
             } else if (action.equals("decline")) {

@@ -936,7 +936,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            RunningLateDialogLegacy.show(App.get(), DIALOG_RUNNING_LATE, _workorder);
+            _markCompleteDialog.show(_workorder);
         }
     };
 

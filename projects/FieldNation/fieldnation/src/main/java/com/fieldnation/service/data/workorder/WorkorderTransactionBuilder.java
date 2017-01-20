@@ -301,9 +301,10 @@ public class WorkorderTransactionBuilder implements WorkorderConstants {
 
     // returns the entire work order details
     public static void actionComplete(Context context, long workorderId) {
-        action(context, workorderId, "POST", "complete", null, null, null,
-                WorkorderTransactionListener.class,
-                WorkorderTransactionListener.pComplete(workorderId));
+        context.startService(
+                action(context, workorderId, "POST", "complete", null, null, null,
+                        WorkorderTransactionListener.class,
+                        WorkorderTransactionListener.pComplete(workorderId)));
     }
 
     // returns the entire work order details
