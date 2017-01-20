@@ -76,12 +76,10 @@ import com.fieldnation.ui.dialog.DiscountDialog;
 import com.fieldnation.ui.dialog.ExpenseDialog;
 import com.fieldnation.ui.dialog.ExpiresDialog;
 import com.fieldnation.ui.dialog.LocationDialog;
-import com.fieldnation.ui.dialog.MarkCompleteDialog;
 import com.fieldnation.ui.dialog.MarkIncompleteDialog;
 import com.fieldnation.ui.dialog.OneButtonDialog;
 import com.fieldnation.ui.dialog.PayDialog;
 import com.fieldnation.ui.dialog.PhotoUploadDialog;
-import com.fieldnation.ui.dialog.RateBuyerModal;
 import com.fieldnation.ui.dialog.ShipmentAddDialog;
 import com.fieldnation.ui.dialog.TaskShipmentAddDialog;
 import com.fieldnation.ui.dialog.TermsDialog;
@@ -91,8 +89,9 @@ import com.fieldnation.ui.dialog.WorkLogDialog;
 import com.fieldnation.ui.dialog.v2.AcceptBundleDialog;
 import com.fieldnation.ui.dialog.v2.CheckInOutDialog;
 import com.fieldnation.ui.dialog.v2.EtaDialog;
+import com.fieldnation.ui.dialog.v2.MarkCompleteDialog;
+import com.fieldnation.ui.dialog.v2.RateBuyerYesNoDialog;
 import com.fieldnation.ui.dialog.v2.ReportProblemDialog;
-import com.fieldnation.ui.dialog.v2.RunningLateDialogLegacy;
 import com.fieldnation.ui.dialog.v2.WithdrawRequestDialog;
 import com.fieldnation.ui.payment.PaymentDetailActivity;
 import com.fieldnation.ui.payment.PaymentListActivity;
@@ -118,6 +117,8 @@ public class WorkFragment extends WorkorderFragment {
     private static final String DIALOG_WITHDRAW = TAG + ".withdrawRequestDialog";
     private static final String DIALOG_CANCEL_WARNING = TAG + ".cancelWarningDialog";
     private static final String DIALOG_RUNNING_LATE = TAG + ".runningLateDialogLegacy";
+    private static final String DIALOG_MARK_COMPLETE = TAG + ".markCompleteDialog";
+    private static final String DIALOG_RATE_BUYER_YESNO = TAG + ".rateBuyerYesNoDialog";
 
     // saved state keys
     private static final String STATE_WORKORDER = "WorkFragment:STATE_WORKORDER";
@@ -160,7 +161,6 @@ public class WorkFragment extends WorkorderFragment {
     private DeclineDialog _declineDialog;
     private DiscountDialog _discountDialog;
     private ExpenseDialog _expenseDialog;
-    private MarkCompleteDialog _markCompleteDialog;
     private ShipmentAddDialog _shipmentAddDialog;
     private TaskShipmentAddDialog _taskShipmentAddDialog;
     private TermsDialog _termsDialog;
@@ -173,8 +173,6 @@ public class WorkFragment extends WorkorderFragment {
     private MarkIncompleteDialog _markIncompleteDialog;
     private ReportProblemDialog _reportProblemDialog;
     private PhotoUploadDialog _photoUploadDialog;
-    private RateBuyerModal _rateBuyerModal;
-
 
     // Data
     private WorkorderClient _workorderClient;
@@ -380,7 +378,6 @@ public class WorkFragment extends WorkorderFragment {
         _expenseDialog = ExpenseDialog.getInstance(getFragmentManager(), TAG);
         _locationDialog = LocationDialog.getInstance(getFragmentManager(), TAG);
         _locationLoadingDialog = OneButtonDialog.getInstance(getFragmentManager(), TAG);
-        _markCompleteDialog = MarkCompleteDialog.getInstance(getFragmentManager(), TAG);
         _markIncompleteDialog = MarkIncompleteDialog.getInstance(getFragmentManager(), TAG);
         _shipmentAddDialog = ShipmentAddDialog.getInstance(getFragmentManager(), TAG);
         _taskShipmentAddDialog = TaskShipmentAddDialog.getInstance(getFragmentManager(), TAG);
@@ -390,8 +387,6 @@ public class WorkFragment extends WorkorderFragment {
         _worklogDialog = WorkLogDialog.getInstance(getFragmentManager(), TAG);
         _photoUploadDialog = PhotoUploadDialog.getInstance(getFragmentManager(), TAG);
         _payDialog = PayDialog.getInstance(getFragmentManager(), TAG);
-        _rateBuyerModal = RateBuyerModal.getInstance(getFragmentManager(), TAG);
-
 
         _locationLoadingDialog.setData(getString(R.string.dialog_location_loading_title),
                 getString(R.string.dialog_location_loading_body),
@@ -408,7 +403,6 @@ public class WorkFragment extends WorkorderFragment {
         _taskShipmentAddDialog.setListener(taskShipmentAddDialog_listener);
         _shipmentAddDialog.setListener(_shipmentAddDialog_listener);
         _worklogDialog.setListener(_worklogDialog_listener);
-        _markCompleteDialog.setListener(_markCompleteDialog_listener);
         _markIncompleteDialog.setListener(_markIncompleteDialog_listener);
         _photoUploadDialog.setListener(_photoUploadDialog_listener);
         _payDialog.setListener(_payDialog_listener);
@@ -420,6 +414,8 @@ public class WorkFragment extends WorkorderFragment {
         EtaDialog.addOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ReportProblemDialog.addOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.addOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+        MarkCompleteDialog.addOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
+        MarkCompleteDialog.addOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
 
         _workorderClient = new WorkorderClient(_workorderClient_listener);
         _workorderClient.connect(App.get());
@@ -445,6 +441,8 @@ public class WorkFragment extends WorkorderFragment {
         EtaDialog.removeOnConfirmedListener(DIALOG_ETA, _etaDialog_onConfirmed);
         ReportProblemDialog.removeOnSendListener(DIALOG_REPORT_PROBLEM, _reportProblemDialog_onSend);
         WithdrawRequestDialog.removeOnWithdrawListener(DIALOG_WITHDRAW, _withdrawRequestDialog_onWithdraw);
+        MarkCompleteDialog.removeOnContinueClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onContinue);
+        MarkCompleteDialog.removeOnSignatureClickListener(DIALOG_MARK_COMPLETE, _markCompleteDialog_onSignature);
 
         if (_workorderClient != null && _workorderClient.isConnected())
             _workorderClient.disconnect(App.get());
@@ -911,7 +909,7 @@ public class WorkFragment extends WorkorderFragment {
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_GET_SIGNATURE && resultCode == Activity.RESULT_OK) {
                 requestWorkorder();
                 if (App.get().getProfile().canRequestWorkOnMarketplace() && !_workorder.isW2Workorder() && _workorder.getBuyerRatingInfo().getRatingId() == null) {
-                    _rateBuyerModal.show(_workorder);
+                    RateBuyerYesNoDialog.show(App.get(), DIALOG_RATE_BUYER_YESNO, _workorder, _workorder.getCompanyName());
                 }
             } else if (requestCode == ActivityResultConstants.RESULT_CODE_ENABLE_GPS_CHECKIN) {
                 startCheckin();
@@ -936,7 +934,7 @@ public class WorkFragment extends WorkorderFragment {
     private final View.OnClickListener _test_onClick = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            _markCompleteDialog.show(_workorder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
         }
     };
 
@@ -1095,7 +1093,7 @@ public class WorkFragment extends WorkorderFragment {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE,
                     null, _workorder.getWorkorderId());
 
-            _markCompleteDialog.show(_workorder);
+            MarkCompleteDialog.show(App.get(), DIALOG_MARK_COMPLETE, _workorder);
         }
     };
 
@@ -1745,7 +1743,8 @@ public class WorkFragment extends WorkorderFragment {
         }
     };
 
-    private final MarkCompleteDialog.Listener _markCompleteDialog_listener = new MarkCompleteDialog.Listener() {
+
+    private final MarkCompleteDialog.OnSignatureClickListener _markCompleteDialog_onSignature = new MarkCompleteDialog.OnSignatureClickListener() {
         @Override
         public void onSignatureClick() {
             new AsyncTaskEx<Object, Object, Object>() {
@@ -1768,7 +1767,9 @@ public class WorkFragment extends WorkorderFragment {
                 }
             }.executeEx(getActivity(), _workorder);
         }
+    };
 
+    private final MarkCompleteDialog.OnContinueClickListener _markCompleteDialog_onContinue = new MarkCompleteDialog.OnContinueClickListener() {
         @Override
         public void onContinueClick() {
             WorkOrderTracker.onActionButtonEvent(App.get(), WorkOrderTracker.ActionButton.MARK_COMPlETE, WorkOrderTracker.Action.MARK_COMPLETE, _workorder.getWorkorderId());
