@@ -79,6 +79,10 @@ public class ReflectionUtils {
         return p;
     }
 
+    protected static boolean isEnum(Class<?> clazz) {
+        return (clazz instanceof Class && clazz.isEnum());
+    }
+
     protected static boolean isPrimitive(Class<?> clazz) {
         return _PRIMITIVES.contains(clazz);
     }
