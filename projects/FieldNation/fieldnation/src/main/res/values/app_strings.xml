@@ -513,6 +513,12 @@
 
     <string name="num_workorders_and_payments">%1$s %2$s</string>
 
+    <string name="payment_type_fixed">TOTAL</string>
+    <string name="payment_type_hourly">/ HOUR (%1$d)</string>
+    <string name="payment_type_blended">+ $%1$d /HR (%2$d)</string>
+    <string name="payment_type_device">/ DEVICE (%1$d)</string>
+
+
     <plurals name="num_other_payments">
         <item quantity="one">and 1 other payment</item>
         <item quantity="other">and %1$s other payments</item>
