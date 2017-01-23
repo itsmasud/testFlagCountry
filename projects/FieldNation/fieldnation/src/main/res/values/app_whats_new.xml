@@ -3,11 +3,11 @@
 
     <string name="added_new_feature">
 &lt;ul&gt;
-&lt;li&gt;You can edit the location and distance defaults for Available and Routed work&lt;/li&gt;
-&lt;li&gt;More helpful descriptions for the user when encountering errors&lt;/li&gt;
-&lt;li&gt;Removed the footer bar on work order lists&lt;/li&gt;
-&lt;li&gt;Fixed distance between user and work site on work order cards&lt;/li&gt;
-&lt;li&gt;Other misc bug fixes&lt;/li&gt;
+&lt;li&gt;You can edit the location and distance defaults for Available and Routed work&lt;/li&gt;&lt;br/&gt;
+&lt;li&gt;More helpful descriptions for the user when encountering errors&lt;/li&gt;&lt;br/&gt;
+&lt;li&gt;Removed the footer bar on work order lists&lt;/li&gt;&lt;br/&gt;
+&lt;li&gt;Fixed distance between user and work site on work order cards&lt;/li&gt;&lt;br/&gt;
+&lt;li&gt;Other misc bug fixes&lt;/li&gt;&lt;br/&gt;
 &lt;/ul&gt;
     </string>
 
