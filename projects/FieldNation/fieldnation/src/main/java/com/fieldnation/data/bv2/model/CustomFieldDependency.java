@@ -16,13 +16,18 @@ public class CustomFieldDependency {
     private String value = null;
 
     @Json(name = "operator")
-    private String operator = null;
+    private OperatorEnum operator = null;
 
     public enum OperatorEnum {
+        @Json(name = "less_than")
         LESS_THAN("less_than"),
+        @Json(name = "greater_than")
         GREATER_THAN("greater_than"),
+        @Json(name = "equals")
         EQUALS("equals"),
+        @Json(name = "less_than_equals")
         LESS_THAN_EQUALS("less_than_equals"),
+        @Json(name = "greater_than_equals")
         GREATER_THAN_EQUALS("greater_than_equals");
 
         private String value;
@@ -34,15 +39,6 @@ public class CustomFieldDependency {
         @Override
         public String toString() {
             return String.valueOf(value);
-        }
-
-        public static OperatorEnum fromValue(String value) {
-            OperatorEnum[] values = values();
-            for (OperatorEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
         }
     }
 
@@ -59,7 +55,7 @@ public class CustomFieldDependency {
     }
 
     public OperatorEnum getOperator() {
-        return OperatorEnum.fromValue(operator);
+        return operator;
     }
 
     /*-*****************************-*/

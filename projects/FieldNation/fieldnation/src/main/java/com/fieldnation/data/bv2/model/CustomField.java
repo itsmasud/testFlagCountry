@@ -19,13 +19,13 @@ public class CustomField {
     private String tip = null;
 
     @Json(name = "type")
-    private String type = null;
+    private TypeEnum type = null;
 
     @Json(name = "options")
     private String[] options;
 
     @Json(name = "role")
-    private String role = null;
+    private RoleEnum role = null;
 
     @Json(name = "value")
     private String value = null;
@@ -34,22 +34,29 @@ public class CustomField {
     private CustomFieldDependency dependency = null;
 
     @Json(name = "flags")
-    private String[] flags;
+    private FlagsEnum[] flags;
 
     @Json(name = "actions")
-    private String actions = null;
+    private ActionsEnum actions = null;
 
     @Json(name = "category")
     private String category = null;
 
 
     public enum TypeEnum {
+        @Json(name = "text")
         TEXT("text"),
+        @Json(name = "numeric")
         NUMERIC("numeric"),
+        @Json(name = "date")
         DATE("date"),
+        @Json(name = "datetime")
         DATETIME("datetime"),
+        @Json(name = "time")
         TIME("time"),
+        @Json(name = "predefined")
         PREDEFINED("predefined"),
+        @Json(name = "phone")
         PHONE("phone");
 
         private String value;
@@ -62,19 +69,12 @@ public class CustomField {
         public String toString() {
             return String.valueOf(value);
         }
-
-        public static TypeEnum fromValue(String value) {
-            TypeEnum[] values = values();
-            for (TypeEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
-        }
     }
 
     public enum RoleEnum {
+        @Json(name = "buyer")
         BUYER("buyer"),
+        @Json(name = "assigned_provider")
         ASSIGNED_PROVIDER("assigned_provider");
 
         private String value;
@@ -87,28 +87,30 @@ public class CustomField {
         public String toString() {
             return String.valueOf(value);
         }
-
-        public static RoleEnum fromValue(String value) {
-            RoleEnum[] values = values();
-            for (RoleEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
-        }
     }
 
     public enum FlagsEnum {
+        @Json(name = "unique")
         UNIQUE("unique"),
+        @Json(name = "required")
         REQUIRED("required"),
+        @Json(name = "internal_id")
         INTERNAL_ID("internal_id"),
+        @Json(name = "required_during_checkin")
         REQUIRED_DURING_CHECKIN("required_during_checkin"),
+        @Json(name = "included_in_alerts")
         INCLUDED_IN_ALERTS("included_in_alerts"),
+        @Json(name = "shown_in_header")
         SHOWN_IN_HEADER("shown_in_header"),
+        @Json(name = "seen_by_provider")
         SEEN_BY_PROVIDER("seen_by_provider"),
+        @Json(name = "seen_by_clients")
         SEEN_BY_CLIENTS("seen_by_clients"),
+        @Json(name = "visible_to_clients")
         VISIBLE_TO_CLIENTS("visible_to_clients"),
+        @Json(name = "client_request_required")
         CLIENT_REQUEST_REQUIRED("client_request_required"),
+        @Json(name = "client_request_use_for")
         CLIENT_REQUEST_USE_FOR("client_request_use_for");
 
         private String value;
@@ -121,18 +123,10 @@ public class CustomField {
         public String toString() {
             return String.valueOf(value);
         }
-
-        public static FlagsEnum fromValues(String value) {
-            FlagsEnum[] values = values();
-            for (FlagsEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
-        }
     }
 
     public enum ActionsEnum {
+        @Json(name = "edit")
         EDIT("edit");
 
         private String value;
@@ -144,15 +138,6 @@ public class CustomField {
         @Override
         public String toString() {
             return String.valueOf(value);
-        }
-
-        public static ActionsEnum fromValue(String value) {
-            ActionsEnum[] values = values();
-            for (ActionsEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
         }
     }
 
@@ -172,7 +157,7 @@ public class CustomField {
     }
 
     public TypeEnum getType() {
-        return TypeEnum.fromValue(type);
+        return type;
     }
 
     public String[] getOptions() {
@@ -180,7 +165,7 @@ public class CustomField {
     }
 
     public RoleEnum getRole() {
-        return RoleEnum.fromValue(role);
+        return role;
     }
 
     public String getValue() {
@@ -194,18 +179,11 @@ public class CustomField {
     private FlagsEnum[] flagsEnums = null;
 
     public FlagsEnum[] getFlags() {
-        if (flagsEnums == null) {
-            flagsEnums = new FlagsEnum[flags.length];
-            for (int i = 0; i < flags.length; i++) {
-                flagsEnums[i] = FlagsEnum.fromValues(flags[i]);
-            }
-        }
-
-        return flagsEnums;
+        return flags;
     }
 
     public ActionsEnum getActions() {
-        return ActionsEnum.fromValue(actions);
+        return actions;
     }
 
     public String getCategory() {

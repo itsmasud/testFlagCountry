@@ -31,7 +31,7 @@ public class Attachment {
     private User reviewer = null;
 
     @Json(name = "status")
-    private String status = null;
+    private StatusEnum status = null;
 
     @Json(name = "status_description")
     private String statusDescription = null;
@@ -46,8 +46,11 @@ public class Attachment {
     private String reviewed = null;
 
     public enum StatusEnum {
+        @Json(name = "pending")
         PENDING("pending"),
+        @Json(name = "approved")
         APPROVED("approved"),
+        @Json(name = "denied")
         DENIED("denied");
 
         private String value;
@@ -59,16 +62,6 @@ public class Attachment {
         @Override
         public String toString() {
             return String.valueOf(value);
-        }
-
-        public static StatusEnum fromString(String name) {
-            StatusEnum[] values = values();
-
-            for (StatusEnum se : values) {
-                if (se.value.equals(name))
-                    return se;
-            }
-            return null;
         }
     }
 
@@ -100,7 +93,7 @@ public class Attachment {
     }
 
     public StatusEnum getStatus() {
-        return StatusEnum.fromString(status);
+        return status;
     }
 
     public String getStatusDescription() {

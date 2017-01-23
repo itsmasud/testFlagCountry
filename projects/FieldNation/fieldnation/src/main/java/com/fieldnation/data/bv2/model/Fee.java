@@ -25,7 +25,9 @@ public class Fee {
     private Boolean charged = null;
 
     public enum CalculationEnum {
+        @Json(name = "percent")
         PERCENT("percent"),
+        @Json(name = "fixed")
         FIXED("fixed");
 
         private String value;
@@ -37,15 +39,6 @@ public class Fee {
         @Override
         public String toString() {
             return String.valueOf(value);
-        }
-
-        public static CalculationEnum fromValue(String value) {
-            CalculationEnum[] values = values();
-            for (CalculationEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
         }
     }
 

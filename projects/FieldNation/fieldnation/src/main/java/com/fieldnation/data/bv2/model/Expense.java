@@ -16,7 +16,7 @@ public class Expense {
     private Integer quantity = null;
 
     @Json(name = "status")
-    private String status = null;
+    private StatusEnum status = null;
 
     @Json(name = "status_description")
     private String statusDescription = null;
@@ -40,8 +40,11 @@ public class Expense {
     private String reason = null;
 
     public enum StatusEnum {
+        @Json(name = "new")
         NEW("new"),
+        @Json(name = "approved")
         APPROVED("approved"),
+        @Json(name = "disapproved")
         DISAPPROVED("disapproved");
 
         private String value;
@@ -53,15 +56,6 @@ public class Expense {
         @Override
         public String toString() {
             return String.valueOf(value);
-        }
-
-        public static StatusEnum fromValue(String value) {
-            StatusEnum[] values = values();
-            for (StatusEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
         }
     }
 
@@ -77,7 +71,7 @@ public class Expense {
     }
 
     public StatusEnum getStatus() {
-        return StatusEnum.fromValue(status);
+        return status;
     }
 
     public String getStatusDescription() {

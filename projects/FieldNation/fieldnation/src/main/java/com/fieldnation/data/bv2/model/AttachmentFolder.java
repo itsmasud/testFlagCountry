@@ -11,12 +11,12 @@ import com.fieldnation.fnlog.Log;
  */
 public class AttachmentFolder {
     private static final String TAG = "AttachmentFolder";
-    
+
     @Json(name = "id")
     private Integer id = null;
 
     @Json(name = "type")
-    private String type = null;
+    private TypeEnum type = null;
 
     @Json(name = "name")
     private String name = null;
@@ -28,7 +28,9 @@ public class AttachmentFolder {
     private Task task = null;
 
     public enum TypeEnum {
+        @Json(name = "slot")
         SLOT("slot"),
+        @Json(name = "document")
         DOCUMENT("document");
 
         private String value;
@@ -41,15 +43,6 @@ public class AttachmentFolder {
         public String toString() {
             return String.valueOf(value);
         }
-
-        public static TypeEnum fromValue(String value) {
-            TypeEnum[] values = values();
-            for (TypeEnum e : values) {
-                if (e.value.equals(value))
-                    return e;
-            }
-            return null;
-        }
     }
 
     public AttachmentFolder() {
@@ -60,7 +53,7 @@ public class AttachmentFolder {
     }
 
     public TypeEnum getType() {
-        return TypeEnum.fromValue(type);
+        return type;
     }
 
     public String getName() {
